@@ -10,37 +10,46 @@ navbarPage(
     wellPanel(
       column(5, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
           p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-          selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "Health and social care partnership"),
+          selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
                       selected = "Scotland")),
           uiOutput("geoname_ui")),
-      column(5, sliderInput("time_media", label = "Step 2 - Select the time period of interest",
+      column(5, sliderInput("time_period", label = "Step 2 - Select the time period of interest",
                             min = as.Date('2020-01-01'), max = as.Date('2020-03-31'),
                             value = c(as.Date('2020-03-24'), as.Date('2020-03-31')),
                             step = 1)),
       actionButton("browser", "Browser")
     ), #wellPanel bracket
     mainPanel(width = 12,
-              column(4, 
-                     plot_box("A&E attendances", "aye_sex"),
-                     plot_box("Admissions to hospital", "adm_sex"),
-                     plot_box("Discharges from hospital", "disch_sex"),
-                     plot_box("NHS 24 calls", "nhs24_sex"),
-                     plot_box("Out of hours", "ooh_sex"),
-                     plot_box("Assessment centres testing", "test_sex")),
-              column(4, 
-                     plot_box("          ", "aye_age"),
-                     plot_box("          ", "adm_age"),
-                     plot_box("          ", "disch_age"),
-                     plot_box("          ", "nhs24_age"),
-                     plot_box("          ", "ooh_age"),
-                     plot_box("          ", "disch_age")),
-              column(4, 
-                     plot_box("          ", "aye_depr"),
-                     plot_box("          ", "adm_depr"),
-                     plot_box("          ", "disch_depr"),
-                     plot_box("          ", "nhs24_depr"),
-                     plot_box("          ", "ooh_depr"),
-                     plot_box("          ", "disch_depr"))
+              fluidRow(h4("A&E attendances"),
+                       column(4, plot_box("By sex", "aye_sex")),
+                       column(4, plot_box("By age group", "aye_age")),
+                       column(4, plot_box("By deprivation quintile", "aye_depr"))
+              ),
+              fluidRow(h4("Admissions to hospital"),
+                       column(4, plot_box("By sex", "adm_sex")),
+                       column(4, plot_box("By age group", "adm_age")),
+                       column(4, plot_box("By deprivation quintile", "adm_depr"))
+              ),
+              fluidRow(h4("Discharges from hospital"),
+                       column(4, plot_box("By sex", "disch_sex")),
+                       column(4, plot_box("By age group", "disch_age")),
+                       column(4, plot_box("By deprivation quintile", "disch_depr"))
+              ),
+              fluidRow(h4("NHS 24 calls"),
+                       column(4, plot_box("By sex", "nhs24_sex")),
+                       column(4, plot_box("By age group", "nhs24_age")),
+                       column(4, plot_box("By deprivation quintile", "nhs24_depr"))
+              ),
+              fluidRow(h4("Out of hours"),
+                       column(4, plot_box("By sex", "ooh_sex")),
+                       column(4, plot_box("By age group", "ooh_age")),
+                       column(4, plot_box("By deprivation quintile", "ooh_depr"))
+              ),
+              fluidRow(h4("Assessment centres testing"),
+                       column(4, plot_box("By sex", "test_sex")),
+                       column(4, plot_box("By age group", "test_age")),
+                       column(4, plot_box("By deprivation quintile", "test_depr"))
+              )
     )# mainPanel bracket
   ), # tabpanel bracket
   tabPanel(

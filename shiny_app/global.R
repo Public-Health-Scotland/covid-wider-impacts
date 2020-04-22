@@ -15,8 +15,7 @@ library(DT)
 ###############################################.
 
 plot_box <- function(title_plot, plot_output) {
-  div(h4(title_plot),
-      p("Source: Blablabla"),
+  div(p(title_plot),
       plotlyOutput(plot_output))
 }
 
@@ -24,6 +23,11 @@ plot_box <- function(title_plot, plot_output) {
 ## Data ----
 ###############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
+
+table_data <- data.frame(date_event = seq(as.Date('2020-01-02'), as.Date('2020-03-31'), by = 'day'),
+                         value = runif(90, 500, 1000),
+                         measure = rep(measure_list, 15)) %>% 
+  mutate(value = round(value, 0))
 
 measure_list <- c("OOH calls", "Testing",
                   "Admissions", "Discharges", "Calls to NHS 24", 
