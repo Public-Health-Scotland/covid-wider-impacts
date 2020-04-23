@@ -6,6 +6,17 @@ function(input, output, session) {
   observeEvent(input$browser, browser())
   
   ###############################################.
+  # To move around tabs 
+  observeEvent(input$jump_summary, {
+    updateTabsetPanel(session, "intabset", selected = "summary")
+  })
+  
+  observeEvent(input$jump_table, {
+    updateTabsetPanel(session, "intabset", selected = "table")
+  })
+  
+  
+  ###############################################.
   # Reactive controls 
   # For areaname depending on areatype selected
   output$geoname_ui <- renderUI({
@@ -38,6 +49,7 @@ function(input, output, session) {
     trend_data <- dataset %>% filter(type == split) %>%
         filter(between(date, as.Date(input$time_period[1]), as.Date(input$time_period[2])))
 
+    # Style of x and y axis
     xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
                         showline = TRUE, tickangle = 270, fixedrange=TRUE)
 
@@ -50,12 +62,13 @@ function(input, output, session) {
                 color = ~category, colors = pal_chose) %>%
       #Layout
       layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(orientation = 'h')) %>%
-      config(displayModeBar = FALSE, displaylogo = F) # taking out plotly logo button
+             yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
+             #legend = list(orientation = 'h', x = 50, y = 100)) %>%
+      config(displaylogo = F) # taking out plotly logo button
 
   }
   
+  # Creating plots for each cut and dataset
   # output$aye_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
   # output$aye_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
   # output$aye_depr <- renderPlotly({plot_trend_chart(pal_depr, "depr")})
@@ -75,11 +88,36 @@ function(input, output, session) {
 ###############################################.
 # Table 
   
+  data_table <- reactive({
+    # Add switch and filter to swap between different datasets
+    # https://github.com/Health-SocialCare-Scotland/Hospital-Acute-Activity/blob/master/Data-Explorer/server.R
+    # Reformat dates? so they become 22 March 2020?.
+    # Think about the variable names
+    
+    # Note: character variables are converted to factors in each
+    # dataset for use in the table
+    # This is because dropdown prompts on the table filters only
+    # appear for factors
+    rapid %>% 
+      rename(Date = date, Count = count, Type = type, Category = category) %>% 
+      mutate_if(is.character, as.factor)
+    
+  })
+  
   output$table_filtered <- DT::renderDataTable({
     
-    # Add switch and filter to swap between different datasets
+    # Remove the underscore from column names in the table
+    table_colnames  <-  gsub("_", " ", colnames(data_table()))
     
-    DT::datatable(rapid)
+    DT::datatable(data_table(), style = 'bootstrap',
+                  class = 'table-bordered table-condensed',
+                  rownames = FALSE,
+                  options = list(pageLength = 20,
+                                 dom = 'tip',
+                                 autoWidth = TRUE),
+                  filter = "top",
+                  colnames = table_colnames)
+    
   })
   
   
