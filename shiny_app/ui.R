@@ -3,14 +3,36 @@
 fluidPage(
   HTML('<meta name="viewport" content="width=1200">'), # needed for embedding as iframe in website
   style = "width: 100%; height: 100%; max-width: 1200px;", 
-  tags$head(includeCSS("www/styles.css")),
+  tags$head(includeCSS("www/styles.css")), # CSS used to style app
   title = "Coronavirus wider impact", #title for browser tab
-  tabsetPanel(
-    id = "Panels", 
-    tabPanel("Introduction", icon = icon("info-circle")
-    ),
-    tabPanel(
-      title = "Summary trends", icon = icon("area-chart"),
+  tabsetPanel(id = "intabset", # id used for jumping between tabs
+###############################################.
+## Introduction ----
+###############################################.
+    tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
+             column(2,
+                    h3("COVID-19 wider impacts to the health care system")),
+             column(10,
+                    tags$br(),
+                    p("This tool allows you to find the data you want",
+                      "and visualise it in different ways. Within each of the",
+                      "following sections there are filters that let you",
+                      "select the data you are interested in:"),
+                    tags$ul( 
+                      tags$li(
+                        tags$b(actionLink("jump_summary","Summary trends")),
+                        icon("area-chart"),
+                        " - shows the data over time for different areas."),
+                      tags$li(
+                        tags$b(actionLink( "jump_table", "Time trend (activity comparison)")),
+                        icon("table"),
+                        " - allows you to view and download the data as a table."))
+                      )
+    ), #tabPanel bracket
+###############################################.
+## Summary trends ----
+###############################################.
+    tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
       wellPanel(
         column(5, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                       p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -27,11 +49,10 @@ fluidPage(
                 #          column(4, plot_box("By age group", "aye_age")),
                 #          column(4, plot_box("By deprivation quintile", "aye_depr"))
                 # ),
-                fluidRow(h4("Admissions to hospital"),
-                         column(4, plot_box("By sex", "adm_sex")),
-                         column(4, plot_box("By age group", "adm_age")),
-                         column(4, plot_box("By deprivation quintile", "adm_depr"))
-                )
+                h4("Admissions to hospital"),
+                plot_box("By sex", "adm_sex"),
+                plot_box("By age group", "adm_age"),
+                plot_box("By deprivation quintile", "adm_depr")
                 # fluidRow(h4("NHS 24 calls"),
                 #          column(4, plot_box("By sex", "nhs24_sex")),
                 #          column(4, plot_box("By age group", "nhs24_age")),
@@ -49,9 +70,13 @@ fluidPage(
                 # )
       )# mainPanel bracket
     ), # tabpanel bracket
-    tabPanel(
-      title = "Data", icon = icon("table"),
-      p("This tab could include the data used in the app. "),
+###############################################.
+## Data ----
+###############################################.
+    tabPanel(title = "Data", icon = icon("table"), value = "table",
+      p("This section allows you to view the data in table format. 
+        You can use the filters to select the data you are interested in. 
+        You can also download the data as a csv using the download buttons."),
       downloadButton('download_table_csv', 'Download data'),
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
