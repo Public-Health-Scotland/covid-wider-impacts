@@ -24,6 +24,10 @@ plot_box <- function(title_plot, plot_output) {
 ###############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
 
+rapid <- readRDS("data/rapid_data.rds") #RAPID data
+
+
+# For dummy data for table
 measure_list <- c("OOH calls", "Testing",
                   "Admissions", "Discharges", "Calls to NHS 24", 
                   "A&E attendances")
