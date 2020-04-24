@@ -67,12 +67,19 @@ rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category.rds") %>%
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")))
 
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
-  janitor::clean_names() %>% select(description, hb_cypher) %>% as.data.frame()
-
 # Bringing HB names
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher)
+
 rap_adm <- left_join(rap_adm, hb_lookup, by = c("hb" = "hb_cypher")) %>% 
   select(-hb) %>% rename(hb = description)
+
+# Bringing spec names
+spec_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/specialt.rds") %>% 
+  janitor::clean_names() %>% select(description, speccode)
+
+rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "speccode")) %>% 
+  select(-spec) %>% rename(spec = description)
 
 # Aggregating to obtain totals for each split type and then putting all back together
 # Totals for overalls for all pop including totals by specialty too
