@@ -9,6 +9,7 @@ library(plotly)
 library(shinyWidgets)
 library(dplyr)
 library(DT)
+library(shinycssloaders) #for loading icons
 
 ###############################################.
 ## Functions ----
@@ -16,7 +17,7 @@ library(DT)
 
 plot_box <- function(title_plot, plot_output) {
   div(p(title_plot),
-      plotlyOutput(plot_output))
+      withSpinner(plotlyOutput(plot_output)))
 }
 
 ###############################################.
@@ -25,6 +26,7 @@ plot_box <- function(title_plot, plot_output) {
 geo_lookup <- readRDS("data/geo_lookup.rds")
 
 rapid <- readRDS("data/rapid_data.rds") #RAPID data
+spec_list <- sort(unique(rapid$spec)) # specialty list
 
 ###############################################.
 ## Palettes ----
