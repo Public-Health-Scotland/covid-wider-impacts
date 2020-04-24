@@ -42,8 +42,9 @@ fluidPage(
         column(5, uiOutput("time_period_ui"),
                selectInput("adm_type", label = "Step 3. Select type of admission.",
                            choices = c("All", "Emergency", "Planned"), selected = "All")),
-        column(2, downloadButton('download_chart_data', 'Download data'),
-               actionButton("browser", "Browser"))
+        column(2, downloadButton('download_chart_data', 'Download data')
+               # actionButton("browser", "Browser")
+               )
       ), #wellPanel bracket
       mainPanel(width = 12,
                 # fluidRow(h4("A&E attendances"),

@@ -3,7 +3,7 @@
 function(input, output, session) {
   
   # For debugging
-  observeEvent(input$browser, browser())
+  # observeEvent(input$browser, browser())
   
   ###############################################.
   # To move around tabs 
@@ -168,6 +168,13 @@ function(input, output, session) {
   
   
   output$download_table_csv <- downloadHandler(
+    filename ="data_extract.csv",
+    content = function(file) {
+      write.csv(rapid,
+                file, row.names=FALSE) } 
+  )
+  
+  output$download_chart_data <- downloadHandler(
     filename ="data_extract.csv",
     content = function(file) {
       write.csv(rapid,

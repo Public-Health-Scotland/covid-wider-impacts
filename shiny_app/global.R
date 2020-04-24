@@ -16,7 +16,7 @@ library(shinycssloaders) #for loading icons
 ###############################################.
 
 plot_box <- function(title_plot, plot_output) {
-  div(p(title_plot),
+  div(h4(title_plot),
       withSpinner(plotlyOutput(plot_output)))
 }
 
