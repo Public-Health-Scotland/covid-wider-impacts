@@ -116,6 +116,9 @@ rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>%
                                TRUE ~ "Council area"),
          admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency"))
 
+# Temporary for testing purposes: supressing numbers under 5
+rap_adm$count <- ifelse(rap_adm$count<5,0,rap_adm$count)
+
 saveRDS(rap_adm, "shiny_app/data/rapid_data.rds")
 
 ##END
