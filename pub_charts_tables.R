@@ -58,6 +58,17 @@ rap_table <- rap_table %>% ungroup() %>%
 write_csv(rap_table, paste0(outputs, "rapid_agesex_table.csv"))
 
 ###############################################.
+# Specialty bullet point 
+# What specialty got most admissions
+rap_spec_bullet <- rap_pub %>% 
+  filter(type == "sex" & admission_type == "All" & category == "All" 
+           between(date, as.Date("2020-03-22"), as.Date("2020-04-21"))) %>% 
+  group_by(spec) %>% summarise(count = sum(count)) %>% 
+  arrange(-count)
+
+write_csv(rap_spec_bullet, paste0(outputs, "rapid_spec_table.csv"))
+
+###############################################.
 # Chart for age groups
 rap_age_chart_data <- rap_pub %>% 
   filter(spec == "All" & type == "age" & admission_type == "All" &
