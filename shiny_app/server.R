@@ -47,19 +47,20 @@ function(input, output, session) {
   plot_trend_chart <- function(dataset, pal_chose, split) {
     
     trend_data <- dataset %>% filter(type == split) %>%
-        filter(between(date, as.Date(input$time_period[1]), as.Date(input$time_period[2])))
-
-    # Style of x and y axis
-    xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
-                        showline = TRUE, tickangle = 270, fixedrange=TRUE)
-
-    yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
-                        tickfont = list(size=14), titlefont = list(size=14))
+        filter(between(date, as.Date(input$time_period[1]), as.Date(input$time_period[2])) &
+                 area_name == input$geoname &
+                 admission_type == input$adm_type &
+                 spec == "All")
+    
+    #Text for tooltip
+    tooltip_trend <- c(paste0(trend_data$category, "<br>", trend_data$date,
+                              "<br>", "Admissions: ", trend_data$count))
 
     #Creating time trend plot
     plot_ly(data=trend_data, x=~date,  y = ~count) %>%
       add_trace(type = 'scatter', mode = 'lines',
-                color = ~category, colors = pal_chose) %>%
+                color = ~category, colors = pal_chose,
+                text=tooltip_trend, hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
@@ -67,7 +68,7 @@ function(input, output, session) {
       config(displaylogo = F) # taking out plotly logo button
 
   }
-  
+  ###############################################.
   # Creating plots for each cut and dataset
   # output$aye_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
   # output$aye_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
@@ -78,6 +79,51 @@ function(input, output, session) {
   output$adm_sex <- renderPlotly({plot_trend_chart(rapid, pal_sex, "sex")})
   output$adm_age <- renderPlotly({plot_trend_chart(rapid, pal_age, "age")})
   output$adm_depr <- renderPlotly({plot_trend_chart(rapid, pal_depr, "depr")})
+  output$adm_spec <- renderPlotly({
+    
+    trend_data <- rapid %>% filter(type == "sex") %>%
+      filter(between(date, as.Date(input$time_period[1]), as.Date(input$time_period[2])) &
+               area_name == input$geoname &
+               # admission_type == input$adm_type &
+               category == "All" &
+               spec %in% input$adm_specialty)
+    
+    #Creating palette of colors: colorblind proof
+    #First obtaining length of each geography type, if more than 6, then 6, 
+    # this avoids issues. Extra selections will not be plotted
+    trend_length <- length(input$adm_specialty)
+    
+    # First define the palette of colours used, then set a named vector, so each color
+    # gets assigned to an area. I think is based on the order in the dataset, which
+    # helps because Scotland is always first so always black.
+    trend_palette <- c("#000000", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99",
+                       "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#b15928")
+    
+    trend_scale <- c(setNames(trend_palette, unique(trend_data$spec)[1:trend_length]))
+    trend_col <- trend_scale[1:trend_length]
+    
+    # Same approach for symbols
+    symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
+                          'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
+    symbols_scale <- c(setNames(symbols_palette, unique(trend_data$spec)[1:trend_length]))
+    symbols_trend <- symbols_scale[1:trend_length]
+    
+    #Text for tooltip
+    tooltip_trend <- c(paste0(trend_data$spec, "<br>", trend_data$date,
+                              "<br>", "Admissions: ", trend_data$count))
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~date,  y = ~count) %>%
+      add_trace(type = 'scatter', mode = 'lines',
+                color = ~spec, colors = trend_palette,
+                text=tooltip_trend, hoverinfo="text") %>%
+      #Layout
+      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
+      config(displaylogo = F) # taking out plotly logo button
+    
+  })
+  
   # output$test_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
   # output$test_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
   # output$test_depr <- renderPlotly({plot_trend_chart(pal_depr, "depr")})

@@ -24,7 +24,7 @@ fluidPage(
                         icon("area-chart"),
                         " - shows the data over time for different areas."),
                       tags$li(
-                        tags$b(actionLink( "jump_table", "Time trend (activity comparison)")),
+                        tags$b(actionLink( "jump_table", "Data")),
                         icon("table"),
                         " - allows you to view and download the data as a table."))
                       )
@@ -41,7 +41,7 @@ fluidPage(
                uiOutput("geoname_ui")),
         column(5, uiOutput("time_period_ui"),
                selectInput("adm_type", label = "Step 3. Select type of admission.",
-                           choices = c("All", "Emergency", "Planned", selected = "All"))),
+                           choices = c("All", "Emergency", "Planned"), selected = "All")),
         column(2, downloadButton('download_chart_data', 'Download data'),
                actionButton("browser", "Browser"))
       ), #wellPanel bracket
@@ -54,7 +54,11 @@ fluidPage(
                 h4("Admissions to hospital"),
                 plot_box("By sex", "adm_sex"),
                 plot_box("By age group", "adm_age"),
-                plot_box("By deprivation quintile", "adm_depr")
+                plot_box("By deprivation quintile", "adm_depr"),
+                pickerInput("adm_specialty", "Select one or more specialties",
+                            choices = spec_list, multiple = TRUE, 
+                            selected = c("Accident & Emergency")),
+                plot_box("By specialty (not distinguishing between planned or emergency admissions)", "adm_spec")
                 # fluidRow(h4("NHS 24 calls"),
                 #          column(4, plot_box("By sex", "nhs24_sex")),
                 #          column(4, plot_box("By age group", "nhs24_age")),
