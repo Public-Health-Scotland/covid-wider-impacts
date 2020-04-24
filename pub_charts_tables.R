@@ -61,7 +61,7 @@ write_csv(rap_table, paste0(outputs, "rapid_agesex_table.csv"))
 # Specialty bullet point 
 # What specialty got most admissions
 rap_spec_bullet <- rap_pub %>% 
-  filter(type == "sex" & admission_type == "All" & category == "All" 
+  filter(type == "sex" & admission_type == "All" & category == "All" &
            between(date, as.Date("2020-03-22"), as.Date("2020-04-21"))) %>% 
   group_by(spec) %>% summarise(count = sum(count)) %>% 
   arrange(-count)
@@ -111,6 +111,25 @@ rap_overall_chart <- ggplot(rap_overall_chart_data, aes(x=date, y = count, color
 rap_overall_chart
 
 ggsave(paste0(outputs, "rapid_overall_chart.png"), rap_overall_chart)
+
+###############################################.
+# Day of the week admissions bullet point
+# Numbers per admission type for the whole period
+rap_weekday_bullet <- rap_overall_chart_data %>% 
+  mutate(weekday = weekdays(date)) %>% 
+  group_by(admission_type, weekday) %>% summarise(count = sum(count))
+
+write_csv(rap_overall_bullet, paste0(outputs, "rapid_overall_table.csv"))
+
+
+###############################################.
+# Overall admissions bullet point
+# Numbers per admission type for the whole period
+rap_overall_bullet <- rap_overall_chart_data %>% 
+  group_by(admission_type) %>% summarise(count = sum(count)) %>% 
+  arrange(-count)
+
+write_csv(rap_overall_bullet, paste0(outputs, "rapid_overall_table.csv"))
 
 ###############################################.
 # Chart for deprivation
