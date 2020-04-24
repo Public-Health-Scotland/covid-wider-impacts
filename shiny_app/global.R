@@ -33,8 +33,9 @@ spec_list <- sort(unique(rapid$spec)) # specialty list
 ###############################################.
 pal_depr <- c('#abd9e9', '#74add1', '#4575b4', '#313695', '#022031')
 #Palette for 9 series in a gradient
-pal_age <- c('#543005', '#8c510a', '#bf812d', '#dfc27d', '#d0d1e6',
-                   '#abd9e9', '#74add1', '#4575b4', '#313695')
+pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
+                    '#74add1', '#4575b4', '#313695')
+# '#abd9e9', '#dfc27d',
 #Palette for those with a single category per sex and overall
 pal_sex <- c('#000000', '#08519c','#bdd7e7')
 
