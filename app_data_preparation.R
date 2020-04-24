@@ -7,31 +7,81 @@ library(dplyr)
 library(janitor)
 
 ###############################################.
+## Functions ----
+###############################################.
+# This function aggregates data for each different cut requires
+agg_rapid <- function(extra_vars = NULL, split, specialty = F) {
+  
+  agg_helper <- function(more_vars, type_chosen = split) {
+    rap_adm %>% 
+      group_by_at(c("date_adm", more_vars)) %>% 
+      summarise(count = sum(count)) %>% ungroup() %>% 
+      mutate(type = type_chosen) 
+  }
+  
+  # Aggregating to obtain totals for each split type and then putting all back together.
+  adm_type_scot <- agg_helper(c(extra_vars, "admission_type")) %>% 
+    mutate(area_name = "Scotland", spec = "All") 
+  
+  all_scot <- agg_helper(extra_vars) %>% 
+    mutate(admission_type = "All", area_name = "Scotland", spec = "All") 
+
+  adm_type_hb <- agg_helper(c(extra_vars, "admission_type", "hb")) %>% 
+    mutate(spec = "All") %>% rename(area_name = hb)
+
+  all_hb <- agg_helper(c(extra_vars, "hb")) %>% 
+    mutate(admission_type = "All", spec = "All") %>% rename(area_name = hb)
+  
+  adm_type_hscp <- agg_helper(c(extra_vars, "admission_type", "hscp_name")) %>% 
+    mutate(spec = "All") %>% rename(area_name = hscp_name)
+  
+  all_hscp <- agg_helper(c(extra_vars, "hscp_name")) %>% 
+    mutate(admission_type = "All", spec = "All") %>% rename(area_name = hscp_name)
+
+
+  if (specialty == T) {
+    spec_scot <- agg_helper(c(extra_vars, "spec")) %>% 
+      mutate(area_name = "Scotland", admission_type = "All") 
+
+    spec_hscp <- agg_helper(c(extra_vars, "spec", "hscp_name")) %>% 
+      mutate(admission_type = "All") %>% rename(area_name = hscp_name)
+
+    spec_hb <- agg_helper(c(extra_vars, "spec", "hb")) %>% 
+      mutate(admission_type = "All") %>% rename(area_name = hb)
+    
+    rbind(all_scot, spec_scot, adm_type_scot, all_hb, spec_hb, adm_type_hb,
+          all_hscp, spec_hscp, adm_type_hscp)
+  } else {
+    rbind(all_scot, adm_type_scot, all_hb, adm_type_hb, all_hscp, adm_type_hscp)
+  }
+
+
+}
+
+###############################################.
 ## Reading RAPID data ----
 ###############################################.
 # Prepare by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_SIMD_age_sex.rds") %>% 
+rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category.rds") %>% 
   janitor::clean_names() %>% 
-  as.data.frame()
+  # taking out aggregated values, not clear right now
+  filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")))
 
-# Aggregating to obtain totals for each split type and then putting all back together.
-rap_adm_all <- rap_adm %>% group_by(date_adm) %>% 
-  summarise(count = sum(count)) %>% 
-  mutate(type = "sex", category = "All")
+# Aggregating to obtain totals for each split type and then putting all back together
+# Totals for overalls for all pop including totals by specialty too
+rap_adm_all <- agg_rapid(NULL, split = "sex", specialty = T) %>% 
+  mutate(category = "All") 
 
-rap_adm_depr <- rap_adm %>% group_by(date_adm, simd_quintile) %>% 
-  summarise(count = sum(count)) %>% rename(category = simd_quintile) %>% 
-  mutate(type = "depr", category = as.character(category),
+# Totals for overalls for all sexes
+rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% 
+  mutate( category = recode(sex, "male" = "Male", "female" = "Female")) %>% 
+  select(-sex)
+
+# Totals for overalls for deprivation quintiles
+rap_adm_depr <- agg_rapid(c("simd_quintile"), split = "depr") %>% 
+  rename(category = simd_quintile) %>% 
+  mutate(category = as.character(category),
          category = recode(category, "1" = "1 - most deprived", "5" = "5 - Least deprived"))
-
-rap_adm_sex <- rap_adm %>% group_by(date_adm, sex) %>% 
-  summarise(count = sum(count)) %>% rename(category = sex) %>% 
-  mutate(type = "sex", 
-         category = recode(category, "male" = "Male", "female" = "Female")) 
-
-rap_adm_age <- rap_adm %>% group_by(date_adm, age_group) %>% 
-  summarise(count = sum(count)) %>% rename(category = age_group) %>% 
-  mutate(type = "age")
   
 rap_adm <- bind_rows(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>% 
   # Filtering cases without information on age, sex or deprivation (still counted in all)
