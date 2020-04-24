@@ -67,6 +67,13 @@ rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category.rds") %>%
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")))
 
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>% as.data.frame()
+
+# Bringing HB names
+rap_adm <- left_join(rap_adm, hb_lookup, by = c("hb" = "hb_cypher")) %>% 
+  select(-hb) %>% rename(hb = description)
+
 # Aggregating to obtain totals for each split type and then putting all back together
 # Totals for overalls for all pop including totals by specialty too
 rap_adm_all <- agg_rapid(NULL, split = "sex", specialty = T) %>% 
@@ -85,8 +92,13 @@ rap_adm_depr <- agg_rapid(c("simd_quintile"), split = "depr") %>%
   
 rap_adm <- bind_rows(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>% 
   # Filtering cases without information on age, sex or deprivation (still counted in all)
-  filter(!(is.na(category))) %>% 
-  rename(date = date_adm)
+  filter(!(is.na(category) | 
+             area_name %in% c("ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND"))) %>% 
+  rename(date = date_adm) %>% 
+  # Creating area type variable
+  mutate(area_type = case_when(substr(area_name, 1,3) == "NHS" ~ "Health board",
+                               area_name == "Scotland" ~ "Scotland",
+                               TRUE ~ "Council area"))
 
 saveRDS(rap_adm, "shiny_app/data/rapid_data.rds")
 
