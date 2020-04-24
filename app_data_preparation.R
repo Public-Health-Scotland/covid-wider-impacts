@@ -84,13 +84,21 @@ rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>%
   mutate( category = recode(sex, "male" = "Male", "female" = "Female")) %>% 
   select(-sex)
 
+# Totals for overalls for all age groups
+rap_adm_age <- agg_rapid(c("age_group"), split = "age") %>% 
+  filter(age_group != "missing") %>% 
+  mutate(category = recode(age_group, "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
+                           "65_thru_74" = "65 -74", "75_thru_84" = "75 -84",
+                           "85+" = "Over 85", "Under_5" = "Under 5")) %>% 
+  select(-age_group)
+
 # Totals for overalls for deprivation quintiles
 rap_adm_depr <- agg_rapid(c("simd_quintile"), split = "depr") %>% 
   rename(category = simd_quintile) %>% 
   mutate(category = as.character(category),
          category = recode(category, "1" = "1 - most deprived", "5" = "5 - Least deprived"))
   
-rap_adm <- bind_rows(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>% 
+rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>% 
   # Filtering cases without information on age, sex or deprivation (still counted in all)
   filter(!(is.na(category) | 
              area_name %in% c("ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND"))) %>% 
@@ -98,7 +106,8 @@ rap_adm <- bind_rows(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>%
   # Creating area type variable
   mutate(area_type = case_when(substr(area_name, 1,3) == "NHS" ~ "Health board",
                                area_name == "Scotland" ~ "Scotland",
-                               TRUE ~ "Council area"))
+                               TRUE ~ "Council area"),
+         admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency"))
 
 saveRDS(rap_adm, "shiny_app/data/rapid_data.rds")
 
