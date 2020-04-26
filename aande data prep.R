@@ -1,3 +1,4 @@
+# A&E Attendance data preparation for wider impact covid app
 
 ###############################################.
 ## Packages ----
@@ -7,10 +8,11 @@ library(janitor)
 library(phsmethods)
 library(lubridate)
 
+###############################################.
+## Functions ----
+###############################################.
 
-
-#Function to create age groups needed for standardization
-# recode age groups
+#format age groups
 create_agegroups <- function(dataset) {
   dataset %>% mutate(age_grp1 = as.character(case_when(between(age, 0, 4) ~ " 0-04",
                                                       between(age, 5, 14) ~ " 5-14",
@@ -35,18 +37,17 @@ create_depgroups <- function(dataset) {
 # Speed up aggregations of different data cuts
 aggregation_help <- function(grouper) {
   ae_all %>%
-    group_by_at(c("week_ending","areaname", "area_type", grouper)) %>%
+    group_by_at(c("week_ending","area_name", "area_type", grouper)) %>%
     summarise(count = sum(count)) %>% ungroup() %>% 
     mutate(type = grouper) 
 }
 
 
-
 ###############################################.
-## Reading A&E data ----
+## Reading in A&E data ----
 ###############################################.
 
-# prepare a&e data (HBT)
+# prepare a&e data (HBT level)
 
 ae_board_data<- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/A&E/2020-04-24-Extracts/NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip", "NHS Boards.csv"), header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
   janitor::clean_names() %>% 
@@ -54,21 +55,22 @@ ae_board_data<- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/A&E/2020-04-24-Extra
   rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode,dep=prompt_dataset_deprivation_scot_quintile,age=pat_age,
          sex=pat_gender_code,count=number_of_attendances)
 
+#format data
 ae_board_data <- ae_board_data %>%
-  mutate(areaname = match_area(area),
+  mutate(area_name = match_area(area),
          area_type="NHS board") %>%
   create_agegroups() %>%
   create_sexgroups() %>%
   create_depgroups() %>%
-  group_by(week_ending, areaname, area_type, age_grp, sex, dep) %>%
+  group_by(week_ending, area_name, area_type, age_grp, sex, dep) %>%
   summarise(count=sum(count)) %>%
   ungroup()
 
-
+#generate scotland level dataset
 ae_scot_data <- ae_board_data %>%
   group_by(week_ending, age_grp, sex, dep) %>%
   summarise(count=sum(count)) %>%
-  mutate(areaname="Scotland",
+  mutate(area_name="Scotland",
          area_type="Scotland") %>%
   ungroup()
 
@@ -80,12 +82,12 @@ ae_hscp_data<- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/A&E/2020-04-24-Extrac
          sex=pat_gender_code,count=number_of_attendances)
 
 ae_hscp_data <- ae_hscp_data %>%
-  mutate(areaname = match_area(area),
+  mutate(area_name = match_area(area),
          area_type="HSCP") %>%
   create_agegroups() %>%
   create_sexgroups() %>%
   create_depgroups() %>%
-  group_by(week_ending, areaname, area_type, age_grp, sex, dep) %>%
+  group_by(week_ending, area_name, area_type, age_grp, sex, dep) %>%
   summarise(count=sum(count)) %>%
   ungroup()
 
@@ -94,7 +96,7 @@ ae_all_geos <- rbind(ae_board_data, ae_hscp_data, ae_scot_data)
 
 #Add an 'all' sex category to data files so possible to present male, female and all.
 ae_all_sex <- ae_all_geos %>%
-  group_by(week_ending, areaname, area_type, age_grp, dep) %>%
+  group_by(week_ending, area_name, area_type, age_grp, dep) %>%
   summarise(count = sum(count)) %>% ungroup() %>% 
   mutate(sex = "All") %>%
   ungroup()
@@ -103,8 +105,8 @@ ae_all_sex <- ae_all_geos %>%
 ae_all <- rbind(ae_all_geos, ae_all_sex) %>%
   rename(age=age_grp)
 
-
-#Use aggregation function to aggregate data files into format required by shiny app.
+##Reshape dataset for shiny app
+#Use aggregation function to aggregate data files into format
 
 ae_sex <- aggregation_help(grouper="sex") %>%
   rename(category=sex)
@@ -118,9 +120,7 @@ ae_age <- aggregation_help(grouper="age") %>%
 # Add final aggregation files to one master file
 ae_final_data <- rbind(ae_sex, ae_dep, ae_age)
 
-
-#derive a week number from week_ending column
-
+#derive a week number from week_ending column to ease presentation of data
 ae_final_data <- ae_final_data %>%
   mutate(date=as.Date(week_ending,format="%d/%m/%Y"),
          week_no=isoweek(date),
@@ -129,16 +129,16 @@ ae_final_data <- ae_final_data %>%
 #find average number of attendances by week and category
 ae_average <- ae_final_data %>%
   subset(year %in% c("2018","2019")) %>%
-  group_by(areaname,area_type,category,type,week_no) %>%
+  group_by(area_name,area_type,category,type,week_no) %>%
   summarise(count_average=mean(count)) %>%
   ungroup()
 
-#filter for latest year - 2020  
+#filter for latest year - 2020  (maybe need to reextract data )
 ae_latest_year <- ae_final_data %>%
   subset(year=="2020")
 
 #join latest year of data with averages from previous years
-ae_shiny <- left_join(ae_average,ae_latest_year,by = c("areaname", "area_type", "category","type","week_no"))
+ae_shiny <- left_join(ae_average,ae_latest_year,by = c("area_name", "area_type", "category","type","week_no"))
 
 #save output for shiny app
 saveRDS(ae_shiny, "shiny_app/data/ae_data.rds")
