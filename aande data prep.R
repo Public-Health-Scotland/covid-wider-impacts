@@ -140,6 +140,9 @@ ae_latest_year <- ae_final_data %>%
 #join latest year of data with averages from previous years
 ae_shiny <- left_join(ae_average,ae_latest_year,by = c("area_name", "area_type", "category","type","week_no"))
 
+# Temporary for testing purposes: supressing numbers under 5
+ae_shiny$count <- ifelse(ae_shiny$count<5,0,ae_shiny$count)
+
 #save output for shiny app
 saveRDS(ae_shiny, "shiny_app/data/ae_data.rds")
 
