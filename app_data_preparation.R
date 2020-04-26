@@ -62,7 +62,7 @@ agg_rapid <- function(extra_vars = NULL, split, specialty = F) {
 ## Reading RAPID data ----
 ###############################################.
 # Prepare by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category.rds") %>% 
+rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_24_Apr.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")))
@@ -94,7 +94,7 @@ rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>%
 # Totals for overalls for all age groups
 rap_adm_age <- agg_rapid(c("age_group"), split = "age") %>% 
   filter(age_group != "missing") %>% 
-  mutate(category = recode(age_group, "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
+  mutate(category = recode(age_group, "5_thru_14" = "5 - 14", "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
                            "65_thru_74" = "65 -74", "75_thru_84" = "75 -84",
                            "85+" = "Over 85", "Under_5" = "Under 5")) %>% 
   select(-age_group)
