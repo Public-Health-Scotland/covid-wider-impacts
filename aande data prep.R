@@ -145,6 +145,7 @@ ae_shiny$count <- ifelse(ae_shiny$count<5,0,ae_shiny$count)
 
 # Remove weeks that haven't happened yet & reformat NHS board names to include prefix/&
 ae_shiny <- ae_shiny %>%
+  filter(category != "Missing") %>% #taking out empty counts
   subset(week_no<17) %>%
   mutate(area_name1 = case_when(area_type=="NHS board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), TRUE~area_name)) %>%
   select(-area_name) %>%
@@ -156,4 +157,3 @@ ae_shiny <- ae_shiny %>%
 saveRDS(ae_shiny, "shiny_app/data/ae_data.rds")
 
 ae_shiny <- readRDS("shiny_app/data/ae_data.rds")
-
