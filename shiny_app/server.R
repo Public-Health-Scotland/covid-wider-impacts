@@ -52,11 +52,11 @@ function(input, output, session) {
     if (input$measure_select == "Hospital admissions") {
       tagList(#Hospital admissions
     h4("Admissions to hospital"),
-    plot_box("2020 compared with average from previous years", "adm_overall")
-    )
-    # plot_box("By sex", "adm_sex"),
-    # plot_box("By age group", "adm_age"),
-    # plot_box("By deprivation quintile", "adm_depr"),
+    plot_box("2020 compared with average from previous years", "adm_overall"),
+    plot_box("By sex", "adm_sex"),
+    plot_box("By age group", "adm_age"),
+    plot_box("By deprivation quintile", "adm_depr")
+      )
     # pickerInput("adm_specialty", "Select one or more specialties",
     #             choices = spec_list, multiple = TRUE, 
     #             selected = c("Accident & Emergency")),
@@ -64,7 +64,10 @@ function(input, output, session) {
 } else if (input$measure_select == "A&E attendances") {
   tagList(#A&E Attendances
     h4("Attendances to A&E departments"),
-    plot_box("2020 compared with average from previous years", "aye_overall")
+    plot_box("2020 compared with average from previous years", "aye_overall"),
+    plot_box("By sex", "aye_sex"),
+    plot_box("By age group", "aye_age"),
+    plot_box("By deprivation quintile", "aye_depr")
     )
   
 } else if (input$measure_select == "NHS 24 calls") {
@@ -89,26 +92,27 @@ function(input, output, session) {
   # THree parameters: pal_chose - what palette of colours you want
   # dataset - what data to use for the chart formatted as required
   # split - age, sex, or deprivation
-  # plot_trend_chart <- function(dataset, pal_chose, split) {
-  #   
-  #   trend_data <- 
-  #   
-  #   #Text for tooltip
-  #   tooltip_trend <- c(paste0(trend_data$category, "<br>", trend_data$date,
-  #                             "<br>", "Admissions: ", trend_data$count))
-  # 
-  #   #Creating time trend plot
-  #   plot_ly(data=trend_data, x=~date,  y = ~count) %>%
-  #     add_trace(type = 'scatter', mode = 'lines',
-  #               color = ~category, colors = pal_chose,
-  #               text=tooltip_trend, hoverinfo="text") %>%
-  #     #Layout
-  #     layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
-  #            yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
-  #            #legend = list(orientation = 'h', x = 50, y = 100)) %>%
-  #     config(displaylogo = F) # taking out plotly logo button
-  # 
-  # }
+  plot_trend_chart <- function(dataset, pal_chose, split) {
+
+    trend_data <- dataset %>% filter(type == split) %>%
+      filter(area_name == input$geoname )
+
+    #Text for tooltip
+    tooltip_trend <- c(paste0(trend_data$category, "<br>", trend_data$date,
+                              "<br>", "Change from average: ", trend_data$variation))
+
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~date,  y = ~variation) %>%
+      add_trace(type = 'scatter', mode = 'lines',
+                color = ~category, colors = pal_chose,
+                text=tooltip_trend, hoverinfo="text") %>%
+      #Layout
+      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots) %>%
+             #legend = list(orientation = 'h', x = 50, y = 100)) %>%
+      config(displaylogo = F) # taking out plotly logo button
+
+  }
   
   plot_overall_chart <- function(dataset, data_name, yaxis_title) {
     
@@ -155,12 +159,16 @@ function(input, output, session) {
   ###############################################.
   # Creating plots for each cut and dataset
   output$aye_overall <- renderPlotly({plot_overall_chart(aye, "aye")})
-  output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
+  output$aye_sex <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex")})
+  output$aye_age <- renderPlotly({plot_trend_chart(aye, pal_age, "age")})
+  output$aye_depr <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep")})
+  
   output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
   
-  # output$adm_sex <- renderPlotly({plot_trend_chart(rapid, pal_sex, "sex")})
-  # output$adm_age <- renderPlotly({plot_trend_chart(rapid, pal_age, "age")})
-  # output$adm_depr <- renderPlotly({plot_trend_chart(rapid, pal_depr, "depr")})
+  output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
+  output$adm_sex <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex")})
+  output$adm_age <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age")})
+  output$adm_depr <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep")})
   # output$adm_spec <- renderPlotly({
   #   
   #   trend_data <- rapid %>% filter(type == "sex") %>%
