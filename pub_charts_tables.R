@@ -97,15 +97,12 @@ rap_age_chart <- ggplot(rap_agesex, aes(x=age_group, y = ifelse(sex == "Male", -
   scale_fill_manual(values = c("#004785", "#bdd7e7")) +
   # Axis, plot  and legend titles
   labs(y = "Age group", x = "Admissions to hospital per 100,000 people",
-       title = "Rate of admissions to hospital in Scotland by age group and sex",
+       title = "Rate of admissions to hospital by age group and sex",
        subtitle = plot_subtitle, fill = "Sex")+
   scale_y_continuous(labels = abs, limits = max(rap_agesex$rate) * c(-1,1)) +
   theme_classic() +
   theme(axis.text = element_text(colour = "black")) +
   coord_flip()
-
-# +
-#   scale_y_continuous(expand = c(0, 0), limits = c(0, 10000))
 
 rap_age_chart
 
