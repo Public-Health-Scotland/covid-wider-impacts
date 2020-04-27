@@ -42,8 +42,8 @@ fluidPage(
         column(5, uiOutput("time_period_ui"),
                selectInput("adm_type", label = "Step 3. Select type of admission.",
                            choices = c("All", "Emergency", "Planned"), selected = "All")),
-        column(3, downloadButton('download_chart_data', 'Download data')
-               # actionButton("browser", "Browser")
+        column(3, downloadButton('download_chart_data', 'Download data'),
+               actionButton("browser", "Browser")
                ),
         div(title="Select what data you want to explore.", # tooltip
             style = "margin-top: 10px; margin-bottom: 20px;", 
@@ -55,27 +55,6 @@ fluidPage(
       ), #wellPanel bracket
       mainPanel(width = 12,
                 uiOutput("data_explorer")
-                # fluidRow(h4("A&E attendances"),
-                #          column(4, plot_box("By sex", "aye_sex")),
-                #          column(4, plot_box("By age group", "aye_age")),
-                #          column(4, plot_box("By deprivation quintile", "aye_depr"))
-                # ),
-
-                # fluidRow(h4("NHS 24 calls"),
-                #          column(4, plot_box("By sex", "nhs24_sex")),
-                #          column(4, plot_box("By age group", "nhs24_age")),
-                #          column(4, plot_box("By deprivation quintile", "nhs24_depr"))
-                # ),
-                # fluidRow(h4("Out of hours"),
-                #          column(4, plot_box("By sex", "ooh_sex")),
-                #          column(4, plot_box("By age group", "ooh_age")),
-                #          column(4, plot_box("By deprivation quintile", "ooh_depr"))
-                # ),
-                # fluidRow(h4("Assessment centres testing"),
-                #          column(4, plot_box("By sex", "test_sex")),
-                #          column(4, plot_box("By age group", "test_age")),
-                #          column(4, plot_box("By deprivation quintile", "test_depr"))
-                # )
       )# mainPanel bracket
     ), # tabpanel bracket
 ###############################################.
