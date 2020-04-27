@@ -31,10 +31,18 @@ function(input, output, session) {
   ###############################################.
   ## Reactive datasets ----
   ###############################################.
+  # Rapid dataset filtered for 
   rapid_filt <- reactive({
     rapid %>% filter(admission_type == input$adm_type &
                        spec == "All")
   })
+  
+  # Function to filter the datasets for the overall charts and download data based on user input
+  filter_data <- function(dataset) {
+    dataset %>% filter(type == "sex") %>%
+      filter(area_name == input$geoname &
+               category == "All")
+  }
   
   ###############################################.
   ## Reactive layout  ----
@@ -63,7 +71,7 @@ function(input, output, session) {
   
 }
     
-  })
+  }) 
   
 
 
@@ -76,37 +84,31 @@ function(input, output, session) {
   # THree parameters: pal_chose - what palette of colours you want
   # dataset - what data to use for the chart formatted as required
   # split - age, sex, or deprivation
-  plot_trend_chart <- function(dataset, pal_chose, split) {
-    
-    trend_data <- dataset %>% filter(type == split) %>%
-        filter(between(date, as.Date(input$time_period[1]), as.Date(input$time_period[2])) &
-                 area_name == input$geoname &
-                 admission_type == input$adm_type &
-                 spec == "All")
-    
-    #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$category, "<br>", trend_data$date,
-                              "<br>", "Admissions: ", trend_data$count))
-
-    #Creating time trend plot
-    plot_ly(data=trend_data, x=~date,  y = ~count) %>%
-      add_trace(type = 'scatter', mode = 'lines',
-                color = ~category, colors = pal_chose,
-                text=tooltip_trend, hoverinfo="text") %>%
-      #Layout
-      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
-             #legend = list(orientation = 'h', x = 50, y = 100)) %>%
-      config(displaylogo = F) # taking out plotly logo button
-
-  }
+  # plot_trend_chart <- function(dataset, pal_chose, split) {
+  #   
+  #   trend_data <- 
+  #   
+  #   #Text for tooltip
+  #   tooltip_trend <- c(paste0(trend_data$category, "<br>", trend_data$date,
+  #                             "<br>", "Admissions: ", trend_data$count))
+  # 
+  #   #Creating time trend plot
+  #   plot_ly(data=trend_data, x=~date,  y = ~count) %>%
+  #     add_trace(type = 'scatter', mode = 'lines',
+  #               color = ~category, colors = pal_chose,
+  #               text=tooltip_trend, hoverinfo="text") %>%
+  #     #Layout
+  #     layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+  #            yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
+  #            #legend = list(orientation = 'h', x = 50, y = 100)) %>%
+  #     config(displaylogo = F) # taking out plotly logo button
+  # 
+  # }
   
   plot_overall_chart <- function(dataset, data_name, yaxis_title) {
     
     # Filtering dataset to include only overall figures
-    trend_data <- dataset %>% filter(type == "sex") %>%
-      filter(area_name == input$geoname &
-               category == "All")
+    trend_data <- filter_data(dataset)
     
     ###############################################
     # Creating objects that change depending on dataset
@@ -245,10 +247,21 @@ function(input, output, session) {
                 file, row.names=FALSE) } 
   )
   
+  # Reactive dataset that gets the data the user is visualisaing ready to download
+  overall_data_download <- reactive({
+    switch(
+      input$measure_select,
+      "Hospital admissions" = filter_data(rapid_filt()),
+      "A&E attendances" = filter_data(aye)
+    ) %>% 
+      select(area_name, date, count, count_average) %>% 
+      rename(average_pre2020 = count_average)
+  })
+
   output$download_chart_data <- downloadHandler(
     filename ="data_extract.csv",
     content = function(file) {
-      write.csv(rapid,
+      write.csv(overall_data_download(),
                 file, row.names=FALSE) } 
   )
   
