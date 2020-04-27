@@ -69,6 +69,11 @@ function(input, output, session) {
   
 } else if (input$measure_select == "NHS 24 calls") {
   
+} else if (input$measure_select == "Out of hours consultations") {
+  tagList(#Out of hours consultations
+    h4("Consultations to out of hours services"),
+    plot_box("2020 compared with average from previous years", "ooh_overall")
+  )
 }
     
   }) 
@@ -112,24 +117,23 @@ function(input, output, session) {
     
     ###############################################
     # Creating objects that change depending on dataset
-    yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions to hospital",
-                             data_name == "aye" ~ "Number of attendances to A&E")
+    yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
+                             data_name == "aye" ~ "Number of attendances",
+                             data_name == "ooh" ~ "Number of consultations")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
     
-
-    period_tooltip <- case_when(data_name == "adm" ~ "7-day rolling average ending: ",
-                                data_name == "aye" ~ "Week ending: ")
-    
     hist_legend <- case_when(data_name == "adm" ~ "Average 2016-2019",
-                             data_name == "aye" ~ "Average 2018-2019")
+                             data_name == "aye" ~ "Average 2018-2019",
+                             data_name == "ooh" ~ "Average xxx")
       
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
-                             data_name == "aye" ~ "Attendances: ")
+                             data_name == "aye" ~ "Attendances: ",
+                             data_name == "ooh" ~ "Consultations: ")
     
     #Text for tooltip
-    tooltip_trend <- c(paste0(period_tooltip, trend_data$date,
+    tooltip_trend <- c(paste0("Week ending: ", trend_data$date,
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
     
@@ -151,9 +155,8 @@ function(input, output, session) {
   ###############################################.
   # Creating plots for each cut and dataset
   output$aye_overall <- renderPlotly({plot_overall_chart(aye, "aye")})
-
   output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
-  
+  output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
   
   # output$adm_sex <- renderPlotly({plot_trend_chart(rapid, pal_sex, "sex")})
   # output$adm_age <- renderPlotly({plot_trend_chart(rapid, pal_age, "age")})
@@ -252,7 +255,8 @@ function(input, output, session) {
     switch(
       input$measure_select,
       "Hospital admissions" = filter_data(rapid_filt()),
-      "A&E attendances" = filter_data(aye)
+      "A&E attendances" = filter_data(aye),
+      "Out of hours consultations" = filter_data(ooh)
     ) %>% 
       select(area_name, date, count, count_average) %>% 
       rename(average_pre2020 = count_average)
