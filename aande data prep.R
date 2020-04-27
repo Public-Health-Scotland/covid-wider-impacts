@@ -143,6 +143,10 @@ ae_shiny <- left_join(ae_average,ae_latest_year,by = c("area_name", "area_type",
 # Temporary for testing purposes: supressing numbers under 5
 ae_shiny$count <- ifelse(ae_shiny$count<5,0,ae_shiny$count)
 
+# Remove weeks that haven't happened yet
+ae_shiny <- ae_shiny %>%
+  subset(week_no<17)
+
 #save output for shiny app
 saveRDS(ae_shiny, "shiny_app/data/ae_data.rds")
 
