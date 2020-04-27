@@ -5,6 +5,8 @@
 ###############################################.
 library(dplyr)
 library(janitor)
+library(lubridate)
+library(zoo)
 
 ###############################################.
 ## Functions ----
@@ -65,7 +67,7 @@ agg_rapid <- function(extra_vars = NULL, split, specialty = F) {
 rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_24_Apr.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
-  filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")))
+  filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All"))) 
 
 # Bringing HB names
 hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
@@ -107,7 +109,7 @@ rap_adm_depr <- agg_rapid(c("simd_quintile"), split = "dep") %>%
   
 rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>% 
   # Filtering cases without information on age, sex or deprivation (still counted in all)
-  filter(!(is.na(category) | 
+  filter(!(is.na(category) | area_name == "" |
              area_name %in% c("ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND"))) %>% 
   rename(date = date_adm) %>% 
   # Creating area type variable
@@ -116,9 +118,25 @@ rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>%
                                TRUE ~ "HSC partnership"),
          admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency"))
 
-# Temporary for testing purposes: supressing numbers under 5
-rap_adm$count <- ifelse(rap_adm$count<5,0,rap_adm$count)
+# Calculating 7 rolling day average, value assigned to last date of period
+rap_adm <- rap_adm %>%
+  group_by(category, type, admission_type, spec, area_name) %>% 
+  mutate(count = round(rollmean(count, 7, fill = NA, align = "right"), 1)) %>% ungroup() %>%
+  # Creating day number to be able to compare pre-covid to covid period
+  mutate(day_year = yday(date))
 
-saveRDS(rap_adm, "shiny_app/data/rapid_data.rds")
+# Creating average admissions of pre-covid data by day of the year
+rap_adm_old <- rap_adm %>% filter(date<as.Date("2020-01-01")) %>% 
+  group_by(category, type, admission_type, spec, area_name, day_year) %>% 
+  summarise(count_average = round(mean(count, na.rm = T), 1)) 
+
+# Joining with 2020 data
+rap_adm_2020 <- left_join(rap_adm %>% filter(date>=as.Date("2020-01-01")), rap_adm_old, 
+                          by = c("category", "type", "admission_type", "spec", "area_name", "day_year"))
+
+# Temporary for testing purposes: supressing numbers under 5
+rap_adm_2020$count <- ifelse(rap_adm_2020$count<5,0,rap_adm_2020$count)
+
+saveRDS(rap_adm_2020, "shiny_app/data/rapid_data.rds")
 
 ##END
