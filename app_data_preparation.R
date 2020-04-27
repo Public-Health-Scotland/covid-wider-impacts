@@ -150,7 +150,9 @@ rap_adm_old <- rap_adm %>% filter(week_ending<as.Date("2020-01-01")) %>%
 rap_adm_2020 <- left_join(rap_adm %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-04-20"))), 
                           rap_adm_old, 
                           by = c("category", "type", "admission_type", "spec", "area_name", "week_no")) %>% 
-  rename(date = week_ending)
+  rename(date = week_ending) %>% 
+  # Creating %variation from precovid to covid period
+  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
 
 # Temporary for testing purposes: supressing numbers under 5
 rap_adm_2020$count <- ifelse(rap_adm_2020$count<5,0,rap_adm_2020$count)
@@ -215,7 +217,11 @@ ooh_old <- ooh %>% filter(week_ending<as.Date("2020-01-01")) %>%
 # Joining with 2020 data
 ooh_2020 <- left_join(ooh %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-04-20"))), 
                           ooh_old, 
-                          by = c("category", "type", "area_name", "week_no")) 
+                          by = c("category", "type", "area_name", "week_no")) %>% 
+  # filtering empty cases
+  filter(!(is.na(category))) %>% 
+  # Creating % variation from pre_covid to covid
+  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
 
 # Temporary for testing purposes: supressing numbers under 5
 ooh_2020$count <- ifelse(ooh_2020$count<5,0,ooh_2020$count)

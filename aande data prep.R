@@ -148,7 +148,9 @@ ae_shiny <- ae_shiny %>%
   subset(week_no<17) %>%
   mutate(area_name1 = case_when(area_type=="NHS board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), TRUE~area_name)) %>%
   select(-area_name) %>%
-  rename(area_name=area_name1)
+  rename(area_name=area_name1) %>% 
+  # Creating % variation from pre_covid to covid
+  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
 
 #save output for shiny app
 saveRDS(ae_shiny, "shiny_app/data/ae_data.rds")
