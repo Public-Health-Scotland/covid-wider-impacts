@@ -39,19 +39,17 @@ fluidPage(
                       selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
                                   selected = "Scotland")),
                uiOutput("geoname_ui")),
-        column(5, 
-               selectInput("adm_type", label = "Step 3. Select type of admission.",
-                           choices = c("All", "Emergency", "Planned"), selected = "All")),
-        column(3, downloadButton('download_chart_data', 'Download data'),
-               actionButton("browser", "Browser")
-               ),
-        div(title="Select what data you want to explore.", # tooltip
-            style = "margin-top: 10px; margin-bottom: 20px;", 
+        column(4, div(title="Select what data you want to explore.", # tooltip
             radioGroupButtons("measure_select", 
-                              label= "Step 4 - Select what data you want to explore.", 
-                              choices = data_list, status = "primary",
-                              justified = TRUE
-            ))
+                              label= "Step 2 - Select what data you want to explore.", 
+                              choices = data_list, status = "primary", 
+                              direction = "vertical", justified = T))),
+        column(4, 
+               selectInput("adm_type", label = "Step 3. Select type of admission",
+                           choices = c("All", "Emergency", "Planned"), selected = "All"),
+               downloadButton('download_chart_data', 'Download data'),
+               actionButton("browser", "Browser")
+               )
       ), #wellPanel bracket
       mainPanel(width = 12,
                 uiOutput("data_explorer")
