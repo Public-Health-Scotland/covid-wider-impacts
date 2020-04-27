@@ -28,16 +28,6 @@ function(input, output, session) {
     
   })
   
-  # Time input depending on what is available
-  output$time_period_ui <- renderUI({
-  
-    sliderInput("time_period", label = "Step 2 - Select the time period of interest",
-                min = as.Date('2014-04-22'), max = as.Date('2020-04-22'),
-                value = c(as.Date('2020-03-22'), as.Date('2020-04-22')),
-                step = 1)
-    
-  })
-  
   ###############################################.
   ## Reactive datasets ----
   ###############################################.

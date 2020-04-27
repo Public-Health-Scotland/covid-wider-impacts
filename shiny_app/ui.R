@@ -39,7 +39,7 @@ fluidPage(
                       selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
                                   selected = "Scotland")),
                uiOutput("geoname_ui")),
-        column(5, uiOutput("time_period_ui"),
+        column(5, 
                selectInput("adm_type", label = "Step 3. Select type of admission.",
                            choices = c("All", "Emergency", "Planned"), selected = "All")),
         column(3, downloadButton('download_chart_data', 'Download data'),
