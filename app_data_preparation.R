@@ -118,6 +118,15 @@ rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>%
                                TRUE ~ "HSC partnership"),
          admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency"))
 
+# Preparing data by week for publication
+rap_adm_pub <- rap_adm %>% 
+  mutate(week_ending = ceiling_date(date, "week")) %>% #end of week
+  group_by(category, type, admission_type, spec, area_name, week_ending) %>% 
+  summarise(count = sum(count)) %>% 
+  ungroup()
+
+saveRDS(rap_adm_pub, "data/rapid_data_pub.rds")
+
 # Calculating 7 rolling day average, value assigned to last date of period
 rap_adm <- rap_adm %>%
   group_by(category, type, admission_type, spec, area_name) %>% 

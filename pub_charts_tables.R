@@ -15,7 +15,7 @@ library(tidyr)
 outputs <- "/conf/PHSCOVID19_Analysis/Publication outputs/"
 
 # RAPID data
-rap_pub <- readRDS("shiny_app/data/rapid_data.rds") %>% 
+rap_pub <- readRDS("data/rapid_data_pub.rds") %>% 
   filter(area_name == "Scotland")
 
 ###############################################.
@@ -26,7 +26,7 @@ pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
 pal_depr <- c('#abd9e9', '#74add1', '#4575b4', '#313695', '#022031')
 pal_overall <- c('#000000', '#08519c','#bdd7e7')
 
-plot_subtitle <- "12 January 2020 - 21 April 2020" 
+plot_subtitle <- "Week ending 12 January 2020 - Week ending 19 April 2020" 
 
 ###############################################.
 ## RAPID charts and tables ----
@@ -36,7 +36,7 @@ plot_subtitle <- "12 January 2020 - 21 April 2020"
 # What specialty got most admissions
 rap_spec_bullet <- rap_pub %>% 
   filter(type == "sex" & admission_type == "All" & category == "All" &
-           between(date, as.Date("2020-01-12"), as.Date("2020-04-21"))) %>% 
+           between(week_ending, as.Date("2020-01-12"), as.Date("2020-04-19"))) %>% 
   group_by(spec) %>% summarise(count = sum(count)) %>% 
   arrange(-count)
 
@@ -44,7 +44,6 @@ write_csv(rap_spec_bullet, paste0(outputs, "rapid_spec_table.csv"))
 
 ###############################################.
 # Chart and table for age and sex groups
-.
 # Preparing the data
 rap_agesex <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_24_Apr.rds") %>% 
   janitor::clean_names() %>% 
@@ -52,7 +51,8 @@ rap_agesex <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_24_Apr.r
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")))
 
 rap_agesex <- rap_agesex %>% 
-  filter(between(date_adm, as.Date("2020-01-12"), as.Date("2020-04-21"))) %>% 
+  mutate(week_ending = ceiling_date(date_adm, "week")) %>% #end of week
+  filter(between(week_ending, as.Date("2020-01-12"), as.Date("2020-04-21"))) %>% 
   group_by(age_group, sex) %>% 
   summarise(count= sum(count)) %>% ungroup () %>% 
   mutate(age_group = recode(age_group, "5_thru_14" = "5 - 14", "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
@@ -112,17 +112,17 @@ ggsave(paste0(outputs, "rapid_age_chart.png"), rap_age_chart)
 # Chart for overall/elective/emergency 
 rap_overall_chart_data <- rap_pub %>% 
   filter(spec == "All" & type == "sex" & category == "All" &
-           between(date, as.Date("2020-01-12"), as.Date("2020-04-21"))) 
+           between(week_ending, as.Date("2020-01-12"), as.Date("2020-04-21"))) 
 
 write_csv(rap_overall_chart_data, paste0(outputs, "rap_admissions_chart_data.csv"))
 
 rap_overall_2019_chart_data <- rap_pub %>% 
   filter(spec == "All" & type == "sex" & category == "All" &
-           between(date, as.Date("2019-01-12"), as.Date("2019-04-21"))) 
+           between(week_ending, as.Date("2019-01-12"), as.Date("2019-04-21"))) 
 
 write_csv(rap_overall_2019_chart_data, paste0(outputs, "rap_admissions_2019_chart_data.csv"))
 
-rap_overall_chart <- ggplot(rap_overall_chart_data, aes(x=date, y = count, color = admission_type))+
+rap_overall_chart <- ggplot(rap_overall_chart_data, aes(x=week_ending, y = count, color = admission_type))+
   geom_line()+
   scale_colour_manual(values = pal_overall) +
   # Axis, plot  and legend titles
@@ -131,14 +131,14 @@ rap_overall_chart <- ggplot(rap_overall_chart_data, aes(x=date, y = count, color
        subtitle = plot_subtitle)+
   theme_classic() +
   theme(axis.text = element_text(colour = "black")) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, 3000))
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 18000))
 
 rap_overall_chart
 
 ggsave(paste0(outputs, "rapid_overall_chart.png"), rap_overall_chart)
 
 # COmparing against same period previous year
-rap_overall_2019_chart <- ggplot(rap_overall_2019_chart_data, aes(x=date, y = count, color = admission_type))+
+rap_overall_2019_chart <- ggplot(rap_overall_2019_chart_data, aes(x=week_ending, y = count, color = admission_type))+
   geom_line()+
   scale_colour_manual(values = pal_overall) +
   # Axis, plot  and legend titles
@@ -147,7 +147,7 @@ rap_overall_2019_chart <- ggplot(rap_overall_2019_chart_data, aes(x=date, y = co
        subtitle = "12 January 2019 - 21 April 2019")+
   theme_classic() +
   theme(axis.text = element_text(colour = "black")) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, 3000))
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 18000))
 
 rap_overall_2019_chart
 
@@ -177,7 +177,7 @@ write_csv(rap_overall_bullet, paste0(outputs, "rapid_overall_table.csv"))
 rap_depr_chart_data <- rap_pub %>% 
   filter(spec == "All" & type == "depr" & admission_type == "All" &
            # Dates of lockdown
-           between(date, as.Date("2020-03-24"), as.Date("2020-04-21"))) %>% 
+           between(week_ending, as.Date("2020-03-24"), as.Date("2020-04-19"))) %>% 
   group_by(category) %>% summarise(count = sum(count))
 
 write_csv(rap_depr_chart_data, paste0(outputs, "rap_simd_chart_data.csv"))
