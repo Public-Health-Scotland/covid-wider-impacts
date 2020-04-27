@@ -3,7 +3,7 @@
 function(input, output, session) {
   
   # For debugging
-  # observeEvent(input$browser, browser())
+  observeEvent(input$browser, browser())
   
   ###############################################.
   # To move around tabs 
@@ -37,8 +37,50 @@ function(input, output, session) {
                 step = 1)
     
   })
+  
+  ###############################################.
+  ## Reactive datasets ----
+  ###############################################.
+  rapid_filt <- reactive({
+    rapid %>% filter(admission_type == input$adm_type &
+                       spec == "All")
+  })
+  
+  ###############################################.
+  ## Reactive layout  ----
+  ###############################################.
+  # The charts and text shown on the app will depend on what the user wants to see
+  output$data_explorer <- renderUI({
+    if (input$measure_select == "Hospital admissions") {
+      tagList(#Hospital admissions
+    h4("Admissions to hospital"),
+    plot_box("2020 compared with average from previous years", "adm_overall")
+    )
+    # plot_box("By sex", "adm_sex"),
+    # plot_box("By age group", "adm_age"),
+    # plot_box("By deprivation quintile", "adm_depr"),
+    # pickerInput("adm_specialty", "Select one or more specialties",
+    #             choices = spec_list, multiple = TRUE, 
+    #             selected = c("Accident & Emergency")),
+    # plot_box("By specialty (not distinguishing between planned or emergency admissions)", "adm_spec"))
+} else if (input$measure_select == "A&E attendances") {
+  tagList(#A&E Attendances
+    h4("Attendances to A&E departments"),
+    plot_box("2020 compared with average from previous years", "aye_overall")
+    )
+  
+} else if (input$measure_select == "NHS 24 calls") {
+  
+}
+    
+  })
+  
 
 
+  ###############################################.
+  ## Charts ----
+  ###############################################.
+  
   ###############################################.
   # Function that creates line trend charts in Plotly for different splits
   # THree parameters: pal_chose - what palette of colours you want
@@ -68,68 +110,107 @@ function(input, output, session) {
       config(displaylogo = F) # taking out plotly logo button
 
   }
-  ###############################################.
-  # Creating plots for each cut and dataset
-  # output$aye_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
-  # output$aye_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
-  # output$aye_depr <- renderPlotly({plot_trend_chart(pal_depr, "depr")})
-  # output$ooh_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
-  # output$ooh_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
-  # output$ooh_depr <- renderPlotly({plot_trend_chart(pal_depr, "depr")})
-  output$adm_sex <- renderPlotly({plot_trend_chart(rapid, pal_sex, "sex")})
-  output$adm_age <- renderPlotly({plot_trend_chart(rapid, pal_age, "age")})
-  output$adm_depr <- renderPlotly({plot_trend_chart(rapid, pal_depr, "depr")})
-  output$adm_spec <- renderPlotly({
+  
+  plot_overall_chart <- function(dataset, data_name, yaxis_title) {
     
-    trend_data <- rapid %>% filter(type == "sex") %>%
-      filter(between(date, as.Date(input$time_period[1]), as.Date(input$time_period[2])) &
-               area_name == input$geoname &
-               # admission_type == input$adm_type &
-               category == "All" &
-               spec %in% input$adm_specialty)
+    # Filtering dataset to include only overall figures
+    trend_data <- dataset %>% filter(type == "sex") %>%
+      filter(area_name == input$geoname &
+               category == "All")
     
-    #Creating palette of colors: colorblind proof
-    #First obtaining length of each geography type, if more than 6, then 6, 
-    # this avoids issues. Extra selections will not be plotted
-    trend_length <- length(input$adm_specialty)
+    ###############################################
+    # Creating objects that change depending on dataset
+    yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions to hospital",
+                             data_name == "aye" ~ "Number of attendances to A&E")
     
-    # First define the palette of colours used, then set a named vector, so each color
-    # gets assigned to an area. I think is based on the order in the dataset, which
-    # helps because Scotland is always first so always black.
-    trend_palette <- c("#000000", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99",
-                       "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#b15928")
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- yaxis_title
     
-    trend_scale <- c(setNames(trend_palette, unique(trend_data$spec)[1:trend_length]))
-    trend_col <- trend_scale[1:trend_length]
+
+    period_tooltip <- case_when(data_name == "adm" ~ "7-day rolling average ending: ",
+                                data_name == "aye" ~ "Week ending: ")
     
-    # Same approach for symbols
-    symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
-                          'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
-    symbols_scale <- c(setNames(symbols_palette, unique(trend_data$spec)[1:trend_length]))
-    symbols_trend <- symbols_scale[1:trend_length]
+    hist_legend <- case_when(data_name == "adm" ~ "Average 2016-2019",
+                             data_name == "aye" ~ "Average 2018-2019")
+      
+    measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
+                             data_name == "aye" ~ "Attendances: ")
     
     #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$spec, "<br>", trend_data$date,
-                              "<br>", "Admissions: ", trend_data$count))
+    tooltip_trend <- c(paste0(period_tooltip, trend_data$date,
+                              "<br>", measure_name, trend_data$count,
+                              "<br>", "Historic average: ", trend_data$count_average))
     
     #Creating time trend plot
-    plot_ly(data=trend_data, x=~date,  y = ~count) %>%
-      add_trace(type = 'scatter', mode = 'lines',
-                color = ~spec, colors = trend_palette,
-                text=tooltip_trend, hoverinfo="text") %>%
+    plot_ly(data=trend_data, x=~date) %>%
+      add_lines(y = ~count, line = list(color = pal_overall[1]),
+                text=tooltip_trend, hoverinfo="text",
+                name = "2020") %>%
+      add_lines(y = ~count_average, line = list(color = pal_overall[2], dash = 'dash'),
+                text=tooltip_trend, hoverinfo="text",
+                name = hist_legend) %>%
       #Layout
       layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
       config(displaylogo = F) # taking out plotly logo button
     
-  })
+  }
   
-  # output$test_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
-  # output$test_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
-  # output$test_depr <- renderPlotly({plot_trend_chart(pal_depr, "depr")})
-  # output$nhs24_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
-  # output$nhs24_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
-  # output$nhs24_depr <- renderPlotly({plot_trend_chart(pal_depr, "depr")})
+  ###############################################.
+  # Creating plots for each cut and dataset
+  output$aye_overall <- renderPlotly({plot_overall_chart(aye, "aye")})
+
+  output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
+  
+  
+  # output$adm_sex <- renderPlotly({plot_trend_chart(rapid, pal_sex, "sex")})
+  # output$adm_age <- renderPlotly({plot_trend_chart(rapid, pal_age, "age")})
+  # output$adm_depr <- renderPlotly({plot_trend_chart(rapid, pal_depr, "depr")})
+  # output$adm_spec <- renderPlotly({
+  #   
+  #   trend_data <- rapid %>% filter(type == "sex") %>%
+  #     filter(between(date, as.Date(input$time_period[1]), as.Date(input$time_period[2])) &
+  #              area_name == input$geoname &
+  #              # admission_type == input$adm_type &
+  #              category == "All" &
+  #              spec %in% input$adm_specialty)
+  #   
+  #   #Creating palette of colors: colorblind proof
+  #   #First obtaining length of each geography type, if more than 6, then 6, 
+  #   # this avoids issues. Extra selections will not be plotted
+  #   trend_length <- length(input$adm_specialty)
+  #   
+  #   # First define the palette of colours used, then set a named vector, so each color
+  #   # gets assigned to an area. I think is based on the order in the dataset, which
+  #   # helps because Scotland is always first so always black.
+  #   trend_palette <- c("#000000", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99",
+  #                      "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#b15928")
+  #   
+  #   trend_scale <- c(setNames(trend_palette, unique(trend_data$spec)[1:trend_length]))
+  #   trend_col <- trend_scale[1:trend_length]
+  #   
+  #   # Same approach for symbols
+  #   symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
+  #                         'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
+  #   symbols_scale <- c(setNames(symbols_palette, unique(trend_data$spec)[1:trend_length]))
+  #   symbols_trend <- symbols_scale[1:trend_length]
+  #   
+  #   #Text for tooltip
+  #   tooltip_trend <- c(paste0(trend_data$spec, "<br>", trend_data$date,
+  #                             "<br>", "Admissions: ", trend_data$count))
+  #   
+  #   #Creating time trend plot
+  #   plot_ly(data=trend_data, x=~date,  y = ~count) %>%
+  #     add_trace(type = 'scatter', mode = 'lines',
+  #               color = ~spec, colors = trend_palette,
+  #               text=tooltip_trend, hoverinfo="text") %>%
+  #     #Layout
+  #     layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+  #            yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
+  #     config(displaylogo = F) # taking out plotly logo button
+  #   
+  # })
+  
 
 ###############################################.
 # Table 

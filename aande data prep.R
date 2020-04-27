@@ -14,12 +14,12 @@ library(lubridate)
 
 #format age groups
 create_agegroups <- function(dataset) {
-  dataset %>% mutate(age_grp1 = as.character(case_when(between(age, 0, 4) ~ " 0-04",
-                                                      between(age, 5, 14) ~ " 5-14",
-                                                      between(age, 15, 44) ~ "15-44", 
-                                                      between(age, 45, 64) ~ "45-64", 
-                                                      between(age, 65, 74) ~ "65-74", 
-                                                      between(age, 75, 84) ~ "75-84",
+  dataset %>% mutate(age_grp1 = as.character(case_when(between(age, 0, 4) ~ " Under 5",
+                                                      between(age, 5, 14) ~ "5 - 14",
+                                                      between(age, 15, 44) ~ "15 - 44", 
+                                                      between(age, 45, 64) ~ "45 - 64", 
+                                                      between(age, 65, 74) ~ "65 - 74", 
+                                                      between(age, 75, 84) ~ "75 - 84",
                                                       between(age, 85, 200) ~ "85 and over")),
                      age_grp=case_when(is.na(age) ~"Missing", TRUE~age_grp1))
 }
@@ -58,7 +58,7 @@ ae_board_data<- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/A&E/2020-04-24-Extra
 #format data
 ae_board_data <- ae_board_data %>%
   mutate(area_name = match_area(area),
-         area_type="NHS board") %>%
+         area_type="Health board") %>%
   create_agegroups() %>%
   create_sexgroups() %>%
   create_depgroups() %>%
@@ -83,7 +83,7 @@ ae_hscp_data<- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/A&E/2020-04-24-Extrac
 
 ae_hscp_data <- ae_hscp_data %>%
   mutate(area_name = match_area(area),
-         area_type="HSCP") %>%
+         area_type="HSC partnership") %>%
   create_agegroups() %>%
   create_sexgroups() %>%
   create_depgroups() %>%
