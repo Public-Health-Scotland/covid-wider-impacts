@@ -29,7 +29,7 @@ rapid <- readRDS("data/rapid_data.rds") #RAPID data
 aye <- readRDS("data/ae_data.rds") #A&E data
 
 spec_list <- sort(unique(rapid$spec)) # specialty list
-data_list <- c("Hospital admissions", "A&E attendances")
+data_list <- c("Hospital admissions", "A&E attendances", "NHS 24 calls")
 
 ###############################################.
 ## Palettes and plot parameters ----
@@ -41,10 +41,12 @@ pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
 # '#abd9e9', '#dfc27d',
 #Palette for those with a single category per sex and overall
 pal_sex <- c('#000000', '#08519c','#bdd7e7')
+pal_overall <- c('#000000', '#b2df8a')
+
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
-                    showline = TRUE, tickangle = 270, fixedrange=TRUE)
+                    showline = TRUE, fixedrange=TRUE)
 
 yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
                     tickfont = list(size=14), titlefont = list(size=14))

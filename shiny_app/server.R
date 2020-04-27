@@ -37,8 +37,39 @@ function(input, output, session) {
                 step = 1)
     
   })
+  
+  ###############################################.
+  ## Reactive layout  ----
+  ###############################################.
+  # The charts and text shown on the app will depend on what the user wants to see
+  output$data_explorer <- renderUI({
+    if (input$measure_select == "Hospital admissions") {
+      tagList(#Hospital admissions
+    h4("Admissions to hospital"),
+    plot_box("By sex", "adm_sex"),
+    plot_box("By age group", "adm_age"),
+    plot_box("By deprivation quintile", "adm_depr"),
+    pickerInput("adm_specialty", "Select one or more specialties",
+                choices = spec_list, multiple = TRUE, 
+                selected = c("Accident & Emergency")),
+    plot_box("By specialty (not distinguishing between planned or emergency admissions)", "adm_spec"))
+} else if (input$measure_select == "A&E attendances") {
+  tagList(#A&E Attendances
+    h4("Attendances to A&E departments"),
+    plot_box("2020 compared with average from previous years", "aye_overall"))
+  
+} else if (input$measure_select == "NHS 24 calls") {
+  
+}
+    
+  })
+  
 
 
+  ###############################################.
+  ## Charts ----
+  ###############################################.
+  
   ###############################################.
   # Function that creates line trend charts in Plotly for different splits
   # THree parameters: pal_chose - what palette of colours you want
@@ -68,8 +99,39 @@ function(input, output, session) {
       config(displaylogo = F) # taking out plotly logo button
 
   }
+  
+  plot_overall_chart <- function(dataset, yaxis_title) {
+    
+    trend_data <- dataset %>% filter(type == "sex") %>%
+      filter(area_name == input$geoname &
+               category == "All")
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    #Text for tooltip
+    tooltip_trend <- c(paste0("Week ending: ", trend_data$date,
+                              "<br>", "Admissions: ", trend_data$count,
+                              "<br>", "Historic average: ", trend_data$count_average))
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~date) %>%
+      add_lines(y = ~count, line = list(color = pal_overall[1]),
+                text=tooltip_trend, hoverinfo="text",
+                name = "2020") %>%
+      add_lines(y = ~count_average, line = list(color = pal_overall[2], dash = 'dash'),
+                text=tooltip_trend, hoverinfo="text",
+                name = "Average 2018-2019") %>%
+      #Layout
+      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
+      config(displaylogo = F) # taking out plotly logo button
+    
+  }
+  
   ###############################################.
   # Creating plots for each cut and dataset
+  output$aye_overall <- renderPlotly({plot_overall_chart(aye, "Number of attendances to A&E")})
   # output$aye_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
   # output$aye_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
   # output$aye_depr <- renderPlotly({plot_trend_chart(pal_depr, "depr")})
@@ -124,12 +186,6 @@ function(input, output, session) {
     
   })
   
-  # output$test_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
-  # output$test_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
-  # output$test_depr <- renderPlotly({plot_trend_chart(pal_depr, "depr")})
-  # output$nhs24_sex <- renderPlotly({plot_trend_chart(pal_sex, "sex")})
-  # output$nhs24_age <- renderPlotly({plot_trend_chart(pal_age, "age")})
-  # output$nhs24_depr <- renderPlotly({plot_trend_chart(pal_depr, "depr")})
 
 ###############################################.
 # Table 

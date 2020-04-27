@@ -54,19 +54,13 @@ fluidPage(
             ))
       ), #wellPanel bracket
       mainPanel(width = 12,
+                uiOutput("data_explorer")
                 # fluidRow(h4("A&E attendances"),
                 #          column(4, plot_box("By sex", "aye_sex")),
                 #          column(4, plot_box("By age group", "aye_age")),
                 #          column(4, plot_box("By deprivation quintile", "aye_depr"))
                 # ),
-                h4("Admissions to hospital"),
-                plot_box("By sex", "adm_sex"),
-                plot_box("By age group", "adm_age"),
-                plot_box("By deprivation quintile", "adm_depr"),
-                pickerInput("adm_specialty", "Select one or more specialties",
-                            choices = spec_list, multiple = TRUE, 
-                            selected = c("Accident & Emergency")),
-                plot_box("By specialty (not distinguishing between planned or emergency admissions)", "adm_spec")
+
                 # fluidRow(h4("NHS 24 calls"),
                 #          column(4, plot_box("By sex", "nhs24_sex")),
                 #          column(4, plot_box("By age group", "nhs24_age")),
