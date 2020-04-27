@@ -41,7 +41,7 @@ pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
 # '#abd9e9', '#dfc27d',
 #Palette for those with a single category per sex and overall
 pal_sex <- c('#000000', '#08519c','#bdd7e7')
-pal_overall <- c('#000000', '#b2df8a')
+pal_overall <- c('#000000', '#009900')
 
 
 # Style of x and y axis
