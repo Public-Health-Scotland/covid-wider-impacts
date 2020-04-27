@@ -96,11 +96,11 @@ rap_adm_age <- agg_rapid(c("age_group"), split = "age") %>%
   filter(age_group != "missing") %>% 
   mutate(category = recode(age_group, "5_thru_14" = "5 - 14", "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
                            "65_thru_74" = "65 -74", "75_thru_84" = "75 -84",
-                           "85+" = "Over 85", "Under_5" = "Under 5")) %>% 
+                           "85+" = "85 and over", "Under_5" = "Under 5")) %>% 
   select(-age_group)
 
 # Totals for overalls for deprivation quintiles
-rap_adm_depr <- agg_rapid(c("simd_quintile"), split = "depr") %>% 
+rap_adm_depr <- agg_rapid(c("simd_quintile"), split = "dep") %>% 
   rename(category = simd_quintile) %>% 
   mutate(category = as.character(category),
          category = recode(category, "1" = "1 - most deprived", "5" = "5 - Least deprived"))
@@ -113,7 +113,7 @@ rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>%
   # Creating area type variable
   mutate(area_type = case_when(substr(area_name, 1,3) == "NHS" ~ "Health board",
                                area_name == "Scotland" ~ "Scotland",
-                               TRUE ~ "Council area"),
+                               TRUE ~ "HSC partnership"),
          admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency"))
 
 # Temporary for testing purposes: supressing numbers under 5
