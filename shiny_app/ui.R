@@ -34,7 +34,7 @@ fluidPage(
 ###############################################.
     tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
       wellPanel(
-        column(5, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+        column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                       p(tags$b("Step 1. Select a geography level and then an area of interest.")),
                       selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
                                   selected = "Scotland")),
@@ -42,9 +42,16 @@ fluidPage(
         column(5, uiOutput("time_period_ui"),
                selectInput("adm_type", label = "Step 3. Select type of admission.",
                            choices = c("All", "Emergency", "Planned"), selected = "All")),
-        column(2, downloadButton('download_chart_data', 'Download data')
+        column(3, downloadButton('download_chart_data', 'Download data')
                # actionButton("browser", "Browser")
-               )
+               ),
+        div(title="Select what data you want to explore.", # tooltip
+            style = "margin-top: 10px; margin-bottom: 20px;", 
+            radioGroupButtons("measure_select", 
+                              label= "Step 4 - Select what data you want to explore.", 
+                              choices = data_list, status = "primary",
+                              justified = TRUE
+            ))
       ), #wellPanel bracket
       mainPanel(width = 12,
                 # fluidRow(h4("A&E attendances"),
