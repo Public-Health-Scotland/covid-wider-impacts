@@ -103,12 +103,19 @@ function(input, output, session) {
     trend_data <- dataset %>% filter(type == split) %>%
       filter(area_name == input$geoname )
 
+    if (split == "age") {
+      trend_data <- trend_data %>% 
+        mutate(category = factor(category, levels = c("Under 5", "5 - 14", "15 - 44", "
+                                                        45 - 64", "65 -74", 
+                                                        "75 -84", "85 and over"))) 
+    }
+    
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>", trend_data$date,
-                              "<br>", "Change from average: ", trend_data$variation))
+                              "<br>", "Change from average: ", trend_data$variation, "%"))
     
     #Modifying standard layout
-    yaxis_plots[["title"]] <- "% change respect historic average"
+    yaxis_plots[["title"]] <- "% change compared with historic average"
 
     #Creating time trend plot
     plot_ly(data=trend_data, x=~date,  y = ~variation) %>%
@@ -116,7 +123,7 @@ function(input, output, session) {
                 color = ~category, colors = pal_chose,
                 text=tooltip_trend, hoverinfo="text") %>%
       #Layout
-      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots) %>%
       config(displaylogo = F) # taking out plotly logo button
 
@@ -160,7 +167,7 @@ function(input, output, session) {
                 text=tooltip_trend, hoverinfo="text",
                 name = hist_legend) %>%
       #Layout
-      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
       config(displaylogo = F) # taking out plotly logo button
     
@@ -279,6 +286,7 @@ function(input, output, session) {
       input$measure_select,
       "Hospital admissions" = filter_data(rapid_filt()),
       "A&E attendances" = filter_data(aye),
+      "NHS24 calls" = filter_data(nhs24),
       "Out of hours consultations" = filter_data(ooh)
     ) %>% 
       select(area_name, date, count, count_average) %>% 
