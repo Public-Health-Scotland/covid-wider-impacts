@@ -254,24 +254,28 @@ function(input, output, session) {
 
   })
 
-
 ###############################################.
-# Table 
+## Table ----
+###############################################.
+
   
   data_table <- reactive({
-    # Add switch and filter to swap between different datasets
-    # https://github.com/Health-SocialCare-Scotland/Hospital-Acute-Activity/blob/master/Data-Explorer/server.R
     # Reformat dates? so they become 22 March 2020?.
     # Think about the variable names
-    
-    # Note: character variables are converted to factors in each
-    # dataset for use in the table
-    # This is because dropdown prompts on the table filters only
-    # appear for factors
-    rapid %>% 
-      rename(Date = date, Count = count, Type = type, Category = category) %>% 
-      mutate_if(is.character, as.factor)
-    
+    switch(
+      input$data_select,
+      "Hospital admissions" = rapid,
+      "A&E attendances" = aye,
+      "NHS24 calls" = nhs24,
+      "Out of hours consultations" = ooh
+    ) %>% 
+      rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
+      # Note: character variables are converted to factors in each
+      # dataset for use in the table
+      # This is because dropdown prompts on the table filters only
+      # appear for factors
+      mutate_if(is.character, as.factor) %>% 
+      select(sort(current_vars())) # orde columns alphabetically
   })
   
   output$table_filtered <- DT::renderDataTable({
@@ -290,12 +294,16 @@ function(input, output, session) {
     
   })
   
+  ###############################################.
+  ## Data downloads ----
+  ###############################################.
   
   output$download_table_csv <- downloadHandler(
     filename ="data_extract.csv",
     content = function(file) {
-      write.csv(rapid,
-                file, row.names=FALSE) } 
+      write_csv(data_table()
+                [input[["table_filtered_rows_all"]], ],
+                file) } 
   )
   
   # Reactive dataset that gets the data the user is visualisaing ready to download
@@ -314,8 +322,8 @@ function(input, output, session) {
   output$download_chart_data <- downloadHandler(
     filename ="data_extract.csv",
     content = function(file) {
-      write.csv(overall_data_download(),
-                file, row.names=FALSE) } 
+      write_csv(overall_data_download(),
+                file) } 
   )
   
 } # server end
