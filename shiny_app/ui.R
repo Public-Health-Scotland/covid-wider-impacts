@@ -1,6 +1,7 @@
 #UI
 
 fluidPage(
+  useShinyjs(), # to allow shinyjs to work
   HTML('<meta name="viewport" content="width=1200">'), # needed for embedding as iframe in website
   style = "width: 100%; height: 100%; max-width: 1200px;", 
   tags$head(includeCSS("www/styles.css")), # CSS used to style app
@@ -45,7 +46,7 @@ fluidPage(
                               choices = data_list, status = "primary", 
                               direction = "vertical", justified = T))),
         column(4, 
-               selectInput("adm_type", label = "Step 3. Select type of admission",
+               selectInput("adm_type", label = "Step 3. Select type of admission.",
                            choices = c("All", "Emergency", "Planned"), selected = "All"),
                downloadButton('download_chart_data', 'Download data'),
                actionButton("browser", "Browser")
