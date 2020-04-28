@@ -10,13 +10,16 @@ library(shinyWidgets)
 library(dplyr)
 library(DT)
 library(shinycssloaders) #for loading icons
+library(shinyjs)
+library(readr)
+library(stringr)
 
 ###############################################.
 ## Functions ----
 ###############################################.
 
 plot_box <- function(title_plot, plot_output) {
-  div(h4(title_plot),
+  tagList(h4(title_plot),
       withSpinner(plotlyOutput(plot_output)))
 }
 
@@ -31,6 +34,8 @@ ooh <- readRDS("data/ooh_data.rds") # OOH data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 
 spec_list <- sort(unique(rapid$spec)) # specialty list
+spec_list <- spec_list[spec_list != "All"]
+
 data_list <- c("Hospital admissions", "A&E attendances", "NHS 24 calls", "Out of hours consultations")
 
 ###############################################.

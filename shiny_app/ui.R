@@ -1,6 +1,7 @@
 #UI
 
 fluidPage(
+  useShinyjs(), # to allow shinyjs to work
   HTML('<meta name="viewport" content="width=1200">'), # needed for embedding as iframe in website
   style = "width: 100%; height: 100%; max-width: 1200px;", 
   tags$head(includeCSS("www/styles.css")), # CSS used to style app
@@ -45,7 +46,7 @@ fluidPage(
                               choices = data_list, status = "primary", 
                               direction = "vertical", justified = T))),
         column(4, 
-               selectInput("adm_type", label = "Step 3. Select type of admission",
+               selectInput("adm_type", label = "Step 3. Select type of admission.",
                            choices = c("All", "Emergency", "Planned"), selected = "All"),
                downloadButton('download_chart_data', 'Download data'),
                actionButton("browser", "Browser")
@@ -62,7 +63,9 @@ fluidPage(
       p("This section allows you to view the data in table format. 
         You can use the filters to select the data you are interested in. 
         You can also download the data as a csv using the download buttons."),
-      downloadButton('download_table_csv', 'Download data'),
+      column(6, selectInput("data_select", "Select what data you want to explore.",
+                           choices = data_list)),
+      column(6, downloadButton('download_table_csv', 'Download data')),
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
     ) # tabpanel bracket
