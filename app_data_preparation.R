@@ -10,8 +10,6 @@ library(zoo)
 library(readr)
 library(stringr)
 library(phsmethods)
-#library(readxl)
-
 
 ###############################################.
 ## Functions ----
@@ -197,6 +195,31 @@ saveRDS(rap_adm_2020, "shiny_app/data/rapid_data.rds")
 ###############################################.
 ## Preparing OOH data ----
 ###############################################.
+
+# Read in historic OOH file
+ooh_historic <- read.csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/OOH DATA 2018 - 22032020.zip","OOH DATA 2018 - 22032020.csv"),
+                         header = TRUE, na.strings = "", sep = ",") %>%
+  janitor::clean_names() %>%
+  as.data.frame() %>%
+  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name, dep=prompt_dataset_deprivation_scot_quintile,sex=gender,count=number_of_cases) %>%
+  mutate(age_group = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
+                                   "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
+                                   "65-74" = "65 -74", "75-84" = "75 -84",
+                                   "85 plus" = "85 and over"),
+         sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
+         dep = recode(dep, 
+                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
+                      "4" = "4", "5" = "5 - Least deprived"),
+         week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
+         date = week_ending) %>%
+  proper() #convert HB names to correct format
+
+
+###haven't finished this bit
+
+
+
+###############################################.
 ooh <- read_csv("/conf/PHSCOVID19_Analysis/OOH_shiny_app/OOH Weekly Demand_Scot+HBs.csv") %>% 
   janitor::clean_names() %>% 
   # Recoding variables to match other datasets
@@ -256,7 +279,7 @@ ooh_2020$count <- ifelse(ooh_2020$count<5,0,ooh_2020$count)
 
 saveRDS(ooh_2020, "shiny_app/data/ooh_data.rds")
 
-
+ooh_2020 <- readRDS("shiny_app/data/ooh_data.rds")
 
 
 ###############################################.
@@ -347,8 +370,7 @@ ae_final_data <- ae_final_data %>%
 ae_average <- ae_final_data %>%
   subset(year %in% c("2018","2019")) %>%
   group_by(area_name,area_type,category,type,week_no) %>%
-  summarise(count_average=mean(count)) %>%
-  ungroup()
+  summarise(count_average=round(mean(count, na.rm = T),1)) %>% ungroup()
 
 # Filter for latest year - 2020
 ae_latest_year <- ae_final_data %>%
@@ -480,7 +502,7 @@ nhs24_final_data <- nhs24_final_data %>%
 nhs24_average <- nhs24_final_data %>%
   subset(year %in% c("2018","2019")) %>%
   group_by(area_name,area_type,category,type,week_no) %>%
-  summarise(count_average=mean(count)) %>% ungroup()
+  summarise(count_average=round(mean(count, na.rm = T),1)) %>% ungroup()
 
 # Filter for latest year - 2020 
 nhs24_latest_year <- nhs24_final_data %>% subset(year=="2020")
