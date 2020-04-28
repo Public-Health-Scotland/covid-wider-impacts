@@ -71,7 +71,13 @@ function(input, output, session) {
     )
   
 } else if (input$measure_select == "NHS 24 calls") {
-  
+  tagList(# NHS 24 callw
+    h4("Calls to NHS24 service"),
+    plot_box("2020 compared with average from previous years", "nhs24_overall"),
+    plot_box("By sex", "nhs24_sex"),
+    plot_box("By age group", "nhs24_age"),
+    plot_box("By deprivation quintile", "nhs24_depr")
+  )
 } else if (input$measure_select == "Out of hours consultations") {
   tagList(#Out of hours consultations
     h4("Consultations to out of hours services"),
@@ -100,6 +106,9 @@ function(input, output, session) {
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>", trend_data$date,
                               "<br>", "Change from average: ", trend_data$variation))
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- "% change respect historic average"
 
     #Creating time trend plot
     plot_ly(data=trend_data, x=~date,  y = ~variation) %>%
@@ -109,7 +118,6 @@ function(input, output, session) {
       #Layout
       layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots) %>%
-             #legend = list(orientation = 'h', x = 50, y = 100)) %>%
       config(displaylogo = F) # taking out plotly logo button
 
   }
@@ -123,18 +131,20 @@ function(input, output, session) {
     # Creating objects that change depending on dataset
     yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
-                             data_name == "ooh" ~ "Number of consultations")
+                             data_name == "ooh" ~ "Number of consultations",
+                             data_name == "nhs24" ~ "Number of calls")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
     
     hist_legend <- case_when(data_name == "adm" ~ "Average 2016-2019",
-                             data_name == "aye" ~ "Average 2018-2019",
+                             data_name %in% c("aye", "nhs24") ~ "Average 2018-2019",
                              data_name == "ooh" ~ "Average xxx")
       
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                              data_name == "aye" ~ "Attendances: ",
-                             data_name == "ooh" ~ "Consultations: ")
+                             data_name == "ooh" ~ "Consultations: ",
+                             data_name == "nhs24" ~ "Calls: ")
     
     #Text for tooltip
     tooltip_trend <- c(paste0("Week ending: ", trend_data$date,
@@ -169,6 +179,11 @@ function(input, output, session) {
   output$adm_sex <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex")})
   output$adm_age <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age")})
   output$adm_depr <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep")})
+  
+  output$nhs24_overall <- renderPlotly({plot_overall_chart(nhs24, "nhs24")})
+  output$nhs24_sex <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex")})
+  output$nhs24_age <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age")})
+  output$nhs24_depr <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep")})
   # output$adm_spec <- renderPlotly({
   #   
   #   trend_data <- rapid %>% filter(type == "sex") %>%

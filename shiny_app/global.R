@@ -28,6 +28,7 @@ geo_lookup <- readRDS("data/geo_lookup.rds")
 rapid <- readRDS("data/rapid_data.rds") #RAPID data
 aye <- readRDS("data/ae_data.rds") #A&E data
 ooh <- readRDS("data/ooh_data.rds") # OOH data
+nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 
 spec_list <- sort(unique(rapid$spec)) # specialty list
 data_list <- c("Hospital admissions", "A&E attendances", "NHS 24 calls", "Out of hours consultations")
