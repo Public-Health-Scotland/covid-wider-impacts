@@ -69,31 +69,33 @@ function(input, output, session) {
   output$data_explorer <- renderUI({
     if (input$measure_select == "Hospital admissions") {
       tagList(#Hospital admissions
-    h4("Admissions to hospital"),
-    plot_box("2020 compared with average from previous years", "adm_overall"),
-    plot_box("By sex", "adm_sex"),
-    plot_box("By age group", "adm_age"),
-    plot_box("By deprivation quintile", "adm_depr"),
-    pickerInput("adm_specialty", "Select one or more specialties",
-                choices = spec_list, multiple = TRUE,
-                selected = c("Medical", "Surgery")),
-    plot_box("By specialty (not distinguishing between planned or emergency admissions)", "adm_spec"))
+        h4("Admissions to hospital"),
+        plot_box("2020 compared with average from previous years", "adm_overall"),
+        plot_box("Variation of 2020 against average of previous years by sex group", "adm_sex"),
+        plot_box("Variation of 2020 against average of previous years by age group", "adm_age"),
+        plot_box("Variation of 2020 against average of previous years by deprivation quintile", "adm_depr"),
+        h4("Variation of 2020 against average of previous years by specialty (not distinguishing between planned or emergency admissions)"),
+        pickerInput("adm_specialty", "Select one or more specialties",
+                    choices = spec_list, multiple = TRUE,
+                    selected = c("Medical", "Surgery")),
+        withSpinner(plotlyOutput("adm_spec"))
+      )
 } else if (input$measure_select == "A&E attendances") {
   tagList(#A&E Attendances
     h4("Attendances to A&E departments"),
     plot_box("2020 compared with average from previous years", "aye_overall"),
-    plot_box("By sex", "aye_sex"),
-    plot_box("By age group", "aye_age"),
-    plot_box("By deprivation quintile", "aye_depr")
+    plot_box("Variation of 2020 against average of previous years by sex", "aye_sex"),
+    plot_box("Variation of 2020 against average of previous years by age group", "aye_age"),
+    plot_box("Variation of 2020 against average of previous years by deprivation quintile", "aye_depr")
     )
   
 } else if (input$measure_select == "NHS 24 calls") {
   tagList(# NHS 24 callw
     h4("Calls to NHS24 service"),
     plot_box("2020 compared with average from previous years", "nhs24_overall"),
-    plot_box("By sex", "nhs24_sex"),
-    plot_box("By age group", "nhs24_age"),
-    plot_box("By deprivation quintile", "nhs24_depr")
+    plot_box("Variation of 2020 against average of previous years by sex", "nhs24_sex"),
+    plot_box("Variation of 2020 against average of previous years by age group", "nhs24_age"),
+    plot_box("Variation of 2020 against average of previous years by deprivation quintile", "nhs24_depr")
   )
 } else if (input$measure_select == "Out of hours consultations") {
   tagList(#Out of hours consultations
@@ -104,8 +106,6 @@ function(input, output, session) {
     
   }) 
   
-
-
   ###############################################.
   ## Charts ----
   ###############################################.
