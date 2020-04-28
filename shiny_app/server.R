@@ -34,13 +34,13 @@ function(input, output, session) {
         enable("adm_type")
 
         updateSelectInput(session, "adm_type",
-                          label = "Step 3. Select type of admission")
+                          label = "Step 3. Select type of admission.")
 
       } else if (input$measure_select != "Hospital admissions") {
         disable("adm_type")
         
         updateSelectInput(session, "adm_type",
-                          label = "Step 3. Select type of admission (not available)")
+                          label = "Step 3. Select type of admission (not available).")
 
       }
       
@@ -128,7 +128,8 @@ function(input, output, session) {
     }
     
     #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$category, "<br>", trend_data$date,
+    tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                              "Week ending: ", format(trend_data$date, "%d %b %y"),
                               "<br>", "Change from average: ", trend_data$variation, "%"))
     
     #Modifying standard layout
@@ -171,7 +172,7 @@ function(input, output, session) {
                              data_name == "nhs24" ~ "Calls: ")
     
     #Text for tooltip
-    tooltip_trend <- c(paste0("Week ending: ", trend_data$date,
+    tooltip_trend <- c(paste0("Week ending: ", format(trend_data$date, "%d %b %y"),
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
     
