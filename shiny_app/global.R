@@ -12,6 +12,7 @@ library(DT)
 library(shinycssloaders) #for loading icons
 library(shinyjs)
 library(readr)
+library(stringr)
 
 ###############################################.
 ## Functions ----
