@@ -9,18 +9,19 @@ library(lubridate)
 library(readxl)
 library(stringr)
 
+zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/"
 
 ###############################################.
 ## Functions ----
 ###############################################.
 
 #Convert HB names to correct format
-proper <- function(dataset)
+proper <- function(dataset) {
   dataset %>% 
   mutate(hb1= str_to_title(hb),
          area_name=paste0(toupper(substr(hb1, 1, 3)),substring(hb1, 4))) %>%
   select(-hb1, -hb)
-
+}
 
 #format age groups
 create_agegroups <- function(dataset) {
@@ -38,7 +39,8 @@ create_agegroups <- function(dataset) {
 
 #format deprivation groups
 create_depgroups <- function(dataset) {
-  dataset %>% mutate(dep=case_when(is.na(dep)~"Missing", dep==1 ~ "1 - most deprived", dep==5 ~"5 - Least deprived", TRUE~as.character(dep)))
+  dataset %>% mutate(dep=case_when(is.na(dep)~"Missing", dep==1 ~ "1 - most deprived", 
+                                   dep==5 ~"5 - Least deprived", TRUE~as.character(dep)))
 }
 
 # Speed up aggregations of different data cuts
@@ -50,58 +52,30 @@ aggregation_help <- function(grouper) {
 }
 
 ###############################################.
-## Reading in A&E data ----
+## Reading in NHS24 data ----
 ###############################################.
+nhs24_jantojun18 <- read.csv(unz(paste0(zip_folder, "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.zip"), "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.csv"), 
+                             header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
+  janitor::clean_names() %>% as.data.frame() 
 
-# prepare a&e data (HBT level)
+nhs24_jultodec18 <- read.csv(unz(paste0(zip_folder, "0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.zip"), "0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.csv"), 
+                                 header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
+  janitor::clean_names() %>% as.data.frame() 
 
-nhs24_jantojun18 <- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/0. NHS24 Extract 1 Jan 18 - 30 Jun 18.zip", "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.csv"), header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-janitor::clean_names() %>%
-as.data.frame() %>%
-rename(hb=patient_nhs_board_description_current,
-       hscp=nhs_24_patient_hscp_name_current,
-       sex=gender_description,
-       dep=nhs_24_patient_prompt_dataset_deprivation_scot_quintile,
-       covid_flag=nhs_24_covid_19_flag,
-       date=nhs_24_call_rcvd_date,
-       count=number_of_nhs_24_records)
-  
-nhs24_jultodec18 <- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.zip", "0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.csv"), header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>%
-  as.data.frame() %>%
-  rename(hb=patient_nhs_board_description_current,
-         hscp=nhs_24_patient_hscp_name_current,
-         sex=gender_description,
-         dep=nhs_24_patient_prompt_dataset_deprivation_scot_quintile,
-         covid_flag=nhs_24_covid_19_flag,
-         date=nhs_24_call_rcvd_date,
-         count=number_of_nhs_24_records)
+nhs24_jantojun19 <- read.csv(unz(paste0(zip_folder, "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.zip"), "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.csv"), 
+                                 header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
+  janitor::clean_names() %>% as.data.frame() 
 
-nhs24_jantojun19 <- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/1. NHS24 Extract 1 Jan 19 - 30 Jun 19.zip", "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.csv"), header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>%
-  as.data.frame() %>%
-  rename(hb=patient_nhs_board_description_current,
-         hscp=nhs_24_patient_hscp_name_current,
-         sex=gender_description,
-         dep=nhs_24_patient_prompt_dataset_deprivation_scot_quintile,
-         covid_flag=nhs_24_covid_19_flag,
-         date=nhs_24_call_rcvd_date,
-         count=number_of_nhs_24_records)
-
-nhs24_jultodec19 <- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/2. NHS24 Extract 1 Jul 19 - 31 Dec 19.zip", "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.csv"), header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>%
-  as.data.frame() %>%
-  rename(hb=patient_nhs_board_description_current,
-         hscp=nhs_24_patient_hscp_name_current,
-         sex=gender_description,
-         dep=nhs_24_patient_prompt_dataset_deprivation_scot_quintile,
-         covid_flag=nhs_24_covid_19_flag,
-         date=nhs_24_call_rcvd_date,
-         count=number_of_nhs_24_records)
+nhs24_jultodec19 <- read.csv(unz(paste0(zip_folder, "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.zip"), "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.csv"), 
+                             header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
+  janitor::clean_names() %>% as.data.frame() 
 
 nhs24_jantoapr20 <- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/3. NHS24 Extract 1 Jan 20 - 24 Apr 20.zip", "3. NHS24 Extract 1 Jan 20 - 24 Apr 20.csv"), header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>%
-  as.data.frame() %>%
+  janitor::clean_names() %>% as.data.frame() 
+
+
+# Add data files
+nhs24 <-  rbind(nhs24_jantojun18,nhs24_jultodec18,nhs24_jantojun19,nhs24_jultodec19,nhs24_jantoapr20) %>% 
   rename(hb=patient_nhs_board_description_current,
          hscp=nhs_24_patient_hscp_name_current,
          sex=gender_description,
@@ -109,13 +83,9 @@ nhs24_jantoapr20 <- read.csv(unz("/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH
          covid_flag=nhs_24_covid_19_flag,
          date=nhs_24_call_rcvd_date,
          count=number_of_nhs_24_records)
-
-# Add data files
-nhs24 <-  rbind(nhs24_jantojun18,nhs24_jultodec18,nhs24_jantojun19,nhs24_jultodec19,nhs24_jantoapr20)
 
 # Tidy
 rm(nhs24_jantojun18,nhs24_jultodec18,nhs24_jantojun19,nhs24_jultodec19,nhs24_jantoapr20)
-
 
 nhs24 <- nhs24 %>%
   proper() %>% #convert HB names to correct format
@@ -144,7 +114,7 @@ board_nhs24 <- nhs24 %>%
 hscp_nhs24 <- nhs24 %>%
   group_by(week_ending, hscp, sex, dep, age_grp) %>%
   summarise(count=sum(count)) %>%
-  mutate(area_type="Health board") %>%
+  mutate(area_type="HSC partnership") %>%
   rename(area_name=hscp) %>%
   ungroup()
 
@@ -207,8 +177,8 @@ nhs24_shiny$count <- ifelse(nhs24_shiny$count<5,0,nhs24_shiny$count)
 
 # Remove weeks that haven't happened yet & reformat NHS board names to include prefix/&
 nhs24_shiny <- nhs24_shiny %>%
-  filter(category != "Missing") %>% #taking out empty counts
-  subset(week_no<18) %>%
+  filter(!(category %in% c("Missing", "Not Known"))) %>% #taking out empty counts
+  subset(week_no<17) %>%
   # Creating % variation from pre_covid to covid
   mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
 
