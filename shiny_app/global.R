@@ -39,11 +39,6 @@ spec_list <- spec_list[spec_list != "All"]
 data_list <- c("Hospital admissions", "A&E attendances", "NHS 24 calls", "Out of hours consultations")
 
 ###############################################.
-## Text ----
-###############################################.
-variation_title <- "Percentage change in admissions compared with the corresponding time in "
-
-###############################################.
 ## Palettes and plot parameters ----
 ###############################################.
 pal_depr <- c('#abd9e9', '#74add1', '#4575b4', '#313695', '#022031')

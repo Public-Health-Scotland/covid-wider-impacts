@@ -67,6 +67,16 @@ function(input, output, session) {
   ###############################################.
   # The charts and text shown on the app will depend on what the user wants to see
   output$data_explorer <- renderUI({
+    # text for titles of cut charts
+    
+    dataset <- case_when(input$measure_select == "Hospital admissions" ~ "admissions",
+                         input$measure_select == "A&E attendances" ~ "attendances",
+                         input$measure_select == "Calls to NHS24 service" ~ "calls",
+                         input$measure_select == "Out of hours consultations" ~ "consultations")
+    variation_title <- paste0("Percentage change in ", dataset, 
+                              " compared with the corresponding time in ")
+    
+    # Charts and rest of UI
     if (input$measure_select == "Hospital admissions") {
       tagList(#Hospital admissions
         h3("Weekly admissions to hospital (Source: RAPID dataset)"),
@@ -100,7 +110,10 @@ function(input, output, session) {
     } else if (input$measure_select == "Out of hours consultations") {
       tagList(#Out of hours consultations
         h3("Consultations to out of hours services"),
-        plot_box("2020 compared with average from previous years", "ooh_overall")
+        plot_box("2020 compared with the 2018-2019 average", "ooh_overall"),
+        plot_box(paste0(variation_title, "in 2018-2019 by sex"), "ooh_sex"),
+        plot_box(paste0(variation_title, "in 2018-2019 by age group"), "ooh_age"),
+        plot_box(paste0(variation_title, "in 2018-2019 by SIMD quintile"), "ooh_depr")
       )
     }
     
@@ -163,8 +176,7 @@ function(input, output, session) {
     yaxis_plots[["title"]] <- yaxis_title
     
     hist_legend <- case_when(data_name == "adm" ~ "Average 2016-2019",
-                             data_name %in% c("aye", "nhs24") ~ "Average 2018-2019",
-                             data_name == "ooh" ~ "Average xxx")
+                             data_name %in% c("aye", "nhs24", "ooh") ~ "Average 2018-2019")
       
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                              data_name == "aye" ~ "Attendances: ",
@@ -199,6 +211,9 @@ function(input, output, session) {
   output$aye_depr <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep")})
   
   output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
+  output$ooh_sex <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex")})
+  output$ooh_age <- renderPlotly({plot_trend_chart(ooh, pal_age, "age")})
+  output$ooh_depr <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep")})
   
   output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
   output$adm_sex <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex")})
