@@ -40,9 +40,9 @@ fluidPage(
                       selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
                                   selected = "Scotland")),
                uiOutput("geoname_ui")),
-        column(4, div(title="Select what data you want to explore.", # tooltip
+        column(4, div(title="Select the data you want to explore.", # tooltip
             radioGroupButtons("measure_select", 
-                              label= "Step 2 - Select what data you want to explore.", 
+                              label= "Step 2 – Select the data you want to explore.", 
                               choices = data_list, status = "primary", 
                               direction = "vertical", justified = T))),
         column(4, 
@@ -62,8 +62,8 @@ fluidPage(
     tabPanel(title = "Data", icon = icon("table"), value = "table",
       p("This section allows you to view the data in table format. 
         You can use the filters to select the data you are interested in. 
-        You can also download the data as a csv using the download buttons."),
-      column(6, selectInput("data_select", "Select what data you want to explore.",
+        You can also download the data as a csv using the download button."),
+      column(6, selectInput("data_select", "Select the data you want to explore.",
                            choices = data_list)),
       column(6, downloadButton('download_table_csv', 'Download data')),
       mainPanel(width = 12,
