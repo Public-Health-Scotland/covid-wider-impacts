@@ -103,11 +103,16 @@ rap_adm <- left_join(rap_adm, hb_lookup, by = c("hb" = "hb_cypher")) %>%
   select(-hb) %>% rename(hb = description)
 
 # Bringing spec names
-spec_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Specialty_Groupings.rds") %>% 
-  janitor::clean_names() %>% select(grouping, speccode)
+spec_lookup <- read_csv("data/spec_groups_dashboard.csv")
 
-rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "speccode")) %>% 
-  select(-spec) %>% rename(spec = grouping)
+rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "spec_code")) %>% 
+  select(-spec) %>% rename(spec = dash_groups)
+
+# For modal in app
+spec_lookup <- spec_lookup %>% select("Specialty name" = spec_name,
+                                      "Specialty group" = dash_groups)
+
+saveRDS(spec_lookup, "shiny_app/data/spec_lookup.rds")
 
 # Formatting groups
 rap_adm <- rap_adm %>% 
@@ -150,6 +155,16 @@ rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>%
   filter(!(is.na(category) ))
 
 saveRDS(rap_adm, "data/rapid_data_pub.rds")
+
+# Producing data for combined medical specialty
+spec_med <- rap_adm %>% 
+  filter(spec %in% c("Cancer", "Medical (excl. Cardiology & Cancer)", "Cardiology")) %>% 
+  mutate(spec = "Medical") %>% 
+  group_by(week_ending, area_name, area_type, date, type, 
+    admission_type, spec, category) %>% 
+  summarise(count = sum(count)) %>% ungroup
+
+rap_adm <- rbind(rap_adm, spec_med)
 
 rap_adm <- rap_adm %>%
   # Creating week number to be able to compare pre-covid to covid period
@@ -304,7 +319,6 @@ ae_shiny$count <- ifelse(ae_shiny$count<5,0,ae_shiny$count)
 ae_shiny <- ae_shiny %>%
   filter(category != "Missing") %>% #taking out empty counts
   filter(!(is.na(area_name) | area_name %in% c("UNKNOWN HSCP - SCOTLAND", "ENGLAND/WALES/NORTHERN IRELAND"))) %>% 
-  
   subset(week_no<17) %>%
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
                                 TRUE~area_name)) %>%
