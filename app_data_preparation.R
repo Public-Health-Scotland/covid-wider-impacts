@@ -35,8 +35,7 @@ agg_rapid <- function(grouper = NULL, split, specialty = F) {
     spec_all <- agg_helper(c(grouper, "spec")) %>% 
       mutate(admission_type = "All") 
     
-    spec_adm <- agg_helper(c(grouper, "spec", "admission_type")) %>% 
-      mutate(admission_type = "All") 
+    spec_adm <- agg_helper(c(grouper, "spec", "admission_type")) 
 
     rbind(all, adm_type, spec_all, spec_adm)
   } else {
@@ -74,7 +73,8 @@ create_sexgroups <- function(dataset) {
 
 # Format deprivation groups
 create_depgroups <- function(dataset) {
-  dataset %>% mutate(dep=case_when(is.na(dep)~"Missing", dep==1 ~ "1 - most deprived", dep==5 ~"5 - Least deprived", TRUE~as.character(dep)))
+  dataset %>% mutate(dep=case_when(is.na(dep)~"Missing", dep==1 ~ "1 - most deprived",
+                                   dep==5 ~"5 - Least deprived", TRUE~as.character(dep)))
 }
 
 # Convert HB names to correct format
