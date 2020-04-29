@@ -227,7 +227,7 @@ function(input, output, session) {
 
     trend_data <- rapid %>% filter(type == "sex") %>%
       filter(area_name == input$geoname &
-               # admission_type == input$adm_type &
+               admission_type == input$adm_type &
                category == "All" &
                spec %in% input$adm_specialty)
 
