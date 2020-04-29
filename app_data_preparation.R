@@ -15,49 +15,32 @@ library(phsmethods)
 ## Functions ----
 ###############################################.
 # This function aggregates data for each different cut requires
-agg_rapid <- function(extra_vars = NULL, split, specialty = F) {
+agg_rapid <- function(grouper = NULL, specialty = F) {
   
   agg_helper <- function(more_vars, type_chosen = split) {
-    rap_adm %>% 
-      group_by_at(c("date_adm", more_vars)) %>% 
-      summarise(count = sum(count)) %>% ungroup() %>% 
-      mutate(type = type_chosen) 
+    rap_adm %>%
+      group_by_at(c("week_ending", more_vars)) %>%
+      summarise(count = sum(count)) %>% ungroup() %>%
+      mutate(type = type_chosen)
   }
   
   # Aggregating to obtain totals for each split type and then putting all back together.
-  adm_type_scot <- agg_helper(c(extra_vars, "admission_type")) %>% 
-    mutate(area_name = "Scotland", spec = "All") 
+  adm_type <- agg_helper(c(extra_vars, "admission_type")) %>% 
+    mutate(spec = "All") 
   
-  all_scot <- agg_helper(extra_vars) %>% 
-    mutate(admission_type = "All", area_name = "Scotland", spec = "All") 
-
-  adm_type_hb <- agg_helper(c(extra_vars, "admission_type", "hb")) %>% 
-    mutate(spec = "All") %>% rename(area_name = hb)
-
-  all_hb <- agg_helper(c(extra_vars, "hb")) %>% 
-    mutate(admission_type = "All", spec = "All") %>% rename(area_name = hb)
-  
-  adm_type_hscp <- agg_helper(c(extra_vars, "admission_type", "hscp_name")) %>% 
-    mutate(spec = "All") %>% rename(area_name = hscp_name)
-  
-  all_hscp <- agg_helper(c(extra_vars, "hscp_name")) %>% 
-    mutate(admission_type = "All", spec = "All") %>% rename(area_name = hscp_name)
-
+  all <- agg_helper(grouper) %>% 
+    mutate(admission_type = "All", spec = "All") 
 
   if (specialty == T) {
-    spec_scot <- agg_helper(c(extra_vars, "spec")) %>% 
-      mutate(area_name = "Scotland", admission_type = "All") 
-
-    spec_hscp <- agg_helper(c(extra_vars, "spec", "hscp_name")) %>% 
-      mutate(admission_type = "All") %>% rename(area_name = hscp_name)
-
-    spec_hb <- agg_helper(c(extra_vars, "spec", "hb")) %>% 
-      mutate(admission_type = "All") %>% rename(area_name = hb)
+    spec_all <- agg_helper(c(grouper, "spec")) %>% 
+      mutate(admission_type = "All") 
     
-    rbind(all_scot, spec_scot, adm_type_scot, all_hb, spec_hb, adm_type_hb,
-          all_hscp, spec_hscp, adm_type_hscp)
+    spec_adm <- agg_helper(c(grouper, "spec", "admission_type")) %>% 
+      mutate(admission_type = "All") 
+
+    rbind(all, adm_type, spec_all, spec_admp)
   } else {
-    rbind(all_scot, adm_type_scot, all_hb, adm_type_hb, all_hscp, adm_type_hscp)
+    rbind(all, adm_type) 
   }
 }
 
@@ -73,7 +56,7 @@ agg_cut <- function(dataset, grouper) {
 
 # Create age groups
 create_agegroups <- function(dataset) {
-  dataset %>% mutate(age_grp1 = as.character(case_when(between(age, 0, 4) ~ " Under 5",
+  dataset %>% mutate(age_grp1 = as.character(case_when(between(age, 0, 4) ~ "Under 5",
                                                        between(age, 5, 14) ~ "5 - 14",
                                                        between(age, 15, 44) ~ "15 - 44", 
                                                        between(age, 45, 64) ~ "45 - 64", 
@@ -85,7 +68,8 @@ create_agegroups <- function(dataset) {
 
 # Format sex groups
 create_sexgroups <- function(dataset) {
-  dataset %>% mutate(sex=case_when(is.na(sex)~"Missing", sex==1 ~ "Male", sex==2 ~"Female", TRUE~as.character(sex)))
+  dataset %>% mutate(sex=case_when(is.na(sex)~"Missing", sex==1 ~ "Male", sex==2 ~"Female", 
+                                   sex %in% c(0, 9 ) ~ "Missing", TRUE~as.character(sex)))
 }
 
 # Format deprivation groups
@@ -125,15 +109,37 @@ spec_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference 
 rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "speccode")) %>% 
   select(-spec) %>% rename(spec = grouping)
 
+# Formatting groups
+rap_adm <- rap_adm %>% 
+  rename(dep = simd_quintile, age = age_group) %>% 
+  mutate(sex = recode(sex, "male" = "Male", "female" = "Female")) %>% 
+  mutate(age = recode_factor(age, "Under_5" = "Under 5", "5_thru_14" = "5 - 14", 
+                                  "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
+                                  "65_thru_74" = "65 -74", "75_thru_84" = "75 - 84",
+                                  "85+" = "85 and over")) %>% 
+  create_depgroups()
+
+# Aggregating to weekly data 
+rap_adm <- rap_adm %>% 
+  mutate(week_ending = ceiling_date(date_adm, "week")) %>% #end of week
+  group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec) %>% 
+  summarise(count = sum(count))
+
+# Aggregating for each geo level
+rap_adm <- rap_adm %>% mutate(scot = "Scotland") %>% 
+  gather(area_type, area_name, c(hb, hscp_name, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "hb" = "Health board", 
+                            "hscp_name" = "HSC partnership", "scot" = "Scotland")) %>%  
+  # Empty areas out
+  filter(!(area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND"))) %>% 
+  mutate(date = week_ending)
+
 # Aggregating to obtain totals for each split type and then putting all back together
 # Totals for overalls for all pop including totals by specialty too
 rap_adm_all <- agg_rapid(NULL, split = "sex", specialty = T) %>% 
   mutate(category = "All") 
-
 # Totals for overalls for all sexes
-rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% 
-  mutate( category = recode(sex, "male" = "Male", "female" = "Female")) %>% 
-  select(-sex)
+rap_adm_sex <- agg_rapid(c("sex"), split = "sex") 
 
 # Totals for overalls for all age groups
 rap_adm_age <- agg_rapid(c("age_group"), split = "age") %>% 
@@ -152,8 +158,7 @@ rap_adm_depr <- agg_rapid(c("simd_quintile"), split = "dep") %>%
   
 rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>% 
   # Filtering cases without information on age, sex or deprivation (still counted in all)
-  filter(!(is.na(category) | area_name == "" |
-             area_name %in% c("ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND"))) %>% 
+  filter(!(is.na(category) )) %>% 
   rename(date = date_adm) %>% 
   # Creating area type variable
   mutate(area_type = case_when(substr(area_name, 1,3) == "NHS" ~ "Health board",
@@ -203,7 +208,7 @@ ooh <- read_csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/OOH DATA 2018 - 2
          count=number_of_consultations) %>%
   mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
                                    "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
-                                   "65-74" = "65 -74", "75-84" = "75 -84",
+                                   "65-74" = "65 - 74", "75-84" = "75 - 84",
                                    "85 plus" = "85 and over"),
          sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          dep = recode(dep, 
