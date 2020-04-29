@@ -11,9 +11,9 @@ tagList( #needed for shinyjs
 ## Introduction ----
 ###############################################.
     tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
-             column(2,
+             column(4,
                     h3("COVID-19 wider impacts to the health care system")),
-             column(10,
+             column(8,
                     tags$br(),
                     p("This tool allows you to find the data you want",
                       "and visualise it in different ways. Within each of the",
