@@ -303,6 +303,8 @@ ae_shiny$count <- ifelse(ae_shiny$count<5,0,ae_shiny$count)
 # Remove weeks that haven't happened yet & reformat NHS board names to include prefix/&
 ae_shiny <- ae_shiny %>%
   filter(category != "Missing") %>% #taking out empty counts
+  filter(!(is.na(area_name) | area_name %in% c("UNKNOWN HSCP - SCOTLAND", "ENGLAND/WALES/NORTHERN IRELAND"))) %>% 
+  
   subset(week_no<17) %>%
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
                                 TRUE~area_name)) %>%
@@ -420,6 +422,7 @@ nhs24_shiny$count <- ifelse(nhs24_shiny$count<5,0,nhs24_shiny$count)
 # Remove weeks that haven't happened yet & reformat NHS board names to include prefix/&
 nhs24_shiny <- nhs24_shiny %>%
   filter(!(category %in% c("Missing", "Not Known"))) %>% #taking out empty counts
+  filter(!(is.na(area_name) | area_name %in% c("UNKNOWN HSCP - SCOTLAND", "ENGLAND/WALES/NORTHERN IRELAND"))) %>% 
   subset(week_no<17) %>%
   # Creating % variation from pre_covid to covid
   mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
