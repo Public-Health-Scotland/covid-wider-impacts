@@ -3,7 +3,7 @@
 function(input, output, session) {
   
   # For debugging
-  observeEvent(input$browser, browser())
+  # observeEvent(input$browser, browser())
   
   ###############################################.
   # To move around tabs 
@@ -47,6 +47,20 @@ function(input, output, session) {
     })
   
   ###############################################.
+  ## Modals ----
+  ###############################################.
+  #modal to provide information on what specialties are included in each group
+  spec_modal <- modalDialog(
+    h5(" List of specialties and what group they correspond to"),
+    renderTable(spec_lookup),
+    size = "l", align= "center",
+    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+  )
+  
+  observeEvent(input$btn_spec_groups, { showModal(spec_modal) }) # Link action button click to modal launch 
+  
+  
+  ###############################################.
   ## Reactive datasets ----
   ###############################################.
   # Rapid dataset filtered for 
@@ -84,15 +98,16 @@ function(input, output, session) {
         plot_box(paste0(variation_title, "in 2016-2019 by sex"), "adm_sex"),
         plot_box(paste0(variation_title, "in 2016-2019 by age group"), "adm_age"),
         plot_box(paste0(variation_title, "in 2016-2019 by SIMD quintile"), "adm_depr"),
-        h4(paste0(variation_title, "in 2016-2019 by specialty")),
-        pickerInput("adm_specialty", "Select one or more specialties",
+        h4(paste0(variation_title, "in 2016-2019 by specialty group")),
+        fluidRow(column(4, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
-                    selected = c("Medical", "Surgery")),
+                    selected = c("Medical", "Surgery"))),
+        column(8, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
         withSpinner(plotlyOutput("adm_spec"))
       )
     } else if (input$measure_select == "A&E attendances") {
       tagList(#A&E Attendances
-        h3("Attendances to A&E departments"),
+        h3("Weekly attendances to A&E departments (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "aye_overall"),
         plot_box(paste0(variation_title, "in 2018-2019 by sex"), "aye_sex"),
         plot_box(paste0(variation_title, "in 2018-2019 by age group"), "aye_age"),
@@ -101,7 +116,7 @@ function(input, output, session) {
       
     } else if (input$measure_select == "NHS 24 calls") {
       tagList(# NHS 24 callw
-        h3("Calls to NHS24 service"),
+        h3("Weekly calls to NHS24 service (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "nhs24_overall"),
         plot_box(paste0(variation_title, "in 2018-2019 by sex"), "nhs24_sex"),
         plot_box(paste0(variation_title, "in 2018-2019 by age group"), "nhs24_age"),
@@ -109,7 +124,7 @@ function(input, output, session) {
       )
     } else if (input$measure_select == "Out of hours consultations") {
       tagList(#Out of hours consultations
-        h3("Consultations to out of hours services"),
+        h3("Weekly consultations to out of hours services (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "ooh_overall"),
         plot_box(paste0(variation_title, "in 2018-2019 by sex"), "ooh_sex"),
         plot_box(paste0(variation_title, "in 2018-2019 by age group"), "ooh_age"),
@@ -146,7 +161,8 @@ function(input, output, session) {
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- "% change compared with historic average"
-
+    # yaxis_plots[["range"]] <- c(x = -100, 80)
+    
     #Creating time trend plot
     plot_ly(data=trend_data, x=~date,  y = ~variation) %>%
       add_trace(type = 'scatter', mode = 'lines',
@@ -155,7 +171,8 @@ function(input, output, session) {
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots) %>%
-      config(displaylogo = F) # taking out plotly logo button
+      # leaving only save plot
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
 
   }
   
@@ -198,7 +215,8 @@ function(input, output, session) {
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
-      config(displaylogo = F) # taking out plotly logo button
+      # leaving only save plot
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
     
   }
   
@@ -254,6 +272,8 @@ function(input, output, session) {
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$spec, "<br>", trend_data$date,
                               "<br>", "Change from average: ", trend_data$variation))
+    
+    # yaxis_plots[["range"]] <- c(-100, 100)
 
     #Creating time trend plot
     plot_ly(data=trend_data, x=~date,  y = ~variation) %>%
@@ -265,8 +285,8 @@ function(input, output, session) {
       layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
              showlegend = TRUE,
              yaxis = yaxis_plots, xaxis = xaxis_plots) %>%
-      config(displaylogo = F) # taking out plotly logo button
-
+      # leaving only save plot
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
   })
 
 ###############################################.
