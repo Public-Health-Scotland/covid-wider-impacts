@@ -5,14 +5,14 @@
 ###############################################.
 
 library(shiny)
-library(plotly)
-library(shinyWidgets)
-library(dplyr)
-library(DT)
+library(plotly) # for charts
+library(shinyWidgets) # for dropdowns
+library(dplyr) # for data manipulation
+library(DT) # for data table
 library(shinycssloaders) #for loading icons
-library(shinyjs)
-library(readr)
-library(stringr)
+library(shinyjs) # for enable/disable functions
+library(readr) # for writing/reading csvs
+library(stringr) #for manipulating strings
 
 ###############################################.
 ## Functions ----
@@ -27,6 +27,7 @@ plot_box <- function(title_plot, plot_output) {
 ## Data ----
 ###############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
+spec_lookup <- readRDS("data/spec_lookup.rds")
 
 rapid <- readRDS("data/rapid_data.rds") #RAPID data
 aye <- readRDS("data/ae_data.rds") #A&E data
@@ -57,5 +58,10 @@ xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(si
 
 yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
                     tickfont = list(size=14), titlefont = list(size=14))
+
+# Buttons to remove
+bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
+                       'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
+                        'hoverClosestCartesian')
 
 ## END
