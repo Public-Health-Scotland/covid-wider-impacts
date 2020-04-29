@@ -3,8 +3,7 @@ tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
   title = div(tags$a(img(src="phs-logo.png", height=40), href= "https://www.publichealthscotland.scot/"),
-              style = "position: relative; top: -5px;",  
-              "COVID-19 wider impacts"), 
+              style = "position: relative; top: -5px;"), 
   windowTitle = "COVID-19 wider impacts", #title for browser tab
   header = tags$head(includeCSS("www/styles.css")),
 ###############################################.

@@ -8,12 +8,17 @@
 .well {background-color:#ffffff; border: 0 solid #336699;
        padding: 5px; box-shadow: none; }
 
-/* Navigation bar following PHS colour scheme */       
-.navbar-default {color: #ffffff; background-color: #433684;
-  border-style: solid; border-width: thick; border-color: #433684;
-}
+/* Navigation bar following PHS colour scheme */    
+.navbar-default {color: #ffffff; background-color: #433684; }
 
-/* .navbar-default .navbar-brand, .navbar-default:hover .navbar-brand:hover, .navbar-default, .navbar-brand {color: #ffffff; background-color: #433684}*/    
+
+/* 
+.navbar-default .navbar-brand, .navbar-default:hover .navbar-brand:hover, .navbar-default, .navbar-brand {color: #ffffff; background-color: #433684}
+
+  border-style: solid; border-width: thick; border-color: #433684;
+
+*/    
+
 .navbar-default .navbar-brand, .navbar-default:hover .navbar-brand:hover, .navbar-brand {color: #433684; background-color: #ffffff}
 
 .navbar-default .navbar-nav > li > a {color: #ffffff;}
