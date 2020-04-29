@@ -15,17 +15,17 @@ library(phsmethods)
 ## Functions ----
 ###############################################.
 # This function aggregates data for each different cut requires
-agg_rapid <- function(grouper = NULL, specialty = F) {
+agg_rapid <- function(grouper = NULL, split, specialty = F) {
   
   agg_helper <- function(more_vars, type_chosen = split) {
     rap_adm %>%
-      group_by_at(c("week_ending", more_vars)) %>%
+      group_by_at(c("week_ending","area_name", "area_type", "date", more_vars)) %>%
       summarise(count = sum(count)) %>% ungroup() %>%
       mutate(type = type_chosen)
   }
   
   # Aggregating to obtain totals for each split type and then putting all back together.
-  adm_type <- agg_helper(c(extra_vars, "admission_type")) %>% 
+  adm_type <- agg_helper(c(grouper, "admission_type")) %>% 
     mutate(spec = "All") 
   
   all <- agg_helper(grouper) %>% 
@@ -38,7 +38,7 @@ agg_rapid <- function(grouper = NULL, specialty = F) {
     spec_adm <- agg_helper(c(grouper, "spec", "admission_type")) %>% 
       mutate(admission_type = "All") 
 
-    rbind(all, adm_type, spec_all, spec_admp)
+    rbind(all, adm_type, spec_all, spec_adm)
   } else {
     rbind(all, adm_type) 
   }
@@ -111,15 +111,16 @@ rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "speccode")) %>%
 
 # Formatting groups
 rap_adm <- rap_adm %>% 
-  rename(dep = simd_quintile, age = age_group) %>% 
+  rename(dep = simd_quintile, age = age_group) %>%
   mutate(sex = recode(sex, "male" = "Male", "female" = "Female")) %>% 
   mutate(age = recode_factor(age, "Under_5" = "Under 5", "5_thru_14" = "5 - 14", 
                                   "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
-                                  "65_thru_74" = "65 -74", "75_thru_84" = "75 - 84",
+                                  "65_thru_74" = "65 - 74", "75_thru_84" = "75 - 84",
                                   "85+" = "85 and over")) %>% 
-  create_depgroups()
+  create_depgroups()  %>% 
+  mutate(admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency"))
 
-# Aggregating to weekly data 
+# Aggregating to weekly data
 rap_adm <- rap_adm %>% 
   mutate(week_ending = ceiling_date(date_adm, "week")) %>% #end of week
   group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec) %>% 
@@ -136,42 +137,17 @@ rap_adm <- rap_adm %>% mutate(scot = "Scotland") %>%
 
 # Aggregating to obtain totals for each split type and then putting all back together
 # Totals for overalls for all pop including totals by specialty too
-rap_adm_all <- agg_rapid(NULL, split = "sex", specialty = T) %>% 
-  mutate(category = "All") 
-# Totals for overalls for all sexes
-rap_adm_sex <- agg_rapid(c("sex"), split = "sex") 
-
-# Totals for overalls for all age groups
-rap_adm_age <- agg_rapid(c("age_group"), split = "age") %>% 
-  filter(age_group != "missing") %>% 
-  mutate(category = recode_factor(age_group, "Under_5" = "Under 5", "5_thru_14" = "5 - 14", 
-                                  "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
-                                  "65_thru_74" = "65 -74", "75_thru_84" = "75 -84",
-                                  "85+" = "85 and over")) %>% 
-  select(-age_group)
-
+rap_adm_all <- agg_rapid(NULL, split = "sex", specialty = T) %>% mutate(category = "All") 
+rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% rename(category = sex)# Totals for overalls for all sexes
+rap_adm_age <- agg_rapid(c("age"), split = "age") %>% rename(category = age) %>% # Totals for overalls for all age groups
+  filter(category != "missing") 
 # Totals for overalls for deprivation quintiles
-rap_adm_depr <- agg_rapid(c("simd_quintile"), split = "dep") %>% 
-  rename(category = simd_quintile) %>% 
-  mutate(category = as.character(category),
-         category = recode(category, "1" = "1 - most deprived", "5" = "5 - Least deprived"))
+rap_adm_depr <- agg_rapid(c("dep"), split = "dep") %>% rename(category = dep) %>% 
+  filter(category != "Missing") 
   
 rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>% 
   # Filtering cases without information on age, sex or deprivation (still counted in all)
-  filter(!(is.na(category) )) %>% 
-  rename(date = date_adm) %>% 
-  # Creating area type variable
-  mutate(area_type = case_when(substr(area_name, 1,3) == "NHS" ~ "Health board",
-                               area_name == "Scotland" ~ "Scotland",
-                               TRUE ~ "HSC partnership"),
-         admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency"))
-
-# Preparing data by week for publication
-rap_adm <- rap_adm %>% 
-  mutate(week_ending = ceiling_date(date, "week")) %>% #end of week
-  group_by(category, type, admission_type, spec, area_name, area_type, week_ending) %>% 
-  summarise(count = sum(count)) %>% 
-  ungroup()
+  filter(!(is.na(category) ))
 
 saveRDS(rap_adm, "data/rapid_data_pub.rds")
 
@@ -188,7 +164,6 @@ rap_adm_old <- rap_adm %>% filter(week_ending<as.Date("2020-01-01")) %>%
 rap_adm_2020 <- left_join(rap_adm %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-04-20"))), 
                           rap_adm_old, 
                           by = c("category", "type", "admission_type", "spec", "area_name", "week_no")) %>% 
-  rename(date = week_ending) %>% 
   # Creating %variation from precovid to covid period
   mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
 
@@ -347,28 +322,17 @@ rm(ae_average, ae_latest_year, ae_data)
 nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/"
 
 ## Reading in NHS24 data
-nhs24_jantojun18 <- read.csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.zip"), "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.csv"), 
-                             header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>% as.data.frame() 
-
-nhs24_jultodec18 <- read.csv(unz(paste0(nhs24_zip_folder, "0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.zip"), "0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.csv"), 
-                             header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>% as.data.frame() 
-
-nhs24_jantojun19 <- read.csv(unz(paste0(nhs24_zip_folder, "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.zip"), "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.csv"), 
-                             header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>% as.data.frame() 
-
-nhs24_jultodec19 <- read.csv(unz(paste0(nhs24_zip_folder, "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.zip"), "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.csv"), 
-                             header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>% as.data.frame() 
-
-nhs24_jantoapr20 <- read.csv(unz(paste0(nhs24_zip_folder,"3. NHS24 Extract 1 Jan 20 - 24 Apr 20.zip"), "3. NHS24 Extract 1 Jan 20 - 24 Apr 20.csv"), 
-                             header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>% as.data.frame() 
-
-# Add data files
-nhs24 <-  rbind(nhs24_jantojun18,nhs24_jultodec18,nhs24_jantojun19,nhs24_jultodec19,nhs24_jantoapr20) %>% 
+nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.zip"), 
+                            "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder, "0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.zip"), 
+                            "0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder, "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.zip"), 
+                            "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder, "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.zip"), 
+                            "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder,"3. NHS24 Extract 1 Jan 20 - 24 Apr 20.zip"), 
+                            "3. NHS24 Extract 1 Jan 20 - 24 Apr 20.csv"))) %>%
+  janitor::clean_names() %>% 
   rename(hb=patient_nhs_board_description_current,
          hscp=nhs_24_patient_hscp_name_current,
          sex=gender_description,
@@ -376,8 +340,6 @@ nhs24 <-  rbind(nhs24_jantojun18,nhs24_jultodec18,nhs24_jantojun19,nhs24_jultode
          covid_flag=nhs_24_covid_19_flag,
          date=nhs_24_call_rcvd_date,
          count=number_of_nhs_24_records)
-# Tidy
-rm(nhs24_jantojun18,nhs24_jultodec18,nhs24_jantojun19,nhs24_jultodec19,nhs24_jantoapr20, nhs24_zip_folder)
 
 nhs24 <- nhs24 %>%
   proper() %>% #convert HB names to correct format
@@ -467,8 +429,6 @@ saveRDS(nhs24_shiny, "shiny_app/data/nhs24_data.rds")
 
 # Tidy
 rm(nhs24_average, nhs24_latest_year, nhs24_final_data)
-
-
 
 
 ##END
