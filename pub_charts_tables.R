@@ -7,6 +7,7 @@ library(dplyr)
 library(readr)
 library(ggplot2)
 library(tidyr)
+library(lubridate)
 
 ###############################################.
 ## Data ----
@@ -175,9 +176,8 @@ write_csv(rap_overall_bullet, paste0(outputs, "rapid_overall_table.csv"))
 ###############################################.
 # Chart for deprivation
 rap_depr_chart_data <- rap_pub %>% 
-  filter(spec == "All" & type == "depr" & admission_type == "All" &
-           # Dates of lockdown
-           between(week_ending, as.Date("2020-03-24"), as.Date("2020-04-19"))) %>% 
+  filter(spec == "All" & type == "dep" & admission_type == "All" &
+           between(week_ending, as.Date("2020-01-12"), as.Date("2020-04-19"))) %>% 
   group_by(category) %>% summarise(count = sum(count))
 
 write_csv(rap_depr_chart_data, paste0(outputs, "rap_simd_chart_data.csv"))
