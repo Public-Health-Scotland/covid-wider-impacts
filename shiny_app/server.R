@@ -71,7 +71,7 @@ function(input, output, session) {
     # text for titles of cut charts
     dataset <- case_when(input$measure_select == "Hospital admissions" ~ "admissions",
                          input$measure_select == "A&E attendances" ~ "attendances",
-                         input$measure_select == "Calls to NHS24 service" ~ "calls",
+                         input$measure_select == "NHS 24 calls" ~ "calls",
                          input$measure_select == "Out of hours consultations" ~ "consultations")
     variation_title <- paste0("Percentage change in ", dataset, 
                               " compared with the corresponding time in ")
