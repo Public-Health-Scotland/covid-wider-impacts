@@ -1,12 +1,12 @@
 #UI
-
-fluidPage(
-  useShinyjs(), # to allow shinyjs to work
-  HTML('<meta name="viewport" content="width=1200">'), # needed for embedding as iframe in website
-  style = "width: 100%; height: 100%; max-width: 1200px;", 
-  tags$head(includeCSS("www/styles.css")), # CSS used to style app
-  title = "Coronavirus wider impact", #title for browser tab
-  tabsetPanel(id = "intabset", # id used for jumping between tabs
+tagList( #needed for shinyjs
+  useShinyjs(),  # Include shinyjs
+  navbarPage(id = "intabset", # id used for jumping between tabs
+  title = div(tags$a(img(src="phs-logo.png", height=40), href= "https://www.publichealthscotland.scot/"),
+              style = "position: relative; top: -5px;",  
+              "COVID-19 wider impacts"), 
+  windowTitle = "COVID-19 wider impacts", #title for browser tab
+  header = tags$head(includeCSS("www/styles.css")),
 ###############################################.
 ## Introduction ----
 ###############################################.
@@ -69,7 +69,6 @@ fluidPage(
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
     ) # tabpanel bracket
-  ) # tabset panel bracket
-) # fluidpage bracket
-
+  ) # page bracket
+)# taglist bracket
 ##END

@@ -7,9 +7,10 @@
 /* Style sidebars/well panels */
 .well {background-color:#ffffff; border: 0 solid #336699;
        padding: 5px; box-shadow: none; }
-       
-.navbar-default .navbar-brand {color: #c11;}
 
+/* Navigation bar following PHS colour scheme */       
+.navbar-default .navbar-brand {color: #ffffff; background-color: #433684}
+    
 /* Paints the ribbon that contains the tab headers white */
 .tabbable > .nav > li > a {  color: #000000;  } 
 
