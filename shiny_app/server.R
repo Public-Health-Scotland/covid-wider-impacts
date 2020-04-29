@@ -67,8 +67,8 @@ function(input, output, session) {
   ###############################################.
   # The charts and text shown on the app will depend on what the user wants to see
   output$data_explorer <- renderUI({
-    # text for titles of cut charts
     
+    # text for titles of cut charts
     dataset <- case_when(input$measure_select == "Hospital admissions" ~ "admissions",
                          input$measure_select == "A&E attendances" ~ "attendances",
                          input$measure_select == "Calls to NHS24 service" ~ "calls",
@@ -116,7 +116,6 @@ function(input, output, session) {
         plot_box(paste0(variation_title, "in 2018-2019 by SIMD quintile"), "ooh_depr")
       )
     }
-    
   }) 
   
   ###############################################.
@@ -135,9 +134,9 @@ function(input, output, session) {
 
     if (split == "age") {
       trend_data <- trend_data %>% 
-        mutate(category = factor(category, levels = c("Under 5", "5 - 14", "15 - 44", "
-                                                        45 - 64", "65 -74", 
-                                                        "75 -84", "85 and over"))) 
+        mutate(category = factor(category, levels = c("Under 5", "5 - 14", "15 - 44", 
+                                                      "45 - 64", "65 - 74", 
+                                                        "75 - 84", "85 and over"))) 
     }
     
     #Text for tooltip
@@ -273,8 +272,6 @@ function(input, output, session) {
 ###############################################.
 ## Table ----
 ###############################################.
-
-  
   data_table <- reactive({
     # Reformat dates? so they become 22 March 2020?.
     # Think about the variable names
@@ -307,7 +304,6 @@ function(input, output, session) {
                                  autoWidth = TRUE),
                   filter = "top",
                   colnames = table_colnames)
-    
   })
   
   ###############################################.
