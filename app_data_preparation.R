@@ -256,99 +256,66 @@ ooh_2020 <- readRDS("shiny_app/data/ooh_data.rds")
 ###############################################.
 ## Preparing A&E data ----
 ###############################################.
-
 #short cut to a&e folder area
 ae_zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-04-24-Extracts/"
 
-# Read a&e data file (HBT level)
-ae_board_data<- read.csv(unz(paste0(ae_zip_folder,"NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), "NHS Boards.csv"),
-                         header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>% 
-  janitor::clean_names() %>%  as.data.frame() %>%
-  rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode,dep=prompt_dataset_deprivation_scot_quintile,age=pat_age,
-         sex=pat_gender_code,count=number_of_attendances)
+# Read A&E data both at HSCP and HB level
+ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), "HSCP.csv")) %>% 
+                   janitor::clean_names() %>% 
+                   rename(area=hscp_of_residence_code_as_at_arrival_date),
+                 read_csv(unz(paste0(ae_zip_folder,"NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), "NHS Boards.csv")) %>% 
+                   janitor::clean_names() %>% 
+                   rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode))
 
 # Format data
-ae_board_data <- ae_board_data %>%
+ae_data <- ae_data %>% 
+  rename(dep=prompt_dataset_deprivation_scot_quintile, age=pat_age,
+         sex=pat_gender_code, count=number_of_attendances) %>% 
   mutate(area_name = match_area(area), #use PHS methods package to add area names
-         area_type="Health board") %>%
+         area_type= case_when(substr(area,1,3) == "S37" ~ "HSC partnership",
+                              substr(area,1,3) == "S08" ~ "Health board")) %>%
   create_agegroups() %>%
   create_sexgroups() %>%
   create_depgroups() %>%
-  group_by(week_ending, area_name, area_type, age_grp, sex, dep) %>%
+  group_by(week_ending, area_name, area_type, age_grp, sex, dep, area) %>%
   summarise(count=sum(count)) %>%
-  ungroup()
+  ungroup() 
 
 # Generate scotland level dataset
-ae_scot_data <- ae_board_data %>%
+ae_scot <- ae_data %>% filter( substr(area ,1,3) == "S08") %>% 
   group_by(week_ending, age_grp, sex, dep) %>%
   summarise(count=sum(count)) %>%
   mutate(area_name="Scotland",
-         area_type="Scotland") %>%
-  ungroup()
+         area_type="Scotland") %>% ungroup()
 
-# Read a&e data (HSCP of residence)
-ae_hscp_data<- read.csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), "HSCP.csv"), 
-                             header = TRUE, na.strings = "", stringsAsFactors = FALSE, sep = ",") %>%
-  janitor::clean_names() %>% as.data.frame() %>%
-  rename(area=hscp_of_residence_code_as_at_arrival_date,dep=prompt_dataset_deprivation_scot_quintile,age=pat_age,
-         sex=pat_gender_code,count=number_of_attendances)
-
-ae_hscp_data <- ae_hscp_data %>%
-  mutate(area_name = match_area(area),
-         area_type="HSC partnership") %>%
-  create_agegroups() %>%
-  create_sexgroups() %>%
-  create_depgroups() %>%
-  group_by(week_ending, area_name, area_type, age_grp, sex, dep) %>%
-  summarise(count=sum(count)) %>%
-  ungroup()
-
-# Add scotland, hscp and nhs board data files
-ae_all_geos <- rbind(ae_board_data, ae_hscp_data, ae_scot_data)
-
-# Tidy files not needed
-rm(ae_board_data, ae_hscp_data, ae_scot_data, ae_zip_folder)
-
-#Add an 'all' sex category to data files so possible to present male, female and all.
-ae_all_sex <- ae_all_geos %>%
-  group_by(week_ending, area_name, area_type, age_grp, dep) %>%
-  summarise(count = sum(count)) %>% ungroup() %>% 
-  mutate(sex = "All") %>%
-  ungroup()
-
-# Add the all sex age group to other a&e data
-ae_all <- rbind(ae_all_geos, ae_all_sex) %>%
+ae_data <- rbind(ae_data %>% select(-area), ae_scot) %>% 
   rename(age=age_grp) %>%  mutate(date=as.Date(week_ending,format="%d/%m/%Y"))
 
 ##Reshape dataset for shiny app
 #Use aggregation function to aggregate data files into format
-
-ae_sex <- agg_cut(dataset=ae_all, grouper="sex") %>% rename(category=sex)
-ae_dep <- agg_cut(dataset=ae_all, grouper="dep") %>% rename(category=dep)
-ae_age <- agg_cut(dataset=ae_all, grouper="age") %>% rename(category=age)
+ae_all <- ae_data %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+ae_sex <- agg_cut(dataset=ae_data, grouper="sex") %>% rename(category=sex)
+ae_dep <- agg_cut(dataset=ae_data, grouper="dep") %>% rename(category=dep)
+ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 
 # Add final aggregation files to one master file
-ae_final_data <- rbind(ae_sex, ae_dep, ae_age)
-
-# Tidy files not needed
-rm(ae_sex, ae_dep, ae_age, ae_all_sex, ae_all_geos, ae_all)
-
+ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) %>% 
 # Derive a week number from week_ending column to ease presentation of data
-ae_final_data <- ae_final_data %>%
-  mutate(week_no=isoweek(date),year=year(date))
+  mutate(week_no=isoweek(date),year=year(date)) 
 
 # Calculate average number of attendances by week and category
-ae_average <- ae_final_data %>%
+ae_average <- ae_data %>%
   subset(year %in% c("2018","2019")) %>%
   group_by(area_name,area_type,category,type,week_no) %>%
   summarise(count_average=round(mean(count, na.rm = T),1)) %>% ungroup()
 
 # Filter for latest year - 2020
-ae_latest_year <- ae_final_data %>%
+ae_latest_year <- ae_data %>%
   subset(year=="2020")
 
 #join latest year of data with averages from previous years
-ae_shiny <- left_join(ae_average,ae_latest_year,by = c("area_name", "area_type", "category","type","week_no"))
+ae_shiny <- left_join(ae_average,ae_latest_year,
+                      by = c("area_name", "area_type", "category","type","week_no"))
 
 # Temporary for testing purposes: supressing numbers under 5
 ae_shiny$count <- ifelse(ae_shiny$count<5,0,ae_shiny$count)
@@ -357,9 +324,8 @@ ae_shiny$count <- ifelse(ae_shiny$count<5,0,ae_shiny$count)
 ae_shiny <- ae_shiny %>%
   filter(category != "Missing") %>% #taking out empty counts
   subset(week_no<17) %>%
-  mutate(area_name1 = case_when(area_type=="NHS board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), TRUE~area_name)) %>%
-  select(-area_name) %>%
-  rename(area_name=area_name1) %>% 
+  mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
+                                TRUE~area_name)) %>%
   # Creating % variation from pre_covid to covid
   mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
 
@@ -367,7 +333,7 @@ ae_shiny <- ae_shiny %>%
 saveRDS(ae_shiny, "shiny_app/data/ae_data.rds")
 
 # Tidy
-rm(ae_average, ae_latest_year, ae_final_data)
+rm(ae_average, ae_latest_year, ae_data)
 
 ###############################################.
 ## Preparing NHS24 data ----
