@@ -195,14 +195,13 @@ saveRDS(rap_adm_2020, "shiny_app/data/rapid_data.rds")
 ###############################################.
 ## Preparing OOH data ----
 ###############################################.
-
 # Read in historic OOH file
-ooh_historic <- read.csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/OOH DATA 2018 - 22032020.zip","OOH DATA 2018 - 22032020.csv"),
-                         header = TRUE, na.strings = "", sep = ",") %>%
+ooh <- read_csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/OOH DATA 2018 - 22032020.zip","OOH DATA 2018 - 22032020.csv")) %>%
   janitor::clean_names() %>%
-  as.data.frame() %>%
-  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name, dep=prompt_dataset_deprivation_scot_quintile,sex=gender,count=number_of_cases) %>%
-  mutate(age_group = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
+  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name,
+         dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
+         count=number_of_consultations) %>%
+  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
                                    "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
                                    "65-74" = "65 -74", "75-84" = "75 -84",
                                    "85 plus" = "85 and over"),
@@ -211,51 +210,24 @@ ooh_historic <- read.csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/OOH DATA
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
                       "4" = "4", "5" = "5 - Least deprived"),
          week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
-         date = week_ending) %>%
+         date = week_ending,
+         scot = "Scotland") %>%
   proper() #convert HB names to correct format
 
-
-###haven't finished this bit
-
-
-
-###############################################.
-ooh <- read_csv("/conf/PHSCOVID19_Analysis/OOH_shiny_app/OOH Weekly Demand_Scot+HBs.csv") %>% 
-  janitor::clean_names() %>% 
-  # Recoding variables to match other datasets
-  mutate(age_group = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
-                                   "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
-                                    "65-74" = "65 -74", "75-84" = "75 -84",
-                                    "85 plus" = "85 and over"),
-         sex = recode(gender, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
-         dep = recode(prompt_dataset_deprivation_scot_quintile, 
-                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
-                      "4" = "4", "5" = "5 - Least deprived"),
-         week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
-         date = week_ending) %>% 
-  # Selecting consultations for app
-  select(date, week_ending, sex, dep, age = age_group, count = number_of_consultations, 
-         area_name = treatment_nhs_board_name) %>% 
-  #renaming Health boards to match standard used in rest of datasets
-  mutate(area_name = paste0(toupper(substr(area_name, 1, 3)), substring(str_to_title(area_name), 4)),
-         area_type = "Health board") %>% 
+# Aggregate up to get figures for each area type.
+ooh <- ooh %>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
-  group_by(date, week_ending, sex, dep, age, area_type, area_name) %>% 
+  group_by(date, week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup()
-
-# Creating Scotland totals and joining with hb data
-ooh_scot <- ooh %>% group_by(date, week_ending, sex, dep, age) %>% 
-  summarise(count = sum(count, na.rm = T)) %>% 
-  mutate(area_name = "Scotland", area_type = "Scotland") %>% ungroup()
-
-ooh <- rbind(ooh, ooh_scot)
 
 # Creating totals for groups
 ooh_all <- ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
 ooh_sex <- ooh %>% agg_cut(grouper="sex") %>% rename(category = sex)
 ooh_dep <- ooh %>% agg_cut(grouper="dep") %>% rename(category = dep)
 ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
- 
+
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age) %>% 
   # Creating week number to be able to compare pre-covid to covid period
   mutate(week_no = isoweek(week_ending))
@@ -266,11 +238,12 @@ ooh_old <- ooh %>% filter(week_ending<as.Date("2020-01-01")) %>%
   summarise(count_average = round(mean(count, na.rm = T), 1)) 
 
 # Joining with 2020 data
-ooh_2020 <- left_join(ooh %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-04-20"))), 
-                          ooh_old, 
-                          by = c("category", "type", "area_name", "week_no")) %>% 
+# Filtering weeks with incomplete week too!! Temporary
+ooh_2020 <- left_join(ooh %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-03-22"))), 
+                      ooh_old, 
+                      by = c("category", "type", "area_name", "week_no")) %>% 
   # filtering empty cases
-  filter(!(is.na(category))) %>% 
+  filter(!(is.na(category) | is.na(area_name) | area_name %in% c("UNKNOWN HSCP - SCOTLAND" ))) %>% 
   # Creating % variation from pre_covid to covid
   mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
 
@@ -278,9 +251,7 @@ ooh_2020 <- left_join(ooh %>% filter(between(week_ending, as.Date("2020-01-01"),
 ooh_2020$count <- ifelse(ooh_2020$count<5,0,ooh_2020$count)
 
 saveRDS(ooh_2020, "shiny_app/data/ooh_data.rds")
-
 ooh_2020 <- readRDS("shiny_app/data/ooh_data.rds")
-
 
 ###############################################.
 ## Preparing A&E data ----
