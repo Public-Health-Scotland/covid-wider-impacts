@@ -91,14 +91,19 @@ function(input, output, session) {
     variation_title <- paste0("Percentage change in ", dataset, 
                               " compared with the corresponding time in ")
     
+    total_title <- paste0("Weekly number of ", dataset)
+    
     # Charts and rest of UI
     if (input$measure_select == "Hospital admissions") {
       tagList(#Hospital admissions
         h3("Weekly admissions to hospital (Source: RAPID dataset)"),
         plot_box("2020 compared with the 2016-2019 average", "adm_overall"),
-        plot_box(paste0(variation_title, " 2016-2019 by sex"), "adm_sex"),
-        plot_box(paste0(variation_title, " 2016-2019 by age group"), "adm_age"),
-        plot_box(paste0(variation_title, " 2016-2019 by SIMD quintile"), "adm_depr"),
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by sex"), "adm_sex_var")),
+                 column(6, plot_box(paste0(total_title, " by sex"), "adm_sex_tot"))),
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by age group"), "adm_age_var")),
+                 column(6, plot_box(paste0(total_title, " by age group"), "adm_age_tot"))),
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "adm_depr_var")),
+                 column(6, plot_box(paste0(total_title, " by SIMD quintile"), "adm_depr_tot"))),
         h4(paste0(variation_title, " 2016-2019 by specialty group")),
         fluidRow(column(4, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
@@ -110,26 +115,35 @@ function(input, output, session) {
       tagList(#A&E Attendances
         h3("Weekly attendances to A&E departments (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "aye_overall"),
-        plot_box(paste0(variation_title, " 2018-2019 by sex"), "aye_sex"),
-        plot_box(paste0(variation_title, " 2018-2019 by age group"), "aye_age"),
-        plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "aye_depr")
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by sex"), "aye_sex_var")),
+                 column(6, plot_box(paste0(total_title, " by sex"), "aye_sex_tot"))),
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by age group"), "aye_age_var")),
+                 column(6, plot_box(paste0(total_title, " by age group"), "aye_age_tot"))),
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "aye_depr_var")),
+                 column(6, plot_box(paste0(total_title, " by SIMD quintile"), "aye_depr_tot")))
       )
       
     } else if (input$measure_select == "NHS 24 calls") {
       tagList(# NHS 24 callw
         h3("Weekly calls to NHS24 service (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "nhs24_overall"),
-        plot_box(paste0(variation_title, " 2018-2019 by sex"), "nhs24_sex"),
-        plot_box(paste0(variation_title, " 2018-2019 by age group"), "nhs24_age"),
-        plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "nhs24_depr")
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by sex"), "nhs24_sex_var")),
+                 column(6, plot_box(paste0(total_title, " by sex"), "nhs24_sex_tot"))),
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by age group"), "nhs24_age_var")),
+                 column(6, plot_box(paste0(total_title, " by age group"), "nhs24_age_tot"))),
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "nhs24_depr_var")),
+                 column(6, plot_box(paste0(total_title, " by SIMD quintile"), "nhs24_depr_tot")))
       )
     } else if (input$measure_select == "Out of hours consultations") {
       tagList(#Out of hours consultations
         h3("Weekly consultations to out of hours services (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "ooh_overall"),
-        plot_box(paste0(variation_title, " 2018-2019 by sex"), "ooh_sex"),
-        plot_box(paste0(variation_title, " 2018-2019 by age group"), "ooh_age"),
-        plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "ooh_depr")
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by sex"), "ooh_sex_var")),
+                 column(6, plot_box(paste0(total_title, " by sex"), "ooh_sex_tot"))),
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by age group"), "ooh_age_var")),
+                 column(6, plot_box(paste0(total_title, " by age group"), "ooh_age_tot"))),
+        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "ooh_depr_var")),
+                 column(6, plot_box(paste0(total_title, " by SIMD quintile"), "ooh_depr_tot")))
       )
     }
   }) 
@@ -143,7 +157,7 @@ function(input, output, session) {
   # THree parameters: pal_chose - what palette of colours you want
   # dataset - what data to use for the chart formatted as required
   # split - age, sex, or dep (simd deprivation)
-  plot_trend_chart <- function(dataset, pal_chose, split) {
+  plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data_name = NULL) {
 
     trend_data <- dataset %>% # filtering data by cut and area name
       filter(type == split &
@@ -157,6 +171,8 @@ function(input, output, session) {
                                                         "75 - 84", "85 and over"))) 
     }
     
+    if (type == "variation") {
+      
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>", 
                               "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
@@ -167,7 +183,41 @@ function(input, output, session) {
     # yaxis_plots[["range"]] <- c(x = -100, 80)
     
     #Creating time trend plot
-    plot_ly(data=trend_data, x=~week_ending,  y = ~variation) %>%
+    trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
+    
+    
+    } else if (type == "total") {
+      
+      ###############################################
+      # Creating objects that change depending on dataset
+      yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
+                               data_name == "aye" ~ "Number of attendances",
+                               data_name == "ooh" ~ "Number of consultations",
+                               data_name == "nhs24" ~ "Number of calls")
+      
+      #Modifying standard layout
+      yaxis_plots[["title"]] <- yaxis_title
+      
+      hist_legend <- case_when(data_name == "adm" ~ "Average 2016-2019",
+                               data_name %in% c("aye", "nhs24", "ooh") ~ "Average 2018-2019")
+      
+      measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
+                                data_name == "aye" ~ "Attendances: ",
+                                data_name == "ooh" ~ "Consultations: ",
+                                data_name == "nhs24" ~ "Calls: ")
+      
+      #Text for tooltip
+      tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                "<br>", measure_name, trend_data$count,
+                                "<br>", "Historic average: ", trend_data$count_average))
+
+      #Creating time trend plot
+      trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count) 
+    
+    }
+    
+    #Creating time trend plot
+    trend_plot %>%
       add_trace(type = 'scatter', mode = 'lines',
                 color = ~category, colors = pal_chose,
                 text=tooltip_trend, hoverinfo="text") %>%
@@ -230,24 +280,37 @@ function(input, output, session) {
   ###############################################.
   # Creating plots for each cut and dataset
   output$aye_overall <- renderPlotly({plot_overall_chart(aye, "aye")})
-  output$aye_sex <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex")})
-  output$aye_age <- renderPlotly({plot_trend_chart(aye, pal_age, "age")})
-  output$aye_depr <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep")})
+  output$aye_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex")})
+  output$aye_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age")})
+  output$aye_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep")})
+  output$aye_sex_tot <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", "total", "aye")})
+  output$aye_age_tot <- renderPlotly({plot_trend_chart(aye, pal_age, "age", "total", "aye")})
+  output$aye_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "total", "aye")})
   
   output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
-  output$ooh_sex <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex")})
-  output$ooh_age <- renderPlotly({plot_trend_chart(ooh, pal_age, "age")})
-  output$ooh_depr <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep")})
-  
-  output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
-  output$adm_sex <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex")})
-  output$adm_age <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age")})
-  output$adm_depr <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep")})
+  output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex")})
+  output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age")})
+  output$ooh_depr_var <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep")})
+  output$ooh_sex_tot <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", "total", "ooh")})
+  output$ooh_age_tot <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", "total", "ooh")})
+  output$ooh_depr_tot <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", "total", "ooh")})
   
   output$nhs24_overall <- renderPlotly({plot_overall_chart(nhs24, "nhs24")})
-  output$nhs24_sex <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex")})
-  output$nhs24_age <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age")})
-  output$nhs24_depr <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep")})
+  output$nhs24_sex_var <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex")})
+  output$nhs24_age_var <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age")})
+  output$nhs24_depr_var <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep")})
+  output$nhs24_sex_tot <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex", "total", "nhs24")})
+  output$nhs24_age_tot <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age", "total", "nhs24")})
+  output$nhs24_depr_tot <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep", "total", "nhs24")})
+  
+  output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
+  output$adm_sex_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex")})
+  output$adm_age_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age")})
+  output$adm_depr_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep")})
+  output$adm_sex_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", "total", "adm")})
+  output$adm_age_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", "total", "adm")})
+  output$adm_depr_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", "total", "adm")})
+  
   output$adm_spec <- renderPlotly({
 
     trend_data <- rapid %>% filter(type == "sex") %>%
