@@ -69,7 +69,17 @@ function(input, output, session) {
     rapid %>% filter(admission_type == input$adm_type &
                        spec == "All")
   })
-  
+
+  # Rapid dataset used for specialty charts
+  rapid_spec <- reactive({
+    rapid %>% filter(type == "sex") %>%
+      filter(area_name == input$geoname &
+               admission_type == input$adm_type &
+               category == "All" &
+               spec %in% input$adm_specialty)
+    
+  })
+    
   # Function to filter the datasets for the overall charts and download data based on user input
   filter_data <- function(dataset) {
     dataset %>% filter(type == "sex") %>%
@@ -93,57 +103,64 @@ function(input, output, session) {
     
     total_title <- paste0("Weekly number of ", dataset)
     
+    # To make sure that both titles take the same space and are lined up doing
+    # a bit of a hacky shortcut:
+    diff_chars <- nchar(variation_title) - nchar(total_title) +10
+    extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
+    
     # Charts and rest of UI
     if (input$measure_select == "Hospital admissions") {
       tagList(#Hospital admissions
         h3("Weekly admissions to hospital (Source: RAPID dataset)"),
         plot_box("2020 compared with the 2016-2019 average", "adm_overall"),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by sex"), "adm_sex_var")),
-                 column(6, plot_box(paste0(total_title, " by sex"), "adm_sex_tot"))),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by age group"), "adm_age_var")),
-                 column(6, plot_box(paste0(total_title, " by age group"), "adm_age_tot"))),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "adm_depr_var")),
-                 column(6, plot_box(paste0(total_title, " by SIMD quintile"), "adm_depr_tot"))),
-        h4(paste0(variation_title, " 2016-2019 by specialty group")),
-        fluidRow(column(4, pickerInput("adm_specialty", "Select one or more specialty groups",
+        plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "adm_sex_var",
+                     paste0(total_title, " by sex"), "adm_sex_tot"),
+        plot_cut_box(paste0(variation_title, " 2018-2019 by age group"), "adm_age_var",
+                     paste0(total_title, " by age group"), "adm_age_tot"),
+        plot_cut_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "adm_depr_var",
+                     paste0(total_title, " by SIMD quintile"), "adm_depr_tot"),
+        fluidRow(column(6, h4(paste0(variation_title, " 2016-2019 by specialty group"))),
+                 column(6, h4(paste0(total_title, " by specialty group")))),
+        fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
                     selected = c("Medical", "Surgery"))),
-        column(8, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
-        withSpinner(plotlyOutput("adm_spec"))
+        column(6, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
+        fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
+                 column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
       )
     } else if (input$measure_select == "A&E attendances") {
       tagList(#A&E Attendances
         h3("Weekly attendances to A&E departments (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "aye_overall"),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by sex"), "aye_sex_var")),
-                 column(6, plot_box(paste0(total_title, " by sex"), "aye_sex_tot"))),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by age group"), "aye_age_var")),
-                 column(6, plot_box(paste0(total_title, " by age group"), "aye_age_tot"))),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "aye_depr_var")),
-                 column(6, plot_box(paste0(total_title, " by SIMD quintile"), "aye_depr_tot")))
+        plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "aye_sex_var",
+                     paste0(total_title, " by sex"), "aye_sex_tot"),
+        plot_cut_box(paste0(variation_title, " 2018-2019 by age group"), "aye_age_var",
+                     paste0(total_title, " by age group"), "aye_age_tot"),
+        plot_cut_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "aye_depr_var",
+                     paste0(total_title, " by SIMD quintile"), "aye_depr_tot")
       )
       
     } else if (input$measure_select == "NHS 24 calls") {
       tagList(# NHS 24 callw
         h3("Weekly calls to NHS24 service (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "nhs24_overall"),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by sex"), "nhs24_sex_var")),
-                 column(6, plot_box(paste0(total_title, " by sex"), "nhs24_sex_tot"))),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by age group"), "nhs24_age_var")),
-                 column(6, plot_box(paste0(total_title, " by age group"), "nhs24_age_tot"))),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "nhs24_depr_var")),
-                 column(6, plot_box(paste0(total_title, " by SIMD quintile"), "nhs24_depr_tot")))
+        plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "nhs24_sex_var",
+                     paste0(total_title, " by sex"), "nhs24_sex_tot"),
+        plot_cut_box(paste0(variation_title, " 2018-2019 by age group"), "nhs24_age_var",
+                     paste0(total_title, " by age group"), "nhs24_age_tot"),
+        plot_cut_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "nhs24_depr_var",
+                     paste0(total_title, " by SIMD quintile"), "nhs24_depr_tot")
       )
     } else if (input$measure_select == "Out of hours consultations") {
       tagList(#Out of hours consultations
         h3("Weekly consultations to out of hours services (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "ooh_overall"),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by sex"), "ooh_sex_var")),
-                 column(6, plot_box(paste0(total_title, " by sex"), "ooh_sex_tot"))),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by age group"), "ooh_age_var")),
-                 column(6, plot_box(paste0(total_title, " by age group"), "ooh_age_tot"))),
-        fluidRow(column(6, plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "ooh_depr_var")),
-                 column(6, plot_box(paste0(total_title, " by SIMD quintile"), "ooh_depr_tot")))
+        plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "ooh_sex_var",
+                     paste0(total_title, " by sex"), "ooh_sex_tot"),
+        plot_cut_box(paste0(variation_title, " 2018-2019 by age group"), "ooh_age_var",
+                     paste0(total_title, " by age group"), "ooh_age_tot"),
+        plot_cut_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "ooh_depr_var",
+                     paste0(total_title, " by SIMD quintile"), "ooh_depr_tot")
       )
     }
   }) 
@@ -179,7 +196,7 @@ function(input, output, session) {
                               "<br>", "Change from average: ", trend_data$variation, "%"))
     
     #Modifying standard layout
-    yaxis_plots[["title"]] <- "% change compared with previous years average"
+    yaxis_plots[["title"]] <- "% change from average"
     # yaxis_plots[["range"]] <- c(x = -100, 80)
     
     #Creating time trend plot
@@ -277,6 +294,58 @@ function(input, output, session) {
     
   }
   
+  plot_spec <- function(type) {
+    trend_data <- rapid_spec()
+    
+    if (type == "variation") {
+      
+      #Text for tooltip
+      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                                "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                "<br>", "Change from average: ", trend_data$variation, "%"))
+      
+      #Modifying standard layout
+      yaxis_plots[["title"]] <- "% change from average"
+      
+      #Creating time trend plot
+      trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
+      
+      
+    } else if (type == "total") {
+      
+      
+      #Modifying standard layout
+      yaxis_plots[["title"]] <- "Number of admissions"
+      
+      hist_legend <- "Average 2016-2019"
+      measure_name <- "Admissions: "
+      
+      #Text for tooltip
+      tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                "<br>", measure_name, trend_data$count,
+                                "<br>", "Historic average: ", trend_data$count_average))
+      
+      #Creating time trend plot
+      trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count) 
+      
+    }
+    
+    
+    #Creating time trend plot
+    trend_plot %>% 
+      add_trace(type = 'scatter', mode = 'lines+markers',
+                color = ~spec, colors = pal_spec(), marker = list(size = 8),
+                symbol = ~spec, symbols = symbol_spec(),
+                text=tooltip_trend, hoverinfo="text") %>%
+      #Layout
+      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+             showlegend = TRUE, # in case only one spec selected, it still shows
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% # position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
+  }
+  
   ###############################################.
   # Creating plots for each cut and dataset
   output$aye_overall <- renderPlotly({plot_overall_chart(aye, "aye")})
@@ -310,56 +379,44 @@ function(input, output, session) {
   output$adm_sex_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", "total", "adm")})
   output$adm_age_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", "total", "adm")})
   output$adm_depr_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", "total", "adm")})
+  output$adm_spec_var <- renderPlotly({plot_spec("variation")})
+  output$adm_spec_tot <- renderPlotly({plot_spec("total")})
   
-  output$adm_spec <- renderPlotly({
-
-    trend_data <- rapid %>% filter(type == "sex") %>%
-      filter(area_name == input$geoname &
-               admission_type == input$adm_type &
-               category == "All" &
-               spec %in% input$adm_specialty)
-
+  # Palette for specialty
+  pal_spec <- reactive({
     #Creating palette of colors: colorblind proof
     #First obtaining length of each geography type, if more than 6, then 6,
     # this avoids issues. Extra selections will not be plotted
     trend_length <- length(input$adm_specialty)
-
+    
     # First define the palette of colours used, then set a named vector, so each color
-    # gets assigned to an area. I think is based on the order in the dataset, which
-    # helps because Scotland is always first so always black.
+    # gets assigned to an area. I think is based on the order in the dataset.
     trend_palette <- c("#000000", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99",
                        "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#b15928")
-
-    trend_scale <- c(setNames(trend_palette, unique(trend_data$spec)[1:trend_length]))
+    
+    trend_scale <- c(setNames(trend_palette, unique(rapid_spec()$spec)[1:trend_length]))
     trend_col <- trend_scale[1:trend_length]
+    
+  })
+  
+  symbol_spec <- reactive({
+    #Creating palette of colors: colorblind proof
+    #First obtaining length of each geography type, if more than 6, then 6,
+    # this avoids issues. Extra selections will not be plotted
+    trend_length <- length(input$adm_specialty)
+    
+    # First define the palette of sybols used, then set a named vector, so each color
+    # gets assigned to an area. I think is based on the order in the dataset.
 
-    # Same approach for symbols
     symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
                           'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
-    symbols_scale <- c(setNames(symbols_palette, unique(trend_data$spec)[1:trend_length]))
+    symbols_scale <- c(setNames(symbols_palette, unique(rapid_spec()$spec)[1:trend_length]))
     symbols_trend <- symbols_scale[1:trend_length]
-
-    #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$spec, "<br>", 
-                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                              "<br>", "Change from average: ", trend_data$variation))
     
-    yaxis_plots[["title"]] <- "% change compared with previous years average"
-    # yaxis_plots[["range"]] <- c(-100, 100)
+  })
+  
+  output$adm_spec <- renderPlotly({
 
-    #Creating time trend plot
-    plot_ly(data=trend_data, x=~week_ending,  y = ~variation) %>%
-      add_trace(type = 'scatter', mode = 'lines+markers',
-                color = ~spec, colors = trend_palette, marker = list(size = 8),
-                symbol = ~spec, symbols = symbols_trend,
-                text=tooltip_trend, hoverinfo="text") %>%
-      #Layout
-      layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
-             showlegend = TRUE, # in case only one spec selected, it still shows
-             yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% # position of legend
-      # leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
   })
 
 ###############################################.

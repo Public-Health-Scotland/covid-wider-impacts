@@ -17,11 +17,23 @@ library(stringr) #for manipulating strings
 ###############################################.
 ## Functions ----
 ###############################################.
-
 plot_box <- function(title_plot, plot_output) {
   tagList(h4(title_plot),
-      withSpinner(plotlyOutput(plot_output)))
+          withSpinner(plotlyOutput(plot_output)))
 }
+
+
+plot_cut_box <- function(title_plot1, plot_output1,
+                         title_plot2, plot_output2) {
+  tagList(
+    fluidRow(column(6, h4(title_plot1)),
+             column(6, h4(title_plot2))),
+    fluidRow(column(6, withSpinner(plotlyOutput(plot_output1))),
+             column(6, withSpinner(plotlyOutput(plot_output2))))
+    )
+}
+
+
 
 ###############################################.
 ## Data ----
