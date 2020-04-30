@@ -10,6 +10,7 @@ library(zoo) #dates
 library(readr) #reading/writing files
 library(stringr) #manipulating string
 library(phsmethods) #matching codes with names
+library(tidyr) # for wide to long formatting
 
 ###############################################.
 ## Functions ----
