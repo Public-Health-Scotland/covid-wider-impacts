@@ -5,7 +5,8 @@ tagList( #needed for shinyjs
   title = div(tags$a(img(src="phs-logo.png", height=40), href= "https://www.publichealthscotland.scot/"),
               style = "position: relative; top: -5px;"), 
   windowTitle = "COVID-19 wider impacts", #title for browser tab
-  header = tags$head(includeCSS("www/styles.css")),
+  header = tags$head(includeCSS("www/styles.css"), # CSS styles
+                     tags$link(rel="shortcut icon", href="favicon.ico")), #Icon for browser tab
 ###############################################.
 ## Introduction ----
 ###############################################.
