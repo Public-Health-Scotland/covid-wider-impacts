@@ -3,7 +3,7 @@
 function(input, output, session) {
   
   # For debugging
-  # observeEvent(input$browser, browser())
+  observeEvent(input$browser, browser())
   
   ###############################################.
   # To move around tabs 
@@ -156,7 +156,7 @@ function(input, output, session) {
     
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                              "Week ending: ", format(trend_data$date, "%d %b %y"),
+                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
                               "<br>", "Change from average: ", trend_data$variation, "%"))
     
     #Modifying standard layout
@@ -164,7 +164,7 @@ function(input, output, session) {
     # yaxis_plots[["range"]] <- c(x = -100, 80)
     
     #Creating time trend plot
-    plot_ly(data=trend_data, x=~date,  y = ~variation) %>%
+    plot_ly(data=trend_data, x=~week_ending,  y = ~variation) %>%
       add_trace(type = 'scatter', mode = 'lines',
                 color = ~category, colors = pal_chose,
                 text=tooltip_trend, hoverinfo="text") %>%
@@ -201,12 +201,12 @@ function(input, output, session) {
                              data_name == "nhs24" ~ "Calls: ")
     
     #Text for tooltip
-    tooltip_trend <- c(paste0("Week ending: ", format(trend_data$date, "%d %b %y"),
+    tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
     
     #Creating time trend plot
-    plot_ly(data=trend_data, x=~date) %>%
+    plot_ly(data=trend_data, x=~week_ending) %>%
       add_lines(y = ~count, line = list(color = pal_overall[1]),
                 text=tooltip_trend, hoverinfo="text",
                 name = "2020") %>%
@@ -272,13 +272,13 @@ function(input, output, session) {
     symbols_trend <- symbols_scale[1:trend_length]
 
     #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$spec, "<br>", trend_data$date,
+    tooltip_trend <- c(paste0(trend_data$spec, "<br>", trend_data$week_ending,
                               "<br>", "Change from average: ", trend_data$variation))
     
     # yaxis_plots[["range"]] <- c(-100, 100)
 
     #Creating time trend plot
-    plot_ly(data=trend_data, x=~date,  y = ~variation) %>%
+    plot_ly(data=trend_data, x=~week_ending,  y = ~variation) %>%
       add_trace(type = 'scatter', mode = 'lines+markers',
                 color = ~spec, colors = trend_palette, marker = list(size = 8),
                 symbol = ~spec, symbols = symbols_trend,
@@ -293,18 +293,17 @@ function(input, output, session) {
   })
 
 ###############################################.
-## Table ----
-###############################################.
+##reactive data to show in app
   data_table <- reactive({
-    # Reformat dates? so they become 22 March 2020?.
-    # Think about the variable names
     switch(
       input$data_select,
-      "Hospital admissions" = rapid,
+      "Hospital admissions" = rapid %>% rename(specialty = spec),
       "A&E attendances" = aye,
-      "NHS24 calls" = nhs24,
+      "NHS 24 calls" = nhs24,
       "Out of hours consultations" = ooh
     ) %>% 
+      mutate(type = str_to_sentence(type)) %>% 
+      rename(average_pre2020 = count_average) %>% 
       rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
       # Note: character variables are converted to factors in each
       # dataset for use in the table
@@ -347,7 +346,7 @@ function(input, output, session) {
       input$measure_select,
       "Hospital admissions" = filter_data(rapid_filt()),
       "A&E attendances" = filter_data(aye),
-      "NHS24 calls" = filter_data(nhs24),
+      "NHS 24 calls" = filter_data(nhs24),
       "Out of hours consultations" = filter_data(ooh)
     ) %>% 
       select(area_name, date, count, count_average) %>% 
