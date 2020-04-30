@@ -170,7 +170,8 @@ function(input, output, session) {
                 text=tooltip_trend, hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots) %>%
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>%
       # leaving only save plot
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
 
@@ -214,7 +215,8 @@ function(input, output, session) {
                 name = hist_legend) %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% 
       # leaving only save plot
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
     
@@ -284,7 +286,8 @@ function(input, output, session) {
       #Layout
       layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
              showlegend = TRUE,
-             yaxis = yaxis_plots, xaxis = xaxis_plots) %>%
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>%
       # leaving only save plot
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
   })
