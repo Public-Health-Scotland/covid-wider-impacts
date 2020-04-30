@@ -47,8 +47,8 @@ tagList( #needed for shinyjs
         column(4, 
                selectInput("adm_type", label = "Step 3. Select type of admission.",
                            choices = c("All", "Emergency", "Planned"), selected = "All"),
-               downloadButton('download_chart_data', 'Download data'),
-               actionButton("browser", "Browser")
+               downloadButton('download_chart_data', 'Download data')#,
+               # actionButton("browser", "Browser")
                )
       ), #wellPanel bracket
       mainPanel(width = 12,
