@@ -3,7 +3,7 @@
 function(input, output, session) {
   
   # For debugging
-  observeEvent(input$browser, browser())
+  # observeEvent(input$browser, browser())
   
   ###############################################.
   # To move around tabs 
@@ -18,7 +18,7 @@ function(input, output, session) {
   
   ###############################################.
   # Reactive controls 
-  # For areaname depending on areatype selected
+  # Show list of area names depending on areatype selected
   output$geoname_ui <- renderUI({
     
     areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype])
@@ -28,7 +28,8 @@ function(input, output, session) {
     
   })
   
-  # Disabling  admissions type if no admissions to hospital selected
+  # Disabling  admissions type if no admissions to hospital selected and
+  # updating labels to say it's not available
   observeEvent({input$measure_select}, {
       if (input$measure_select == "Hospital admissions") {
         enable("adm_type")
@@ -52,18 +53,18 @@ function(input, output, session) {
   #modal to provide information on what specialties are included in each group
   spec_modal <- modalDialog(
     h5(" List of specialties and what group they correspond to"),
-    renderTable(spec_lookup),
+    renderTable(spec_lookup), # creating table based on specialty lookup
     size = "l", align= "center",
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   )
-  
-  observeEvent(input$btn_spec_groups, { showModal(spec_modal) }) # Link action button click to modal launch 
+  # Link action button click to modal launch 
+  observeEvent(input$btn_spec_groups, { showModal(spec_modal) }) 
   
   
   ###############################################.
   ## Reactive datasets ----
   ###############################################.
-  # Rapid dataset filtered for 
+  # Rapid dataset filtered for admission_type, then used to create the admissions charts
   rapid_filt <- reactive({
     rapid %>% filter(admission_type == input$adm_type &
                        spec == "All")
@@ -95,10 +96,10 @@ function(input, output, session) {
       tagList(#Hospital admissions
         h3("Weekly admissions to hospital (Source: RAPID dataset)"),
         plot_box("2020 compared with the 2016-2019 average", "adm_overall"),
-        plot_box(paste0(variation_title, "in 2016-2019 by sex"), "adm_sex"),
-        plot_box(paste0(variation_title, "in 2016-2019 by age group"), "adm_age"),
-        plot_box(paste0(variation_title, "in 2016-2019 by SIMD quintile"), "adm_depr"),
-        h4(paste0(variation_title, "in 2016-2019 by specialty group")),
+        plot_box(paste0(variation_title, " 2016-2019 by sex"), "adm_sex"),
+        plot_box(paste0(variation_title, " 2016-2019 by age group"), "adm_age"),
+        plot_box(paste0(variation_title, " 2016-2019 by SIMD quintile"), "adm_depr"),
+        h4(paste0(variation_title, " 2016-2019 by specialty group")),
         fluidRow(column(4, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
                     selected = c("Medical", "Surgery"))),
@@ -109,26 +110,26 @@ function(input, output, session) {
       tagList(#A&E Attendances
         h3("Weekly attendances to A&E departments (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "aye_overall"),
-        plot_box(paste0(variation_title, "in 2018-2019 by sex"), "aye_sex"),
-        plot_box(paste0(variation_title, "in 2018-2019 by age group"), "aye_age"),
-        plot_box(paste0(variation_title, "in 2018-2019 by SIMD quintile"), "aye_depr")
+        plot_box(paste0(variation_title, " 2018-2019 by sex"), "aye_sex"),
+        plot_box(paste0(variation_title, " 2018-2019 by age group"), "aye_age"),
+        plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "aye_depr")
       )
       
     } else if (input$measure_select == "NHS 24 calls") {
       tagList(# NHS 24 callw
         h3("Weekly calls to NHS24 service (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "nhs24_overall"),
-        plot_box(paste0(variation_title, "in 2018-2019 by sex"), "nhs24_sex"),
-        plot_box(paste0(variation_title, "in 2018-2019 by age group"), "nhs24_age"),
-        plot_box(paste0(variation_title, "in 2018-2019 by SIMD quintile"), "nhs24_depr")
+        plot_box(paste0(variation_title, " 2018-2019 by sex"), "nhs24_sex"),
+        plot_box(paste0(variation_title, " 2018-2019 by age group"), "nhs24_age"),
+        plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "nhs24_depr")
       )
     } else if (input$measure_select == "Out of hours consultations") {
       tagList(#Out of hours consultations
         h3("Weekly consultations to out of hours services (Source: Unscheduled Care Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "ooh_overall"),
-        plot_box(paste0(variation_title, "in 2018-2019 by sex"), "ooh_sex"),
-        plot_box(paste0(variation_title, "in 2018-2019 by age group"), "ooh_age"),
-        plot_box(paste0(variation_title, "in 2018-2019 by SIMD quintile"), "ooh_depr")
+        plot_box(paste0(variation_title, " 2018-2019 by sex"), "ooh_sex"),
+        plot_box(paste0(variation_title, " 2018-2019 by age group"), "ooh_age"),
+        plot_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "ooh_depr")
       )
     }
   }) 
@@ -138,15 +139,17 @@ function(input, output, session) {
   ###############################################.
   
   ###############################################.
-  # Function that creates line trend charts in Plotly for different splits
+  # Function that creates line trend charts in Plotly for different splits: age, sex, depr
   # THree parameters: pal_chose - what palette of colours you want
   # dataset - what data to use for the chart formatted as required
-  # split - age, sex, or deprivation
+  # split - age, sex, or dep (simd deprivation)
   plot_trend_chart <- function(dataset, pal_chose, split) {
 
-    trend_data <- dataset %>% filter(type == split) %>%
-      filter(area_name == input$geoname )
+    trend_data <- dataset %>% # filtering data by cut and area name
+      filter(type == split &
+              area_name == input$geoname )
 
+    # Formatting age groups as factor so they appear in the correct order in the legend
     if (split == "age") {
       trend_data <- trend_data %>% 
         mutate(category = factor(category, levels = c("Under 5", "5 - 14", "15 - 44", 
@@ -160,7 +163,7 @@ function(input, output, session) {
                               "<br>", "Change from average: ", trend_data$variation, "%"))
     
     #Modifying standard layout
-    yaxis_plots[["title"]] <- "% change compared with historic average"
+    yaxis_plots[["title"]] <- "% change compared with previous years average"
     # yaxis_plots[["range"]] <- c(x = -100, 80)
     
     #Creating time trend plot
@@ -171,8 +174,8 @@ function(input, output, session) {
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>%
-      # leaving only save plot
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
 
   }
@@ -207,17 +210,19 @@ function(input, output, session) {
     
     #Creating time trend plot
     plot_ly(data=trend_data, x=~week_ending) %>%
+      # 2020 line
       add_lines(y = ~count, line = list(color = pal_overall[1]),
                 text=tooltip_trend, hoverinfo="text",
                 name = "2020") %>%
+      # Average of previous years line
       add_lines(y = ~count_average, line = list(color = pal_overall[2], dash = 'dash'),
                 text=tooltip_trend, hoverinfo="text",
                 name = hist_legend) %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% 
-      # leaving only save plot
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
     
   }
@@ -272,9 +277,11 @@ function(input, output, session) {
     symbols_trend <- symbols_scale[1:trend_length]
 
     #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$spec, "<br>", trend_data$week_ending,
+    tooltip_trend <- c(paste0(trend_data$spec, "<br>", 
+                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
                               "<br>", "Change from average: ", trend_data$variation))
     
+    yaxis_plots[["title"]] <- "% change compared with previous years average"
     # yaxis_plots[["range"]] <- c(-100, 100)
 
     #Creating time trend plot
@@ -285,32 +292,41 @@ function(input, output, session) {
                 text=tooltip_trend, hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
-             showlegend = TRUE,
+             showlegend = TRUE, # in case only one spec selected, it still shows
              yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>%
-      # leaving only save plot
+             legend = list(x = 100, y = 0.5)) %>% # position of legend
+      # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
   })
 
 ###############################################.
 ##reactive data to show in app
   data_table <- reactive({
-    switch(
-      input$data_select,
+    # Change dataset depending on what user selected
+    switch(input$data_select,
       "Hospital admissions" = rapid %>% rename(specialty = spec),
       "A&E attendances" = aye,
       "NHS 24 calls" = nhs24,
-      "Out of hours consultations" = ooh
-    ) %>% 
-      mutate(type = str_to_sentence(type)) %>% 
+      "Out of hours consultations" = ooh) %>% 
+      # Formatting to a "nicer" style
+      select(-type) %>% 
       rename(average_pre2020 = count_average) %>% 
-      rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
       # Note: character variables are converted to factors in each
       # dataset for use in the table
       # This is because dropdown prompts on the table filters only
       # appear for factors
       mutate_if(is.character, as.factor) %>% 
-      select(sort(current_vars())) # orde columns alphabetically
+      mutate(category = recode_factor(category, "All" = "All", "Female" = "Female", "Male" = "Male",
+                                      "1 - most deprived" = "Quintile 1 - most deprived",
+                                      "2" = "Quintile 2", "3" = "Quintile 3", "4" = "Quintile 4",
+                                      "5 - least deprived" = "Quintile 5 - least deprived",
+                                      "Under 5" = "Aged under 5", "5 - 14"= "Aged 5 to 14",
+                                      "15 - 44" = "Aged 15 to 44","45 - 64" = "Aged 45 to 64",
+                                      "65 - 74" = "Aged 65 to 74", "75 - 84" = "Aged 75 to 84", 
+                                      "85 and over" = "Aged 85 and over"),
+             week_ending = format(week_ending, "%d %b %y")) %>% 
+      rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
+      select(sort(current_vars())) # order columns alphabetically
   })
   
   output$table_filtered <- DT::renderDataTable({
@@ -331,15 +347,17 @@ function(input, output, session) {
   ###############################################.
   ## Data downloads ----
   ###############################################.
-  
+  # Data download of data table. 
   output$download_table_csv <- downloadHandler(
     filename ="data_extract.csv",
     content = function(file) {
-      write_csv(data_table()
-                [input[["table_filtered_rows_all"]], ],
-                file) } 
+      # This downloads only the data the user has selected using the table filters
+      write_csv(data_table()[input[["table_filtered_rows_all"]], ], file) 
+      } 
   )
   
+  # For the charts at the moment the data download is for the overall one,
+  # need to think how to allow downloading for each chart
   # Reactive dataset that gets the data the user is visualisaing ready to download
   overall_data_download <- reactive({
     switch(
@@ -349,8 +367,9 @@ function(input, output, session) {
       "NHS 24 calls" = filter_data(nhs24),
       "Out of hours consultations" = filter_data(ooh)
     ) %>% 
-      select(area_name, date, count, count_average) %>% 
-      rename(average_pre2020 = count_average)
+      select(area_name, week_ending, count, count_average) %>% 
+      rename(average_pre2020 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y"))
   })
 
   output$download_chart_data <- downloadHandler(
