@@ -10,25 +10,35 @@ tagList( #needed for shinyjs
 ###############################################.
 ## Introduction ----
 ###############################################.
-    tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
-             column(4,
-                    h3("COVID-19 wider impacts to the health care system")),
-             column(8,
-                    tags$br(),
-                    p("This tool allows you to find the data you want",
-                      "and visualise it in different ways. Within each of the",
-                      "following sections there are filters that let you",
-                      "select the data you are interested in:"),
-                    tags$ul( 
+tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
+         wellPanel(
+           column(4,
+                  h3("COVID-19 wider impacts to the health care system")),
+           column(8,
+                  tags$br(),
+                  p("This tool provides a high level overview of how the COVID-19 response 
+is impacting more widely on health and health inequalities. The initial version focuses on 
+hospital admissions, unscheduled care and volume of calls to NHS24. The data are presented by age, sex, 
+deprivation quintile, specialty, elective versus emergency and by geographical location. 
+Further data will be added as it becomes available and the dashboard will be updated weekly,
+aligned to the release of the ", tags$a(href="https://beta.isdscotland.org/recent-publications/https://www.isdscotland.org/index.asp?Co=Y", "Coronavirus (COVID-19) weekly report for Scotland.", 
+                           class="externallink")),
+                    p("If you any questions relating to the data or the tool, then please contact us at: ",
+                      tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink"))),
+                      tags$ul( 
                       tags$li(
                         tags$b(actionLink("jump_summary","Summary trends")),
                         icon("area-chart"),
-                        " - shows the data over time for different areas."),
+                        " - for hospital admissions, unscheduled care & calls to NHS24."),
                       tags$li(
                         tags$b(actionLink( "jump_table", "Data")),
                         icon("table"),
-                        " - allows you to view and download the data as a table."))
+                        " - view & download data behind this tool."))
                       )
+             ), #wellPanel bracket
+             mainPanel(width = 12
+                      #reserve space for summary text 
+             )# mainPanel bracket
     ), #tabPanel bracket
 ###############################################.
 ## Summary trends ----

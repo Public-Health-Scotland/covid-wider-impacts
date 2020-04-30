@@ -130,7 +130,7 @@ function(input, output, session) {
       )
     } else if (input$measure_select == "A&E attendances") {
       tagList(#A&E Attendances
-        h3("Weekly attendances to A&E departments (Source: Unscheduled Care Datamart)"),
+        h3("Weekly attendances to A&E departments (Source: AE2 Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "aye_overall"),
         plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "aye_sex_var",
                      paste0(total_title, " by sex"), "aye_sex_tot"),
@@ -153,7 +153,7 @@ function(input, output, session) {
       )
     } else if (input$measure_select == "Out of hours consultations") {
       tagList(#Out of hours consultations
-        h3("Weekly consultations to out of hours services (Source: Unscheduled Care Datamart)"),
+        h3("Weekly consultations to out of hours services (Source: GP OOH Datamart)"),
         plot_box("2020 compared with the 2018-2019 average", "ooh_overall"),
         plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "ooh_sex_var",
                      paste0(total_title, " by sex"), "ooh_sex_tot"),
