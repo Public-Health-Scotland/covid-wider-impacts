@@ -13,7 +13,7 @@ tagList( #needed for shinyjs
 tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
          wellPanel(
            column(4,
-                  h3("COVID-19 wider impacts to the health care system")),
+                  h3("COVID-19 wider impacts on the health care system")),
            column(8,
                   tags$br(),
                   p("This tool provides a high level overview of how the COVID-19 response 

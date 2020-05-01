@@ -126,28 +126,28 @@ function(input, output, session) {
     # Charts and rest of UI
     if (input$measure_select == "Hospital admissions") {
       tagList(#Hospital admissions
-        cut_charts(title= "Weekly admissions to hospital", source = "RAPID Datamart",
+        cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
                    data_name = "adm", average = "2016-2019"),
         fluidRow(column(6, h4(paste0(variation_title, " 2016-2019 by specialty group"))),
                  column(6, h4(paste0(total_title, " by specialty group")))),
         fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
-                    selected = c("Medical", "Surgery"))),
+                    selected = c("Medical", "Surgery","Paediatrics"))),
         column(6, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
         fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                  column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
       )
     } else if (input$measure_select == "A&E attendances") { #A&E Attendances
         cut_charts(title= "Weekly attendances to A&E departments", 
-                   source = "AE2 Datamart", data_name = "aye")
+                   source = "PHS AE2 Datamart", data_name = "aye")
       
     } else if (input$measure_select == "NHS 24 calls") {# NHS 24 calls
       cut_charts(title= "Weekly calls to NHS24 service", 
-                 source = "Unscheduled Care Datamart", data_name ="nhs24")
+                 source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
     } else if (input$measure_select == "Out of hours consultations") { #Out of hours consultations
         cut_charts(title= "Weekly consultations to out of hours services", 
-                   source = "GP OOH Datamart", data_name ="ooh")
+                   source = "PHS GP OOH Datamart", data_name ="ooh")
     }
   }) 
   
@@ -179,10 +179,10 @@ function(input, output, session) {
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>", 
                               "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                              "<br>", "Change from average: ", trend_data$variation, "%"))
+                              "<br>", "Change from 2018-19 average: ", trend_data$variation, "%"))
     
     #Modifying standard layout
-    yaxis_plots[["title"]] <- "% change from average"
+    yaxis_plots[["title"]] <- "% change from 2018-19 average"
     # yaxis_plots[["range"]] <- c(x = -100, 80)
     
     #Creating time trend plot
@@ -210,7 +210,8 @@ function(input, output, session) {
                                 data_name == "nhs24" ~ "Calls: ")
       
       #Text for tooltip
-      tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+      tooltip_trend <- c(paste0(trend_data$category, "<br>",
+        "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
                                 "<br>", measure_name, trend_data$count,
                                 "<br>", "Historic average: ", trend_data$count_average))
 
@@ -310,7 +311,8 @@ function(input, output, session) {
       measure_name <- "Admissions: "
       
       #Text for tooltip
-      tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+      tooltip_trend <- c(paste0(trend_data$spec, "<br>",
+        "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
                                 "<br>", measure_name, trend_data$count,
                                 "<br>", "Historic average: ", trend_data$count_average))
       
