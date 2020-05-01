@@ -86,6 +86,15 @@ proper <- function(dataset) {
     select(-hb1, -hb)
 }
 
+# Creating %variation from precovid to covid period
+calculate_variation <- function(dataset) {
+  dataset %>% 
+    mutate(count_average = ifelse(is.na(count_average), 0, count_average),
+           variation = round(-1 * ((count_average - count)/count_average * 100), 1),
+           # Dealing with infinite values from historic average = 0
+           variation =  ifelse(is.infinite(variation), 8000, variation)) 
+}
+
 
 ###############################################.
 ## Reading RAPID data ----
@@ -94,7 +103,8 @@ proper <- function(dataset) {
 rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_24_Apr.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
-  filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All"))) 
+  filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
+         date_adm > as.Date("2017-12-31")) 
 
 # Bringing HB names
 hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
@@ -157,7 +167,7 @@ rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>%
 # Producing data for combined medical specialty
 spec_med <- rap_adm %>% 
   filter(spec %in% c("Cancer", "Medical (excl. Cardiology & Cancer)", "Cardiology")) %>% 
-  mutate(spec = "Medical") %>% 
+  mutate(spec = "Medical (incl. Cardiology & Cancer)") %>% 
   group_by(week_ending, area_name, area_type, type, 
     admission_type, spec, category) %>% 
   summarise(count = sum(count)) %>% ungroup
@@ -171,18 +181,17 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
 # Creating average admissions of pre-covid data by day of the year
 rap_adm_old <- rap_adm %>% filter(week_ending<as.Date("2020-01-01")) %>% 
   group_by(category, type, admission_type, spec, area_name, week_no) %>% 
-  summarise(count_average = round(mean(count, na.rm = T), 1)) 
+  summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
 
 # Joining with 2020 data
 rap_adm_2020 <- left_join(rap_adm %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-04-20"))), 
                           rap_adm_old, 
                           by = c("category", "type", "admission_type", "spec", "area_name", "week_no")) %>% 
-  # Creating %variation from precovid to covid period
-  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1)) %>% 
+  calculate_variation() %>% # Creating %variation from precovid to covid period
   select(-week_no)
 
-# Temporary for testing purposes: supressing numbers under 5
-rap_adm_2020$count <- ifelse(rap_adm_2020$count<5,0,rap_adm_2020$count)
+# Supressing numbers under 5
+rap_adm_2020 <- rap_adm_2020 %>% filter(count>=5)
 
 saveRDS(rap_adm_2020, "shiny_app/data/rapid_data.rds")
 
@@ -263,7 +272,7 @@ ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age) %>%
 # Creating average admissions of pre-covid data by day of the year
 ooh_old <- ooh %>% filter(week_ending<as.Date("2020-01-01")) %>% 
   group_by(category, type, area_name, week_no) %>% 
-  summarise(count_average = round(mean(count, na.rm = T), 1)) 
+  summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
 
 # Joining with 2020 data
 # Filtering weeks with incomplete week too!! Temporary
@@ -272,12 +281,11 @@ ooh_2020 <- left_join(ooh %>% filter(between(week_ending, as.Date("2020-01-01"),
                       by = c("category", "type", "area_name", "week_no")) %>% 
   # filtering empty cases
   filter(!(is.na(category) | is.na(area_name) | area_name %in% c("UNKNOWN HSCP - SCOTLAND" ))) %>% 
-  # Creating % variation from pre_covid to covid
-  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1)) %>% 
+  calculate_variation() %>% # Creating %variation from precovid to covid period
   select(-week_no) 
 
-# Temporary for testing purposes: supressing numbers under 5
-ooh_2020$count <- ifelse(ooh_2020$count<5,0,ooh_2020$count)
+# Supressing numbers under 5
+ooh_2020 <- ooh_2020 %>% filter(count>=5)
 
 saveRDS(ooh_2020, "shiny_app/data/ooh_data.rds")
 ooh_2020 <- readRDS("shiny_app/data/ooh_data.rds")
@@ -336,18 +344,14 @@ ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) %>%
 ae_average <- ae_data %>%
   subset(year %in% c("2018","2019")) %>%
   group_by(area_name,area_type,category,type,week_no) %>%
-  summarise(count_average=round(mean(count, na.rm = T),1)) %>% ungroup()
+  summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% ungroup()
 
 # Filter for latest year - 2020
-ae_latest_year <- ae_data %>%
-  subset(year=="2020")
+ae_latest_year <- ae_data %>% subset(year=="2020")
 
 #join latest year of data with averages from previous years
 ae_shiny <- left_join(ae_average,ae_latest_year,
                       by = c("area_name", "area_type", "category","type","week_no"))
-
-# Temporary for testing purposes: supressing numbers under 5
-ae_shiny$count <- ifelse(ae_shiny$count<5,0,ae_shiny$count)
 
 # Remove weeks that haven't happened yet & reformat NHS board names to include prefix/&
 ae_shiny <- ae_shiny %>%
@@ -356,9 +360,11 @@ ae_shiny <- ae_shiny %>%
   subset(week_no<17) %>%
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
                                 TRUE~area_name)) %>%
-  # Creating % variation from pre_covid to covid
-  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1)) %>% 
+  calculate_variation() %>% # Creating %variation from precovid to covid period
   select(-week_no, - year) # not needed for app
+
+# Supressing numbers under 5
+ae_shiny <- ae_shiny %>% filter(count>=5)
 
 #save output for shiny app
 saveRDS(ae_shiny, "shiny_app/data/ae_data.rds")
@@ -430,7 +436,7 @@ nhs24_final_data <- nhs24_final_data %>%
 nhs24_average <- nhs24_final_data %>%
   subset(year %in% c("2018","2019")) %>%
   group_by(area_name,area_type,category,type,week_no) %>%
-  summarise(count_average=round(mean(count, na.rm = T),1)) %>% ungroup()
+  summarise(count_average = round((sum(count, na.rm = T))/2, 1))  %>% ungroup()
 
 # Filter for latest year - 2020 
 nhs24_latest_year <- nhs24_final_data %>% subset(year=="2020")
@@ -446,9 +452,11 @@ nhs24_shiny <- nhs24_shiny %>%
   filter(!(category %in% c("Missing", "Not Known"))) %>% #taking out empty counts
   filter(!(is.na(area_name) | area_name %in% c("UNKNOWN HSCP - SCOTLAND", "ENGLAND/WALES/NORTHERN IRELAND"))) %>% 
   subset(week_no<17) %>%
-  # Creating % variation from pre_covid to covid
-  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1)) %>% 
+  calculate_variation() %>% # Creating % variation from pre_covid to covid
   select(-week_no, - year)
+
+# Supressing numbers under 5
+nhs24_shiny <- nhs24_shiny %>% filter(count>=5)
 
 #save output for shiny app
 saveRDS(nhs24_shiny, "shiny_app/data/nhs24_data.rds")
