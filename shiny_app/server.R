@@ -80,32 +80,59 @@ function(input, output, session) {
                if(input$measure_select == "Hospital admissions"){
                  showModal(modalDialog(
                    title = "What is the data source?",
-                   p("Hospital admissions data has been sourced from ",tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37","Rapid Preliminary Inpatient Data (RAPID).",class="externallink")), br(),
-                   p("RAPID data is not a complete record of all admissions within Scottish hospitals. Maternity, geriatric long stay and mental health admissions, as well as admissions to the Golden Jubilee, would not be included in figures."), br(),
-                   p("Data on hospital admissions normally comes from the ",tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5","SMR01 dataset.",class="externallink"),"However there is a 12 week lag in obtaining these data
-                   and monitoring of the impact of COVID-19 therefore depends on the Rapid dataset, a more limited but up to date information flow 
-                   which provides broadly comparable figures on numbers of admissions"),
+                   p("Hospital admissions data has been sourced from the ",
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37",
+                            "Rapid Preliminary Inpatient Data (RAPID).",class="externallink")), 
+                   p("RAPID data is not a complete record of all admissions within Scottish hospitals. 
+                     Maternity, geriatric long stay and mental health admissions, as well as admissions 
+                     to the Golden Jubilee, would not be included in the figures."), 
+                   p("Data on hospital admissions normally comes from the ",
+                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5",
+                      "SMR01 dataset.",class="externallink"),"However there is a 12 week lag in obtaining these data
+                   and monitoring of the impact of COVID-19 therefore depends on the RAPID dataset, a more limited but up to date information flow 
+                   which provides broadly comparable figures to SMR01 on numbers of admissions."),
                    p(h5("The RAPID dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/", 
-                               "Public Health Scotland (PHS)", class="externallink"))),
+                               "Public Health Scotland (PHS).", class="externallink"))),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }else if (input$measure_select == "A&E attendances"){
                  showModal(modalDialog(
                    title = "What is the data source?",
-                   "A&E",
+                   p("Attendances to A&E departments data has been sourced from the ",
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
+                            "Accident and Emergency Datamart (A&E2).",class="externallink")), 
+                   p("There are two types of data submitted to the A&E datamart: episode and aggregate level data. 
+                     All hospitals with Emergency Departments submit episode level data containing a detailed record 
+                     for each patient attendance. Some smaller sites with minor injury units or community hospitals 
+                     only submit aggregate files containing monthly summary attendance and compliance figures only. 
+                     This is because they do not have the information systems and support to enable collection of 
+                     detailed patient based information. Sites that submit episode level data account for 
+                     around 94% of all attendances at A&E."),
+                   p(h5("The A&E2 dataset is managed by ", 
+                        tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
+                               "Public Health Scotland (PHS).", class="externallink"))),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }else if (input$measure_select == "NHS 24 calls"){
                  showModal(modalDialog(
                    title = "What is the data source?",
-                   "NHS24",
+                   p("Data on calls to NHS24 has been sourced from the ",
+                     tags$a(href="", "xxxx.",class="externallink")), 
+                   p(h5("The NHS24 dataset is managed by ", 
+                        tags$a(href="https://www.nhs24.scot/", 
+                               "NHS24.", class="externallink"))),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }else if (input$measure_select == "Out of hours consultations"){
                  showModal(modalDialog(
                    title = "What is the data source?",
-                   "OOH",
+                   p("Consultations to the Primary Care Out of Hours service data has been sourced from the",
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113", 
+                            "GP Out of Hours Dataset (OOH).",class="externallink")), br(),
+                   p(h5("The OOH dataset is managed by ", 
+                        tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/", 
+                               "Public Health Scotland (PHS).", class="externallink"))),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))})
   
@@ -160,17 +187,17 @@ function(input, output, session) {
     cut_charts <- function(title, source, data_name, average = "2018-2019") {
       tagList(
         h3(title),
-        p(paste0("Source: ", source),
-        actionButton("btn_dataset_modal", "Data Source", icon = icon('question-circle'))),
-      plot_box(paste0("2020 compared with the ", average, " average"), paste0(data_name, "_overall")),
-      plot_cut_box(paste0(variation_title, " ", average, " by sex"), paste0(data_name, "_sex_var"),
-                   paste0(total_title, " by sex"), paste0(data_name, "_sex_tot")),
-      plot_cut_box(paste0(variation_title, " ", average, " by age group"), paste0(data_name, "_age_var"),
-                   paste0(total_title, " by age group"), paste0(data_name, "_age_tot")),
-      plot_cut_box(paste0(variation_title, " ", average, " by SIMD quintile"), paste0(data_name, "_depr_var"),
-                   paste0(total_title, " by SIMD quintile"), paste0(data_name, "_depr_tot")))
+        actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
+        # fluidRow(column(4, p(paste0("Source: ", source))),
+        #                 column(8, actionButton("btn_dataset_modal", "Data source", icon = icon('question-circle')))),
+        plot_box(paste0("2020 compared with the ", average, " average"), paste0(data_name, "_overall")),
+        plot_cut_box(paste0(variation_title, " ", average, " by sex"), paste0(data_name, "_sex_var"),
+                     paste0(total_title, " by sex"), paste0(data_name, "_sex_tot")),
+        plot_cut_box(paste0(variation_title, " ", average, " by age group"), paste0(data_name, "_age_var"),
+                     paste0(total_title, " by age group"), paste0(data_name, "_age_tot")),
+        plot_cut_box(paste0(variation_title, " ", average, " by SIMD quintile"), paste0(data_name, "_depr_var"),
+                     paste0(total_title, " by SIMD quintile"), paste0(data_name, "_depr_tot")))
     }
-    
     
     # Charts and rest of UI
     if (input$measure_select == "Hospital admissions") {
@@ -191,12 +218,12 @@ function(input, output, session) {
                    source = "PHS AE2 Datamart", data_name = "aye")
       
     } else if (input$measure_select == "NHS 24 calls") {# NHS 24 calls
-      cut_charts(title= "Weekly calls to NHS24 service", 
-                 source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
+        cut_charts(title= "Weekly calls to NHS24 service", 
+                    source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
     } else if (input$measure_select == "Out of hours consultations") { #Out of hours consultations
-        cut_charts(title= "Weekly consultations to out of hours services", 
-                   source = "PHS GP OOH Datamart", data_name ="ooh")
+          cut_charts(title= "Weekly consultations to out of hours services", 
+                      source = "PHS GP OOH Datamart", data_name ="ooh")
     }
   }) 
   
