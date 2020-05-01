@@ -109,6 +109,9 @@ function(input, output, session) {
                      This is because they do not have the information systems and support to enable collection of 
                      detailed patient based information. Sites that submit episode level data account for 
                      around 94% of all attendances at A&E."),
+                   p("The data for sites that submit episode level data is included in the 
+                     figures for total admissions by area, but not included for any of the figures
+                     by sex, age group or deprivation."),
                    p(h5("The A&E2 dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                                "Public Health Scotland (PHS).", class="externallink"))),
