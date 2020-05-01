@@ -294,13 +294,16 @@ function(input, output, session) {
     
   }
   
+  ###############################################.
+  # Function that creates specialty charts. Potentially could be merge with tren one 
+  
   plot_spec <- function(type) {
     trend_data <- rapid_spec()
     
     if (type == "variation") {
       
       #Text for tooltip
-      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+      tooltip_trend <- c(paste0(trend_data$spec, "<br>", 
                                 "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
                                 "<br>", "Change from average: ", trend_data$variation, "%"))
       
