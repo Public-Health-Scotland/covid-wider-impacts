@@ -19,13 +19,14 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                   p("This tool provides a high level overview of how the COVID-19 response 
 is impacting more widely on health and health inequalities. The initial version focuses on 
 hospital admissions, unscheduled care and volume of calls to NHS24. The data are presented by age, sex, 
-deprivation quintile, specialty, elective versus emergency and by geographical location. 
+deprivation quintile, specialty, planned versus emergency admissions and by geographical location. 
 Further data will be added as it becomes available and the dashboard will be updated weekly,
 aligned to the release of the ", tags$a(href="https://beta.isdscotland.org/recent-publications/https://www.isdscotland.org/index.asp?Co=Y", "Coronavirus (COVID-19) weekly report for Scotland.", 
                            class="externallink")),
                     p("If you any questions relating to the data or the tool, then please contact us at: ",
                       tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink"))),
-                      tags$ul( 
+                  h3("Contents"),    
+                  tags$ul( 
                       tags$li(
                         tags$b(actionLink("jump_summary","Summary trends")),
                         icon("area-chart"),
