@@ -108,17 +108,26 @@ function(input, output, session) {
     diff_chars <- nchar(variation_title) - nchar(total_title) +10
     extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
     
+    # Function to create the standard layout for all the different charts/sections
+    cut_charts <- function(title, source, data_name, average = "2018-2019") {
+      tagList(
+        h3(title),
+        p(paste0("Source: ", source)),
+      plot_box(paste0("2020 compared with the ", average, " average"), paste0(data_name, "_overall")),
+      plot_cut_box(paste0(variation_title, " ", average, " by sex"), paste0(data_name, "_sex_var"),
+                   paste0(total_title, " by sex"), paste0(data_name, "_sex_tot")),
+      plot_cut_box(paste0(variation_title, " ", average, " by age group"), paste0(data_name, "_age_var"),
+                   paste0(total_title, " by age group"), paste0(data_name, "_age_tot")),
+      plot_cut_box(paste0(variation_title, " ", average, " by SIMD quintile"), paste0(data_name, "_depr_var"),
+                   paste0(total_title, " by SIMD quintile"), paste0(data_name, "_depr_tot")))
+    }
+    
+    
     # Charts and rest of UI
     if (input$measure_select == "Hospital admissions") {
       tagList(#Hospital admissions
-        h3("Weekly admissions to hospital (Source: RAPID dataset)"),
-        plot_box("2020 compared with the 2016-2019 average", "adm_overall"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "adm_sex_var",
-                     paste0(total_title, " by sex"), "adm_sex_tot"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by age group"), "adm_age_var",
-                     paste0(total_title, " by age group"), "adm_age_tot"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "adm_depr_var",
-                     paste0(total_title, " by SIMD quintile"), "adm_depr_tot"),
+        cut_charts(title= "Weekly admissions to hospital", source = "RAPID Datamart",
+                   data_name = "adm", average = "2016-2019"),
         fluidRow(column(6, h4(paste0(variation_title, " 2016-2019 by specialty group"))),
                  column(6, h4(paste0(total_title, " by specialty group")))),
         fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
@@ -128,40 +137,17 @@ function(input, output, session) {
         fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                  column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
       )
-    } else if (input$measure_select == "A&E attendances") {
-      tagList(#A&E Attendances
-        h3("Weekly attendances to A&E departments (Source: AE2 Datamart)"),
-        plot_box("2020 compared with the 2018-2019 average", "aye_overall"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "aye_sex_var",
-                     paste0(total_title, " by sex"), "aye_sex_tot"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by age group"), "aye_age_var",
-                     paste0(total_title, " by age group"), "aye_age_tot"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "aye_depr_var",
-                     paste0(total_title, " by SIMD quintile"), "aye_depr_tot")
-      )
+    } else if (input$measure_select == "A&E attendances") { #A&E Attendances
+        cut_charts(title= "Weekly attendances to A&E departments", 
+                   source = "AE2 Datamart", data_name = "aye")
       
-    } else if (input$measure_select == "NHS 24 calls") {
-      tagList(# NHS 24 callw
-        h3("Weekly calls to NHS24 service (Source: Unscheduled Care Datamart)"),
-        plot_box("2020 compared with the 2018-2019 average", "nhs24_overall"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "nhs24_sex_var",
-                     paste0(total_title, " by sex"), "nhs24_sex_tot"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by age group"), "nhs24_age_var",
-                     paste0(total_title, " by age group"), "nhs24_age_tot"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "nhs24_depr_var",
-                     paste0(total_title, " by SIMD quintile"), "nhs24_depr_tot")
-      )
-    } else if (input$measure_select == "Out of hours consultations") {
-      tagList(#Out of hours consultations
-        h3("Weekly consultations to out of hours services (Source: GP OOH Datamart)"),
-        plot_box("2020 compared with the 2018-2019 average", "ooh_overall"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by sex"), "ooh_sex_var",
-                     paste0(total_title, " by sex"), "ooh_sex_tot"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by age group"), "ooh_age_var",
-                     paste0(total_title, " by age group"), "ooh_age_tot"),
-        plot_cut_box(paste0(variation_title, " 2018-2019 by SIMD quintile"), "ooh_depr_var",
-                     paste0(total_title, " by SIMD quintile"), "ooh_depr_tot")
-      )
+    } else if (input$measure_select == "NHS 24 calls") {# NHS 24 calls
+      cut_charts(title= "Weekly calls to NHS24 service", 
+                 source = "Unscheduled Care Datamart", data_name ="nhs24")
+
+    } else if (input$measure_select == "Out of hours consultations") { #Out of hours consultations
+        cut_charts(title= "Weekly consultations to out of hours services", 
+                   source = "GP OOH Datamart", data_name ="ooh")
     }
   }) 
   
