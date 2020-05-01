@@ -419,7 +419,8 @@ function(input, output, session) {
       "Out of hours consultations" = ooh) %>% 
       # Formatting to a "nicer" style
       select(-type) %>% 
-      rename(average_pre2020 = count_average) %>% 
+      rename(count_average_pre2020 = count_average,
+             "Variation (%)" = variation) %>% 
       # Note: character variables are converted to factors in each
       # dataset for use in the table
       # This is because dropdown prompts on the table filters only
