@@ -110,8 +110,8 @@ rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "spec_code")) %>%
   select(-spec) %>% rename(spec = dash_groups)
 
 # For modal in app
-spec_lookup <- spec_lookup %>% select("Specialty name" = spec_name,
-                                      "Specialty group" = dash_groups)
+spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) %>% 
+  select("Specialty name" = spec_name, "Specialty group" = dash_groups) 
 
 saveRDS(spec_lookup, "shiny_app/data/spec_lookup.rds")
 
@@ -154,8 +154,6 @@ rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>%
   # Filtering cases without information on age, sex or deprivation (still counted in all)
   filter(!(is.na(category) ))
 
-saveRDS(rap_adm, "data/rapid_data_pub.rds")
-
 # Producing data for combined medical specialty
 spec_med <- rap_adm %>% 
   filter(spec %in% c("Cancer", "Medical (excl. Cardiology & Cancer)", "Cardiology")) %>% 
@@ -164,9 +162,9 @@ spec_med <- rap_adm %>%
     admission_type, spec, category) %>% 
   summarise(count = sum(count)) %>% ungroup
 
-rap_adm <- rbind(rap_adm, spec_med)
-
-rap_adm <- rap_adm %>%
+rap_adm <- rbind(rap_adm, spec_med) %>% 
+  # Excluding specialties groups with very few cases and of not much interest
+  filter(!(spec %in% c("Dental", "Other"))) %>% 
   # Creating week number to be able to compare pre-covid to covid period
   mutate(week_no = isoweek(week_ending))
 
@@ -224,10 +222,13 @@ ooh_new <- read_csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/COVID DASHBOA
   rename(date=sc_start_date, hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender, age_group=age_band,
          count=number_of_cases) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
-                             "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
-                             "65-74" = "65 - 74", "75-84" = "75 - 84",
-                             "85 plus" = "85 and over"),
+  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
+                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
+                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
+                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
+                             "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
+                             "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
+                             "90+" = "85 and over"),
          sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          dep = recode(dep, 
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
@@ -242,8 +243,8 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
-  group_by(week_ending, sex, dep, age_group, area_name, area_type) %>% 
-  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_group) %>%
+  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
 #bind old and new ooh data
@@ -266,7 +267,7 @@ ooh_old <- ooh %>% filter(week_ending<as.Date("2020-01-01")) %>%
 
 # Joining with 2020 data
 # Filtering weeks with incomplete week too!! Temporary
-ooh_2020 <- left_join(ooh %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-04-26"))), 
+ooh_2020 <- left_join(ooh %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-04-19"))), 
                       ooh_old, 
                       by = c("category", "type", "area_name", "week_no")) %>% 
   # filtering empty cases
@@ -280,8 +281,6 @@ ooh_2020$count <- ifelse(ooh_2020$count<5,0,ooh_2020$count)
 
 saveRDS(ooh_2020, "shiny_app/data/ooh_data.rds")
 ooh_2020 <- readRDS("shiny_app/data/ooh_data.rds")
-
-
 
 ###############################################.
 ## Preparing A&E data ----
