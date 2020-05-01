@@ -132,7 +132,7 @@ function(input, output, session) {
                  column(6, h4(paste0(total_title, " by specialty group")))),
         fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
-                    selected = c("Medical", "Surgery"))),
+                    selected = c("Medical (incl. Cardiology & Cancer)", "Surgery"))),
         column(6, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
         fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                  column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
