@@ -107,7 +107,8 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
     filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
                is.na(area_name) | 
-               area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND" ))) %>% 
+               area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND",
+                                "ENGland/Wales/Northern Ireland", "NANA"))) %>% 
     # Creating %variation from precovid to covid period 
     mutate(count_average = ifelse(is.na(count_average), 0, count_average),
            variation = round(-1 * ((count_average - count)/count_average * 100), 1),
@@ -128,7 +129,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
 ## Reading RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_30_Apr.rds") %>% 
+rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_04-May.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -166,7 +167,7 @@ rap_adm <- rap_adm %>%
 
 # Aggregating to weekly data
 rap_adm <- rap_adm %>% 
-  mutate(week_ending = ceiling_date(date_adm, "week")) %>% #end of week
+  mutate(week_ending = ceiling_date(date_adm, "week", change_on_boundary = F)) %>% #end of week
   group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec) %>% 
   summarise(count = sum(count, na.rm = T))
 
@@ -352,15 +353,37 @@ nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 
          dep = nhs_24_patient_prompt_dataset_deprivation_scot_quintile,
          covid_flag = nhs_24_covid_19_flag,
          week_ending = nhs_24_call_rcvd_date,
-         count = number_of_nhs_24_records)
+         count = number_of_nhs_24_records) %>% 
+  # Formatting dates
+  mutate(week_ending = as.Date(week_ending, format="%d-%b-%y"),
+         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F)) %>% 
+  # Filtering data to avoid duplication for latest dates
+  filter(week_ending <= as.Date("2020-04-19"))
 
-nhs24 <- nhs24 %>%
+# Data including for weeks 26-4 and 3-5
+nhs24_new <- readxl::read_excel("/conf/PHSCOVID19_Analysis/NHS24_shiny_app/NHS 24 EXTRACT 4May20.xlsx") %>% 
+  janitor::clean_names() %>% 
+  rename(hb = patient_nhs_board_description_current, hscp = patient_hscp_name_current,
+         sex = gender_description, 
+         dep = patient_prompt_dataset_deprivation_scot_quintile,
+         covid_flag = nhs_24_covid_19_flag,
+         week_ending = nhs_24_call_rcvd_date,
+         count = number_of_nhs_24_records) %>% 
+  # Formatting dates
+  mutate(week_ending = as.Date(week_ending, format="%d-%b-%y"),
+         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F)) 
+
+# Joining with latest data and formatting
+nhs24 <- rbind(nhs24, nhs24_new) %>% #end of week) 
+  mutate(sex = str_to_title(sex)) %>% 
   proper() %>% #convert HB names to correct format
-  mutate(sex = str_to_title(sex),
-         week_ending = as.Date(week_ending, format="%d-%b-%y"),
-         week_ending = ceiling_date(week_ending, "week")) %>% #end of week) 
   create_agegroups () %>%
   create_depgroups () 
+
+# Aggregate to weekly data
+nhs24 <- nhs24 %>% 
+  group_by(hscp, sex, dep, age_grp, week_ending, area_name) %>% 
+  summarise(count = sum(count, na.rm = T)) %>% ungroup()
 
 # Aggregate up to get figures for each area type.
 nhs24 <- nhs24 %>% mutate(scot = "Scotland") %>% 
@@ -381,7 +404,6 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-04-26")
-
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-03")
 
 ##END
