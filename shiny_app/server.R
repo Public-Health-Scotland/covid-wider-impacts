@@ -72,8 +72,8 @@ function(input, output, session) {
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37",
                             "Rapid Preliminary Inpatient Data (RAPID).",class="externallink")), 
                    p("RAPID data is not a complete record of all admissions within Scottish hospitals. 
-                     Maternity, geriatric long stay and mental health admissions, as well as admissions 
-                     to the Golden Jubilee National Hospital, is not included in the figures."), 
+                     Day cases, maternity, geriatric long stay and mental health admissions, as well as admissions 
+                     to the Golden Jubilee National Hospital, are not included in the figures."), 
                    p("Data on hospital admissions normally comes from the ",
                       tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5",
                       "SMR01 dataset.",class="externallink"),"However there is a 12 week lag in obtaining these data
