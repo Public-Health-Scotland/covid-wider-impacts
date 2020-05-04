@@ -166,7 +166,7 @@ rap_adm <- rap_adm %>%
 
 # Aggregating to weekly data
 rap_adm <- rap_adm %>% 
-  mutate(week_ending = ceiling_date(date_adm, "week")) %>% #end of week
+  mutate(week_ending = ceiling_date(date_adm, "week", change_on_boundary = F)) %>% #end of week
   group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec) %>% 
   summarise(count = sum(count))
 
@@ -248,7 +248,7 @@ ooh_new <- read_csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/COVID DASHBOA
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
                       "4" = "4", "5" = "5 - least deprived"),
          date = as.Date(date, "%d/%m/%y")) %>% #formatting date
-  mutate(week_ending = ceiling_date(date, "week")) %>% #end of week
+  mutate(week_ending = ceiling_date(date, "week", change_on_boundary = F)) %>% #end of week
   proper() #convert HB names to correct format
 
 # Aggregate up to get figures for each area type.
@@ -302,13 +302,12 @@ ae_data2 <- rbind(read_csv(unz(paste0(ae_zip_folder2,"HSCP.zip"), "HSCP.csv")) %
 
 ae_data2 <- ae_data2 %>%
   mutate(date=as.Date(dat_date,format="%d/%m/%y"),
-         week = ceiling_date(date, "week"),
+         week = ceiling_date(date, "week", change_on_boundary = F),
          week_ending=paste0(mday(week),"/0",month(week),"/",year(week))) %>% #end of week) 
   select(-dat_date, -date) %>%
   group_by(week_ending, area, pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile) %>%
   summarise(number_of_attendances=sum(number_of_attendances)) %>%
-  ungroup() %>%
-  filter(week_ending != "3/05/2020") #exclude partial week
+  ungroup() 
 
 # Bind all a&e data
 ae_data <- rbind(ae_data,ae_data2)
@@ -380,10 +379,9 @@ nhs24 <- nhs24 %>%
   proper() %>% #convert HB names to correct format
   mutate(sex=str_to_title(sex),
          date=as.Date(date,format="%d-%b-%y"),
-         week_ending = ceiling_date(date, "week")) %>% #end of week) 
+         week_ending = ceiling_date(date, "week", change_on_boundary = F)) %>% #end of week) 
   create_agegroups () %>%
-  create_depgroups () %>% 
-  select(-date)
+  create_depgroups () 
 
 # Aggregate up to get figures for each area type.
 nhs24 <- nhs24 %>% mutate(scot = "Scotland") %>% 
