@@ -60,20 +60,8 @@ function(input, output, session) {
   # Link action button click to modal launch 
   observeEvent(input$btn_spec_groups, { showModal(spec_modal) }) 
   
-  
   #######
   #modal to describe dataset
-  # dataset_modal <- modalDialog(
-  #   h5("What is the data source?"),
-  #   
-  #   if(input$measure_select == "Hospital admissions"){
-  #     "hello"
-  #   },
-  #   
-  #   size = "m", align= "center",
-  #   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  # )
-  
   # Link action button click to modal launch 
   observeEvent(input$btn_dataset_modal, 
                
@@ -102,7 +90,7 @@ function(input, output, session) {
                    p("Attendances to A&E departments data sourced from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
                             "Accident and Emergency Datamart (A&E2).",class="externallink")), 
-                   p("Numbers of A&E attendances will include both COVID-19 and non-COVID related activity." ),                   
+                   p("Numbers of A&E attendances will include both COVID-19 and non-COVID-19 related activity." ),                   
                    p("There are two types of data submitted to the A&E datamart: episode and aggregate level data. 
                      All hospitals with Emergency Departments submit episode level data containing a detailed record 
                      for each patient attendance. Some smaller sites with minor injury units or community hospitals 
@@ -113,7 +101,11 @@ function(input, output, session) {
                    p("The data for sites that submit episode level data is included in the 
                      figures for total admissions by area, but not included for any of the figures
                      by sex, age group or deprivation."),
-                   p("This dashboard has beed designed to provide a weekly summary of activity along with historical activity for comparison. Additional information relating to A&E activity is available from the  ", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/", "NHS Performs - weekly update of emergency department activity and waiting time statistics.", class="externallink")),
+                   p("This dashboard has beed designed to provide a weekly summary of activity along with historical 
+                     activity for comparison. Additional information relating to A&E activity is available from the ", 
+                     tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/", 
+                            "NHS Performs - weekly update of emergency department activity and waiting time statistics.", 
+                            class="externallink")),
                    p(h5("The A&E2 dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                                "Public Health Scotland (PHS).", class="externallink"))),
@@ -123,14 +115,17 @@ function(input, output, session) {
                  showModal(modalDialog(
                    title = "What is the data source?",
                    p("Data on calls to NHS24 sourced from the ",
-                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD)",class="externallink")), 
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")), 
                    p("Numbers of NHS24 calls will include both COVID-19 and non-COVID related activity." ),
-                   p("This dashboard has beed designed to provide a weekly summary of activity along with historical activity for comparison. For more detailed analysis of NHS24 activity contact", tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", class="externallink")),
+                   p("This dashboard has beed designed to provide a weekly summary of activity along with historical activity for comparison. 
+                     For more detailed analysis of NHS24 activity contact ", 
+                     tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
+                            class="externallink"), "."),
                    p(h5("The NHS24 dataset is managed by ", 
-                        tags$a(href="https://www.nhs24.scot/", 
-                               "Public Health Scotland", class="externallink"),"and ",
+                        tags$a(href="https://publichealthscotland.scot/", 
+                               "Public Health Scotland", class="externallink"), "and ",
                      tags$a(href="https://www.nhs24.scot/", 
-                            "NHS24", class="externallink"))),
+                            "NHS24", class="externallink"), ".")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }else if (input$measure_select == "Out of hours consultations"){
@@ -138,13 +133,14 @@ function(input, output, session) {
                    title = "What is the data source?",
                    p("General Practice Out of Hours service data sourced from the",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113", 
-                            "GP Out of Hours Dataset (OOH).",class="externallink")), br(),
+                            "GP Out of Hours Dataset (OOH).",class="externallink")), 
                    p("At present this dashboard does not include activity from any of the COVID-19 hubs or assessment centres." ),
                    p(h5("The OOH dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/", 
                                "Public Health Scotland (PHS).", class="externallink"))),
                    size = "m",
-                   easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))})
+                   easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+                 })
   
   ###############################################.
   ## Reactive datasets ----
