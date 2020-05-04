@@ -1,0 +1,54 @@
+spec_code,spec_name,normal_groups,dash_groups
+A1,General Medicine,Medical,Medical (excl. Cardiology & Cancer)
+A11,Acute Medicine,Medical,Medical (excl. Cardiology & Cancer)
+A2,Cardiology,Medical,Cardiology
+A3,Clinical Genetics,Medical,Medical (excl. Cardiology & Cancer)
+A6,Infectious Diseases,Medical,Medical (excl. Cardiology & Cancer)
+A7,Dermatology,Medical,Medical (excl. Cardiology & Cancer)
+A8,Endocrinology & Diabetes,Medical,Medical (excl. Cardiology & Cancer)
+A81,Endocrinology,Medical,Medical (excl. Cardiology & Cancer)
+A82,Diabetes,Medical,Medical (excl. Cardiology & Cancer)
+A9,Gastroenterology,Medical,Medical (excl. Cardiology & Cancer)
+AA,Genito-Urinary Medicine,Medical,Medical (excl. Cardiology & Cancer)
+AB,Geriatric Medicine,Medical,Medical (excl. Cardiology & Cancer)
+AC,Homeopathy,Other,Other
+AD,Medical Oncology,Medical,Cancer
+AF,Paediatrics,Paediatrics Grouping,Paediatrics
+AG,Renal Medicine,Medical,Medical (excl. Cardiology & Cancer)
+AH,Neurology,Medical,Medical (excl. Cardiology & Cancer)
+AJ,Integrative Care,Other,Other
+AM,Palliative Medicine,Medical,Medical (excl. Cardiology & Cancer)
+AP,Rehabilitation Medicine,Medical,Medical (excl. Cardiology & Cancer)
+AQ,Respiratory Medicine,Medical,Medical (excl. Cardiology & Cancer)
+AR,Rheumatology,Medical,Medical (excl. Cardiology & Cancer)
+AV,Clinical Neurophysiology,Medical,Medical (excl. Cardiology & Cancer)
+AW,Allergy,Medical,Medical (excl. Cardiology & Cancer)
+C1,General Surgery,Surgery,Surgery
+C11,"General Surgery (excl Vascular, Maxillofacial)",Surgery,Surgery
+C12,Vascular Surgery,Surgery,Surgery
+C13,Oral and Maxillofacial Surgery,Surgery,Surgery
+C2,Accident & Emergency,Emergency,Accident & Emergency
+C3,Anaesthetics,Surgery,Surgery
+C31,Pain Management,Surgery,Surgery
+C4,Cardiothoracic Surgery,Surgery,Surgery
+C41,Cardiac Surgery,Surgery,Surgery
+C42,Thoracic Surgery,Surgery,Surgery
+C5,"Ear, Nose & Throat (ENT)",Surgery,Surgery
+C6,Neurosurgery,Surgery,Surgery
+C7,Ophthalmology,Surgery,Surgery
+C8,Trauma and Orthopaedic Surgery,Surgery,Surgery
+C9,Plastic Surgery,Surgery,Surgery
+CA,Paediatric Surgery,Paediatrics Grouping,Paediatrics
+CB,Urology,Surgery,Surgery
+D1,Community Dental Practice,Dental,Dental
+D3,Oral Surgery,Dental,Dental
+D4,Oral Medicine,Dental,Dental
+D5,Orthodontics,Dental,Dental
+D6,Restorative Dentistry,Dental,Dental
+D8,Paediatric Dentistry,Paediatrics Grouping,Paediatrics
+E12,GP Other than Obstetrics,Community,Community
+F2,Gynaecology,Women and Newborn,Gynaecology
+H1,Clinical Radiology,Medical,Cancer
+H2,Clinical Oncology,Medical,Cancer
+J4,Haematology,Medical,Medical (excl. Cardiology & Cancer)
+J5,Immunology,Medical,Medical (excl. Cardiology & Cancer)

@@ -215,7 +215,7 @@ function(input, output, session) {
                  column(6, h4(paste0(total_title, "specialty group")))),
         fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
-                    selected = c("Medical (incl. Cardiology & Cancer)", "Surgery","Paediatrics"))),
+                    selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics"))),
         column(6, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
         fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                  column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
@@ -504,7 +504,8 @@ function(input, output, session) {
       "Out of hours consultations" = ooh) %>% 
       # Formatting to a "nicer" style
       select(-type) %>% 
-      rename(average_pre2020 = count_average) %>% 
+      rename(count_average_pre2020 = count_average,
+             "Variation (%)" = variation) %>% 
       # Note: character variables are converted to factors in each
       # dataset for use in the table
       # This is because dropdown prompts on the table filters only
