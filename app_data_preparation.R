@@ -86,25 +86,53 @@ proper <- function(dataset) {
     select(-hb1, -hb)
 }
 
-# Creating %variation from precovid to covid period
-calculate_variation <- function(dataset) {
-  dataset %>% 
+# Function to format data in the right format for the Shiny app
+prepare_final_data <- function(dataset, filename, last_week) {
+  
+  # Creating week number to be able to compare pre-covid to covid period
+  dataset <- dataset %>% mutate(week_no = isoweek(week_ending))
+    
+  
+  # Creating average admissions of pre-covid data (2018-2019) by day of the year
+  historic_data <- dataset %>% filter(year(week_ending) %in% c("2018", "2019")) %>% 
+    group_by(category, type, area_name, area_type, week_no) %>% 
+    # Not using mean to avoid issues with missing data for some weeks
+    summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
+  
+  # Joining with 2020 data
+  # Filtering weeks with incomplete week too!! Temporary
+  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020")), 
+                         historic_data, 
+                         by = c("category", "type", "area_name", "area_type", "week_no")) %>% 
+    # Filtering cases without information on age, sex, area or deprivation (still counted in all)
+    filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
+               is.na(area_name) | 
+               area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND" ))) %>% 
+    # Creating %variation from precovid to covid period 
     mutate(count_average = ifelse(is.na(count_average), 0, count_average),
            variation = round(-1 * ((count_average - count)/count_average * 100), 1),
            # Dealing with infinite values from historic average = 0
-           variation =  ifelse(is.infinite(variation), 8000, variation)) 
+           variation =  ifelse(is.infinite(variation), 8000, variation)) %>% 
+    select(-week_no) 
+  
+  # Supressing numbers under 5
+  data_2020 <- data_2020 %>% filter(count>=5) %>% 
+    filter(week_ending <= as.Date(last_week))
+  
+  final_data <<- data_2020
+  
+  saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
 }
-
 
 ###############################################.
 ## Reading RAPID data ----
 ###############################################.
-# Prepare by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_24_Apr.rds") %>% 
+# Prepared by Unscheduled care team
+rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_30_Apr.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
-         date_adm > as.Date("2017-12-31")) 
+           date_adm > as.Date("2017-12-31")) 
 
 # Bringing HB names
 hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
@@ -146,23 +174,17 @@ rap_adm <- rap_adm %>%
 rap_adm <- rap_adm %>% mutate(scot = "Scotland") %>% 
   gather(area_type, area_name, c(hb, hscp_name, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "hb" = "Health board", 
-                            "hscp_name" = "HSC partnership", "scot" = "Scotland")) %>%  
-  # Empty areas out
-  filter(!(area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND"))) 
+                            "hscp_name" = "HSC partnership", "scot" = "Scotland")) 
 
 # Aggregating to obtain totals for each split type and then putting all back together
 # Totals for overalls for all pop including totals by specialty too
 rap_adm_all <- agg_rapid(NULL, split = "sex", specialty = T) %>% mutate(category = "All") 
-rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% rename(category = sex)# Totals for overalls for all sexes
-rap_adm_age <- agg_rapid(c("age"), split = "age") %>% rename(category = age) %>% # Totals for overalls for all age groups
-  filter(category != "missing") 
+rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% rename(category = sex) # Totals for overalls for all sexes
+rap_adm_age <- agg_rapid(c("age"), split = "age") %>% rename(category = age) # Totals for overalls for all age groups
 # Totals for overalls for deprivation quintiles
-rap_adm_depr <- agg_rapid(c("dep"), split = "dep") %>% rename(category = dep) %>% 
-  filter(category != "Missing") 
+rap_adm_depr <- agg_rapid(c("dep"), split = "dep") %>% rename(category = dep) 
   
-rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) %>% 
-  # Filtering cases without information on age, sex or deprivation (still counted in all)
-  filter(!(is.na(category) ))
+rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) 
 
 # Producing data for combined medical specialty
 spec_med <- rap_adm %>% 
@@ -174,26 +196,9 @@ spec_med <- rap_adm %>%
 
 rap_adm <- rbind(rap_adm, spec_med) %>% 
   # Excluding specialties groups with very few cases and of not much interest
-  filter(!(spec %in% c("Dental", "Other"))) %>% 
-  # Creating week number to be able to compare pre-covid to covid period
-  mutate(week_no = isoweek(week_ending))
+  filter(!(spec %in% c("Dental", "Other"))) 
 
-# Creating average admissions of pre-covid data by day of the year
-rap_adm_old <- rap_adm %>% filter(week_ending<as.Date("2020-01-01")) %>% 
-  group_by(category, type, admission_type, spec, area_name, week_no) %>% 
-  summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
-
-# Joining with 2020 data
-rap_adm_2020 <- left_join(rap_adm %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-04-20"))), 
-                          rap_adm_old, 
-                          by = c("category", "type", "admission_type", "spec", "area_name", "week_no")) %>% 
-  calculate_variation() %>% # Creating %variation from precovid to covid period
-  select(-week_no)
-
-# Supressing numbers under 5
-rap_adm_2020 <- rap_adm_2020 %>% filter(count>=5)
-
-saveRDS(rap_adm_2020, "shiny_app/data/rapid_data.rds")
+prepare_final_data(rap_adm, "rapid", last_week = "2020-04-26")
 
 ###############################################.
 ## Preparing OOH data ----
@@ -265,30 +270,10 @@ ooh_sex <- ooh %>% agg_cut(grouper="sex") %>% rename(category = sex)
 ooh_dep <- ooh %>% agg_cut(grouper="dep") %>% rename(category = dep)
 ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 
-ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age) %>% 
-  # Creating week number to be able to compare pre-covid to covid period
-  mutate(week_no = isoweek(week_ending))
+ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
-# Creating average admissions of pre-covid data by day of the year
-ooh_old <- ooh %>% filter(week_ending<as.Date("2020-01-01")) %>% 
-  group_by(category, type, area_name, week_no) %>% 
-  summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
-
-# Joining with 2020 data
-# Filtering weeks with incomplete week too!! Temporary
-ooh_2020 <- left_join(ooh %>% filter(between(week_ending, as.Date("2020-01-01"), as.Date("2020-04-19"))), 
-                      ooh_old, 
-                      by = c("category", "type", "area_name", "week_no")) %>% 
-  # filtering empty cases
-  filter(!(is.na(category) | is.na(area_name) | area_name %in% c("UNKNOWN HSCP - SCOTLAND" ))) %>% 
-  calculate_variation() %>% # Creating %variation from precovid to covid period
-  select(-week_no) 
-
-# Supressing numbers under 5
-ooh_2020 <- ooh_2020 %>% filter(count>=5)
-
-saveRDS(ooh_2020, "shiny_app/data/ooh_data.rds")
-ooh_2020 <- readRDS("shiny_app/data/ooh_data.rds")
+# Formatting file for shiny app
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-04-26")
 
 ###############################################.
 ## Preparing A&E data ----
@@ -326,7 +311,9 @@ ae_scot <- ae_data %>% filter( substr(area ,1,3) == "S08") %>%
          area_type="Scotland") %>% ungroup()
 
 ae_data <- rbind(ae_data %>% select(-area), ae_scot) %>% 
-  rename(age=age_grp) %>%  mutate(week_ending=as.Date(week_ending,format="%d/%m/%Y"))
+  rename(age=age_grp) %>%  mutate(week_ending=as.Date(week_ending,format="%d/%m/%Y")) %>% 
+  mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
+                               TRUE~area_name)) %>%
 
 ##Reshape dataset for shiny app
 #Use aggregation function to aggregate data files into format
@@ -336,41 +323,9 @@ ae_dep <- agg_cut(dataset=ae_data, grouper="dep") %>% rename(category=dep)
 ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 
 # Add final aggregation files to one master file
-ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) %>% 
-# Derive a week number from week_ending column to ease presentation of data
-  mutate(week_no=isoweek(week_ending),year=year(week_ending)) 
+ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-# Calculate average number of attendances by week and category
-ae_average <- ae_data %>%
-  subset(year %in% c("2018","2019")) %>%
-  group_by(area_name,area_type,category,type,week_no) %>%
-  summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% ungroup()
-
-# Filter for latest year - 2020
-ae_latest_year <- ae_data %>% subset(year=="2020")
-
-#join latest year of data with averages from previous years
-ae_shiny <- left_join(ae_average,ae_latest_year,
-                      by = c("area_name", "area_type", "category","type","week_no"))
-
-# Remove weeks that haven't happened yet & reformat NHS board names to include prefix/&
-ae_shiny <- ae_shiny %>%
-  filter(category != "Missing") %>% #taking out empty counts
-  filter(!(is.na(area_name) | area_name %in% c("UNKNOWN HSCP - SCOTLAND", "ENGLAND/WALES/NORTHERN IRELAND"))) %>% 
-  subset(week_no<17) %>%
-  mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
-                                TRUE~area_name)) %>%
-  calculate_variation() %>% # Creating %variation from precovid to covid period
-  select(-week_no, - year) # not needed for app
-
-# Supressing numbers under 5
-ae_shiny <- ae_shiny %>% filter(count>=5)
-
-#save output for shiny app
-saveRDS(ae_shiny, "shiny_app/data/ae_data.rds")
-
-# Tidy
-rm(ae_average, ae_latest_year, ae_data)
+prepare_final_data(ae_data, "ae", last_week = "2020-04-26")
 
 ###############################################.
 ## Preparing NHS24 data ----
@@ -423,46 +378,10 @@ nhs24_dep <- agg_cut(dataset= nhs24, grouper="dep") %>% rename(category=dep)
 nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 
 # Add final aggregation files to one master file
-nhs24_final_data <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
+nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
-# Tidy
-rm(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
-
-# Derive a week number from week_ending column to ease presentation of data
-nhs24_final_data <- nhs24_final_data %>%
-  mutate(week_no=isoweek(week_ending), year=year(week_ending))
-
-# Find average number of attendances by week and category
-nhs24_average <- nhs24_final_data %>%
-  subset(year %in% c("2018","2019")) %>%
-  group_by(area_name,area_type,category,type,week_no) %>%
-  summarise(count_average = round((sum(count, na.rm = T))/2, 1))  %>% ungroup()
-
-# Filter for latest year - 2020 
-nhs24_latest_year <- nhs24_final_data %>% subset(year=="2020")
-
-# Join latest year of data with averages from previous years
-nhs24_shiny <- left_join(nhs24_average,nhs24_latest_year,by = c("area_name", "area_type", "category","type","week_no"))
-
-# Temporary for testing purposes: supressing numbers under 5
-nhs24_shiny$count <- ifelse(nhs24_shiny$count<5,0,nhs24_shiny$count)
-
-# Remove weeks that haven't happened yet & reformat NHS board names to include prefix/&
-nhs24_shiny <- nhs24_shiny %>%
-  filter(!(category %in% c("Missing", "Not Known"))) %>% #taking out empty counts
-  filter(!(is.na(area_name) | area_name %in% c("UNKNOWN HSCP - SCOTLAND", "ENGLAND/WALES/NORTHERN IRELAND"))) %>% 
-  subset(week_no<17) %>%
-  calculate_variation() %>% # Creating % variation from pre_covid to covid
-  select(-week_no, - year)
-
-# Supressing numbers under 5
-nhs24_shiny <- nhs24_shiny %>% filter(count>=5)
-
-#save output for shiny app
-saveRDS(nhs24_shiny, "shiny_app/data/nhs24_data.rds")
-
-# Tidy
-rm(nhs24_average, nhs24_latest_year, nhs24_final_data)
+# Formatting file for shiny app
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-04-26")
 
 
 ##END
