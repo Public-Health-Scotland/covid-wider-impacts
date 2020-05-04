@@ -129,7 +129,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
 ## Reading RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_30_Apr.rds") %>% 
+rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_04-May.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -167,7 +167,7 @@ rap_adm <- rap_adm %>%
 
 # Aggregating to weekly data
 rap_adm <- rap_adm %>% 
-  mutate(week_ending = ceiling_date(date_adm, "week")) %>% #end of week
+  mutate(week_ending = ceiling_date(date_adm, "week", change_on_boundary = F)) %>% #end of week
   group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec) %>% 
   summarise(count = sum(count, na.rm = T))
 
@@ -356,7 +356,7 @@ nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 
          count = number_of_nhs_24_records) %>% 
   # Formatting dates
   mutate(week_ending = as.Date(week_ending, format="%d-%b-%y"),
-         week_ending = ceiling_date(week_ending, "week")) %>% 
+         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F)) %>% 
   # Filtering data to avoid duplication for latest dates
   filter(week_ending <= as.Date("2020-04-19"))
 
@@ -371,7 +371,7 @@ nhs24_new <- readxl::read_excel("/conf/PHSCOVID19_Analysis/NHS24_shiny_app/NHS 2
          count = number_of_nhs_24_records) %>% 
   # Formatting dates
   mutate(week_ending = as.Date(week_ending, format="%d-%b-%y"),
-         week_ending = ceiling_date(week_ending, "week")) 
+         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F)) 
 
 # Joining with latest data and formatting
 nhs24 <- rbind(nhs24, nhs24_new) %>% #end of week) 
