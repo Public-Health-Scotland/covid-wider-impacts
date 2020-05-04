@@ -259,7 +259,7 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-05-03")))  #filter complete weeks (Mon-Sun)
 
 #bind old and new ooh data
 ooh <- rbind(ooh_new, ooh)
@@ -273,7 +273,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-04-26")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-03")
 
 ###############################################.
 ## Preparing A&E data ----
