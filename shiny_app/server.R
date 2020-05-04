@@ -180,9 +180,9 @@ function(input, output, session) {
                          input$measure_select == "NHS 24 calls" ~ "calls",
                          input$measure_select == "Out of hours consultations" ~ "consultations")
     variation_title <- paste0("Percentage change in ", dataset, 
-                              " compared with the corresponding time in ")
+                              " compared with the corresponding time in 2018-2019 by ")
     
-    total_title <- paste0("Weekly number of ", dataset)
+    total_title <- paste0("Weekly number of ", dataset, " by ")
     
     # To make sure that both titles take the same space and are lined up doing
     # a bit of a hacky shortcut:
@@ -190,28 +190,28 @@ function(input, output, session) {
     extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
     
     # Function to create the standard layout for all the different charts/sections
-    cut_charts <- function(title, source, data_name, average = "2018-2019") {
+    cut_charts <- function(title, source, data_name) {
       tagList(
         h3(title),
         actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
         # fluidRow(column(4, p(paste0("Source: ", source))),
         #                 column(8, actionButton("btn_dataset_modal", "Data source", icon = icon('question-circle')))),
-        plot_box(paste0("2020 compared with the ", average, " average"), paste0(data_name, "_overall")),
-        plot_cut_box(paste0(variation_title, " ", average, " by sex"), paste0(data_name, "_sex_var"),
-                     paste0(total_title, " by sex"), paste0(data_name, "_sex_tot")),
-        plot_cut_box(paste0(variation_title, " ", average, " by age group"), paste0(data_name, "_age_var"),
-                     paste0(total_title, " by age group"), paste0(data_name, "_age_tot")),
-        plot_cut_box(paste0(variation_title, " ", average, " by SIMD quintile"), paste0(data_name, "_depr_var"),
-                     paste0(total_title, " by SIMD quintile"), paste0(data_name, "_depr_tot")))
+        plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
+        plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
+                     paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
+        plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
+                     paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
+        plot_cut_box(paste0(variation_title, "SIMD quintile"), paste0(data_name, "_depr_var"),
+                     paste0(total_title, "SIMD quintile"), paste0(data_name, "_depr_tot")))
     }
     
     # Charts and rest of UI
     if (input$measure_select == "Hospital admissions") {
       tagList(#Hospital admissions
         cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
-                   data_name = "adm", average = "2016-2019"),
-        fluidRow(column(6, h4(paste0(variation_title, " 2016-2019 by specialty group"))),
-                 column(6, h4(paste0(total_title, " by specialty group")))),
+                   data_name = "adm"),
+        fluidRow(column(6, h4(paste0(variation_title, "specialty group"))),
+                 column(6, h4(paste0(total_title, "specialty group")))),
         fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
                     selected = c("Medical (incl. Cardiology & Cancer)", "Surgery","Paediatrics"))),
