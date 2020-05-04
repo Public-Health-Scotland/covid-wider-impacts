@@ -66,7 +66,7 @@ function(input, output, session) {
   observeEvent(input$btn_dataset_modal, 
                
                if(input$measure_select == "Hospital admissions"){
-                 showModal(modalDialog(
+                 showModal(modalDialog(#RAPID ADMISSIONS MODAL
                    title = "What is the data source?",
                    p("Hospital admissions data sourced from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37",
@@ -84,7 +84,7 @@ function(input, output, session) {
                                "Public Health Scotland (PHS).", class="externallink"))),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               }else if (input$measure_select == "A&E attendances"){
+               }else if (input$measure_select == "A&E attendances"){ #A&E ATTENDANCES MODAL
                  showModal(modalDialog(
                    title = "What is the data source?",
                    p("Attendances to A&E departments data sourced from the ",
@@ -111,12 +111,13 @@ function(input, output, session) {
                                "Public Health Scotland (PHS).", class="externallink"))),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               }else if (input$measure_select == "NHS 24 calls"){
+               }else if (input$measure_select == "NHS 24 calls"){#NHS24 CALLS MODAL
                  showModal(modalDialog(
                    title = "What is the data source?",
-                   p("Data on calls to NHS24 sourced from the ",
+                   p("Data on calls to NHS 24 sourced from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")), 
-                   p("Numbers of NHS24 calls will include both COVID-19 and non-COVID related activity." ),
+                   p("Numbers of NHS 24 calls will include both COVID-19 and non-COVID related activity." ),
+                   p("Figures by NHS health board include those calls made by residents of each health board area."),
                    p("This dashboard has beed designed to provide a weekly summary of activity along with historical activity for comparison. 
                      For more detailed analysis of NHS24 activity contact ", 
                      tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
@@ -125,11 +126,11 @@ function(input, output, session) {
                         tags$a(href="https://publichealthscotland.scot/", 
                                "Public Health Scotland", class="externallink"), "and ",
                      tags$a(href="https://www.nhs24.scot/", 
-                            "NHS24", class="externallink"), ".")),
+                            "NHS 24", class="externallink"), ".")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }else if (input$measure_select == "Out of hours consultations"){
-                 showModal(modalDialog(
+                 showModal(modalDialog(# OUT OF HOURS CONSULTATIONS  MODAL
                    title = "What is the data source?",
                    p("General Practice Out of Hours service data sourced from the",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113", 
