@@ -199,7 +199,7 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-05-03", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-04-26", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
