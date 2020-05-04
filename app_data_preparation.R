@@ -231,7 +231,7 @@ ooh <- ooh %>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungrou
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-03-22")))
 
 ## Additional new OOH data
-ooh_new <- read_csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/COVID DASHBOARD EXTRACT_2203to3004.zip","COVID DASHBOARD EXTRACT_2203to3004.csv")) %>%
+ooh_new <- read_csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/COVID DASHBOARD EXTRACT_2203to0505.zip","COVID DASHBOARD EXTRACT_2203to0505.csv")) %>%
   janitor::clean_names() %>%
   rename(date=sc_start_date, hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender, age_group=age_band,
@@ -278,8 +278,9 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-04-26")
 ###############################################.
 ## Preparing A&E data ----
 ###############################################.
-#short cut to a&e folder area
+#short cut to a&e folder areas
 ae_zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-04-24-Extracts/"
+ae_zip_folder2 <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-05-04-Extracts/"
 
 # Read A&E data both at HSCP and HB level
 ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), "HSCP.csv")) %>% 
@@ -288,6 +289,29 @@ ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-Age
                  read_csv(unz(paste0(ae_zip_folder,"NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), "NHS Boards.csv")) %>% 
                    janitor::clean_names() %>% 
                    rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode))
+
+# Read w/e 26th April A&E data both at HSCP and HB level             
+ae_data2 <- rbind(read_csv(unz(paste0(ae_zip_folder2,"HSCP.zip"), "HSCP.csv")) %>% 
+                    janitor::clean_names() %>% 
+                    rename(area=hscp_of_residence_code_as_at_arrival_date) %>%
+                    select(dat_date,area,pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile,number_of_attendances),
+                  read_csv(unz(paste0(ae_zip_folder2,"Board.zip"), "Board.csv")) %>% 
+                    janitor::clean_names() %>% 
+                    rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode) %>%
+                    select(dat_date,area,pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile,number_of_attendances))
+
+ae_data2 <- ae_data2 %>%
+  mutate(date=as.Date(dat_date,format="%d/%m/%y"),
+         week = ceiling_date(date, "week"),
+         week_ending=paste0(mday(week),"/0",month(week),"/",year(week))) %>% #end of week) 
+  select(-dat_date, -date) %>%
+  group_by(week_ending, area, pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile) %>%
+  summarise(number_of_attendances=sum(number_of_attendances)) %>%
+  ungroup() %>%
+  filter(week_ending != "3/05/2020") #exclude partial week
+
+# Bind all a&e data
+ae_data <- rbind(ae_data,ae_data2)
 
 # Format data
 ae_data <- ae_data %>% 
@@ -313,8 +337,7 @@ ae_scot <- ae_data %>% filter( substr(area ,1,3) == "S08") %>%
 ae_data <- rbind(ae_data %>% select(-area), ae_scot) %>% 
   rename(age=age_grp) %>%  mutate(week_ending=as.Date(week_ending,format="%d/%m/%Y")) %>% 
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
-                               TRUE~area_name)) %>%
-
+                               TRUE~area_name)) 
 ##Reshape dataset for shiny app
 #Use aggregation function to aggregate data files into format
 ae_all <- ae_data %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
