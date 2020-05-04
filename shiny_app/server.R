@@ -60,6 +60,88 @@ function(input, output, session) {
   # Link action button click to modal launch 
   observeEvent(input$btn_spec_groups, { showModal(spec_modal) }) 
   
+  #######
+  #modal to describe dataset
+  # Link action button click to modal launch 
+  observeEvent(input$btn_dataset_modal, 
+               
+               if(input$measure_select == "Hospital admissions"){
+                 showModal(modalDialog(#RAPID ADMISSIONS MODAL
+                   title = "What is the data source?",
+                   p("Hospital admissions data sourced from the ",
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37",
+                            "Rapid Preliminary Inpatient Data (RAPID).",class="externallink")), 
+                   p("RAPID data is not a complete record of all admissions within Scottish hospitals. 
+                     Day cases, maternity, geriatric long stay and mental health admissions, as well as admissions 
+                     to the Golden Jubilee National Hospital, are not included in the figures."), 
+                   p("Data on hospital admissions normally comes from the ",
+                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5",
+                      "SMR01 dataset.",class="externallink"),"However there is a 12 week lag in obtaining these data
+                   and monitoring of the impact of COVID-19 therefore depends on the RAPID dataset, a more limited but up to date information flow 
+                   which provides broadly comparable figures to SMR01 on numbers of admissions."),
+                   p(h5("The RAPID dataset is managed by ", 
+                        tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/", 
+                               "Public Health Scotland (PHS).", class="externallink"))),
+                   size = "m",
+                   easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+               }else if (input$measure_select == "A&E attendances"){ #A&E ATTENDANCES MODAL
+                 showModal(modalDialog(
+                   title = "What is the data source?",
+                   p("Attendances to A&E departments data sourced from the ",
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
+                            "Accident and Emergency Datamart (A&E2).",class="externallink")), 
+                   p("Numbers of A&E attendances will include both COVID-19 and non-COVID-19 related activity." ),                   
+                   p("There are two types of data submitted to the A&E datamart: episode and aggregate level data. 
+                     All hospitals with Emergency Departments submit episode level data containing a detailed record 
+                     for each patient attendance. Some smaller sites with minor injury units or community hospitals 
+                     only submit aggregate files containing monthly summary attendance and compliance figures only. 
+                     This is because they do not have the information systems and support to enable collection of 
+                     detailed patient based information. Sites that submit episode level data account for 
+                     around 94% of all attendances at A&E."),
+                   p("The data for sites that submit episode level data is included in the 
+                     figures for total admissions by area, but not included for any of the figures
+                     by sex, age group or deprivation."),
+                   p("This dashboard has beed designed to provide a weekly summary of activity along with historical 
+                     activity for comparison. Additional information relating to A&E activity is available from the ", 
+                     tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/", 
+                            "NHS Performs - weekly update of emergency department activity and waiting time statistics.", 
+                            class="externallink")),
+                   p(h5("The A&E2 dataset is managed by ", 
+                        tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
+                               "Public Health Scotland (PHS).", class="externallink"))),
+                   size = "m",
+                   easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+               }else if (input$measure_select == "NHS 24 calls"){#NHS24 CALLS MODAL
+                 showModal(modalDialog(
+                   title = "What is the data source?",
+                   p("Data on calls to NHS 24 sourced from the ",
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")), 
+                   p("Numbers of NHS 24 calls will include both COVID-19 and non-COVID related activity." ),
+                   p("Figures by NHS health board include those calls made by residents of each health board area."),
+                   p("This dashboard has beed designed to provide a weekly summary of activity along with historical activity for comparison. 
+                     For more detailed analysis of NHS24 activity contact ", 
+                     tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
+                            class="externallink"), "."),
+                   p(h5("The NHS24 dataset is managed by ", 
+                        tags$a(href="https://publichealthscotland.scot/", 
+                               "Public Health Scotland", class="externallink"), "and ",
+                     tags$a(href="https://www.nhs24.scot/", 
+                            "NHS 24", class="externallink"), ".")),
+                   size = "m",
+                   easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+               }else if (input$measure_select == "Out of hours consultations"){
+                 showModal(modalDialog(# OUT OF HOURS CONSULTATIONS  MODAL
+                   title = "What is the data source?",
+                   p("General Practice Out of Hours service data sourced from the",
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113", 
+                            "GP Out of Hours Dataset (OOH).",class="externallink")), 
+                   p("At present this dashboard does not include activity from any of the COVID-19 hubs or assessment centres." ),
+                   p(h5("The OOH dataset is managed by ", 
+                        tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/", 
+                               "Public Health Scotland (PHS).", class="externallink"))),
+                   size = "m",
+                   easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+                 })
   
   ###############################################.
   ## Reactive datasets ----
@@ -99,9 +181,9 @@ function(input, output, session) {
                          input$measure_select == "NHS 24 calls" ~ "calls",
                          input$measure_select == "Out of hours consultations" ~ "consultations")
     variation_title <- paste0("Percentage change in ", dataset, 
-                              " compared with the corresponding time in ")
+                              " compared with the corresponding time in 2018-2019 by ")
     
-    total_title <- paste0("Weekly number of ", dataset)
+    total_title <- paste0("Weekly number of ", dataset, " by ")
     
     # To make sure that both titles take the same space and are lined up doing
     # a bit of a hacky shortcut:
@@ -109,27 +191,28 @@ function(input, output, session) {
     extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
     
     # Function to create the standard layout for all the different charts/sections
-    cut_charts <- function(title, source, data_name, average = "2018-2019") {
+    cut_charts <- function(title, source, data_name) {
       tagList(
         h3(title),
-        p(paste0("Source: ", source)),
-      plot_box(paste0("2020 compared with the ", average, " average"), paste0(data_name, "_overall")),
-      plot_cut_box(paste0(variation_title, " ", average, " by sex"), paste0(data_name, "_sex_var"),
-                   paste0(total_title, " by sex"), paste0(data_name, "_sex_tot")),
-      plot_cut_box(paste0(variation_title, " ", average, " by age group"), paste0(data_name, "_age_var"),
-                   paste0(total_title, " by age group"), paste0(data_name, "_age_tot")),
-      plot_cut_box(paste0(variation_title, " ", average, " by SIMD quintile"), paste0(data_name, "_depr_var"),
-                   paste0(total_title, " by SIMD quintile"), paste0(data_name, "_depr_tot")))
+        actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
+        # fluidRow(column(4, p(paste0("Source: ", source))),
+        #                 column(8, actionButton("btn_dataset_modal", "Data source", icon = icon('question-circle')))),
+        plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
+        plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
+                     paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
+        plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
+                     paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
+        plot_cut_box(paste0(variation_title, "SIMD quintile"), paste0(data_name, "_depr_var"),
+                     paste0(total_title, "SIMD quintile"), paste0(data_name, "_depr_tot")))
     }
-    
     
     # Charts and rest of UI
     if (input$measure_select == "Hospital admissions") {
       tagList(#Hospital admissions
         cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
-                   data_name = "adm", average = "2016-2019"),
-        fluidRow(column(6, h4(paste0(variation_title, " 2016-2019 by specialty group"))),
-                 column(6, h4(paste0(total_title, " by specialty group")))),
+                   data_name = "adm"),
+        fluidRow(column(6, h4(paste0(variation_title, "specialty group"))),
+                 column(6, h4(paste0(total_title, "specialty group")))),
         fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
                     selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics"))),
@@ -142,12 +225,12 @@ function(input, output, session) {
                    source = "PHS AE2 Datamart", data_name = "aye")
       
     } else if (input$measure_select == "NHS 24 calls") {# NHS 24 calls
-      cut_charts(title= "Weekly calls to NHS24 service", 
-                 source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
+        cut_charts(title= "Weekly calls to NHS24 service", 
+                    source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
     } else if (input$measure_select == "Out of hours consultations") { #Out of hours consultations
-        cut_charts(title= "Weekly consultations to out of hours services", 
-                   source = "PHS GP OOH Datamart", data_name ="ooh")
+          cut_charts(title= "Weekly consultations to out of hours services", 
+                      source = "PHS GP OOH Datamart", data_name ="ooh")
     }
   }) 
   

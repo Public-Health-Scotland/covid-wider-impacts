@@ -9,7 +9,9 @@ library(plotly) # for charts
 library(shinyWidgets) # for dropdowns
 library(dplyr) # for data manipulation
 library(DT) # for data table
-library(shinycssloaders) #for loading icons
+library(shinycssloaders) #for loading icons, see line below
+# it uses github version devtools::install_github("andrewsali/shinycssloaders")
+# This is to avoid issues with loading symbols behind charts and perhaps with bouncing of app
 library(shinyjs) # for enable/disable functions
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
