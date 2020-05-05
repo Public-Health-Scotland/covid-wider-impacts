@@ -26,7 +26,7 @@ aligned to the release of the ", tags$a(href="https://beta.isdscotland.org/recen
                   p("Disclosure control methods have been applied to the data in order to protect 
                     patient confidentiality therefore figures may not be additive. "),
                   p("If you have any questions relating to the data or the tool, then please contact us at: ",
-                      tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink"))),
+                      tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink")), "."),
                   h3("Contents"),    
                   tags$ul( 
                       tags$li(

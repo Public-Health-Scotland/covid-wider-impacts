@@ -266,8 +266,7 @@ function(input, output, session) {
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- "% change from 2018-19 average"
-    # yaxis_plots[["range"]] <- c(x = -100, 80)
-    
+
     #Creating time trend plot
     trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
     
@@ -283,9 +282,6 @@ function(input, output, session) {
       
       #Modifying standard layout
       yaxis_plots[["title"]] <- yaxis_title
-      
-      hist_legend <- case_when(data_name == "adm" ~ "Average 2016-2019",
-                               data_name %in% c("aye", "nhs24", "ooh") ~ "Average 2018-2019")
       
       measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                                 data_name == "aye" ~ "Attendances: ",
@@ -332,8 +328,7 @@ function(input, output, session) {
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
     
-    hist_legend <- case_when(data_name == "adm" ~ "Average 2016-2019",
-                             data_name %in% c("aye", "nhs24", "ooh") ~ "Average 2018-2019")
+    hist_legend <- "Average 2018-2019"
       
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                              data_name == "aye" ~ "Attendances: ",
@@ -375,10 +370,10 @@ function(input, output, session) {
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$spec, "<br>", 
                                 "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                                "<br>", "Change from average: ", trend_data$variation, "%"))
+                                "<br>", "Change from 2018 - 2019 average: ", trend_data$variation, "%"))
       
       #Modifying standard layout
-      yaxis_plots[["title"]] <- "% change from average"
+      yaxis_plots[["title"]] <- "% change from 2018-19 average"
       
       #Creating time trend plot
       trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
@@ -390,7 +385,6 @@ function(input, output, session) {
       #Modifying standard layout
       yaxis_plots[["title"]] <- "Number of admissions"
       
-      hist_legend <- "Average 2016-2019"
       measure_name <- "Admissions: "
       
       #Text for tooltip
