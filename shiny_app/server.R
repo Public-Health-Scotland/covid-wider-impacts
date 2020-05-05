@@ -114,19 +114,20 @@ function(input, output, session) {
                }else if (input$measure_select == "NHS 24 calls"){#NHS24 CALLS MODAL
                  showModal(modalDialog(
                    title = "What is the data source?",
-                   p("Data on calls to NHS 24 sourced from the ",
-                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")), 
-                   p("Numbers of NHS 24 calls will include both COVID-19 and non-COVID related activity." ),
-                   p("Figures by NHS health board include those calls made by residents of each health board area."),
-                   p("This dashboard has beed designed to provide a weekly summary of activity along with historical activity for comparison. 
-                     For more detailed analysis of NHS24 activity contact ", 
+                   p("For many people an NHS24 call provides the first point of contact for urgent access to healthcare advice and, where necessary, onward treatment. At this time NHS24 will receive calls that relate to both COVID-19 and to the wide range of other healthcare issues that can and do occur all the year round."),
+                   p("The figures presented in this dashboard relate to calls concerning both COVID-19 and non-COVID issues. The charts provide a weekly summary of calls handled in the recent past and historical trends for comparison purposes." ),
+                   p("If required, more detailed analysis of NHS24 activity may be available on request from ",
                      tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                             class="externallink"), "."),
+                   p("Figures by NHS health board include those calls made by residents of each health board area."),
                    p(h5("The NHS24 dataset is managed by ", 
                         tags$a(href="https://publichealthscotland.scot/", 
                                "Public Health Scotland", class="externallink"), "and ",
                      tags$a(href="https://www.nhs24.scot/", 
-                            "NHS 24", class="externallink"), ".")),
+                            "NHS 24", class="externallink"), "."),
+                     p("This analysis has been sourced from the ",
+                       tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink"))
+                     ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }else if (input$measure_select == "Out of hours consultations"){

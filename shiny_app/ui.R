@@ -23,10 +23,9 @@ deprivation quintile, specialty, planned versus emergency admissions and by geog
 Further data will be added as it becomes available and the dashboard will be updated weekly,
 aligned to the release of the ", tags$a(href="https://beta.isdscotland.org/recent-publications/https://www.isdscotland.org/index.asp?Co=Y", "Coronavirus (COVID-19) weekly report for Scotland.", 
                            class="externallink")),
-                  p("Disclosure control methods have been applied to the data in order to protect 
-                    patient confidentiality therefore figures may not be additive. "),
-                  p("If you have any questions relating to the data or the tool, then please contact us at: ",
-                      tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink")), "."),
+                  p("Note that some numbers may not sum to the total as disclosure control methods have been applied to the data in order to protect patient confidentiality."),
+                  p("If you have any questions on the data presented or the tool, then please contact us at: ",
+                      tags$b(tags$a(href="mailto:phs.statsgov@nhs.net", "phs.statsgov@nhs.net", class="externallink")), "."),
                   h3("Contents"),    
                   tags$ul( 
                       tags$li(
