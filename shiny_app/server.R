@@ -68,17 +68,27 @@ function(input, output, session) {
                if(input$measure_select == "Hospital admissions"){
                  showModal(modalDialog(#RAPID ADMISSIONS MODAL
                    title = "What is the data source?",
-                   p("Hospital admissions data sourced from the ",
+                   p("The analyses shown here are derived from person level hospital admissions 
+                     data and show recent trends in admissions, whether COVID or non-COVID related, 
+                     and historic trends for comparison. The recent trend data is shown by age group, 
+                     sex, broad deprivation category and specialty groups."),
+                   p("The hospital admissions analyses are derived from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37",
-                            "Rapid Preliminary Inpatient Data (RAPID).",class="externallink")), 
+                            "Rapid Preliminary Inpatient Data (RAPID)",class="externallink"),
+                     "dataset. This dataset is submitted daily to PHS and relates mainly to general acute care. 
+                     Exclusions from the RAPID dataset are day cases, maternity and geriatric long stay admissions 
+                     and admissions for psychiatric care.  Admissions to the Golden Jubilee National Hospital are 
+                     also not included. "),
                    p("RAPID data is not a complete record of all admissions within Scottish hospitals. 
                      Day cases, maternity, neonatal, geriatric long stay and mental health admissions, as well as admissions 
                      to the Golden Jubilee National Hospital, are not included in the figures. Admissions related to Covid will be included in totals."), 
-                   p("Data on hospital admissions normally comes from the ",
+                   p("The normal source of information on hospital admissions is the ",
                       tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5",
-                      "SMR01 dataset.",class="externallink"),"However there is a 12 week lag in obtaining these data
-                   and monitoring of the impact of COVID-19 therefore depends on the RAPID dataset, a more limited but up to date information flow 
-                   which provides broadly comparable figures to SMR01 on numbers of admissions."),
+                      "SMR01 (general inpatient and day cases) return.",class="externallink"),
+                      "However, there is generally time lag in the submission of SMR01 to PHS.  
+                     Therefore, RAPID is being used for the immediate monitoring of the impact of 
+                     COVID-19 on admissions to hospital and it provides broadly comparable figures to SMR01 on 
+                     numbers of admissions."),
                    p(h5("The RAPID dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/", 
                                "Public Health Scotland (PHS).", class="externallink"))),
