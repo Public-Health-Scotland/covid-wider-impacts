@@ -134,7 +134,7 @@ function(input, output, session) {
                      trends for comparison purposes. The recent trend data is shown by age group, sex and broad 
                      deprivation category (SIMD)." ),
                    p("Figures by NHS health board include those calls made by residents of each health board area."),
-                   p("If required, more detailed analysis of NHS24 activity may be available on request from ",
+                   p("If required, more detailed analysis of NHS24 activity may be available on request to ",
                      tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                             class="externallink"), "."),
                    p("The NHS24 dataset is managed by ", 
@@ -150,13 +150,26 @@ function(input, output, session) {
                }else if (input$measure_select == "Out of hours consultations"){
                  showModal(modalDialog(# OUT OF HOURS CONSULTATIONS  MODAL
                    title = "What is the data source?",
-                   p("General Practice Out of Hours service data sourced from the",
+                   p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor, 
+                     when needed at times outwith normal general practice hours, such as evenings, 
+                     overnight or during the weekend. An appointment to the service is normally arranged 
+                     following contact with NHS 24. The recent trend data is shown by age group, sex and 
+                     broad deprivation category (SIMD)."),
+                   p("The charts provide a weekly summary of consultations in the recent past and 
+                     historical trends for comparison purposes."),
+                   p("The figures presented in this tool exclude consultations within any of the COVID-19 
+                     hubs or assessment centres and relate only to consultations that concerned non-COVID 
+                     issues. "),
+                   p("If required, more detailed analysis of the Primary Care Out of Hours servica may 
+                     be available on request to ",
+                     tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
+                            class="externallink"), "."),
+                   p("General Practice Out of Hours service data is sourced from the",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113", 
-                            "GP Out of Hours Dataset (OOH).",class="externallink")), 
-                   p("At present this dashboard does not include activity from any of the COVID-19 hubs or assessment centres." ),
-                   p(h5("The OOH dataset is managed by ", 
+                            "GP Out of Hours Dataset (OOH).",class="externallink"), 
+                     "The OOH dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/", 
-                               "Public Health Scotland (PHS).", class="externallink"))),
+                               "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                  })
