@@ -52,7 +52,7 @@ function(input, output, session) {
   ###############################################.
   #modal to provide information on what specialties are included in each group
   spec_modal <- modalDialog(
-    h5(" List of specialties and what group they correspond to"),
+    h5("List of specialties and what group they correspond to"),
     renderTable(spec_lookup), # creating table based on specialty lookup
     size = "l", align= "center",
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
@@ -108,7 +108,7 @@ function(input, output, session) {
                      for each patient attendance. Some smaller sites (6% of the total annual attendances) – nurse/GP 
                      led minor injury units – can only provide aggregated monthly summary attendance and compliance 
                      figures, as they do not have the IT systems and support to enable collection and submission of 
-                     detailed patient level information. The data for sites that submit episode level data is included 
+                     detailed patient level information. The data for sites that submit aggregate level data is included 
                      in the figures for total admissions by area, but not included for any of the figures by sex, age 
                      group or deprivation."),
                    p("Attendances to A&E departments data sourced from the ",
@@ -175,6 +175,32 @@ function(input, output, session) {
                  })
   
   ###############################################.
+  # Modal to explain SIMD and deprivation
+  simd_modal <- modalDialog(
+    h5("What is SIMD and deprivation?"),
+    p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+                    class="externallink"), "is the Scottish Government's 
+      official tool for identifying areas in Scotland concentrations of deprivation 
+      by incorporating several different aspects of deprivation (multiple-deprivations) 
+      and combining them into a single index. Concentrations of deprivation are identified 
+      in SIMD at Data Zone level and can be analysed using this small geographical unit. 
+      The use of data for such small areas helps to identify 'pockets' (or concentrations) 
+      of deprivation that may be missed in analyses based on larger areas such as council 
+      areas. By identifying small areas where there are concentrations of multiple deprivation, 
+      the SIMD can be used to target policies and resources at the places with greatest need. 
+      The SIMD identifies deprived areas, not deprived individuals."),
+    p("In this tool we use the concept of quintile, which refers to a fifth of the population. 
+      For example when we talk about the most deprived quintile, this means the 20% of the population 
+      living in the most deprived areas."),
+    size = "l", align= "center",
+    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+  )
+  # Link action button click to modal launch 
+  observeEvent(input$btn_modal_simd, { showModal(simd_modal) }) 
+  
+  
+  
+  ###############################################.
   ## Reactive datasets ----
   ###############################################.
   # Rapid dataset filtered for admission_type, then used to create the admissions charts
@@ -226,15 +252,19 @@ function(input, output, session) {
       tagList(
         h3(title),
         actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
-        # fluidRow(column(4, p(paste0("Source: ", source))),
-        #                 column(8, actionButton("btn_dataset_modal", "Data source", icon = icon('question-circle')))),
         plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
         plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                      paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
         plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
                      paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
-        plot_cut_box(paste0(variation_title, "SIMD quintile"), paste0(data_name, "_depr_var"),
-                     paste0(total_title, "SIMD quintile"), paste0(data_name, "_depr_tot")))
+          fluidRow(column(6, h4(paste0(variation_title, "SIMD quintile"))),
+                   column(6, h4(paste0(total_title, "SIMD quintile")))),
+        fluidRow(actionButton("btn_simd_modal", "What is SIMD and deprivation?", 
+                              icon = icon('question-circle'))),
+          fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))),
+                   column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))
+      )
+
     }
     
     # Charts and rest of UI
