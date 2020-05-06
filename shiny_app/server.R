@@ -192,7 +192,7 @@ function(input, output, session) {
     p("In this tool we use the concept of quintile, which refers to a fifth of the population. 
       For example when we talk about the most deprived quintile, this means the 20% of the population 
       living in the most deprived areas."),
-    size = "l", align= "center",
+    size = "l", 
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   )
   # Link action button click to modal launch 
@@ -259,7 +259,7 @@ function(input, output, session) {
                      paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
           fluidRow(column(6, h4(paste0(variation_title, "SIMD quintile"))),
                    column(6, h4(paste0(total_title, "SIMD quintile")))),
-        fluidRow(actionButton("btn_simd_modal", "What is SIMD and deprivation?", 
+        fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
                               icon = icon('question-circle'))),
           fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))),
                    column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))

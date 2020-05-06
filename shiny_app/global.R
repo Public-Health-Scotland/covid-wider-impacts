@@ -35,8 +35,6 @@ plot_cut_box <- function(title_plot1, plot_output1,
     )
 }
 
-
-
 ###############################################.
 ## Data ----
 ###############################################.
@@ -50,8 +48,6 @@ nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'), 
                   "Medical (incl. Cardiology & Cancer)")) # specialty list
-#spec_list <- spec_list[spec_list != "All"]
-spec_list <- spec_list %>% subset(spec_list != "All" & spec_list !="Dental")
 
 data_list <- c("Hospital admissions", "A&E attendances", "NHS 24 calls", "Out of hours consultations")
 
