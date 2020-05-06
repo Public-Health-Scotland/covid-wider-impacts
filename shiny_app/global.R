@@ -48,7 +48,8 @@ aye <- readRDS("data/ae_data.rds") #A&E data
 ooh <- readRDS("data/ooh_data.rds") # OOH data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 
-spec_list <- sort(unique(rapid$spec)) # specialty list
+spec_list <- sort(c(unique(spec_lookup$'Specialty group'), 
+                  "Medical (incl. Cardiology & Cancer)")) # specialty list
 #spec_list <- spec_list[spec_list != "All"]
 spec_list <- spec_list %>% subset(spec_list != "All" & spec_list !="Dental")
 

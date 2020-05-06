@@ -150,7 +150,8 @@ rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "spec_code")) %>%
 
 # For modal in app
 spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) %>% 
-  select("Specialty name" = spec_name, "Specialty group" = dash_groups) 
+  arrange(dash_groups, spec_name) %>% 
+  select("Specialty name" = spec_name, "Specialty group" = dash_groups)
 
 saveRDS(spec_lookup, "shiny_app/data/spec_lookup.rds")
 
