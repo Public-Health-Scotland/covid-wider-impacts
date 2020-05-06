@@ -78,10 +78,7 @@ function(input, output, session) {
                      "dataset. This dataset is submitted daily to PHS and relates mainly to general acute care. 
                      Exclusions from the RAPID dataset are day cases, maternity and geriatric long stay admissions 
                      and admissions for psychiatric care.  Admissions to the Golden Jubilee National Hospital are 
-                     also not included. "),
-                   p("RAPID data is not a complete record of all admissions within Scottish hospitals. 
-                     Day cases, maternity, neonatal, geriatric long stay and mental health admissions, as well as admissions 
-                     to the Golden Jubilee National Hospital, are not included in the figures. Admissions related to Covid will be included in totals."), 
+                     also not included. Admissions related to COVID-19 will be included in totals."),
                    p("The normal source of information on hospital admissions is the ",
                       tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5",
                       "SMR01 (general inpatient and day cases) return.",class="externallink"),
@@ -89,36 +86,37 @@ function(input, output, session) {
                      Therefore, RAPID is being used for the immediate monitoring of the impact of 
                      COVID-19 on admissions to hospital and it provides broadly comparable figures to SMR01 on 
                      numbers of admissions."),
-                   p(h5("The RAPID dataset is managed by ", 
+                   p("The RAPID dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/", 
-                               "Public Health Scotland (PHS).", class="externallink"))),
+                               "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }else if (input$measure_select == "A&E attendances"){ #A&E ATTENDANCES MODAL
                  showModal(modalDialog(
                    title = "What is the data source?",
-                   p("Attendances to A&E departments data sourced from the ",
-                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
-                            "Accident and Emergency Datamart (A&E2).",class="externallink")), 
-                   p("Numbers of A&E attendances will include both COVID-19 and non-COVID-19 related activity." ),                   
-                   p("There are two types of data submitted to the A&E datamart: episode and aggregate level data. 
-                     All hospitals with Emergency Departments submit episode level data containing a detailed record 
-                     for each patient attendance. Some smaller sites with minor injury units or community hospitals 
-                     only submit aggregate files containing monthly summary attendance and compliance figures only. 
-                     This is because they do not have the information systems and support to enable collection of 
-                     detailed patient based information. Sites that submit episode level data account for 
-                     around 94% of all attendances at A&E."),
-                   p("The data for sites that submit episode level data is included in the 
-                     figures for total admissions by area, but not included for any of the figures
-                     by sex, age group or deprivation."),
-                   p("This dashboard has beed designed to provide a weekly summary of activity along with historical 
-                     activity for comparison. Additional information relating to A&E activity is available from the ", 
+                   p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments 
+                     and Nurse/GP lead minor injury units) in the recent past, along with historical activity for 
+                     comparison purposes. The recent trend data is shown by age group, sex
+                     and broad deprivation category (SIMD)."),
+                   p("Additional information relating to A&E activity is available from the ", 
                      tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/", 
                             "NHS Performs - weekly update of emergency department activity and waiting time statistics.", 
                             class="externallink")),
-                   p(h5("The A&E2 dataset is managed by ", 
+                   p("Numbers of A&E attendances will include both COVID-19 and non-COVID-19 related activity." ),                   
+                   p("There are two types of data submitted to the A&E datamart: episode and aggregate level data. 
+                     All hospitals with Emergency Departments submit episode level data containing a detailed record 
+                     for each patient attendance. Some smaller sites (6% of the total annual attendances) – nurse/GP 
+                     led minor injury units – can only provide aggregated monthly summary attendance and compliance 
+                     figures, as they do not have the IT systems and support to enable collection and submission of 
+                     detailed patient level information. The data for sites that submit episode level data is included 
+                     in the figures for total admissions by area, but not included for any of the figures by sex, age 
+                     group or deprivation."),
+                   p("Attendances to A&E departments data sourced from the ",
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
+                            "Accident and Emergency Datamart (A&E2).",class="externallink"), 
+                     "The A&E2 dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
-                               "Public Health Scotland (PHS).", class="externallink"))),
+                               "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }else if (input$measure_select == "NHS 24 calls"){#NHS24 CALLS MODAL
@@ -130,13 +128,13 @@ function(input, output, session) {
                      tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                             class="externallink"), "."),
                    p("Figures by NHS health board include those calls made by residents of each health board area."),
-                   p(h5("The NHS24 dataset is managed by ", 
+                   p("The NHS24 dataset is managed by ", 
                         tags$a(href="https://publichealthscotland.scot/", 
                                "Public Health Scotland", class="externallink"), "and ",
                      tags$a(href="https://www.nhs24.scot/", 
-                            "NHS 24", class="externallink"), "."),
-                     p("This analysis has been sourced from the ",
-                       tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink"))
+                            "NHS 24", class="externallink"), ".",
+                     "This analysis has been sourced from the ",
+                       tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
                      ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
