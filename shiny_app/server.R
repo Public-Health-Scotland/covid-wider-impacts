@@ -108,9 +108,8 @@ function(input, output, session) {
                      for each patient attendance. Some smaller sites (6% of the total annual attendances) – nurse/GP 
                      led minor injury units – can only provide aggregated monthly summary attendance and compliance 
                      figures, as they do not have the IT systems and support to enable collection and submission of 
-                     detailed patient level information. The data for sites that submit aggregate level data is included 
-                     in the figures for total admissions by area, but not included for any of the figures by sex, age 
-                     group or deprivation."),
+                     detailed patient level information. The data for sites that submit aggregate level data is not 
+                     included in the figures presented in the tool. "),
                    p("Attendances to A&E departments data sourced from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
                             "Accident and Emergency Datamart (A&E2).",class="externallink"), 
