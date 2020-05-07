@@ -431,4 +431,53 @@ nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 # Formatting file for shiny app
 prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-03")
 
+
+###############################################.
+## Reading SAS data ----
+###############################################.
+
+sas_zip_folder <- "/conf/PHSCOVID19_Analysis/OOH_shiny_app/SAS/"
+
+
+sas <- rbind(read.delim(unzip(paste0(sas_zip_folder,"COVID WIDER IMPACT SAS_01012018to03052020.zip"),
+                              "COVID WIDER IMPACT SAS_01012018to03052020.txt"),sep ="\t", header = TRUE, dec ="."),
+             read.delim(unzip(paste0(sas_zip_folder,"COVID WIDER IMPACT SAS_04052020to10052020.zip"),
+                              "COVID WIDER IMPACT SAS_04052020to10052020.txt"),sep ="\t", header = TRUE, dec =".")) %>%
+  janitor::clean_names() %>%
+  rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
+         dep=patient_prompt_dataset_deprivation_scot_quintile,
+         count=number_of_incidents,gender=gender_description) %>%
+  select(-sas_call_start_calendar_week) %>%
+  # Formatting dates and sex
+  mutate(week_ending = as.Date(week_ending, format="%d-%b-%Y"),
+         sex=case_when(is.na(gender)~"Missing",gender=="" ~"Missing", gender=="MALE" ~ "Male", gender=="FEMALE" ~"Female", 
+                       gender %in% c(0, 9 ) ~ "Missing", TRUE~as.character(gender))) %>% 
+  proper() %>% #convert HB names to correct format
+  create_agegroups () %>%
+  create_depgroups () %>%
+  mutate(year=year(week_ending))
+
+# Aggregate up to get figures for each area type.
+sas <- sas %>% mutate(scot = "Scotland") %>% 
+  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age_grp, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
+
+# Use aggregation function to aggregate data files for use in shiny app
+sas_allsex <- sas %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+sas_sex <- agg_cut(dataset= sas, grouper="sex") %>% rename(category=sex)
+sas_dep <- agg_cut(dataset= sas, grouper="dep") %>% rename(category=dep)
+sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
+
+# Add final aggregation files to one master file
+sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
+
+# Formatting file for shiny app
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-03")
+
+
+
 ##END
