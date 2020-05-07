@@ -90,7 +90,9 @@ proper <- function(dataset) {
 prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) {
   
   # Creating week number to be able to compare pre-covid to covid period
-  dataset <- dataset %>% mutate(week_no = isoweek(week_ending))
+  dataset <- dataset %>% mutate(week_no = isoweek(week_ending),
+                                # Fixing HSCP names
+                                area_name = gsub(" and ", " & ", area_name))
     
   
   # Creating average admissions of pre-covid data (2018-2019) by day of the year
