@@ -45,11 +45,13 @@ rapid <- readRDS("data/rapid_data.rds") #RAPID data
 aye <- readRDS("data/ae_data.rds") #A&E data
 ooh <- readRDS("data/ooh_data.rds") # OOH data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
+sas <- readRDS("data/sas_data.rds") # OOH data
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'), 
                   "Medical (incl. Cardiology & Cancer)")) # specialty list
 
-data_list <- c("Hospital admissions", "A&E attendances", "NHS 24 calls", "Out of hours consultations")
+data_list <- c("Hospital admissions", "A&E attendances", "NHS 24 calls", 
+               "Out of hours consultations", "Ambulance incidents attended")
 
 ###############################################.
 ## Palettes and plot parameters ----
