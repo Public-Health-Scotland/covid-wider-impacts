@@ -174,7 +174,7 @@ function(input, output, session) {
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                  
                } else if (input$measure_select == "Ambulance service activity"){
-                 showModal(modalDialog(# SAS MODAL
+                 showModal(modalDialog(# SAS MODAL #
                    title = "What is the data source?",
                    p("The Scottish Ambulance Service (SAS) is the frontline of the NHS in Scotland, providing
                      an emergency ambulance service to a population of over 5 million, serving all of the 
