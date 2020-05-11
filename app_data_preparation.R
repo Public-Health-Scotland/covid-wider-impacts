@@ -131,7 +131,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
 ## Reading RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_04-May.rds") %>% 
+rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_11-May.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -202,7 +202,7 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-04-26", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-05-10", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
