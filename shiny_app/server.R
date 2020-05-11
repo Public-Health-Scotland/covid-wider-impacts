@@ -124,7 +124,7 @@ function(input, output, session) {
                    p("For many people an NHS24 call provides the first point of contact for urgent access 
                      to healthcare advice and, where necessary, onward treatment. At this time NHS24 will 
                      receive calls that relate to both COVID-19 and to the wide range of other healthcare 
-                     issues that can and do occur all the year round.Contacting NHS 24  provides many people 
+                     issues that can and do occur all the year round. Contacting NHS 24 provides many people 
                      with access to healthcare advice, urgent clinical advice and, where necessary, onward treatment. 
                      At this time NHS 24 will receive calls that relate to both COVID-19 and to the wide 
                      range of other urgent healthcare issues that can and do occur all year round."),
@@ -178,13 +178,20 @@ function(input, output, session) {
                    title = "What is the data source?",
                    p("The Scottish Ambulance Service (SAS) is the frontline of the NHS in Scotland, providing
                      an emergency ambulance service to a population of over 5 million, serving all of the 
-                     nation's mainland and island communities. The SAS also provides a patient transport service 
-                     with over 662,000 patient journeys every year, and provides are for patients who need support 
-                     to reach their healthcare appointments due to their medical and mobility needs. The recent 
-                     trend data is shown by age group, sex and broad deprivation category (SIMD)."),
+                     nation's mainland and island communities. The ambulance service response may follow a call
+                     to NHS24 or emergency services. The recent trend data is shown by age group, sex 
+                     and broad deprivation category (SIMD)."),
                    p("The charts provide a weekly summary of incidents attended by the ambulance service in 
                      the recent past and trends for comparison purposes."),
-                   P("Scottish Ambulance Service data is sourced from ")
+                   p("If required, more detailed analysis of SAS activity may be available on request to ",
+                     tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
+                            class="externallink"), "."),
+                   p("The SAS dataset is managed by ", 
+                     tags$a(href="https://publichealthscotland.scot/", 
+                            "Public Health Scotland", class="externallink"),".",
+                     "This analysis is drawn from the ",
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
+                   ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }
