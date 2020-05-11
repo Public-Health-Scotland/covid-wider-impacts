@@ -176,19 +176,19 @@ function(input, output, session) {
                } else if (input$measure_select == "Ambulance service activity"){
                  showModal(modalDialog(# SAS MODAL #
                    title = "What is the data source?",
-                   p("The Scottish Ambulance Service (SAS) is the frontline of the NHS in Scotland, providing
-                     an emergency ambulance service to a population of over 5 million, serving all of the 
-                     nation's mainland and island communities. The ambulance service response may follow a call
-                     to NHS24 or emergency services. The recent trend data is shown by age group, sex 
-                     and broad deprivation category (SIMD)."),
-                   p("The charts provide a weekly summary of incidents attended by the ambulance service in 
-                     the recent past and trends for comparison purposes."),
+                   p("The charts provide a weekly summary of Scottish Ambulance Service accident and emergency calls attended in the recent 
+                      past and historical trends for comparison purposes. The recent trend data is shown by age group, sex and 
+                      broad deprivation category (SIMD). The figures presented in this tool relate to incidents concerning both COVID-19 and 
+                      non-COVID issues. Please note that this represents a sub-set of the total Scottish Ambulance service activity and 
+                      does not include patient transfers or paramedic responses."),
                    p("If required, more detailed analysis of SAS activity may be available on request to ",
                      tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                             class="externallink"), "."),
                    p("The SAS dataset is managed by ", 
                      tags$a(href="https://publichealthscotland.scot/", 
-                            "Public Health Scotland", class="externallink"),".",
+                            "Public Health Scotland", class="externallink"), "and ",
+                     tags$a(href="https://www.scottishambulance.com/", 
+                            "Scottish Ambulance Service", class="externallink"), ".",
                      "This analysis is drawn from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
                    ),
