@@ -369,8 +369,10 @@ nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 
                             "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.csv")),
                read_csv(unz(paste0(nhs24_zip_folder, "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.zip"), 
                             "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.csv")),
-               read_csv(unz(paste0(nhs24_zip_folder,"3. NHS24 Extract 1 Jan 20 - 24 Apr 20.zip"), 
-                            "3. NHS24 Extract 1 Jan 20 - 24 Apr 20.csv"))) %>%
+               read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 1 Jan 20 - 19 Apr 20.zip"), 
+                            "Report 2.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 20 Apr 20 - 10 May 20.zip"), 
+                          "Report 2.csv"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -381,25 +383,10 @@ nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 
          count = number_of_nhs_24_records) %>% 
   # Formatting dates
   mutate(week_ending = as.Date(week_ending, format="%d-%b-%y"),
-         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F)) %>% 
-  # Filtering data to avoid duplication for latest dates
-  filter(week_ending <= as.Date("2020-04-19"))
-
-# Data including for weeks 26-4 and 3-5
-nhs24_new <- readxl::read_excel("/conf/PHSCOVID19_Analysis/NHS24_shiny_app/NHS 24 EXTRACT 4May20.xlsx") %>% 
-  janitor::clean_names() %>% 
-  rename(hb = patient_nhs_board_description_current, hscp = patient_hscp_name_current,
-         sex = gender_description, 
-         dep = patient_prompt_dataset_deprivation_scot_quintile,
-         covid_flag = nhs_24_covid_19_flag,
-         week_ending = nhs_24_call_rcvd_date,
-         count = number_of_nhs_24_records) %>% 
-  # Formatting dates
-  mutate(week_ending = as.Date(week_ending, format="%d-%b-%y"),
-         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F)) 
+         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F))
 
 # Joining with latest data and formatting
-nhs24 <- rbind(nhs24, nhs24_new) %>% #end of week) 
+nhs24 <- nhs24 %>%
   mutate(sex = str_to_title(sex)) %>% 
   proper() %>% #convert HB names to correct format
   create_agegroups () %>%
@@ -429,7 +416,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-03")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-10")
 
 
 ###############################################.
