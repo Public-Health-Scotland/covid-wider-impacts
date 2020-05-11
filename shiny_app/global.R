@@ -52,7 +52,7 @@ spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
 
 data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
                "NHS 24 calls" = "nhs24", 
-               "Out of hours consultations" = "ooh", "Ambulance service activity" = "sas")
+               "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
 
 ###############################################.
 ## Palettes and plot parameters ----

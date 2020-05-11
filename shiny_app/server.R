@@ -113,7 +113,7 @@ function(input, output, session) {
                    p("Attendances to A&E departments data sourced from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
                             "Accident and Emergency Datamart (A&E2).",class="externallink"), 
-                     "The A&E dataset is managed by ", 
+                     "The A&E2 dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                                "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
