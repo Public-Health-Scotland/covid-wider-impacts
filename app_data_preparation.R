@@ -294,28 +294,6 @@ ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-Age
                    janitor::clean_names() %>% 
                    rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode))
 
-# # Read w/e 26th April A&E data both at HSCP and HB level             
-# ae_data2 <- rbind(read_csv(unz(paste0(ae_zip_folder2,"HSCP.zip"), "HSCP.csv")) %>% 
-#                     janitor::clean_names() %>% 
-#                     rename(area=hscp_of_residence_code_as_at_arrival_date) %>%
-#                     select(dat_date,area,pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile,number_of_attendances),
-#                   read_csv(unz(paste0(ae_zip_folder2,"Board.zip"), "Board.csv")) %>% 
-#                     janitor::clean_names() %>% 
-#                     rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode) %>%
-#                     select(dat_date,area,pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile,number_of_attendances))
-# 
-# ae_data2 <- ae_data2 %>%
-#   mutate(date=as.Date(dat_date,format="%d/%m/%y"),
-#          week = ceiling_date(date, "week", change_on_boundary = F),
-#          week_ending=paste0(mday(week),"/0",month(week),"/",year(week))) %>% #end of week) 
-#   select(-dat_date, -date) %>%
-#   group_by(week_ending, area, pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile) %>%
-#   summarise(number_of_attendances=sum(number_of_attendances)) %>%
-#   ungroup() 
-# 
-# # Bind all a&e data
-# ae_data <- rbind(ae_data,ae_data2)
-
 # Format data
 ae_data <- ae_data %>% 
   rename(dep=prompt_dataset_deprivation_scot_quintile, age=pat_age,
