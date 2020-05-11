@@ -51,7 +51,7 @@ spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                   "Medical (incl. Cardiology & Cancer)")) # specialty list
 
 data_list <- c("Hospital admissions", "A&E attendances", "NHS 24 calls", 
-               "Out of hours consultations", "Ambulance incidents attended")
+               "Out of hours consultations", "Ambulance service activity")
 
 ###############################################.
 ## Palettes and plot parameters ----
