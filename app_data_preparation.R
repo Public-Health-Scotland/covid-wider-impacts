@@ -261,34 +261,37 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
-  # Aggregating to make it faster to work with
+  # Aggregating by week to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-05-03")))  #filter complete weeks (Mon-Sun)
 
 #New extract provided for week ending 10 May 2020
-new_ooh_10may2020 <- read_csv("/conf/PHSCOVID19_Analysis/OOH_shiny_app/new_11052020.csv") %>%
+new_ooh_10may2020 <- read_csv("/conf/PHSCOVID19_Analysis/OOH_shiny_app/new_11052020.csv") %>% 
   rename(count=number_of_cases, hscp = hspc) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
-                             "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
-                             "65-74" = "65 - 74", "75-84" = "75 - 84",
-                             "85 plus" = "85 and over"),
+  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
+                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
+                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
+                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
+                             "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
+                             "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
+                             "90+" = "85 and over"),
          sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          dep = recode(dep, 
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
                       "4" = "4", "5" = "5 - least deprived"),
          week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
-         scot = "Scotland") %>%
-  subset(week_ending == "2020-05-10")
-
-new_ooh_10may2020 <- new_ooh_10may2020 %>% mutate(scot = "Scotland") %>% 
+         scot = "Scotland") %>% 
+  proper() # convert HB names to correct format
+  
+new_ooh_10may2020 <- new_ooh_10may2020 %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-05-04"), as.Date("2020-05-10")))  #filter complete weeks (Mon-Sun)
+  filter(week_ending == as.Date("2020-05-10"))  #filter complete weeks (Mon-Sun)
 
 #bind old and new ooh data
 ooh <- rbind(new_ooh_10may2020, ooh_new, ooh)
