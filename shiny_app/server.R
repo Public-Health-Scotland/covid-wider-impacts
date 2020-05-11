@@ -320,7 +320,7 @@ function(input, output, session) {
                       source = "PHS GP OOH Datamart", data_name ="ooh")
       
     } else if (input$measure_select == "Ambulance service activity") { # SAS data
-        cut_charts(title= "Weekly incidents attended by ambulance service", 
+        cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service", 
                    source = "PHS Unscheduled Care Datamart", data_name ="sas")
     }
   }) 
