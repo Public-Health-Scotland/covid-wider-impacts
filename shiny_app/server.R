@@ -60,12 +60,12 @@ function(input, output, session) {
   # Link action button click to modal launch 
   observeEvent(input$btn_spec_groups, { showModal(spec_modal) }) 
   
-  #######
+###############################################.
   #modal to describe dataset
   # Link action button click to modal launch 
   observeEvent(input$btn_dataset_modal, 
                
-               if(input$measure_select == "Hospital admissions"){
+               if (input$measure_select == "Hospital admissions") {
                  showModal(modalDialog(#RAPID ADMISSIONS MODAL
                    title = "What is the data source?",
                    p("The analyses shown here are derived from person level hospital admissions 
@@ -91,7 +91,7 @@ function(input, output, session) {
                                "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               }else if (input$measure_select == "A&E attendances"){ #A&E ATTENDANCES MODAL
+               } else if (input$measure_select == "A&E attendances") { #A&E ATTENDANCES MODAL
                  showModal(modalDialog(
                    title = "What is the data source?",
                    p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments 
@@ -118,7 +118,7 @@ function(input, output, session) {
                                "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               }else if (input$measure_select == "NHS 24 calls"){#NHS24 CALLS MODAL
+               } else if (input$measure_select == "NHS 24 calls") { #NHS24 CALLS MODAL
                  showModal(modalDialog(
                    title = "What is the data source?",
                    p("For many people an NHS24 call provides the first point of contact for urgent access 
@@ -146,7 +146,8 @@ function(input, output, session) {
                      ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               }else if (input$measure_select == "Out of hours consultations"){
+                 
+               } else if (input$measure_select == "Out of hours consultations"){
                  showModal(modalDialog(# OUT OF HOURS CONSULTATIONS  MODAL
                    title = "What is the data source?",
                    p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor, 
@@ -171,7 +172,16 @@ function(input, output, session) {
                                "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-                 })
+                 
+               } else if (input$measure_select == "Ambulance service activity"){
+                 showModal(modalDialog(# SAS  MODAL
+                   title = "What is the data source?",
+                   p("Hello World"),
+                   size = "m",
+                   easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+               }
+               
+               )
   
   ###############################################.
   # Modal to explain SIMD and deprivation
@@ -236,7 +246,7 @@ function(input, output, session) {
                          input$measure_select == "A&E attendances" ~ "attendances",
                          input$measure_select == "NHS 24 calls" ~ "calls",
                          input$measure_select == "Out of hours consultations" ~ "consultations",
-                         input$measure_select == "Ambulance incidents attended" ~ "incidents")
+                         input$measure_select == "Ambulance service activity" ~ "incidents")
     
     variation_title <- paste0("Percentage change in ", dataset, 
                               " compared with the corresponding time in 2018-2019 by ")
@@ -294,9 +304,9 @@ function(input, output, session) {
           cut_charts(title= "Weekly consultations to out of hours services", 
                       source = "PHS GP OOH Datamart", data_name ="ooh")
       
-    } else if (input$measure_select == "Ambulance incidents attended") { # SAS data
+    } else if (input$measure_select == "Ambulance service activity") { # SAS data
         cut_charts(title= "Weekly incidents attended by ambulance service", 
-                   source = "PHS SAS Datamart", data_name ="sas")
+                   source = "PHS Unscheduled Care Datamart", data_name ="sas")
     }
   }) 
   
@@ -339,7 +349,7 @@ function(input, output, session) {
     
     } else if (type == "total") {
       
-      ###############################################
+      ###############################################.
       # Creating objects that change depending on dataset
       yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                                data_name == "aye" ~ "Number of attendances",
@@ -386,7 +396,7 @@ function(input, output, session) {
     # Filtering dataset to include only overall figures
     trend_data <- filter_data(dataset)
     
-    ###############################################
+    ###############################################.
     # Creating objects that change depending on dataset
     yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
@@ -579,7 +589,7 @@ function(input, output, session) {
       "A&E attendances" = aye,
       "NHS 24 calls" = nhs24,
       "Out of hours consultations" = ooh,
-      "Ambulance incidents attended" = sas) %>% 
+      "Ambulance service activity" = sas) %>% 
       # Formatting to a "nicer" style
       select(-type) %>% 
       rename(count_average_pre2020 = count_average,
@@ -639,7 +649,7 @@ function(input, output, session) {
       "A&E attendances" = filter_data(aye),
       "NHS 24 calls" = filter_data(nhs24),
       "Out of hours consultations" = filter_data(ooh),
-      "Ambulance incidents attended" = filter_data(sas),
+      "Ambulance service activity" = filter_data(sas),
     ) %>% 
       select(area_name, week_ending, count, count_average) %>% 
       rename(average_pre2020 = count_average) %>% 
