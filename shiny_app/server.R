@@ -235,7 +235,9 @@ function(input, output, session) {
     dataset <- case_when(input$measure_select == "Hospital admissions" ~ "admissions",
                          input$measure_select == "A&E attendances" ~ "attendances",
                          input$measure_select == "NHS 24 calls" ~ "calls",
-                         input$measure_select == "Out of hours consultations" ~ "consultations")
+                         input$measure_select == "Out of hours consultations" ~ "consultations",
+                         input$measure_select == "Ambulance incidents attended" ~ "incidents")
+    
     variation_title <- paste0("Percentage change in ", dataset, 
                               " compared with the corresponding time in 2018-2019 by ")
     
@@ -291,6 +293,10 @@ function(input, output, session) {
     } else if (input$measure_select == "Out of hours consultations") { #Out of hours consultations
           cut_charts(title= "Weekly consultations to out of hours services", 
                       source = "PHS GP OOH Datamart", data_name ="ooh")
+      
+    } else if (input$measure_select == "Ambulance incidents attended") { # SAS data
+        cut_charts(title= "Weekly incidents attended by ambulance service", 
+                   source = "PHS SAS Datamart", data_name ="sas")
     }
   }) 
   
@@ -338,7 +344,8 @@ function(input, output, session) {
       yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                                data_name == "aye" ~ "Number of attendances",
                                data_name == "ooh" ~ "Number of consultations",
-                               data_name == "nhs24" ~ "Number of calls")
+                               data_name == "nhs24" ~ "Number of calls",
+                               data_name == "sas" ~ "Number of incidents")
       
       #Modifying standard layout
       yaxis_plots[["title"]] <- yaxis_title
@@ -346,7 +353,8 @@ function(input, output, session) {
       measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                                 data_name == "aye" ~ "Attendances: ",
                                 data_name == "ooh" ~ "Consultations: ",
-                                data_name == "nhs24" ~ "Calls: ")
+                                data_name == "nhs24" ~ "Calls: ",
+                                data_name == "sas" ~ "Incidents: ")
       
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$category, "<br>",
@@ -383,7 +391,8 @@ function(input, output, session) {
     yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
                              data_name == "ooh" ~ "Number of consultations",
-                             data_name == "nhs24" ~ "Number of calls")
+                             data_name == "nhs24" ~ "Number of calls",
+                             data_name == "sas" ~ "Number of incidents")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
@@ -393,7 +402,8 @@ function(input, output, session) {
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                              data_name == "aye" ~ "Attendances: ",
                              data_name == "ooh" ~ "Consultations: ",
-                             data_name == "nhs24" ~ "Calls: ")
+                             data_name == "nhs24" ~ "Calls: ",
+                             data_name == "sas" ~ "Incidents: ")
     
     #Text for tooltip
     tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
@@ -476,6 +486,7 @@ function(input, output, session) {
   
   ###############################################.
   # Creating plots for each cut and dataset
+  # A&E charts
   output$aye_overall <- renderPlotly({plot_overall_chart(aye, "aye")})
   output$aye_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex")})
   output$aye_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age")})
@@ -484,6 +495,7 @@ function(input, output, session) {
   output$aye_age_tot <- renderPlotly({plot_trend_chart(aye, pal_age, "age", "total", "aye")})
   output$aye_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "total", "aye")})
   
+  # OOH charts
   output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
   output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex")})
   output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age")})
@@ -492,6 +504,7 @@ function(input, output, session) {
   output$ooh_age_tot <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", "total", "ooh")})
   output$ooh_depr_tot <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", "total", "ooh")})
   
+  # NHS24 charts
   output$nhs24_overall <- renderPlotly({plot_overall_chart(nhs24, "nhs24")})
   output$nhs24_sex_var <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex")})
   output$nhs24_age_var <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age")})
@@ -500,6 +513,16 @@ function(input, output, session) {
   output$nhs24_age_tot <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age", "total", "nhs24")})
   output$nhs24_depr_tot <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep", "total", "nhs24")})
   
+  # SAS charts
+  output$sas_overall <- renderPlotly({plot_overall_chart(sas, "sas")})
+  output$sas_sex_var <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex")})
+  output$sas_age_var <- renderPlotly({plot_trend_chart(sas, pal_age, "age")})
+  output$sas_depr_var <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep")})
+  output$sas_sex_tot <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex", "total", "sas")})
+  output$sas_age_tot <- renderPlotly({plot_trend_chart(sas, pal_age, "age", "total", "sas")})
+  output$sas_depr_tot <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep", "total", "sas")})
+  
+  # Admissions to hospital charts
   output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
   output$adm_sex_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex")})
   output$adm_age_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age")})
@@ -555,7 +578,8 @@ function(input, output, session) {
       "Hospital admissions" = rapid %>% rename(specialty = spec),
       "A&E attendances" = aye,
       "NHS 24 calls" = nhs24,
-      "Out of hours consultations" = ooh) %>% 
+      "Out of hours consultations" = ooh,
+      "Ambulance incidents attended" = sas) %>% 
       # Formatting to a "nicer" style
       select(-type) %>% 
       rename(count_average_pre2020 = count_average,
@@ -614,7 +638,8 @@ function(input, output, session) {
       "Hospital admissions" = filter_data(rapid_filt()),
       "A&E attendances" = filter_data(aye),
       "NHS 24 calls" = filter_data(nhs24),
-      "Out of hours consultations" = filter_data(ooh)
+      "Out of hours consultations" = filter_data(ooh),
+      "Ambulance incidents attended" = filter_data(sas),
     ) %>% 
       select(area_name, week_ending, count, count_average) %>% 
       rename(average_pre2020 = count_average) %>% 
