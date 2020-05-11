@@ -16,16 +16,13 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                   h3("COVID-19 wider impacts on the health care system")),
            column(8,
                   tags$br(),
-                  p("This tool provides a high level overview of how the COVID-19 response 
-is impacting more widely on health and health inequalities. The initial version focuses on 
-hospital admissions, unscheduled care and volume of calls to NHS24. The data are presented by age, sex, 
-deprivation quintile, specialty, planned versus emergency admissions and by geographical location. 
-Further data will be added as it becomes available and the tool will be updated weekly,
-aligned to the release of the ", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", "Coronavirus (COVID-19) weekly report for Scotland.", 
-                           class="externallink")),
-                  p("Note that some numbers may not sum to the total as disclosure control methods have been applied to the data in order to protect patient confidentiality."),
-                  p("If you have any questions on the data presented or the tool, then please contact us at: ",
-                      tags$b(tags$a(href="mailto:phs.statsgov@nhs.net", "phs.statsgov@nhs.net", class="externallink")), "."),
+                  p("The COVID-19 pandemic has wider impacts than those that occur as the direct result of infection. There are a range of possible reasons for this, including public reluctance to burden the NHS, anxiety about using the NHS because of fears of infection, pressure on health services, delays to routine non-urgent care, impacts on existing preventive programmes and possible direct effects of COVID-19 on other conditions such as heart disease."),
+                  p("This information tool provides an overview of changes in health and healthcare during the COVID-19 pandemic in Scotland, drawing on a range of national data sources. This first release focuses on recent trends in calls to NHS24, out-of-hours primary care consultations, Accident and Emergency attendances and hospital admissions. Because of the lag in submissions to routine hospital discharge datasets it has been necessary to use the Rapid dataset to monitor hospital admissions. This provides much less detail than usual sources, but has the advantage of offering more timely data."),
+                  p("The intention is to enhance this selection in future releases as the data become available. The dashboard will be updated weekly, aligned to the release of the ", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", "Coronavirus (COVID-19) weekly report for Scotland.", 
+                                                                                                                                                                                               class="externallink")),
+                  p("Depending on the subject the data are presented by age, sex, measures of material deprivation, consultant specialty, planned and emergency hospital admissions and geographical location. Note that some numbers may not sum to the total as disclosure control methods have been applied to the data in order to protect patient confidentiality."),
+                  p("If you have any questions on the data presented then please contact us at: ",
+                    tags$b(tags$a(href="mailto:phs.statsgov@nhs.net", "phs.statsgov@nhs.net", class="externallink")), "."),
                   h3("Contents"),    
                   tags$ul( 
                       tags$li(
