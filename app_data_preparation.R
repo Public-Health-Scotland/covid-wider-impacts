@@ -282,38 +282,39 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-03")
 ## Preparing A&E data ----
 ###############################################.
 #short cut to a&e folder areas
-ae_zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-04-24-Extracts/"
-ae_zip_folder2 <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-05-04-Extracts/"
+ae_zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-05-08-Extracts/"
 
 # Read A&E data both at HSCP and HB level
-ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), "HSCP.csv")) %>% 
+ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
+                              "HSCP.csv")) %>% 
                    janitor::clean_names() %>% 
                    rename(area=hscp_of_residence_code_as_at_arrival_date),
-                 read_csv(unz(paste0(ae_zip_folder,"NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), "NHS Boards.csv")) %>% 
+                 read_csv(unz(paste0(ae_zip_folder,"NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), 
+                              "NHS Boards.csv")) %>% 
                    janitor::clean_names() %>% 
                    rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode))
 
-# Read w/e 26th April A&E data both at HSCP and HB level             
-ae_data2 <- rbind(read_csv(unz(paste0(ae_zip_folder2,"HSCP.zip"), "HSCP.csv")) %>% 
-                    janitor::clean_names() %>% 
-                    rename(area=hscp_of_residence_code_as_at_arrival_date) %>%
-                    select(dat_date,area,pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile,number_of_attendances),
-                  read_csv(unz(paste0(ae_zip_folder2,"Board.zip"), "Board.csv")) %>% 
-                    janitor::clean_names() %>% 
-                    rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode) %>%
-                    select(dat_date,area,pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile,number_of_attendances))
-
-ae_data2 <- ae_data2 %>%
-  mutate(date=as.Date(dat_date,format="%d/%m/%y"),
-         week = ceiling_date(date, "week", change_on_boundary = F),
-         week_ending=paste0(mday(week),"/0",month(week),"/",year(week))) %>% #end of week) 
-  select(-dat_date, -date) %>%
-  group_by(week_ending, area, pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile) %>%
-  summarise(number_of_attendances=sum(number_of_attendances)) %>%
-  ungroup() 
-
-# Bind all a&e data
-ae_data <- rbind(ae_data,ae_data2)
+# # Read w/e 26th April A&E data both at HSCP and HB level             
+# ae_data2 <- rbind(read_csv(unz(paste0(ae_zip_folder2,"HSCP.zip"), "HSCP.csv")) %>% 
+#                     janitor::clean_names() %>% 
+#                     rename(area=hscp_of_residence_code_as_at_arrival_date) %>%
+#                     select(dat_date,area,pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile,number_of_attendances),
+#                   read_csv(unz(paste0(ae_zip_folder2,"Board.zip"), "Board.csv")) %>% 
+#                     janitor::clean_names() %>% 
+#                     rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode) %>%
+#                     select(dat_date,area,pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile,number_of_attendances))
+# 
+# ae_data2 <- ae_data2 %>%
+#   mutate(date=as.Date(dat_date,format="%d/%m/%y"),
+#          week = ceiling_date(date, "week", change_on_boundary = F),
+#          week_ending=paste0(mday(week),"/0",month(week),"/",year(week))) %>% #end of week) 
+#   select(-dat_date, -date) %>%
+#   group_by(week_ending, area, pat_age,pat_gender_code,prompt_dataset_deprivation_scot_quintile) %>%
+#   summarise(number_of_attendances=sum(number_of_attendances)) %>%
+#   ungroup() 
+# 
+# # Bind all a&e data
+# ae_data <- rbind(ae_data,ae_data2)
 
 # Format data
 ae_data <- ae_data %>% 
@@ -350,7 +351,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2020-04-26")
+prepare_final_data(ae_data, "ae", last_week = "2020-05-03")
 
 ###############################################.
 ## Preparing NHS24 data ----
