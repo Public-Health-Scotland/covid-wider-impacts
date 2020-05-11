@@ -113,7 +113,7 @@ function(input, output, session) {
                    p("Attendances to A&E departments data sourced from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
                             "Accident and Emergency Datamart (A&E2).",class="externallink"), 
-                     "The A&E2 dataset is managed by ", 
+                     "The A&E dataset is managed by ", 
                         tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                                "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
@@ -160,7 +160,7 @@ function(input, output, session) {
                    p("The figures presented in this tool exclude consultations within any of the COVID-19 
                      hubs or assessment centres and relate only to consultations that concerned non-COVID 
                      issues. "),
-                   p("If required, more detailed analysis of the Primary Care Out of Hours servica may 
+                   p("If required, more detailed analysis of the Primary Care Out of Hours service may 
                      be available on request to ",
                      tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                             class="externallink"), "."),
@@ -176,7 +176,15 @@ function(input, output, session) {
                } else if (input$measure_select == "Ambulance service activity"){
                  showModal(modalDialog(# SAS  MODAL
                    title = "What is the data source?",
-                   p("Hello World"),
+                   p("The Scottish Ambulance Service (SAS) is the frontline of the NHS in Scotland, providing
+                     an emergency ambulance service to a population of over 5 million, serving all of the 
+                     nation's mainland and island communities. The SAS also provides a patient transport service 
+                     with over 662,000 patient journeys every year, and provides are for patients who need support 
+                     to reach their healthcare appointments due to their medical and mobility needs. The recent 
+                     trend data is shown by age group, sex and broad deprivation category (SIMD)."),
+                   p("The charts provide a weekly summary of incidents attended by the ambulance service in 
+                     the recent past and trends for comparison purposes."),
+                   P("Scottish Ambulance Service data is sourced from ")
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                }
