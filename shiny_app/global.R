@@ -50,8 +50,9 @@ sas <- readRDS("data/sas_data.rds") # OOH data
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'), 
                   "Medical (incl. Cardiology & Cancer)")) # specialty list
 
-data_list <- c("Hospital admissions", "A&E attendances", "NHS 24 calls", 
-               "Out of hours consultations", "Ambulance service activity")
+data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
+               "NHS 24 calls" = "nhs24", 
+               "Out of hours consultations" = "ooh", "Ambulance service activity" = "sas")
 
 ###############################################.
 ## Palettes and plot parameters ----
