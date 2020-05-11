@@ -31,13 +31,13 @@ function(input, output, session) {
   # Disabling  admissions type if no admissions to hospital selected and
   # updating labels to say it's not available
   observeEvent({input$measure_select}, {
-      if (input$measure_select == "Hospital admissions") {
+      if (input$measure_select == "rapid") {
         enable("adm_type")
 
         updateSelectInput(session, "adm_type",
                           label = "Step 3. Select type of admission.")
 
-      } else if (input$measure_select != "Hospital admissions") {
+      } else if (input$measure_select != "rapid") {
         disable("adm_type")
         
         updateSelectInput(session, "adm_type",
@@ -65,7 +65,7 @@ function(input, output, session) {
   # Link action button click to modal launch 
   observeEvent(input$btn_dataset_modal, 
                
-               if (input$measure_select == "Hospital admissions") {
+               if (input$measure_select == "rapid") {
                  showModal(modalDialog(#RAPID ADMISSIONS MODAL
                    title = "What is the data source?",
                    p("The analyses shown here are derived from person level hospital admissions 
@@ -91,7 +91,7 @@ function(input, output, session) {
                                "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               } else if (input$measure_select == "A&E attendances") { #A&E ATTENDANCES MODAL
+               } else if (input$measure_select == "aye") { #A&E ATTENDANCES MODAL
                  showModal(modalDialog(
                    title = "What is the data source?",
                    p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments 
@@ -118,7 +118,7 @@ function(input, output, session) {
                                "Public Health Scotland (PHS).", class="externallink")),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               } else if (input$measure_select == "NHS 24 calls") { #NHS24 CALLS MODAL
+               } else if (input$measure_select == "nhs24") { #NHS24 CALLS MODAL
                  showModal(modalDialog(
                    title = "What is the data source?",
                    p("For many people an NHS24 call provides the first point of contact for urgent access 
@@ -147,7 +147,7 @@ function(input, output, session) {
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                  
-               } else if (input$measure_select == "Out of hours consultations"){
+               } else if (input$measure_select == "ooh"){
                  showModal(modalDialog(# OUT OF HOURS CONSULTATIONS  MODAL
                    title = "What is the data source?",
                    p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor, 
@@ -173,7 +173,7 @@ function(input, output, session) {
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                  
-               } else if (input$measure_select == "Ambulance service activity"){
+               } else if (input$measure_select == "sas"){
                  showModal(modalDialog(# SAS  MODAL
                    title = "What is the data source?",
                    p("Hello World"),
@@ -242,11 +242,11 @@ function(input, output, session) {
   output$data_explorer <- renderUI({
     
     # text for titles of cut charts
-    dataset <- case_when(input$measure_select == "Hospital admissions" ~ "admissions",
-                         input$measure_select == "A&E attendances" ~ "attendances",
-                         input$measure_select == "NHS 24 calls" ~ "calls",
-                         input$measure_select == "Out of hours consultations" ~ "consultations",
-                         input$measure_select == "Ambulance service activity" ~ "incidents")
+    dataset <- case_when(input$measure_select == "rapid" ~ "admissions",
+                         input$measure_select == "aye" ~ "attendances",
+                         input$measure_select == "nhs24" ~ "calls",
+                         input$measure_select == "ooh" ~ "consultations",
+                         input$measure_select == "sas" ~ "incidents")
     
     variation_title <- paste0("Percentage change in ", dataset, 
                               " compared with the corresponding time in 2018-2019 by ")
@@ -279,7 +279,7 @@ function(input, output, session) {
     }
     
     # Charts and rest of UI
-    if (input$measure_select == "Hospital admissions") {
+    if (input$measure_select == "rapid") {
       tagList(#Hospital admissions
         cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
                    data_name = "adm"),
@@ -292,19 +292,19 @@ function(input, output, session) {
         fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                  column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
       )
-    } else if (input$measure_select == "A&E attendances") { #A&E Attendances
+    } else if (input$measure_select == "aye") { #A&E Attendances
         cut_charts(title= "Weekly attendances to A&E departments", 
                    source = "PHS AE2 Datamart", data_name = "aye")
       
-    } else if (input$measure_select == "NHS 24 calls") {# NHS 24 calls
+    } else if (input$measure_select == "nhs24") {# NHS 24 calls
         cut_charts(title= "Weekly calls to NHS24 service", 
                     source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
-    } else if (input$measure_select == "Out of hours consultations") { #Out of hours consultations
+    } else if (input$measure_select == "ooh") { #Out of hours consultations
           cut_charts(title= "Weekly consultations to out of hours services", 
                       source = "PHS GP OOH Datamart", data_name ="ooh")
       
-    } else if (input$measure_select == "Ambulance service activity") { # SAS data
+    } else if (input$measure_select == "sas") { # SAS data
         cut_charts(title= "Weekly incidents attended by ambulance service", 
                    source = "PHS Unscheduled Care Datamart", data_name ="sas")
     }
@@ -585,11 +585,11 @@ function(input, output, session) {
   data_table <- reactive({
     # Change dataset depending on what user selected
     switch(input$data_select,
-      "Hospital admissions" = rapid %>% rename(specialty = spec),
-      "A&E attendances" = aye,
-      "NHS 24 calls" = nhs24,
-      "Out of hours consultations" = ooh,
-      "Ambulance service activity" = sas) %>% 
+      "rapid" = rapid %>% rename(specialty = spec),
+      "aye" = aye,
+      "nhs24" = nhs24,
+      "ooh" = ooh,
+      "sas" = sas) %>% 
       # Formatting to a "nicer" style
       select(-type) %>% 
       rename(count_average_pre2020 = count_average,
@@ -645,11 +645,11 @@ function(input, output, session) {
   overall_data_download <- reactive({
     switch(
       input$measure_select,
-      "Hospital admissions" = filter_data(rapid_filt()),
-      "A&E attendances" = filter_data(aye),
-      "NHS 24 calls" = filter_data(nhs24),
-      "Out of hours consultations" = filter_data(ooh),
-      "Ambulance service activity" = filter_data(sas),
+      "rapid" = filter_data(rapid_filt()),
+      "aye" = filter_data(aye),
+      "nhs24" = filter_data(nhs24),
+      "ooh" = filter_data(ooh),
+      "sas" = filter_data(sas)
     ) %>% 
       select(area_name, week_ending, count, count_average) %>% 
       rename(average_pre2020 = count_average) %>% 
