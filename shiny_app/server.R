@@ -121,15 +121,20 @@ function(input, output, session) {
                } else if (input$measure_select == "nhs24") { #NHS24 CALLS MODAL
                  showModal(modalDialog(
                    title = "What is the data source?",
-                   p("For many people an NHS24 call provides the first point of contact for urgent access 
-                     to healthcare advice and, where necessary, onward treatment. At this time NHS24 will 
+                   p("For many people an NHS 24 call provides the first point of contact for urgent access 
+                     to healthcare advice and, where necessary, onward treatment. At this time NHS 24 will 
                      receive calls that relate to both COVID-19 and to the wide range of other healthcare 
                      issues that can and do occur all the year round. Contacting NHS 24 provides many people 
                      with access to healthcare advice, urgent clinical advice and, where necessary, onward treatment. 
                      At this time NHS 24 will receive calls that relate to both COVID-19 and to the wide 
-                     range of other urgent healthcare issues that can and do occur all year round."),
+                     range of other urgent healthcare issues that can and do occur all year round.  As well as telephone
+                     contact NHS 24 also provide digital (online) services through NHS Inform and self-help guidance."),
                    p("The figures presented in this tool relate to contacts concerning both COVID-19 and non-COVID 
-                     issues. The charts provide a weekly summary of calls handled in the recent past and historical 
+                     issues however they do not represent the complete picture of NHS 24 activity or demand. 
+                     The figures below only show data where there has been contact with 111 service and an individual
+                     has spoken to and NHS 24 member of staff. They do not include activity relating to non-clinical 
+                     hotlines or digital (online) services such as NHS Inform.The charts 
+                     provide a weekly summary of contacts recorded in the recent past and historical 
                      trends for comparison purposes. The recent trend data is shown by age group, sex and broad 
                      deprivation category (SIMD)." ),
                    p("Figures by NHS health board include those calls made by residents of each health board area."),
@@ -146,7 +151,7 @@ function(input, output, session) {
                      ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-                 
+              
                } else if (input$measure_select == "ooh"){
                  showModal(modalDialog(# OUT OF HOURS CONSULTATIONS  MODAL
                    title = "What is the data source?",
@@ -259,7 +264,7 @@ function(input, output, session) {
     # text for titles of cut charts
     dataset <- case_when(input$measure_select == "rapid" ~ "admissions",
                          input$measure_select == "aye" ~ "attendances",
-                         input$measure_select == "nhs24" ~ "calls",
+                         input$measure_select == "nhs24" ~ "contacts",
                          input$measure_select == "ooh" ~ "consultations",
                          input$measure_select == "sas" ~ "incidents")
     
@@ -278,6 +283,10 @@ function(input, output, session) {
       tagList(
         h3(title),
         actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
+        if (input$measure_select == "nhs24"){
+          p(p("Please note figures below are not a complete record of NHS 24 activity or demand."),
+          p("The figures below only show data where there has been contact with 111 service and an individual has spoken to and NHS 24 member of staff. They do not include activity relating to non-clinical hotlines or digital (online) services such as NHS Inform."))
+        },
         plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
         plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                      paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
@@ -369,7 +378,7 @@ function(input, output, session) {
       yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                                data_name == "aye" ~ "Number of attendances",
                                data_name == "ooh" ~ "Number of consultations",
-                               data_name == "nhs24" ~ "Number of calls",
+                               data_name == "nhs24" ~ "Number of contacts",
                                data_name == "sas" ~ "Number of incidents")
       
       #Modifying standard layout
@@ -378,7 +387,7 @@ function(input, output, session) {
       measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                                 data_name == "aye" ~ "Attendances: ",
                                 data_name == "ooh" ~ "Consultations: ",
-                                data_name == "nhs24" ~ "Calls: ",
+                                data_name == "nhs24" ~ "Contacts: ",
                                 data_name == "sas" ~ "Incidents: ")
       
       #Text for tooltip
@@ -416,7 +425,7 @@ function(input, output, session) {
     yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
                              data_name == "ooh" ~ "Number of consultations",
-                             data_name == "nhs24" ~ "Number of calls",
+                             data_name == "nhs24" ~ "Number of contacts",
                              data_name == "sas" ~ "Number of incidents")
     
     #Modifying standard layout
@@ -427,7 +436,7 @@ function(input, output, session) {
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                              data_name == "aye" ~ "Attendances: ",
                              data_name == "ooh" ~ "Consultations: ",
-                             data_name == "nhs24" ~ "Calls: ",
+                             data_name == "nhs24" ~ "Contacts: ",
                              data_name == "sas" ~ "Incidents: ")
     
     #Text for tooltip
