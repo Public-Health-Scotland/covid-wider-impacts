@@ -127,11 +127,12 @@ function(input, output, session) {
                      issues that can and do occur all the year round. Contacting NHS 24 provides many people 
                      with access to healthcare advice, urgent clinical advice and, where necessary, onward treatment. 
                      At this time NHS 24 will receive calls that relate to both COVID-19 and to the wide 
-                     range of other urgent healthcare issues that can and do occur all year round."),
+                     range of other urgent healthcare issues that can and do occur all year round.  As well as telephone
+                     contact NHS 24 also provide digital (online) services through NHS Inform and self-help guidance."),
                    p("The figures presented in this tool relate to contacts concerning both COVID-19 and non-COVID 
                      issues however they do not represent the complete picture of NHS 24 activity or demand. 
                      The figures below only show data where there has been contact with 111 service and an individual
-                     has spoken to and NHS 24 member of staff.They do not include activity relating to non-clinical 
+                     has spoken to and NHS 24 member of staff. They do not include activity relating to non-clinical 
                      hotlines or digital (online) services such as NHS Inform.The charts 
                      provide a weekly summary of contacts recorded in the recent past and historical 
                      trends for comparison purposes. The recent trend data is shown by age group, sex and broad 
