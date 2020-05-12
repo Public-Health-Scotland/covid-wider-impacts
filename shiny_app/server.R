@@ -146,7 +146,7 @@ function(input, output, session) {
                      ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-                 
+              
                } else if (input$measure_select == "ooh"){
                  showModal(modalDialog(# OUT OF HOURS CONSULTATIONS  MODAL
                    title = "What is the data source?",
@@ -278,6 +278,10 @@ function(input, output, session) {
       tagList(
         h3(title),
         actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
+        if (input$measure_select == "nhs24"){
+          p(p("Please note figures below are not a complete record of NHS24 activity or demand."),
+          p("The figures below show out of hours calls recorded and do not include activity relating to hotlines or digital (online) services such as NHS Inform."))
+        },
         plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
         plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                      paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
