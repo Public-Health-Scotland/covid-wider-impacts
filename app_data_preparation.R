@@ -467,7 +467,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-10")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-03")
 
 
 ##END
