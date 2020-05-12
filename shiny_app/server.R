@@ -185,7 +185,7 @@ function(input, output, session) {
                       past and historical trends for comparison purposes. The recent trend data is shown by age group, sex and 
                       broad deprivation category (SIMD). The figures presented in this tool relate to incidents concerning both COVID-19 and 
                       non-COVID issues. Please note that this represents a sub-set of the total Scottish Ambulance service activity and 
-                      does not include patient transfers or paramedic responses."),
+                      does not include patient transfers or emergency first responses."),
                    p("If required, more detailed analysis of SAS activity may be available on request to ",
                      tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                             class="externallink"), "."),
