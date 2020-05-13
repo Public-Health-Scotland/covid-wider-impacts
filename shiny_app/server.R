@@ -95,7 +95,7 @@ function(input, output, session) {
                  showModal(modalDialog(
                    title = "What is the data source?",
                    p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments 
-                     and Nurse/GP lead minor injury units) in the recent past, along with historical activity for 
+                     and Nurse/GP led minor injury units) in the recent past, along with historical activity for 
                      comparison purposes. The recent trend data is shown by age group, sex
                      and broad deprivation category (SIMD)."),
                    p("Additional information relating to A&E activity is available from the ", 
@@ -123,17 +123,15 @@ function(input, output, session) {
                    title = "What is the data source?",
                    p("For many people an NHS 24 call provides the first point of contact for urgent access 
                      to healthcare advice and, where necessary, onward treatment. At this time NHS 24 will 
-                     receive calls that relate to both COVID-19 and to the wide range of other healthcare 
-                     issues that can and do occur all the year round. Contacting NHS 24 provides many people 
+                     receive calls that relate to both COVID-19 and the wide range of other healthcare 
+                     issues that can and do occur all year round. Contacting NHS 24 provides many people 
                      with access to healthcare advice, urgent clinical advice and, where necessary, onward treatment. 
-                     At this time NHS 24 will receive calls that relate to both COVID-19 and to the wide 
-                     range of other urgent healthcare issues that can and do occur all year round.  As well as telephone
-                     contact NHS 24 also provide digital (online) services through NHS Inform and self-help guidance."),
+                     As well as telephone contact NHS 24 also provide digital (online) services through NHS Inform and self-help guidance."),
                    p("The figures presented in this tool relate to contacts concerning both COVID-19 and non-COVID 
                      issues however they do not represent the complete picture of NHS 24 activity or demand. 
                      The figures below only show data where there has been contact with 111 service and an individual
-                     has spoken to and NHS 24 member of staff. They do not include activity relating to non-clinical 
-                     hotlines or digital (online) services such as NHS Inform.The charts 
+                     has spoken to a member of NHS 24 staff. They do not include activity relating to non-clinical 
+                     hotlines or digital (online) services such as NHS Inform. The charts 
                      provide a weekly summary of contacts recorded in the recent past and historical 
                      trends for comparison purposes. The recent trend data is shown by age group, sex and broad 
                      deprivation category (SIMD)." ),
@@ -156,14 +154,14 @@ function(input, output, session) {
                  showModal(modalDialog(# OUT OF HOURS CONSULTATIONS  MODAL
                    title = "What is the data source?",
                    p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor, 
-                     when needed at times outwith normal general practice hours, such as evenings, 
+                     when needed at times outside normal general practice hours, such as evenings, 
                      overnight or during the weekend. An appointment to the service is normally arranged 
                      following contact with NHS 24. The recent trend data is shown by age group, sex and 
                      broad deprivation category (SIMD)."),
                    p("The charts provide a weekly summary of consultations in the recent past and 
                      historical trends for comparison purposes."),
                    p("The figures presented in this tool exclude consultations within any of the COVID-19 
-                     hubs or assessment centres and relate only to consultations that concerned non-COVID 
+                     hubs or assessment centres and relate only to consultations concerning non-COVID 
                      issues. "),
                    p("If required, more detailed analysis of the Primary Care Out of Hours service may 
                      be available on request to ",
@@ -181,9 +179,11 @@ function(input, output, session) {
                } else if (input$measure_select == "sas"){
                  showModal(modalDialog( # SAS  MODAL
                    title = "What is the data source?",
-                   p("The charts provide a weekly summary of Scottish Ambulance Service emergency calls attended with historical trends for comparison purposes. The recent trend data is shown by age group, sex and 
-                      broad deprivation category (SIMD). The figures presented in this tool relate to incidents concerning both COVID-19 and 
-                      non-COVID issues. Please note that the source of this data is the Unscheduled Care Datamart and will represents a sub-set of the total Scottish Ambulance service activity. Figures include emergency where a vehicle arrived on the scene of the incident, and excludes data from resources which were cleared with a reason of ‘dealt with by another vehicle’ and air ambulance data."),
+                   p("The charts provide a weekly summary of Scottish Ambulance Service emergency calls attended with historical trends for comparison purposes. 
+                      The recent trend data is shown by age group, sex and broad deprivation category (SIMD). The figures presented in this tool 
+                      relate to incidents concerning both COVID-19 and non-COVID issues. Please note that the source of this data is the Unscheduled Care 
+                      Datamart and represents a sub-set of the total Scottish Ambulance service activity. Figures include emergencies, where a vehicle arrived 
+                      at the scene of the incident, and excludes both data from resources which were cleared as ‘dealt with by another vehicle’ and air ambulance data."),
                    p("If required, more detailed analysis of SAS activity may be available on request to ",
                      tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                             class="externallink"), "."),
@@ -207,14 +207,14 @@ function(input, output, session) {
     h5("What is SIMD and deprivation?"),
     p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
                     class="externallink"), "is the Scottish Government's 
-      official tool for identifying areas in Scotland concentrations of deprivation 
+      official tool for identifying areas in Scotland with concentrations of deprivation 
       by incorporating several different aspects of deprivation (multiple-deprivations) 
       and combining them into a single index. Concentrations of deprivation are identified 
       in SIMD at Data Zone level and can be analysed using this small geographical unit. 
       The use of data for such small areas helps to identify 'pockets' (or concentrations) 
       of deprivation that may be missed in analyses based on larger areas such as council 
       areas. By identifying small areas where there are concentrations of multiple deprivation, 
-      the SIMD can be used to target policies and resources at the places with greatest need. 
+      the SIMD can be used to target policies and resources at the places with the greatest need. 
       The SIMD identifies deprived areas, not deprived individuals."),
     p("In this tool we use the concept of quintile, which refers to a fifth of the population. 
       For example when we talk about the most deprived quintile, this means the 20% of the population 
