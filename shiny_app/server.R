@@ -181,11 +181,9 @@ function(input, output, session) {
                } else if (input$measure_select == "sas"){
                  showModal(modalDialog( # SAS  MODAL
                    title = "What is the data source?",
-                   p("The charts provide a weekly summary of Scottish Ambulance Service accident and emergency calls attended in the recent 
-                      past and historical trends for comparison purposes. The recent trend data is shown by age group, sex and 
+                   p("The charts provide a weekly summary of Scottish Ambulance Service emergency calls attended with historical trends for comparison purposes. The recent trend data is shown by age group, sex and 
                       broad deprivation category (SIMD). The figures presented in this tool relate to incidents concerning both COVID-19 and 
-                      non-COVID issues. Please note that this represents a sub-set of the total Scottish Ambulance service activity and 
-                      does not include patient transfers or emergency first responses."),
+                      non-COVID issues. Please note that the source of this data is the Unscheduled Care Datamart and will represents a sub-set of the total Scottish Ambulance service activity. Figures include emergency where a vehicle arrived on the scene of the incident, and excludes data from resources which were cleared with a reason of ‘dealt with by another vehicle’ and air ambulance data."),
                    p("If required, more detailed analysis of SAS activity may be available on request to ",
                      tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                             class="externallink"), "."),
@@ -264,7 +262,7 @@ function(input, output, session) {
     # text for titles of cut charts
     dataset <- case_when(input$measure_select == "rapid" ~ "admissions",
                          input$measure_select == "aye" ~ "attendances",
-                         input$measure_select == "nhs24" ~ "contacts",
+                         input$measure_select == "nhs24" ~ "completed contacts",
                          input$measure_select == "ooh" ~ "consultations",
                          input$measure_select == "sas" ~ "incidents")
     
@@ -284,8 +282,8 @@ function(input, output, session) {
         h3(title),
         actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
         if (input$measure_select == "nhs24"){
-          p(p("Please note figures below are not a complete record of NHS 24 activity or demand."),
-          p("The figures below only show data where there has been contact with 111 service and an individual has spoken to and NHS 24 member of staff. They do not include activity relating to non-clinical hotlines or digital (online) services such as NHS Inform."))
+          p("The data used in this chart are taken from the Unscheduled Care Datamart.  As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
+                           "COVID-19 weekly report for Scotland", class="externallink"), "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that can be shown in this publication.")
         },
         plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
         plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
@@ -321,7 +319,7 @@ function(input, output, session) {
                    source = "PHS AE2 Datamart", data_name = "aye")
       
     } else if (input$measure_select == "nhs24") {# NHS 24 calls
-        cut_charts(title= "Weekly calls to NHS24 service", 
+        cut_charts(title= "Weekly completed contacts with NHS 24", 
                     source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
     } else if (input$measure_select == "ooh") { #Out of hours consultations
@@ -378,7 +376,7 @@ function(input, output, session) {
       yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                                data_name == "aye" ~ "Number of attendances",
                                data_name == "ooh" ~ "Number of consultations",
-                               data_name == "nhs24" ~ "Number of contacts",
+                               data_name == "nhs24" ~ "Number of completed contacts",
                                data_name == "sas" ~ "Number of incidents")
       
       #Modifying standard layout
@@ -387,7 +385,7 @@ function(input, output, session) {
       measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                                 data_name == "aye" ~ "Attendances: ",
                                 data_name == "ooh" ~ "Consultations: ",
-                                data_name == "nhs24" ~ "Contacts: ",
+                                data_name == "nhs24" ~ "Completed contacts: ",
                                 data_name == "sas" ~ "Incidents: ")
       
       #Text for tooltip
@@ -425,7 +423,7 @@ function(input, output, session) {
     yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
                              data_name == "ooh" ~ "Number of consultations",
-                             data_name == "nhs24" ~ "Number of contacts",
+                             data_name == "nhs24" ~ "Number of completed contacts",
                              data_name == "sas" ~ "Number of incidents")
     
     #Modifying standard layout
@@ -436,7 +434,7 @@ function(input, output, session) {
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                              data_name == "aye" ~ "Attendances: ",
                              data_name == "ooh" ~ "Consultations: ",
-                             data_name == "nhs24" ~ "Contacts: ",
+                             data_name == "nhs24" ~ "Completed contacts: ",
                              data_name == "sas" ~ "Incidents: ")
     
     #Text for tooltip
