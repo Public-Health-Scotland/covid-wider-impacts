@@ -16,23 +16,37 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                   h3("COVID-19 wider impacts on the health care system")),
            column(8,
                   tags$br(),
-                  p("The COVID-19 pandemic has wider impacts than those that occur as the direct result of infection. There are a range of possible reasons for this, including public reluctance to burden the NHS, anxiety about using the NHS because of fears of infection, pressure on health services, delays to routine non-urgent care, impacts on existing preventive programmes and possible direct effects of COVID-19 on other conditions such as heart disease."),
-                  p("This information tool provides an overview of changes in health and healthcare during the COVID-19 pandemic in Scotland, drawing on a range of national data sources. This first release focuses on recent trends in calls to NHS24, out-of-hours primary care consultations, Accident and Emergency attendances and hospital admissions. Because of the lag in submissions to routine hospital discharge datasets it has been necessary to use the Rapid dataset to monitor hospital admissions. This provides much less detail than usual sources, but has the advantage of offering more timely data."),
-                  p("The intention is to enhance this selection in future releases as the data become available. The dashboard will be updated weekly, aligned to the release of the ", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", "Coronavirus (COVID-19) weekly report for Scotland.", 
-                                                                                                                                                                                               class="externallink")),
-                  p("Depending on the subject the data are presented by age, sex, measures of material deprivation, consultant specialty, planned and emergency hospital admissions and geographical location. Note that some numbers may not sum to the total as disclosure control methods have been applied to the data in order to protect patient confidentiality."),
-                  p("If you have any questions on the data presented then please contact us at: ",
-                    tags$b(tags$a(href="mailto:phs.statsgov@nhs.net", "phs.statsgov@nhs.net", class="externallink")), "."),
-                  h3("Contents"),    
+                  p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services, 
+                    than those that occur as the direct result of infection"),
+                  p("Reasons for this may include:"),
                   tags$ul( 
-                      tags$li(
-                        tags$b(actionLink("jump_summary","Summary trends")),
-                        icon("area-chart"),
-                        " - for hospital admissions, unscheduled care & calls to NHS24."),
-                      tags$li(
-                        tags$b(actionLink( "jump_table", "Data")),
-                        icon("table"),
-                        " - view & download data behind this tool."))
+                    tags$li("Individuals being reluctant to use health services because they do not want to burden 
+                            the NHS or are anxious about the risk of infection."),
+                    tags$li("The health service delaying preventative and non-urgent care such as some screening 
+                            services and planned surgery."),
+                    tags$li("Other indirect effects of interventions to control COVID-19, such as mental or physical 
+                            consequences of distancing measures.")
+                    ),
+                  p("This information tool provides an overview of changes in health and use of healthcare during the COVID-19 
+                    pandemic in Scotland, drawing on a range of national data sources."),
+                  p("We are providing information on different topics as quickly as we can, given the different time lags 
+                    that apply to different national data sources.  For example, Public Health Scotland receives information 
+                    on patients attending Accident & Emergency within days; but there can be a delay of at least six weeks 
+                    before we receive detailed information on patients discharged from hospital after having a baby."),
+                  p("Depending on the topic being looked at, information will be shown for patients in different age groups; 
+                    for males and females; and for people living in areas with different levels of material deprivation.  
+                    Information will also be shown for different locations across Scotland, such as NHS Board areas."),
+                  p("Interactive charts on each of the topics are available in the ",
+                    actionLink("jump_summary","'Summary trends' tab.")),
+                  p("The underlying data used to create the interactive charts can be downloaded using the ", 
+                    actionLink( "jump_table", "'Data' tab."),
+                    "Note that some numbers may not sum to the total as disclosure control methods have been applied 
+                    to the data in order to protect patient confidentiality."),
+                  p("This tool will be updated weekly. New releases will be published at the same time as the Public Health Scotland ", 
+                    tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
+                           "COVID-19 weekly report for Scotland.", class="externallink")),
+                  p("If you have any questions relating to the data presented please contact us at: ",
+                    tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink")), ".")
                       )
              ), #wellPanel bracket
              mainPanel(width = 12
