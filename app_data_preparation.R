@@ -131,7 +131,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
 ## Reading RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/Admissions_by_category_11-May.rds") %>% 
+rap_adm <- readRDS(unzip("/conf/PHSCOVID19_Analysis/shiny_input_files/rapid/rapid_extracts.zip", "Admissions_by_category_11-May.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -209,7 +209,7 @@ prepare_final_data(rap_adm, "rapid", last_week = "2020-05-03",
 ## Preparing OOH data ----
 ###############################################.
 # Read in historic OOH file
-ooh <- read_csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/OOH DATA 2018 - 22032020.zip","OOH DATA 2018 - 22032020.csv")) %>%
+ooh <- read_csv(unzip("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/OOH DATA 2018 - 22032020.zip","OOH DATA 2018 - 22032020.csv")) %>%
   janitor::clean_names() %>%
   rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
@@ -236,7 +236,7 @@ ooh <- ooh %>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungrou
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-03-22")))
 
 ## Additional new OOH data
-ooh_new <- read_csv(unzip("/conf/PHSCOVID19_Analysis/OOH_shiny_app/COVID DASHBOARD EXTRACT_2203to0505.zip","COVID DASHBOARD EXTRACT_2203to0505.csv")) %>%
+ooh_new <- read_csv(unzip("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip","COVID DASHBOARD EXTRACT_2203to0505.csv")) %>%
   janitor::clean_names() %>%
   rename(date=sc_start_date, hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender, age_group=age_band,
@@ -267,7 +267,7 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-05-03")))  #filter complete weeks (Mon-Sun)
 
 #New extract provided for week ending 10 May 2020
-new_ooh_10may2020 <- read_csv("/conf/PHSCOVID19_Analysis/OOH_shiny_app/new_11052020.csv") %>% 
+new_ooh_10may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new_11052020.csv") %>% 
   rename(count=number_of_cases, hscp = hspc) %>%
   mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
                              "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
@@ -311,7 +311,7 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-10")
 ## Preparing A&E data ----
 ###############################################.
 #short cut to a&e folder areas
-ae_zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-05-08-Extracts/"
+ae_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E/2020-05-08-Extracts/"
 
 # Read A&E data both at HSCP and HB level
 ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
@@ -364,7 +364,7 @@ prepare_final_data(ae_data, "ae", last_week = "2020-05-03")
 ## Preparing NHS24 data ----
 ###############################################.
 
-nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/"
+nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/NHS24/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/"
 
 ## Reading in NHS24 data
 nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.zip"), 
@@ -429,7 +429,7 @@ prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-10"
 ## Reading SAS data ----
 ###############################################.
 
-sas_zip_folder <- "/conf/PHSCOVID19_Analysis/OOH_shiny_app/SAS/"
+sas_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/SAS/"
 
 sas <- rbind(read_tsv(unzip(paste0(sas_zip_folder,"COVID WIDER IMPACT SAS_01012018to03052020.zip"),
                             "COVID WIDER IMPACT SAS_01012018to03052020.txt")),
