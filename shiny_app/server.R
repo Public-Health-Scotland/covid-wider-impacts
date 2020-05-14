@@ -305,7 +305,7 @@ function(input, output, session) {
       tagList(#Hospital admissions
         cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
                    data_name = "adm"),
-        fluidRow(column(6, h4(paste0(variation_title, "specialty group"))),
+        fluidRow(column(6, h4(paste0(variation_title, "specialty group ", input$adm_type))), # Test to change title
                  column(6, h4(paste0(total_title, "specialty group")))),
         fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
