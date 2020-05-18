@@ -6,6 +6,13 @@ function(input, output, session) {
   # observeEvent(input$browser, browser())
   
   ###############################################.
+  ## Functions ----
+  ###############################################.
+  # Sourcing file with functions code
+  source(file.path("functions_server"),  local = TRUE)$value
+  
+
+  ###############################################.
   # To move around tabs 
   observeEvent(input$jump_summary, {
     updateTabsetPanel(session, "intabset", selected = "summary")
@@ -15,9 +22,10 @@ function(input, output, session) {
     updateTabsetPanel(session, "intabset", selected = "table")
   })
   
-  
   ###############################################.
-  # Reactive controls 
+  #  # Reactive controls  ----
+  ###############################################.
+  
   # Show list of area names depending on areatype selected
   output$geoname_ui <- renderUI({
     
