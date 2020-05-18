@@ -202,7 +202,7 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-05-17", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-05-10", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -264,37 +264,10 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   # Aggregating by week to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-05-03")))  #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
-#New extract provided for week ending 10 May 2020
-new_ooh_10may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new_11052020.csv") %>% 
-  rename(count=number_of_cases, hscp = hspc) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
-                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
-                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
-                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
-                             "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
-                             "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
-                             "90+" = "85 and over"),
-         sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
-         dep = recode(dep, 
-                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
-                      "4" = "4", "5" = "5 - least deprived"),
-         week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
-         scot = "Scotland") %>% 
-  proper() # convert HB names to correct format
-  
-new_ooh_10may2020 <- new_ooh_10may2020 %>% 
-  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
-  mutate(area_type = recode(area_type, "area_name" = "Health board", 
-                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
-  # Aggregating to make it faster to work with
-  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
-  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(week_ending == as.Date("2020-05-10"))  #filter complete weeks (Mon-Sun)
-
-#new data extract up to week ending 17 may 2020
-new_ooh_17may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new_18052020.csv") %>% 
+#new data extract from week ending 03 may 2020 up to week ending 17 may 2020
+new_ooh_03_17may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new_18052020.csv") %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -313,7 +286,7 @@ new_ooh_17may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OO
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-new_ooh_17may2020 <- new_ooh_17may2020 %>% 
+new_ooh_03_17may2020 <- new_ooh_03_17may2020 %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
@@ -324,7 +297,7 @@ new_ooh_17may2020 <- new_ooh_17may2020 %>%
 
 
 #bind old and new ooh data
-ooh <- rbind(new_ooh_17may2020, new_ooh_10may2020, ooh_new, ooh)
+ooh <- rbind(new_ooh_03_17may2020, ooh_new, ooh)
 
 # Creating totals for groups
 ooh_all <- ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
