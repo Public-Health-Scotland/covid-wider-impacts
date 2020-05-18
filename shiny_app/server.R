@@ -23,14 +23,14 @@ function(input, output, session) {
   source(file.path("data_tab.R"),  local = TRUE)$value
   
   ###############################################.
-  ## To move around tabs
-  
+  ## To move around tabs  
   observeEvent(input$jump_summary, {
     updateTabsetPanel(session, "intabset", selected = "summary")
   })
   
   observeEvent(input$jump_table, {
     updateTabsetPanel(session, "intabset", selected = "table")
+
   })
   
 } # server end
