@@ -80,6 +80,28 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
       )# mainPanel bracket
     ), # tabpanel bracket
 ###############################################.
+## Immunisation Tab ----
+###############################################.
+tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
+         wellPanel(
+           column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_immun")),
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_select_immun", 
+                                           label= "Step 2 – Select the data you want to explore.", 
+                                           choices = data_list_immun, status = "primary", 
+                                           direction = "vertical", justified = T)))
+           #actionButton("browser", "Browser")
+         ), #well panel
+         mainPanel(width = 12,
+                   p("Title for chart goes here"),
+                   uiOutput("immunisation_explorer")
+         )# mainPanel bracket 
+), # tabpanel bracket
+###############################################.
 ## Data ----
 ###############################################.
     tabPanel(title = "Data", icon = icon("table"), value = "table",

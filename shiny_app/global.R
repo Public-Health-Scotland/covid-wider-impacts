@@ -47,6 +47,10 @@ ooh <- readRDS("data/ooh_data.rds") # OOH data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 sas <- readRDS("data/sas_data.rds") # OOH data
 
+## Immunisation Data
+six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
+
+
 # cath_lab <- readRDS(paste0("shiny_app/data/cath_lab_data.rds"))
 # angio_lab <- readRDS(paste0("shiny_app/data/angio_lab_data.rds"))# Data: GJNH Coronary Angios/PCI 
 
@@ -56,6 +60,10 @@ spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
 data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
                "NHS 24 completed contacts" = "nhs24", 
                "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
+
+data_list_immun <- c("Six in One at 8 weeks" = "sixin_8wks",
+                     "Six in One at 12 weeks *COMING 10th June 2020*" = "sixin_12wks",
+                     "Six in One at 16 weeks *COMING 10th June 2020*" = "sixin_16wks")
 
 ###############################################.
 ## Palettes and plot parameters ----
