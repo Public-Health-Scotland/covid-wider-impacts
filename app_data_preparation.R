@@ -364,7 +364,7 @@ prepare_final_data(ae_data, "ae", last_week = "2020-05-03")
 ## Preparing NHS24 data ----
 ###############################################.
 
-nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/"
+nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/NHS24/3. Vicky Elliott - NHS24/Zipped/"
 
 ## Reading in NHS24 data
 nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.zip"), 
