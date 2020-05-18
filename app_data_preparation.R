@@ -11,6 +11,7 @@ library(readr) #reading/writing files
 library(stringr) #manipulating string
 library(phsmethods) #matching codes with names
 library(tidyr) # for wide to long formatting
+library(readxl) # reading excel
 
 ###############################################.
 ## Functions ----
@@ -468,6 +469,38 @@ sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
 prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-03")
+
+###############################################.
+## Cath labs ----
+###############################################.
+# Data for cardiovascular app
+cath_lab <- bind_rows(read_excel(paste0(data_folder, "cath_labs/CoronaryProcsByWkNo_Urgency.xls"), 
+                       sheet = "JK_q001_CoronaryProcsByWkNo+Urg"),
+                      read_excel(paste0(data_folder, "cath_labs/CoronaryProcsByWkNo_Urgency.xls"), 
+                       sheet = "JK_q002_CoronaryProcsByWkNo+Urg")) %>% 
+  clean_names %>% 
+  select(week_ending = to_date, week_no, "All" = total, "Planned" = total_elective, "Emergency" = total_emergency, 
+         "Urgent" = urgent) %>% 
+  pivot_longer(c(All:Urgent), names_to = "admission_type", values_to = "count")
+
+cath_2019 <- cath_lab %>% filter(year(week_ending) %in% c("2019")) %>% 
+  rename(count_average = count) %>%  select(-week_ending)
+
+cath_2020 <- full_join(cath_lab %>% filter(year(week_ending) %in% c("2020")), 
+                       cath_2019, 
+                       by = c("week_no", "admission_type")) %>% 
+  select(-week_no) %>% 
+  # Create variation
+  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
+
+saveRDS(cath_2020, paste0("shiny_app/data/cath_lab_data.rds"))
+
+# Data: GJNH Coronary Angios/PCI 
+angio_lab <- read_excel(paste0(data_folder, "cath_labs/MonthlyTrendsCorAngioNumbersAgeSex.xls"), 
+                               sheet = "Sheet2") %>% clean_names %>% 
+  
+
+saveRDS(cath_2020, paste0("shiny_app/data/cath_lab_data.rds"))
 
 
 ##END
