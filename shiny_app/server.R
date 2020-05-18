@@ -614,7 +614,7 @@ function(input, output, session) {
       "sas" = sas) %>% 
       # Formatting to a "nicer" style
       select(-type) %>% 
-      rename(count_average_pre2020 = count_average,
+      rename(average_2018_2019 = count_average,
              "Variation (%)" = variation) %>% 
       # Note: character variables are converted to factors in each
       # dataset for use in the table
@@ -674,7 +674,7 @@ function(input, output, session) {
       "sas" = filter_data(sas)
     ) %>% 
       select(area_name, week_ending, count, count_average) %>% 
-      rename(average_pre2020 = count_average) %>% 
+      rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y"))
   })
 
