@@ -131,7 +131,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
 ## Reading RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(unzip("/conf/PHSCOVID19_Analysis/shiny_input_files/rapid/rapid_extracts.zip", "Admissions_by_category_11-May.rds")) %>% 
+rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/shiny_input_files/rapid/Admissions_by_category_18-May.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -202,7 +202,7 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-05-03", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-05-10", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -264,11 +264,13 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   # Aggregating by week to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-05-03")))  #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
-#New extract provided for week ending 10 May 2020
-new_ooh_10may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new_11052020.csv") %>% 
-  rename(count=number_of_cases, hscp = hspc) %>%
+#new data extract from week ending 03 may 2020 up to week ending 17 may 2020
+new_ooh_03_17may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new_18052020.csv") %>% 
+  janitor::clean_names() %>%
+  rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
+         hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
   mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
                              "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
                              "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
@@ -283,18 +285,19 @@ new_ooh_10may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OO
          week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
-  
-new_ooh_10may2020 <- new_ooh_10may2020 %>% 
+
+new_ooh_03_17may2020 <- new_ooh_03_17may2020 %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(week_ending == as.Date("2020-05-10"))  #filter complete weeks (Mon-Sun)
+  filter(week_ending == as.Date("2020-05-17"))  #filter complete weeks (Mon-Sun)
+
 
 #bind old and new ooh data
-ooh <- rbind(new_ooh_10may2020, ooh_new, ooh)
+ooh <- rbind(new_ooh_03_17may2020, ooh_new, ooh)
 
 # Creating totals for groups
 ooh_all <- ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
@@ -305,13 +308,13 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-10")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-17")
 
 ###############################################.
 ## Preparing A&E data ----
 ###############################################.
 #short cut to a&e folder areas
-ae_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E/2020-05-08-Extracts/"
+ae_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E/2020-05-14-Extracts/"
 
 # Read A&E data both at HSCP and HB level
 ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
@@ -358,13 +361,13 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2020-05-03")
+prepare_final_data(ae_data, "ae", last_week = "2020-05-10")
 
 ###############################################.
 ## Preparing NHS24 data ----
 ###############################################.
 
-nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/NHS24/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/"
+nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/NHS24/3. Vicky Elliott - NHS24/Zipped/"
 
 ## Reading in NHS24 data
 nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.zip"), 
@@ -378,7 +381,9 @@ nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 
                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 1 Jan 20 - 19 Apr 20.zip"), 
                             "Report 2.csv")),
                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 20 Apr 20 - 10 May 20.zip"), 
-                          "Report 2.csv"))) %>%
+                          "Report 2.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder,"NHS24 covid Extract 11 May 20 - 17 May 20.zip"), 
+                            "Report 2.csv"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -422,7 +427,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-10")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-17")
 
 
 ###############################################.
@@ -433,8 +438,8 @@ sas_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/SAS/"
 
 sas <- rbind(read_tsv(unzip(paste0(sas_zip_folder,"COVID WIDER IMPACT SAS_01012018to03052020.zip"),
                             "COVID WIDER IMPACT SAS_01012018to03052020.txt")),
-             read_tsv(unzip(paste0(sas_zip_folder,"COVID WIDER IMPACT SAS_04052020to10052020.zip"),
-                            "COVID WIDER IMPACT SAS_04052020to10052020.txt"))) %>%
+             read_tsv(paste0(sas_zip_folder, "COVID WIDER IMPACT SAS_04052020to10052020.txt"))) %>%
+  
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -446,7 +451,8 @@ sas <- rbind(read_tsv(unzip(paste0(sas_zip_folder,"COVID WIDER IMPACT SAS_010120
                        gender %in% c(0, 9 ) ~ "Missing", TRUE ~ as.character(gender))) %>% 
   proper() %>% #convert HB names to correct format
   create_agegroups () %>%
-  create_depgroups () 
+  create_depgroups () %>%
+  filter(between(week_ending, as.Date("2018-01-07"), as.Date("2020-05-10")))  #filter complete weeks (Mon-Sun)
 
 # Aggregate up to get figures for each area type.
 sas <- sas %>% mutate(scot = "Scotland") %>% 
@@ -467,7 +473,6 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-03")
-
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-10")
 
 ##END

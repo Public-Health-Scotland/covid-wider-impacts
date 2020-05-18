@@ -1,7 +1,7 @@
 /* CSS styles used in the shiny app */
 
 /* to avoid red text error messages in the whole app, take out for testing*/
-/*.shiny-output-error { visibility: hidden; }
+.shiny-output-error { visibility: hidden; }
 .shiny-output-error:before { visibility: hidden; }
 
 /* Style sidebars/well panels */
@@ -10,14 +10,6 @@
 
 /* Navigation bar following PHS colour scheme */    
 .navbar-default {color: #ffffff; background-color: #433684; }
-
-
-/* 
-.navbar-default .navbar-brand, .navbar-default:hover .navbar-brand:hover, .navbar-default, .navbar-brand {color: #ffffff; background-color: #433684}
-
-  border-style: solid; border-width: thick; border-color: #433684;
-
-*/    
 
 .navbar-default .navbar-brand, .navbar-default:hover .navbar-brand:hover, .navbar-brand {color: #433684; background-color: #ffffff}
 
@@ -31,11 +23,4 @@
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
     color: #ffffff;     background-color: #5c4ab5;}
 
-/* Paints the ribbon that contains the tab headers white */
-/* .tabbable > .nav > li > a {  color: #000000;  } 
-
-/* Highlights the header of the active tab in blue */
-/* .tabbable > .nav > li[class = active] > a { 
-                  background-color: #0072B2; 
-                  color: #FFFFFF; } 
                   
