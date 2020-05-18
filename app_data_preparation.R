@@ -508,5 +508,30 @@ angio_lab <- read_excel(paste0(data_folder, "cath_labs/MonthlyTrendsCorAngioNumb
 
 saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
 
+###############################################.
+## Prepare Immunisation data ----
+###############################################.
+immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/"
+
+six <- read_csv(paste0(immunisation_folder,"six in one_1_dashboard_20200511_.csv")) %>%
+  janitor::clean_names()
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         cohort_eligible_name=(as.factor(case_when(born_commencing=="01-Jan-18" ~"Baseline 2018",
+                                                   born_commencing=="01-Jan-19" ~"Baseline 2019",TRUE~week_8_start))))
+
+final_data <<- six
+
+saveRDS(six, paste0("shiny_app/data/","sixinone_data.rds"))
+
 
 ##END
