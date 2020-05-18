@@ -14,7 +14,7 @@ data_table <- reactive({
          "sas" = sas) %>% 
     # Formatting to a "nicer" style
     select(-type) %>% 
-    rename(count_average_pre2020 = count_average,
+    rename(average_2018_2019 = count_average,
            "Variation (%)" = variation) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
