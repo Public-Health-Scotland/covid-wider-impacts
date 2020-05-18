@@ -11,8 +11,9 @@
 # Approximate run time: 5 minutes
 ###
 
-
-#### Section 1: Setup ####
+###############################################.
+## Section 1: Setup ----
+###############################################.
 
 #Install/Load Packages
 library(data.table) #Uses functions fread() and rbindlist()
@@ -24,12 +25,9 @@ data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/" # folder for files
 health.boards <- c('A', 'B', 'F', 'G', 'H', 'L', 'N','R', 'S', 'T', 'V', 'W', 'Y', 'Z', 'X')
 hb_trim <- c(A = 1, B = 2, F = 1, G = 1, H = 2, L = 2, N = 1, R = 1, S = 1, T = 2, V = 1, W = 1, Y = 2, Z = 1)
 
-#### End of Section 1 #### #---------------------------------------------------#
-
-
-
-#### Section 2: Retrieve Stay Records from RAPID ####
-
+###############################################.
+## Section 2: Retrieve Stay Records from RAPID ----
+###############################################.
 stay_by_hb <- list()
 for(hb in health.boards[health.boards != 'X']) {
   
@@ -73,24 +71,19 @@ for(hb in health.boards[health.boards != 'X']) {
 #Combine the stays for each healthboard all into a single data frame.
 stay_files <- rbindlist(stay_by_hb) %>% as.data.frame()
 
-#### End of Section 2 #### #---------------------------------------------------#
-
-
-
-#### Section 3: Filter Out Unnecessary Records from Stay Files ####
-
+###############################################.
+## Section 3: Filter Out Unnecessary Records from Stay Files ----
+###############################################.
 #This line is needed for cases where there is no hospital code given.  So far, HB 'Y' Dumfries
 #and Galloway is the only health board to have had this problem.
-stay_files <- stay_files %>% filter(hosp != "") 
-
-#Only include inpatient cases (no day cases). 
-stay_files <- stay_files %>% filter(ipdc == 'I') 
-
-#These two lines discard records belonging to Hospitals G303H in Glasgow and W106H in Western Isles.
+stay_files <- stay_files %>% 
+  filter(hosp != "") %>% 
+#Only include inpatient cases (no day cases). Day cases data quality is problematic
+# as it's not being until recently that boards started to submit
+  filter(ipdc == 'I') %>% 
+# Discard records belonging to Hospitals G303H in Glasgow and W106H in Western Isles.
 #This list can of course be expanded to include other hospitals and in other health boards.
-discarded_hospitals <- readRDS(paste0(data_folder, 'lookups/Discarded_Hospitals.rds')) %>% unlist()
-stay_files <- stay_files %>% filter(!hosp %in% Discarded_Hospitals)
-
+  filter(!hosp %in% c("G303H", "W106H"))
 
 #---#This section was added on 04-Mar-2019 to bring the results closer to what they would be in the rest of System Watch.
 #Exclude specialties G1,G3,G4,and G5.  Not sure if this should be included for data given to Jaime and Vicky?
@@ -107,18 +100,13 @@ stay_files <- stay_files %>% filter(medsur != 0)
 #Odd CHI numbers represent males, evens represent females.
 stay_files$sex <- ifelse(stay_files$chi %% 2 == 1, yes = 'male', no = 'female')
 
-
 rapid <- stay_files %>% select(hb, hosp, hscp_code, hscp_name, emergency, spec, age, date_adm, date_dis, sex, postcode)
 
 rapid$source <- 'RAPID'
 
-#### End of Section 3 #### #---------------------------------------------------#
-
-
-
-
-#### Section 4: Extra Steps to perform on RAPID records ####
-
+###############################################.
+## Section 4: Extra Steps to perform on RAPID records  ----
+###############################################.
 rapid$admission_type <- ifelse(rapid$emergency == 1, yes = 'emergency', no = 'elective')
 
 rapid$age <- as.numeric(rapid$age)
@@ -133,25 +121,20 @@ rapid <- rapid %>% mutate(age_group = case_when(
                               age %in% 0:4   ~ 'Under_5',
                               TRUE ~ 'missing') ) 
 
-
 ### Subsection: Lookup SIMDs by postcode.
-simd_table <- simd_table('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2019_2_simd2020.rds')
+simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2019_2_simd2020.rds') %>% 
+  select(pc7, simd2020_sc_quintile) %>% as.data.table
 
 #Using a data table lookup is much faster than using an index lookup in base R.  
-simd_lookup <- SIMD_Table[ , c('pc7', 'simd2020_sc_quintile')]
-simd_lookup <- as.data.table(simd_lookup)
 system.time( setkey(simd_lookup, pc7) )
 system.time( rapid$simd_quintile <- simd_lookup[ .(rapid$postcode), nomatch = NA]$simd2020_sc_quintile )
-RAPID <- RAPID %>% select(-postcode) #The postcodes are no longer needed now that we have the SIMDs.
-### End of Subsection ###
+rapid <- rapid %>% select(-postcode) #The postcodes are no longer needed now that we have the SIMDs.
 
 rapid <- rapid %>% arrange(admission_type, hb, hosp, hscp_code, emergency, spec, sex, simd_quintile, date_adm)
 
-#### End of Section 4 #### #---------------------------------------------------#
-
-
-
-#### Section 5: Create and add records that are totals for Scotland, each board, and each location ####
+###############################################.
+## Section 5: Create and add records that are totals for Scotland, each board, and each location ----
+###############################################.
 
 # First, get data frame for all records within Scotland by Admission_Type, spec, SIMD_quintile, age_group, sex, and date_adm.
 scot_totals <- rapid %>% 
@@ -162,7 +145,6 @@ scot_totals <- rapid %>%
     select(hb, hosp, hscp_code, hscp_name, admission_type, spec, #put the columns in the proper order.
            simd_quintile, age_group, sex, date_adm, count)
 
-
 # Second, get health board totals by Admission_Type, spec, SIMD_quintile, age_group, sex, and date_adm.
 hb_totals <- rapid %>% 
     group_by(hb, admission_type, spec, simd_quintile, age_group, sex, date_adm) %>% 
@@ -172,7 +154,6 @@ hb_totals <- rapid %>%
     select(hb, hosp, hscp_code, hscp_name, admission_type, spec,  #put the columns in the proper order.
            simd_quintile, age_group, sex, date_adm, count)
 
-
 # Third, get all totals within each location (hosp and HSCP) by Admission_Type, spec, SIMD_quintile, age_group, sex, and date_adm.
 all_records_within_locations <- rapid %>% 
     group_by(hb, hosp, hscp_code, hscp_name, admission_type, spec, simd_quintile, age_group, sex, date_adm) %>% 
@@ -181,15 +162,11 @@ all_records_within_locations <- rapid %>%
     select(hb, hosp, hscp_code, hscp_name, admission_type,  #put the columns in the proper order.
            spec, simd_quintile, age_group, sex, date_adm, count)
 
-
 combined_records <- rbind(all_records_within_locations, hb_totals, scot_totals ) #Merge all three data frames into one.
 
-#### End of Section 5 #### #---------------------------------------------------#
-
-
-
-#### Section 6: Determining Start and End Dates ####
-
+###############################################.
+## Section 6: Determining Start and End Dates ----
+###############################################.
 #I'm guessing RAPID should be good until 4 years from the present, this will have to be checked however.
 combined_records <- combined_records %>% filter(date_adm >= paste0(year(Sys.Date()) - 4, '-01-01'))
 #This takes care of the start date.
@@ -216,12 +193,6 @@ lookup_end_date_by_hb['X'] <- min(lookup_end_date_by_hb)
 
 #Here we finally remove any records where the date of admission is after the date for which we are sure a HB has complete data.
 combined_records <- combined_records %>% filter(date_adm <= lookup_end_date_by_hb[combined_records$hb])
-
-#### End of Section 6 #### #---------------------------------------------------#
-
-
-
-#### Section 7: Save the output! ####
 
 #Save the file to a shared area. 
 date_on_filename <- format(Sys.Date(), format = '%d-%b')
