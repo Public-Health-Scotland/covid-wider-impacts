@@ -293,7 +293,7 @@ new_ooh_03_17may2020 <- new_ooh_03_17may2020 %>%
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(week_ending == as.Date("2020-05-17"))  #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-05-17"))) #filter complete weeks (Mon-Sun)
 
 
 #bind old and new ooh data
