@@ -47,8 +47,8 @@ ooh <- readRDS("data/ooh_data.rds") # OOH data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 sas <- readRDS("data/sas_data.rds") # OOH data
 
-cath_lab <- readRDS(paste0("shiny_app/data/cath_lab_data.rds"))
-angio_lab <- readRDS(paste0("shiny_app/data/angio_lab_data.rds"))# Data: GJNH Coronary Angios/PCI 
+# cath_lab <- readRDS(paste0("shiny_app/data/cath_lab_data.rds"))
+# angio_lab <- readRDS(paste0("shiny_app/data/angio_lab_data.rds"))# Data: GJNH Coronary Angios/PCI 
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'), 
                   "Medical (incl. Cardiology & Cancer)")) # specialty list
