@@ -497,10 +497,10 @@ saveRDS(cath_2020, paste0("shiny_app/data/cath_lab_data.rds"))
 
 # Data: GJNH Coronary Angios/PCI 
 angio_lab <- read_excel(paste0(data_folder, "cath_labs/MonthlyTrendsCorAngioNumbersAgeSex.xls"), 
-                               sheet = "Sheet2") %>% clean_names %>% 
+                               sheet = "Sheet2") %>% clean_names 
   
 
-saveRDS(cath_2020, paste0("shiny_app/data/cath_lab_data.rds"))
+saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
 
 
 ##END
