@@ -305,8 +305,8 @@ function(input, output, session) {
       tagList(#Hospital admissions
         cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
                    data_name = "adm"),
-        fluidRow(column(6, h4(paste0(variation_title, "specialty group"))),
-                 column(6, h4(paste0(total_title, "specialty group")))),
+        fluidRow(column(6, h4(paste0(variation_title, "specialty group - (admission type: ", tolower(input$adm_type), ")"))), # Adding adm_type here to make clear what is selected
+                 column(6, h4(paste0(total_title, "specialty group - (admission type: ", tolower(input$adm_type), ")")))), # Adding adm_type here to make clear what is selected
         fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
                     choices = spec_list, multiple = TRUE,
                     selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics"))),
@@ -614,7 +614,7 @@ function(input, output, session) {
       "sas" = sas) %>% 
       # Formatting to a "nicer" style
       select(-type) %>% 
-      rename(count_average_pre2020 = count_average,
+      rename(average_2018_2019 = count_average,
              "Variation (%)" = variation) %>% 
       # Note: character variables are converted to factors in each
       # dataset for use in the table
@@ -674,7 +674,7 @@ function(input, output, session) {
       "sas" = filter_data(sas)
     ) %>% 
       select(area_name, week_ending, count, count_average) %>% 
-      rename(average_pre2020 = count_average) %>% 
+      rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y"))
   })
 
