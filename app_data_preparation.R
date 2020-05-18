@@ -364,7 +364,7 @@ prepare_final_data(ae_data, "ae", last_week = "2020-05-10")
 ## Preparing NHS24 data ----
 ###############################################.
 
-nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/UCD/NHS 24 SAS GPOOH reporting/06 Publications/3. Vicky Elliott - NHS24/Zipped/"
+nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/NHS24/3. Vicky Elliott - NHS24/Zipped/"
 
 ## Reading in NHS24 data
 nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.zip"), 
@@ -378,7 +378,9 @@ nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 
                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 1 Jan 20 - 19 Apr 20.zip"), 
                             "Report 2.csv")),
                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 20 Apr 20 - 10 May 20.zip"), 
-                          "Report 2.csv"))) %>%
+                          "Report 2.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder,"NHS24 covid Extract 11 May 20 - 17 May 20.zip"), 
+                            "Report 2.csv"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -422,7 +424,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-10")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-17")
 
 
 ###############################################.
