@@ -13,6 +13,8 @@ library(phsmethods) #matching codes with names
 library(tidyr) # for wide to long formatting
 library(readxl) # reading excel
 
+data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/" # folder for files
+
 ###############################################.
 ## Functions ----
 ###############################################.
@@ -485,9 +487,9 @@ cath_lab <- bind_rows(read_excel(paste0(data_folder, "cath_labs/CoronaryProcsByW
                       read_excel(paste0(data_folder, "cath_labs/CoronaryProcsByWkNo_Urgency.xls"), 
                        sheet = "JK_q002_CoronaryProcsByWkNo+Urg")) %>% 
   clean_names %>% 
-  select(week_ending = to_date, week_no, "All" = total, "Planned" = total_elective, "Emergency" = total_emergency, 
-         "Urgent" = urgent) %>% 
-  pivot_longer(c(All:Urgent), names_to = "admission_type", values_to = "count")
+  mutate(tot_emerg_urg = Reduce("+", c(.[9], .[11]))) %>% 
+  select(week_ending = to_date, week_no, "All" = total, "Planned" = total_elective, "Emergency" = tot_emerg_urg) %>% 
+  pivot_longer(c(All:Emergency), names_to = "admission_type", values_to = "count")
 
 cath_2019 <- cath_lab %>% filter(year(week_ending) %in% c("2019")) %>% 
   rename(count_average = count) %>%  select(-week_ending)
@@ -503,7 +505,10 @@ saveRDS(cath_2020, paste0("shiny_app/data/cath_lab_data.rds"))
 
 # Data: GJNH Coronary Angios/PCI 
 angio_lab <- read_excel(paste0(data_folder, "cath_labs/MonthlyTrendsCorAngioNumbersAgeSex.xls"), 
-                               sheet = "Sheet2") %>% clean_names 
+                               sheet = "Sheet2") %>% clean_names %>% 
+  mutate(month_date = as.Date(paste0(year, "-", month, "-", "01")),
+         percent_female = round(percent_female*100, 1),
+         percent_70 = round(percent_70*100, 1))
   
 
 saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
