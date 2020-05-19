@@ -38,8 +38,10 @@ output$immunisation_explorer <- renderUI({
       column(8, withSpinner(plotlyOutput("immun_scurve"))),
              column(4, p("Space for commentary here")))
   }  else if (input$measure_select_immun == "sixin_12wks"){
-    p("6 in 1 at 12 weeks coming 10th June 2020")
-  }
+    p("6-in-1 at 12 weeks coming 10th June 2020")
+  }  else if (input$measure_select_immun == "sixin_16wks"){
+  p("6-in-1 at 16 weeks coming 10th June 2020")
+}
 })
 
 
