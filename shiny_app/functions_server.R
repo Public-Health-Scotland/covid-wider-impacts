@@ -5,29 +5,41 @@
 # THree parameters: pal_chose - what palette of colours you want
 # dataset - what data to use for the chart formatted as required
 # split - age, sex, or dep (simd deprivation)
-plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data_name = NULL) {
+plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation", 
+                             data_name = NULL) {
   
-  trend_data <- dataset %>% # filtering data by cut and area name
-    filter(type == split &
-             area_name == input$geoname )
-  
+  if (split != FALSE) {
+    trend_data <- dataset %>% # filtering data by cut and area name
+      filter(type == split &
+               area_name == input$geoname )
+  } else { # for cases outside summary tab
+    trend_data <- dataset
+  }
+
+
   # Formatting age groups as factor so they appear in the correct order in the legend
-  if (split == "age") {
+  if ( split == "age") {
     trend_data <- trend_data %>% 
       mutate(category = factor(category, levels = c("Under 5", "5 - 14", "15 - 44", 
                                                     "45 - 64", "65 - 74", 
                                                     "75 - 84", "85 and over"))) 
+  } else {
+    trend_data <- trend_data 
   }
   
+  # If variation selected different values
   if (type == "variation") {
+    
+    aver_period <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas") ~ "2018-2019",
+                             data_name == "cath" ~ "2019")
     
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>", 
                               "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                              "<br>", "Change from 2018-19 average: ", trend_data$variation, "%"))
+                              "<br>", "Change from ", aver_period, " average: ", trend_data$variation, "%"))
     
     #Modifying standard layout
-    yaxis_plots[["title"]] <- "% change from 2018-19 average"
+    yaxis_plots[["title"]] <- paste0("% change from ", aver_period, " average")
     
     #Creating time trend plot
     trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
@@ -41,7 +53,8 @@ plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data
                              data_name == "aye" ~ "Number of attendances",
                              data_name == "ooh" ~ "Number of consultations",
                              data_name == "nhs24" ~ "Number of completed contacts",
-                             data_name == "sas" ~ "Number of incidents")
+                             data_name == "sas" ~ "Number of incidents",
+                             data_name == "cath" ~ "Number of cases")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
@@ -50,7 +63,8 @@ plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data
                               data_name == "aye" ~ "Attendances: ",
                               data_name == "ooh" ~ "Consultations: ",
                               data_name == "nhs24" ~ "Completed contacts: ",
-                              data_name == "sas" ~ "Incidents: ")
+                              data_name == "sas" ~ "Incidents: ",
+                              data_name == "cath" ~ "Cases: ")
     
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>",
@@ -77,10 +91,14 @@ plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data
   
 }
 
-plot_overall_chart <- function(dataset, data_name, yaxis_title) {
+###############################################.
+## Function for overall charts ----
+###############################################.
+
+plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
   
   # Filtering dataset to include only overall figures
-  trend_data <- filter_data(dataset)
+  trend_data <- filter_data(dataset, area = area)
   
   ###############################################.
   # Creating objects that change depending on dataset
@@ -88,18 +106,21 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title) {
                            data_name == "aye" ~ "Number of attendances",
                            data_name == "ooh" ~ "Number of consultations",
                            data_name == "nhs24" ~ "Number of completed contacts",
-                           data_name == "sas" ~ "Number of incidents")
+                           data_name == "sas" ~ "Number of incidents",
+                           data_name == "cath" ~ "Number of cases")
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  hist_legend <- "Average 2018-2019"
+  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas") ~ "Average 2018-2019",
+                           data_name == "cath" ~ "Average 2019")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                             data_name == "aye" ~ "Attendances: ",
                             data_name == "ooh" ~ "Consultations: ",
                             data_name == "nhs24" ~ "Completed contacts: ",
-                            data_name == "sas" ~ "Incidents: ")
+                            data_name == "sas" ~ "Incidents: ",
+                            data_name == "cath" ~ "Cases: ")
   
   #Text for tooltip
   tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
@@ -124,10 +145,10 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title) {
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
   
 }
-
 ###############################################.
-# Function that creates specialty charts. Potentially could be merge with tren one 
-
+## # Function that creates specialty charts.   ----
+###############################################.
+# Potentially could be merge with trend one
 plot_spec <- function(type) {
   trend_data <- rapid_spec()
   
@@ -178,6 +199,22 @@ plot_spec <- function(type) {
            legend = list(x = 100, y = 0.5)) %>% # position of legend
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
+}
+
+###############################################.
+## Function for filtering ----
+###############################################.
+# Function to filter the datasets for the overall charts and download data based on user input
+filter_data <- function(dataset, area = T) {
+  if (area == T) {
+    dataset %>% filter(type == "sex") %>%
+      filter(area_name == input$geoname &
+               category == "All")
+  } else { #this works for cath data
+    dataset %>% 
+      filter(category == "All")
+  }
+
 }
 
 ### END
