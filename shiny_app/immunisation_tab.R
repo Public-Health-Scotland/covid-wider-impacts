@@ -22,43 +22,20 @@ output$geoname_ui_immun <- renderUI({
 ## Immunisation Tab Reactive layout  ----
 ###############################################.
 
-plot_scurve <- function(dataset) {
-  
-  scurve_data <- dataset %>% filter(area_name == input$geoname_immun) %>%
-    droplevels()
-  
-  #Create tooltip for scurve
-  tooltip_scurve <- c(paste0("cohort", scurve_data$cohort_eligible_name))
-  
-  #Creating time trend plot
-  s_plot <- plot_ly(data=scurve_data, x=~interv,  y = ~surv)
-  
-  #Creating time trend plot
-  s_plot %>%
-    add_trace(type = 'scatter', mode = 'lines',
-              color = ~cohort_eligible_name, colors = "BrBG",
-              text= tooltip_scurve, hoverinfo="text") %>%
-    #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.5)) %>% #position of legend
-    # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )}
-
-
 # The charts and text shown on the app will depend on what the user wants to see
 output$immunisation_explorer <- renderUI({
-  
+
   # text for titles of cut charts
-  dataset <- case_when(input$measure_select_immun == "sixin_8wks" ~ "immunisation",
-                       input$measure_select_immun == "sixin_12wk" ~ "visits")
+  immune_title <- paste0(case_when(input$measure_select_immun == "sixin_8wks" ~ "Uptake of first dose 6-in-1 vaccine (routinely scheduled at 8 weeks of age)",
+                            input$measure_select_immun == "sixin_12wks" ~ "Uptake of second dose 6-in-1 vaccine (routinely scheduled at 12 weeks of age)",
+                            input$measure_select_immun == "sixin_16wks" ~ "Uptake of third dose 6-in-1 vaccine (routinely scheduled at 16 weeks of age)"))
   
-  
-  
+  immune_subtitle <- paste0(input$geoname_immun)
   
   # Charts and rest of UI
   if (input$measure_select_immun == "sixin_8wks") {
-    fluidRow(column(8, withSpinner(plotlyOutput("immun_scurve"))),
+    fluidRow(column(10, h4(paste0(immune_title)), p(immune_subtitle)),
+      column(8, withSpinner(plotlyOutput("immun_scurve"))),
              column(4, p("Space for commentary here")))
   }  else if (input$measure_select_immun == "sixin_12wks"){
     p("6 in 1 at 12 weeks coming 10th June 2020")

@@ -173,11 +173,44 @@ plot_spec <- function(type) {
               text=tooltip_trend, hoverinfo="text") %>%
     #Layout
     layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
-           showlegend = TRUE, # in case only one spec selected, it still shows
+           showlegend = TRUE, # always show legen
            yaxis = yaxis_plots, xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% # position of legend
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
 }
+
+
+#####################################################################################.
+## Function for drawing S-Curve charts used in immunisation and health visitor tabs.
+
+plot_scurve <- function(dataset) {
+  
+  scurve_data <- dataset %>% filter(area_name == input$geoname_immun) %>%
+    droplevels()
+  
+  #Create tooltip for scurve
+  tooltip_scurve <- c(paste0("cohort", scurve_data$cohort_eligible_name))
+  
+   #Creating time trend plot
+  s_plot <- plot_ly(data=scurve_data, x=~interv,  y = ~surv)
+  
+  #Creating time trend plot
+  s_plot %>%
+    add_trace(type = 'scatter', mode = 'lines',
+              color = ~cohort_eligible_name, colors = "BrBG",
+              text= tooltip_scurve, hoverinfo="text") %>%
+    #Layout
+    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.5)) %>% #position of legend
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }
+
+
+
+
+
 
 ### END

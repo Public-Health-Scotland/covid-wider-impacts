@@ -97,7 +97,7 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
-                   p("Title for chart goes here"),
+                   #p("Title for chart goes here"),
                    uiOutput("immunisation_explorer")
          )# mainPanel bracket 
 ), # tabpanel bracket
