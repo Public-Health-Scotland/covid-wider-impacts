@@ -1,12 +1,8 @@
 ###
-# Name: SW_Records_by_Category.R
-# Original Author(s): Rory Madigan
-# Original Date:  April 2020
-#   
 # Written/run on: R Studio Server Pro 
 # Base R Version: 3.5.1
 # Description: This file creates an output of RAPID records to be saved in /conf/PHSCOVID19_Analysis/
-# for Jaime and Vicky to use in their Shiny App for a weekly Covid publication.
+# then it goes through further transformations in app_data_preparation.
 # 
 # Approximate run time: 5 minutes
 ###
@@ -182,7 +178,7 @@ hb_end_dates <- recent_admissions_by_hosp %>%
 
 #Here we are removing a set number of days (either 1 or 2) from the end dates.  
 #These days to cut off of the end have tradionally been used in System Watch to ensure we have complete data from each board.
-hb_end_dates$end = hb_end_dates$end - HB_trim[hb_end_dates$hb] 
+hb_end_dates$end = hb_end_dates$end - hb_trim[hb_end_dates$hb] 
 
 lookup_end_date_by_hb <- hb_end_dates$end
 names(lookup_end_date_by_hb) <- hb_end_dates$hb
