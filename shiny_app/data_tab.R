@@ -11,7 +11,8 @@ data_table <- reactive({
          "aye" = aye,
          "nhs24" = nhs24,
          "ooh" = ooh,
-         "sas" = sas) %>% 
+         "sas" = sas,
+         "deaths" = deaths) %>% 
     # Formatting to a "nicer" style
     select(-type) %>% 
     rename(average_2018_2019 = count_average,
@@ -28,7 +29,9 @@ data_table <- reactive({
                                     "Under 5" = "Aged under 5", "5 - 14"= "Aged 5 to 14",
                                     "15 - 44" = "Aged 15 to 44","45 - 64" = "Aged 45 to 64",
                                     "65 - 74" = "Aged 65 to 74", "75 - 84" = "Aged 75 to 84", 
-                                    "85 and over" = "Aged 85 and over"),
+                                    "85 and over" = "Aged 85 and over",
+                                    "Under 15" = "Aged under 15", "16 - 64" = "Aged 16 to 64",
+                                    "65 and over" = "Aged 65 and over"),
            week_ending = format(week_ending, "%d %b %y")) %>% 
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
     select(sort(current_vars())) # order columns alphabetically
