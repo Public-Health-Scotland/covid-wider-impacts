@@ -7,16 +7,15 @@
 data_table <- reactive({
   # Change dataset depending on what user selected
   switch(input$data_select,
-         "rapid" = rapid %>% rename(specialty = spec),
-         "aye" = aye,
-         "nhs24" = nhs24,
-         "ooh" = ooh,
-         "sas" = sas,
-         "deaths" = deaths) %>% 
+         "rapid" = rapid %>% rename(specialty = spec, average_2018_2019 = count_average),
+         "aye" = aye %>% rename(average_2018_2019 = count_average),
+         "nhs24" = nhs24 %>% rename(average_2018_2019 = count_average),
+         "ooh" = ooh %>% rename(average_2018_2019 = count_average),
+         "sas" = sas %>% rename(average_2018_2019 = count_average),
+         "deaths" = deaths %>% rename(average_2015_2019 = count_average)) %>% 
     # Formatting to a "nicer" style
     select(-type) %>% 
-    rename(average_2018_2019 = count_average,
-           "Variation (%)" = variation) %>% 
+    rename("Variation (%)" = variation) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
     # This is because dropdown prompts on the table filters only

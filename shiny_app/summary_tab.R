@@ -461,15 +461,14 @@ symbol_spec <- reactive({
 overall_data_download <- reactive({
   switch(
     input$measure_select,
-    "rapid" = filter_data(rapid_filt()),
-    "aye" = filter_data(aye),
-    "nhs24" = filter_data(nhs24),
-    "ooh" = filter_data(ooh),
-    "sas" = filter_data(sas),
-    "deaths" = filter_data(deaths)
+    "rapid" = filter_data(rapid_filt() %>% rename(average_2018_2019 = count_average)),
+    "aye" = filter_data(aye) %>% rename(average_2018_2019 = count_average),
+    "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average),
+    "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average),
+    "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average),
+    "deaths" = filter_data(deaths %>% rename(average_2015_2019 = count_average))
   ) %>% 
     select(area_name, week_ending, count, count_average) %>% 
-    rename(average_2018_2019 = count_average) %>%  ##needs to be 2015-2019 for deaths data download
     mutate(week_ending = format(week_ending, "%d %b %y"))
 })
 
