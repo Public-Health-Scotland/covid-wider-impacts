@@ -14,25 +14,25 @@ plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data
   # Formatting age groups as factor so they appear in the correct order in the legend
   if (split == "age") {
     trend_data <- trend_data %>% 
-      mutate(category = factor(category, levels = c("Under 5", "5 - 14", "15 - 44", 
-                                                    "45 - 64", "65 - 74", 
+      mutate(category = factor(category, levels = c("Under 5", "5 - 14", "Under 15", "15 - 44", "15 - 64", 
+                                                    "45 - 64", "65 - 74", "65 and over", 
                                                     "75 - 84", "85 and over"))) 
-  }
+    }
+
   
   if (type == "variation") {
     
-    #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                              "<br>", "Change from 2018-19 average: ", trend_data$variation, "%"))
-    
-    #Modifying standard layout
-    yaxis_plots[["title"]] <- "% change from 2018-19 average"
-    
-    #Creating time trend plot
-    trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
-    
-    
+      #Text for tooltip
+      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                                "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                "<br>", "Change from 2018-19 average: ", trend_data$variation, "%"))
+
+      #Modifying standard layout
+      yaxis_plots[["title"]] <- "% change from 2018-19 average"
+
+      #Creating time trend plot
+      trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
+      
   } else if (type == "total") {
     
     ###############################################.
@@ -41,7 +41,8 @@ plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data
                              data_name == "aye" ~ "Number of attendances",
                              data_name == "ooh" ~ "Number of consultations",
                              data_name == "nhs24" ~ "Number of completed contacts",
-                             data_name == "sas" ~ "Number of incidents")
+                             data_name == "sas" ~ "Number of incidents",
+                             data_name == "deaths" ~ "Number of deaths")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
@@ -50,7 +51,8 @@ plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data
                               data_name == "aye" ~ "Attendances: ",
                               data_name == "ooh" ~ "Consultations: ",
                               data_name == "nhs24" ~ "Completed contacts: ",
-                              data_name == "sas" ~ "Incidents: ")
+                              data_name == "sas" ~ "Incidents: ",
+                              data_name == "deaths" ~ "Deaths: ")
     
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>",
@@ -88,18 +90,20 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title) {
                            data_name == "aye" ~ "Number of attendances",
                            data_name == "ooh" ~ "Number of consultations",
                            data_name == "nhs24" ~ "Number of completed contacts",
-                           data_name == "sas" ~ "Number of incidents")
+                           data_name == "sas" ~ "Number of incidents",
+                           data_name == "deaths" ~ "Number of deaths")
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  hist_legend <- "Average 2018-2019"
+  hist_legend <- ifelse(data_name == "deaths", "Average 2015-2019", "Average 2018-2019")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                             data_name == "aye" ~ "Attendances: ",
                             data_name == "ooh" ~ "Consultations: ",
                             data_name == "nhs24" ~ "Completed contacts: ",
-                            data_name == "sas" ~ "Incidents: ")
+                            data_name == "sas" ~ "Incidents: ",
+                            data_name == "deaths" ~ "Deaths: ")
   
   #Text for tooltip
   tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
