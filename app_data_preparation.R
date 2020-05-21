@@ -527,7 +527,7 @@ ae_cardio_all <- ae_cardio %>%
   group_by(diag_cat, week_ending) %>% 
   summarise(count = sum(number_of_attendances),
             type = "all",
-            category = "all",
+            category = "All",
             area_name = "Scotland",
             area_type = "Scotland") %>% 
   ungroup() %>% 

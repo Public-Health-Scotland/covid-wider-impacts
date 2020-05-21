@@ -68,7 +68,9 @@ output$cardio_explorer <- renderUI({
       tagList(# A&E attendances (cardiovascular only)
         h3("Weekly cardiovascular A&E attendances"),
         actionButton("btn_cardio_modal", "Data source: A&E", icon = icon('question-circle')),
-        plot_box("2020 campred with 2018/19", "ae_cardio_overall")
+        plot_box("2020 compared with 2018-2019 average", "ae_cardio_overall"),
+        plot_cut_box("Percentage change in cardiovascular attendances compared with the corresponding time in 2018-2019 by SIMD quintile", "ae_cardio_dep_var",
+                     "Weekly number of cardiovascular A&E attendances by SIMD quintile", "ae_cardio_dep_tot")
       )
     }
 })
@@ -83,7 +85,9 @@ output$cath_adm_gj_tot <- renderPlotly({plot_trend_chart(cath_lab, pal_sex,
                                                          type = "total", data_name = "cath")})
 
 # A&E Cardio charts
-output$ae_cardio_overall <- renderPlotly({plot_overall_chart(filter(ae_cardio, category == "all"), "aye")})
+output$ae_cardio_overall <- renderPlotly({plot_overall_chart(ae_cardio, data_name = "aye", area = "All")})
+output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye")})
+output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye")})
 
 ###############################################.
 ## Data downloads ----

@@ -7,6 +7,7 @@
 # split - age, sex, or dep (simd deprivation)
 plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation", 
                              data_name = NULL) {
+  print("got to 10")
   
   if (split != FALSE) {
     trend_data <- dataset %>% # filtering data by cut and area name
@@ -15,7 +16,6 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   } else { # for cases outside summary tab
     trend_data <- dataset
   }
-
 
   # Formatting age groups as factor so they appear in the correct order in the legend
   if ( split == "age") {
@@ -32,7 +32,6 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     
     aver_period <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas") ~ "2018-2019",
                              data_name == "cath" ~ "2019")
-    
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>", 
                               "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
