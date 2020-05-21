@@ -181,8 +181,34 @@ observeEvent(input$btn_dataset_modal,
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             } else if (input$measure_select == "deaths"){
+               showModal(modalDialog( # DEATHS  MODAL
+                 title = "What is the data source?", 
+                 p("The analyses shown here are derived from weekly deaths registration data, and show recent trends in deaths (2020), 
+                   whether COVID or non-COVID related, and historic trends for comparison (five-year average, 2015-2019). 
+                   The recent trend data is shown by age group, sex, and broad area deprivation category (Scottish Index of Multiple 
+                   Deprivation, SIMD)."), 
+                 p("The deaths data are derived from the National Records of Scotland (NRS) ", 
+                   tags$a(href="https://www.nrscotland.gov.uk/covid19stats", 
+                          "weekly deaths", class="externallink"), " dataset. 
+                   Deaths related to COVID-19 are included in totals."), 
+                 p("The figures are based on the date a death was registered rather than the date the death occurred. When someone dies, 
+                   their family (or a representative) have to make an appointment with a registrar to register the death. 
+                   Legally this must be done within 8 days, although in practice there is, on average, a 3 day gap between a 
+                   death occurring and being registered. More information on days between occurrence and registration can be be found on the ", 
+                   tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-background-information/births-and-deaths-days-until-registration", 
+                          "NRS website",class="externallink")," ."),
+                 p("The figures are reported by week, with each week running from Monday to Sunday (the ISO8601 standard week). 
+                   Moveable public holidays, when registration offices are closed, affect the number of registrations made in the 
+                   published weeks and in the corresponding weeks in previous years."), 
+                 p("Figures include non-residents.  Deaths are allocated to area based on the usual residence of the deceased. 
+                   If the deceased was not a Scottish resident, the death is allocated to the area where the death occurred."), 
+                 p("The weekly deaths dataset is managed by ", 
+                   tags$a(href=" https://www.nrscotland.gov.uk/", 
+                          "National Records of Scotland (NRS).", class="externallink")), 
+                 size = "m", 
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
-             
              )
 
 ###############################################.
