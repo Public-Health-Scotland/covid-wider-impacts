@@ -90,8 +90,74 @@ output$cath_adm_gj_tot <- renderPlotly({plot_trend_chart(cath_lab, pal_sex,
 
 # A&E Cardio charts
 output$ae_cardio_overall <- renderPlotly({plot_overall_chart(ae_cardio, data_name = "aye", area = "All")})
-output$ae_cardio_age_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
-output$ae_cardio_age_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
+output$ae_cardio_age_var <- renderPlotly({
+  # Due to different age groups (<65 & 65+) it is not possible to use 'plot_trend_chart' function
+  # Hence the standalone chart
+  
+  # Filter for required data
+  trend_data <- ae_cardio %>% 
+    filter(type == "age") %>% 
+    mutate(category = factor(category, levels = c("<65", "65+")))
+  
+  aver_period <- "2018-2019"
+  
+  #Text for tooltip
+  tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                            "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                            "<br>", "Change from ", aver_period, " average: ", trend_data$variation, "%"))
+  
+  # Setting y-axis title
+  yaxis_plots[["title"]] <- paste0("% change from ", aver_period, " average")
+  
+  # Creating time trend plot
+  trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
+  
+  trend_plot %>%
+    add_trace(type = 'scatter', mode = 'lines',
+              color = ~category, colors = c('#543005', '#8c510a'),
+              text=tooltip_trend, hoverinfo="text") %>%
+    #Layout
+    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.5)) %>% #position of legend
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
+})
+output$ae_cardio_age_tot <- renderPlotly({
+  # Due to different age groups (<65 & 65+) it is not possible to use 'plot_trend_chart' function
+  # Hence the standalone chart
+  
+  # Filter for required data
+  trend_data <- ae_cardio %>% 
+    filter(type == "age") %>% 
+    mutate(category = factor(category, levels = c("<65", "65+")))
+  
+  # Setting y-axis title
+  yaxis_plots[["title"]] <- "Number of attendances"
+  
+  # Setting measure
+  measure_name <- "Attendances: "
+  
+  #Text for tooltip
+  tooltip_trend <- c(paste0(trend_data$category, "<br>",
+                            "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                            "<br>", measure_name, trend_data$count,
+                            "<br>", "Historic average: ", trend_data$count_average))
+  
+  # Creating time trend plot
+  trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count)
+  
+  trend_plot %>%
+    add_trace(type = 'scatter', mode = 'lines',
+              color = ~category, colors = c('#543005', '#8c510a'),
+              text=tooltip_trend, hoverinfo="text") %>%
+    #Layout
+    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.5)) %>% #position of legend
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+})
 output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
 output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
 
