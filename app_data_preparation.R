@@ -513,7 +513,7 @@ saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
 ###############################################.
 immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/"
 
-six <- read_csv(paste0(immunisation_folder,"six in one_1_dashboard_20200511_.csv")) %>%
+six <- read_csv(paste0(immunisation_folder,"six in one_1_dashboard20200518.csv")) %>%
   janitor::clean_names()
 
 # Bringing HB names immunisation data contain HB cypher not area name
@@ -526,9 +526,8 @@ hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Fi
 six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
-         cohort_eligible_name=(as.factor(case_when(born_commencing=="01-Jan-18" ~"Baseline 2018",
-                                                   born_commencing=="01-Jan-19" ~"Baseline 2019",TRUE~week_8_start))))
-
+         cohort_eligible_name=(as.factor(case_when(week_8_start=="01-Jan-18" ~"Baseline 2018",
+                                                   week_8_start=="01-Jan-19" ~"Baseline 2019",TRUE~week_8_start))))
 
 six <- six %>%
   mutate(date=as.Date(week_8_start, format="%d-%B-%y"),
@@ -536,7 +535,6 @@ six <- six %>%
          week_no= isoweek(date)) %>%
   filter(cohort_eligible_name=="Baseline 2019"|between(date, as.Date("2020-03-01"), as.Date("2020-05-10"))) %>%
   filter(weeks<=20)
-
 
 final_data <<- six
 
