@@ -437,10 +437,12 @@ prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-17"
 
 sas_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/SAS/"
 
-sas <- rbind(read_tsv(unzip(paste0(sas_zip_folder,"COVID WIDER IMPACT SAS_01012018to03052020.zip"),
-                            "COVID WIDER IMPACT SAS_01012018to03052020.txt")),
-             read_tsv(paste0(sas_zip_folder, "COVID WIDER IMPACT SAS_04052020to10052020.txt"))) %>%
-  
+# Code to transform extract to rds and delete giant txt file
+# sas <-(read_tsv(paste0(sas_zip_folder,"COVID_WIDER_IMPACT_SAS_01012018to10052020.txt"))) 
+# saveRDS(sas, paste0(sas_zip_folder,"COVID_WIDER_IMPACT_SAS_01012018to10052020.rds"))  
+# file.remove(paste0(sas_zip_folder,"COVID_WIDER_IMPACT_SAS_01012018to10052020.txt"))
+
+sas <-readRDS(paste0(sas_zip_folder,"COVID_WIDER_IMPACT_SAS_01012018to10052020.rds")) %>%
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
