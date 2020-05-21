@@ -95,7 +95,7 @@ resource21 <- "sas_hscp_agesex"
 resource22 <- "sas_hscp_simd"
 
 #Geo codes
-#need to run proxy config!!!
+#may need to run proxy config
 
 ckan <- src_ckan("https://www.opendata.nhs.scot")
 res_id_hb <- "f177be64-e94c-4ddf-a2ee-ea58d648d55a"
@@ -191,9 +191,13 @@ simd_od <- function(dataset) {
   #filter for simd, rename, select, reorder
   dataset_simd <- dataset %>%
     filter(Category %in% c("Quintile 1 - most deprived", "Quintile 2", 
-                           "Quintile 3", "Quintile 4", "Quintile 5 - least deprived",
-                           "Quintile 2")) %>%
-    rename("SIMDQuintile" = "Category")
+                           "Quintile 3", "Quintile 4", "Quintile 5 - least deprived")) %>%
+    rename("SIMDQuintile" = "Category") %>%
+    mutate(SIMDQuintile = recode("Quintile 1 - most deprived" = "1",
+                                 "Quintile 2" = "2",
+                                 "Quintile 3" = "3",
+                                 "Quintile 4" = "4",
+                                 "Quintile 5 - least deprived" = "5"))
 }
 
 
