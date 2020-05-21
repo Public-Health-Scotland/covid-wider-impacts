@@ -18,6 +18,31 @@ output$geoname_ui_immun <- renderUI({
 })
 
 
+# Reactive dataset filtered for flextable - four possible combinations of data
+table_data <- reactive({  
+  table <- sixtable %>%
+    filter(geography_name=="Scotland") %>%
+    mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+    arrange(cohort)
+})
+
+
+immune_table <- function() {
+  
+  table_data() %>%
+    select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
+    flextable() %>%
+    set_header_labels(time_period_eligible="8 Weeks of age reached", denominator="Cohort",uptake_12weeks_num="Uptake before 12 weeks",uptake_12weeks_percent="Uptake before 12 weeks",uptake_tot_num="Total uptake",uptake_tot_percent="Total uptake") %>%
+    merge_at(i = 1, j = 3:4, part = "header") %>%
+    merge_at(i = 1, j = 5:6, part = "header") %>%
+    add_header_row(values=c("","","N","%","N","%"), top = FALSE ) %>%
+    theme_box() %>%
+    autofit() %>%
+    htmltools_value()
+}
+
+
+
 ###############################################.
 ## Immunisation Tab Reactive layout  ----
 ###############################################.
@@ -35,10 +60,10 @@ output$immunisation_explorer <- renderUI({
   # Charts and rest of UI
   if (input$measure_select_immun == "sixin_8wks") {
     tagList(
-      fluidRow(p("Data table")),
-      fluidRow(column(10, h4(paste0(immune_title)), p(immune_subtitle)),
+            fluidRow(column(10, h4(paste0(immune_title)), p(immune_subtitle)),
                column(8, withSpinner(plotlyOutput("immun_scurve"))),
-               column(4, p("Space for commentary here")))
+               column(4, p("Space for commentary here"))),
+            fluidRow(column(10,renderUI(immune_table())))
     )
   }  else if (input$measure_select_immun == "sixin_12wks"){
     p("6-in-1 at 12 weeks coming 10th June 2020")

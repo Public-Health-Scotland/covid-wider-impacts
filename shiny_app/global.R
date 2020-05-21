@@ -15,6 +15,7 @@ library(shinycssloaders) #for loading icons, see line below
 library(shinyjs) # for enable/disable functions
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
+library(flextable)
 
 ###############################################.
 ## Functions ----
