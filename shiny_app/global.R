@@ -46,6 +46,7 @@ aye <- readRDS("data/ae_data.rds") #A&E data
 ooh <- readRDS("data/ooh_data.rds") # OOH data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 sas <- readRDS("data/sas_data.rds") # OOH data
+ae_cardio <- readRDS("data/ae_cardio_data.rds")
 
 cath_lab <- readRDS(paste0("data/cath_lab_data.rds")) %>% 
   mutate(type = "adm") %>% 

@@ -65,7 +65,10 @@ output$cardio_explorer <- renderUI({
       tagList(#Hospital admissions
       )
     } else if (input$measure_cardio_select == "aye") {
-      tagList(# A&E attendances
+      tagList(# A&E attendances (cardiovascular only)
+        h3("Weekly cardiovascular A&E attendances"),
+        actionButton("btn_cardio_modal", "Data source: A&E", icon = icon('question-circle')),
+        plot_box("2020 campred with 2018/19", "ae_cardio_overall")
       )
     }
 })
@@ -78,6 +81,9 @@ output$cath_gj_overall <- renderPlotly({plot_overall_chart(cath_lab, "cath", are
 output$cath_adm_gj_var <- renderPlotly({plot_trend_chart(cath_lab, pal_depr)})
 output$cath_adm_gj_tot <- renderPlotly({plot_trend_chart(cath_lab, pal_sex, 
                                                          type = "total", data_name = "cath")})
+
+# A&E Cardio charts
+output$ae_cardio_overall <- renderPlotly({plot_overall_chart(filter(ae_cardio, category == "all"), "aye")})
 
 ###############################################.
 ## Data downloads ----
