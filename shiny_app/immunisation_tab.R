@@ -34,9 +34,12 @@ output$immunisation_explorer <- renderUI({
   
   # Charts and rest of UI
   if (input$measure_select_immun == "sixin_8wks") {
-    fluidRow(column(10, h4(paste0(immune_title)), p(immune_subtitle)),
-      column(8, withSpinner(plotlyOutput("immun_scurve"))),
-             column(4, p("Space for commentary here")))
+    tagList(
+      fluidRow(p("Data table")),
+      fluidRow(column(10, h4(paste0(immune_title)), p(immune_subtitle)),
+               column(8, withSpinner(plotlyOutput("immun_scurve"))),
+               column(4, p("Space for commentary here")))
+    )
   }  else if (input$measure_select_immun == "sixin_12wks"){
     p("6-in-1 at 12 weeks coming 10th June 2020")
   }  else if (input$measure_select_immun == "sixin_16wks"){
