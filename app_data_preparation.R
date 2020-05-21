@@ -529,6 +529,15 @@ six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort_eligible_name=(as.factor(case_when(born_commencing=="01-Jan-18" ~"Baseline 2018",
                                                    born_commencing=="01-Jan-19" ~"Baseline 2019",TRUE~week_8_start))))
 
+
+six <- six %>%
+  mutate(date=as.Date(week_8_start, format="%d-%B-%y"),
+         weeks=interv/7,
+         week_no= isoweek(date)) %>%
+  filter(cohort_eligible_name=="Baseline 2019"|between(date, as.Date("2020-03-01"), as.Date("2020-05-10"))) %>%
+  filter(weeks<=20)
+
+
 final_data <<- six
 
 saveRDS(six, paste0("shiny_app/data/","sixinone_data.rds"))

@@ -192,6 +192,15 @@ plot_scurve <- function(dataset) {
   #Create tooltip for scurve
   tooltip_scurve <- c(paste0("cohort", scurve_data$cohort_eligible_name))
   
+  #Modifying standard yaxis layout
+  yaxis_title <-"% Uptake"
+  yaxis_plots[["title"]] <- yaxis_title
+  
+  #Modifying standard xaxis layout
+  xaxis_title <-"Weeks"
+  xaxis_plots[["title"]] <- xaxis_title
+  
+  
    #Creating time trend plot
   s_plot <- plot_ly(data=scurve_data, x=~interv,  y = ~surv)
   
