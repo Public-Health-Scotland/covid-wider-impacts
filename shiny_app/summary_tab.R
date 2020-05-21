@@ -181,7 +181,8 @@ observeEvent(input$btn_dataset_modal,
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-             } else if (input$measure_select == "deaths"){
+               
+               } else if (input$measure_select == "deaths"){
                showModal(modalDialog( # DEATHS  MODAL
                  title = "What is the data source?", 
                  p("The analyses shown here are derived from weekly deaths registration data, and show recent trends in deaths (2020), 
@@ -190,14 +191,13 @@ observeEvent(input$btn_dataset_modal,
                    Deprivation, SIMD)."), 
                  p("The deaths data are derived from the National Records of Scotland (NRS) ", 
                    tags$a(href="https://www.nrscotland.gov.uk/covid19stats", 
-                          "weekly deaths", class="externallink"), " dataset. 
-                   Deaths related to COVID-19 are included in totals."), 
+                          "weekly deaths", class="externallink"), " dataset. Deaths related to COVID-19 are included in totals."), 
                  p("The figures are based on the date a death was registered rather than the date the death occurred. When someone dies, 
                    their family (or a representative) have to make an appointment with a registrar to register the death. 
                    Legally this must be done within 8 days, although in practice there is, on average, a 3 day gap between a 
                    death occurring and being registered. More information on days between occurrence and registration can be be found on the ", 
                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-background-information/births-and-deaths-days-until-registration", 
-                          "NRS website",class="externallink")," ."),
+                          "NRS website",class="externallink"),"."),
                  p("The figures are reported by week, with each week running from Monday to Sunday (the ISO8601 standard week). 
                    Moveable public holidays, when registration offices are closed, affect the number of registrations made in the 
                    published weeks and in the corresponding weeks in previous years."), 
@@ -274,18 +274,24 @@ output$data_explorer <- renderUI({
                        input$measure_select == "aye" ~ "attendances",
                        input$measure_select == "nhs24" ~ "completed contacts",
                        input$measure_select == "ooh" ~ "consultations",
-                       input$measure_select == "sas" ~ "incidents")
+                       input$measure_select == "sas" ~ "incidents",
+                       input$measure_select == "deaths" ~ "deaths")
   
-  variation_title <- paste0("Percentage change in ", dataset, 
-                            " compared with the corresponding time in 2018-2019 by ")
-  
+  if (input$measure_select == "deaths"){
+    variation_title <- paste0("Percentage change in ", dataset, 
+                            " compared with the corresponding time in 2015-2019 by ")   #different averaging period for deaths
+  } else {
+    variation_title <- paste0("Percentage change in ", dataset, 
+                              " compared with the corresponding time in 2018-2019 by ")
+  }
+
   total_title <- paste0("Weekly number of ", dataset, " by ")
   
   # To make sure that both titles take the same space and are lined up doing
   # a bit of a hacky shortcut:
   diff_chars <- nchar(variation_title) - nchar(total_title) +10
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
-  
+
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
     tagList(
@@ -295,7 +301,11 @@ output$data_explorer <- renderUI({
         p("The data used in this chart are taken from the Unscheduled Care Datamart.  As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
                                                                                                                    "COVID-19 weekly report for Scotland", class="externallink"), "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that can be shown in this publication.")
       },
-      plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
+      if (input$measure_select == "deaths"){
+        plot_box(paste0("2020 compared with the 2015-2019 average"), paste0(data_name, "_overall")) #different averaging period for deaths
+        } else {
+          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+        },
       plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
       plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
@@ -339,6 +349,10 @@ output$data_explorer <- renderUI({
   } else if (input$measure_select == "sas") { # SAS data
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service", 
                source = "PHS Unscheduled Care Datamart", data_name ="sas")
+    
+  } else if (input$measure_select == "deaths") { # Deaths data
+    cut_charts(title= "Weekly all-cause deaths", 
+               source = "NRS Death Registrations", data_name ="deaths")
   }
 }) 
 
@@ -394,6 +408,16 @@ output$adm_depr_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "d
 output$adm_spec_var <- renderPlotly({plot_spec("variation")})
 output$adm_spec_tot <- renderPlotly({plot_spec("total")})
 
+# Deaths charts
+output$deaths_overall <- renderPlotly({plot_overall_chart(deaths, "deaths")})
+output$deaths_sex_var <- renderPlotly({plot_trend_chart(deaths, pal_sex, "sex")})
+output$deaths_age_var <- renderPlotly({plot_trend_chart(deaths, pal_age, "age")})
+output$deaths_depr_var <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep")})
+output$deaths_sex_tot <- renderPlotly({plot_trend_chart(deaths, pal_sex, "sex", "total", "deaths")})
+output$deaths_age_tot <- renderPlotly({plot_trend_chart(deaths, pal_age, "age", "total", "deaths")})
+output$deaths_depr_tot <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep", "total", "deaths")})
+
+
 # Palette for specialty
 pal_spec <- reactive({
   #Creating palette of colors: colorblind proof
@@ -441,10 +465,11 @@ overall_data_download <- reactive({
     "aye" = filter_data(aye),
     "nhs24" = filter_data(nhs24),
     "ooh" = filter_data(ooh),
-    "sas" = filter_data(sas)
+    "sas" = filter_data(sas),
+    "deaths" = filter_data(deaths)
   ) %>% 
     select(area_name, week_ending, count, count_average) %>% 
-    rename(average_2018_2019 = count_average) %>% 
+    rename(average_2018_2019 = count_average) %>%  ##needs to be 2015-2019 for deaths data download
     mutate(week_ending = format(week_ending, "%d %b %y"))
 })
 
