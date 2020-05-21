@@ -46,7 +46,8 @@ aye <- readRDS("data/ae_data.rds") #A&E data
 ooh <- readRDS("data/ooh_data.rds") # OOH data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 sas <- readRDS("data/sas_data.rds") # OOH data
-
+deaths <- readRDS("data/deaths_data.rds") # deaths data
+  
 # cath_lab <- readRDS(paste0("shiny_app/data/cath_lab_data.rds"))
 # angio_lab <- readRDS(paste0("shiny_app/data/angio_lab_data.rds"))# Data: GJNH Coronary Angios/PCI 
 
@@ -55,7 +56,8 @@ spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
 
 data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
                "NHS 24 completed contacts" = "nhs24", 
-               "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
+               "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas",
+               "All deaths (COVID-19 + non-COVID-19)" = "deaths")
 
 ###############################################.
 ## Palettes and plot parameters ----
