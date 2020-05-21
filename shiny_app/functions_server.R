@@ -7,7 +7,6 @@
 # split - age, sex, or dep (simd deprivation)
 plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation", 
                              data_name = NULL) {
-  print("got to 10")
   
   if (split != FALSE) {
     trend_data <- dataset %>% # filtering data by cut and area name
