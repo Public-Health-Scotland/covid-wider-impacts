@@ -468,7 +468,7 @@ overall_data_download <- reactive({
     "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average),
     "deaths" = filter_data(deaths %>% rename(average_2015_2019 = count_average))
   ) %>% 
-    select(area_name, week_ending, count, count_average) %>% 
+    select(area_name, week_ending, count, starts_with("average")) %>% 
     mutate(week_ending = format(week_ending, "%d %b %y"))
 })
 
