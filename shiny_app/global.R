@@ -49,7 +49,7 @@ sas <- readRDS("data/sas_data.rds") # OOH data
 
 ## Immunisation Data
 six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
-
+sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
 
 # cath_lab <- readRDS(paste0("shiny_app/data/cath_lab_data.rds"))
 # angio_lab <- readRDS(paste0("shiny_app/data/angio_lab_data.rds"))# Data: GJNH Coronary Angios/PCI 

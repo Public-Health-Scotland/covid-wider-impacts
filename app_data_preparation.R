@@ -543,4 +543,9 @@ final_data <<- six
 saveRDS(six, paste0("shiny_app/data/","sixinone_data.rds"))
 
 
+six_datatable <- read_csv(paste0(immunisation_folder,"six in one_1_dashboardtab_20200518.csv")) %>%
+  janitor::clean_names()
+
+saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
+
 ##END
