@@ -6,12 +6,12 @@
 # dataset - what data to use for the chart formatted as required
 # split - age, sex, or dep (simd deprivation)
 plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation", 
-                             data_name = NULL) {
+                             data_name = NULL, tab = "summary") {
   
   if (split != FALSE) {
     trend_data <- dataset %>% # filtering data by cut and area name
       filter(type == split &
-               area_name == input$geoname )
+               if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
   } else { # for cases outside summary tab
     trend_data <- dataset
   }
