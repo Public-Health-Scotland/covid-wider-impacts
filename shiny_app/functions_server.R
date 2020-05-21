@@ -22,14 +22,17 @@ plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data
   
   if (type == "variation") {
     
-      #Text for tooltip
-      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                                "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                                "<br>", "Change from 2018-19 average: ", trend_data$variation, "%"))
+    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas") ~ "2018-2019",
+                             data_name == "deaths" ~ "2015-2019"))
+    
+    #Text for tooltip
+    tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                              "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
 
       #Modifying standard layout
-      yaxis_plots[["title"]] <- "% change from 2018-19 average"
-
+    yaxis_plots[["title"]] <- paste0("% change from ", aver_period, " average")
+    
       #Creating time trend plot
       trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
       
