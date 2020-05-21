@@ -70,6 +70,9 @@ output$cardio_explorer <- renderUI({
         actionButton("btn_cardio_modal", "Data source: A&E", icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "ae_cardio_overall"),
         plot_cut_box("Percentage change in cardiovascular A&E attendances compared with the corresponding
+                     time in 2018-2019 by age group", "ae_cardio_age_var",
+                     "Weekly number of cardiovascular A&E attendances by age group", "ae_cardio_age_tot"),
+        plot_cut_box("Percentage change in cardiovascular A&E attendances compared with the corresponding
                      time in 2018-2019 by SIMD quintile", "ae_cardio_dep_var",
                      "Weekly number of cardiovascular A&E attendances by SIMD quintile", "ae_cardio_dep_tot")
       )
@@ -87,6 +90,8 @@ output$cath_adm_gj_tot <- renderPlotly({plot_trend_chart(cath_lab, pal_sex,
 
 # A&E Cardio charts
 output$ae_cardio_overall <- renderPlotly({plot_overall_chart(ae_cardio, data_name = "aye", area = "All")})
+output$ae_cardio_age_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
+output$ae_cardio_age_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
 output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
 output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
 
