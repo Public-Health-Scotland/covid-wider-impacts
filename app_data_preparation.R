@@ -524,17 +524,29 @@ hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Fi
          area_type="Health board")
 
 six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
-  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~area_name), #Scotland not in lookup but present in data
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
-         cohort_eligible_name=(as.factor(case_when(week_8_start=="01-Jan-18" ~"Baseline 2018",
-                                                   week_8_start=="01-Jan-19" ~"Baseline 2019",TRUE~week_8_start))))
+         cohort_eligible.ch=format(week_8_start, format="%d-%B-%y"),
+         cohort_eligible_name=factor(cohort_eligible.ch,unique(cohort_eligible.ch)))
+
+         #cohort_eligible_name=(as.factor(week_8_start)))
+         #cohort_eligible_name=(as.factor(case_when(week_8_start=="01-Jan-19" ~"Baseline 2019",TRUE~week_8_start))))
 
 six <- six %>%
   mutate(date=as.Date(week_8_start, format="%d-%B-%y"),
          weeks=interv/7,
          week_no= isoweek(date)) %>%
-  filter(cohort_eligible_name=="Baseline 2019"|between(date, as.Date("2020-03-01"), as.Date("2020-05-10"))) %>%
-  filter(weeks<=20)
+  #filter(cohort_eligible_name=="Baseline 2019"|between(date, as.Date("2020-03-01"), as.Date("2020-05-10"))) %>%
+  filter(weeks<=20) %>% # not sure this filter needed once new data extract provided
+  mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort)
+
+
+# six$date2 <- factor(six$date,levels = paste(month.abb, rep(sort(unique(year(six$date))), each=12)))
+# six$cohort2 <- factor(six$cohort_eligible_name,levels = paste(month.abb, rep(sort(unique(year(six$date))), each=12)))
+# 
+# six$cohort3 <- factor(six$cohort_eligible_name,levels = paste(month.abb, rep(sort(unique(year(six$date))), each=12)))
+
 
 final_data <<- six
 
@@ -542,7 +554,10 @@ saveRDS(six, paste0("shiny_app/data/","sixinone_data.rds"))
 
 
 six_datatable <- read_csv(paste0(immunisation_folder,"six in one_1_dashboardtab_20200518.csv")) %>%
-  janitor::clean_names()
+  janitor::clean_names() %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ paste0("NHS ",geography_name))) %>%
+  select (-geography)
+  
 
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
 
