@@ -93,7 +93,8 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
                          radioGroupButtons("measure_select_immun", 
                                            label= "Step 2 – Select the data you want to explore.", 
                                            choices = data_list_immun, status = "primary", 
-                                           direction = "vertical", justified = T)))
+                                           direction = "vertical", justified = T))),
+           column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
