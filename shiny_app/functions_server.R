@@ -190,10 +190,8 @@ plot_scurve <- function(dataset) {
     droplevels()
   
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
-  {
-    plot_nodata(height = 50)
+  { plot_nodata(height = 50)
   } else {
-  
   
   #Create tooltip for scurve
   tooltip_scurve <- c(paste0("cohort", scurve_data$cohort_eligible_name))
