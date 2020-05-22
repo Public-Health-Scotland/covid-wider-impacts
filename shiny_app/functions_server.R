@@ -189,6 +189,12 @@ plot_scurve <- function(dataset) {
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun) %>%
     droplevels()
   
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  {
+    plot_nodata(height = 50)
+  } else {
+  
+  
   #Create tooltip for scurve
   tooltip_scurve <- c(paste0("cohort", scurve_data$cohort_eligible_name))
   
@@ -215,11 +221,24 @@ plot_scurve <- function(dataset) {
            legend = list(x = 100, y = 0.5)) %>% #position of legend
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
-  }
+  }}
 
 
 
-
+######################################################################.
+#Function to create plot when no data available
+plot_nodata <- function(height_plot = 450) {
+  text_na <- list(x = 5, y = 5, text = "Data not available due to small numbers" , size = 20,
+                  xref = "x", yref = "y",  showarrow = FALSE)
+  
+  plot_ly(height = height_plot) %>%
+    layout(annotations = text_na,
+           #empty layout
+           yaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
+           xaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
+           font = list(family = '"Helvetica Neue", Helvetica, Arial, sans-serif')) %>% 
+    config( displayModeBar = FALSE) # taking out plotly logo and collaborate button
+} 
 
 
 ### END
