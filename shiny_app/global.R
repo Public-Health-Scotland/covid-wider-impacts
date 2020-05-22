@@ -63,9 +63,9 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
 
 #List of data items available in step 2 of immunisation tab
-data_list_immun <- c("Six in One at 8 weeks" = "sixin_8wks",
-                     "Six in One at 12 weeks *COMING 10th June 2020*" = "sixin_12wks",
-                     "Six in One at 16 weeks *COMING 10th June 2020*" = "sixin_16wks")
+data_list_immun <- c("6-in-1 first dose" = "sixin_8wks",
+                     "6-in-1 second dose *COMING 10th June 2020*" = "sixin_12wks",
+                     "6-in-1 thirds dose *COMING 17th June 2020*" = "sixin_16wks")
 
 ###############################################.
 ## Palettes and plot parameters ----
