@@ -28,7 +28,7 @@ output$geoname_ui_immun <- renderUI({
 # Reactive dataset filtered for flextable - four possible combinations of data
 table_data <- reactive({  
   table <- sixtable %>%
-    filter(geography_name=="Scotland") %>%
+    filter(area_name==input$geoname_immun) %>%
     mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
     arrange(cohort)
 })
@@ -38,10 +38,11 @@ immune_table <- function() {
     table_data() %>%
     select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
     flextable() %>%
-    set_header_labels(time_period_eligible="8 Weeks of age reached", denominator="Cohort",uptake_12weeks_num="Uptake before 12 weeks",uptake_12weeks_percent="Uptake before 12 weeks",uptake_tot_num="Total uptake",uptake_tot_percent="Total uptake") %>%
+    set_header_labels(time_period_eligible="8 weeks of age reached", denominator="Children",uptake_12weeks_num="Uptake before 12 weeks of age",uptake_12weeks_percent="Uptake before 12 weeks of age",uptake_tot_num="Total uptake recorded by 18 May",uptake_tot_percent="Total uptake recorded by 18 May") %>%
     merge_at(i = 1, j = 3:4, part = "header") %>%
     merge_at(i = 1, j = 5:6, part = "header") %>%
     add_header_row(values=c("","","N","%","N","%"), top = FALSE ) %>%
+    font(fontname="Helvetica", part = "all") %>%
     theme_box() %>%
     autofit() %>%
     htmltools_value()
@@ -57,13 +58,14 @@ immune_table <- function() {
 output$immunisation_explorer <- renderUI({
 
   # text for titles of cut charts
-  immune_chart_title <- paste0(case_when(input$measure_select_immun == "sixin_8wks" ~ "Uptake of first dose 6-in-1 vaccine (routinely scheduled at 8 weeks of age)",
-                            input$measure_select_immun == "sixin_12wks" ~ "Uptake of second dose 6-in-1 vaccine (routinely scheduled at 12 weeks of age)",
-                            input$measure_select_immun == "sixin_16wks" ~ "Uptake of third dose 6-in-1 vaccine (routinely scheduled at 16 weeks of age)"))
+  immune_chart_title <- paste0(case_when(input$measure_select_immun == "sixin_8wks" ~ paste0("Uptake of first dose 6-in-1 vaccine (routinely scheduled at 8 weeks of age): ",
+                                                                                             input$geoname_immun),
+                            input$measure_select_immun == "sixin_12wks" ~ paste0("Uptake of second dose 6-in-1 vaccine (routinely scheduled at 12 weeks of age): ", input$geoname_immun),
+                            input$measure_select_immun == "sixin_16wks" ~ paste0("Uptake of third dose 6-in-1 vaccine (routinely scheduled at 16 weeks of age): ", input$geoname_immun)))
   
-  immune_subtitle <- paste0(input$geoname_immun)
+  #immune_subtitle <- paste0(input$geoname_immun)
   
-  immune_extract_date <- "Data recorded on SIRS by 18 May 2020; data for the most recent birth cohorts are incomplete" 
+  immune_extract_date <- "Uptake rates are based on data on vaccinations given recorded by 18 May 2020; data for the most recent cohorts of children eligible for immunisation will not be fully complete at this stage." 
   
   # text for titles of cut tables
   immune_table_title <- paste0(case_when(input$measure_select_immun == "sixin_8wks" ~ "Uptake of first dose 6-in-1 vaccine (routinely scheduled at 8 weeks of age)",
@@ -72,21 +74,38 @@ output$immunisation_explorer <- renderUI({
   
   
   # Charts and rest of UI
+#   if (input$measure_select_immun == "sixin_8wks") {
+#     tagList(
+#             actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
+#             fluidRow(column(10, h4(paste0(immune_chart_title)), p(immune_extract_date))),
+#             fluidRow(column(8, withSpinner(plotlyOutput("immun_scurve"))),
+#                column(4, p("Space for commentary here"))),
+#             fluidRow(column(10, h4(paste0(immune_table_title)), p(immune_extract_date)),
+#                     column(6,renderUI(immune_table())))
+#     )
+#   }  else if (input$measure_select_immun == "sixin_12wks"){
+#     p("6-in-1 at 12 weeks coming 10th June 2020")
+#   }  else if (input$measure_select_immun == "sixin_16wks"){
+#   p("6-in-1 at 16 weeks coming 10th June 2020")
+# }
+# })
+
   if (input$measure_select_immun == "sixin_8wks") {
     tagList(
-            actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
-            fluidRow(column(10, h4(paste0(immune_chart_title)), p(immune_subtitle), p(immune_extract_date))),
-            fluidRow(column(8, withSpinner(plotlyOutput("immun_scurve"))),
-               column(4, p("Space for commentary here"))),
-            fluidRow(column(10, h4(paste0(immune_table_title)), p(immune_subtitle), p(immune_extract_date)),
-                    column(6,renderUI(immune_table())))
+      #actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
+      fluidRow(column(10, h4(paste0(immune_chart_title)), p(immune_extract_date))),
+      fluidRow(column(7, withSpinner(plotlyOutput("immun_scurve"))),
+               column(5,renderUI(immune_table()))),
+      fluidRow(column(12, p("Space for commentary here")))
     )
   }  else if (input$measure_select_immun == "sixin_12wks"){
     p("6-in-1 at 12 weeks coming 10th June 2020")
   }  else if (input$measure_select_immun == "sixin_16wks"){
-  p("6-in-1 at 16 weeks coming 10th June 2020")
-}
+    p("6-in-1 at 16 weeks coming 17th June 2020")
+  }
 })
-
-
+  
+  
+  
+  
 output$immun_scurve <- renderPlotly({plot_scurve(six)})
