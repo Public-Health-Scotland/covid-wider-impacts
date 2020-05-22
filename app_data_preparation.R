@@ -511,6 +511,13 @@ saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
 ###############################################.
 ## A&E Cardio ----
 ###############################################.
+
+# Reads in A&E cardio ICD 10 codes for modal, only required to run in case code list changes
+ae_cardio_codes <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/A&E_Cardio/A&E-CardioConditionCodes.xlsx")
+saveRDS(ae_cardio_codes, "shiny_app/data/ae_cardio_codes.rds")
+rm(ae_cardio_codes)
+
+# Set A&E cardio folder
 ae_cardio_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E_Cardio/"
 
 # Read in data, clean names + some simple mutations

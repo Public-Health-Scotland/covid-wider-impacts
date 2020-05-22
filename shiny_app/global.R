@@ -40,6 +40,7 @@ plot_cut_box <- function(title_plot1, plot_output1,
 ###############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
 spec_lookup <- readRDS("data/spec_lookup.rds")
+ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 
 rapid <- readRDS("data/rapid_data.rds") #RAPID data
 aye <- readRDS("data/ae_data.rds") #A&E data

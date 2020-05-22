@@ -28,9 +28,31 @@ observeEvent(input$btn_cardio_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }  else if (input$measure_cardio_select == "aye") {
-               showModal(modalDialog(#A&E MODAL
+               showModal(modalDialog(# Cardio A&E MODAL
                  title = "What is the data source?",
-                 p(""),
+                 p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments 
+                   and Nurse/GP led minor injury units) with cardiovascular problems. It shows data from the recent 
+                   past along with historical activity for comparison purposes. The recent trend data is shown by 
+                   age group (under and over 65) and broad deprivation category (SIMD)."),
+                 p("Additional information relating to the overall A&E activity is available from the ", 
+                   tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/", 
+                          "NHS Performs - weekly update of emergency department activity and waiting time statistics.", 
+                          class="externallink")),
+                 p("There are two types of data submitted to the A&E datamart: episode and aggregate level data. 
+                   All hospitals with Emergency Departments submit episode level data containing a detailed record 
+                   for each patient attendance. Some smaller sites (6% of the total annual attendances) – nurse/GP 
+                   led minor injury units – can only provide aggregated monthly summary attendance and compliance 
+                   figures, as they do not have the IT systems and support to enable collection and submission of 
+                   detailed patient level information. The data for sites that submit aggregate level data is not 
+                   included in the figures presented in the tool. "),
+                 p("Attendances to A&E departments data sourced from the ",
+                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
+                          "Accident and Emergency Datamart (A&E2).",class="externallink"), 
+                   "The A&E2 dataset is managed by ", 
+                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
+                          "Public Health Scotland (PHS).", class="externallink")),
+                 p("The following ICD-10 codes were considered for the cardiovascular A&E data subset:"),
+                 DT::dataTableOutput("ae_cardio_codes_tbl"),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "cath") {
@@ -41,6 +63,12 @@ observeEvent(input$btn_cardio_modal,
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
 )
+
+# Rendering A&E Cardio Codes table here for inclusion to modal above
+output$ae_cardio_codes_tbl <- DT::renderDataTable(
+  ae_cardio_codes
+)
+
 ###############################################.
 ## Reactive datasets ----
 ###############################################.
@@ -67,7 +95,7 @@ output$cardio_explorer <- renderUI({
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
         h3("Weekly cardiovascular A&E attendances"),
-        actionButton("btn_cardio_modal", "Data source: A&E", icon = icon('question-circle')),
+        actionButton("btn_cardio_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "ae_cardio_overall"),
         plot_cut_box("Percentage change in cardiovascular A&E attendances compared with the corresponding
                      time in 2018-2019 by age group", "ae_cardio_age_var",
