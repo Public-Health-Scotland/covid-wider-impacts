@@ -166,12 +166,27 @@ output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, 
 ###############################################.
 
 overall_cardio_download <- reactive({
+  
+  # Branching this so that depending on input the right variables and names can be used
+  # Cath branch
+  if (input$measure_cardio_select == "cath") {
+    selection <- c("week_ending", "count", "count_average", "variation")
+    new_var_name <- "count_2019"
+  }
+  # A&E branch
+  if (input$measure_cardio_select == "aye") {
+    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
+    new_var_name <- "average_2018_2019"
+  }
+  
+  # Prep data for download
   switch(
     input$measure_cardio_select,
-    "cath" = filter_data(cath, area = F)
+    "cath" = filter_data(cath_lab, area = F),
+    "aye" = filter_data(ae_cardio, area = F)
   ) %>% 
-    select(week_ending, count, count_average, variation) %>% 
-    rename(count_2019 = count_average) %>% 
+    select(all_of(selection)) %>% 
+    rename(!!new_var_name := count_average) %>% 
     mutate(week_ending = format(week_ending, "%d %b %y"))
 })
 
