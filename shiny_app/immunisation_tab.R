@@ -73,7 +73,7 @@ output$immunisation_explorer <- renderUI({
   if (input$measure_select_immun == "sixin_8wks") {
     tagList(
       fluidRow(column(10, h4(paste0(immune_title)))),
-      fluidRow(column(7, withSpinner(plotlyOutput("immun_6in8_scurve", height = "800px"))),
+      fluidRow(column(7, withSpinner(plotlyOutput("immun_6in8_scurve"))),
                column(5, uiOutput("immun_6in8_table"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )

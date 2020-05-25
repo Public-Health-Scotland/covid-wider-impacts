@@ -204,7 +204,9 @@ plot_scurve <- function(dataset) {
   #Modifying standard xaxis layout
   xaxis_title <-"Age of children in weeks"
   xaxis_plots[["title"]] <- xaxis_title
-  xaxis_plots[["range"]] <- ~week_no
+  # For custom tick labels
+  xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
+  xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
   
   #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
