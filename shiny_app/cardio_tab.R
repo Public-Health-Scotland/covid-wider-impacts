@@ -5,14 +5,14 @@
 ###############################################.
 
 # Show list of area names depending on areatype selected
-output$geoname_cardio_ui <- renderUI({
-  
-  areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_cardio])
-  
-  selectizeInput("geoname_cardio", label = NULL,  
-                 choices = areas_summary, selected = "")
-  
-})
+# output$geoname_cardio_ui <- renderUI({
+#   
+#   areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_cardio])
+#   
+#   selectizeInput("geoname_cardio", label = NULL,  
+#                  choices = areas_summary, selected = "")
+#   
+# })
 
 ###############################################.
 ## Modals ----
