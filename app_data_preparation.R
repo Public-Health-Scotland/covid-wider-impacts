@@ -513,5 +513,63 @@ angio_lab <- read_excel(paste0(data_folder, "cath_labs/MonthlyTrendsCorAngioNumb
 
 saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
 
+###############################################.
+## A&E Cardio ----
+###############################################.
+
+# Reads in A&E cardio ICD 10 codes for modal, only required to run in case code list changes
+ae_cardio_codes <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/A&E_Cardio/A&E-CardioConditionCodes.xlsx")
+saveRDS(ae_cardio_codes, "shiny_app/data/ae_cardio_codes.rds")
+rm(ae_cardio_codes)
+
+# Set A&E cardio folder
+ae_cardio_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E_Cardio/"
+
+# Read in data, clean names + some simple mutations
+ae_cardio <- read_xlsx(paste0(ae_cardio_folder, "2020-05-20-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
+  clean_names() %>% 
+  rename(diag_cat = diagnosis_catagory,
+         dep = prompt_dataset_deprivation_scot_quintile) %>% 
+  mutate(week_ending = as.Date(week_ending),
+         age_band = ifelse(is.na(age_band), "Missing", age_band)) %>%
+  create_depgroups()
+
+# Reshaping of A&E cardio data to make it compliant with Shiny app format
+ae_cardio_all <- ae_cardio %>% 
+  group_by(diag_cat, week_ending) %>% 
+  summarise(count = sum(number_of_attendances),
+            type = "all",
+            category = "All",
+            area_name = "Scotland",
+            area_type = "Scotland") %>% 
+  ungroup() %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+ae_cardio_dep <- ae_cardio %>% 
+  group_by(diag_cat, week_ending, dep) %>% 
+  summarise(count = sum(number_of_attendances),
+            type = "dep",
+            area_name = "Scotland",
+            area_type = "Scotland") %>% 
+  ungroup() %>% 
+  rename(category = dep) %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+ae_cardio_age <- ae_cardio %>% 
+  group_by(diag_cat, week_ending, age_band) %>% 
+  summarise(count = sum(number_of_attendances),
+            type = "age",
+            area_name = "Scotland",
+            area_type = "Scotland") %>% 
+  ungroup() %>% 
+  rename(category = age_band) %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
+
+# Remove temporary object from environment to reduce session size
+rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
+
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-05-10")
 
 ##END

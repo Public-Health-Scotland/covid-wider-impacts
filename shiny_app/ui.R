@@ -84,17 +84,17 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
 tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          wellPanel(
            actionButton("browser", "Browser"),
-           column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_cardio", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_cardio_ui")),
-           column(4, div(title="Select the data you want to explore.", # tooltip
+           # column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+           #               p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+           #               selectInput("geotype_cardio", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
+           #                           selected = "Scotland")),
+           #        uiOutput("geoname_cardio_ui")),
+           column(6, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_cardio_select", 
-                                           label= "Step 2 – Select the data you want to explore.", 
+                                           label= "Step 1 – Select the data you want to explore.", 
                                            choices = cardio_list, status = "primary", 
                                            direction = "vertical", justified = T))),
-           column(4, downloadButton('download_cardio_data', 'Download data'))
+           column(6, downloadButton('download_cardio_data', 'Download data'))
          ), #wellPanel bracket
          mainPanel(width = 12,
                    uiOutput("cardio_explorer")

@@ -6,23 +6,32 @@
 # dataset - what data to use for the chart formatted as required
 # split - age, sex, or dep (simd deprivation)
 plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation", 
-                             data_name = NULL) {
+                             data_name = NULL, tab = "summary") {
   
   if (split != FALSE) {
-    trend_data <- dataset %>% # filtering data by cut and area name
-      filter(type == split &
-               area_name == input$geoname )
+    if (tab == "summary") {
+      trend_data <- dataset %>% # filtering data by cut and area name
+        filter(type == split & area_name == input$geoname)
+    } else if (tab == "cardio") {
+      trend_data <- dataset %>% # filtering data by cut and area name
+        filter(type %in% split)
+    }
+ # if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
   } else { # for cases outside summary tab
     trend_data <- dataset
   }
 
-
   # Formatting age groups as factor so they appear in the correct order in the legend
   if ( split == "age") {
+    if (tab == "summary") {
     trend_data <- trend_data %>% 
       mutate(category = factor(category, levels = c("Under 5", "5 - 14", "15 - 44", 
                                                     "45 - 64", "65 - 74", 
                                                     "75 - 84", "85 and over"))) 
+    } else if (tab == "cardio") {
+      trend_data <- trend_data %>% 
+        mutate(category = factor(category, levels = c("All", "<65", "65+")))
+    }
   } else {
     trend_data <- trend_data 
   }
@@ -32,7 +41,6 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     
     aver_period <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas") ~ "2018-2019",
                              data_name == "cath" ~ "2019")
-    
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>", 
                               "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
