@@ -529,6 +529,9 @@ six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type), # not sure areatype is required - consider removing once tab design complete
          cohort_eligible.ch=format(week_8_start, format="%d-%B-%y"),
+         cohort_eligible.ch = recode_factor(cohort_eligible.ch, "01-Jan-19" = "2019", 
+                                     "30-Dec-19" = "January 2020",
+                                     "27-Jan-20" = "February 2020"),
          cohort_eligible_name=factor(cohort_eligible.ch,unique(cohort_eligible.ch)))
 
 six <- six %>%
