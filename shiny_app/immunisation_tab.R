@@ -5,7 +5,7 @@
 observeEvent(input$btn_immune_modal, 
                  showModal(modalDialog(#RAPID ADMISSIONS MODAL
                  title = "What is the data source?",
-                 p("The information shown on the numbers of children eligible for, and receiving, routine preschool vaccinations is taken from the ",
+                 p("The information shown on the numbers of children eligible for, and receiving, routine preschool immunisations is taken from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=4&SubID=12",
                           "Scottish Immunisation and Recall System (SIRS)",class="externallink")),
                  p("SIRS is an electronic system used by all NHS Boards in Scotland. The system facilitates the invitation of children when a scheduled vaccination is due.  When a child receives a vaccine, relevant information is returned to administrative staff in the NHS Board child health department.  The administrative staff then update the child’s SIRS record accordingly."),
@@ -32,9 +32,9 @@ output$geoname_ui_immun <- renderUI({
 # Reactive dataset for flextable filter on geographical area
 table_data <- reactive({  
   table <- sixtable %>%
-    filter(area_name==input$geoname_immun) %>%
-    mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
-    arrange(cohort)
+    filter(area_name==input$geoname_immun)
+    #mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%  # required if table sort order is to change
+    #arrange(cohort)
 })
 
 
@@ -60,9 +60,12 @@ output$immunisation_explorer <- renderUI({
   commentary_6in1 <-p("Vaccination protects children against certain serious infections.  It is important that children ",
                       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
                              "continue to receive their routine vaccinations during the Covid-19 pandemic",class="externallink"),".",br(),
-                      "This page provides information on the uptake of ",
-                      tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","vaccinations that are routinely offered to all preschool children",class="externallink"),
-                      ". This will help us to ensure that vaccination rates remain high throughout the pandemic.",br(),
+                      "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice at ",
+                      tags$a(href="https://twitter.com/NHSImmuniseScot","https://twitter.com/NHSImmuniseScot ",class="externallink"),
+                      " and ",tags$a(href="https://www.nhsinform.scot/immunisation","https://www.nhsinform.scot/immunisation",class="externallink"),".",br(),
+                      #"This page provides information on the uptake of ",
+                      #tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","vaccinations that are routinely offered to all preschool children",class="externallink"),
+                      #". This will help us to ensure that vaccination rates remain high throughout the pandemic.",br(),
                       "All preschool children are offered a total of five vaccination appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age.  Multiple vaccinations are offered at each appointment.",br(), 
                       "Here, for simplicity, we have just shown the uptake of one of the vaccines offered at each appointment. The charts show the progression of uptake of the relevant vaccine as children age.  The data tables provide the uptake rates at two time-points in the chart.  Firstly, the uptake rate reached by a fixed age is shown.  For example, for the first dose of the 6-in-1 vaccine which is offered at the 8 week appointment, uptake by the time children turn 12 weeks old is shown.  Secondly, the overall uptake rate recorded by the date the data was extracted from SIRS for analysis is shown.",br(),
                       "Data is shown for children who have become eligible for vaccination during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for vaccination before the pandemic (in 2019 and in January and February 2020) for comparison. After a child receives a vaccination, it can take some time for the record of the vaccination to be returned to the NHS Board child health department and entered into the SIRS system.  We have allowed a 6 week window for data entry.  So, for the first release of this page on 3 June 2020, information was extracted from SIRS on 25 May, and results were reported for children becoming eligible for vaccination up to 6 weeks previously,
@@ -73,7 +76,8 @@ output$immunisation_explorer <- renderUI({
   if (input$measure_select_immun == "sixin_8wks") {
     tagList(
       fluidRow(column(10, h4(paste0(immune_title)))),
-      fluidRow(column(7, withSpinner(plotlyOutput("immun_6in8_scurve"))),
+      fluidRow(column(7,br(), br(),
+                      withSpinner(plotlyOutput("immun_6in8_scurve"))),
                column(5, uiOutput("immun_6in8_table"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )

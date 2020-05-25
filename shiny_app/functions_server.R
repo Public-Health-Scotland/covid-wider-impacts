@@ -186,15 +186,16 @@ plot_spec <- function(type) {
 
 plot_scurve <- function(dataset) {
   
-  scurve_data <- dataset %>% filter(area_name == input$geoname_immun) %>%
-    droplevels()
+  scurve_data <- dataset %>% filter(area_name == input$geoname_immun) 
+  # %>%
+  # droplevels() # might be needed if sort order in legend is to change
   
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {
   
   #Create tooltip for scurve
-  tooltip_scurve <- c(paste0("Cohort: ", scurve_data$cohort_eligible_name))
+  tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
   
   #Modifying standard yaxis layout
   yaxis_plots[["title"]] <- "% of children who have received their vaccine"
@@ -206,10 +207,10 @@ plot_scurve <- function(dataset) {
   #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
     add_trace(type = 'scatter', mode = 'lines',
-              color = ~cohort_eligible_name, colors = pal_immun,
+              color = ~time_period_eligible, colors = pal_immun,
               text= tooltip_scurve, hoverinfo="text") %>%
       # Adding legend title
-      add_annotations( text="Cohort", xref="paper", yref="paper",
+      add_annotations( text="Children turning 8 weeks in:", xref="paper", yref="paper",
                        x=1.02, xanchor="left",
                        y=0.8, yanchor="bottom",    # Same y as legend below
                        legendtitle=TRUE, showarrow=FALSE ) %>% 
@@ -243,18 +244,21 @@ plot_nodata <- function(height_plot = 450) {
 
 immune_table <- function() {
   table_data() %>%
-    select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
+    select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_24weeks_num, uptake_24weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
     flextable() %>%
     set_header_labels(time_period_eligible="Children turning 8 weeks in:",
                       denominator="Total number of children",
                       uptake_12weeks_num="Children recorded as receiving their vaccine by 12 weeks of age",
                       uptake_12weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age",
+                      uptake_24weeks_num="Children recorded as receiving their vaccine by 24 weeks of age",
+                      uptake_24weeks_percent="Children recorded as receiving their vaccine by 24 weeks of age",
                       uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",
                       uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>%
-    footnote(i = 1, j = 1, value = as_paragraph(c("W/B : Week beginning")),ref_symbols = c("a"),part = "header") %>%
+    footnote(i = 1, j = 1:2, value = as_paragraph(c("W/B : Week beginning","Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly")),part = "header") %>%
     merge_at(i = 1, j = 3:4, part = "header") %>%
     merge_at(i = 1, j = 5:6, part = "header") %>%
-    add_header_row(values=c("","","N","%","N","%"), top = FALSE ) %>%
+    merge_at(i = 1, j = 7:8, part = "header") %>%
+    add_header_row(values=c("","","N","%","N","%","N","%"), top = FALSE ) %>%
     font(fontname="Helvetica", part = "all") %>%
     theme_box() %>%
     autofit() %>%

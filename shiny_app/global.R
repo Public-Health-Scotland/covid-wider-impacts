@@ -78,10 +78,15 @@ pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
 #Palette for those with a single category per sex and overall
 pal_sex <- c('#000000', '#08519c','#bdd7e7')
 pal_overall <- c('#000000', '#009900')
-pal_immun <- c("2019" = '#000000', "January 2020" = "#abd9e9", "February 2020" = "#74add1", 
-               "02-Mar-20" = "#fee391", "09-Mar-20" = "#fec44f", 
-               "16-Mar-20" = "#fe9929", "23-Mar-20" = "#ec7014", 
-               "30-Mar-20" = "#cc4c02", "06-Apr-20" = "#8c2d04")
+# pal_immun <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", 
+#                "02-Mar-20" = "#fee391", "09-Mar-20" = "#fec44f", 
+#                "16-Mar-20" = "#fe9929", "23-Mar-20" = "#ec7014", 
+#                "30-Mar-20" = "#cc4c02", "06-Apr-20" = "#8c2d04")
+pal_immun <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
+               "W/B 02-MAR-2020" = "#fee391", "W/B 09-MAR-2020" = "#fec44f",
+               "W/B 16-MAR-2020" = "#fe9929", "W/B 23-MAR-2020" = "#ec7014",
+               "W/B 30-MAR-2020" = "#cc4c02", "W/B 06-APR-2020" = "#8c2d04")
+
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
