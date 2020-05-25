@@ -62,7 +62,7 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
 
 cardio_list <- c("Coronary cases GJ Hospital" = "cath", 
-                 "Hospital admissions" = "rapid", "A&E attendances" = "aye")
+                 "A&E attendances" = "aye")
 
 ###############################################.
 ## Palettes and plot parameters ----

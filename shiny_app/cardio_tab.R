@@ -91,9 +91,6 @@ output$cardio_explorer <- renderUI({
       plot_cut_box("Angiographies/PCI carried out", "angio_gj_overall",
                    "Percentage of total for females and over 70 years old people", "angio_gj_perc")
     )
-    } else if (input$measure_cardio_select == "rapid") {
-      tagList(#Hospital admissions
-      )
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
         h3("Weekly cardiovascular A&E attendances in Scotland"),

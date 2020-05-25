@@ -3,7 +3,7 @@
 function(input, output, session) {
   
   # For debugging
-  observeEvent(input$browser, browser())
+  # observeEvent(input$browser, browser())
   
   ###############################################.
   ## Functions 

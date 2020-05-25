@@ -83,7 +83,7 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
 ###############################################.
 tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          wellPanel(
-           actionButton("browser", "Browser"),
+           # actionButton("browser", "Browser"), #for debugging
            # column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
            #               p(tags$b("Step 1. Select a geography level and then an area of interest.")),
            #               selectInput("geotype_cardio", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
