@@ -223,9 +223,6 @@ plot_scurve <- function(dataset) {
   }}
 
 
-
-
-
 ######################################################################.
 #Function to create plot when no data available
 plot_nodata <- function(height_plot = 450) {
@@ -240,6 +237,26 @@ plot_nodata <- function(height_plot = 450) {
            font = list(family = '"Helvetica Neue", Helvetica, Arial, sans-serif')) %>% 
     config( displayModeBar = FALSE) # taking out plotly logo and collaborate button
 } 
+
+
+#####################################################################################.
+## Function for generating flextable summary of immunisation data being displayed in s curve.
+
+immune_table <- function() {
+  table_data() %>%
+    select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
+    flextable() %>%
+    set_header_labels(time_period_eligible="Children turning 8 weeks in:", denominator="Total number of children",uptake_12weeks_num="Children recorded as receiving their vaccine by 12 weeks of age",uptake_12weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age",uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>%
+    footnote(i = 1, j = 1, value = as_paragraph(c("W/B : Week beginning")),ref_symbols = c("a"),part = "header") %>%
+    merge_at(i = 1, j = 3:4, part = "header") %>%
+    merge_at(i = 1, j = 5:6, part = "header") %>%
+    add_header_row(values=c("","","N","%","N","%"), top = FALSE ) %>%
+    font(fontname="Helvetica", part = "all") %>%
+    theme_box() %>%
+    autofit() %>%
+    htmltools_value()
+}
+
 
 
 ### END

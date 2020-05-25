@@ -1,5 +1,7 @@
 ##Server script for immunisations tab
 
+
+# Pop-up modal explaining source of data
 observeEvent(input$btn_immune_modal, 
                  showModal(modalDialog(#RAPID ADMISSIONS MODAL
                  title = "What is the data source?",
@@ -7,13 +9,9 @@ observeEvent(input$btn_immune_modal,
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=4&SubID=12",
                           "Scottish Immunisation and Recall System (SIRS)",class="externallink")),
                  p("SIRS is an electronic system used by all NHS Boards in Scotland. The system facilitates the invitation of children when a scheduled vaccination is due.  When a child receives a vaccine, relevant information is returned to administrative staff in the NHS Board child health department.  The administrative staff then update the child’s SIRS record accordingly."),
-                 p("These data show uptake rates of the first dose of the 6-in-1 vaccine, which children should receive at 8 weeks old. The vaccine protects against diphtheria, tetanus, pertussis (whooping cough), polio, Haemophilus influenzae type b (Hib) and Hepatitis B. Children should also receive a second dose of the vaccine at 12 weeks and a third dose at 16 weeks."),
-                 p("Data are provided for cohorts of children reaching 8 weeks of age in the recent past as well as historical information (the baseline) for comparison purposes."),
-                 p("The chart shows the progression of uptake of the first dose of vaccine as children age. The data table provides the uptake rates at two time-points in the chart: the uptake rate reached by 12 weeks old and the overall uptake rate recorded by the time of reporting."),
-                 p("There is a reporting-lag of 6 weeks to allow time for the recording of data on vaccinations given. Although the vast majority of data on vaccinations given will be recorded within 6 weeks, data shown for the most recent cohorts of children reaching 8 weeks old will not be fully complete at this stage. "),
-                 p(tags$a(href="https://www.isdscotland.org/Health-Topics/Child-Health/Immunisation/",
-                          "Public Health Scotland (PHS)",class="externallink"),"routinely receive quarterly data extracts from SIRS for the purpose of producing and publishing immunisation uptake rates. For the immediate monitoring of the impact of COVID-19 on childhood immunisation uptake rates, a sub-set of data from SIRS will be extracted each month."),
-                 size = "l",
+                 p(tags$a(href="https://publichealthscotland.scot/","Public Health Scotland (PHS)",class="externallink")," routinely receives quarterly data extracts from SIRS for the purpose of producing and ",
+                   (tags$a(href="https://www.isdscotland.org/Health-Topics/Child-Health/Immunisation/","publishing",class="externallink"))," immunisation uptake rates.  To allow more rapid monitoring of the impact of Covid-19 on childhood immunisation uptake rates, PHS is also currently extracting a sub-set of data from SIRS each month."),
+                 size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
     
 
@@ -21,20 +19,17 @@ observeEvent(input$btn_immune_modal,
 ## Immunisation Reactive controls  ----
 ###############################################.
 
-# 'Immunisation' reactive drop-down control showing list of area names depending on areatype selected
-
+# Immunisation reactive drop-down control showing list of area names depending on areatype selected
 output$geoname_ui_immun <- renderUI({
   
   #Lists areas available in   
   areas_summary_immun <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_immun])
   
-  selectizeInput("geoname_immun", label = NULL,
-                 choices = areas_summary_immun, selected = "")
-  
+  selectizeInput("geoname_immun", label = NULL, choices = areas_summary_immun, selected = "")
 })
 
 
-# Reactive dataset filtered for flextable - four possible combinations of data
+# Reactive dataset for flextable filter on geographical area
 table_data <- reactive({  
   table <- sixtable %>%
     filter(area_name==input$geoname_immun) %>%
@@ -43,62 +38,51 @@ table_data <- reactive({
 })
 
 
-immune_table <- function() {
-    table_data() %>%
-    select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
-    flextable() %>%
-    set_header_labels(time_period_eligible="Children turning 8 weeks in:", denominator="Total number of children",uptake_12weeks_num="Children recorded as receiving their vaccine by 12 weeks of age",uptake_12weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age",uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>%
-    footnote(i = 1, j = 1, value = as_paragraph(c("W/B : Week beginning")),ref_symbols = c("a"),part = "header") %>%
-    merge_at(i = 1, j = 3:4, part = "header") %>%
-    merge_at(i = 1, j = 5:6, part = "header") %>%
-    add_header_row(values=c("","","N","%","N","%"), top = FALSE ) %>%
-    font(fontname="Helvetica", part = "all") %>%
-    theme_box() %>%
-    autofit() %>%
-    htmltools_value()
-}
-
-
-
-
 ###############################################.
 ## Immunisation Tab Reactive layout  ----
 ###############################################.
+
+#run chart function to generate s curve  
+output$immun_scurve <- renderPlotly({plot_scurve(six)})
+
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$immunisation_explorer <- renderUI({
 
   # text for titles of cut charts
-  immune_chart_title <- paste0(case_when(input$measure_select_immun == "sixin_8wks" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
+  immune_title <- paste0(case_when(input$measure_select_immun == "sixin_8wks" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
                                                                                              input$geoname_immun),
                             input$measure_select_immun == "sixin_12wks" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
                             input$measure_select_immun == "sixin_16wks" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun)))
-
-  #immune_extract_date <- "Uptake rates are based on data on vaccinations given recorded by 18 May 2020; data for the most recent cohorts of children eligible for immunisation will not be fully complete at this stage." 
   
-  # text for titles of cut tables
-  immune_table_title <- paste0(case_when(input$measure_select_immun == "sixin_8wks" ~ "Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age)",
-                                   input$measure_select_immun == "sixin_12wks" ~ "Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age)",
-                                   input$measure_select_immun == "sixin_16wks" ~ "Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age)"))
+  #6-in-1: 8 weeks commentary to appear in immunisations tab
+  commentary_6in1 <-p("Vaccination protects children against certain serious infections.  It is important that children ",
+                      tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
+                             "continue to receive their routine vaccinations during the Covid-19 pandemic",class="externallink"),".",br(),
+                      "This page provides information on the uptake of ",
+                      tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","vaccinations that are routinely offered to all preschool children",class="externallink"),
+                      ". This will help us to ensure that vaccination rates remain high throughout the pandemic.",br(),
+                      "All preschool children are offered a total of five vaccination appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age.  Multiple vaccinations are offered at each appointment.",br(), 
+                      "Here, for simplicity, we have just shown the uptake of one of the vaccines offered at each appointment. The charts show the progression of uptake of the relevant vaccine as children age.  The data tables provide the uptake rates at two time-points in the chart.  Firstly, the uptake rate reached by a fixed age is shown.  For example, for the first dose of the 6-in-1 vaccine which is offered at the 8 week appointment, uptake by the time children turn 12 weeks old is shown.  Secondly, the overall uptake rate recorded by the date the data was extracted from SIRS for analysis is shown.",br(),
+                      "Data is shown for children who have become eligible for vaccination during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for vaccination before the pandemic (in 2019 and in January and February 2020) for comparison. After a child receives a vaccination, it can take some time for the record of the vaccination to be returned to the NHS Board child health department and entered into the SIRS system.  We have allowed a 6 week window for data entry.  So, for the first release of this page on 3 June 2020, information was extracted from SIRS on 25 May, and results were reported for children becoming eligible for vaccination up to 6 weeks previously,
+                      i.e. up to the week beginning 6 April.  Although the vast majority of data on vaccinations given will be recorded within 6 weeks, data shown for the most recent cohorts of children will not be fully complete in SIRS at this stage.",br(),  
+                      "Data is shown for Scotland and for NHS Board areas separately.  Due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland, and NHS Western Isles are not shown separately, however the Island Boards are included within the Scotland total.  Aberdeenshire local authority area within NHS Grampian has had difficulty recording vaccinations given on the SIRS system since the start of the Covid-19 pandemic.  Information on children in Aberdeenshire has therefore been excluded from figures provided for NHS Grampian and Scotland as a whole.  We hope to include Aberdeenshire in future releases once local data recording difficulties are resolved.")
   
-
-
+  # Specify items to display in immunisation ui based on step 2 selection 
   if (input$measure_select_immun == "sixin_8wks") {
     tagList(
-      #actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
-      fluidRow(column(10, h4(paste0(immune_chart_title)))),
+      fluidRow(column(10, h4(paste0(immune_title)))),
       fluidRow(column(7, withSpinner(plotlyOutput("immun_scurve"))),
                column(5,renderUI(immune_table()))),
-      fluidRow(column(12, p("Space for commentary here")))
+      fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }  else if (input$measure_select_immun == "sixin_12wks"){
     p("6-in-1 at 12 weeks coming 10th June 2020")
   }  else if (input$measure_select_immun == "sixin_16wks"){
-    p("6-in-1 at 16 weeks coming 17th June 2020")
-  }
-})
+    p("6-in-1 at 16 weeks coming 17th June 2020")}
   
-  
-  
-  
-output$immun_scurve <- renderPlotly({plot_scurve(six)})
+}) #close immunisation_explorer function
+
+
+#END
+

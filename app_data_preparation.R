@@ -513,6 +513,8 @@ saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
 ###############################################.
 immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/"
 
+
+# 6-in-1 at 8 weeks - scurve data
 six <- read_csv(paste0(immunisation_folder,"six in one_1_dashboard20200518.csv")) %>%
   janitor::clean_names()
 
@@ -525,12 +527,9 @@ hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Fi
 
 six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
-         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type), # not sure areatype is required - consider removing once tab design complete
          cohort_eligible.ch=format(week_8_start, format="%d-%B-%y"),
          cohort_eligible_name=factor(cohort_eligible.ch,unique(cohort_eligible.ch)))
-
-         #cohort_eligible_name=(as.factor(week_8_start)))
-         #cohort_eligible_name=(as.factor(case_when(week_8_start=="01-Jan-19" ~"Baseline 2019",TRUE~week_8_start))))
 
 six <- six %>%
   mutate(date=as.Date(week_8_start, format="%d-%B-%y"),
@@ -541,24 +540,17 @@ six <- six %>%
   mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort)
 
-
-# six$date2 <- factor(six$date,levels = paste(month.abb, rep(sort(unique(year(six$date))), each=12)))
-# six$cohort2 <- factor(six$cohort_eligible_name,levels = paste(month.abb, rep(sort(unique(year(six$date))), each=12)))
-# 
-# six$cohort3 <- factor(six$cohort_eligible_name,levels = paste(month.abb, rep(sort(unique(year(six$date))), each=12)))
-
-
 final_data <<- six
 
 saveRDS(six, paste0("shiny_app/data/","sixinone_data.rds"))
 
 
+# 6-in-1 at 8 weeks - summary table data
 six_datatable <- read_csv(paste0(immunisation_folder,"six in one_1_dashboardtab_20200518.csv")) %>%
   janitor::clean_names() %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ paste0("NHS ",geography_name))) %>%
   select (-geography)
   
-
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
 
 ##END
