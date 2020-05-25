@@ -187,23 +187,18 @@ plot_spec <- function(type) {
 plot_scurve <- function(dataset) {
   
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun) %>%
-    droplevels() %>% 
-    mutate(week_no = floor(interv/7))
+    droplevels()
   
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {
   
   #Create tooltip for scurve
-  tooltip_scurve <- c(paste0("cohort", scurve_data$cohort_eligible_name))
+  tooltip_scurve <- c(paste0("Cohort: ", scurve_data$cohort_eligible_name))
   
   #Modifying standard yaxis layout
-  yaxis_title <-"% of children who have received their vaccine"
-  yaxis_plots[["title"]] <- yaxis_title
-  
-  #Modifying standard xaxis layout
-  xaxis_title <-"Age of children in weeks"
-  xaxis_plots[["title"]] <- xaxis_title
+  yaxis_plots[["title"]] <- "% of children who have received their vaccine"
+  xaxis_plots[["title"]] <- "Age of children in weeks"
   # For custom tick labels
   xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
   xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
@@ -211,18 +206,17 @@ plot_scurve <- function(dataset) {
   #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
     add_trace(type = 'scatter', mode = 'lines',
-              color = ~cohort_eligible_name, colors = "BrBG",
+              color = ~cohort_eligible_name, colors = pal_immun,
               text= tooltip_scurve, hoverinfo="text") %>%
       # Adding legend title
       add_annotations( text="Cohort", xref="paper", yref="paper",
                        x=1.02, xanchor="left",
-                       y=0.5, yanchor="bottom",    # Same y as legend below
+                       y=0.8, yanchor="bottom",    # Same y as legend below
                        legendtitle=TRUE, showarrow=FALSE ) %>% 
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
          yaxis = yaxis_plots, xaxis = xaxis_plots,
-         legend = list(x = 100, y = 0.5, yanchor="top")) %>% #position of legend
-    #layout(legend=list(title=list(text='<b>Children turning 8 weeks in:</b>'))) %>%  ##trying to add title to plotly legend
+         legend = list(x = 100, y = 0.8, yanchor="top")) %>% #position of legend
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
   }}
