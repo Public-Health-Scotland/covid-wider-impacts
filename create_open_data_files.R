@@ -43,17 +43,17 @@ sas_filepath <- file.path("//Freddy", "DEPT", "PHIBCS", "PHI", "Publications",
                           "OD2000028 - COVID-19 Wider Impact - Scottish Ambulance Services")
 
 #set filenames for dashboard data tables --- UPDATE TO MATCH WHAT FILE NAMES WILL BE
-hospital_admissions <- "hospital_admissions"
-a_and_e <- "a_and_e"
-nhs24 <- "nhs24"
-ooh <- "ooh"
-sas <- "sas"
+hospital_admissions_data <- "hospital_admissions"
+a_and_e_data <- "a_and_e"
+nhs24_data <- "nhs24"
+ooh_data <- "ooh"
+sas_data <- "sas"
 
-hospital_admissions <- read_csv(glue("{adm_filepath}/{hospital_admissions}.csv"))
-a_and_e <- read_csv(glue("{ae_filepath}/{a_and_e}.csv"))
-nhs24 <- read_csv(glue("{nhs24_filepath}/{nhs24}.csv"))
-ooh <- read_csv(glue("{ooh_filepath}/{ooh}.csv"))
-sas <- read_csv(glue("{sas_filepath}/{sas}.csv"))
+hospital_admissions <- read_csv(glue("{adm_filepath}/{hospital_admissions_data}.csv"))
+a_and_e <- read_csv(glue("{ae_filepath}/{a_and_e_data}.csv"))
+nhs24 <- read_csv(glue("{nhs24_filepath}/{nhs24_data}.csv"))
+ooh <- read_csv(glue("{ooh_filepath}/{ooh_data}.csv"))
+sas <- read_csv(glue("{sas_filepath}/{sas_data}.csv"))
 
 # Set resources to use
 
@@ -122,15 +122,17 @@ sas <- left_join(sas, geo_codes, by = "Area_name")
 ###############################################
 
 #format names for ckan
+
 od_names <- function(dataset) {
   dataset_hb <- dataset %>%
-    rename("Average20182019" = "Count_average_pre2020") %>%
+    rename("Average20182019" = "Average_2018_2019") %>%
     rename("PercentVariation" = "Variation (%)") %>%
     rename("WeekEnding" = "Week_ending")
 }
 
 
 ###filter HB
+
 hb_filter <- function(dataset) {
   dataset_hb <- dataset %>%
     filter(Area_type != "HSC partnership") %>%
@@ -139,6 +141,7 @@ hb_filter <- function(dataset) {
 
 
 ###filter HSCP
+
 hscp_filter <- function(dataset) {
   dataset_hscp <- dataset %>%
     filter(Area_type == "HSC partnership") %>%
@@ -146,6 +149,7 @@ hscp_filter <- function(dataset) {
 }
 
 ###Age+Sex
+
 age_sex_od <- function(dataset) {
   #filter for sex, rename, add AgeGroup
   dataset_sex <- dataset %>%
@@ -173,13 +177,14 @@ age_sex_od <- function(dataset) {
 
 
 ###SIMD
+
 simd_od <- function(dataset) {
   #filter for simd, rename, select, reorder
   dataset_simd <- dataset %>%
     filter(Category %in% c("Quintile 1 - most deprived", "Quintile 2", 
                            "Quintile 3", "Quintile 4", "Quintile 5 - least deprived")) %>%
     rename("SIMDQuintile" = "Category") %>%
-    mutate(SIMDQuintile = recode("Quintile 1 - most deprived" = "1",
+    mutate(SIMDQuintile = recode(SIMDQuintile, "Quintile 1 - most deprived" = "1",
                                  "Quintile 2" = "2",
                                  "Quintile 3" = "3",
                                  "Quintile 4" = "4",
@@ -309,6 +314,12 @@ adm_hscp_spec <- adm_hscp %>%
 
 write_csv(adm_hscp_spec, glue("{adm_filepath}/{resource6}_{date}.csv"))
 
+# Tidy Global Environment
+rm(adm_hb, adm_hb_age_sex, adm_hb_simd, adm_hb_spec, adm_hscp, adm_hscp_age_sex, 
+   adm_hscp_simd, adm_hscp_spec)
+
+
+
 ##############################################
 #2##Create Weekly_a_and_e OD Resources
 ##############################################
@@ -387,6 +398,10 @@ ae_hscp_simd <- ae_hscp_simd %>%
 
 #create OD csv file
 write_csv(ae_hscp_simd, glue("{ae_filepath}/{resource10}_{date}.csv"))
+
+# Tidy Global Environment
+rm(ae_hb, ae_hb_age_sex, ae_hb_simd, ae_hscp, ae_hscp_age_sex, ae_hscp_simd)
+
 
 
 ##############################################
@@ -468,6 +483,10 @@ nhs24_hscp_simd <- nhs24_hscp_simd %>%
 #create OD csv file
 write_csv(nhs24_hscp_simd, glue("{nhs24_filepath}/{resource14}_{date}.csv"))
 
+# Tidy Global Environment
+rm(nhs24_hb, nhs24_hb_age_sex, nhs24_hb_simd, nhs24_hscp, nhs24_hscp_age_sex, 
+   nhs24_hscp_simd)
+
 
 
 ##############################################
@@ -548,6 +567,11 @@ ooh_hscp_simd <- ooh_hscp_simd %>%
 
 #create OD csv file
 write_csv(ooh_hscp_simd, glue("{ooh_filepath}/{resource18}_{date}.csv"))
+
+# Tidy Global Environment
+rm(ooh_hb, ooh_hb_age_sex, ooh_hb_simd, ooh_hscp, ooh_hscp_age_sex, 
+   ooh_hscp_simd)
+
 
 
 ##############################################
