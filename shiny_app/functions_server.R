@@ -18,10 +18,15 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
   # Formatting age groups as factor so they appear in the correct order in the legend
   if ( split == "age") {
+    if (tab == "summary") {
     trend_data <- trend_data %>% 
       mutate(category = factor(category, levels = c("Under 5", "5 - 14", "15 - 44", 
                                                     "45 - 64", "65 - 74", 
                                                     "75 - 84", "85 and over"))) 
+    } else if (tab == "cardio") {
+      trend_data <- trend_data %>% 
+        mutate(category = factor(category, levels = c("<65", "65+")))
+    }
   } else {
     trend_data <- trend_data 
   }
