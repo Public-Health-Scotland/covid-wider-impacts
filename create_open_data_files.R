@@ -1,17 +1,3 @@
-##########################################################
-# Create PHS COVID Wider Impact Open Data
-# Original author: Csilla Scharle
-# Original date: 13/05/20
-# Latest update author
-# Latest update date
-# Latest update description
-# Type of script
-# Written/run on RStudio Desktop
-# Version of R that the script was most recently run on - 3.5.1
-# Description: create open data csv for Weekly COVID-19 Wider Impacts update
-# Approximate run time 
-##########################################################
-
 
 #############################################################
 ### Housekeeping ----
