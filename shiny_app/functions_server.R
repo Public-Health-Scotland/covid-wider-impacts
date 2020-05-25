@@ -187,7 +187,8 @@ plot_spec <- function(type) {
 plot_scurve <- function(dataset) {
   
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun) %>%
-    droplevels()
+    droplevels() %>% 
+    mutate(week_no = floor(interv/7))
   
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
@@ -203,20 +204,22 @@ plot_scurve <- function(dataset) {
   #Modifying standard xaxis layout
   xaxis_title <-"Age of children in weeks"
   xaxis_plots[["title"]] <- xaxis_title
-  
-  
-   #Creating time trend plot
-  s_plot <- plot_ly(data=scurve_data, x=~interv,  y = ~surv)
+  xaxis_plots[["range"]] <- ~week_no
   
   #Creating time trend plot
-  s_plot %>%
+    plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
     add_trace(type = 'scatter', mode = 'lines',
               color = ~cohort_eligible_name, colors = "BrBG",
               text= tooltip_scurve, hoverinfo="text") %>%
+      # Adding legend title
+      add_annotations( text="Cohort", xref="paper", yref="paper",
+                       x=1.02, xanchor="left",
+                       y=0.5, yanchor="bottom",    # Same y as legend below
+                       legendtitle=TRUE, showarrow=FALSE ) %>% 
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
          yaxis = yaxis_plots, xaxis = xaxis_plots,
-         legend = list(x = 100, y = 0.5)) %>% #position of legend
+         legend = list(x = 100, y = 0.5, yanchor="top")) %>% #position of legend
     #layout(legend=list(title=list(text='<b>Children turning 8 weeks in:</b>'))) %>%  ##trying to add title to plotly legend
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
@@ -246,7 +249,12 @@ immune_table <- function() {
   table_data() %>%
     select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
     flextable() %>%
-    set_header_labels(time_period_eligible="Children turning 8 weeks in:", denominator="Total number of children",uptake_12weeks_num="Children recorded as receiving their vaccine by 12 weeks of age",uptake_12weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age",uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>%
+    set_header_labels(time_period_eligible="Children turning 8 weeks in:",
+                      denominator="Total number of children",
+                      uptake_12weeks_num="Children recorded as receiving their vaccine by 12 weeks of age",
+                      uptake_12weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age",
+                      uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",
+                      uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>%
     footnote(i = 1, j = 1, value = as_paragraph(c("W/B : Week beginning")),ref_symbols = c("a"),part = "header") %>%
     merge_at(i = 1, j = 3:4, part = "header") %>%
     merge_at(i = 1, j = 5:6, part = "header") %>%
