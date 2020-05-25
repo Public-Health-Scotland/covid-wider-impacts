@@ -9,9 +9,14 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name = NULL, tab = "summary") {
   
   if (split != FALSE) {
-    trend_data <- dataset %>% # filtering data by cut and area name
-      filter(type == split &
-               if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
+    if (tab == "summary") {
+      trend_data <- dataset %>% # filtering data by cut and area name
+        filter(type == split & area_name == input$geoname)
+    } else if (tab == "cardio") {
+      trend_data <- dataset %>% # filtering data by cut and area name
+        filter(type %in% split)
+    }
+ # if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
   } else { # for cases outside summary tab
     trend_data <- dataset
   }
@@ -25,7 +30,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                                     "75 - 84", "85 and over"))) 
     } else if (tab == "cardio") {
       trend_data <- trend_data %>% 
-        mutate(category = factor(category, levels = c("<65", "65+")))
+        mutate(category = factor(category, levels = c("All", "<65", "65+")))
     }
   } else {
     trend_data <- trend_data 
