@@ -132,7 +132,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
 ## Reading RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/shiny_input_files/rapid/Admissions_by_category_18-May.rds") %>% 
+rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/shiny_input_files/rapid/Admissions_by_category_25-May.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -203,7 +203,7 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-05-10", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-05-17", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -268,7 +268,7 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
 #new data extract from week ending 03 may 2020 up to week ending 17 may 2020
-new_ooh_03_17may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new_18052020_fixage.csv") %>% 
+new_ooh_03_25may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new data_25mayupdate.csv") %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -288,18 +288,18 @@ new_ooh_03_17may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-new_ooh_03_17may2020 <- new_ooh_03_17may2020 %>% 
+new_ooh_03_25may2020 <- new_ooh_03_25may2020 %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-05-17"))) #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-05-24"))) #filter complete weeks (Mon-Sun)
 
 
 #bind old and new ooh data
-ooh <- rbind(new_ooh_03_17may2020, ooh_new, ooh)
+ooh <- rbind(new_ooh_03_25may2020, ooh_new, ooh)
 
 # Creating totals for groups
 ooh_all <- ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
@@ -310,7 +310,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-17")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-24")
 
 ###############################################.
 ## Preparing A&E data ----
@@ -467,6 +467,33 @@ sas <- sas %>% mutate(scot = "Scotland") %>%
   group_by(week_ending, sex, dep, age_grp, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
+#NEW DATA UPDATE ON 25TH MAY - FOR WEEK ENDING 17 MAY
+sas_new_25may <-read_tsv(paste0(sas_zip_folder,"COVID WIDER IMPACT SAS_11052020to17052020.txt")) %>%
+  janitor::clean_names() %>%
+  rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
+         dep=patient_prompt_dataset_deprivation_scot_quintile,
+         count=number_of_incidents,gender=gender_description) %>%
+  select(-sas_call_start_calendar_week) %>%
+  # Formatting dates and sex
+  mutate(week_ending = as.Date(week_ending, format="%d-%b-%Y"),
+         sex=case_when(is.na(gender)~"Missing", gender=="" ~"Missing", gender=="MALE" ~ "Male", gender=="FEMALE" ~"Female", 
+                       gender %in% c(0, 9 ) ~ "Missing", TRUE ~ as.character(gender))) %>% 
+  proper() %>% #convert HB names to correct format
+  create_agegroups () %>%
+  create_depgroups ()
+
+# Aggregate up to get figures for each area type.
+sas_new_25may <- sas_new_25may %>% mutate(scot = "Scotland") %>% 
+  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age_grp, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
+
+#bind old and new SAS data
+sas <- rbind(sas_new_25may, sas)
+
 # Use aggregation function to aggregate data files for use in shiny app
 sas_allsex <- sas %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
 sas_sex <- agg_cut(dataset= sas, grouper="sex") %>% rename(category=sex)
@@ -477,7 +504,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-10")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-17")
 
 ###############################################.
 ## Cath labs ----
