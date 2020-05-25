@@ -94,15 +94,15 @@ output$cardio_explorer <- renderUI({
       )
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
-        h3("Weekly cardiovascular A&E attendances"),
+        h3("Weekly cardiovascular A&E attendances in Scotland"),
         actionButton("btn_cardio_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "ae_cardio_overall"),
-        plot_cut_box("Percentage change in cardiovascular A&E attendances compared with the corresponding
+        plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by age group", "ae_cardio_age_var",
-                     "Weekly number of cardiovascular A&E attendances by age group", "ae_cardio_age_tot"),
-        plot_cut_box("Percentage change in cardiovascular A&E attendances compared with the corresponding
+                     "Weekly number of cardiovascular A&E attendances in Scotland by age group", "ae_cardio_age_tot"),
+        plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by SIMD quintile", "ae_cardio_dep_var",
-                     "Weekly number of cardiovascular A&E attendances by SIMD quintile", "ae_cardio_dep_tot")
+                     "Weekly number of cardiovascular A&E attendances in Scotland by SIMD quintile", "ae_cardio_dep_tot")
       )
     }
 })
