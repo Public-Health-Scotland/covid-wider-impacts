@@ -197,11 +197,11 @@ plot_scurve <- function(dataset) {
   tooltip_scurve <- c(paste0("cohort", scurve_data$cohort_eligible_name))
   
   #Modifying standard yaxis layout
-  yaxis_title <-"% Uptake"
+  yaxis_title <-"% of children who have received their vaccine"
   yaxis_plots[["title"]] <- yaxis_title
   
   #Modifying standard xaxis layout
-  xaxis_title <-"Weeks"
+  xaxis_title <-"Age of children in weeks"
   xaxis_plots[["title"]] <- xaxis_title
   
   
@@ -215,11 +215,14 @@ plot_scurve <- function(dataset) {
               text= tooltip_scurve, hoverinfo="text") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.5)) %>% #position of legend
+         yaxis = yaxis_plots, xaxis = xaxis_plots,
+         legend = list(x = 100, y = 0.5)) %>% #position of legend
+    #layout(legend=list(title=list(text='<b>Children turning 8 weeks in:</b>'))) %>%  ##trying to add title to plotly legend
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
   }}
+
+
 
 
 
