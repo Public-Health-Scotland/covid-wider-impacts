@@ -537,7 +537,7 @@ six <- six %>%
          weeks=interv/7,
          week_no= isoweek(date)) %>%
   #filter(cohort_eligible_name=="Baseline 2019"|between(date, as.Date("2020-03-01"), as.Date("2020-05-10"))) %>%
-  filter(weeks<=20) %>% # not sure this filter needed once new data extract provided
+  filter(weeks<=24) %>% # not sure this filter needed once new data extract provided
   mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort)
 
