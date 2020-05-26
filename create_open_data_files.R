@@ -1,7 +1,7 @@
 
-#############################################################
+#############################################################.
 ### Housekeeping ----
-#############################################################
+#############################################################.
 
 # empty workspace
 
@@ -11,49 +11,66 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library(stringi)
-library(readxl)
 library(glue)
 library(janitor)
-library(reshape2)
 library(readr)
 library(ckanr)
-library(here)
-
 
 # Set date for open data filenames
 
 date <- strftime(Sys.Date(), format = "%d%m%Y")
 
-#Set Open Data folder filepaths & Dashboard data filenames
+#set filepath for httr configuration for api & source
+config_filepath <- file.path("//Freddy", "DEPT", "PHIBCS", "PHI", "Referencing & Standards",
+                             "GPD", "5_GitHub", "GPD", "Geography", "Scottish Postcode Directory")
 
-adm_filepath <- file.path("//Freddy", "DEPT", "PHIBCS", "PHI", "Publications", 
-                          "Open Data (Non Health Topic)", "Data", 
+source(glue("{config_filepath}/Set httr configuration for API.R"))
+
+#set file paths to read in dashboard data
+
+generic_source_filepath <- file.path("//Isdsf00d03", "PHSCOVID19_Analysis", "Publication outputs", 
+                                     "open_data")
+
+adm_source_filepath <- file.path(generic_source_filepath,
+                                 "Rapid_data")
+ae_source_filepath <- file.path(generic_source_filepath,
+                                "A&E_data")
+nhs24_source_filepath <- file.path(generic_source_filepath,
+                                   "NHS24_data")
+ooh_source_filepath <- file.path(generic_source_filepath,
+                                 "GP-OOH_data")
+sas_source_filepath <- file.path(generic_source_filepath,
+                                 "SAS_data")
+
+#Set Open Data folder filepaths for output
+
+generic_filepath <- file.path("//Freddy", "DEPT", "PHIBCS", "PHI", "Publications", 
+                              "Open Data (Non Health Topic)", "Data")
+
+adm_filepath <- file.path(generic_filepath,
                           "OD2000024 - COVID-19 Wider Impact - Hospital Admissions")
-ae_filepath <- file.path("//Freddy", "DEPT", "PHIBCS", "PHI", "Publications", 
-                         "Open Data (Non Health Topic)", "Data", 
+ae_filepath <- file.path(generic_filepath,
                          "OD2000025 - COVID-19 Wider Impact - A&E")
-nhs24_filepath <- file.path("//Freddy", "DEPT", "PHIBCS", "PHI", "Publications", 
-                            "Open Data (Non Health Topic)", "Data", 
+nhs24_filepath <- file.path(generic_filepath,
                             "OD2000026 - COVID-19 Wider Impact - NHS24")
-ooh_filepath <- file.path("//Freddy", "DEPT", "PHIBCS", "PHI", "Publications", 
-                          "Open Data (Non Health Topic)", "Data", 
+ooh_filepath <- file.path(generic_filepath,
                           "OD2000027 - COVID-19 Wider Impact - OOH Consultations")
-sas_filepath <- file.path("//Freddy", "DEPT", "PHIBCS", "PHI", "Publications", 
-                          "Open Data (Non Health Topic)", "Data", 
+sas_filepath <- file.path(generic_filepath,
                           "OD2000028 - COVID-19 Wider Impact - Scottish Ambulance Services")
 
-#set filenames for dashboard data tables --- UPDATE TO MATCH WHAT FILE NAMES WILL BE
-hospital_admissions_data <- "hospital_admissions"
-a_and_e_data <- "a_and_e"
-nhs24_data <- "nhs24"
-ooh_data <- "ooh"
-sas_data <- "sas"
 
-hospital_admissions <- read_csv(glue("{adm_filepath}/{hospital_admissions_data}.csv"))
-a_and_e <- read_csv(glue("{ae_filepath}/{a_and_e_data}.csv"))
-nhs24 <- read_csv(glue("{nhs24_filepath}/{nhs24_data}.csv"))
-ooh <- read_csv(glue("{ooh_filepath}/{ooh_data}.csv"))
-sas <- read_csv(glue("{sas_filepath}/{sas_data}.csv"))
+#set filenames for dashboard data tables --- UPDATE TO MATCH WHAT FILE NAMES WILL BE
+hospital_admissions_data <- "rapid_finaldata"
+a_and_e_data <- "AE_finaldata"
+nhs24_data <- "NHS24_finaldata"
+ooh_data <- "OOH_finaldata"
+sas_data <- "SAS_finaldata"
+
+hospital_admissions <- read_rds(glue("{adm_source_filepath}/{hospital_admissions_data}.rds"))
+a_and_e <- read_rds(glue("{ae_source_filepath}/{a_and_e_data}.rds"))
+nhs24 <- read_rds(glue("{nhs24_source_filepath}/{nhs24_data}.rds"))
+ooh <- read_rds(glue("{ooh_source_filepath}/{ooh_data}.rds"))
+sas <- read_rds(glue("{sas_source_filepath}/{sas_data}.rds"))
 
 # Set resources to use
 
@@ -63,25 +80,8 @@ resource3 <- "hospital_admissions_hb_specialty"
 resource4 <- "hospital_admissions_hscp_agesex"
 resource5 <- "hospital_admissions_hscp_simd"
 resource6 <- "hospital_admissions_hscp_specialty"
-resource7 <- "a_and_e_hb_agesex"
-resource8 <- "a_and_e_hb_simd"
-resource9 <- "a_and_e_hscp_agesex"
-resource10 <- "a_and_e_hscp_simd"
-resource11 <- "nhs24_hb_agesex"
-resource12 <- "nhs24_hb_simd"
-resource13 <- "nhs24_hscp_agesex"
-resource14 <- "nhs24_hscp_simd"
-resource15 <- "ooh_hb_agesex"
-resource16 <- "ooh_hb_simd"
-resource17 <- "ooh_hscp_agesex"
-resource18 <- "ooh_hscp_simd"
-resource19 <- "sas_hb_agesex"
-resource20 <- "sas_hb_simd"
-resource21 <- "sas_hscp_agesex"
-resource22 <- "sas_hscp_simd"
 
 #Geo codes
-#may need to run proxy config
 
 ckan <- src_ckan("https://www.opendata.nhs.scot")
 res_id_hb <- "f177be64-e94c-4ddf-a2ee-ea58d648d55a"
@@ -90,18 +90,18 @@ res_id_hscp <- "ccfeea67-2407-413c-9676-01c03527046a"
 hb_codes <- dplyr::tbl(src = ckan$con, from = res_id_hb) %>% 
   as_tibble() %>%
   rename("Code" = "HB") %>%
-  rename("Area_name" = "HBName")%>%
-  select(Code, Area_name)
+  rename("area_name" = "HBName")%>%
+  select(Code, area_name)
 
 hscp_codes <- dplyr::tbl(src = ckan$con, from = res_id_hscp) %>% 
   as_tibble() %>%
   rename("Code" = "HSCP")%>%
-  rename("Area_name" = "HSCPName")%>%
-  select(Code, Area_name)
+  rename("area_name" = "HSCPName")%>%
+  select(Code, area_name)
 
 geo_codes <- bind_rows(hb_codes, hscp_codes) %>%
-  add_row(Code = "S92000003", Area_name = "Scotland") %>%
-  mutate(Area_name = recode(Area_name, 
+  add_row(Code = "S92000003", area_name = "Scotland") %>%
+  mutate(Area_name = recode(area_name, 
                             "NHS Dumfries and Galloway" = "NHS Dumfries & Galloway",    
                             "NHS Ayrshire and Arran" = "NHS Ayrshire & Arran",       
                             "NHS Greater Glasgow and Clyde" = "NHS Greater Glasgow & Clyde",
@@ -111,23 +111,24 @@ geo_codes <- bind_rows(hb_codes, hscp_codes) %>%
                             "Perth and Kinross" = "Perth & Kinross"))
 
 #add geo codes to source data files
-hospital_admissions <- left_join(hospital_admissions, geo_codes, by = "Area_name")
-a_and_e <- left_join(a_and_e, geo_codes, by = "Area_name")
-nhs24 <- left_join(nhs24, geo_codes, by = "Area_name")
-ooh <- left_join(ooh, geo_codes, by = "Area_name")
-sas <- left_join(sas, geo_codes, by = "Area_name")
+hospital_admissions <- left_join(hospital_admissions, geo_codes, by = "area_name")
+a_and_e <- left_join(a_and_e, geo_codes, by = "area_name")
+nhs24 <- left_join(nhs24, geo_codes, by = "area_name")
+ooh <- left_join(ooh, geo_codes, by = "area_name")
+sas <- left_join(sas, geo_codes, by = "area_name")
 
-##############################################
-###FUNCTIONS
-###############################################
+
+##############################################.
+###FUNCTIONS ----
+###############################################.
 
 #format names for ckan
 
 od_names <- function(dataset) {
   dataset_hb <- dataset %>%
-    rename("Average20182019" = "Average_2018_2019") %>%
-    rename("PercentVariation" = "Variation (%)") %>%
-    rename("WeekEnding" = "Week_ending")
+    rename("Average20182019" = "count_average") %>%
+    rename("PercentVariation" = "variation") %>%
+    rename("WeekEnding" = "week_ending")
 }
 
 
@@ -135,7 +136,7 @@ od_names <- function(dataset) {
 
 hb_filter <- function(dataset) {
   dataset_hb <- dataset %>%
-    filter(Area_type != "HSC partnership") %>%
+    filter(area_type != "HSC partnership") %>%
     rename("HB" = "Code")
 }
 
@@ -144,7 +145,7 @@ hb_filter <- function(dataset) {
 
 hscp_filter <- function(dataset) {
   dataset_hscp <- dataset %>%
-    filter(Area_type == "HSC partnership") %>%
+    filter(area_type == "HSC partnership") %>%
     rename("HSCP" = "Code")
 }
 
@@ -153,18 +154,18 @@ hscp_filter <- function(dataset) {
 age_sex_od <- function(dataset) {
   #filter for sex, rename, add AgeGroup
   dataset_sex <- dataset %>%
-    filter(Category %in% c("Male", "Female", "All")) %>%
+    filter(category %in% c("Male", "Female", "All")) %>%
     mutate(AgeGroup = "All ages") %>%
-    rename("Sex" = "Category")
+    rename("Sex" = "category")
   
   #filter for age, rename, add sex
   dataset_age <- dataset %>%
-    filter(Category %in% c("Aged 5 to 14", "Aged 15 to 44", 
+    filter(category %in% c("Aged 5 to 14", "Aged 15 to 44", 
                            "Aged 45 to 64", "Aged 65 to 74",
                            "Aged 75 to 84", "Aged 85 and over",
                            "Aged under 5"))%>%
     mutate(Sex = "All") %>%
-    rename("AgeGroup" = "Category")
+    rename("AgeGroup" = "category")
   
   #join age+sex
   dataset_agesex <- full_join(dataset_age, dataset_sex)
@@ -181,9 +182,9 @@ age_sex_od <- function(dataset) {
 simd_od <- function(dataset) {
   #filter for simd, rename, select, reorder
   dataset_simd <- dataset %>%
-    filter(Category %in% c("Quintile 1 - most deprived", "Quintile 2", 
+    filter(category %in% c("Quintile 1 - most deprived", "Quintile 2", 
                            "Quintile 3", "Quintile 4", "Quintile 5 - least deprived")) %>%
-    rename("SIMDQuintile" = "Category") %>%
+    rename("SIMDQuintile" = "category") %>%
     mutate(SIMDQuintile = recode(SIMDQuintile, "Quintile 1 - most deprived" = "1",
                                  "Quintile 2" = "2",
                                  "Quintile 3" = "3",
@@ -191,21 +192,102 @@ simd_od <- function(dataset) {
                                  "Quintile 5 - least deprived" = "5"))
 }
 
+###Create open data
 
-##############################################
-#1##Create Weekly_hospital_admissions OD Resources (6 files)
-##############################################
+create_open_data <- function(dataset, count_variable, filepath_chosen,
+                             data_name) {
+  
+  filepath <- filepath_chosen
+  
+  open_data <- dataset %>%
+    mutate(week_ending = as.Date(week_ending, format = "%d %b %y")) %>%
+    mutate(week_ending = strftime(week_ending, format = "%Y%m%d")) %>% 
+    #rename common colnames
+    od_names 
+  
+  names(open_data)[names(open_data) == 'count'] <- count_variable
+  
+  hb <- hb_filter(open_data)
+  
+  #rename, add qualifiers
+  hb <- hb %>%
+    mutate(HBQF = if_else(HB == "S92000003", "d", ""))
+  
+  #age-sex
+  hb_age_sex <- age_sex_od(hb)
+  
+  #select+reorder
+  hb_age_sex <- hb_age_sex %>%
+    select_at(c("WeekEnding", "HB", "HBQF", "AgeGroup", "AgeGroupQF", "Sex", "SexQF",
+                count_variable, "Average20182019", "PercentVariation")) %>%
+    arrange(WeekEnding, HB, Sex, AgeGroup)
+  
+  #create OD csv file 1
+  write_csv(hb_age_sex, glue("{filepath}/{data_name}_hb_agesex_{date}.csv"))
+  
+  ###By HB and SIMD
+  
+  #filter for simd
+  hb_simd <- simd_od(hb)
+  
+  #select, reorder
+  hb_simd <- hb_simd %>%
+    select_at(c("WeekEnding", "HB", "HBQF", "SIMDQuintile", count_variable, 
+                "Average20182019", "PercentVariation")) %>%
+    arrange(WeekEnding, HB, SIMDQuintile)
+  
+  #create OD csv file 2
+  write_csv(hb_simd, glue("{filepath}/{data_name}_hb_simd_{date}.csv"))
+  
+  ###By HSCP +Age +sex
+  
+  #filter for HB (+Scotland)
+  hscp <- hscp_filter(open_data)
+  
+  #age-sex
+  hscp_age_sex <- age_sex_od(hscp)
+  
+  #select+reorder
+  hscp_age_sex <- hscp_age_sex %>%
+    select_at(c("WeekEnding", "HSCP", "AgeGroup", "AgeGroupQF", "Sex", "SexQF", 
+                count_variable, "Average20182019", "PercentVariation")) %>%
+    arrange(WeekEnding, HSCP, Sex, AgeGroup)
+  
+  #create OD csv file 3
+  write_csv(hscp_age_sex, glue("{filepath}/{data_name}_hscp_agesex_{date}.csv"))
+  
+  ###By HSCP and SIMD
+  
+  #filter for simd
+  hscp_simd <- simd_od(hscp)  
+  
+  #select, reorder
+  hscp_simd <- hscp_simd %>%
+    select_at(c("WeekEnding", "HSCP", "SIMDQuintile", count_variable, 
+                "Average20182019", "PercentVariation")) %>%
+    arrange(WeekEnding, HSCP, SIMDQuintile)
+  
+  #create OD csv file 4
+  write_csv(hscp_simd, glue("{filepath}/{data_name}_hscp_simd_{date}.csv"))
+  
+}
+
+
+##############################################.
+#1##Create Weekly_hospital_admissions OD Resources (6 files) ----
+##############################################.
 
 #format date
 hospital_admissions <- hospital_admissions %>%
-  mutate(Week_ending = as.Date(Week_ending, format = "%d %b %y")) %>%
-  mutate(Week_ending = strftime(Week_ending, format = "%Y%m%d"))
+  mutate(week_ending = as.Date(week_ending, format = "%d %b %y")) %>%
+  mutate(week_ending = strftime(week_ending, format = "%Y%m%d"))
 
 
 #rename common colnames
 hospital_admissions <- od_names(hospital_admissions) %>%
-  rename("AdmissionType" = "Admission_type") %>%
-  rename("NumberAdmissions" = "Count")
+  rename("AdmissionType" = "admission_type") %>%
+  rename("NumberAdmissions" = "count") %>%
+  rename("Specialty" = "spec")
 
 ###1A-1##By HB and Age + Sex
 
@@ -251,7 +333,7 @@ write_csv(adm_hb_simd, glue("{adm_filepath}/{resource2}_{date}.csv"))
 
 #filter for specialty, add QF, rename, select, reorder
 adm_hb_spec <- adm_hb %>%
-  filter(Category == "All") %>%
+  filter(category == "All") %>%
   mutate(SpecialtyQF = if_else(Specialty == "All", "d", "")) %>%
   select(WeekEnding, HB, HBQF, AdmissionType, AdmissionTypeQF, Specialty,
          SpecialtyQF, NumberAdmissions, Average20182019, PercentVariation) %>%
@@ -304,7 +386,7 @@ write_csv(adm_hscp_simd, glue("{adm_filepath}/{resource5}_{date}.csv"))
 
 #filter for specialty, add QF, rename, select, reorder
 adm_hscp_spec <- adm_hscp %>%
-  filter(Category == "All") %>%
+  filter(category == "All") %>%
   mutate(SpecialtyQF = if_else(Specialty == "All", "d", "")) %>%
   select(WeekEnding, HSCP, AdmissionType, AdmissionTypeQF, Specialty, 
          SpecialtyQF, NumberAdmissions, Average20182019, PercentVariation) %>%
@@ -320,335 +402,37 @@ rm(adm_hb, adm_hb_age_sex, adm_hb_simd, adm_hb_spec, adm_hscp, adm_hscp_age_sex,
 
 
 
-##############################################
-#2##Create Weekly_a_and_e OD Resources
-##############################################
+##############################################.
+#2##Create Weekly_a_and_e OD Resources ----
+##############################################.
 
-#format date
-a_and_e <- a_and_e %>%
-  mutate(Week_ending = as.Date(Week_ending, format = "%d %b %y"))%>%
-  mutate(Week_ending = strftime(Week_ending, format = "%Y%m%d"))
+create_open_data(dataset = a_and_e, count_variable = "NumberAttendances",
+                 filepath_chosen = ae_filepath, data_name = "a_and_e")
 
-#rename common colnames
-a_and_e <- od_names(a_and_e) %>%
-  rename("NumberAttendances" = "Count") 
 
-###2A-1##By HB and Age + Sex
 
-#filter for HB (+Scotland)
-ae_hb <- hb_filter(a_and_e)
+##############################################.
+#3##Create Weekly_nhs24_calls OD Resources ----
+##############################################.
 
-#rename, add qualifiers
-ae_hb <- ae_hb %>%
-  mutate(HBQF = if_else(HB == "S92000003", "d", ""))
+create_open_data(dataset = nhs24, count_variable = "CompletedContacts",
+                 filepath_chosen = nhs24_filepath, data_name = "nhs24")
 
-#age-sex
-ae_hb_age_sex <- age_sex_od(ae_hb)
 
-#select+reorder
-ae_hb_age_sex <- ae_hb_age_sex %>%
-  select(WeekEnding, HB, HBQF, AgeGroup, AgeGroupQF, Sex, SexQF,
-         NumberAttendances, Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HB, Sex, AgeGroup)
 
-#create OD csv file
-write_csv(ae_hb_age_sex, glue("{ae_filepath}/{resource7}_{date}.csv"))
+##############################################.
+#4##Create Weekly_ooh_consults OD Resources----
+##############################################.
 
-###2A-2##By HB and SIMD
+create_open_data(dataset = ooh, count_variable = "Consultations",
+                 filepath_chosen = ooh_filepath, data_name = "ooh")
 
-#filter for simd
-ae_hb_simd <- simd_od(ae_hb)
 
-#select, reorder
-ae_hb_simd <- ae_hb_simd %>%
-  select(WeekEnding, HB, HBQF, SIMDQuintile,NumberAttendances, 
-         Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HB, SIMDQuintile)
 
-#create OD csv file
-write_csv(ae_hb_simd, glue("{ae_filepath}/{resource8}_{date}.csv"))
+##############################################.
+#5##Create Weekly_sas OD Resources----
+##############################################.
 
-###2B-1##By HSCP +Age +sex
+create_open_data(dataset = sas, count_variable = "SASIncidents",
+                 filepath_chosen = sas_filepath, data_name = "sas")
 
-#filter for HB (+Scotland)
-ae_hscp <- hscp_filter(a_and_e)
-
-#age-sex
-ae_hscp_age_sex <- age_sex_od(ae_hscp)
-
-#select+reorder
-ae_hscp_age_sex <- ae_hscp_age_sex %>%
-  select(WeekEnding, HSCP, AgeGroup, AgeGroupQF, Sex, SexQF, 
-         NumberAttendances, Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HSCP, Sex, AgeGroup)
-
-#create OD csv file
-write_csv(ae_hscp_age_sex, glue("{ae_filepath}/{resource9}_{date}.csv"))
-
-###2B-2##By HSCP and SIMD
-
-#filter for simd
-ae_hscp_simd <- simd_od(ae_hscp)
-
-#select, reorder
-ae_hscp_simd <- ae_hscp_simd %>%
-  select(WeekEnding, HSCP, SIMDQuintile, NumberAttendances, 
-         Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HSCP, SIMDQuintile)
-
-#create OD csv file
-write_csv(ae_hscp_simd, glue("{ae_filepath}/{resource10}_{date}.csv"))
-
-# Tidy Global Environment
-rm(ae_hb, ae_hb_age_sex, ae_hb_simd, ae_hscp, ae_hscp_age_sex, ae_hscp_simd)
-
-
-
-##############################################
-#3##Create Weekly_nhs24_calls OD Resources
-##############################################
-
-#format date
-nhs24 <- nhs24 %>%
-  mutate(Week_ending = as.Date(Week_ending, format = "%d %b %y"))%>%
-  mutate(Week_ending = strftime(Week_ending, format = "%Y%m%d"))
-
-#rename common colnames
-nhs24 <- od_names(nhs24) %>%
-  rename("CompletedContacts" = "Count")
-
-###3A-1##By HB and Age + Sex
-
-#filter for HB (+Scotland)
-nhs24_hb <- hb_filter(nhs24)
-
-#rename, add qualifiers
-nhs24_hb <- nhs24_hb %>%
-  mutate(HBQF = if_else(HB == "S92000003", "d", ""))
-
-#age-sex
-nhs24_hb_age_sex <- age_sex_od(nhs24_hb)
-
-#select+reorder
-nhs24_hb_age_sex <- nhs24_hb_age_sex %>%
-  select(WeekEnding, HB, HBQF, AgeGroup, AgeGroupQF, Sex, SexQF,
-         CompletedContacts, Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HB, Sex, AgeGroup)
-
-#create OD csv file
-write_csv(nhs24_hb_age_sex, glue("{nhs24_filepath}/{resource11}_{date}.csv"))
-
-###3A-2##By HB and SIMD
-
-#filter for simd
-nhs24_hb_simd <- simd_od(nhs24_hb)
-
-#select, reorder
-nhs24_hb_simd <- nhs24_hb_simd %>%
-  select(WeekEnding, HB, HBQF, SIMDQuintile, CompletedContacts, 
-         Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HB, SIMDQuintile)
-
-#create OD csv file
-write_csv(nhs24_hb_simd, glue("{nhs24_filepath}/{resource12}_{date}.csv"))
-
-###3B-1##By HSCP +Age +sex
-
-#filter for HB (+Scotland)
-nhs24_hscp <- hscp_filter(nhs24)
-
-#age-sex
-nhs24_hscp_age_sex <- age_sex_od(nhs24_hscp)
-
-#select+reorder
-nhs24_hscp_age_sex <- nhs24_hscp_age_sex %>%
-  select(WeekEnding, HSCP, AgeGroup, AgeGroupQF, Sex, SexQF, 
-         CompletedContacts, Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HSCP, Sex, AgeGroup)
-
-#create OD csv file
-write_csv(nhs24_hscp_age_sex, glue("{nhs24_filepath}/{resource13}_{date}.csv"))
-
-###3B-2##By HSCP and SIMD
-
-#filter for simd
-nhs24_hscp_simd <- simd_od(nhs24_hscp)
-
-#select, reorder
-nhs24_hscp_simd <- nhs24_hscp_simd %>%
-  select(WeekEnding, HSCP, SIMDQuintile, CompletedContacts, 
-         Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HSCP, SIMDQuintile)
-
-#create OD csv file
-write_csv(nhs24_hscp_simd, glue("{nhs24_filepath}/{resource14}_{date}.csv"))
-
-# Tidy Global Environment
-rm(nhs24_hb, nhs24_hb_age_sex, nhs24_hb_simd, nhs24_hscp, nhs24_hscp_age_sex, 
-   nhs24_hscp_simd)
-
-
-
-##############################################
-#4##Create Weekly_ooh_consults OD Resources
-##############################################
-
-#format date
-ooh <- ooh %>%
-  mutate(Week_ending = as.Date(Week_ending, format = "%d %b %y"))%>%
-  mutate(Week_ending = strftime(Week_ending, format = "%Y%m%d"))
-
-#rename common colnames
-ooh <- od_names(ooh) %>%
-  rename("Consultations" = "Count")
-
-###4A-1##By HB and Age + Sex
-
-#filter for HB (+Scotland)
-ooh_hb <- hb_filter(ooh)
-
-#rename, add qualifiers
-ooh_hb <- ooh_hb %>%
-  mutate(HBQF = if_else(HB == "S92000003", "d", ""))
-
-#age-sex
-ooh_hb_age_sex <- age_sex_od(ooh_hb)
-
-#select+reorder
-ooh_hb_age_sex <- ooh_hb_age_sex %>%
-  select(WeekEnding, HB, HBQF, AgeGroup, AgeGroupQF, Sex, SexQF,
-         Consultations, Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HB, Sex, AgeGroup)
-
-#create OD csv file
-write_csv(ooh_hb_age_sex, glue("{ooh_filepath}/{resource15}_{date}.csv"))
-
-###4A-2##By HB and SIMD
-
-#filter for simd
-ooh_hb_simd <- simd_od(ooh_hb)
-
-#select, reorder
-ooh_hb_simd <- ooh_hb_simd %>%
-  select(WeekEnding, HB, HBQF, SIMDQuintile, Consultations, 
-         Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HB, SIMDQuintile)
-
-#create OD csv file
-write_csv(ooh_hb_simd, glue("{ooh_filepath}/{resource16}_{date}.csv"))
-
-###4B-1##By HSCP +Age +sex
-
-#filter for HB (+Scotland)
-ooh_hscp <- hscp_filter(ooh)
-
-#age-sex
-ooh_hscp_age_sex <- age_sex_od(ooh_hscp)
-
-#select+reorder
-ooh_hscp_age_sex <- ooh_hscp_age_sex %>%
-  select(WeekEnding, HSCP, AgeGroup, AgeGroupQF, Sex, SexQF, 
-         Consultations, Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HSCP, Sex, AgeGroup)
-
-#create OD csv file
-write_csv(ooh_hscp_age_sex, glue("{ooh_filepath}/{resource17}_{date}.csv"))
-
-###4B-2##By HSCP and SIMD
-
-#filter for simd
-ooh_hscp_simd <- simd_od(ooh_hscp)
-
-#select, reorder
-ooh_hscp_simd <- ooh_hscp_simd %>%
-  select(WeekEnding, HSCP, SIMDQuintile, Consultations, 
-         Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HSCP, SIMDQuintile)
-
-#create OD csv file
-write_csv(ooh_hscp_simd, glue("{ooh_filepath}/{resource18}_{date}.csv"))
-
-# Tidy Global Environment
-rm(ooh_hb, ooh_hb_age_sex, ooh_hb_simd, ooh_hscp, ooh_hscp_age_sex, 
-   ooh_hscp_simd)
-
-
-
-##############################################
-#5##Create Weekly_sas OD Resources
-##############################################
-
-#format date
-sas <- sas %>%
-  mutate(Week_ending = as.Date(Week_ending, format = "%d %b %y"))%>%
-  mutate(Week_ending = strftime(Week_ending, format = "%Y%m%d"))
-
-#rename common colnames
-sas <- od_names(sas) %>%
-  rename("SASIncidents" = "Count")
-
-###5A-1##By HB and Age + Sex
-
-#filter for HB (+Scotland)
-sas_hb <- hb_filter(sas)
-
-#rename, add qualifiers
-sas_hb <- sas_hb %>%
-  mutate(HBQF = if_else(HB == "S92000003", "d", ""))
-
-#age-sex
-sas_hb_age_sex <- age_sex_od(sas_hb)
-
-#select+reorder
-sas_hb_age_sex <- sas_hb_age_sex %>%
-  select(WeekEnding, HB, HBQF, AgeGroup, AgeGroupQF, Sex, SexQF,
-         SASIncidents, Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HB, Sex, AgeGroup)
-
-#create OD csv file
-write_csv(sas_hb_age_sex, glue("{sas_filepath}/{resource19}_{date}.csv"))
-
-###5A-2##By HB and SIMD
-
-#filter for simd
-sas_hb_simd <- simd_od(sas_hb)
-
-#select, reorder
-sas_hb_simd <- sas_hb_simd %>%
-  select(WeekEnding, HB, HBQF, SIMDQuintile, SASIncidents, 
-         Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HB, SIMDQuintile)
-
-#create OD csv file
-write_csv(sas_hb_simd, glue("{sas_filepath}/{resource20}_{date}.csv"))
-
-###5B-1##By HSCP +Age +sex
-
-#filter for HB (+Scotland)
-sas_hscp <- hscp_filter(sas)
-
-#age-sex
-sas_hscp_age_sex <- age_sex_od(sas_hscp)
-
-#select+reorder
-sas_hscp_age_sex <- sas_hscp_age_sex %>%
-  select(WeekEnding, HSCP, AgeGroup, AgeGroupQF, Sex, SexQF, 
-         SASIncidents, Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HSCP, Sex, AgeGroup)
-
-#create OD csv file
-write_csv(sas_hscp_age_sex, glue("{sas_filepath}/{resource21}_{date}.csv"))
-
-###5B-2##By HSCP and SIMD
-
-#filter for simd
-sas_hscp_simd <- simd_od(sas_hscp)
-
-#select, reorder
-sas_hscp_simd <- sas_hscp_simd %>%
-  select(WeekEnding, HSCP, SIMDQuintile, SASIncidents, 
-         Average20182019, PercentVariation) %>%
-  arrange(WeekEnding, HSCP, SIMDQuintile)
-
-#create OD csv file
-write_csv(sas_hscp_simd, glue("{sas_filepath}/{resource22}_{date}.csv"))
