@@ -11,6 +11,12 @@ plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data
     filter(type == split &
              area_name == input$geoname )
   
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50)
+  } else {
+    
   # Formatting age groups as factor so they appear in the correct order in the legend
   if (split == "age") {
     trend_data <- trend_data %>% 
@@ -80,6 +86,7 @@ plot_trend_chart <- function(dataset, pal_chose, split, type = "variation", data
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
   
+  }
 }
 
 plot_overall_chart <- function(dataset, data_name, yaxis_title) {
@@ -186,5 +193,18 @@ plot_spec <- function(type) {
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
 }
+
+#Function to create plot when no data available 
+plot_nodata <- function(height_plot = 450) {
+  text_na <- list(x = 5, y = 5, text = "No data available" , size = 20, xref = "x", yref = "y",  showarrow = FALSE)
+  plot_ly(height = height_plot) %>% 
+    add_trace(type = 'scatter', mode = 'lines') %>%
+    layout(annotations = text_na, 
+           #empty layout 
+           yaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE), 
+           xaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE), 
+           font = list(family = '"Helvetica Neue", Helvetica, Arial, sans-serif')) %>%  
+    config(displayModeBar = FALSE) # taking out plotly logo and collaborate button 
+}  
 
 ### END
