@@ -60,8 +60,8 @@ observeEvent(input$btn_dataset_modal,
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37",
                           "Rapid Preliminary Inpatient Data (RAPID)",class="externallink"),
                    "dataset. This dataset is submitted daily to PHS and relates mainly to general acute care. 
-                   Exclusions from the RAPID dataset are day cases, neonatal, maternity and geriatric long stay admissions 
-                   and admissions for psychiatric care.  Admissions to the Golden Jubilee National Hospital are 
+                   Exclusions from the RAPID dataset are day cases, neonatal, maternity and 
+                   psychiatric care admissions. Admissions to the Golden Jubilee National Hospital are 
                    also not included. Admissions related to COVID-19 will be included in totals."),
                  p("The normal source of information on hospital admissions is the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5",
