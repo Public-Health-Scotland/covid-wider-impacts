@@ -62,13 +62,13 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
 ###############################################.
 ## Palettes and plot parameters ----
 ###############################################.
-pal_depr <- c('#abd9e9', '#74add1', '#4575b4', '#313695', '#022031')
+pal_depr <- c('#2c7fb8', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 #Palette for 9 series in a gradient
 pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
                     '#74add1', '#4575b4', '#313695')
 # '#abd9e9', '#dfc27d',
 #Palette for those with a single category per sex and overall
-pal_sex <- c('#000000', '#08519c','#bdd7e7')
+pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
 
 
