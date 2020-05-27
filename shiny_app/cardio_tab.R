@@ -51,6 +51,12 @@ observeEvent(input$btn_cardio_modal,
                    "The A&E2 dataset is managed by ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                           "Public Health Scotland (PHS).", class="externallink")),
+                 p(tags$em("Please note that due to limitations in diagnosis recording in the A&E datamart, the 
+                         figures reported for cardiology offer only a very rough indication of cardiovascular 
+                         attendances and do not represent the exact figures for cardiovascular attendances at 
+                         Emergency Departments. Part of the data quality issues is that the data on cardiovascular 
+                         attendance only includes part or no data for NHS Ayrshire and Arran, NHS Fife, 
+                         NHS Forth Valley and NHS Lothian.")),
                  p("The following ICD-10 codes were considered for the cardiovascular A&E data subset:"),
                  DT::dataTableOutput("ae_cardio_codes_tbl"),
                  size = "m",
@@ -93,6 +99,12 @@ output$cardio_explorer <- renderUI({
     )
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
+        tags$em("Please note that due to limitations in diagnosis recording in the A&E datamart, the 
+                         figures reported for cardiology offer only a very rough indication of cardiovascular 
+                         attendances and do not represent the exact figures for cardiovascular attendances at 
+                         Emergency Departments. Part of the data quality issues is that the data on cardiovascular 
+                         attendance only includes part or no data for NHS Ayrshire and Arran, NHS Fife, 
+                         NHS Forth Valley and NHS Lothian."),
         h3("Weekly cardiovascular A&E attendances in Scotland"),
         actionButton("btn_cardio_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "ae_cardio_overall"),
