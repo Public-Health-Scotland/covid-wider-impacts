@@ -29,7 +29,7 @@ data_table <- reactive({
                                     "15 - 44" = "Aged 15 to 44","45 - 64" = "Aged 45 to 64",
                                     "65 - 74" = "Aged 65 to 74", "75 - 84" = "Aged 75 to 84", 
                                     "85 and over" = "Aged 85 and over",
-                                    "Under 15" = "Aged under 15", "16 - 64" = "Aged 16 to 64",
+                                    "Under 65" = "Aged under 65",
                                     "65 and over" = "Aged 65 and over"),
            week_ending = format(week_ending, "%d %b %y")) %>% 
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
