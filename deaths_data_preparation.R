@@ -36,10 +36,11 @@ df_received <- readRDS(paste0(datafolder,"received_data/NRS_Data.rds")) %>%
 names(df_received) <- tolower(names(df_received)) # decapitalise column names
 
 ### load postcode-simd look up ---------------
-#pc_lookup <- read_csv(paste0(lookups,"Geography/postcode_2019_2_simd2020.csv"))
-pc_lookup <- readRDS(paste0(appfolder,"data/pc_lookup.rds")) %>% 
-  select(c("pc8", "DZ2011", "HB2019", "HSCP2019", "simd2020_sc_quintile"))
-pc_lookup <- pc_lookup %>%  rename("postcode" = "pc8")
+# pc_lookup <- read_csv(paste0(lookups,"Geography/postcode_2019_2_simd2020.csv")) %>% 
+#   select(c("pc8", "DZ2011", "HB2019", "HSCP2019", "simd2020_sc_quintile")) %>% 
+#   rename("postcode" = "pc8")
+# write_rds(pc_lookup, paste0(appfolder, "data/pc_lookup.rds"))
+pc_lookup <- readRDS(paste0(appfolder, "data/pc_lookup.rds"))
 
 ### load weekly lookup file ----------------------
 #weeks_lookup <- read_csv(paste0(working,"reg_week_to_start_date_2020.csv"))
