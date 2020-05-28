@@ -20,31 +20,34 @@ library(ggplot2)
 rm(list = ls())
 
 ## set pathways ----------------------
-data_folder <- "Z:/NRS data/Weekly COVID deaths/data/"
-lookups <- "Z:/NRS data/Weekly COVID deaths/lookups/"
-working <- "Z:/NRS data/Weekly COVID deaths/wider_impacts_dashboard/working_data/"
-appdata <- "D:/Users/elizabethr/Documents/GitHub/covid-wider-impact/shiny_app/data/"
+datafolder <- "Z:/NRS data/Weekly COVID deaths/data/"
+appfolder <- "D:/Users/elizabethr/Documents/GitHub/covid-wider-impact/"
+#lookups <- "Z:/NRS data/Weekly COVID deaths/lookups/"
+#working <- "Z:/NRS data/Weekly COVID deaths/wider_impacts_dashboard/working_data/"
   
 ###############################################.
 ## Reading in data and lookups ----
 ###############################################.
 
 ### load deaths data ----------------------
-df_received <- readRDS(paste0(data_folder,"received_data/NRS_Data.rds")) %>% 
+df_received <- readRDS(paste0(datafolder,"received_data/NRS_Data.rds")) %>% 
   as_tibble()
 
 names(df_received) <- tolower(names(df_received)) # decapitalise column names
 
 ### load postcode-simd look up ---------------
-pc_lookup <- read_csv(paste0(lookups,"Geography/postcode_2019_2_simd2020.csv")) %>% 
+#pc_lookup <- read_csv(paste0(lookups,"Geography/postcode_2019_2_simd2020.csv"))
+pc_lookup <- readRDS(paste0(appfolder,"data/pc_lookup.rds")) %>% 
   select(c("pc8", "DZ2011", "HB2019", "HSCP2019", "simd2020_sc_quintile"))
 pc_lookup <- pc_lookup %>%  rename("postcode" = "pc8")
 
 ### load weekly lookup file ----------------------
-weeks_lookup <- read_csv(paste0(working,"reg_week_to_start_date_2020.csv"))
+#weeks_lookup <- read_csv(paste0(working,"reg_week_to_start_date_2020.csv"))
+weeks_lookup <- readRDS(paste0(appfolder,"data/weeks_lookup.rds"))
 
 ### load geography lookup file ----------------------
-geo_lookup <- readRDS(paste0(working,"geo_lookup.rds"))
+#geo_lookup <- readRDS(paste0(working,"geo_lookup.rds"))
+geo_lookup <- readRDS(paste0(appfolder, "data/geo_lookup.rds"))
 
 #check which areas don't have which SIMD quintiles
 ####################################################
@@ -105,7 +108,7 @@ df_weekly <- df_received %>%
 #sapply(df_weekly, function(x) sum(is.na(x))) ## check number of missing cases per column
 
 ## save raw data file
-write_rds(df_weekly, paste0(working,"covid_widerimpacts_raw.rds"))
+#write_rds(df_weekly, paste0(working,"covid_widerimpacts_raw.rds"))
 #df_weekly <-readRDS(paste0(working,"covid_widerimpacts_raw.rds"))
 
 ###############################################.
@@ -281,9 +284,9 @@ combined_wide <- combined %>%
   arrange(category, week_ending, area_type, area_name, type)
 
 ## save final data file
-write_rds(combined_wide, paste0(working, "deaths_data.rds"))
-write_rds(combined_wide, paste0(appdata, "deaths_data.rds"))
-#combined_wide <- readRDS(paste0(appdata, "deaths_data.rds"))
+#write_rds(combined_wide, paste0(working, "deaths_data.rds"))
+write_rds(combined_wide, paste0(appfolder, "shiny_app/data/deaths_data.rds"))
+#combined_wide <- readRDS(paste0(appfolder, "deaths_data.rds"))
 
 ########################################
 # QA checks against NRS published data:
