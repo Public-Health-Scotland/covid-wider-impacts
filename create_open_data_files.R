@@ -28,19 +28,8 @@ source(glue("{config_filepath}/Set httr configuration for API.R"))
 
 #set file paths to read in dashboard data
 
-generic_source_filepath <- file.path("//Isdsf00d03", "PHSCOVID19_Analysis", "Publication outputs", 
-                                     "open_data")
-
-adm_source_filepath <- file.path(generic_source_filepath,
-                                 "Rapid_data")
-ae_source_filepath <- file.path(generic_source_filepath,
-                                "A&E_data")
-nhs24_source_filepath <- file.path(generic_source_filepath,
-                                   "NHS24_data")
-ooh_source_filepath <- file.path(generic_source_filepath,
-                                 "GP-OOH_data")
-sas_source_filepath <- file.path(generic_source_filepath,
-                                 "SAS_data")
+source_filepath <- file.path("//Isdsf00d03", "PHSCOVID19_Analysis", "Publication outputs", 
+                             "open_data")
 
 #Set Open Data folder filepaths for output
 
@@ -60,17 +49,17 @@ sas_filepath <- file.path(generic_filepath,
 
 
 #set filenames for dashboard data tables --- UPDATE TO MATCH WHAT FILE NAMES WILL BE
-hospital_admissions_data <- "rapid_finaldata"
-a_and_e_data <- "AE_finaldata"
-nhs24_data <- "NHS24_finaldata"
-ooh_data <- "OOH_finaldata"
-sas_data <- "SAS_finaldata"
+hospital_admissions_data <- "rapid_data"
+a_and_e_data <- "ae_data"
+nhs24_data <- "nhs24_data"
+ooh_data <- "ooh_data"
+sas_data <- "sas_data"
 
-hospital_admissions <- read_rds(glue("{adm_source_filepath}/{hospital_admissions_data}.rds"))
-a_and_e <- read_rds(glue("{ae_source_filepath}/{a_and_e_data}.rds"))
-nhs24 <- read_rds(glue("{nhs24_source_filepath}/{nhs24_data}.rds"))
-ooh <- read_rds(glue("{ooh_source_filepath}/{ooh_data}.rds"))
-sas <- read_rds(glue("{sas_source_filepath}/{sas_data}.rds"))
+hospital_admissions <- read_rds(glue("{source_filepath}/{hospital_admissions_data}.rds"))
+a_and_e <- read_rds(glue("{source_filepath}/{a_and_e_data}.rds"))
+nhs24 <- read_rds(glue("{source_filepath}/{nhs24_data}.rds"))
+ooh <- read_rds(glue("{source_filepath}/{ooh_data}.rds"))
+sas <- read_rds(glue("{source_filepath}/{sas_data}.rds"))
 
 # Set resources to use
 
@@ -101,7 +90,7 @@ hscp_codes <- dplyr::tbl(src = ckan$con, from = res_id_hscp) %>%
 
 geo_codes <- bind_rows(hb_codes, hscp_codes) %>%
   add_row(Code = "S92000003", area_name = "Scotland") %>%
-  mutate(Area_name = recode(area_name, 
+  mutate(area_name = recode(area_name, 
                             "NHS Dumfries and Galloway" = "NHS Dumfries & Galloway",    
                             "NHS Ayrshire and Arran" = "NHS Ayrshire & Arran",       
                             "NHS Greater Glasgow and Clyde" = "NHS Greater Glasgow & Clyde",
@@ -160,10 +149,10 @@ age_sex_od <- function(dataset) {
   
   #filter for age, rename, add sex
   dataset_age <- dataset %>%
-    filter(category %in% c("Aged 5 to 14", "Aged 15 to 44", 
-                           "Aged 45 to 64", "Aged 65 to 74",
-                           "Aged 75 to 84", "Aged 85 and over",
-                           "Aged under 5"))%>%
+    filter(category %in% c("5 - 14", "15 - 44", 
+                           "45 - 64", "65 - 74",
+                           "75 - 84", "85 and over",
+                           "Under 5"))%>%
     mutate(Sex = "All") %>%
     rename("AgeGroup" = "category")
   
@@ -182,14 +171,11 @@ age_sex_od <- function(dataset) {
 simd_od <- function(dataset) {
   #filter for simd, rename, select, reorder
   dataset_simd <- dataset %>%
-    filter(category %in% c("Quintile 1 - most deprived", "Quintile 2", 
-                           "Quintile 3", "Quintile 4", "Quintile 5 - least deprived")) %>%
+    filter(category %in% c("1 - most deprived", "2", 
+                           "3", "4", "5 - least deprived")) %>%
     rename("SIMDQuintile" = "category") %>%
-    mutate(SIMDQuintile = recode(SIMDQuintile, "Quintile 1 - most deprived" = "1",
-                                 "Quintile 2" = "2",
-                                 "Quintile 3" = "3",
-                                 "Quintile 4" = "4",
-                                 "Quintile 5 - least deprived" = "5"))
+    mutate(SIMDQuintile = recode(SIMDQuintile, "1 - most deprived" = "1",
+                                 "5 - least deprived" = "5"))
 }
 
 ###Create open data
