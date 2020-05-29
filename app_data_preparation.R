@@ -531,9 +531,27 @@ loth_sex <- read_csv(paste0(data_folder, "cath_labs/Lothian_sex.csv")) %>%
   rename(category = gender)
 
 
-loth_cath <- rbind(loth_age, loth_all, loth_sex)
+loth_cath <- rbind(loth_age, loth_all, loth_sex) %>% 
+  mutate(week_ending = as.Date(paste(proc.year, proc.week, 7, sep="-"), "%Y-%W-%u")) %>% 
+  select(-proc.year) %>% rename(count = num)
 
-saveRDS(loth_cath, "shiny_app/data/lothian_cath_lab_data.rds")
+# Creating average admissions of pre-covid data (2018-2019) by day of the year
+loth_cath_hist <- loth_cath %>% filter(year(week_ending) %in% c("2018", "2019")) %>%
+  group_by_at(c("category", "type", "proc.week", "groups")) %>%
+  # Not using mean to avoid issues with missing data for some weeks
+  summarise(count_average = round((sum(count, na.rm = T))/2, 1))
+
+loth_cath_2020 <- left_join(loth_cath %>% filter(year(week_ending) %in% c("2020")),
+                            loth_cath_hist,
+                       by = c("category", "type", "groups", "proc.week")) %>%
+  # Creating %variation from precovid to covid period
+  mutate(count_average = ifelse(is.na(count_average), 0, count_average),
+         variation = round(-1 * ((count_average - count)/count_average * 100), 1),
+         # Dealing with infinite values from historic average = 0
+         variation =  ifelse(is.infinite(variation), 8000, variation)) %>%
+  select(-proc.week)
+
+saveRDS(loth_cath_2020, "shiny_app/data/lothian_cath_lab_data.rds")
 
 ###############################################.
 ## A&E Cardio ----
