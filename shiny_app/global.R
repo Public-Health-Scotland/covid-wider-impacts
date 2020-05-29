@@ -53,6 +53,7 @@ cath_lab <- readRDS(paste0("data/cath_lab_data.rds")) %>%
   mutate(type = "adm") %>% 
   rename(category = admission_type)
 angio_lab <- readRDS(paste0("data/angio_lab_data.rds"))# Data: GJNH Coronary Angios/PCI
+loth_cath <- readRDS("data/lothian_cath_lab_data.rds") # Lothian cath lab data
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'), 
                   "Medical (incl. Cardiology & Cancer)")) # specialty list
