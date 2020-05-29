@@ -511,7 +511,29 @@ angio_lab <- read_excel(paste0(data_folder, "cath_labs/MonthlyTrendsCorAngioNumb
          percent_70 = round(percent_70*100, 1))
   
 
-saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
+saveRDS(angio_lab, "shiny_app/data/angio_lab_data.rds")
+
+###############################################.
+# Lothian cath labs 
+loth_age <- read_csv(paste0(data_folder, "cath_labs/Lothian_age.csv")) %>% 
+  mutate(type = "age",
+         age.band = recode(age.band, "gt60" = "60 and over",
+                           "lt60" = "Under 60")) %>% 
+  rename(category = age.band)
+
+loth_all <- read_csv(paste0(data_folder, "cath_labs/Lothian_no_strata.csv")) %>% 
+  mutate(type = "sex", category = "All")
+
+loth_sex <- read_csv(paste0(data_folder, "cath_labs/Lothian_sex.csv")) %>% 
+  mutate(type = "sex",
+         gender = recode(gender, "M" = "Male",
+                           "F" = "Female")) %>% 
+  rename(category = gender)
+
+
+loth_cath <- rbind(loth_age, loth_all, loth_sex)
+
+saveRDS(loth_cath, "shiny_app/data/lothian_cath_lab_data.rds")
 
 ###############################################.
 ## A&E Cardio ----
