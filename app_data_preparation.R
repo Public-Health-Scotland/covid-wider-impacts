@@ -526,7 +526,7 @@ rm(ae_cardio_codes)
 ae_cardio_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E_Cardio/"
 
 # Read in data, clean names + some simple mutations
-ae_cardio <- read_xlsx(paste0(ae_cardio_folder, "2020-05-20-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
+ae_cardio <- read_xlsx(paste0(ae_cardio_folder, "2020-05-28-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
   clean_names() %>% 
   rename(diag_cat = diagnosis_catagory,
          dep = prompt_dataset_deprivation_scot_quintile) %>% 
@@ -570,6 +570,6 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-05-10")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-05-24")
 
 ##END
