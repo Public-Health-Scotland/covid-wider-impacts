@@ -97,7 +97,10 @@ output$cardio_explorer <- renderUI({
                      "Weekly number of cases by sex", "cath_rie_sex_tot"),
         plot_cut_box("Percentage change in cases compared with the
                    corresponding time in 2018-2019 by age group", "cath_rie_age_var",
-                     "Weekly number of cases by age group", "cath_rie_age_tot")
+                     "Weekly number of cases by age group", "cath_rie_age_tot"),
+        plot_cut_box("Percentage change in cases compared with the
+                   corresponding time in 2018-2019 by type of intervention", "cath_rie_type_var",
+                     "Weekly number of cases by type of intervention", "cath_rie_type_tot")
       )
       
     } else if (input$cath_lab == "Golden Jubilee Hospital") {
@@ -105,11 +108,15 @@ output$cardio_explorer <- renderUI({
       h3("Weekly visits to the cardiac catheterization labs at the Golden Jubilee Hospital"),
       actionButton("btn_cardio_modal", "Data source: Golden Jubilee", icon = icon('question-circle')),
       plot_box("2020 compared with 2019", "cath_gj_overall"),
+      plot_cut_box("Percentage change in cases compared with the
+                   corresponding time in 2019 by sex", "cath_gj_sex_var",
+                   "Weekly number of cases by sex", "cath_gj_sex_tot"),
+      plot_cut_box("Percentage change in cases compared with the
+                   corresponding time in 2019 by age group", "cath_gj_age_var",
+                   "Weekly number of cases by age group", "cath_gj_age_tot"),
       plot_cut_box("Percentage change in cases compared with the 
                    corresponding time in 2019 by admission type", "cath_adm_gj_var",
-                   "Weekly number of cases by admission type", "cath_adm_gj_tot"),
-      plot_cut_box("Angiographies/PCI carried out", "angio_gj_overall",
-                   "Percentage of total for females and over 70 years old people", "angio_gj_perc")
+                   "Weekly number of cases by admission type", "cath_adm_gj_tot")
     )
     }
     } else if (input$measure_cardio_select == "aye") {
@@ -142,7 +149,7 @@ output$cath_rie_overall <- renderPlotly({
 output$cath_rie_devices <- renderPlotly({
   plot_overall_chart(rie_cath %>% filter(groups == "Devices"), "cath", area = F)})
 output$cath_rie_pci <- renderPlotly({
-  plot_overall_chart(rie_cath %>% filter(groups == "Percutaneous coronary intervention"), "cath", area = F)})
+  plot_overall_chart(rie_cath %>% filter(groups == "PCI"), "cath", area = F)})
 
 output$cath_rie_sex_var <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography"  & type == "sex"), 
                                                           pal_sex)})
@@ -153,22 +160,38 @@ output$cath_rie_age_var <- renderPlotly({plot_trend_chart(rie_cath %>% filter(gr
 output$cath_rie_age_tot <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography"  & type == "age"), 
                                                           pal_2ages, type = "total", data_name = "cath")})
 
+output$cath_rie_type_var <- renderPlotly({
+  plot_trend_chart(rie_cath %>% filter(category == "All") %>% 
+                     select(-category) %>% rename(category = groups), pal_sex)})
+output$cath_rie_type_tot <- renderPlotly({
+  plot_trend_chart(rie_cath %>% filter(category == "All") %>% 
+                     select(-category) %>% rename(category = groups), 
+                   pal_sex, type = "total", data_name = "cath")})
 
 
 # Cath labs Golden Jubilee charts
 output$cath_gj_overall <- renderPlotly({plot_overall_chart(gjub_cath, "cath", area = F)})
 output$cath_adm_gj_var <- renderPlotly({plot_trend_chart(gjub_cath, pal_sex)})
 output$cath_adm_gj_tot <- renderPlotly({plot_trend_chart(gjub_cath, pal_sex, type = "total", data_name = "cath")})
+output$cath_gj_sex_var <- renderPlotly({plot_trend_chart(gjub_monthly %>% filter(type == "sex"), 
+                                                         pal_sex, period = "monthly")})
+output$cath_gj_sex_tot <- renderPlotly({plot_trend_chart(gjub_monthly %>% filter(type == "sex"), 
+                                                         pal_sex, type = "total", data_name = "cath", period = "monthly")})
+output$cath_gj_age_var <- renderPlotly({plot_trend_chart(gjub_monthly %>% filter(type == "age"), 
+                                                         pal_2ages, period = "monthly")})
+output$cath_gj_age_tot <- renderPlotly({plot_trend_chart(gjub_monthly %>% filter(type == "age"), 
+                                                         pal_2ages, type = "total", data_name = "cath", period = "monthly")})
+
 output$angio_gj_overall <- renderPlotly({
   
   #Text for tooltip
-  tooltip_trend <- c(paste0("Month: ", format(gjub_angio$month_date, "%b %y"),
-                            "<br>", "Angiographies: ", gjub_angio$n))
+  tooltip_trend <- c(paste0("Month: ", format(gjub_monthly$month_date, "%b %y"),
+                            "<br>", "Angiographies: ", gjub_monthly$n))
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- "Number of angiographies"
   
-  plot_ly(data=gjub_angio, x=~month_date,  y = ~n) %>% 
+  plot_ly(data=gjub_monthly, x=~month_date,  y = ~n) %>% 
     add_trace(type = 'scatter', mode = 'lines', line = list(color = "black"),
               text=tooltip_trend, hoverinfo="text") %>% 
     #Layout
@@ -182,19 +205,19 @@ output$angio_gj_overall <- renderPlotly({
 output$angio_gj_perc <- renderPlotly({
   
   #Text for tooltip
-  tooltip_fem <- c(paste0("Month: ", format(gjub_angio$month_date, "%b %y"),
-                          "<br>", "Angiographies: ", gjub_angio$n_female,
-                            "<br>", "Percentage: ", gjub_angio$percent_female))
+  tooltip_fem <- c(paste0("Month: ", format(gjub_monthly$month_date, "%b %y"),
+                          "<br>", "Angiographies: ", gjub_monthly$n_female,
+                            "<br>", "Percentage: ", gjub_monthly$percent_female))
   
-  tooltip_70 <- c(paste0("Month: ", format(gjub_angio$month_date, "%b %y"),
-                          "<br>", "Angiographies: ", gjub_angio$n70,
-                          "<br>", "Percentage: ", gjub_angio$percent_70))
+  tooltip_70 <- c(paste0("Month: ", format(gjub_monthly$month_date, "%b %y"),
+                          "<br>", "Angiographies: ", gjub_monthly$n70,
+                          "<br>", "Percentage: ", gjub_monthly$percent_70))
   
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- "Percentage over the total"
   
-  plot_ly(data=gjub_angio, x=~month_date) %>% 
+  plot_ly(data=gjub_monthly, x=~month_date) %>% 
     add_trace(y= ~percent_female, type = 'scatter', mode = 'lines', line = list(color = "blue"),
               text=tooltip_fem, hoverinfo="text", name = "% Females") %>% 
     add_trace(y= ~percent_70, type = 'scatter', mode = 'lines', line = list(color = "brown"),
