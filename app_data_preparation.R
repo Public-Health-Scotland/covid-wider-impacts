@@ -543,13 +543,12 @@ saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
 
 ###############################################.
 ## Prepare Child Health data ----
-##  Currently using immunisations data to set up the tab whilst CH is unavailable
 ###############################################.
-immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/"
+child_health_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/child_health/"
 
-# 6-in-1 at 8 weeks - scurve data
-six <- read_csv(paste0(immunisation_folder,"six in one_1_dashboard20200525.csv"), 
-                col_types =list(week_8_start=col_date(format="%m/%d/%Y"),
+# First visit - scurve data
+first <- read_csv(paste0(child_health_folder,"firstvisit_dashboard20200525.csv"), 
+                col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_factor())) %>%
   janitor::clean_names()
 
@@ -571,14 +570,14 @@ hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Fi
 #          cohort_eligible_name=factor(cohort_eligible.ch,unique(cohort_eligible.ch)))
 
 
-six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
+first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
          weeks=interv/7,
-         week_no= isoweek(week_8_start),
+         week_no= isoweek(week_2_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, immunisation, week_8_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
+  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
 
 
@@ -609,11 +608,11 @@ six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
 #   mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
 #   arrange(cohort)
 
-final_data <<- six
+final_data <<- first
 
-saveRDS(six, paste0("shiny_app/data/","sixinone_data.rds"))
+saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
-
+# TO DO: Update with child health data when available
 # 6-in-1 at 8 weeks - summary table data
 six_datatable <- read_csv(paste0(immunisation_folder,"six in one_1_dashboardtab_20200525.csv")) %>%
   janitor::clean_names() %>%
