@@ -126,6 +126,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
   final_data <<- data_2020
   
   saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
+  saveRDS(data_2020, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/", filename,"_data.rds"))
 }
 
 ###############################################.
@@ -434,7 +435,6 @@ nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
 prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-31")
-
 
 ###############################################.
 ## Reading SAS data ----
