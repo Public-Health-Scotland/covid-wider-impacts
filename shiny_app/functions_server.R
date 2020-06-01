@@ -244,7 +244,7 @@ plot_nodata <- function(height_plot = 450) {
 
 immune_table <- function() {
   format_col <- c("denominator","uptake_12weeks_num","uptake_24weeks_num","uptake_tot_num")
-  no_24_row_id <- with(table_data(), substr(time_period_eligible,1,3) == "W/B" )
+  no_24_row_id <- with(table_data(), (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "FEB"))
   
   table_data() %>%
     select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_24weeks_num, uptake_24weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
