@@ -289,14 +289,18 @@ new_ooh_03_31may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP
   proper() # convert HB names to correct format
 
 new_ooh_03_31may2020 <- new_ooh_03_31may2020 %>% 
+  # TEMPORARY - FILTERING OUT LANARKSHIRE DATA FOR LAST WEEK AS IT IS NOT COMPLETE
+  filter(!(area_name %in% c("NHS Lanarkshire") & week_ending == as.Date("2020-05-31"))) %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-05-31"))) #filter complete weeks (Mon-Sun)
-
+  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-05-31"))) %>% #filter complete weeks (Mon-Sun)
+  # TEMPORARY - FILTERING OUT LANARKSHIRE DATA FOR LAST WEEK AS IT IS NOT COMPLETE
+  filter(!(area_name %in% c("North Lanarkshire", "South Lanarkshire") & 
+             week_ending == as.Date("2020-05-31")))
 
 #bind old and new ooh data
 ooh <- rbind(new_ooh_03_31may2020, ooh_new, ooh)
