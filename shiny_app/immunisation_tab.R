@@ -106,7 +106,7 @@ output$immunisation_explorer <- renderUI({
 
 
 output$immun_commentary_section <- renderUI({
-  tagList(h4("Immunisations - 3rd June 2020"), 
+  tagList(h2("Immunisations - 3rd June 2020"), 
           p("Information on the uptake of ",
             tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","vaccinations that 
                    are routinely offered to all preschool children",class="externallink"),
