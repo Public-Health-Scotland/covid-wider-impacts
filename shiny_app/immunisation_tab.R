@@ -117,7 +117,7 @@ output$immun_commentary_section <- renderUI({
             "It is important to maintain the best possible immunisation uptake rates to ensure children 
             remain protected and to prevent a resurgence of these infections.  Including information on 
             childhood immunisation rates in this tool will help us to ensure that immunisation rates remain 
-            high throughout the pandemic.",
+            high throughout the pandemic.",br(),
             "On 3 June 2020, information has been provided on the uptake of the first dose of the 6-in-1 
             vaccine, which is offered to children at 8 weeks of age. The vaccine protects against diphtheria, 
             tetanus, pertussis (whooping cough), polio, Haemophilus influenzae type b (Hib) and Hepatitis B. 
