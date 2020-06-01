@@ -6,7 +6,10 @@
 # dataset - what data to use for the chart formatted as required
 # split - age, sex, or dep (simd deprivation)
 plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation", 
-                             data_name = NULL, tab = "summary") {
+                             data_name = NULL, tab = "summary", period = "weekly") {
+  
+  period_data <- case_when(period == "weekly" ~ "Week ending: ",
+                           period == "monthly" ~ "Month: ")
   
   if (split != FALSE) {
     if (tab == "summary") {
@@ -43,7 +46,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name == "cath" ~ "2019")
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                              period_data, format(trend_data$week_ending, "%d %b %y"),
                               "<br>", "Change from ", aver_period, " average: ", trend_data$variation, "%"))
     
     #Modifying standard layout
