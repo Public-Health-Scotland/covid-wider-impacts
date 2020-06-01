@@ -614,13 +614,13 @@ saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
 # TO DO: Update with child health data when available
 # 6-in-1 at 8 weeks - summary table data
-six_datatable <- read_csv(paste0(immunisation_folder,"six in one_1_dashboardtab_20200525.csv")) %>%
-  janitor::clean_names() %>%
-  rename(area_name=geography_name) %>%
-  select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible))
-
-
-saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
+# six_datatable <- read_csv(paste0(immunisation_folder,"six in one_1_dashboardtab_20200525.csv")) %>%
+#   janitor::clean_names() %>%
+#   rename(area_name=geography_name) %>%
+#   select (-geography) %>%
+#   mutate(time_period_eligible=as.factor(time_period_eligible))
+# 
+# 
+# saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
 
 ##END
