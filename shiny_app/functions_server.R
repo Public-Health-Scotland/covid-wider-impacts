@@ -244,6 +244,7 @@ plot_nodata <- function(height_plot = 450) {
 
 immune_table <- function() {
   format_col <- c("denominator","uptake_12weeks_num","uptake_24weeks_num","uptake_tot_num")
+  no_24_row_id <- with(table_data(), substr(time_period_eligible,1,3) == "W/B" )
   
   table_data() %>%
     select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_24weeks_num, uptake_24weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
@@ -256,18 +257,24 @@ immune_table <- function() {
                       uptake_24weeks_percent="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
                       uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",
                       uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>%
-    footnote(i = 1, j = 1:2, value = as_paragraph(c("W/B : Week beginning","Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly")),part = "header") %>%
+    footnote(i = 1, j = 1:3, 
+             value = as_paragraph(c("W/B : Week beginning",
+                                    "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
+                                    "Blue cells indicate cohorts that have not reached 24 weeks of age")),
+             part = "header") %>%
     merge_at(i = 1, j = 3:4, part = "header") %>%
     merge_at(i = 1, j = 5:6, part = "header") %>%
     merge_at(i = 1, j = 7:8, part = "header") %>%
     add_header_row(values=c("","","N","%","N","%","N","%"), top = FALSE ) %>%
     font(fontname="Helvetica", part = "all") %>%
     colformat_num(j=format_col,big.mark = ",", digits=0) %>%
-    #width(j = flag_24weeks,width=) %>%
-    #select(-flag_24weeks) %>%
+    # Italics and colour if not 24 weeks
+    color(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>% 
+    italic(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent")) %>% 
     theme_box() %>%
     autofit() %>%
     htmltools_value()
+  
 }
 
 
