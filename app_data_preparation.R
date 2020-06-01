@@ -126,6 +126,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
   final_data <<- data_2020
   
   saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
+  saveRDS(data_2020, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/", filename,"_data.rds"))
 }
 
 ###############################################.
@@ -205,8 +206,6 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
 
 prepare_final_data(rap_adm, "rapid", last_week = "2020-05-17", 
                    extra_vars = c("admission_type", "spec"))
-
-saveRDS(rap_adm, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/Rapid_data/rapid_finaldata.rds"))
 
 ###############################################.
 ## Preparing OOH data ----
@@ -314,8 +313,6 @@ ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 # Formatting file for shiny app
 prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-24")
 
-saveRDS(ooh, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/GP-OOH_data/OOH_finaldata.rds"))
-
 ###############################################.
 ## Preparing A&E data ----
 ###############################################.
@@ -368,8 +365,6 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
 prepare_final_data(ae_data, "ae", last_week = "2020-05-17")
-
-saveRDS(ae_data, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/A&E_data/AE_finaldata.rds"))
 
 ###############################################.
 ## Preparing NHS24 data ----
@@ -438,8 +433,6 @@ nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
 prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-24")
-
-saveRDS(nhs24, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/NHS24_data/NHS24_finaldata.rds"))
 
 ###############################################.
 ## Reading SAS data ----
@@ -514,8 +507,6 @@ sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
 prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-17")
-
-saveRDS(sas, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/SAS_data/SAS_finaldata.rds"))
 
 ###############################################.
 ## Cath labs ----
