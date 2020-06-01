@@ -566,7 +566,7 @@ loth_cath_2020 <- left_join(loth_cath %>% filter(year(week_ending) %in% c("2020"
          # Dealing with infinite values from historic average = 0
          variation =  ifelse(is.infinite(variation), 8000, variation),
          groups = recode(groups, "angio" = "Angiography", "devices" = "Devices",
-                         "pci" = "Percutaneous coronary intervention")) %>%
+                         "pci" = "PCI")) %>%
   select(-proc.week)
 
 saveRDS(loth_cath_2020, "shiny_app/data/lothian_cath_lab_data.rds")

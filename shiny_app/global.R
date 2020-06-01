@@ -52,7 +52,9 @@ ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
 gjub_cath <- readRDS(paste0("data/gj_cath_lab_data.rds")) %>% 
   mutate(type = "adm") %>% 
   rename(category = admission_type)
-gjub_monthly <- readRDS(paste0("data/gjmonthly_cath_data.rds"))# Data: GJNH Coronary Angios/PCI
+gjub_monthly <- readRDS(paste0("data/gjmonthly_cath_data.rds")) %>% # Data: GJNH Coronary Angios/PCI
+  rename(week_ending = month_date)
+
 rie_cath <- readRDS("data/lothian_cath_lab_data.rds") # Lothian cath lab data
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'), 
