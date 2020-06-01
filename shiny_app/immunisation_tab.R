@@ -5,12 +5,23 @@
 observeEvent(input$btn_immune_modal, 
              showModal(modalDialog(#RAPID ADMISSIONS MODAL
                title = "What is the data source?",
-               p("The information shown on the numbers of children eligible for, and receiving, routine preschool immunisations is taken from the ",
+               p("The information shown on the numbers of children eligible for, and receiving, routine preschool 
+                 immunisations is taken from the ",
                  tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=4&SubID=12",
                         "Scottish Immunisation and Recall System (SIRS)",class="externallink")),
-               p("SIRS is an electronic system used by all NHS Boards in Scotland. The system facilitates the invitation of children when a scheduled vaccination is due.  When a child receives a vaccine, relevant information is returned to administrative staff in the NHS Board child health department.  The administrative staff then update the child’s SIRS record accordingly."),
-               p(tags$a(href="https://publichealthscotland.scot/","Public Health Scotland (PHS)",class="externallink")," routinely receives quarterly data extracts from SIRS for the purpose of producing and ",
-                 (tags$a(href="https://www.isdscotland.org/Health-Topics/Child-Health/Immunisation/","publishing",class="externallink"))," immunisation uptake rates.  To allow more rapid monitoring of the impact of Covid-19 on childhood immunisation uptake rates, PHS is also currently extracting a sub-set of data from SIRS each month."),
+               p("SIRS is an electronic system used by all NHS Boards in Scotland. The system facilitates the 
+                 invitation of children when a scheduled vaccination is due.  When a child receives a vaccine, 
+                 relevant information is returned to administrative staff in the NHS Board child health department.  
+                 The administrative staff then update the child’s SIRS record accordingly."),
+               p(tags$a(href="https://publichealthscotland.scot/","Public Health Scotland (PHS)",class="externallink"),
+                 " routinely receives quarterly data extracts from SIRS for the purpose of producing and ",
+                 (tags$a(href="https://www.isdscotland.org/Health-Topics/Child-Health/Immunisation/","publishing",class="externallink"))," 
+                 immunisation uptake rates.  To allow more rapid monitoring of the impact of Covid-19 on 
+                 childhood immunisation uptake rates, PHS is also currently extracting a sub-set of
+                 data from SIRS each month."),
+               p("Uptake rates based on small numbers are prone to fluctuation. Therefore in boards 
+                 with small numbers of children eligible for immunisation each week, particularly NHS Borders 
+                 and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
