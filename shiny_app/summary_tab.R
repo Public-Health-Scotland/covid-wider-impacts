@@ -299,11 +299,21 @@ output$data_explorer <- renderUI({
       h3(title),
       actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
       if (input$measure_select == "nhs24"){
-        p("The data used in this chart are taken from the Unscheduled Care Datamart.  As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
-                                                                                                                   "COVID-19 weekly report for Scotland", class="externallink"), "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that can be shown in this publication.")
+        p("The data used in this chart are taken from the Unscheduled Care Datamart.  
+          As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
+                                                                                                                   "COVID-19 weekly report for Scotland", class="externallink"), 
+          "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 
+          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. 
+          Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that 
+          can be shown in this publication.")
       },
       if (input$measure_select == "deaths"){
-        plot_box(paste0("2020 compared with the 2015-2019 average"), paste0(data_name, "_overall")) #different averaging period for deaths
+        tagList(
+        p("The analyses below are derived from the National Records of Scotland (NRS) weekly deaths dataset. 
+          Numbers of deaths represent the total number of deaths (from any cause) that were registered in 
+          Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the 
+          average over the past 5 years allows estimation of the numbers of excess deaths."),
+        plot_box(paste0("2020 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else {
           plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
