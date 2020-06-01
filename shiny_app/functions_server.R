@@ -187,9 +187,7 @@ plot_spec <- function(type) {
 plot_scurve <- function(dataset) {
   
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun) 
-  # %>%
-  # droplevels() # might be needed if sort order in legend is to change
-  
+
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {
@@ -242,11 +240,15 @@ plot_nodata <- function(height_plot = 450) {
 #####################################################################################.
 ## Function for generating flextable summary of immunisation data being displayed in s curve.
 
-immune_table <- function() {
-  format_col <- c("denominator","uptake_12weeks_num","uptake_24weeks_num","uptake_tot_num")
-  no_24_row_id <- with(table_data(), (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "FEB"))
+immune_table <- function(dataset) {
+
+  table_data <- filter_table_data(dataset)
   
-  table_data() %>%
+  #Apply different column names and formatting according to which dataset selected
+  format_col <- c("denominator","uptake_12weeks_num","uptake_24weeks_num","uptake_tot_num")
+  no_24_row_id <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "FEB"))
+  
+  table_data %>%
     select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_24weeks_num, uptake_24weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
     flextable() %>%
     set_header_labels(time_period_eligible="Children turning 8 weeks in:",

@@ -41,31 +41,45 @@ output$geoname_ui_immun <- renderUI({
 
 
 # Reactive dataset for flextable filter on geographical area
-table_data <- reactive({  
-  table <- sixtable %>%
-    filter(area_name==input$geoname_immun)
-  #mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%  # required if table sort order is to change
-  #arrange(cohort)
-})
 
+# table_data <- reactive({
+#   table <- sixtable %>%
+#     filter(area_name==input$geoname_immun)
+# })
+
+filter_table_data <- function(dataset){
+  dataset %>% filter(area_name==input$geoname_immun)
+}
+
+
+# filter_data <- function(dataset) {
+#   dataset %>% filter(type == "sex") %>%
+#     filter(area_name == input$geoname &
+#              category == "All")
+# }
 
 ###############################################.
 ## Immunisation Tab Reactive layout  ----
 ###############################################.
 
+# Creating plots for each dataset
 #run chart function to generate s curve  
-output$immun_6in8_scurve <- renderPlotly({plot_scurve(six)})
-output$immun_6in8_table <- renderUI({immune_table()})
+output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(six)})
+output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable)})
 
+output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_dose2)})
+output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2)})
+
+#output$aye_overall <- renderPlotly({plot_overall_chart(aye, "aye")})
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$immunisation_explorer <- renderUI({
   
   # text for titles of cut charts
-  immune_title <- paste0(case_when(input$measure_select_immun == "sixin_8wks" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
+  immune_title <- paste0(case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
                                                                                        input$geoname_immun),
-                                   input$measure_select_immun == "sixin_12wks" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
-                                   input$measure_select_immun == "sixin_16wks" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun)))
+                                   input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
+                                   input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun)))
   
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Vaccination protects children against certain serious infections.  It is important that children ",
@@ -83,17 +97,24 @@ output$immunisation_explorer <- renderUI({
                         "Data is shown for Scotland and for NHS Board areas separately.  Due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland, and NHS Western Isles are not shown separately, however the Island Boards are included within the Scotland total.  Aberdeenshire local authority area within NHS Grampian has had difficulty recording vaccinations given on the SIRS system since the start of the Covid-19 pandemic.  Information on children in Aberdeenshire has therefore been excluded from figures provided for NHS Grampian and Scotland as a whole.  We hope to include Aberdeenshire in future releases once local data recording difficulties are resolved.")
   
   # Specify items to display in immunisation ui based on step 2 selection 
-  if (input$measure_select_immun == "sixin_8wks") {
+  if (input$measure_select_immun == "sixin_dose1") {
     tagList(
       fluidRow(column(12, renderUI(intro_6in1),
                       h4(paste0(immune_title)))),
       fluidRow(column(6,br(), br(),
-                      withSpinner(plotlyOutput("immun_6in8_scurve"))),
-               column(6, uiOutput("immun_6in8_table"))),
+                      withSpinner(plotlyOutput("immun_6in1_scurve_dose1"))),
+               column(6, uiOutput("immun_6in1_table_dose1"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
-  }  else if (input$measure_select_immun == "sixin_12wks"){
-    p("6-in-1 at 12 weeks coming 10th June 2020")
+  }  else if (input$measure_select_immun == "sixin_dose2"){
+    tagList(
+      fluidRow(column(12, renderUI(intro_6in1),
+                      h4(paste0(immune_title)))),
+      fluidRow(column(6,br(), br(),
+                      withSpinner(plotlyOutput("immun_6in1_scurve_dose2"))),
+               column(6, uiOutput("immun_6in1_table_dose2"))),
+      fluidRow(column(12, renderUI(commentary_6in1)))
+    )
   }  else if (input$measure_select_immun == "sixin_16wks"){
     p("6-in-1 at 16 weeks coming 17th June 2020")}
   
