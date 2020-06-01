@@ -272,7 +272,8 @@ output$data_explorer <- renderUI({
       if (input$measure_select == "ooh"){
         p("Please note that data for week ending 31st May is not available for NHS Lanarkshire, 
           North Lanarkshire HSC partnership and South Lanarkshire HSC partnership. 
-          This also affects the Scotland figure for week ending 31st May.")
+          These areas have not been included in the Scotland figure for week ending 31st May,
+          which explains the decrease in out of hours cases for that week.")
       },
       plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
       plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
