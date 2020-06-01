@@ -92,7 +92,7 @@ tabPanel(title = "Child Health", icon = icon("syringe"), value = "child",
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_immun", 
                                            label= "Step 2 – Select the data you want to explore.", 
-                                           choices = data_list_immun, status = "primary", 
+                                           choices = data_list_child, status = "primary", 
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')))
            #actionButton("browser", "Browser")
