@@ -87,8 +87,22 @@ output$ae_cardio_codes_tbl <- DT::renderDataTable(
 output$cardio_explorer <- renderUI({
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
+    if (input$cath_lab == "Royal Infirmary of Edinburgh") {
+      tagList( # Cath cases Golden Jubilee
+        h3("Weekly visits to the cardiac catheterization labs at the Royal Infirmary of Edinburgh"),
+        actionButton("btn_cardio_modal", "Data source: Royal Infirmary of Edinburgh", icon = icon('question-circle')),
+        plot_box("2020 compared with 2019", "cath_rie_overall"),
+        plot_cut_box("Percentage change in cases compared with the
+                   corresponding time in 2018-2019 by sex", "cath_rie_sex_var",
+                     "Weekly number of cases by sex", "cath_rie_sex_tot"),
+        plot_cut_box("Percentage change in cases compared with the
+                   corresponding time in 2018-2019 by age group", "cath_rie_age_var",
+                     "Weekly number of cases by age group", "cath_rie_age_tot")
+      )
+      
+    } else if (input$cath_lab == "Golden Jubilee Hospital") {
     tagList( # Cath cases Golden Jubilee
-      h3("Weekly coronary cases at the Golden Jubilee Hospital"),
+      h3("Weekly visits to the cardiac catheterization labs at the Golden Jubilee Hospital"),
       actionButton("btn_cardio_modal", "Data source: Golden Jubilee", icon = icon('question-circle')),
       plot_box("2020 compared with 2019", "cath_gj_overall"),
       plot_cut_box("Percentage change in cases compared with the 
@@ -97,6 +111,7 @@ output$cardio_explorer <- renderUI({
       plot_cut_box("Angiographies/PCI carried out", "angio_gj_overall",
                    "Percentage of total for females and over 70 years old people", "angio_gj_perc")
     )
+    }
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
         tags$em("Please note that due to limitations in diagnosis recording in the A&E datamart, the 
@@ -121,20 +136,39 @@ output$cardio_explorer <- renderUI({
 ###############################################.
 ## Charts ----
 ###############################################.
+#Cath labs RIE charts
+output$cath_rie_overall <- renderPlotly({
+  plot_overall_chart(rie_cath %>% filter(groups == "Angiography"), "cath", area = F)})
+output$cath_rie_devices <- renderPlotly({
+  plot_overall_chart(rie_cath %>% filter(groups == "Devices"), "cath", area = F)})
+output$cath_rie_pci <- renderPlotly({
+  plot_overall_chart(rie_cath %>% filter(groups == "Percutaneous coronary intervention"), "cath", area = F)})
+
+output$cath_rie_sex_var <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography"  & type == "sex"), 
+                                                          pal_sex)})
+output$cath_rie_sex_tot <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography" & type == "sex"), 
+                                                          pal_sex, type = "total", data_name = "cath")})
+output$cath_rie_age_var <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography"  & type == "age"), 
+                                                          pal_2ages)})
+output$cath_rie_age_tot <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography"  & type == "age"), 
+                                                          pal_2ages, type = "total", data_name = "cath")})
+
+
+
 # Cath labs Golden Jubilee charts
-output$cath_gj_overall <- renderPlotly({plot_overall_chart(cath_lab, "cath", area = F)})
-output$cath_adm_gj_var <- renderPlotly({plot_trend_chart(cath_lab, pal_sex)})
-output$cath_adm_gj_tot <- renderPlotly({plot_trend_chart(cath_lab, pal_sex, type = "total", data_name = "cath")})
+output$cath_gj_overall <- renderPlotly({plot_overall_chart(gjub_cath, "cath", area = F)})
+output$cath_adm_gj_var <- renderPlotly({plot_trend_chart(gjub_cath, pal_sex)})
+output$cath_adm_gj_tot <- renderPlotly({plot_trend_chart(gjub_cath, pal_sex, type = "total", data_name = "cath")})
 output$angio_gj_overall <- renderPlotly({
   
   #Text for tooltip
-  tooltip_trend <- c(paste0("Month: ", format(angio_lab$month_date, "%b %y"),
-                            "<br>", "Angiographies: ", angio_lab$n))
+  tooltip_trend <- c(paste0("Month: ", format(gjub_angio$month_date, "%b %y"),
+                            "<br>", "Angiographies: ", gjub_angio$n))
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- "Number of angiographies"
   
-  plot_ly(data=angio_lab, x=~month_date,  y = ~n) %>% 
+  plot_ly(data=gjub_angio, x=~month_date,  y = ~n) %>% 
     add_trace(type = 'scatter', mode = 'lines', line = list(color = "black"),
               text=tooltip_trend, hoverinfo="text") %>% 
     #Layout
@@ -148,19 +182,19 @@ output$angio_gj_overall <- renderPlotly({
 output$angio_gj_perc <- renderPlotly({
   
   #Text for tooltip
-  tooltip_fem <- c(paste0("Month: ", format(angio_lab$month_date, "%b %y"),
-                          "<br>", "Angiographies: ", angio_lab$n_female,
-                            "<br>", "Percentage: ", angio_lab$percent_female))
+  tooltip_fem <- c(paste0("Month: ", format(gjub_angio$month_date, "%b %y"),
+                          "<br>", "Angiographies: ", gjub_angio$n_female,
+                            "<br>", "Percentage: ", gjub_angio$percent_female))
   
-  tooltip_70 <- c(paste0("Month: ", format(angio_lab$month_date, "%b %y"),
-                          "<br>", "Angiographies: ", angio_lab$n70,
-                          "<br>", "Percentage: ", angio_lab$percent_70))
+  tooltip_70 <- c(paste0("Month: ", format(gjub_angio$month_date, "%b %y"),
+                          "<br>", "Angiographies: ", gjub_angio$n70,
+                          "<br>", "Percentage: ", gjub_angio$percent_70))
   
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- "Percentage over the total"
   
-  plot_ly(data=angio_lab, x=~month_date) %>% 
+  plot_ly(data=gjub_angio, x=~month_date) %>% 
     add_trace(y= ~percent_female, type = 'scatter', mode = 'lines', line = list(color = "blue"),
               text=tooltip_fem, hoverinfo="text", name = "% Females") %>% 
     add_trace(y= ~percent_70, type = 'scatter', mode = 'lines', line = list(color = "brown"),
@@ -202,7 +236,7 @@ overall_cardio_download <- reactive({
   # Prep data for download
   switch(
     input$measure_cardio_select,
-    "cath" = filter_data(cath_lab, area = F),
+    "cath" = filter_data(gjub_cath, area = F),
     "aye" = filter_data(ae_cardio, area = F)
   ) %>% 
     select_at(selection) %>% 
