@@ -49,7 +49,8 @@ nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 sas <- readRDS("data/sas_data.rds") # OOH data
 
 ## Child Health Data
-six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
+first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
+## TO DO ----
 sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
 
 # cath_lab <- readRDS(paste0("shiny_app/data/cath_lab_data.rds"))
@@ -60,12 +61,12 @@ spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
 
 data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "NHS 24 completed contacts" = "nhs24",
-               "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
+    "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
 
-#List of data items available in step 2 of immunisation tab
-data_list_child <- c("6-in-1 first dose" = "sixin_8wks",
-                     "6-in-1 second dose *COMING 10th June 2020*" = "sixin_12wks",
-                     "6-in-1 third dose *COMING 17th June 2020*" = "sixin_16wks")
+## TO DO ----
+# List of data items available in step 2 of immunisation tab
+data_list_child_health <- c("Health Visitor First Visit" = "sixin_8wks",
+            "Health Visitor 6-8 Weeks *COMING DDth MM 2020*" = "sixin_12wks")
 
 ###############################################.
 ## Palettes and plot parameters ----
@@ -79,7 +80,7 @@ pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
 pal_sex <- c('#000000', '#08519c','#bdd7e7')
 pal_overall <- c('#000000', '#009900')
 
-pal_immun <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
+pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
                "W/B 02-MAR-2020" = "#fee391", "W/B 09-MAR-2020" = "#fec44f",
                "W/B 16-MAR-2020" = "#fe9929", "W/B 23-MAR-2020" = "#ec7014",
                "W/B 30-MAR-2020" = "#cc4c02", "W/B 06-APR-2020" = "#8c2d04")
