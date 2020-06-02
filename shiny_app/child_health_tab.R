@@ -51,9 +51,9 @@ output$child_first_table <- renderUI({child_table()})
 output$child_health_explorer <- renderUI({
 
   # text for titles of cut charts
-  child_title <- paste0(case_when(input$measure_select_child == "first_visit" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
+  child_title <- paste0(case_when(input$measure_select_child == "first_visit" ~ paste0("Coverage of Health Visitor first visit (offered to children at 2 weeks of age): ",
                                                                                              input$geoname_child),
-                            input$measure_select_child == "six_eightwks" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_child)))
+                            input$measure_select_child == "six_eightwks" ~ paste0("Coverage of Health Visitor 6-8 weeks/second visit (offered to children at 6-8 weeks of age): ", input$geoname_child)))
   
   #commentary to appear in child health tab
   commentary_first <-p("Vaccination protects children against certain serious infections.  It is important that children ",
@@ -81,7 +81,7 @@ output$child_health_explorer <- renderUI({
       fluidRow(column(12, renderUI(commentary_first)))
     )
   }  else if (input$measure_select_child == "six_eightwks"){
-    p("6-in-1 at 12 weeks coming 10th June 2020")}
+    p("Health Visitor 6-8 weeks coming DDth MM 2020")}
   
 }) #close child_health_explorer function
 

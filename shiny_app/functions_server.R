@@ -306,7 +306,7 @@ plot_scurve_child <- function(dataset) {
                 color = ~time_period_eligible, colors = pal_immun,
                 text= tooltip_scurve, hoverinfo="text") %>%
       # Adding legend title
-      add_annotations( text="Children turning 2 weeks in:", xref="paper", yref="paper",
+      add_annotations( text="Children turning X weeks in:", xref="paper", yref="paper",
                        x=1.02, xanchor="left",
                        y=0.8, yanchor="bottom",    # Same y as legend below
                        legendtitle=TRUE, showarrow=FALSE ) %>% 
@@ -347,7 +347,7 @@ child_table <- function() {
             coverage_4weeks_percent, coverage_12weeks_num, coverage_12weeks_percent, 
             coverage_tot_num, coverage_tot_percent) %>%
     flextable() %>%
-    set_header_labels(time_period_eligible="Children turning 8 weeks in:",
+    set_header_labels(time_period_eligible="Children turning X weeks in:",
                       denominator="Total number of children",
                       coverage_4weeks_num="Children recorded as receiving their vaccine by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
                       coverage_4weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
@@ -366,9 +366,9 @@ child_table <- function() {
     add_header_row(values=c("","","N","%","N","%","N","%"), top = FALSE ) %>%
     font(fontname="Helvetica", part = "all") %>%
     colformat_num(j=format_col,big.mark = ",", digits=0) %>%
-    # Italics and colour if not 24 weeks
-    color(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>%
-    italic(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent")) %>%
+    # # Italics and colour if not 24 weeks
+    # color(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>%
+    # italic(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent")) %>%
     theme_box() %>%
     autofit() %>%
     htmltools_value()
