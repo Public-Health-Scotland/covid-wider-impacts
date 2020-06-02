@@ -362,7 +362,7 @@ output$data_explorer <- renderUI({
                source = "PHS Unscheduled Care Datamart", data_name ="sas")
     
   } else if (input$measure_select == "deaths") { # Deaths data
-    cut_charts(title= "Weekly all-cause deaths", 
+    cut_charts(title= "Weekly number of deaths", 
                source = "NRS Death Registrations", data_name ="deaths")
   }
 }) 
