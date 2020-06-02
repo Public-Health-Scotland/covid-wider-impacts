@@ -117,11 +117,11 @@ tabPanel(title = "Child Health", icon = icon("syringe"), value = "child",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
+                         selectInput("geotype_child", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
-                  uiOutput("geoname_ui_immun")),
+                  uiOutput("geoname_ui_child")),
            column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_immun", 
+                         radioGroupButtons("measure_select_child", 
                                            label= "Step 2. Select the data you want to explore.", 
                                            choices = data_list_child, status = "primary", 
                                            direction = "vertical", justified = T))),
@@ -129,7 +129,7 @@ tabPanel(title = "Child Health", icon = icon("syringe"), value = "child",
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
-                   uiOutput("immunisation_explorer")
+                   uiOutput("child_health_explorer")
          )# mainPanel bracket 
     ), # tabpanel bracket
 ###############################################.
