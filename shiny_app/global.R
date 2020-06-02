@@ -50,7 +50,7 @@ sas <- readRDS("data/sas_data.rds") # OOH data
 
 ## Child Health Data
 first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
-#firsttable <- 
+firsttable <- readRDS("data/first_visit_datatable.rds")
 ## Immunisation Data
 six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
 sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
@@ -70,10 +70,9 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_8wks",
                      "6-in-1 second dose *COMING 10th June 2020*" = "sixin_12wks",
                      "6-in-1 third dose *COMING 17th June 2020*" = "sixin_16wks")
 
-## TO DO ----
 # List of data items available in step 2 of immunisation tab
-data_list_child_health <- c("Health Visitor First Visit" = "sixin_8wks",
-            "Health Visitor 6-8 Weeks *COMING DDth MM 2020*" = "sixin_12wks")
+data_list_child <- c("Health Visitor First Visit" = "first_visit",
+            "Health Visitor 6-8 Weeks *COMING DDth MM 2020*" = "six_eightwks")
 
 ###############################################.
 ## Palettes and plot parameters ----

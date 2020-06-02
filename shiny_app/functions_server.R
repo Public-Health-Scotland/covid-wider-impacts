@@ -182,9 +182,9 @@ plot_spec <- function(type) {
 
 
 #####################################################################################.
-## Function for drawing S-Curve charts used in immunisation and health visitor tabs.
+## Function for drawing S-Curve charts used in immunisation tabs.
 
-plot_scurve <- function(dataset) {
+plot_scurve__immun <- function(dataset) {
   
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun) 
   # %>%
@@ -277,6 +277,102 @@ immune_table <- function() {
   
 }
 
+#####################################################################################.
+## Function for drawing S-Curve charts used in health visitor tabs.
 
+plot_scurve_child <- function(dataset) {
+  
+  scurve_data <- dataset %>% filter(area_name == input$geoname_child) 
+  # %>%
+  # droplevels() # might be needed if sort order in legend is to change
+  
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  { plot_nodata(height = 50)
+  } else {
+    
+    #Create tooltip for scurve
+    tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
+    
+    #Modifying standard yaxis layout
+    yaxis_plots[["title"]] <- "% of children who have received their HV first visit"
+    xaxis_plots[["title"]] <- "Age of children in weeks"
+    # For custom tick labels
+    xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
+    xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
+    
+    #Creating time trend plot
+    plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
+      add_trace(type = 'scatter', mode = 'lines',
+                color = ~time_period_eligible, colors = pal_immun,
+                text= tooltip_scurve, hoverinfo="text") %>%
+      # Adding legend title
+      add_annotations( text="Children turning 2 weeks in:", xref="paper", yref="paper",
+                       x=1.02, xanchor="left",
+                       y=0.8, yanchor="bottom",    # Same y as legend below
+                       legendtitle=TRUE, showarrow=FALSE ) %>% 
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.8, yanchor="top")) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }}
+
+
+# ######################################################################.
+# #Function to create plot when no data available
+# plot_nodata <- function(height_plot = 450) {
+#   text_na <- list(x = 5, y = 5, text = "Data not available due to small numbers" , size = 20,
+#                   xref = "x", yref = "y",  showarrow = FALSE)
+#   
+#   plot_ly(height = height_plot) %>%
+#     layout(annotations = text_na,
+#            #empty layout
+#            yaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
+#            xaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
+#            font = list(family = '"Helvetica Neue", Helvetica, Arial, sans-serif')) %>% 
+#     config( displayModeBar = FALSE) # taking out plotly logo and collaborate button
+# } 
+
+
+#####################################################################################.
+## Function for generating flextable summary of child health data being displayed in s curve.
+
+child_table <- function() {
+  format_col <- c("denominator","coverage_4weeks_num","coverage_12weeks_num","coverage_tot_num")
+  no_24_row_id <- with(table_data(), (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "FEB"))
+
+  table_data() %>%
+    select (time_period_eligible, denominator, coverage_4weeks_num, 
+            coverage_4weeks_percent, coverage_12weeks_num, coverage_12weeks_percent, 
+            coverage_tot_num, coverage_tot_percent) %>%
+    flextable() %>%
+    set_header_labels(time_period_eligible="Children turning 8 weeks in:",
+                      denominator="Total number of children",
+                      coverage_4weeks_num="Children recorded as receiving their vaccine by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
+                      coverage_4weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
+                      coverage_12weeks_num="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
+                      coverage_12weeks_percent="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
+                      coverage_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",
+                      coverage_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>%
+    footnote(i = 1, j = 1:3,
+             value = as_paragraph(c("W/B : Week beginning",
+                                    "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
+                                    "Blue cells indicate cohorts that have not reached 24 weeks of age")),
+             part = "header") %>%
+    merge_at(i = 1, j = 3:4, part = "header") %>%
+    merge_at(i = 1, j = 5:6, part = "header") %>%
+    merge_at(i = 1, j = 7:8, part = "header") %>%
+    add_header_row(values=c("","","N","%","N","%","N","%"), top = FALSE ) %>%
+    font(fontname="Helvetica", part = "all") %>%
+    colformat_num(j=format_col,big.mark = ",", digits=0) %>%
+    # Italics and colour if not 24 weeks
+    color(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>%
+    italic(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent")) %>%
+    theme_box() %>%
+    autofit() %>%
+    htmltools_value()
+
+}
 
 ### END

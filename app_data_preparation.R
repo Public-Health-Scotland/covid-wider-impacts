@@ -601,15 +601,6 @@ hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Fi
   mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
          area_type="Health board")
 
-# six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
-#   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
-#          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type), # not sure areatype is required - consider removing once tab design complete
-#          cohort_eligible.ch=format(week_8_start, format="%d-%B-%y"),
-#          cohort_eligible.ch = recode_factor(cohort_eligible.ch, "01-Jan-19" = "2019", 
-#                                      "30-Dec-19" = "Jan 2020",
-#                                      "27-Jan-20" = "Feb 2020"),
-#          cohort_eligible_name=factor(cohort_eligible.ch,unique(cohort_eligible.ch)))
-
 
 first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -620,48 +611,18 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
-
-
-
-# 
-# , # not sure areatype is required - consider removing once tab design complete
-#          week2 = as.Date(week_8_start, format="%m/%d/%y"))
-#          
-#          cohort_eligible.ch=format(week_8_start, format="%m/%d/%y"),
-#          cohort_eligible=case_when(cohort_eligible.ch=="1/1/2019" ~ "2019", TRUE~cohort_eligible.ch))
-#          
-# mutate(week_ending = as.Date(week_ending, format="%d-%b-%Y"),
-#          
-#          ,
-#          cohort_eligible.ch = recode_factor(cohort_eligible.ch, "01-Jan-19" = "2019", 
-#                                             "30-Dec-19" = "Jan 2020",
-#                                             "27-Jan-20" = "Feb 2020"),
-#          cohort_eligible_name=factor(cohort_eligible.ch,unique(cohort_eligible.ch)))
-# 
-# 
-# 
-# six <- six %>%
-#   mutate(date=as.Date(week_8_start, format="%d-%B-%y"),
-#          weeks=interv/7,
-#          week_no= isoweek(date)) %>%
-#   #filter(cohort_eligible_name=="Baseline 2019"|between(date, as.Date("2020-03-01"), as.Date("2020-05-10"))) %>%
-#   filter(weeks<=24) %>% # not sure this filter needed once new data extract provided
-#   mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
-#   arrange(cohort)
-
 final_data <<- first
 
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
-# TO DO: Update with child health data when available
-# 6-in-1 at 8 weeks - summary table data
-# six_datatable <- read_csv(paste0(immunisation_folder,"six in one_1_dashboardtab_20200525.csv")) %>%
-#   janitor::clean_names() %>%
-#   rename(area_name=geography_name) %>%
-#   select (-geography) %>%
-#   mutate(time_period_eligible=as.factor(time_period_eligible))
-# 
-# 
-# saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
+# First visit - summary table data
+first_datatable <- read_csv(paste0(child_health_folder,"firstvisit_dashboardtab_20200525.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+
+saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 
 ##END

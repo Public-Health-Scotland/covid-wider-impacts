@@ -30,8 +30,8 @@ output$geoname_ui_child <- renderUI({
 
 
 # Reactive dataset for flextable filter on geographical area
-table_data <- reactive({  
-  table <- firsttable %>%
+table_data <- reactive({
+  table <- first_datatable %>%
     filter(area_name==input$geoname_child)
     #mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%  # required if table sort order is to change
     #arrange(cohort)
@@ -43,7 +43,7 @@ table_data <- reactive({
 ###############################################.
 
 #run chart function to generate s curve  
-output$child_first_scurve <- renderPlotly({plot_scurve(first)})
+output$child_first_scurve <- renderPlotly({plot_scurve_child(first)})
 output$child_first_table <- renderUI({child_table()})
 
 
@@ -51,11 +51,11 @@ output$child_first_table <- renderUI({child_table()})
 output$child_health_explorer <- renderUI({
 
   # text for titles of cut charts
-  child_title <- paste0(case_when(input$measure_select_child == "sixin_8wks" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
+  child_title <- paste0(case_when(input$measure_select_child == "first_visit" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
                                                                                              input$geoname_child),
-                            input$measure_select_child == "sixin_12wks" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_child)))
+                            input$measure_select_child == "six_eightwks" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_child)))
   
-  #6-in-1: 8 weeks commentary to appear in child health tab
+  #commentary to appear in child health tab
   commentary_first <-p("Vaccination protects children against certain serious infections.  It is important that children ",
                       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
                              "continue to receive their routine vaccinations during the Covid-19 pandemic",class="externallink"),".",br(),
@@ -72,7 +72,7 @@ output$child_health_explorer <- renderUI({
                       "Data is shown for Scotland and for NHS Board areas separately.  Due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland, and NHS Western Isles are not shown separately, however the Island Boards are included within the Scotland total.  Aberdeenshire local authority area within NHS Grampian has had difficulty recording vaccinations given on the SIRS system since the start of the Covid-19 pandemic.  Information on children in Aberdeenshire has therefore been excluded from figures provided for NHS Grampian and Scotland as a whole.  We hope to include Aberdeenshire in future releases once local data recording difficulties are resolved.")
   
   # Specify items to display in child health ui based on step 2 selection 
-  if (input$measure_select_child == "sixin_8wks") {
+  if (input$measure_select_child == "first_visit") {
     tagList(
       fluidRow(column(10, h4(paste0(child_title)))),
       fluidRow(column(6,br(), br(),
@@ -80,7 +80,7 @@ output$child_health_explorer <- renderUI({
                column(6, uiOutput("child_first_table"))),
       fluidRow(column(12, renderUI(commentary_first)))
     )
-  }  else if (input$measure_select_child == "sixin_12wks"){
+  }  else if (input$measure_select_child == "six_eightwks"){
     p("6-in-1 at 12 weeks coming 10th June 2020")}
   
 }) #close child_health_explorer function

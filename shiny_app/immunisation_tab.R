@@ -54,7 +54,7 @@ table_data <- reactive({
 ###############################################.
 
 #run chart function to generate s curve  
-output$immun_6in8_scurve <- renderPlotly({plot_scurve(six)})
+output$immun_6in8_scurve <- renderPlotly({plot_scurve_immun(six)})
 output$immun_6in8_table <- renderUI({immune_table()})
 
 
