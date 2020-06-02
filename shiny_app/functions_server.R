@@ -251,13 +251,13 @@ immune_table <- function() {
     flextable() %>%
     set_header_labels(time_period_eligible="Children turning 8 weeks in:",
                       denominator="Total number of children",
-                      uptake_12weeks_num="Children recorded as receiving their vaccine by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
-                      uptake_12weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
+                      uptake_12weeks_num="Children recorded as receiving their vaccine by 12 weeks of age",
+                      uptake_12weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age",
                       uptake_24weeks_num="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
                       uptake_24weeks_percent="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
                       uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",
                       uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>%
-    footnote(i = 1, j = 1:3, 
+    footnote(i = 1, j = c(1,2,4), 
              value = as_paragraph(c("W/B : Week beginning",
                                     "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
                                     "Blue cells indicate cohorts that have not reached 24 weeks of age")),
