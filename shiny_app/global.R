@@ -72,7 +72,8 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_8wks",
 
 # List of data items available in step 2 of immunisation tab
 data_list_child <- c("Health Visitor First Visit" = "first_visit",
-            "Health Visitor 6-8 Weeks Visit *COMING DDth MM 2020*" = "six_eightwks")
+            "6-8 Week Review *COMING 17th June 2020*" = "six_eightwks",
+            "13-15 Month Review *COMING 24th June 2020*" = "13_15mnth")
 
 ###############################################.
 ## Palettes and plot parameters ----
