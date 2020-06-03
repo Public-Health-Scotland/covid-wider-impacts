@@ -482,7 +482,7 @@ prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-10")
 ## Cath labs ----
 ###############################################.
 # Data for cardiovascular app
-cath_lab <- bind_rows(read_excel(paste0(data_folder, "cath_labs/CoronaryProcsByWkNo_Urgency.xls"), 
+gj_cath <- bind_rows(read_excel(paste0(data_folder, "cath_labs/CoronaryProcsByWkNo_Urgency.xls"), 
                        sheet = "JK_q001_CoronaryProcsByWkNo+Urg"),
                       read_excel(paste0(data_folder, "cath_labs/CoronaryProcsByWkNo_Urgency.xls"), 
                        sheet = "JK_q002_CoronaryProcsByWkNo+Urg")) %>% 
@@ -491,27 +491,85 @@ cath_lab <- bind_rows(read_excel(paste0(data_folder, "cath_labs/CoronaryProcsByW
   select(week_ending = to_date, week_no, "All" = total, "Planned" = total_elective, "Emergency" = tot_emerg_urg) %>% 
   pivot_longer(c(All:Emergency), names_to = "admission_type", values_to = "count")
 
-cath_2019 <- cath_lab %>% filter(year(week_ending) %in% c("2019")) %>% 
+gj_cath_19 <- gj_cath %>% filter(year(week_ending) %in% c("2019")) %>% 
   rename(count_average = count) %>%  select(-week_ending)
 
-cath_2020 <- full_join(cath_lab %>% filter(year(week_ending) %in% c("2020")), 
-                       cath_2019, 
+gj_cath_2020 <- full_join(gj_cath %>% filter(year(week_ending) %in% c("2020")), 
+                          gj_cath_19, 
                        by = c("week_no", "admission_type")) %>% 
   select(-week_no) %>% 
   # Create variation
   mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
 
-saveRDS(cath_2020, paste0("shiny_app/data/cath_lab_data.rds"))
+saveRDS(gj_cath_2020, paste0("shiny_app/data/gj_cath_lab_data.rds"))
 
-# Data: GJNH Coronary Angios/PCI 
-angio_lab <- read_excel(paste0(data_folder, "cath_labs/MonthlyTrendsCorAngioNumbersAgeSex.xls"), 
+# Data: GJNH Coronary monthly data includes age and sex cuts 
+gj_cath_monthly <- read_excel(paste0(data_folder, "cath_labs/MonthlyTrendsCorAngioNumbersAgeSex.xls"), 
                                sheet = "Sheet2") %>% clean_names %>% 
-  mutate(month_date = as.Date(paste0(year, "-", month, "-", "01")),
-         percent_female = round(percent_female*100, 1),
-         percent_70 = round(percent_70*100, 1))
-  
+  mutate(n_male = n - n_female,
+         n_under70 = n - n70,
+         month_date = as.Date(paste0(year, "-", month, "-", "01"))) %>% 
+  select(-percent_female, -median_age, -percent_70) %>% 
+  pivot_longer(n:n_under70, names_to = "category", values_to = "count") %>% 
+  mutate(category = recode(category, "n" = "All", "n_female" = "Female", "n70" = "70 and over", 
+                           "n_male" = "Male", "n_under70" = "Under 70"),
+         type = case_when(category %in% c("All", "Male", "Female") ~ "sex",
+                          category %in% c("70 and over", "Under 70") ~ "age"))
 
-saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
+gj_cath_19_monthly <- gj_cath_monthly %>% filter(year(month_date) %in% c("2019")) %>% 
+  rename(count_average = count) %>%  select(-month_date, -year) %>% 
+  filter(month <5)
+
+gj_cath_2020_monthly <- full_join(gj_cath_monthly %>% filter(year(month_date) %in% c("2020")), 
+                          gj_cath_19_monthly, 
+                          by = c("month", "category", "type")) %>% 
+  select(-year, - month) %>%
+  # Create variation
+  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1))
+  
+saveRDS(gj_cath_2020_monthly, "shiny_app/data/gjmonthly_cath_data.rds")
+
+###############################################.
+# Lothian/RIE cath labs 
+loth_age <- read_csv(paste0(data_folder, "cath_labs/Lothian_age.csv")) %>% 
+  mutate(type = "age",
+         age.band = recode(age.band, "gt60" = "60 and over",
+                           "lt60" = "Under 60")) %>% 
+  rename(category = age.band)
+
+loth_all <- read_csv(paste0(data_folder, "cath_labs/Lothian_no_strata.csv")) %>% 
+  mutate(type = "sex", category = "All")
+
+loth_sex <- read_csv(paste0(data_folder, "cath_labs/Lothian_sex.csv")) %>% 
+  mutate(type = "sex",
+         gender = recode(gender, "M" = "Male",
+                           "F" = "Female")) %>% 
+  rename(category = gender)
+
+
+loth_cath <- rbind(loth_age, loth_all, loth_sex) %>% 
+  mutate(week_ending = as.Date(paste(proc.year, proc.week, 7, sep="-"), "%Y-%W-%u")) %>% 
+  select(-proc.year) %>% rename(count = num)
+
+# Creating average admissions of pre-covid data (2018-2019) by day of the year
+loth_cath_hist <- loth_cath %>% filter(year(week_ending) %in% c("2018", "2019")) %>%
+  group_by_at(c("category", "type", "proc.week", "groups")) %>%
+  # Not using mean to avoid issues with missing data for some weeks
+  summarise(count_average = round((sum(count, na.rm = T))/2, 1))
+
+loth_cath_2020 <- left_join(loth_cath %>% filter(year(week_ending) %in% c("2020")),
+                            loth_cath_hist,
+                       by = c("category", "type", "groups", "proc.week")) %>%
+  # Creating %variation from precovid to covid period
+  mutate(count_average = ifelse(is.na(count_average), 0, count_average),
+         variation = round(-1 * ((count_average - count)/count_average * 100), 1),
+         # Dealing with infinite values from historic average = 0
+         variation =  ifelse(is.infinite(variation), 8000, variation),
+         groups = recode(groups, "angio" = "Angiography", "devices" = "Devices",
+                         "pci" = "PCI")) %>%
+  select(-proc.week)
+
+saveRDS(loth_cath_2020, "shiny_app/data/lothian_cath_lab_data.rds")
 
 ###############################################.
 ## A&E Cardio ----

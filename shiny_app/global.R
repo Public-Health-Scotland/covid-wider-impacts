@@ -49,10 +49,13 @@ nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 sas <- readRDS("data/sas_data.rds") # OOH data
 ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
 
-cath_lab <- readRDS(paste0("data/cath_lab_data.rds")) %>% 
+gjub_cath <- readRDS(paste0("data/gj_cath_lab_data.rds")) %>% 
   mutate(type = "adm") %>% 
   rename(category = admission_type)
-angio_lab <- readRDS(paste0("data/angio_lab_data.rds"))# Data: GJNH Coronary Angios/PCI
+gjub_monthly <- readRDS(paste0("data/gjmonthly_cath_data.rds")) %>% # Data: GJNH Coronary Angios/PCI
+  rename(week_ending = month_date)
+
+rie_cath <- readRDS("data/lothian_cath_lab_data.rds") # Lothian cath lab data
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'), 
                   "Medical (incl. Cardiology & Cancer)")) # specialty list
@@ -61,19 +64,20 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "NHS 24 completed contacts" = "nhs24", 
                "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
 
-cardio_list <- c("A&E attendances" = "aye", "Coronary cases GJ Hospital" = "cath")
+cardio_list <- c("A&E attendances" = "aye", "Cardiac catheterization labs" = "cath")
 
 ###############################################.
 ## Palettes and plot parameters ----
 ###############################################.
-pal_depr <- c('#abd9e9', '#74add1', '#4575b4', '#313695', '#022031')
+pal_depr <- c('#2c7fb8', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 #Palette for 9 series in a gradient
 pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
                     '#74add1', '#4575b4', '#313695')
 # '#abd9e9', '#dfc27d',
 #Palette for those with a single category per sex and overall
-pal_sex <- c('#000000', '#08519c','#bdd7e7')
+pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
+pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
 
 
 # Style of x and y axis
