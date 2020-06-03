@@ -294,24 +294,24 @@ plot_scurve_child <- function(dataset) {
     tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
     
     #Modifying standard yaxis layout
-    yaxis_plots[["title"]] <- "% of children who have received their HV first visit"
+    yaxis_plots[["title"]] <- "% of children who have received their health visitor first visit"
     xaxis_plots[["title"]] <- "Age of children in weeks"
     # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
-    xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
+    xaxis_plots[["tickvals"]] <- c(0, seq(14, 367, by = 56))
+    xaxis_plots[["ticktext"]] <- c(0, seq(2, 52, by = 8))
     
     #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
       add_trace(type = 'scatter', mode = 'lines',
-                color = ~time_period_eligible, colors = pal_immun,
+                color = ~time_period_eligible, colors = pal_child,
                 text= tooltip_scurve, hoverinfo="text") %>%
       # Adding legend title
-      add_annotations( text="Children turning X weeks in:", xref="paper", yref="paper",
+      add_annotations( text="Children turning 2 weeks in:", xref="paper", yref="paper",
                        x=1.02, xanchor="left",
                        y=0.8, yanchor="bottom",    # Same y as legend below
                        legendtitle=TRUE, showarrow=FALSE ) %>% 
       #Layout
-      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+      layout(margin = list(b = 80, t=10), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
              legend = list(x = 100, y = 0.8, yanchor="top")) %>% #position of legend
       # leaving only save plot button
@@ -319,46 +319,30 @@ plot_scurve_child <- function(dataset) {
   }}
 
 
-# ######################################################################.
-# #Function to create plot when no data available
-# plot_nodata <- function(height_plot = 450) {
-#   text_na <- list(x = 5, y = 5, text = "Data not available due to small numbers" , size = 20,
-#                   xref = "x", yref = "y",  showarrow = FALSE)
-#   
-#   plot_ly(height = height_plot) %>%
-#     layout(annotations = text_na,
-#            #empty layout
-#            yaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
-#            xaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
-#            font = list(family = '"Helvetica Neue", Helvetica, Arial, sans-serif')) %>% 
-#     config( displayModeBar = FALSE) # taking out plotly logo and collaborate button
-# } 
-
-
 #####################################################################################.
 ## Function for generating flextable summary of child health data being displayed in s curve.
 
 child_table <- function() {
   format_col <- c("denominator","coverage_4weeks_num","coverage_12weeks_num","coverage_tot_num")
-  no_24_row_id <- with(table_data(), (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "FEB"))
+  # no_12_row_id <- with(table_data(), (substr(time_period_eligible,1,3) == "W/B"))
 
   table_data() %>%
     select (time_period_eligible, denominator, coverage_4weeks_num, 
             coverage_4weeks_percent, coverage_12weeks_num, coverage_12weeks_percent, 
             coverage_tot_num, coverage_tot_percent) %>%
     flextable() %>%
-    set_header_labels(time_period_eligible="Children turning X weeks in:",
+    set_header_labels(time_period_eligible="Children turning 2 weeks in:",
                       denominator="Total number of children",
-                      coverage_4weeks_num="Children recorded as receiving their vaccine by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
-                      coverage_4weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
-                      coverage_12weeks_num="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
-                      coverage_12weeks_percent="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
-                      coverage_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",
-                      coverage_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>%
-    footnote(i = 1, j = 1:3,
+                      coverage_4weeks_num="Children recorded as receiving their health visitor first visit by 4 weeks of age",
+                      coverage_4weeks_percent="Children recorded as receiving their health visitor first visit by 4 weeks of age",
+                      coverage_12weeks_num="Children recorded as receiving their health visitor first visit by 12 weeks of age",
+                      coverage_12weeks_percent="Children recorded as receiving their health visitor first visit by 12 weeks of age",
+                      coverage_tot_num="Children recorded as receiving their health visitor first visit by the date information was extracted for analysis (01-June-2020)",
+                      coverage_tot_percent="Children recorded as receiving their health visitor first visit by the date information was extracted for analysis (01-June-2020)") %>%
+    footnote(i = 1, j = 1:2,
              value = as_paragraph(c("W/B : Week beginning",
-                                    "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
-                                    "Blue cells indicate cohorts that have not reached 24 weeks of age")),
+                                    "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly")),
+                                  #  "Blue cells indicate cohorts that have not reached 12 weeks of age")),
              part = "header") %>%
     merge_at(i = 1, j = 3:4, part = "header") %>%
     merge_at(i = 1, j = 5:6, part = "header") %>%
@@ -366,9 +350,9 @@ child_table <- function() {
     add_header_row(values=c("","","N","%","N","%","N","%"), top = FALSE ) %>%
     font(fontname="Helvetica", part = "all") %>%
     colformat_num(j=format_col,big.mark = ",", digits=0) %>%
-    # # Italics and colour if not 24 weeks
-    # color(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>%
-    # italic(i = no_24_row_id, j = c("uptake_24weeks_num", "uptake_24weeks_percent")) %>%
+    # # Italics and colour if not 12 weeks
+    # color(i = no_12_row_id, j = c("uptake_12weeks_num", "uptake_12weeks_percent"), color="#0033cc")  %>%
+    # italic(i = no_12_row_id, j = c("uptake_12weeks_num", "uptake_12weeks_percent")) %>%
     theme_box() %>%
     autofit() %>%
     htmltools_value()

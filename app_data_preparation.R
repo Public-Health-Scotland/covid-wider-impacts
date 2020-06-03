@@ -588,7 +588,7 @@ saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
 child_health_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/child_health/"
 
 # First visit - scurve data
-first <- read_csv(paste0(child_health_folder,"firstvisit_dashboard20200525.csv"), 
+first <- read_csv(paste0(child_health_folder,"firstvisit_dashboard20200601.csv"), 
                 col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_factor())) %>%
   janitor::clean_names()
@@ -616,7 +616,7 @@ final_data <<- first
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
 # First visit - summary table data
-first_datatable <- read_csv(paste0(child_health_folder,"firstvisit_dashboardtab_20200525.csv")) %>%
+first_datatable <- read_csv(paste0(child_health_folder,"firstvisit_dashboardtab_20200601.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%

@@ -56,41 +56,41 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
 ###############################################.
 ## Commentary ----
 ###############################################.
-tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
-         mainPanel(width = 12,
-                   uiOutput("summary_comment"),
-                   uiOutput("immun_commentary_section")
-         )#main panel bracket
-), #tab panel
-###############################################.
-## Summary trends ----
-###############################################.
-    # tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
-    #   wellPanel(
-    #     column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-    #                   p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-    #                   selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
-    #                               selected = "Scotland")),
-    #            uiOutput("geoname_ui")),
-    #     column(4, div(title="Select the data you want to explore.", # tooltip
-    #         radioGroupButtons("measure_select",
-    #                           label= "Step 2 – Select the data you want to explore.",
-    #                           choices = data_list, status = "primary",
-    #                           direction = "vertical", justified = T))),
-    #     column(4,
-    #            selectInput("adm_type", label = "Step 3. Select type of admission.",
-    #                        choices = c("All", "Emergency", "Planned"), selected = "All"),
-    #            downloadButton('download_chart_data', 'Download data')#,
-    #            # actionButton("browser", "Browser")
-    #            )
-    #   ), #wellPanel bracket
-    #   mainPanel(width = 12,
-    #             uiOutput("data_explorer")
-    #   )# mainPanel bracket
-    # ), # tabpanel bracket
-###############################################.
-## Immunisation Tab ----
-###############################################.
+# tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
+#          mainPanel(width = 12,
+#                    uiOutput("summary_comment"),
+#                    uiOutput("immun_commentary_section")
+#          )#main panel bracket
+# ), #tab panel
+# ###############################################.
+# ## Summary trends ----
+# ###############################################.
+#     tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
+#       wellPanel(
+#         column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+#                       p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+#                       selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
+#                                   selected = "Scotland")),
+#                uiOutput("geoname_ui")),
+#         column(4, div(title="Select the data you want to explore.", # tooltip
+#             radioGroupButtons("measure_select",
+#                               label= "Step 2 – Select the data you want to explore.",
+#                               choices = data_list, status = "primary",
+#                               direction = "vertical", justified = T))),
+#         column(4,
+#                selectInput("adm_type", label = "Step 3. Select type of admission.",
+#                            choices = c("All", "Emergency", "Planned"), selected = "All"),
+#                downloadButton('download_chart_data', 'Download data')#,
+#                # actionButton("browser", "Browser")
+#                )
+#       ), #wellPanel bracket
+#       mainPanel(width = 12,
+#                 uiOutput("data_explorer")
+#       )# mainPanel bracket
+#     ), # tabpanel bracket
+# ###############################################.
+# ## Immunisation Tab ----
+# ###############################################.
 # tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
 #          wellPanel(
 #            column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -113,9 +113,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 ###############################################.
 ## Child Health Tab ----
 ###############################################.
-tabPanel(title = "Child Health", icon = icon("baby"), value = "child",
+tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
          wellPanel(
-           column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+           column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
                          selectInput("geotype_child", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
@@ -125,7 +125,7 @@ tabPanel(title = "Child Health", icon = icon("baby"), value = "child",
                                            label= "Step 2. Select the data you want to explore.", 
                                            choices = data_list_child, status = "primary", 
                                            direction = "vertical", justified = T))),
-           column(4,actionButton("btn_immune_modal", "Data source: ???", icon = icon('question-circle')))
+           column(4,actionButton("btn_child_modal", "Data source: CHSP-PS", icon = icon('question-circle')))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
