@@ -590,9 +590,13 @@ child_health_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/child_health
 # First visit - scurve data
 first <- read_csv(paste0(child_health_folder,"firstvisit_dashboard20200601.csv"), 
                 col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
-                                time_period_eligible=col_factor())) %>%
-  janitor::clean_names()
+                                time_period_eligible=col_character())) %>%
+  janitor::clean_names() 
 
+# Creating levels for factor in chronological order
+first$time_period_eligible <- factor(first$time_period_eligible, 
+                                     levels=unique(first$time_period_eligible[order(first$week_2_end)]), 
+                                     ordered=TRUE)
 
 # Bringing HB names immunisation data contain HB cypher not area name
 hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
@@ -609,9 +613,8 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          week_no= isoweek(week_2_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
-
-final_data <<- first
+  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(interv<168)
 
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 

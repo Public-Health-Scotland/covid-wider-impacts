@@ -96,7 +96,7 @@ pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1
                "W/B 02-MAR-2020" = "#fee391", "W/B 09-MAR-2020" = "#fec44f",
                "W/B 16-MAR-2020" = "#fe9929", "W/B 23-MAR-2020" = "#ec7014",
                "W/B 30-MAR-2020" = "#cc4c02", "W/B 06-APR-2020" = "#8c2d04",
-               "W/B 13-APR-2020" = "#8c2d04")
+               "W/B 13-APR-2020" = "#662506")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
