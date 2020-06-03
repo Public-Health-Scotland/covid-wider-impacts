@@ -35,8 +35,8 @@ output$geoname_ui_child <- renderUI({
 
 
 # Reactive dataset for flextable filter on geographical area
-table_data <- reactive({
-  table <- first_datatable %>%
+child_table_data <- reactive({
+  firsttable %>%
     filter(area_name==input$geoname_child)
     #mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%  # required if table sort order is to change
     #arrange(cohort)

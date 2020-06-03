@@ -326,7 +326,7 @@ child_table <- function() {
   format_col <- c("denominator","coverage_4weeks_num","coverage_12weeks_num","coverage_tot_num")
  # no_12_row_id <- with(table_data(), (substr(time_period_eligible,1,3) == "W/B"))
 
-  table_data() %>%
+  child_table_data() %>%
     select (time_period_eligible, denominator, coverage_4weeks_num, 
             coverage_4weeks_percent, coverage_12weeks_num, coverage_12weeks_percent, 
             coverage_tot_num, coverage_tot_percent) %>%
