@@ -184,7 +184,7 @@ plot_spec <- function(type) {
 #####################################################################################.
 ## Function for drawing S-Curve charts used in immunisation and health visitor tabs.
 
-plot_scurve <- function(dataset) {
+plot_scurve <- function(dataset, age_week) {
   
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun) 
 
@@ -208,7 +208,7 @@ plot_scurve <- function(dataset) {
               color = ~time_period_eligible, colors = pal_immun,
               text= tooltip_scurve, hoverinfo="text") %>%
       # Adding legend title
-      add_annotations( text="Children turning 8 weeks in:", xref="paper", yref="paper",
+      add_annotations( text= paste0("Children turning ", age_week, " weeks in:"), xref="paper", yref="paper",
                        x=1.02, xanchor="left",
                        y=0.8, yanchor="bottom",    # Same y as legend below
                        legendtitle=TRUE, showarrow=FALSE ) %>% 
@@ -242,7 +242,7 @@ plot_nodata <- function(height_plot = 450) {
 
 immune_table <- function(dataset) {
 
-  table_data <- filter_table_data(dataset)
+  table_data <- filter_table_data_immun(dataset)
   
   #Apply different column names and formatting according to which dataset selected
   format_col <- c("denominator","uptake_12weeks_num","uptake_24weeks_num","uptake_tot_num")

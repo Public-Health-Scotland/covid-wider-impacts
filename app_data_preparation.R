@@ -612,8 +612,6 @@ six_dose2 <- left_join(six_dose2, hb_lookup, by = c("geography" = "hb_cypher")) 
   rename(week_12_start=week_8_start) %>%
   select (extract_date, immunisation, week_12_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
-final_data <<- six_dose2
-
 saveRDS(six_dose2, paste0("shiny_app/data/","sixinone_dose2_data.rds"))
 
 # 6-in-1 at 12 weeks - summary table data
