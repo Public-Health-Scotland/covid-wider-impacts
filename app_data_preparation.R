@@ -651,6 +651,18 @@ cardio_drugs <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/prescribi
          count = items) %>% 
   select(week_ending, area_name, area_type, type, category, count)
 
+cardio_drugs_all <- cardio_drugs %>% 
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count),
+            category = "All") %>% 
+  ungroup() %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
+
+# Remove temporary object from environment to reduce session size
+rm(cardio_drugs_all)
+
 prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-05-31")
 
 ##END

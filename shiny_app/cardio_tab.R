@@ -5,14 +5,14 @@
 ###############################################.
 
 # Show list of area names depending on areatype selected
-# output$geoname_cardio_ui <- renderUI({
-#   
-#   areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_cardio])
-#   
-#   selectizeInput("geoname_cardio", label = NULL,  
-#                  choices = areas_summary, selected = "")
-#   
-# })
+output$geoname_cardio_ui <- renderUI({
+
+  areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$area_cardio_select])
+
+  selectizeInput("geoname_cardio", label = NULL,
+                 choices = areas_summary, selected = "")
+
+})
 
 # Adding 'observeEvent' to allow reactive 'area of interest' selction on cardio tab
 observeEvent(input$measure_cardio_select, {
@@ -21,16 +21,19 @@ observeEvent(input$measure_cardio_select, {
   if (x == "cath") {
     cardio_label = "Step 2 - Select the area of interest for cardiac catheterization labs"
     cardio_choices = c("Royal Infirmary of Edinburgh", "Golden Jubilee Hospital")
+    hide("geoname_cardio_ui")
   }
   
   if (x == "aye") {
     cardio_label = "Step 2 - Select geography level for cardiovascular A&E attendances"
     cardio_choices = c("Scotland")
+    hide("geoname_cardio_ui")
   }
   
   if (x == "drug_presc") {
     cardio_label = "Step 2 - Select geography level for cardiovascular drug prescriptions"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::show("geoname_cardio_ui")
   }
   
   updateSelectInput(session, "area_cardio_select",
@@ -164,6 +167,12 @@ output$cardio_explorer <- renderUI({
                      time in 2018-2019 by SIMD quintile", "ae_cardio_dep_var",
                      "Weekly number of cardiovascular A&E attendances in Scotland by SIMD quintile", "ae_cardio_dep_tot")
       )
+    } else if (input$measure_cardio_select == "drug_presc") {
+      tagList(# Prescribing - items dispensed
+        h3("Weekly number of cardiovascular drug items prescribed"),
+        actionButton("btn_cardio_modal", "Data source: Prescribing", icon = icon('question-circle')),
+        plot_box("2020 compared with 2018-2019 average", "prescribing_all")
+      )
     }
 })
 
@@ -264,6 +273,10 @@ output$ae_cardio_age_var <- renderPlotly({plot_trend_chart(ae_cardio, pal_sex, c
 output$ae_cardio_age_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_sex, c("age", "all"), "total", "aye", tab = "cardio")})
 output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
 output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
+
+# Prescribing charts
+output$prescribing_all <- renderPlotly({plot_overall_chart(cardio_drugs %>% filter(area_name == "Scotland"), 
+                                                           data_name = "drug_presc", area = "All")})
 
 ###############################################.
 ## Data downloads ----
