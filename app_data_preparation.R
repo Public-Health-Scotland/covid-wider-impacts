@@ -584,4 +584,77 @@ six_datatable <- read_csv(paste0(immunisation_folder,"six in one_1_dashboardtab_
 
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
 
+
+###############################################.
+## Prepare perinatal data ----
+###############################################.
+
+perinatal_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/perinatal/"
+
+# P CHART PERINATAL DATA
+p_perinatal <- read_csv(paste0(perinatal_folder,"all_p_data.csv")) %>%
+  janitor::clean_names() %>%
+  rename(date=sample, binomial_stdev_proportion=binomial_st_dev, binomial_stdev_rate=binomial_st_dev_1)
+
+p_perinatal <- p_perinatal %>%
+  mutate(area_name="Scotland",
+         area_type="Scotland")
+
+p_perinatal <- p_perinatal %>%
+  mutate(date_test = gsub(" ", "0", date),
+         date = as.Date(paste0(date_test,"1"), format="%Y%m%d")) %>%
+  select(!date_test)
+
+p_perinatal_final_data <<- p_perinatal
+
+saveRDS(p_perinatal, paste0("shiny_app/data/","p_perinatal_data.rds"))
+
+# # perinatal mortality - summary table data - MAY ADD TO TAB
+p_perinatal_datatable <- read_csv(paste0(perinatal_folder,"all_p_data.csv")) %>%
+  janitor::clean_names() %>%
+  rename(date=sample, number=observation, totalbirths=sample_size) %>%
+  mutate(area_name="Scotland",
+         area_type="Scotland") %>%
+  select(date, number, totalbirths, proportion, rate, type)
+
+
+saveRDS(p_perinatal_datatable, paste0("shiny_app/data/","p_perinatal_datatable.rds"))
+
+# U CHART PERINATAL DATA
+
+u_perinatal <- read_csv(paste0(perinatal_folder,"all_u_data.csv")) %>%
+  janitor::clean_names() %>%
+  rename(date=sample)
+
+u_perinatal <- u_perinatal %>%
+  mutate(area_name="Scotland",
+         area_type="Scotland")
+
+u_perinatal <- u_perinatal %>%
+  mutate(date_test = gsub(" ", "0", date),
+         date = as.Date(paste0(date_test,"1"), format="%Y%m%d")) %>%
+  select(!date_test)
+
+u_perinatal_final_data <<- u_perinatal
+
+saveRDS(u_perinatal, paste0("shiny_app/data/","u_perinatal_data.rds"))
+
+# # perinatal mortality - summary table data - MAY ADD TO TAB
+u_perinatal_datatable <- read_csv(paste0(perinatal_folder,"all_u_data.csv")) %>%
+  janitor::clean_names() %>%
+  rename(date=sample, stillbirths=observation, totalbirths=sample_size) %>%
+  mutate(area_name="Scotland",
+         area_type="Scotland") %>%
+  select(date, stillbirths, totalbirths, proportion, rate, type)
+
+saveRDS(u_perinatal_datatable, paste0("shiny_app/data/","u_perinatal_datatable.rds"))
+
+# MAY NEED LATER FOR HB DATA
+# Bringing HB names 
+# hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+#   janitor::clean_names() %>% select(description, hb_cypher) %>%
+#   rename(area_name=description) %>%
+#   mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+#          area_type="Health board")
+
 ##END

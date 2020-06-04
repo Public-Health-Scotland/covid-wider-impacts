@@ -23,6 +23,10 @@ function(input, output, session) {
   source(file.path("immunisation_tab.R"),  local = TRUE)$value
   
   ###############################################.
+  ## Perinatal tab
+  source(file.path("perinatal_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
   ## Data tab
   source(file.path("data_tab.R"),  local = TRUE)$value
   

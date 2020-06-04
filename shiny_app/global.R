@@ -52,6 +52,12 @@ sas <- readRDS("data/sas_data.rds") # OOH data
 six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
 sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
 
+## perinatal mortality data
+p_perinatal <- readRDS("data/p_perinatal_data.rds")
+p_perinatal_table <- readRDS("data/p_perinatal_datatable.rds") # may add data table to tab
+u_perinatal <- readRDS("data/u_perinatal_data.rds")
+u_perinatal_table <- readRDS("data/u_perinatal_datatable.rds") # may add data table to tab
+
 # cath_lab <- readRDS(paste0("shiny_app/data/cath_lab_data.rds"))
 # angio_lab <- readRDS(paste0("shiny_app/data/angio_lab_data.rds"))# Data: GJNH Coronary Angios/PCI 
 
@@ -66,6 +72,13 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
 data_list_immun <- c("6-in-1 first dose" = "sixin_8wks",
                      "6-in-1 second dose *COMING 10th June 2020*" = "sixin_12wks",
                      "6-in-1 third dose *COMING 17th June 2020*" = "sixin_16wks")
+
+#List of data items available in step 2 of perinatal tab
+data_list_perinatal <- c("Still births"="stillbirths",
+                         "Post neonatal deaths"="pnnd",
+                         "Neonatal deaths"="nnd",
+                         "Extended perinatal deaths"="extperi",
+                         "Infant deaths"="infantdeaths")
 
 ###############################################.
 ## Palettes and plot parameters ----
