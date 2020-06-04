@@ -42,7 +42,7 @@ output$geoname_ui_immun <- renderUI({
 
 # Reactive dataset for flextable filter on geographical area
 filter_table_data_immun <- function(dataset){
-  dataset %>% filter(area_name=="Scotland")#input$geoname_immun)
+  dataset %>% filter(area_name == input$geoname_immun)
 }
 
 
@@ -53,10 +53,10 @@ filter_table_data_immun <- function(dataset){
 # Creating plots for each dataset
 #run chart function to generate s curve  
 output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(six, age_week = "8")})
-output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable)})
+output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable, age_week = 8)})
 
 output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_dose2, age_week = "12")})
-output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2)})
+output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week = 12)})
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$immunisation_explorer <- renderUI({
