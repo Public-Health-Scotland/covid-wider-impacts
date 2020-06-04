@@ -94,9 +94,11 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            label= "Step 1 – Select the data you want to explore.", 
                                            choices = cardio_list, status = "primary", 
                                            direction = "vertical", justified = T))),
-           column(4, selectizeInput("cath_lab", "Step 2 - Select the area of interest
-                                    for cardiac catheterization labs",
-                                    choices = c("Royal Infirmary of Edinburgh", "Golden Jubilee Hospital"))),
+           # column(4, selectizeInput("cath_lab", "Step 2 - Select the area of interest
+           #                          for cardiac catheterization labs",
+           #                          choices = c("Royal Infirmary of Edinburgh", "Golden Jubilee Hospital"))),
+           column(4, selectizeInput("area_cardio_select", "Step 2 - Select the area of interest",
+                                    choices = c("Scotland"))),
            column(4, downloadButton('download_cardio_data', 'Download data'))
          ), #wellPanel bracket
          mainPanel(width = 12,

@@ -14,6 +14,33 @@
 #   
 # })
 
+# Adding 'observeEvent' to allow reactive 'area of interest' selction on cardio tab
+observeEvent(input$measure_cardio_select, {
+  x <- input$measure_cardio_select
+  
+  if (x == "cath") {
+    cardio_label = "Step 2 - Select the area of interest for cardiac catheterization labs"
+    cardio_choices = c("Royal Infirmary of Edinburgh", "Golden Jubilee Hospital")
+  }
+  
+  if (x == "aye") {
+    cardio_label = "Step 2 - Select geography level for cardiovascular A&E attendances"
+    cardio_choices = c("Scotland")
+  }
+  
+  if (x == "drug_presc") {
+    cardio_label = "Step 2 - Select geography level for cardiovascular drug prescriptions"
+    cardio_choices = c("Scotland", "Health board", "HSC partnership")
+  }
+  
+  updateSelectInput(session, "area_cardio_select",
+                    label = cardio_label,
+                    choices = cardio_choices,
+                    selected = cardio_choices[1]
+  )
+  
+}, ignoreNULL= F)
+
 ###############################################.
 ## Modals ----
 ###############################################.
@@ -87,7 +114,7 @@ output$ae_cardio_codes_tbl <- DT::renderDataTable(
 output$cardio_explorer <- renderUI({
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
-    if (input$cath_lab == "Royal Infirmary of Edinburgh") {
+    if (input$area_cardio_select == "Royal Infirmary of Edinburgh") {
       tagList( # Cath cases Golden Jubilee
         h3("Weekly visits to the cardiac catheterization labs at the Royal Infirmary of Edinburgh"),
         actionButton("btn_cardio_modal", "Data source: Royal Infirmary of Edinburgh", icon = icon('question-circle')),
@@ -103,7 +130,7 @@ output$cardio_explorer <- renderUI({
                      "Weekly number of cases by type of intervention", "cath_rie_type_tot")
       )
       
-    } else if (input$cath_lab == "Golden Jubilee Hospital") {
+    } else if (input$area_cardio_select == "Golden Jubilee Hospital") {
     tagList( # Cath cases Golden Jubilee
       h3("Weekly visits to the cardiac catheterization labs at the Golden Jubilee Hospital"),
       actionButton("btn_cardio_modal", "Data source: Golden Jubilee", icon = icon('question-circle')),
