@@ -48,6 +48,7 @@ ooh <- readRDS("data/ooh_data.rds") # OOH data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 sas <- readRDS("data/sas_data.rds") # OOH data
 ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
+cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
 
 gjub_cath <- readRDS(paste0("data/gj_cath_lab_data.rds")) %>% 
   mutate(type = "adm") %>% 
@@ -64,7 +65,8 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "NHS 24 completed contacts" = "nhs24", 
                "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
 
-cardio_list <- c("A&E attendances" = "aye", "Cardiac catheterization labs" = "cath")
+cardio_list <- c("Drug prescriptions" = "drug_presc",
+                 "A&E attendances" = "aye", "Cardiac catheterization labs" = "cath")
 
 ###############################################.
 ## Palettes and plot parameters ----
@@ -78,6 +80,7 @@ pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
 pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
+pal_con <- c('#bf812d', '#74add1', '#313695') # Palettes for conditions
 
 
 # Style of x and y axis

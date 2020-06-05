@@ -630,4 +630,42 @@ rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
 prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-05-24")
 
+###############################################.
+## Prescribing - Cardiovascular Drugs ----
+###############################################.
+
+cardio_drugs <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/prescribing data/ePr data by Partnership, Board and Scotland.xlsx") %>% 
+  select(1:5) %>% 
+  clean_names() %>% 
+  filter(condition %in% c("Cardiovascular diseases",
+                          "Platelet aggregation inhibitors excl. heparin",
+                          "Thromboembolic disease, atrial fibrillation or valvular heart disease")) %>% 
+  mutate(week_ending = as.Date(week_ending),
+         area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
+                               substr(area_code,1,3) == "S08" ~ "Health board",
+                               substr(area_code,1,3) == "S00" ~ "Scotland"),
+         area_name = case_when(area_type == "Health board" ~ stringr::str_to_title(area_name),
+                               area_type == "Scotland" ~ stringr::str_to_title(area_name),
+                               TRUE ~ area_name),
+         area_name = case_when(area_type == "Health board" ~ gsub("Nhs", "NHS", area_name),
+                               TRUE ~ area_name),
+         type = "condition") %>% 
+  rename(category = condition,
+         count = items) %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+cardio_drugs_all <- cardio_drugs %>% 
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count),
+            category = "All") %>% 
+  ungroup() %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
+
+# Remove temporary object from environment to reduce session size
+rm(cardio_drugs_all)
+
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-05-31")
+
 ##END

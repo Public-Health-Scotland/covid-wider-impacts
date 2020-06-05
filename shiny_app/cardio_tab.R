@@ -5,14 +5,44 @@
 ###############################################.
 
 # Show list of area names depending on areatype selected
-# output$geoname_cardio_ui <- renderUI({
-#   
-#   areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_cardio])
-#   
-#   selectizeInput("geoname_cardio", label = NULL,  
-#                  choices = areas_summary, selected = "")
-#   
-# })
+output$geoname_cardio_ui <- renderUI({
+
+  areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$area_cardio_select])
+
+  selectizeInput("geoname_cardio", label = NULL,
+                 choices = areas_summary, selected = "")
+
+})
+
+# Adding 'observeEvent' to allow reactive 'area of interest' selction on cardio tab
+observeEvent(input$measure_cardio_select, {
+  x <- input$measure_cardio_select
+  
+  if (x == "cath") {
+    cardio_label = "Step 2 - Select the area of interest for cardiac catheterization labs"
+    cardio_choices = c("Royal Infirmary of Edinburgh", "Golden Jubilee Hospital")
+    hide("geoname_cardio_ui")
+  }
+  
+  if (x == "aye") {
+    cardio_label = "Step 2 - Select geography level for cardiovascular A&E attendances"
+    cardio_choices = c("Scotland")
+    hide("geoname_cardio_ui")
+  }
+  
+  if (x == "drug_presc") {
+    cardio_label = "Step 2 - Select geography level for cardiovascular drug prescriptions"
+    cardio_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::show("geoname_cardio_ui")
+  }
+  
+  updateSelectInput(session, "area_cardio_select",
+                    label = cardio_label,
+                    choices = cardio_choices,
+                    selected = cardio_choices[1]
+  )
+  
+}, ignoreNULL= F)
 
 ###############################################.
 ## Modals ----
@@ -61,6 +91,12 @@ observeEvent(input$btn_cardio_modal,
                  DT::dataTableOutput("ae_cardio_codes_tbl"),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             } else if (input$measure_cardio_select == "drug_presc") {
+               showModal(modalDialog(#Prescribin - Cardio Drugs
+                 title = "What is the data source?",
+                 p("Text to be written"),
+                 size = "m",
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "cath") {
                showModal(modalDialog(#CATH A&E MODAL
                  title = "What is the data source?",
@@ -87,7 +123,7 @@ output$ae_cardio_codes_tbl <- DT::renderDataTable(
 output$cardio_explorer <- renderUI({
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
-    if (input$cath_lab == "Royal Infirmary of Edinburgh") {
+    if (input$area_cardio_select == "Royal Infirmary of Edinburgh") {
       tagList( # Cath cases Golden Jubilee
         h3("Weekly visits to the cardiac catheterization labs at the Royal Infirmary of Edinburgh"),
         actionButton("btn_cardio_modal", "Data source: Royal Infirmary of Edinburgh", icon = icon('question-circle')),
@@ -103,7 +139,7 @@ output$cardio_explorer <- renderUI({
                      "Weekly number of cases by type of intervention", "cath_rie_type_tot")
       )
       
-    } else if (input$cath_lab == "Golden Jubilee Hospital") {
+    } else if (input$area_cardio_select == "Golden Jubilee Hospital") {
     tagList( # Cath cases Golden Jubilee
       h3("Weekly visits to the cardiac catheterization labs at the Golden Jubilee Hospital"),
       actionButton("btn_cardio_modal", "Data source: Golden Jubilee", icon = icon('question-circle')),
@@ -136,6 +172,15 @@ output$cardio_explorer <- renderUI({
         plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by SIMD quintile", "ae_cardio_dep_var",
                      "Weekly number of cardiovascular A&E attendances in Scotland by SIMD quintile", "ae_cardio_dep_tot")
+      )
+    } else if (input$measure_cardio_select == "drug_presc") {
+      tagList(# Prescribing - items dispensed
+        h3(paste0("Weekly number of cardiovascular drug items prescribed in ", input$geoname_cardio)),
+        actionButton("btn_cardio_modal", "Data source: Prescribing", icon = icon('question-circle')),
+        plot_box("2020 compared with 2018-2019 average", "prescribing_all"),
+        plot_cut_box(paste0("Percentage change in cardiovascular drug prescriptions in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by drug group"), "cardio_drugs_var",
+                     paste0("Weekly number of cardiovascular drug prescriptions in ", input$geoname_cardio, " by age group"), "cardio_drugs_tot")
       )
     }
 })
@@ -238,6 +283,11 @@ output$ae_cardio_age_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_sex, c
 output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
 output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
 
+# Prescribing charts
+output$prescribing_all <- renderPlotly({plot_overall_chart(cardio_drugs %>% filter(area_name == input$geoname_cardio), 
+                                                           data_name = "drug_presc", area = "All")})
+output$cardio_drugs_var <- renderPlotly({plot_trend_chart(cardio_drugs, pal_con, c("condition"), data_name = "drug_presc", tab = "cardio")})
+output$cardio_drugs_tot <- renderPlotly({plot_trend_chart(cardio_drugs, pal_con, c("condition"), "total", data_name = "drug_presc", tab = "cardio")})
 ###############################################.
 ## Data downloads ----
 ###############################################.
@@ -255,12 +305,18 @@ overall_cardio_download <- reactive({
     selection <- c("week_ending", "area_name", "count", "count_average", "variation")
     new_var_name <- "average_2018_2019"
   }
+  # Prescribing
+  if (input$measure_cardio_select == "drug_presc") {
+    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
+    new_var_name <- "average_2018_2019"
+  }
   
   # Prep data for download
   switch(
     input$measure_cardio_select,
     "cath" = filter_data(gjub_cath, area = F),
-    "aye" = filter_data(ae_cardio, area = F)
+    "aye" = filter_data(ae_cardio, area = F),
+    "drug_presc" = filter_data(cardio_drugs, area = F)
   ) %>% 
     select_at(selection) %>% 
     rename(!!new_var_name := count_average) %>% 
