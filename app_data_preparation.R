@@ -601,11 +601,8 @@ p_perinatal <- p_perinatal %>%
          area_type="Scotland")
 
 p_perinatal <- p_perinatal %>%
-  mutate(date_test = gsub(" ", "0", date),
-         date = as.Date(paste0(date_test,"1"), format="%Y%m%d")) %>%
-  select(!date_test)
-
-p_perinatal_final_data <<- p_perinatal
+  mutate(date = gsub(" ", "0", date),
+         date = as.Date(paste0(date,"1"), format="%Y%m%d")) 
 
 saveRDS(p_perinatal, paste0("shiny_app/data/","p_perinatal_data.rds"))
 
@@ -631,11 +628,8 @@ u_perinatal <- u_perinatal %>%
          area_type="Scotland")
 
 u_perinatal <- u_perinatal %>%
-  mutate(date_test = gsub(" ", "0", date),
-         date = as.Date(paste0(date_test,"1"), format="%Y%m%d")) %>%
-  select(!date_test)
-
-u_perinatal_final_data <<- u_perinatal
+  mutate(date = gsub(" ", "0", date),
+         date = as.Date(paste0(date,"1"), format="%Y%m%d")) 
 
 saveRDS(u_perinatal, paste0("shiny_app/data/","u_perinatal_data.rds"))
 
