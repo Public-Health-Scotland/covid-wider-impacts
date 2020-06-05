@@ -38,7 +38,13 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   } else if (split == "condition") {
       if (tab == "cardio") {
         trend_data <- dataset %>% 
-          filter(type %in% split & area_name == input$geoname_cardio)
+          filter(type %in% split & area_name == input$geoname_cardio) %>% 
+          # Wrapping long legend names
+          mutate(category = case_when(
+            category == "Platelet aggregation inhibitors excl. heparin" ~ "Platelet aggregation \ninhibitors excl. heparin",
+            category == "Thromboembolic disease, atrial fibrillation or valvular heart disease" ~ "Thromboembolic disease, \natrial fibrillation or \nvalvular heart disease",
+            TRUE ~ category
+          ))
       }
   } else {
     trend_data <- trend_data 

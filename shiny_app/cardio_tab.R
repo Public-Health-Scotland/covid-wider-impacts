@@ -91,6 +91,12 @@ observeEvent(input$btn_cardio_modal,
                  DT::dataTableOutput("ae_cardio_codes_tbl"),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             } else if (input$measure_cardio_select == "drug_presc") {
+               showModal(modalDialog(#Prescribin - Cardio Drugs
+                 title = "What is the data source?",
+                 p("Text to be written"),
+                 size = "m",
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "cath") {
                showModal(modalDialog(#CATH A&E MODAL
                  title = "What is the data source?",
@@ -299,12 +305,18 @@ overall_cardio_download <- reactive({
     selection <- c("week_ending", "area_name", "count", "count_average", "variation")
     new_var_name <- "average_2018_2019"
   }
+  # Prescribing
+  if (input$measure_cardio_select == "drug_presc") {
+    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
+    new_var_name <- "average_2018_2019"
+  }
   
   # Prep data for download
   switch(
     input$measure_cardio_select,
     "cath" = filter_data(gjub_cath, area = F),
-    "aye" = filter_data(ae_cardio, area = F)
+    "aye" = filter_data(ae_cardio, area = F),
+    "drug_presc" = filter_data(cardio_drugs, area = F)
   ) %>% 
     select_at(selection) %>% 
     rename(!!new_var_name := count_average) %>% 
