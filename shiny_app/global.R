@@ -80,7 +80,7 @@ pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
 pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
-pal_con <- c('#000000', '#bf812d', '#74add1', '#313695') # Palettes for conditions
+pal_con <- c('#bf812d', '#74add1', '#313695') # Palettes for conditions
 
 
 # Style of x and y axis

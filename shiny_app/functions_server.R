@@ -38,7 +38,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   } else if (split == "condition") {
       if (tab == "cardio") {
         trend_data <- dataset %>% 
-          filter(type %in% split & area_name == input$geoname_cardio) %>% 
+          filter(type %in% split & area_name == input$geoname_cardio,
+                 category != "All") %>% 
           # Wrapping long legend names
           mutate(category = case_when(
             category == "Platelet aggregation inhibitors excl. heparin" ~ "Platelet aggregation \ninhibitors excl. heparin",
