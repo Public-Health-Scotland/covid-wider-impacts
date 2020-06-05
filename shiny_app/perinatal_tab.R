@@ -52,60 +52,69 @@ observeEvent(input$btn_perinatal_modal,
 output$perinatal_scatter_p <- renderPlotly({
   p_perinatal_filter <- p_perinatal %>% filter(type == input$measure_select_perinatal)
   
-    plot_ly(data = p_perinatal_filter, x = ~date) %>%
+  yaxis_plots[["title"]] <- "Rate per 1000 births"
+  xaxis_plots[["title"]] <- "Month"
+  
+  plot_ly(data = p_perinatal_filter, x = ~date) %>%
   add_lines(y = ~rate, line = list(color = "black"),
             #text=tooltip_trend, hoverinfo="text",
-            name = "rate") %>%
+            name = "Rate") %>%
   add_lines(y = ~centreline, line = list(color = "purple"),
             #text=tooltip_trend, hoverinfo="text",
-            name = "centreline") %>%
+            name = "Centreline") %>%
   add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dot"),
             #text=tooltip_trend, hoverinfo="text",
-            name = "upper confidence interval to 3 stdev") %>%
+            name = "Upper confidence interval to 3 stdev") %>%
   add_lines(y = ~lower_cl_3_std_dev, line = list(color = "red", dash = "dot"),
             #text=tooltip_trend, hoverinfo="text",
-            name = "lower confidence interval to 3 stdev") %>%
+            name = "Lower confidence interval to 3 stdev") %>%
   add_lines(y = ~upper_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
             #text=tooltip_trend, hoverinfo="text",
-            name = "upper confidence interval to 2 stdev") %>%
+            name = "Upper confidence interval to 2 stdev") %>%
   add_lines(y = ~lower_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
             #text=tooltip_trend, hoverinfo="text",
-             name = "lower confidence interval to 2 stdev") #%>%
-    # #Layout
-     # layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-     #       yaxis = yaxis_plots, xaxis = xaxis_plots,
-     #       legend = list(x = 50, y = 0.2))  #position of legend
+             name = "Lower confidence interval to 2 stdev") %>%
+    
+    layout( #to avoid labels getting cut out
+           yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+
     }
 )
 
-
 #run chart function to generate p charts
 output$perinatal_scatter_u <- renderPlotly({
-  u_perinatal_filter <- u_perinatal %>% filter(type == input$measure_select_perinatal)
-  
+  u_perinatal_filter <- u_perinatal %>% filter(type == input$measure_select_perinatal) 
+
+  yaxis_plots[["title"]] <- "Rate per 1000 births"
+  xaxis_plots[["title"]] <- "Month"
+    
   plot_ly(data = u_perinatal_filter, x = ~date) %>%
     add_lines(y = ~rate, line = list(color = "black"),
               #text=tooltip_trend, hoverinfo="text",
-              name = "rate") %>%
+              name = "Rate") %>%
     add_lines(y = ~centreline, line = list(color = "purple"),
               #text=tooltip_trend, hoverinfo="text",
-              name = "centreline") %>%
+              name = "Centreline") %>%
     add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dot"),
               #text=tooltip_trend, hoverinfo="text",
-              name = "upper confidence interval to 3 stdev") %>%
+              name = "Upper confidence interval to 3 stdev") %>%
     add_lines(y = ~lower_cl_3_std_dev, line = list(color = "red", dash = "dot"),
               #text=tooltip_trend, hoverinfo="text",
-              name = "lower confidence interval to 3 stdev") %>%
+              name = "Lower confidence interval to 3 stdev") %>%
     add_lines(y = ~upper_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
               #text=tooltip_trend, hoverinfo="text",
-              name = "upper confidence interval to 2 stdev") %>%
+              name = "Upper confidence interval to 2 stdev") %>%
     add_lines(y = ~lower_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
               #text=tooltip_trend, hoverinfo="text",
-              name = "lower confidence interval to 2 stdev") #%>%
-  # #Layout
-  # layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-  #       yaxis = yaxis_plots, xaxis = xaxis_plots,
-  #       legend = list(x = 50, y = 0.2))  #position of legend
+              name = "Lower confidence interval to 2 stdev") %>%
+    
+    layout( #to avoid labels getting cut out
+      yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+
 }
 )
 
@@ -115,15 +124,15 @@ output$perinatal_scatter_u <- renderPlotly({
 output$perinatal_explorer <- renderUI({
 
   # text for titles of cut charts
-  perinatal_title <- paste0(case_when(input$measure_select_perinatal == "stillbirths" ~ paste0("Rate of stillbirths per 1000 births",
+  perinatal_title <- paste0(case_when(input$measure_select_perinatal == "stillbirths" ~ paste0("Rate of stillbirths per 1000 births in Scotland",
                                                                                        input$geoname_perinatal),
-                                      input$measure_select_perinatal == "pnnd" ~ paste0("Rate of post-neonatal deaths per 1000 births",
+                                      input$measure_select_perinatal == "pnnd" ~ paste0("Rate of post-neonatal deaths per 1000 births in Scotland",
                                                                                         input$geoname_perinatal),
-                                      input$measure_select_perinatal == "nnd" ~ paste0("Rate of neonatal deaths per 1000 births",
+                                      input$measure_select_perinatal == "nnd" ~ paste0("Rate of neonatal deaths per 1000 births in Scotland",
                                                                                     input$geoname_perinatal),
-                                      input$measure_select_perinatal == "extperi" ~ paste0("Rate of extended perinatal deaths per 1000 births",
+                                      input$measure_select_perinatal == "extperi" ~ paste0("Rate of extended perinatal deaths per 1000 births in Scotland",
                                                                                     input$geoname_perinatal),
-                                      input$measure_select_perinatal == "infantdeaths" ~ paste0("Rate of infant deaths per 1000 births",
+                                      input$measure_select_perinatal == "infantdeaths" ~ paste0("Rate of infant deaths per 1000 births in Scotland",
                                                                                            input$geoname_perinatal)))
 
   # Intro paragraph within perinatal tab
@@ -131,27 +140,33 @@ output$perinatal_explorer <- renderUI({
                          signs of life.",class="externallink"), "The stillbirth rate in Scotland in 2018", tags$a(href="https://www.scotpho.org.uk/population-dynamics/pregnancy-births-and-maternity/key-points/", 
                         "was 3.7 per 1,000 total births.",class="externallink"), "It is important to monitor the rate of perinatal mortality during the Covid-19 pandemic.",
                         "NHS Scotland and Scottish Government", tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                        "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.")
-  
+                        "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.",
+                        p("Confidence intervals indicate a range of values of which it is likely the true value lies within."))
+                        
+
   intro_pnnd <- p("Post-neonatal deaths refer to", tags$a(href="https://www.healthcareimprovementscotland.org/our_work/reproductive,_maternal__child/reproductive_health/spimmr_2012.aspx", "deaths occuring after the first 4 weeks but within the first year",class="externallink"), "of life.
                   It is important to monitor the rate of perinatal mortality during the Covid-19 pandemic.",
                   "NHS Scotland and Scottish Government", tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                  "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.")
+                  "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.",
+                  p("Confidence intervals indicate a range of values of which it is likely the true value lies within."))
   
   intro_nnd <- p("Neonatal deaths refer to", tags$a(href="https://www.healthcareimprovementscotland.org/our_work/reproductive,_maternal__child/reproductive_health/spimmr_2012.aspx", "deaths in the first four weeks",class="externallink"), "of life.
                  It is important to monitor the rate of perinatal mortality during the Covid-19 pandemic.",
                  "NHS Scotland and Scottish Government", tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                                                                "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.")
+                  "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.",
+                 p("Confidence intervals indicate a range of values of which it is likely the true value lies within."))
   
   intro_extperi <- p("Extended perinatal deaths refer to", tags$a(href="https://www.healthcareimprovementscotland.org/our_work/reproductive,_maternal__child/reproductive_health/spimmr_2012.aspx", "the sum of stillbirths and neonatal mortality",class="externallink"), "(deaths within the first 28 days of life).
                      It is important to monitor the rate of perinatal mortality during the Covid-19 pandemic.",
                      "NHS Scotland and Scottish Government", tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                                                                    "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.")
+                      "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.",
+                     p("Confidence intervals indicate a range of values of which it is likely the true value lies within."))
   
   intro_infantdeaths <- p("Infant deaths refer to", tags$a(href="https://www.healthcareimprovementscotland.org/our_work/reproductive,_maternal__child/reproductive_health/spimmr_2012.aspx", "all deaths in the first year",class="externallink"), "of life.
                           It is important to monitor the rate of perinatal mortality during the Covid-19 pandemic.",
                           "NHS Scotland and Scottish Government", tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                                                                         "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.")
+                          "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.",
+                        p("Confidence intervals indicate a range of values of which it is likely the true value lies within."))
                   
 
   # Specify items to display in perinatal ui based on step 2 selection
@@ -160,41 +175,36 @@ if (input$measure_select_perinatal == "stillbirths") {
   tagList(
     fluidRow(column(12, renderUI(intro_stillbirths),
                     h4(paste0(perinatal_title)))),
-    fluidRow(column(6,br(), br(),
-                    withSpinner(plotlyOutput("perinatal_scatter_p"))),
-             column(6, uiOutput("p_perinatal_table"))) #add potential table later
-  )
+    fluidRow(withSpinner(plotlyOutput("perinatal_scatter_p"))))#,
+             #column(6, uiOutput("p_perinatal_table"))) #add potential table later
+  
 }  else if (input$measure_select_perinatal == "pnnd"){
   tagList(
     fluidRow(column(12, renderUI(intro_pnnd),
                     h4(paste0(perinatal_title)))),
-    fluidRow(column(6,br(), br(),
-                    withSpinner(plotlyOutput("perinatal_scatter_p"))),
-             column(6, uiOutput("p_perinatal_table"))) #add potential table later
-  )
+    fluidRow(withSpinner(plotlyOutput("perinatal_scatter_p"))))#,
+             #column(6, uiOutput("p_perinatal_table"))) #add potential table later
+  
 }  else if (input$measure_select_perinatal == "nnd"){
   tagList(
     fluidRow(column(12, renderUI(intro_nnd),
                     h4(paste0(perinatal_title)))),
-    fluidRow(column(6,br(), br(),
-                    withSpinner(plotlyOutput("perinatal_scatter_p"))),
-             column(6, uiOutput("p_perinatal_table"))) #add potential table later
-  )
+    fluidRow(withSpinner(plotlyOutput("perinatal_scatter_p"))))#,
+             #column(6, uiOutput("p_perinatal_table"))) #add potential table later
+  
 } else if (input$measure_select_perinatal == "extperi"){
   tagList(
     fluidRow(column(12, renderUI(intro_extperi),
                     h4(paste0(perinatal_title)))),
-    fluidRow(column(6,br(), br(),
-                    withSpinner(plotlyOutput("perinatal_scatter_p"))),
-             column(6, uiOutput("p_perinatal_table"))) #add potential table later
-  )
+    fluidRow(withSpinner(plotlyOutput("perinatal_scatter_p"))))#,
+             #column(6, uiOutput("p_perinatal_table"))) #add potential table later
+  
 } else if (input$measure_select_perinatal == "infantdeaths"){
   tagList(
     fluidRow(column(12, renderUI(intro_infantdeaths),
                     h4(paste0(perinatal_title)))),
-    fluidRow(column(6,br(), br(),
-                    withSpinner(plotlyOutput("perinatal_scatter_u"))),
-             column(6, uiOutput("u_perinatal_table"))) #add potential table later   
-)
+    fluidRow(withSpinner(plotlyOutput("perinatal_scatter_u"))))#,
+             #column(6, uiOutput("u_perinatal_table"))) #add potential table later   
+
 } #close perinatal_explorer function
 })
