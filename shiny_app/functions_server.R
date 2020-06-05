@@ -225,8 +225,8 @@ plot_scurve__immun <- function(dataset) {
 
 ######################################################################.
 #Function to create plot when no data available
-plot_nodata <- function(height_plot = 450) {
-  text_na <- list(x = 5, y = 5, text = "Data not available due to small numbers" , size = 20,
+plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due to small numbers") {
+  text_na <- list(x = 5, y = 5, text = text_nodata , size = 20,
                   xref = "x", yref = "y",  showarrow = FALSE)
   
   plot_ly(height = height_plot) %>%
@@ -286,8 +286,8 @@ plot_scurve_child <- function(dataset) {
   # %>%
   # droplevels() # might be needed if sort order in legend is to change
   
-  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && area_name == "NHS Grampian")
-  { plot_nodata_grampian(height = 50)
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_child == "NHS Grampian")
+  { plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {
@@ -319,22 +319,6 @@ plot_scurve_child <- function(dataset) {
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
   }}
-
-
-######################################################################.
-#Function to create plot when no data available - NHS Grampian
-plot_nodata_grampian <- function(height_plot = 450) {
-  text_na <- list(x = 5, y = 5, text = "Data not available due to data quality issues" , size = 20,
-                  xref = "x", yref = "y",  showarrow = FALSE)
-  
-  plot_ly(height = height_plot) %>%
-    layout(annotations = text_na,
-           #empty layout
-           yaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
-           xaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
-           font = list(family = '"Helvetica Neue", Helvetica, Arial, sans-serif')) %>% 
-    config( displayModeBar = FALSE) # taking out plotly logo and collaborate button
-} 
 
 #####################################################################################.
 ## Function for generating flextable summary of child health data being displayed in s curve.
