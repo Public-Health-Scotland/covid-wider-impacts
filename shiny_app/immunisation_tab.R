@@ -93,7 +93,7 @@ output$immunisation_explorer <- renderUI({
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }  else if (input$measure_select_immun == "sixin_12wks"){
-    p("6-in-1 at 12 weeks coming 10th June 2020")
+    p("6-in-1 at 12 weeks coming 17th June 2020")
   }  else if (input$measure_select_immun == "sixin_16wks"){
     p("6-in-1 at 16 weeks coming 17th June 2020")}
   
