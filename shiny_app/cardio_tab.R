@@ -169,9 +169,12 @@ output$cardio_explorer <- renderUI({
       )
     } else if (input$measure_cardio_select == "drug_presc") {
       tagList(# Prescribing - items dispensed
-        h3("Weekly number of cardiovascular drug items prescribed"),
+        h3(paste0("Weekly number of cardiovascular drug items prescribed in ", input$geoname_cardio)),
         actionButton("btn_cardio_modal", "Data source: Prescribing", icon = icon('question-circle')),
-        plot_box("2020 compared with 2018-2019 average", "prescribing_all")
+        plot_box("2020 compared with 2018-2019 average", "prescribing_all"),
+        plot_cut_box(paste0("Percentage change in cardiovascular drug prescriptions in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by drug group"), "cardio_drugs_var",
+                     paste0("Weekly number of cardiovascular drug prescriptions in ", input$geoname_cardio, " by age group"), "cardio_drugs_tot")
       )
     }
 })
@@ -275,9 +278,10 @@ output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, 
 output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
 
 # Prescribing charts
-output$prescribing_all <- renderPlotly({plot_overall_chart(cardio_drugs %>% filter(area_name == "Scotland"), 
+output$prescribing_all <- renderPlotly({plot_overall_chart(cardio_drugs %>% filter(area_name == input$geoname_cardio), 
                                                            data_name = "drug_presc", area = "All")})
-
+output$cardio_drugs_var <- renderPlotly({plot_trend_chart(cardio_drugs, pal_con, c("condition"), data_name = "drug_presc", tab = "cardio")})
+output$cardio_drugs_tot <- renderPlotly({plot_trend_chart(cardio_drugs, pal_con, c("condition"), "total", data_name = "drug_presc", tab = "cardio")})
 ###############################################.
 ## Data downloads ----
 ###############################################.

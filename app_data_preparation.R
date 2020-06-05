@@ -637,6 +637,9 @@ prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-05-24")
 cardio_drugs <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/prescribing data/ePr data by Partnership, Board and Scotland.xlsx") %>% 
   select(1:5) %>% 
   clean_names() %>% 
+  filter(condition %in% c("Cardiovascular diseases",
+                          "Platelet aggregation inhibitors excl. heparin",
+                          "Thromboembolic disease, atrial fibrillation or valvular heart disease")) %>% 
   mutate(week_ending = as.Date(week_ending),
          area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
                                substr(area_code,1,3) == "S08" ~ "Health board",

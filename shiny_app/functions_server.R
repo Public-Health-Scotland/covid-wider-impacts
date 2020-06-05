@@ -1,10 +1,10 @@
 # Functions for server side
 
 ###############################################.
-# Function that creates line trend charts in Plotly for different splits: age, sex, depr
+# Function that creates line trend charts in Plotly for different splits: age, sex, depr, condition
 # THree parameters: pal_chose - what palette of colours you want
 # dataset - what data to use for the chart formatted as required
-# split - age, sex, or dep (simd deprivation)
+# split - age, sex, condition, or dep (simd deprivation)
 plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation", 
                              data_name = NULL, tab = "summary", period = "weekly") {
   
@@ -35,6 +35,11 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       trend_data <- trend_data %>% 
         mutate(category = factor(category, levels = c("All", "<65", "65+")))
     }
+  } else if (split == "condition") {
+      if (tab == "cardio") {
+        trend_data <- dataset %>% 
+          filter(type %in% split & area_name == input$geoname_cardio)
+      }
   } else {
     trend_data <- trend_data 
   }
