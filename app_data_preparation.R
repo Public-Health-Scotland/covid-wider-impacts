@@ -595,7 +595,7 @@ first <- read_csv(paste0(child_health_folder,"firstvisit_dashboard20200601.csv")
 
 # Creating levels for factor in chronological order
 first$time_period_eligible <- factor(first$time_period_eligible, 
-                                     levels=unique(first$time_period_eligible[order(first$week_2_end)]), 
+                                     levels=unique(first$time_period_eligible[order(first$week_2_start, decreasing = T)]), 
                                      ordered=TRUE)
 
 # Bringing HB names immunisation data contain HB cypher not area name
