@@ -336,8 +336,8 @@ child_table <- function() {
                       denominator="Total number of children",
                       coverage_4weeks_num="Children recorded as receiving their health visitor first visit by 4 weeks of age",
                       coverage_4weeks_percent="Children recorded as receiving their health visitor first visit by 4 weeks of age",
-                      coverage_12weeks_num="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
-                      coverage_12weeks_percent="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
+                      coverage_12weeks_num="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 12 weeks of age by the date data was extracted for analysis)",
+                      coverage_12weeks_percent="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 12 weeks of age by the date data was extracted for analysis)",
                       coverage_tot_num="Children recorded as receiving their health visitor first visit by the date information was extracted for analysis (01-June-2020)",
                       coverage_tot_percent="Children recorded as receiving their health visitor first visit by the date information was extracted for analysis (01-June-2020)") %>%
     footnote(i = 1, j = c(1:2, 4),
