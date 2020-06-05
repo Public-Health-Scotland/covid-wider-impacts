@@ -297,8 +297,8 @@ plot_scurve_child <- function(dataset) {
     yaxis_plots[["title"]] <- "% of children who have received their health visitor first visit"
     xaxis_plots[["title"]] <- "Age of children in weeks"
     # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(14, 367, by = 56))
-    xaxis_plots[["ticktext"]] <- c(0, seq(2, 52, by = 8))
+    xaxis_plots[["tickvals"]] <- c(0, seq(14, 168, by = 28))
+    xaxis_plots[["ticktext"]] <- c(0, seq(2, 24, by = 4))
     
     #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
