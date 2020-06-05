@@ -125,7 +125,8 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
                                            label= "Step 2. Select the data you want to explore.", 
                                            choices = data_list_child, status = "primary", 
                                            direction = "vertical", justified = T))),
-           column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')))
+           column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')))#,
+           #column(4,downloadButton("download_chart_data_child", "Download data"))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,

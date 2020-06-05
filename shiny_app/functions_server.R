@@ -286,7 +286,9 @@ plot_scurve_child <- function(dataset) {
   # %>%
   # droplevels() # might be needed if sort order in legend is to change
   
-  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && area_name == "NHS Grampian")
+  { plot_nodata_grampian(height = 50)
+  } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {
     
@@ -294,7 +296,7 @@ plot_scurve_child <- function(dataset) {
     tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
     
     #Modifying standard yaxis layout
-    yaxis_plots[["title"]] <- "% of children who have received their health visitor first visit"
+    yaxis_plots[["title"]] <- "% of children who have received their review"
     xaxis_plots[["title"]] <- "Age of children in weeks"
     # For custom tick labels
     xaxis_plots[["tickvals"]] <- c(0, seq(14, 168, by = 28))
@@ -311,13 +313,28 @@ plot_scurve_child <- function(dataset) {
                        y=0.8, yanchor="bottom",    # Same y as legend below
                        legendtitle=TRUE, showarrow=FALSE ) %>% 
       #Layout
-      layout(margin = list(b = 80, t=10), #to avoid labels getting cut out
+      layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
              legend = list(x = 100, y = 0.8, yanchor="top")) %>% #position of legend
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
   }}
 
+
+######################################################################.
+#Function to create plot when no data available - NHS Grampian
+plot_nodata_grampian <- function(height_plot = 450) {
+  text_na <- list(x = 5, y = 5, text = "Data not available due to data quality issues" , size = 20,
+                  xref = "x", yref = "y",  showarrow = FALSE)
+  
+  plot_ly(height = height_plot) %>%
+    layout(annotations = text_na,
+           #empty layout
+           yaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
+           xaxis = list(showline = FALSE, showticklabels = FALSE, showgrid = FALSE, fixedrange=TRUE),
+           font = list(family = '"Helvetica Neue", Helvetica, Arial, sans-serif')) %>% 
+    config( displayModeBar = FALSE) # taking out plotly logo and collaborate button
+} 
 
 #####################################################################################.
 ## Function for generating flextable summary of child health data being displayed in s curve.

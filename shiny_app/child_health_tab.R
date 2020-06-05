@@ -62,12 +62,12 @@ output$child_health_explorer <- renderUI({
                             input$measure_select_child == "13_15mnth" ~ paste0("Coverage of 13-15 month reviews (offered to children at 13-15 months of age): ", input$geoname_child)))
   
   #commentary to appear in child health tab
-  commentary_first <-p("Routine child health reviews help ensure that children’s health and development is progressing as expected for their age and stage, and allow any concerns to be addressed.  It is important that children continue to receive their routine health reviews during the Covid-19 pandemic." ,br(),
-                       br(), 
-                       "All preschool children should be offered the following health reviews: health visitor first visit, 6-8 week review, 13-15 month review, 27-30 month review, and 4-5 year review. Although the 4-5 year review only became mandated by government policy for children turning 4 from April 2020 onwards." ,br(),
-                        "The charts show the progression of coverage of the relevant review as children age. The data tables provide the coverage rates at two time-points in the chart. Firstly, the uptake rate reached by a fixed age is shown. For example, for the health visitor first visit which is offered at the 2 week appointment, coverage by the time children turn 4 weeks old is shown. Then, the coverage by the time the children turn 12 weeks old is shown. Then finally, the overall coverage rate recorded by the date the data was extracted from CHSP-PS and SIRS for analysis is shown." ,br(), 
-                        "Data is shown for children who have become eligible for review during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for review before the pandemic (in 2019 and in January and February 2020) for comparison. After a child receives a review, it can take some time for the record of the review to be returned to the NHS Board child health department and entered into the CHSP-PS system. We have allowed a 6 week window for data entry. So, for the first release of this page on 10 June 2020, information was extracted from CHSP-PS and SIRS on 1 June, and results were reported for children becoming eligible for review up to 6 weeks previously, i.e. up to the week beginning 13 April. Although the vast majority of data on reviews given will be recorded within 6 weeks, data shown for the most recent cohorts of children will not be fully complete in CHSP-PS at this stage.",br(), 
-                        "Data is shown for Scotland and for NHS Board areas separately. Due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland, and NHS Western Isles are not shown separately, however the Island Boards are included within the Scotland total. NHS Grampian has had difficulty recording reviews given on the CHSP-PS system since the start of the Covid-19 pandemic. Information on children in Grampian has therefore been excluded from figures and these are also excluded from Scotland totals. We hope to include NHS Grampian in future releases once local data recording difficulties are resolved.")
+  commentary_first <-p("All preschool children should be offered the following health reviews: health visitor first visit, 6-8 week review, 13-15 month review, 27-30 month review, and 4-5 year review. Although the 4-5 year review only became mandated by government policy for children turning 4 from April 2020 onwards.
+The charts show the progression of coverage of the relevant review as children age. The data tables provide the coverage rates at three specific time-points. Data is shown for children who have become eligible for review during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for review before the pandemic (in 2019 and in January and February 2020) for comparison. 
+After a child receives a review, it takes time for a record of the review to be entered into the CHSP-PS system. We have allowed a 6 week window for data entry. Each release of this page will therefore report on reviews provided up to 6 weeks previously. Although the vast majority of data on reviews given will be recorded within 6 weeks, data shown for the most recent cohorts of children will not be fully complete in CHSP-PS at this stage. 
+Data is shown for Scotland and for NHS Board areas. Due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland, and NHS Western Isles are not shown separately, however the Island Boards are included within the Scotland total. NHS Grampian has had difficulty recording reviews given on the CHSP-PS system since the start of the Covid-19 pandemic. Information on children in Grampian has therefore been excluded, and Grampian is not included in the Scotland totals. We hope to include NHS Grampian in future releases once local data recording difficulties are resolved.
+Coverage rates based on small numbers are prone to fluctuation. Therefore, in Boards with small numbers of children eligible for review each week, particularly NHS Borders and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates.
+")
   
   # Specify items to display in child health ui based on step 2 selection 
   if (input$measure_select_child == "first_visit") {
@@ -79,9 +79,9 @@ output$child_health_explorer <- renderUI({
       fluidRow(column(12, renderUI(commentary_first)))
     )
   }  else if (input$measure_select_child == "six_eightwks"){
-    p("6-8 Week Review coming 17th June 2020")
+    p("6-8 Week Review coming soon")
   } else if (input$measure_select_child == "13_15mnth") {
-    p("13-15 Month Review coming 24th June 2020")
+    p("13-15 Month Review coming soon")
   }
   
 }) #close child_health_explorer function
@@ -105,6 +105,35 @@ output$child_health_explorer <- renderUI({
 #     )
 # })
 
+# ###############################################.
+# ## Data downloads ----
+# ###############################################.
+# 
+# # For the charts at the moment the data download is for the overall one,
+# # need to think how to allow downloading for each chart
+# # Reactive dataset that gets the data the user is visualisaing ready to download
+# overall_data_download_child <-
+#   # reactive({
+#   # switch(
+#   #   input$measure_select,
+#   #   "rapid" = filter_data(rapid_filt()),
+#   #   "aye" = filter_data(aye),
+#   #   "nhs24" = filter_data(nhs24),
+#   #   "ooh" = filter_data(ooh),
+#   #   "sas" = filter_data(sas)
+#   # ) %>%
+#   first_datatable %>%
+#     select(area_name, time_period_eligible, denominator, coverage_tot_num, coverage_tot_percent) %>%
+#     rename(children_tot_num = denominator) #%>%
+# #    mutate(week_ending = format(week_ending, "%d %b %y"))
+# #})
+# 
+# output$download_chart_data_child <- downloadHandler(
+#   filename ="data_extract.csv",
+#   content = function(file) {
+#     write_csv(overall_data_download_child,
+#               file) }
+# )
 
 #END
 
