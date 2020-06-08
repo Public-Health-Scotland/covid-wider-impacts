@@ -21,7 +21,7 @@ data_table <- reactive({
     # appear for factors
     mutate_if(is.character, as.factor) 
   
-  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas")) {
+  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths")) {
     table_data <- table_data %>% 
     # Formatting to a "nicer" style
     select(-type) %>% 
@@ -40,7 +40,13 @@ data_table <- reactive({
   } else if (input$data_select %in% "first_visit") {
     table_data <- table_data %>%
       select(-extract_date, -tabno, -week_no, -review, -cohort) %>% 
-      rename(week_starting = week_2_start, children_due_visit_in = time_period_eligible)
+      rename(week_starting = week_2_start, children_due_visit_in = time_period_eligible,
+             age_in_days = interv, percentage_of_children_who_have_received_review = surv)
+  } else if (input$data_select %in% "sixin_8wks") {
+    table_data <- table_data %>%
+      select(-extract_date, -tabno, -week_no, -immunisation, -cohort) %>% 
+      rename(week_starting = week_8_start, children_due_immunisation_in = time_period_eligible,
+             age_in_days = interv, percentage_of_children_who_have_received_immunisation = surv)
   }
   
   table_data %>% 
