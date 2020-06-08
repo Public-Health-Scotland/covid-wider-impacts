@@ -20,7 +20,7 @@ observeEvent(input$measure_cardio_select, {
   
   if (x == "cath") {
     cardio_label = "Step 2 - Select the area of interest for cardiac catheterization labs"
-    cardio_choices = c("Royal Infirmary of Edinburgh", "Golden Jubilee Hospital")
+    cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee Hospital")
     hide("geoname_cardio_ui")
   }
   
@@ -28,6 +28,7 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular A&E attendances"
     cardio_choices = c("Scotland")
     hide("geoname_cardio_ui")
+    disable("area_cardio_select")
   }
   
   if (x == "drug_presc") {
