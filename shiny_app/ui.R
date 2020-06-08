@@ -103,7 +103,9 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
                                            label= "Step 2 – Select the data you want to explore.", 
                                            choices = data_list_immun, status = "primary", 
                                            direction = "vertical", justified = T))),
-           column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')))
+           column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton('download_imm_data', 'Download data'))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
