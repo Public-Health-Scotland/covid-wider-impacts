@@ -13,6 +13,8 @@ library(phsmethods) #matching codes with names
 library(tidyr) # for wide to long formatting
 library(readxl) # reading excel
 
+data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
+
 ###############################################.
 ## Functions ----
 ###############################################.
@@ -133,7 +135,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
 ## Reading RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/shiny_input_files/rapid/Admissions_by_category_01-Jun.rds") %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_08-Jun.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -204,14 +206,14 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-05-24", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-05-31", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
 ## Preparing OOH data ----
 ###############################################.
 # Read in historic OOH file
-ooh <- read_csv(unzip("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/OOH DATA 2018 - 22032020.zip","OOH DATA 2018 - 22032020.csv")) %>%
+ooh <- read_csv(unzip(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.zip","OOH DATA 2018 - 22032020.csv"))) %>%
   janitor::clean_names() %>%
   rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
@@ -238,7 +240,7 @@ ooh <- ooh %>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungrou
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-03-22")))
 
 ## Additional new OOH data
-ooh_new <- read_csv(unzip("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip","COVID DASHBOARD EXTRACT_2203to0505.csv")) %>%
+ooh_new <- read_csv(unzip(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip","COVID DASHBOARD EXTRACT_2203to0505.csv"))) %>%
   janitor::clean_names() %>%
   rename(date=sc_start_date, hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender, age_group=age_band,
@@ -269,7 +271,7 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-new_ooh_03_31may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new_01062020.csv") %>% 
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_56_2771757260302589203.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -289,22 +291,17 @@ new_ooh_03_31may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-new_ooh_03_31may2020 <- new_ooh_03_31may2020 %>% 
-  # TEMPORARY - FILTERING OUT LANARKSHIRE DATA FOR LAST WEEK AS IT IS NOT COMPLETE
-  filter(!(area_name %in% c("NHS Lanarkshire") & week_ending == as.Date("2020-05-31"))) %>% 
+ooh_may_onwards <- ooh_may_onwards %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-05-31"))) %>% #filter complete weeks (Mon-Sun)
-  # TEMPORARY - FILTERING OUT LANARKSHIRE DATA FOR LAST WEEK AS IT IS NOT COMPLETE
-  filter(!(area_name %in% c("North Lanarkshire", "South Lanarkshire") & 
-             week_ending == as.Date("2020-05-31")))
+  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-06-07"))) #filter complete weeks (Mon-Sun)
 
 #bind old and new ooh data
-ooh <- rbind(new_ooh_03_31may2020, ooh_new, ooh)
+ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
 
 # Creating totals for groups
 ooh_all <- ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
@@ -315,7 +312,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-31")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-06-07")
 
 ###############################################.
 ## Preparing A&E data ----
