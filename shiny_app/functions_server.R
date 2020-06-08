@@ -344,7 +344,9 @@ plot_scurve_child <- function(dataset) {
 child_table <- function() {
   format_col <- c("denominator","coverage_4weeks_num","coverage_12weeks_num","coverage_tot_num")
   no_12_row_id <- with(child_table_data(), (substr(time_period_eligible,1,3) == "W/B" &
-                                      time_period_eligible != "W/B 02-MAR-2020"))
+                                      time_period_eligible != "W/B 02-MAR-2020" &
+                                        time_period_eligible != "W/B 09-MAR-2020" &
+                                        time_period_eligible != "W/B 16-MAR-2020"))
 
   child_table_data() %>%
     select (time_period_eligible, denominator, coverage_4weeks_num, 
