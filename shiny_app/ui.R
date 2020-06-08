@@ -56,12 +56,13 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
 ###############################################.
 ## Commentary ----
 ###############################################.
-# tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
-#          mainPanel(width = 12,
-#                    uiOutput("summary_comment"),
-#                    uiOutput("immun_commentary_section")
-#          )#main panel bracket
-# ), #tab panel
+tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
+         mainPanel(width = 12,
+                   uiOutput("summary_comment"),
+                   uiOutput("immun_commentary_section"),
+                   uiOutput("child_comments")
+         )#main panel bracket
+), #tab panel
 # ###############################################.
 # ## Summary trends ----
 # ###############################################.

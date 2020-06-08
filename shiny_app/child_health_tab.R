@@ -62,8 +62,8 @@ output$child_health_explorer <- renderUI({
                             input$measure_select_child == "13_15mnth" ~ paste0("Coverage of 13-15 month reviews (offered to children at 13-15 months of age): ", input$geoname_child)))
   
   #commentary to appear in child health tab
-  commentary_first <-p("All preschool children should be offered the following health reviews: health visitor first visit, 6-8 week review, 13-15 month review, 27-30 month review, and 4-5 year review. Although the 4-5 year review only became mandated by government policy for children turning 4 from April 2020 onwards.
-The charts show the progression of coverage of the relevant review as children age. The data tables provide the coverage rates at three specific time-points. Data is shown for children who have become eligible for review during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for review before the pandemic (in 2019 and in January and February 2020) for comparison. 
+  commentary_first <-p("All preschool children should be offered the following health reviews: health visitor first visit, 6-8 week review, 13-15 month review, 27-30 month review, and 4-5 year review. Although the 4-5 year review only became mandated by government policy for children turning 4 from April 2020 onwards.", br(),
+"The charts show the progression of coverage of the relevant review as children age. The data tables provide the coverage rates at three specific time-points. Data is shown for children who have become eligible for review during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for review before the pandemic (in 2019 and in January and February 2020) for comparison. 
 After a child receives a review, it takes time for a record of the review to be entered into the CHSP-PS system. We have allowed a 6 week window for data entry. Each release of this page will therefore report on reviews provided up to 6 weeks previously. Although the vast majority of data on reviews given will be recorded within 6 weeks, data shown for the most recent cohorts of children will not be fully complete in CHSP-PS at this stage. 
 Data is shown for Scotland and for NHS Board areas. Due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland, and NHS Western Isles are not shown separately, however the Island Boards are included within the Scotland total. NHS Grampian has had difficulty recording reviews given on the CHSP-PS system since the start of the Covid-19 pandemic. Information on children in Grampian has therefore been excluded, and Grampian is not included in the Scotland totals. We hope to include NHS Grampian in future releases once local data recording difficulties are resolved.
 Coverage rates based on small numbers are prone to fluctuation. Therefore, in Boards with small numbers of children eligible for review each week, particularly NHS Borders and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates.
@@ -93,12 +93,13 @@ Coverage rates based on small numbers are prone to fluctuation. Therefore, in Bo
 
 
  output$child_comments <- renderUI({
-     
+     tagList(h2("Child Health reviews - 10th June 2020"), 
    p("Information on the uptake of child health reviews that are routinely offered to all preschool children by Health Visitors has been included in this tool for the first time on 10 June 2020.", br(),
-      "Child health reviews incorporate assessment of children's health, development, and wider wellbeing alongside provision of health promotion advice and parenting support.  Routine child health reviews help ensure that children’s health and development is progressing as expected for their age and stage, and allow any concerns to be addressed.  It is important that children continue to receive their routine health reviews during the Covid-19 pandemic.",
-      "On 10 June 2020, information has been provided on the coverage of the Health Visitor first visit, which is offered to children at 10-14 days of age. Children receive subsequent Health Visitor reviews at 6-8 weeks, 13-15 months, 27-30 month, and 4-5 years of age. ",
+      "Child health reviews incorporate assessment of children's health, development, and wider wellbeing alongside provision of health promotion advice and parenting support.  Routine child health reviews help ensure that children’s health and development is progressing as expected for their age and stage, and allow any concerns to be addressed.  It is important that children continue to receive their routine health reviews during the Covid-19 pandemic.", br(),
+      "On 10 June 2020, information has been provided on the coverage of the Health Visitor first visit, which is offered to children at 10-14 days of age. Children receive subsequent Health Visitor reviews at 6-8 weeks, 13-15 months, 27-30 month, and 4-5 years of age. ", br(),
       "Coverage rates for the Health Visitor first visit have remained high during the pandemic. Coverage continues to exceed 90% among children who were due their review in March and early April. The recording of data on reviews undertaken by the reporting date will not be fully complete at this stage, particularly for the most recent cohorts, so coverage rates are slightly under-reported."
       )
+     )
  })
 
 # ###############################################.
