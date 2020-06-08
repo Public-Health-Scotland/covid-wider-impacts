@@ -188,11 +188,12 @@ observeEvent(input$btn_dataset_modal,
                  p("The analyses shown here are derived from weekly deaths registration data, and show recent trends in deaths (2020), 
                    whether COVID or non-COVID related, and historic trends for comparison (five-year average, 2015-2019). 
                    The recent trend data are shown by age group and sex, and the national data are also shown by broad area 
-                   deprivation category (Scottish Index of Multiple Deprivation, SIMD).  SIMD trends are not shown for Health Boards or Health 
+                   deprivation category (Scottish Index of Multiple Deprivation, SIMD). SIMD trends are not shown for Health Boards or Health 
                    and Social Care Partnerships because of the small numbers involved and the possibility for misinterpretation."), 
                  p("The deaths data are derived from the National Records of Scotland (NRS) ", 
                    tags$a(href="https://www.nrscotland.gov.uk/covid19stats", 
-                          "weekly deaths", class="externallink"), " dataset. Deaths related to COVID-19 are included in totals."), 
+                          "weekly deaths", class="externallink"), " dataset. Deaths related to COVID-19 are included in totals.
+                   Data are provisional and subject to revision."), 
                  p("The figures are based on the date a death was registered rather than the date the death occurred. When someone dies, 
                    their family (or a representative) have to make an appointment with a registrar to register the death. 
                    Legally this must be done within 8 days, although in practice there is, on average, a 3 day gap between a 
