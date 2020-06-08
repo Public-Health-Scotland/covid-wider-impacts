@@ -113,7 +113,8 @@ imm_data_download <- reactive({
     "sixin_12wks" = sixtable,
     "sixin_16wks" = sixtable
   ) %>% 
-    select(area_name, time_period_eligible, denominator, starts_with("uptake")) 
+    select(area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
+    rename(cohort = time_period_eligible)
 })
 
 output$download_imm_data <- downloadHandler(
