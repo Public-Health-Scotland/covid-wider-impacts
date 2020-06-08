@@ -102,35 +102,30 @@ output$child_health_explorer <- renderUI({
      )
  })
 
-# ###############################################.
-# ## Data downloads ----
-# ###############################################.
-# 
-# # For the charts at the moment the data download is for the overall one,
-# # need to think how to allow downloading for each chart
-# # Reactive dataset that gets the data the user is visualisaing ready to download
-# overall_data_download_child <-
-#   # reactive({
-#   # switch(
-#   #   input$measure_select,
-#   #   "rapid" = filter_data(rapid_filt()),
-#   #   "aye" = filter_data(aye),
-#   #   "nhs24" = filter_data(nhs24),
-#   #   "ooh" = filter_data(ooh),
-#   #   "sas" = filter_data(sas)
-#   # ) %>%
-#   first_datatable %>%
-#     select(area_name, time_period_eligible, denominator, coverage_tot_num, coverage_tot_percent) %>%
-#     rename(children_tot_num = denominator) #%>%
-# #    mutate(week_ending = format(week_ending, "%d %b %y"))
-# #})
-# 
-# output$download_chart_data_child <- downloadHandler(
-#   filename ="data_extract.csv",
-#   content = function(file) {
-#     write_csv(overall_data_download_child,
-#               file) }
-# )
+###############################################.
+## Data downloads ----
+###############################################.
+
+# For the charts at the moment the data download is for the overall one,
+# need to think how to allow downloading for each chart
+# Reactive dataset that gets the data the user is visualisaing ready to download
+visit_data_download <- reactive({
+  switch(
+    input$measure_select_child,
+    "first_visit" = firsttable,
+    "six_eightwks" = firsttable,
+    "13_15mnth" = firsttable
+  ) %>% 
+    select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>% 
+    rename(cohort = time_period_eligible)
+})
+
+output$download_visit_data <- downloadHandler(
+  filename ="child_visits_extract.csv",
+  content = function(file) {
+    write_csv(visit_data_download(),
+              file) } 
+)
 
 #END
 
