@@ -307,12 +307,6 @@ output$data_explorer <- renderUI({
           Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that 
           can be shown in this publication.")
       },
-      if (input$measure_select == "ooh"){
-        p("Please note that data for week ending 31st May is not available for NHS Lanarkshire, 
-          North Lanarkshire HSC partnership and South Lanarkshire HSC partnership. 
-          These areas have not been included in the Scotland figure for week ending 31st May,
-          which explains the decrease in out of hours cases for that week.")
-      },
       if (input$measure_select == "deaths"){
         tagList(
         p("The analyses below are derived from the National Records of Scotland (NRS) weekly deaths dataset. 
