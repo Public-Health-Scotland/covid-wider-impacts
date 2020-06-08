@@ -181,8 +181,35 @@ observeEvent(input$btn_dataset_modal,
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+               
+               } else if (input$measure_select == "deaths"){
+               showModal(modalDialog( # DEATHS  MODAL
+                 title = "What is the data source?", 
+                 p("The analyses shown here are derived from weekly deaths registration data, and show recent trends in deaths (2020), 
+                   whether COVID or non-COVID related, and historic trends for comparison (five-year average, 2015-2019). 
+                   The recent trend data are shown by age group and sex, and the national data are also shown by broad area 
+                   deprivation category (Scottish Index of Multiple Deprivation, SIMD).  SIMD trends are not shown for Health Boards or Health 
+                   and Social Care Partnerships because of the small numbers involved and the possibility for misinterpretation."), 
+                 p("The deaths data are derived from the National Records of Scotland (NRS) ", 
+                   tags$a(href="https://www.nrscotland.gov.uk/covid19stats", 
+                          "weekly deaths", class="externallink"), " dataset. Deaths related to COVID-19 are included in totals."), 
+                 p("The figures are based on the date a death was registered rather than the date the death occurred. When someone dies, 
+                   their family (or a representative) have to make an appointment with a registrar to register the death. 
+                   Legally this must be done within 8 days, although in practice there is, on average, a 3 day gap between a 
+                   death occurring and being registered. More information on days between occurrence and registration can be be found on the ", 
+                   tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-background-information/births-and-deaths-days-until-registration", 
+                          "NRS website",class="externallink"),"."),
+                 p("The figures are reported by week, with each week running from Monday to Sunday (the ISO8601 standard week). 
+                   Moveable public holidays, when registration offices are closed, affect the number of registrations made in the 
+                   published weeks and in the corresponding weeks in previous years."), 
+                 p("Figures include non-residents.  Deaths are allocated to area based on the usual residence of the deceased. 
+                   If the deceased was not a Scottish resident, the death is allocated to the area where the death occurred."), 
+                 p("The weekly deaths dataset is managed by ", 
+                   tags$a(href=" https://www.nrscotland.gov.uk/", 
+                          "National Records of Scotland (NRS).", class="externallink")), 
+                 size = "m", 
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
-             
              )
 
 ###############################################.
@@ -247,27 +274,38 @@ output$data_explorer <- renderUI({
   dataset <- case_when(input$measure_select == "rapid" ~ "admissions",
                        input$measure_select == "aye" ~ "attendances",
                        input$measure_select == "nhs24" ~ "completed contacts",
-                       input$measure_select == "ooh" ~ "cases",
-                       input$measure_select == "sas" ~ "incidents")
+                       input$measure_select == "ooh" ~ "consultations",
+                       input$measure_select == "sas" ~ "incidents",
+                       input$measure_select == "deaths" ~ "deaths")
   
-  variation_title <- paste0("Percentage change in ", dataset, 
-                            " compared with the corresponding time in 2018-2019 by ")
-  
+  if (input$measure_select == "deaths"){
+    variation_title <- paste0("Percentage change in ", dataset, 
+                            " compared with the corresponding time in 2015-2019 by ")   #different averaging period for deaths
+  } else {
+    variation_title <- paste0("Percentage change in ", dataset, 
+                              " compared with the corresponding time in 2018-2019 by ")
+  }
+
   total_title <- paste0("Weekly number of ", dataset, " by ")
   
   # To make sure that both titles take the same space and are lined up doing
   # a bit of a hacky shortcut:
   diff_chars <- nchar(variation_title) - nchar(total_title) +10
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
-  
+
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
     tagList(
       h3(title),
       actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
       if (input$measure_select == "nhs24"){
-        p("The data used in this chart are taken from the Unscheduled Care Datamart.  As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
-                                                                                                                   "COVID-19 weekly report for Scotland", class="externallink"), "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that can be shown in this publication.")
+        p("The data used in this chart are taken from the Unscheduled Care Datamart.  
+          As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
+                                                                                                                   "COVID-19 weekly report for Scotland", class="externallink"), 
+          "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 
+          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. 
+          Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that 
+          can be shown in this publication.")
       },
       if (input$measure_select == "ooh"){
         p("Please note that data for week ending 31st May is not available for NHS Lanarkshire, 
@@ -275,7 +313,16 @@ output$data_explorer <- renderUI({
           These areas have not been included in the Scotland figure for week ending 31st May,
           which explains the decrease in out of hours cases for that week.")
       },
-      plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
+      if (input$measure_select == "deaths"){
+        tagList(
+        p("The analyses below are derived from the National Records of Scotland (NRS) weekly deaths dataset. 
+          Numbers of deaths represent the total number of deaths (from any cause) that were registered in 
+          Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the 
+          average over the past 5 years allows estimation of the numbers of excess deaths."),
+        plot_box(paste0("2020 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
+        } else {
+          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+        },
       plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
       plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
@@ -319,6 +366,10 @@ output$data_explorer <- renderUI({
   } else if (input$measure_select == "sas") { # SAS data
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service", 
                source = "PHS Unscheduled Care Datamart", data_name ="sas")
+    
+  } else if (input$measure_select == "deaths") { # Deaths data
+    cut_charts(title= "Weekly number of deaths", 
+               source = "NRS Death Registrations", data_name ="deaths")
   }
 }) 
 
@@ -328,51 +379,61 @@ output$data_explorer <- renderUI({
 ###############################################.
 # Creating plots for each cut and dataset
 # A&E charts
-output$aye_overall <- renderPlotly({plot_overall_chart(aye, "aye")})
-output$aye_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex")})
-output$aye_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age")})
-output$aye_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep")})
+output$aye_overall <- renderPlotly({plot_overall_chart(aye, data_name = "aye")})
+output$aye_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", data_name = "aye")})
+output$aye_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age", data_name = "aye")})
+output$aye_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", data_name = "aye")})
 output$aye_sex_tot <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", "total", "aye")})
 output$aye_age_tot <- renderPlotly({plot_trend_chart(aye, pal_age, "age", "total", "aye")})
 output$aye_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "total", "aye")})
 
 # OOH charts
 output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
-output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex")})
-output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age")})
-output$ooh_depr_var <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep")})
+output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", data_name = "ooh")})
+output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", data_name = "ooh")})
+output$ooh_depr_var <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", data_name = "ooh")})
 output$ooh_sex_tot <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", "total", "ooh")})
 output$ooh_age_tot <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", "total", "ooh")})
 output$ooh_depr_tot <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", "total", "ooh")})
 
 # NHS24 charts
 output$nhs24_overall <- renderPlotly({plot_overall_chart(nhs24, "nhs24")})
-output$nhs24_sex_var <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex")})
-output$nhs24_age_var <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age")})
-output$nhs24_depr_var <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep")})
+output$nhs24_sex_var <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex", data_name = "nhs24")})
+output$nhs24_age_var <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age", data_name = "nhs24")})
+output$nhs24_depr_var <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep", data_name = "nhs24")})
 output$nhs24_sex_tot <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex", "total", "nhs24")})
 output$nhs24_age_tot <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age", "total", "nhs24")})
 output$nhs24_depr_tot <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep", "total", "nhs24")})
 
 # SAS charts
 output$sas_overall <- renderPlotly({plot_overall_chart(sas, "sas")})
-output$sas_sex_var <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex")})
-output$sas_age_var <- renderPlotly({plot_trend_chart(sas, pal_age, "age")})
-output$sas_depr_var <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep")})
+output$sas_sex_var <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex", data_name = "sas")})
+output$sas_age_var <- renderPlotly({plot_trend_chart(sas, pal_age, "age", data_name = "sas")})
+output$sas_depr_var <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep", data_name = "sas")})
 output$sas_sex_tot <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex", "total", "sas")})
 output$sas_age_tot <- renderPlotly({plot_trend_chart(sas, pal_age, "age", "total", "sas")})
 output$sas_depr_tot <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep", "total", "sas")})
 
 # Admissions to hospital charts
 output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
-output$adm_sex_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex")})
-output$adm_age_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age")})
-output$adm_depr_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep")})
+output$adm_sex_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", data_name = "adm")})
+output$adm_age_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", data_name = "adm")})
+output$adm_depr_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", data_name = "adm")})
 output$adm_sex_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", "total", "adm")})
 output$adm_age_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", "total", "adm")})
 output$adm_depr_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", "total", "adm")})
 output$adm_spec_var <- renderPlotly({plot_spec("variation")})
 output$adm_spec_tot <- renderPlotly({plot_spec("total")})
+
+# Deaths charts
+output$deaths_overall <- renderPlotly({plot_overall_chart(deaths, "deaths")})
+output$deaths_sex_var <- renderPlotly({plot_trend_chart(deaths, pal_sex, "sex", data_name = "deaths")})
+output$deaths_age_var <- renderPlotly({plot_trend_chart(deaths, pal_age, "age", data_name = "deaths")})
+output$deaths_depr_var <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep", data_name = "deaths")})
+output$deaths_sex_tot <- renderPlotly({plot_trend_chart(deaths, pal_sex, "sex", "total", "deaths")})
+output$deaths_age_tot <- renderPlotly({plot_trend_chart(deaths, pal_age, "age", "total", "deaths")})
+output$deaths_depr_tot <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep", "total", "deaths")})
+
 
 # Palette for specialty
 pal_spec <- reactive({
@@ -417,14 +478,14 @@ symbol_spec <- reactive({
 overall_data_download <- reactive({
   switch(
     input$measure_select,
-    "rapid" = filter_data(rapid_filt()),
-    "aye" = filter_data(aye),
-    "nhs24" = filter_data(nhs24),
-    "ooh" = filter_data(ooh),
-    "sas" = filter_data(sas)
+    "rapid" = filter_data(rapid_filt() %>% rename(average_2018_2019 = count_average)),
+    "aye" = filter_data(aye) %>% rename(average_2018_2019 = count_average),
+    "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average),
+    "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average),
+    "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average),
+    "deaths" = filter_data(deaths %>% rename(average_2015_2019 = count_average))
   ) %>% 
-    select(area_name, week_ending, count, count_average) %>% 
-    rename(average_2018_2019 = count_average) %>% 
+    select(area_name, week_ending, count, starts_with("average")) %>% 
     mutate(week_ending = format(week_ending, "%d %b %y"))
 })
 
