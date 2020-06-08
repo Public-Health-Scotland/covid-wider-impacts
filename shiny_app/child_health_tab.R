@@ -92,18 +92,14 @@ Coverage rates based on small numbers are prone to fluctuation. Therefore, in Bo
 ###############################################.
 
 
-# output$child_comments <- renderUI({
-#     
-#   p("Information on the uptake of ",
-#       tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","vaccinations that are routinely offered to all preschool children",class="externallink"),
-#       " has been included in this tool for the first time on 3 June 2020.", br(),
-#       "Vaccination protects children against many serious infectious diseases including diphtheria, whooping cough, and measles.",
-#       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening","Immunisation services throughout Scotland are continuing during the Covid-19 pandemic",class="externallink"),".",
-#      "It is important to maintain the best possible vaccination uptake rates to ensure children remain protected and to prevent a resurgence of these infections.  Including information on childhood vaccination rates in this tool will help us to ensure that vaccination rates remain high throughout the pandemic.",
-#     "On 3 June 2020, information has been provided on the uptake of the first dose of the 6-in-1 vaccine, which is offered to children at 8 weeks of age. The vaccine protects against diphtheria, tetanus, pertussis (whooping cough), polio, Haemophilus influenzae type b (Hib) and Hepatitis B. Children should also receive a second dose of the vaccine at 12 weeks and a third dose at 16 weeks.",br(),
-#     "Uptake rates for this vaccination have remained high during the pandemic.  Uptake continues to exceed 90% among children who were due their first dose of the 6-in-1 vaccine in March and early April. The recording of data on vaccinations given by the reporting date will not be fully complete at this stage, particularly for the most recent cohorts, so uptake rates are slightly under-reported. In addition, some children will receive the vaccine at a later age, for example due to missed or rescheduled appointments, so uptake rates are expected to continue to increase as children age (as shown in the baseline)."
-#     )
-# })
+ output$child_comments <- renderUI({
+     
+   p("Information on the uptake of child health reviews that are routinely offered to all preschool children by Health Visitors has been included in this tool for the first time on 10 June 2020.", br(),
+      "Child health reviews incorporate assessment of children's health, development, and wider wellbeing alongside provision of health promotion advice and parenting support.  Routine child health reviews help ensure that children’s health and development is progressing as expected for their age and stage, and allow any concerns to be addressed.  It is important that children continue to receive their routine health reviews during the Covid-19 pandemic.",
+      "On 10 June 2020, information has been provided on the coverage of the Health Visitor first visit, which is offered to children at 10-14 days of age. Children receive subsequent Health Visitor reviews at 6-8 weeks, 13-15 months, 27-30 month, and 4-5 years of age. ",
+      "Coverage rates for the Health Visitor first visit have remained high during the pandemic. Coverage continues to exceed 90% among children who were due their review in March and early April. The recording of data on reviews undertaken by the reporting date will not be fully complete at this stage, particularly for the most recent cohorts, so coverage rates are slightly under-reported."
+      )
+ })
 
 # ###############################################.
 # ## Data downloads ----
