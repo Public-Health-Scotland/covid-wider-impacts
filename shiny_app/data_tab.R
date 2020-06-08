@@ -6,31 +6,15 @@
 ##reactive data to show in app
 data_table <- reactive({
   # Change dataset depending on what user selected
-  
-##########################################################################.  
-# child_health_LL
   table_data <- switch(input$data_select,
-         "rapid" = rapid %>% rename(specialty = spec),
-         "aye" = aye,
-         "nhs24" = nhs24,
-         "ooh" = ooh,
-         "sas" = sas,
-         "sixin_8wks" = six,
-         "first_visit" = first) %>% 
-# child_health_LL / master
-  switch(input$data_select,
-         "rapid" = rapid %>% rename(specialty = spec, average_2018_2019 = count_average),
+        "rapid" = rapid %>% rename(specialty = spec, average_2018_2019 = count_average),
          "aye" = aye %>% rename(average_2018_2019 = count_average),
          "nhs24" = nhs24 %>% rename(average_2018_2019 = count_average),
          "ooh" = ooh %>% rename(average_2018_2019 = count_average),
          "sas" = sas %>% rename(average_2018_2019 = count_average),
-         "deaths" = deaths %>% rename(average_2015_2019 = count_average)) %>% 
-    # Formatting to a "nicer" style
-    select(-type) %>% 
-    rename("Variation (%)" = variation) %>% 
-# master end
-###########################################################################.
-  
+         "deaths" = deaths %>% rename(average_2015_2019 = count_average),
+         "sixin_8wks" = six,
+         "first_visit" = first) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
     # This is because dropdown prompts on the table filters only
@@ -41,8 +25,7 @@ data_table <- reactive({
     table_data <- table_data %>% 
     # Formatting to a "nicer" style
     select(-type) %>% 
-    rename(average_2018_2019 = count_average,
-           "Variation (%)" = variation) %>% 
+    rename("Variation (%)" = variation) %>% 
     mutate(category = recode_factor(category, "All" = "All", "Female" = "Female", "Male" = "Male",
                                     "1 - most deprived" = "Quintile 1 - most deprived",
                                     "2" = "Quintile 2", "3" = "Quintile 3", "4" = "Quintile 4",
@@ -50,28 +33,17 @@ data_table <- reactive({
                                     "Under 5" = "Aged under 5", "5 - 14"= "Aged 5 to 14",
                                     "15 - 44" = "Aged 15 to 44","45 - 64" = "Aged 45 to 64",
                                     "65 - 74" = "Aged 65 to 74", "75 - 84" = "Aged 75 to 84", 
-                                    
-###################################################################################################.
-  # child_health_LL
-                                    "85 and over" = "Aged 85 and over"),
-           week_ending = format(week_ending, "%d %b %y")) 
-    
+                                    "85 and over" = "Aged 85 and over",
+                                    "Under 65" = "Aged under 65",
+                                    "65 and over" = "Aged 65 and over"),
+           week_ending = format(week_ending, "%d %b %y"))
   } else if (input$data_select %in% "first_visit") {
     table_data <- table_data %>%
       select(-extract_date, -tabno, -week_no, -review, -cohort) %>% 
       rename(week_starting = week_2_start, children_due_visit_in = time_period_eligible)
-      
   }
   
   table_data %>% 
-# child_health_LL / master
-                                    "85 and over" = "Aged 85 and over",
-                                    "Under 65" = "Aged under 65",
-                                    "65 and over" = "Aged 65 and over"),
-           week_ending = format(week_ending, "%d %b %y")) %>% 
-# master end
-#################################################################################################.
-  
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
     select(sort(current_vars())) # order columns alphabetically
 })
