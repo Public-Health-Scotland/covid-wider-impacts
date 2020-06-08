@@ -135,17 +135,17 @@ observeEvent(input$btn_dataset_modal,
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                
              } else if (input$measure_select == "ooh"){
-               showModal(modalDialog(# OUT OF HOURS CONSULTATIONS  MODAL
+               showModal(modalDialog(# OUT OF HOURS cases  MODAL
                  title = "What is the data source?",
                  p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor, 
                    when needed at times outside normal general practice hours, such as evenings, 
                    overnight or during the weekend. An appointment to the service is normally arranged 
                    following contact with NHS 24. The recent trend data is shown by age group, sex and 
                    broad deprivation category (SIMD)."),
-                 p("The charts provide a weekly summary of consultations in the recent past and 
+                 p("The charts provide a weekly summary of cases in the recent past and 
                    historical trends for comparison purposes."),
-                 p("The figures presented in this tool exclude consultations within any of the COVID-19 
-                   hubs or assessment centres and relate only to consultations concerning non-COVID 
+                 p("The figures presented in this tool exclude cases within any of the COVID-19 
+                   hubs or assessment centres and relate only to cases concerning non-COVID 
                    issues. "),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may 
                    be available on request to ",
@@ -181,8 +181,35 @@ observeEvent(input$btn_dataset_modal,
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+               
+               } else if (input$measure_select == "deaths"){
+               showModal(modalDialog( # DEATHS  MODAL
+                 title = "What is the data source?", 
+                 p("The analyses shown here are derived from weekly deaths registration data, and show recent trends in deaths (2020), 
+                   whether COVID or non-COVID related, and historic trends for comparison (five-year average, 2015-2019). 
+                   The recent trend data are shown by age group and sex, and the national data are also shown by broad area 
+                   deprivation category (Scottish Index of Multiple Deprivation, SIMD).  SIMD trends are not shown for Health Boards or Health 
+                   and Social Care Partnerships because of the small numbers involved and the possibility for misinterpretation."), 
+                 p("The deaths data are derived from the National Records of Scotland (NRS) ", 
+                   tags$a(href="https://www.nrscotland.gov.uk/covid19stats", 
+                          "weekly deaths", class="externallink"), " dataset. Deaths related to COVID-19 are included in totals."), 
+                 p("The figures are based on the date a death was registered rather than the date the death occurred. When someone dies, 
+                   their family (or a representative) have to make an appointment with a registrar to register the death. 
+                   Legally this must be done within 8 days, although in practice there is, on average, a 3 day gap between a 
+                   death occurring and being registered. More information on days between occurrence and registration can be be found on the ", 
+                   tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-background-information/births-and-deaths-days-until-registration", 
+                          "NRS website",class="externallink"),"."),
+                 p("The figures are reported by week, with each week running from Monday to Sunday (the ISO8601 standard week). 
+                   Moveable public holidays, when registration offices are closed, affect the number of registrations made in the 
+                   published weeks and in the corresponding weeks in previous years."), 
+                 p("Figures include non-residents.  Deaths are allocated to area based on the usual residence of the deceased. 
+                   If the deceased was not a Scottish resident, the death is allocated to the area where the death occurred."), 
+                 p("The weekly deaths dataset is managed by ", 
+                   tags$a(href=" https://www.nrscotland.gov.uk/", 
+                          "National Records of Scotland (NRS).", class="externallink")), 
+                 size = "m", 
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
-             
              )
 
 ###############################################.
@@ -248,28 +275,54 @@ output$data_explorer <- renderUI({
                        input$measure_select == "aye" ~ "attendances",
                        input$measure_select == "nhs24" ~ "completed contacts",
                        input$measure_select == "ooh" ~ "consultations",
-                       input$measure_select == "sas" ~ "incidents")
+                       input$measure_select == "sas" ~ "incidents",
+                       input$measure_select == "deaths" ~ "deaths")
   
-  variation_title <- paste0("Percentage change in ", dataset, 
-                            " compared with the corresponding time in 2018-2019 by ")
-  
+  if (input$measure_select == "deaths"){
+    variation_title <- paste0("Percentage change in ", dataset, 
+                            " compared with the corresponding time in 2015-2019 by ")   #different averaging period for deaths
+  } else {
+    variation_title <- paste0("Percentage change in ", dataset, 
+                              " compared with the corresponding time in 2018-2019 by ")
+  }
+
   total_title <- paste0("Weekly number of ", dataset, " by ")
   
   # To make sure that both titles take the same space and are lined up doing
   # a bit of a hacky shortcut:
   diff_chars <- nchar(variation_title) - nchar(total_title) +10
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
-  
+
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
     tagList(
       h3(title),
       actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
       if (input$measure_select == "nhs24"){
-        p("The data used in this chart are taken from the Unscheduled Care Datamart.  As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
-                                                                                                                   "COVID-19 weekly report for Scotland", class="externallink"), "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that can be shown in this publication.")
+        p("The data used in this chart are taken from the Unscheduled Care Datamart.  
+          As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
+                                                                                                                   "COVID-19 weekly report for Scotland", class="externallink"), 
+          "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 
+          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. 
+          Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that 
+          can be shown in this publication.")
       },
-      plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
+      if (input$measure_select == "ooh"){
+        p("Please note that data for week ending 31st May is not available for NHS Lanarkshire, 
+          North Lanarkshire HSC partnership and South Lanarkshire HSC partnership. 
+          These areas have not been included in the Scotland figure for week ending 31st May,
+          which explains the decrease in out of hours cases for that week.")
+      },
+      if (input$measure_select == "deaths"){
+        tagList(
+        p("The analyses below are derived from the National Records of Scotland (NRS) weekly deaths dataset. 
+          Numbers of deaths represent the total number of deaths (from any cause) that were registered in 
+          Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the 
+          average over the past 5 years allows estimation of the numbers of excess deaths."),
+        plot_box(paste0("2020 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
+        } else {
+          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+        },
       plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
       plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
@@ -306,13 +359,17 @@ output$data_explorer <- renderUI({
     cut_charts(title= "Weekly completed contacts with NHS 24", 
                source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
     
-  } else if (input$measure_select == "ooh") { #Out of hours consultations
-    cut_charts(title= "Weekly consultations to out of hours services", 
+  } else if (input$measure_select == "ooh") { #Out of hours cases
+    cut_charts(title= "Weekly cases in out of hours services", 
                source = "PHS GP OOH Datamart", data_name ="ooh")
     
   } else if (input$measure_select == "sas") { # SAS data
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service", 
                source = "PHS Unscheduled Care Datamart", data_name ="sas")
+    
+  } else if (input$measure_select == "deaths") { # Deaths data
+    cut_charts(title= "Weekly number of deaths", 
+               source = "NRS Death Registrations", data_name ="deaths")
   }
 }) 
 
@@ -322,51 +379,61 @@ output$data_explorer <- renderUI({
 ###############################################.
 # Creating plots for each cut and dataset
 # A&E charts
-output$aye_overall <- renderPlotly({plot_overall_chart(aye, "aye")})
-output$aye_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex")})
-output$aye_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age")})
-output$aye_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep")})
+output$aye_overall <- renderPlotly({plot_overall_chart(aye, data_name = "aye")})
+output$aye_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", data_name = "aye")})
+output$aye_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age", data_name = "aye")})
+output$aye_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", data_name = "aye")})
 output$aye_sex_tot <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", "total", "aye")})
 output$aye_age_tot <- renderPlotly({plot_trend_chart(aye, pal_age, "age", "total", "aye")})
 output$aye_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "total", "aye")})
 
 # OOH charts
 output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
-output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex")})
-output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age")})
-output$ooh_depr_var <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep")})
+output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", data_name = "ooh")})
+output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", data_name = "ooh")})
+output$ooh_depr_var <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", data_name = "ooh")})
 output$ooh_sex_tot <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", "total", "ooh")})
 output$ooh_age_tot <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", "total", "ooh")})
 output$ooh_depr_tot <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", "total", "ooh")})
 
 # NHS24 charts
 output$nhs24_overall <- renderPlotly({plot_overall_chart(nhs24, "nhs24")})
-output$nhs24_sex_var <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex")})
-output$nhs24_age_var <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age")})
-output$nhs24_depr_var <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep")})
+output$nhs24_sex_var <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex", data_name = "nhs24")})
+output$nhs24_age_var <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age", data_name = "nhs24")})
+output$nhs24_depr_var <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep", data_name = "nhs24")})
 output$nhs24_sex_tot <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex", "total", "nhs24")})
 output$nhs24_age_tot <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age", "total", "nhs24")})
 output$nhs24_depr_tot <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep", "total", "nhs24")})
 
 # SAS charts
 output$sas_overall <- renderPlotly({plot_overall_chart(sas, "sas")})
-output$sas_sex_var <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex")})
-output$sas_age_var <- renderPlotly({plot_trend_chart(sas, pal_age, "age")})
-output$sas_depr_var <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep")})
+output$sas_sex_var <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex", data_name = "sas")})
+output$sas_age_var <- renderPlotly({plot_trend_chart(sas, pal_age, "age", data_name = "sas")})
+output$sas_depr_var <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep", data_name = "sas")})
 output$sas_sex_tot <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex", "total", "sas")})
 output$sas_age_tot <- renderPlotly({plot_trend_chart(sas, pal_age, "age", "total", "sas")})
 output$sas_depr_tot <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep", "total", "sas")})
 
 # Admissions to hospital charts
 output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
-output$adm_sex_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex")})
-output$adm_age_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age")})
-output$adm_depr_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep")})
+output$adm_sex_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", data_name = "adm")})
+output$adm_age_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", data_name = "adm")})
+output$adm_depr_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", data_name = "adm")})
 output$adm_sex_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", "total", "adm")})
 output$adm_age_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", "total", "adm")})
 output$adm_depr_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", "total", "adm")})
 output$adm_spec_var <- renderPlotly({plot_spec("variation")})
 output$adm_spec_tot <- renderPlotly({plot_spec("total")})
+
+# Deaths charts
+output$deaths_overall <- renderPlotly({plot_overall_chart(deaths, "deaths")})
+output$deaths_sex_var <- renderPlotly({plot_trend_chart(deaths, pal_sex, "sex", data_name = "deaths")})
+output$deaths_age_var <- renderPlotly({plot_trend_chart(deaths, pal_age, "age", data_name = "deaths")})
+output$deaths_depr_var <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep", data_name = "deaths")})
+output$deaths_sex_tot <- renderPlotly({plot_trend_chart(deaths, pal_sex, "sex", "total", "deaths")})
+output$deaths_age_tot <- renderPlotly({plot_trend_chart(deaths, pal_age, "age", "total", "deaths")})
+output$deaths_depr_tot <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep", "total", "deaths")})
+
 
 # Palette for specialty
 pal_spec <- reactive({
@@ -411,14 +478,14 @@ symbol_spec <- reactive({
 overall_data_download <- reactive({
   switch(
     input$measure_select,
-    "rapid" = filter_data(rapid_filt()),
-    "aye" = filter_data(aye),
-    "nhs24" = filter_data(nhs24),
-    "ooh" = filter_data(ooh),
-    "sas" = filter_data(sas)
+    "rapid" = filter_data(rapid_filt() %>% rename(average_2018_2019 = count_average)),
+    "aye" = filter_data(aye) %>% rename(average_2018_2019 = count_average),
+    "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average),
+    "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average),
+    "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average),
+    "deaths" = filter_data(deaths %>% rename(average_2015_2019 = count_average))
   ) %>% 
-    select(area_name, week_ending, count, count_average) %>% 
-    rename(average_2018_2019 = count_average) %>% 
+    select(area_name, week_ending, count, starts_with("average")) %>% 
     mutate(week_ending = format(week_ending, "%d %b %y"))
 })
 
@@ -428,5 +495,91 @@ output$download_chart_data <- downloadHandler(
     write_csv(overall_data_download(),
               file) } 
 )
+
+###############################################.
+## Commentary tab content  ----
+###############################################.
+
+
+output$summary_comment <- renderUI({
+  tagList(h2("Summary - 3rd June 2020"), 
+          p("From the second week of March 2020 there was an abrupt and steep fall in hospital admissions, 
+attendances at Accident and Emergency (A&E) departments and cases in out of hours services. 
+Use of all of these services fell to around half the average levels seen 2018-19 and has since recovered 
+only slightly. Numbers of NHS 24 111 completed contacts did not change appreciably though the data presented 
+here do not include additional NHS 24 services specific to COVID-19. There was a small fall in attended 
+ambulance incidents. Further analyses are presented in this interactive online tool."),
+          h4("Background"),
+          p("The COVID-19 pandemic has direct impacts on health as a result of illness, 
+hospitalisations and deaths due to COVID-19. However, the pandemic also has wider impacts on health and 
+on health inequalities. Reasons for this may include:"),
+          tags$ul( 
+            tags$li("Individuals being reluctant to use health services because they do not want to 
+burden the NHS or are anxious about the risk of infection."),
+            tags$li("The health service delaying preventative and non-urgent care such as 
+some screening services and planned surgery."),
+            tags$li("Other indirect effects of interventions to control COVID-19, such as mental or 
+physical consequences of distancing measures.")),
+            p("Public Health Scotland aims to provide information and intelligence on the wider 
+impacts of COVID-19 on health, healthcare and health inequalities that are not directly due to COVID-19."),
+            p("We have focused initially on using the national datasets that are returned to PHS most quickly, 
+as these allow us to monitor impacts with the minimum delay. The work to date has made use of the following data sources:"),
+            tags$ul(
+              tags$li("The RAPID (rapid and preliminary inpatient data) hospital admissions database."),
+              tags$li("A&E attendances."),
+              tags$li("NHS 24 completed contacts."),
+              tags$li("Out of hours cases."),
+              tags$li("Scottish Ambulance Service data.")),
+          h4("Initial findings: hospital admissions"),
+          tags$ul(
+            tags$li("Hospital admissions fell sharply from the second week of March, reaching levels 
+nearly 50% below those expected on the basis of admissions during 2018-19."),
+            tags$li("There has been some recovery since late April, but numbers of admissions remain 
+around 35% below the 2018-19 average."),
+            tags$li("Similar patterns are seen by sex and by deprivation, but falls were larger for children 
+under 14 years and smaller for those aged 85 years and over."),
+            tags$li("There were larger relative falls for surgical than medical specialties."),
+            tags$li("There were much larger falls in planned admissions (around 65%) than in 
+emergency admissions (around 40%)."),
+            tags$li("There were particularly large falls (around 60%) for emergency paediatric admissions."),
+            tags$li("The pattern was broadly similar across NHS Boards; the low level of recorded admissions 
+in NHS Forth Valley is likely to be due to data quality problems.")),
+          h4("Initial findings: unscheduled care"),
+          tags$ul(
+            tags$li("Other data sources showed changes with similar time patterns to those seen for 
+hospital admissions. There were larger falls (nearly 60%) for A&E attendances, with similar patterns by 
+age, sex and deprivation."),
+            tags$li("NHS 24 111 completed contacts rose substantially for working age adults, 
+but fell to around 50% of previous levels for children under 15 years of age, with little sign of recovery 
+to previous levels. However it is important to note that while these figures include some contacts related 
+to COVID-19, they do not include additional services set up to respond directly to COVID-19. 
+Compared to previous years, percentage falls in completed contacts were smaller among those 
+living in more deprived areas."),
+            tags$li("Compared to earlier years there were large percentage falls (around 55% overall) in 
+cases in out of hours services, especially for children, where the fall was around 70%."),
+            tags$li("There were more modest falls in attended ambulance incidents (around 15% overall) 
+though the fall was much larger for children (around 50%). These figures include incidents related to COVID-19.")),
+          h4("Interpreting these figures"),
+          p("These analyses are based on a selected range of data sources that are available to describe 
+changes in health service use in Scotland during the COVID-19 pandemic. Hospital admissions, attendances 
+at A&E departments, contacts with the NHS 24 111 completed contacts and cases in out of hours 
+services all fell to around half the average levels seen 2018-19 and have since recovered only modestly. 
+There was a smaller fall in attended ambulance incidents and no appreciable change in NHS 24 111 completed 
+contacts. These falls are likely to reflect a range of factors, including public anxiety about using NHS 
+services, changes in the delivery of NHS services in response to rising numbers of COVID-19 hospital admissions 
+and actions to defer planned activity in order to be prepared for expected COVID-19 related demand. 
+The changes preceded by around a week the introduction of social distancing measures. The impact was 
+particularly large for children under 14 years, with larger percentage falls in hospital admissions, NHS 24 111 
+completed contacts, out of hours cases and ambulance incidents. As expected, the falls in hospital 
+admissions were larger for planned than for emergency admissions and larger for surgical than medical 
+admissions. There was little evidence from these data sources that social inequalities in the use of these 
+services increased during this period."),
+          h4("Future work"),
+          p("Work is under way to broaden the range of data sources available – within the next few weeks 
+we expect to publish information on health visitor checks, perinatal mortality, 
+excess mortality (in collaboration with NRS), prescribing and cardiovascular presentations"
+          ))
+})
+
 
 #END

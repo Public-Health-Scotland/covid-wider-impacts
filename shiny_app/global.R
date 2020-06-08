@@ -47,6 +47,12 @@ aye <- readRDS("data/ae_data.rds") #A&E data
 ooh <- readRDS("data/ooh_data.rds") # OOH data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 sas <- readRDS("data/sas_data.rds") # OOH data
+deaths <- readRDS("data/deaths_data.rds") # deaths data
+  
+## Immunisation Data
+six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
+sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
+
 
 ## Child Health Data
 first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
@@ -61,13 +67,14 @@ sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)")) # specialty list
 
-data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
-               "NHS 24 completed contacts" = "nhs24",
-    "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
+data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
+               "NHS 24 completed contacts" = "nhs24", 
+               "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas",
+               "Excess mortality" = "deaths")
 
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_8wks",
-                     "6-in-1 second dose *COMING 10th June 2020*" = "sixin_12wks",
+                     "6-in-1 second dose *COMING 17th June 2020*" = "sixin_12wks",
                      "6-in-1 third dose *COMING 17th June 2020*" = "sixin_16wks")
 
 # List of data items available in step 2 of immunisation tab
@@ -78,17 +85,26 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
 data_list_data_tab <- c(data_list, "6-in-1 first dose"  = "sixin_8wks", 
                         "Health Visitor first visit" = "first_visit")
 
+
 ###############################################.
 ## Palettes and plot parameters ----
 ###############################################.
-pal_depr <- c('#abd9e9', '#74add1', '#4575b4', '#313695', '#022031')
+pal_depr <- c('#2c7fb8', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 #Palette for 9 series in a gradient
 pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
                     '#74add1', '#4575b4', '#313695')
 # '#abd9e9', '#dfc27d',
 #Palette for those with a single category per sex and overall
-pal_sex <- c('#000000', '#08519c','#bdd7e7')
+pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
+# pal_immun <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", 
+#                "02-Mar-20" = "#fee391", "09-Mar-20" = "#fec44f", 
+#                "16-Mar-20" = "#fe9929", "23-Mar-20" = "#ec7014", 
+#                "30-Mar-20" = "#cc4c02", "06-Apr-20" = "#8c2d04")
+pal_immun <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
+               "W/B 02-MAR-2020" = "#fee391", "W/B 09-MAR-2020" = "#fec44f",
+               "W/B 16-MAR-2020" = "#fe9929", "W/B 23-MAR-2020" = "#ec7014",
+               "W/B 30-MAR-2020" = "#cc4c02", "W/B 06-APR-2020" = "#8c2d04")
 
 pal_immun <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
                "W/B 02-MAR-2020" = "#fee391", "W/B 09-MAR-2020" = "#fec44f",
