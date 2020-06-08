@@ -180,7 +180,7 @@ output$cardio_explorer <- renderUI({
         plot_box("2020 compared with 2018-2019 average", "prescribing_all"),
         plot_cut_box(paste0("Percentage change in cardiovascular drug prescriptions in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by drug group"), "cardio_drugs_var",
-                     paste0("Weekly number of cardiovascular drug prescriptions in ", input$geoname_cardio, " by age group"), "cardio_drugs_tot")
+                     paste0("Weekly number of cardiovascular drug prescriptions in ", input$geoname_cardio, " by drug group"), "cardio_drugs_tot")
       )
     }
 })
