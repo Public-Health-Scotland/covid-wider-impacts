@@ -56,12 +56,13 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
 ###############################################.
 ## Commentary ----
 ###############################################.
-tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
-         mainPanel(width = 12,
-                   uiOutput("summary_comment"),
-                   uiOutput("immun_commentary_section")
-         )#main panel bracket
-), #tab panel
+ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
+          mainPanel(width = 12,
+                    uiOutput("summary_comment"),
+                    uiOutput("immun_commentary_section"),
+                    uiOutput("child_comments")
+          )#main panel bracket
+ ), #tab panel
 ###############################################.
 ## Summary trends ----
 ###############################################.
@@ -112,6 +113,29 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
                    uiOutput("immunisation_explorer")
          )# mainPanel bracket 
 ), # tabpanel bracket
+###############################################.
+## Child Health Tab ----
+###############################################.
+tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
+         wellPanel(
+           column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_child", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_child")),
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_select_child", 
+                                           label= "Step 2. Select the data you want to explore.", 
+                                           choices = data_list_child, status = "primary", 
+                                           direction = "vertical", justified = T))),
+           column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')),
+                  downloadButton("download_visit_data", "Download data"))
+           #actionButton("browser", "Browser")
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("child_health_explorer")
+         )# mainPanel bracket 
+    ), # tabpanel bracket
 ###############################################.
 ## Data ----
 ###############################################.
