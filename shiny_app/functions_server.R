@@ -199,7 +199,7 @@ plot_spec <- function(type) {
 #####################################################################################.
 ## Function for drawing S-Curve charts used in immunisation tabs.
 
-plot_scurve__immun <- function(dataset) {
+plot_scurve_immun <- function(dataset) {
   
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun) 
   # %>%
