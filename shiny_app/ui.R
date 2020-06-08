@@ -129,6 +129,7 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
                                            choices = data_list_child, status = "primary", 
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')),
+                  fluidRow(br()),
                   downloadButton("download_visit_data", "Download data"))
            #actionButton("browser", "Browser")
          ), #well panel
