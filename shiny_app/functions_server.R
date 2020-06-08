@@ -209,8 +209,6 @@ plot_nodata <- function(height_plot = 450, text_nodata = "No data available") {
     config( displayModeBar = FALSE) # taking out plotly logo and collaborate button
 } 
 
-}  
-
 #####################################################################################.
 ## Function for drawing S-Curve charts used in immunisation and health visitor tabs.
 
