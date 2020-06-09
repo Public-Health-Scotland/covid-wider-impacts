@@ -102,16 +102,34 @@ observeEvent(input$btn_cardio_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "cath") {
-               if (input$area_cardio_select == "Royal Infirmary of Edinburgh") {
-                 
-               } else if (input$area_cardio_select == "Golden Jubilee Hospital") {
-                 
-               } else if (input$area_cardio_select == "All") {
-                 
-               }
                showModal(modalDialog(#ALL  MODAL
                  title = "What is the data source?",
-                 p(""),
+                 p("Catheterization labs carry out a series of procedures to observe
+                    the condition of the heart and its arteries and to treat problems
+                    found this way, particularly the narrowing of the arteries."),
+                 p("This data shows the number of procedures carried out by two of the 
+                   biggest cath labs in Scotland. We show the data split by three types of procedures: "),
+                 tags$ul(
+                   tags$li("Angiographies - These diagnostic procedures allow clinicians to see and investigate
+                          the state of the hearts and its arteries. Patients of the labs will go
+                          through this process before any other one. Therefore have used the number of
+                          angiographies as the total number of cases for each lab. Many angiographies
+                          are planned."),
+                   tags$li("PCI - Percutaneous coronary intervention is a procedure used to treat
+                          the narrowing of the heart arteries. In many cases this is an urgent procedure
+                          which is used when patients are suffering a heart attack."),
+                   tags$li("Devices - in these labs patients can be fitted with pacemakers and other
+                          devices used to treat cardiac problems. These procedures are also carried out
+                          in other environments so please be aware they are not representative of the 
+                          total volume of devices fitted.")
+                 ),
+                 p("There are four catheterization labs in Scotland: Golden Jubilee Hospital,
+                   Royal Infirmary of Edinburgh, Aberdeen Royal Infirmary and Ninewells Hospital in Dundee."),
+                 p("For Golden Jubilee Hospital please be aware that they extended their catchment area 
+                    during the lockdown period to cover Ayrshire & Arran, Dumfried & Galloway and southeast Glasgow,
+                    areas which previously would have gone to Hairmyres Hospital.
+                    Also their volume of cases from 2019 (used as a comparator) is 
+                    artificially high as they had a mobile lab in 2019."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
@@ -140,7 +158,7 @@ output$cardio_explorer <- renderUI({
       tagList( # Cath labs
         h3(paste0("Weekly visits to the cardiac catheterization labs at the ", lab_chosen)),
         actionButton("btn_cardio_modal", paste0("Data source: ", lab_chosen), icon = icon('question-circle')),
-        plot_box("2020 compared with 2019", "cath_overall"),
+        plot_box("2020 compared with 2018-2019 average", "cath_overall"),
         plot_cut_box("Percentage change in cases compared with the
                    corresponding time in 2018-2019 by sex", "cath_sex_var",
                      "Weekly number of cases by sex", "cath_sex_tot"),
@@ -186,12 +204,8 @@ output$cardio_explorer <- renderUI({
 ###############################################.
 #Cath labs RIE charts
 output$cath_overall <- renderPlotly({
-  plot_overall_chart(cath_lab %>% filter(groups == "Angiography" & lab == input$area_cardio_select), "cath", area = F)})
-output$cath_devices <- renderPlotly({
-  plot_overall_chart(cath_lab %>% filter(groups == "Devices" & lab == input$area_cardio_select), "cath", area = F)})
-output$cath_pci <- renderPlotly({
-  plot_overall_chart(cath_lab %>% filter(groups == "PCI" & lab == input$area_cardio_select), "cath", area = F)})
-
+  plot_overall_chart(cath_lab %>% filter(groups == "Angiography" & lab == input$area_cardio_select), 
+                     "cath", area = F)})
 output$cath_sex_var <- renderPlotly({
   plot_trend_chart(cath_lab %>% filter(groups == "Angiography"  & type == "sex"
                                        & lab == input$area_cardio_select), pal_sex)})
@@ -208,7 +222,7 @@ output$cath_age_tot <- renderPlotly({
                    pal_2ages, type = "total", data_name = "cath")})
 
 output$cath_type_var <- renderPlotly({
-  plot_trend_chart(cath_lab %>% filter(category == "All"& lab == input$area_cardio_select) %>% 
+  plot_trend_chart(cath_lab %>% filter(category == "All" & lab == input$area_cardio_select) %>% 
                      select(-category) %>% rename(category = groups), pal_sex)})
 output$cath_type_tot <- renderPlotly({
   plot_trend_chart(cath_lab %>% filter(category == "All" & lab == input$area_cardio_select) %>% 
