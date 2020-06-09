@@ -500,7 +500,7 @@ gj_cath_all <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabProcCountsB
 # Merging together and formating
 gj_cath <- rbind(gj_cath_age, gj_cath_sex, gj_cath_all) %>% 
   mutate(week_ending = as.Date(date_to) + 1,
-         lab = "Golden Jubilee Hospital") %>% 
+         lab = "Golden Jubilee National Hospital") %>% 
   select(-proc_year, -wk, -date_from, -date_to) %>% 
   rename(count = num_procs, groups = group)
 

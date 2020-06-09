@@ -20,7 +20,7 @@ observeEvent(input$measure_cardio_select, {
   
   if (x == "cath") {
     cardio_label = "Step 2 - Select the area of interest for cardiac catheterization labs"
-    cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee Hospital")
+    cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
     
@@ -104,27 +104,38 @@ observeEvent(input$btn_cardio_modal,
              } else if (input$measure_cardio_select == "cath") {
                showModal(modalDialog(#ALL  MODAL
                  title = "What is the data source?",
-                 p("Catheterization labs carry out a series of procedures to observe
+                 p("Catheterisation labs carry out a series of procedures to observe
                     the condition of the heart and its arteries and to treat problems
-                    found this way, particularly the narrowing of the arteries."),
+                    found this way, particularly the narrowing of the arteries.
+                   There are four catheterisation labs in Scotland: Golden Jubilee Hospital,
+                   Royal Infirmary of Edinburgh, Aberdeen Royal Infirmary and Ninewells Hospital in Dundee.
+                   Information on the numbers of procedures taking place in these catheterisation 
+                   labs has been supplied to PHS directly by a number of these facilities as part 
+                   of a bespoke data request."),
+                 
                  p("This data shows the number of procedures carried out by two of the 
-                   biggest cath labs in Scotland. We show the data split by three types of procedures: "),
+                   biggest catheterisation labs in Scotland. We show the data split by three types of procedures: "),
                  tags$ul(
                    tags$li("Angiographies - These diagnostic procedures allow clinicians to see and investigate
-                          the state of the hearts and its arteries. Patients of the labs will go
-                          through this process before any other one. Therefore have used the number of
-                          angiographies as the total number of cases for each lab. Many angiographies
-                          are planned."),
+                          the condition of the hearts and its arteries. All patients who are taken to a
+                          catheterisation lab will go through this process before any further procedures in the lab.
+                          Within this tool, the number of angiographies carried out is considered 
+                          the total number of cases for each lab. Many angiographies
+                          are carried out as planned procedures."),
                    tags$li("PCI - Percutaneous coronary intervention is a procedure used to treat
                           the narrowing of the heart arteries. In many cases this is an urgent procedure
                           which is used when patients are suffering a heart attack."),
                    tags$li("Devices - in these labs patients can be fitted with pacemakers and other
-                          devices used to treat cardiac problems. These procedures are also carried out
+                          devices to treat cardiac problems. Fitting of cardiac devices may also be carried out
                           in other environments so please be aware they are not representative of the 
-                          total volume of devices fitted.")
+                          total volume of cardiac devices fitted.")
                  ),
-                 p("There are four catheterization labs in Scotland: Golden Jubilee Hospital,
-                   Royal Infirmary of Edinburgh, Aberdeen Royal Infirmary and Ninewells Hospital in Dundee."),
+                 p("Note that during the COVID-19 lockdown period the Golden Jubilee National Hospital 
+                   extended their catheterisation lab catchment area to cover Ayrshire & Arran, Dumfriesd & Galloway 
+                   and southeast Glasgow, areas which previously would have gone to Hairmyres Hospital. 
+                   In addition, during 2019 increased catheterisation lab activity was seen at the Golden Jubilee National 
+                    Hospital activity due to the presence of the temporary mobile lab which was not present during other 
+                   time periods,"),
                  p("For Golden Jubilee Hospital please be aware that they extended their catchment area 
                     during the lockdown period to cover Ayrshire & Arran, Dumfried & Galloway and southeast Glasgow,
                     areas which previously would have gone to Hairmyres Hospital.
@@ -133,6 +144,29 @@ observeEvent(input$btn_cardio_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
+)
+
+# Link action button click to modal launch 
+observeEvent(input$btn_cath_modal, 
+               showModal(modalDialog(#ALL  MODAL
+                 title = "What these interventions involve?",
+                 tags$ul(
+                   tags$li("Angiographies - These diagnostic procedures allow clinicians to see and investigate
+                           the condition of the hearts and its arteries. All patients who are taken to a
+                           catheterisation lab will go through this process before any further procedures in the lab.
+                           Within this tool, the number of angiographies carried out is considered 
+                           the total number of cases for each lab. Many angiographies
+                           are carried out as planned procedures."),
+                   tags$li("PCI - Percutaneous coronary intervention is a procedure used to treat
+                           the narrowing of the heart arteries. In many cases this is an urgent procedure
+                           which is used when patients are suffering a heart attack."),
+                   tags$li("Devices - in these labs patients can be fitted with pacemakers and other
+                           devices to treat cardiac problems. Fitting of cardiac devices may also be carried out
+                           in other environments so please be aware they are not representative of the 
+                           total volume of cardiac devices fitted.")
+                 ),
+                 size = "m",
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
 )
 
 # Rendering A&E Cardio Codes table here for inclusion to modal above
@@ -152,7 +186,7 @@ output$ae_cardio_codes_tbl <- DT::renderDataTable(
 output$cardio_explorer <- renderUI({
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
-    lab_chosen <- case_when(input$area_cardio_select == "All" ~ "Royal Infirmary of Edinburgh and Golden Jubilee Hospital",
+    lab_chosen <- case_when(input$area_cardio_select == "All" ~ "Royal Infirmary of Edinburgh and Golden Jubilee National Hospital",
                             TRUE ~ paste0(input$area_cardio_select))
     
       tagList( # Cath labs
@@ -160,14 +194,16 @@ output$cardio_explorer <- renderUI({
         actionButton("btn_cardio_modal", paste0("Data source: ", lab_chosen), icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "cath_overall"),
         plot_cut_box("Percentage change in cases compared with the
+                   corresponding time in 2018-2019 by type of intervention", "cath_type_var",
+                     "Weekly number of cases by type of intervention", "cath_type_tot",
+                     extra_content =  fluidRow(actionButton("btn_cath_modal", "What these interventions involve?", 
+                                                                   icon = icon('question-circle')))),
+        plot_cut_box("Percentage change in cases compared with the
                    corresponding time in 2018-2019 by sex", "cath_sex_var",
                      "Weekly number of cases by sex", "cath_sex_tot"),
         plot_cut_box("Percentage change in cases compared with the
                    corresponding time in 2018-2019 by age group", "cath_age_var",
-                     "Weekly number of cases by age group", "cath_age_tot"),
-        plot_cut_box("Percentage change in cases compared with the
-                   corresponding time in 2018-2019 by type of intervention", "cath_type_var",
-                     "Weekly number of cases by type of intervention", "cath_type_tot")
+                     "Weekly number of cases by age group", "cath_age_tot")
       )
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
