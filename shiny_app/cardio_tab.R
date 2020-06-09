@@ -94,7 +94,115 @@ observeEvent(input$btn_cardio_modal,
              } else if (input$measure_cardio_select == "drug_presc") {
                showModal(modalDialog(#Prescribin - Cardio Drugs
                  title = "What is the data source?",
-                 p("Text to be written"),
+                 p("This section of the PHS Covid-19 - Wider Impacts dashboard provides weekly information on the 
+                   number of cardiovascular drug items prescribed. The data ranges from the start of 2020 to the
+                   latest available week and is shown alongside historical activity (average from 2018 and 2019) for 
+                   comparison purposes. Additional breakdowns by drug grouping are provided also (please see below 
+                   for more details)."),
+                 tags$b("What are ePrescribed Messages?"),
+                 p("ePrescribed Messages are electronic messages that are generated when a GP issues a GP10 prescription. 
+                   They are one of the main data streams feeding into the Prescribing Information Sytem (PIS). 
+                   GPs account for more than 95% of prescribing in primary care, the great majority of prescriptions 
+                   processed have at least one accompanying electronic source."),
+                 tags$b("Why are we using ePrescribed messaging data?"),
+                 p("The ePrescribed data are loaded daily and are typically available ~48h after the prescription was written. 
+                   This allows for a far more rapid turnaround in terms of data analysis of prescribing data as
+                   opposed to waiting for 3 months for data to become available through standard data collection means.  
+                   This “real-time” intelligence on prescribing trends across Scotland is of particular importance 
+                   during the current Covid-19 crisis."),
+                 tags$b("Limitations of ePrescribed messaging data?"),
+                 p("Some prescribers currently cannot generate electronic messages – this information is only 
+                   available when all prescriptions are processed for payment 3 months later. Therefore, e-messaging 
+                   data should be regarded as incomplete for all prescriber types. (*Can we say something here about 
+                   how complete for GP prescribing?*). In addition, data is not subject to the same quality assurance 
+                   processes as prescribing data in the PIS and PRISMS data warehouses. Also, although a prescription 
+                   might have been issued, it may not have been dispensed for various reasons. Currently, the electronic 
+                   message data is unstructured which makes looking at groups of drugs e.g. medicines used for diabetes, more 
+                   challenging. A serial prescription is prescribed once and generates a single electronic message, 
+                   but can be dispensed multiple times within a period of 24, 48 or 52 weeks – many Health Boards use 
+                   serial prescribing for suitable patients, making this analysis complicated."),
+                 tags$hr(),
+                 actionButton("toggleBNFCodes", "Show / Hide BNF Codes"),
+                 shinyjs::onclick("toggleBNFCodes",
+                                  shinyjs::toggle(id = "BNFCodes")),
+                 shinyjs::hidden(div(id="BNFCodes",
+                     br(),
+                     tags$b("Hypertension, ischaemic heart disease and heart failure"),
+                     HTML({
+                       "
+                       <table style='width:100%'>
+                       <tr>
+                       <th colspan='2'>BNF Legacy</th>
+                       </tr>
+                       <tr>
+                       <td>0201</td>
+                       <td>Positive inotrpic drugs</td>
+                       </tr>
+                       <tr>
+                       <td>0203</td>
+                       <td>Anti-arrhythmic drugs</td>
+                       </tr>
+                       <tr>
+                       <td>0204</td>
+                       <td>Beta-adrenoreceptor blocking drugs</td>
+                       </tr>
+                       <tr>
+                       <td>0205</td>
+                       <td>Antihypertensives</td>
+                       </tr>
+                       <tr>
+                       <td>0207</td>
+                       <td>Sympathomimetics</td>
+                       </tr>
+                       <tr>
+                       <td>020505</td>
+                       <td>Drugs affecting the renin-angiotensin system</td>
+                       </tr>
+                       <tr>
+                       <td>020601</td>
+                       <td>Nitrates</td>
+                       </tr>
+                       <tr>
+                       <td>020602</td>
+                       <td>Calcium channel blockers</td>
+                       </tr>
+                       <tr>
+                       <td>020604</td>
+                       <td>Peripheral vasodilator and related drugs</td>
+                       </tr>
+                       </table>
+                       "
+                     }),
+                     br(),
+                     tags$b("Antiplatelet drugs"),
+                     HTML({
+                       "
+                       <table style='width:100%'>
+                       <tr>
+                       <th colspan='2'>BNF Legacy</th>
+                       </tr>
+                       <tr>
+                       <td>0209</td>
+                       <td>Antiplatelet drugs</td>
+                       </tr>
+                       </table>
+                       "
+                 }),
+                     br(),
+                     tags$b("Oral anticoagulants"),
+                     HTML({
+                       "
+                       <table style='width:100%'>
+                       <tr>
+                       <th colspan='2'>BNF Legacy</th>
+                       </tr>
+                       <tr>
+                       <td>020802</td>
+                       <td>Oral anticoagulants</td>
+                       </tr>
+                       </table>
+                       "
+                     }))),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "cath") {
@@ -176,7 +284,7 @@ output$cardio_explorer <- renderUI({
     } else if (input$measure_cardio_select == "drug_presc") {
       tagList(# Prescribing - items dispensed
         h3(paste0("Weekly number of cardiovascular drug items prescribed in ", input$geoname_cardio)),
-        actionButton("btn_cardio_modal", "Data source: Prescribing", icon = icon('question-circle')),
+        actionButton("btn_cardio_modal", "Data source: ePrescribed Messages", icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "prescribing_all"),
         plot_cut_box(paste0("Percentage change in cardiovascular drug prescriptions in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by drug group"), "cardio_drugs_var",
