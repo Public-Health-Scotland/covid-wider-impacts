@@ -500,7 +500,7 @@ gj_cath_all <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabProcCountsB
 # Merging together and formating
 gj_cath <- rbind(gj_cath_age, gj_cath_sex, gj_cath_all) %>% 
   mutate(week_ending = as.Date(date_to) + 1,
-         lab = "Golden Jubilee Hospital") %>% 
+         lab = "Golden Jubilee National Hospital") %>% 
   select(-proc_year, -wk, -date_from, -date_to) %>% 
   rename(count = num_procs, groups = group)
 
@@ -559,7 +559,10 @@ cath_labs_2020 <- left_join(cath_labs %>% filter(year(week_ending) %in% c("2020"
          variation = round(-1 * ((count_average - count)/count_average * 100), 1),
          # Dealing with infinite values from historic average = 0
          variation =  ifelse(is.infinite(variation), 8000, variation)) %>% 
-  select(-proc_week)
+  select(-proc_week) %>% 
+  # Supressing small numbers
+  mutate(count = case_when(count<5 ~ NA_real_, TRUE ~ count),
+         variation = case_when((count<5 | is.na(count)) ~ NA_real_, TRUE ~ variation))
 
 saveRDS(cath_labs_2020, "shiny_app/data/cath_lab_data.rds")
 
