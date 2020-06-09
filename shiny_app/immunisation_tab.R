@@ -43,6 +43,8 @@ output$geoname_ui_immun <- renderUI({
 # Reactive dataset for flextable filter on geographical area
 filter_table_data_immun <- function(dataset){
   dataset %>% filter(area_name == input$geoname_immun)
+   # mutate(cohort=factor(cohort,levels=c("yearly","monthly","weekly"))) %>%  # required if table sort order is to change
+    #arrange(cohort)
 }
 
 
@@ -57,6 +59,10 @@ output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable, age_week = 8)}
 
 output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_dose2, age_week = "12")})
 output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week = 12)})
+
+output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_dose3, age_week = "16")})
+output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week = 16)})
+
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$immunisation_explorer <- renderUI({
@@ -101,9 +107,15 @@ output$immunisation_explorer <- renderUI({
                column(6, uiOutput("immun_6in1_table_dose2"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
-  }  else if (input$measure_select_immun == "sixin_16wks"){
-    p("6-in-1 at 16 weeks coming 17th June 2020")}
-  
+  }  else if (input$measure_select_immun == "sixin_dose3"){
+    tagList(
+      fluidRow(column(12, renderUI(intro_6in1),
+                      h4(paste0(immune_title)))),
+      fluidRow(column(6,br(), br(),
+                      withSpinner(plotlyOutput("immun_6in1_scurve_dose3"))),
+               column(6, uiOutput("immun_6in1_table_dose3"))),
+      fluidRow(column(12, renderUI(commentary_6in1)))
+    )}
 }) #close immunisation_explorer function
 
 
