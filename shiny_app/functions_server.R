@@ -201,6 +201,8 @@ plot_scurve <- function(dataset, age_week) {
   # For custom tick labels
   xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
   xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
+  # To adjust x-axis min and max depending on which dose selected 
+  xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) 
   
   #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
@@ -208,7 +210,7 @@ plot_scurve <- function(dataset, age_week) {
               color = ~time_period_eligible, colors = pal_immun,
               text= tooltip_scurve, hoverinfo="text") %>%
       # Adding legend title
-      add_annotations( text= paste0("Children turning ", age_week, " weeks in:"), xref="paper", yref="paper",
+      add_annotations( text= paste0("Children turning ", age_week, " weeks:"), xref="paper", yref="paper",
                        x=1.02, xanchor="left",
                        y=0.8, yanchor="bottom",    # Same y as legend below
                        legendtitle=TRUE, showarrow=FALSE ) %>% 
@@ -278,6 +280,22 @@ immune_table <- function(dataset, age_week) {
       color(i = no_complete_row, j = c("uptake_28weeks_num", "uptake_28weeks_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_28weeks_num", "uptake_28weeks_percent")) 
 
+  }else if (age_week == 16) {
+    #Apply different column names and formatting according to which dataset selected
+    format_col <- c("denominator","uptake_20weeks_num","uptake_32weeks_num","uptake_tot_num")
+    
+    imm_table <- table_data %>%
+      select (time_period_eligible, denominator,uptake_20weeks_num,uptake_20weeks_percent,uptake_32weeks_num, 
+              uptake_32weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(uptake_20weeks_num="Children recorded as receiving their vaccine by 20 weeks of age",
+                        uptake_20weeks_percent="Children recorded as receiving their vaccine by 20 weeks of age ",
+                        uptake_32weeks_num="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 28 weeks of age by the date data was extracted for analysis)",
+                        uptake_32weeks_percent="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 28 weeks of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not  weeks
+      color(i = no_complete_row, j = c("uptake_32weeks_num", "uptake_32weeks_percent"), color="#0033cc")  %>% 
+      italic(i = no_complete_row, j = c("uptake_32weeks_num", "uptake_32weeks_percent")) 
+    
   }
  imm_table %>% 
    set_header_labels(time_period_eligible= paste0("Children turning ", age_week + 4, " weeks in:"),
