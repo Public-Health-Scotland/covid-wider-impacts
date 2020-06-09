@@ -82,9 +82,8 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
         column(4,
                selectInput("adm_type", label = "Step 3. Select type of admission.",
                            choices = c("All", "Emergency", "Planned"), selected = "All"),
-               downloadButton('download_chart_data', 'Download data')#,
-               # actionButton("browser", "Browser")
-               )
+               downloadButton('download_chart_data', 'Download data')
+        )
       ), #wellPanel bracket
       mainPanel(width = 12,
                 uiOutput("data_explorer")
@@ -144,7 +143,10 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
     tabPanel(title = "Data", icon = icon("table"), value = "table",
       p("This section allows you to view the data in table format.
         You can use the filters to select the data you are interested in.
-        You can also download the data as a csv using the download button."),
+        You can also download the data as a csv using the download button. 
+        The data is also hosted in the", 
+        tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
+               "Scottish Health and Social Care Open Data portal", class="externallink"), "."),
       column(6, selectInput("data_select", "Select the data you want to explore.",
                            choices = data_list_data_tab)),
       column(6, downloadButton('download_table_csv', 'Download data')),
