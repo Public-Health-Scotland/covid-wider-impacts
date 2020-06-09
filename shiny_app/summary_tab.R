@@ -188,7 +188,9 @@ observeEvent(input$btn_dataset_modal,
                  p("The analyses shown here are derived from weekly deaths registration data, and show recent trends in deaths (2020), 
                    whether COVID or non-COVID related, and historic trends for comparison (five-year average, 2015-2019). 
                    The recent trend data are shown by age group and sex, and the national data are also shown by broad area 
-                   deprivation category (Scottish Index of Multiple Deprivation, SIMD). SIMD trends are not shown for Health Boards or Health 
+                   deprivation category (Scottish Index of Multiple Deprivation, SIMD). 
+                    Volatility of the trends will be observed in some charts due to small counts. 
+                    SIMD trends are not shown for Health Boards or Health 
                    and Social Care Partnerships because of the small numbers involved and the possibility for misinterpretation."), 
                  p("The deaths data are derived from the National Records of Scotland (NRS) ", 
                    tags$a(href="https://www.nrscotland.gov.uk/covid19stats", 
@@ -310,10 +312,11 @@ output$data_explorer <- renderUI({
       },
       if (input$measure_select == "deaths"){
         tagList(
-        p("The analyses below are derived from the National Records of Scotland (NRS) weekly deaths dataset. 
+        p("The analyses below are derived from the National Records of Scotland (NRS) weekly deaths dataset (provisional numbers). 
           Numbers of deaths represent the total number of deaths (from any cause) that were registered in 
           Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the 
-          average over the past 5 years allows estimation of the numbers of excess deaths."),
+          average over the past 5 years allows estimation of the numbers of excess deaths.
+          Volatility of the trends will be observed in some charts due to small counts."),
         plot_box(paste0("2020 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else {
           plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
@@ -576,5 +579,24 @@ excess mortality (in collaboration with NRS), prescribing and cardiovascular pre
           ))
 })
 
+output$deaths_commentary <- renderUI({
+  tagList(
+    h2("Excess mortality - 10th June 2020"),
+    p("Each week National Records for Scotland (NRS) release provisional deaths data and a ", 
+      tags$a(href="https://www.nrscotland.gov.uk/covid19stats", "report", class="externallink"),
+" about the numbers of deaths involving COVID-19 in Scotland. 
+NRS report that weekly excess mortality (defined as deaths from any cause in 2020, 
+both COVID-19 and non-COVID-19, compared with the average of the previous five years) 
+peaked at 80% higher in the week ending 12 April, and had reduced to 17% higher by 
+the most recent week (ending 24 May)."),
+    p("PHS are using the NRS data to provide further insight about excess mortality 
+by sex, age group, area deprivation (quintiles of Scottish Index of Multiple Deprivation 2020), 
+as well as at NHS Board and HSCP level. Thet numbers of deaths from any 
+cause increased markedly at all levels of area deprivation from early April 2020. 
+The excess deaths for each SIMD quintile compared with the 2015 to 2019 average
+was between 72% and 98% in the week ending 19 April, and had reduced to less than 25% 
+for all quintiles by the latest week (ending 24 May).")
+  )
+})
 
 #END
