@@ -51,7 +51,8 @@ data_table <- reactive({
   
   table_data %>% 
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
-    select(sort(current_vars())) # order columns alphabetically
+    select(sort(current_vars())) %>%  # order columns alphabetically
+    mutate_if(is.numeric, round, 1)
 })
 
 ###############################################.
