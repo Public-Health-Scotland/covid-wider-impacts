@@ -22,6 +22,8 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select the area of interest for cardiac catheterization labs"
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee Hospital")
     hide("geoname_cardio_ui")
+    enable("area_cardio_select")
+    
   }
   
   if (x == "aye") {
@@ -35,6 +37,7 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular drug prescriptions"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
     shinyjs::show("geoname_cardio_ui")
+    enable("area_cardio_select")
   }
   
   updateSelectInput(session, "area_cardio_select",
@@ -99,7 +102,14 @@ observeEvent(input$btn_cardio_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "cath") {
-               showModal(modalDialog(#CATH A&E MODAL
+               if (input$area_cardio_select == "Royal Infirmary of Edinburgh") {
+                 
+               } else if (input$area_cardio_select == "Golden Jubilee Hospital") {
+                 
+               } else if (input$area_cardio_select == "All") {
+                 
+               }
+               showModal(modalDialog(#ALL  MODAL
                  title = "What is the data source?",
                  p(""),
                  size = "m",
@@ -124,38 +134,23 @@ output$ae_cardio_codes_tbl <- DT::renderDataTable(
 output$cardio_explorer <- renderUI({
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
-    if (input$area_cardio_select == "Royal Infirmary of Edinburgh") {
-      tagList( # Cath cases Golden Jubilee
-        h3("Weekly visits to the cardiac catheterization labs at the Royal Infirmary of Edinburgh"),
-        actionButton("btn_cardio_modal", "Data source: Royal Infirmary of Edinburgh", icon = icon('question-circle')),
-        plot_box("2020 compared with 2019", "cath_rie_overall"),
+    lab_chosen <- case_when(input$area_cardio_select == "All" ~ "Royal Infirmary of Edinburgh and Golden Jubilee Hospital",
+                            TRUE ~ paste0(input$area_cardio_select))
+    
+      tagList( # Cath labs
+        h3(paste0("Weekly visits to the cardiac catheterization labs at the ", lab_chosen)),
+        actionButton("btn_cardio_modal", paste0("Data source: ", lab_chosen), icon = icon('question-circle')),
+        plot_box("2020 compared with 2019", "cath_overall"),
         plot_cut_box("Percentage change in cases compared with the
-                   corresponding time in 2018-2019 by sex", "cath_rie_sex_var",
-                     "Weekly number of cases by sex", "cath_rie_sex_tot"),
+                   corresponding time in 2018-2019 by sex", "cath_sex_var",
+                     "Weekly number of cases by sex", "cath_sex_tot"),
         plot_cut_box("Percentage change in cases compared with the
-                   corresponding time in 2018-2019 by age group", "cath_rie_age_var",
-                     "Weekly number of cases by age group", "cath_rie_age_tot"),
+                   corresponding time in 2018-2019 by age group", "cath_age_var",
+                     "Weekly number of cases by age group", "cath_age_tot"),
         plot_cut_box("Percentage change in cases compared with the
-                   corresponding time in 2018-2019 by type of intervention", "cath_rie_type_var",
-                     "Weekly number of cases by type of intervention", "cath_rie_type_tot")
+                   corresponding time in 2018-2019 by type of intervention", "cath_type_var",
+                     "Weekly number of cases by type of intervention", "cath_type_tot")
       )
-      
-    } else if (input$area_cardio_select == "Golden Jubilee Hospital") {
-    tagList( # Cath cases Golden Jubilee
-      h3("Weekly visits to the cardiac catheterization labs at the Golden Jubilee Hospital"),
-      actionButton("btn_cardio_modal", "Data source: Golden Jubilee", icon = icon('question-circle')),
-      plot_box("2020 compared with 2019", "cath_gj_overall"),
-      plot_cut_box("Percentage change in cases compared with the
-                   corresponding time in 2019 by sex", "cath_gj_sex_var",
-                   "Weekly number of cases by sex", "cath_gj_sex_tot"),
-      plot_cut_box("Percentage change in cases compared with the
-                   corresponding time in 2019 by age group", "cath_gj_age_var",
-                   "Weekly number of cases by age group", "cath_gj_age_tot"),
-      plot_cut_box("Percentage change in cases compared with the 
-                   corresponding time in 2019 by admission type", "cath_adm_gj_var",
-                   "Weekly number of cases by admission type", "cath_adm_gj_tot")
-    )
-    }
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
         tags$em("Please note that due to limitations in diagnosis recording in the A&E datamart, the 
@@ -190,93 +185,37 @@ output$cardio_explorer <- renderUI({
 ## Charts ----
 ###############################################.
 #Cath labs RIE charts
-output$cath_rie_overall <- renderPlotly({
-  plot_overall_chart(rie_cath %>% filter(groups == "Angiography"), "cath", area = F)})
-output$cath_rie_devices <- renderPlotly({
-  plot_overall_chart(rie_cath %>% filter(groups == "Devices"), "cath", area = F)})
-output$cath_rie_pci <- renderPlotly({
-  plot_overall_chart(rie_cath %>% filter(groups == "PCI"), "cath", area = F)})
+output$cath_overall <- renderPlotly({
+  plot_overall_chart(cath_lab %>% filter(groups == "Angiography" & lab == input$area_cardio_select), "cath", area = F)})
+output$cath_devices <- renderPlotly({
+  plot_overall_chart(cath_lab %>% filter(groups == "Devices" & lab == input$area_cardio_select), "cath", area = F)})
+output$cath_pci <- renderPlotly({
+  plot_overall_chart(cath_lab %>% filter(groups == "PCI" & lab == input$area_cardio_select), "cath", area = F)})
 
-output$cath_rie_sex_var <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography"  & type == "sex"), 
-                                                          pal_sex)})
-output$cath_rie_sex_tot <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography" & type == "sex"), 
-                                                          pal_sex, type = "total", data_name = "cath")})
-output$cath_rie_age_var <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography"  & type == "age"), 
-                                                          pal_2ages)})
-output$cath_rie_age_tot <- renderPlotly({plot_trend_chart(rie_cath %>% filter(groups == "Angiography"  & type == "age"), 
-                                                          pal_2ages, type = "total", data_name = "cath")})
+output$cath_sex_var <- renderPlotly({
+  plot_trend_chart(cath_lab %>% filter(groups == "Angiography"  & type == "sex"
+                                       & lab == input$area_cardio_select), pal_sex)})
+output$cath_sex_tot <- renderPlotly({
+  plot_trend_chart(cath_lab %>% filter(groups == "Angiography" & type == "sex" 
+                                       & lab == input$area_cardio_select),
+                   pal_sex, type = "total", data_name = "cath")})
+output$cath_age_var <- renderPlotly({
+  plot_trend_chart(cath_lab %>% filter(groups == "Angiography"  & type == "age" 
+                                       & lab == input$area_cardio_select), pal_2ages)})
+output$cath_age_tot <- renderPlotly({
+  plot_trend_chart(cath_lab %>% filter(groups == "Angiography"  & type == "age" 
+                                       & lab == input$area_cardio_select), 
+                   pal_2ages, type = "total", data_name = "cath")})
 
-output$cath_rie_type_var <- renderPlotly({
-  plot_trend_chart(rie_cath %>% filter(category == "All") %>% 
+output$cath_type_var <- renderPlotly({
+  plot_trend_chart(cath_lab %>% filter(category == "All"& lab == input$area_cardio_select) %>% 
                      select(-category) %>% rename(category = groups), pal_sex)})
-output$cath_rie_type_tot <- renderPlotly({
-  plot_trend_chart(rie_cath %>% filter(category == "All") %>% 
+output$cath_type_tot <- renderPlotly({
+  plot_trend_chart(cath_lab %>% filter(category == "All" & lab == input$area_cardio_select) %>% 
                      select(-category) %>% rename(category = groups), 
                    pal_sex, type = "total", data_name = "cath")})
 
-
-# Cath labs Golden Jubilee charts
-output$cath_gj_overall <- renderPlotly({plot_overall_chart(gjub_cath, "cath", area = F)})
-output$cath_adm_gj_var <- renderPlotly({plot_trend_chart(gjub_cath, pal_sex)})
-output$cath_adm_gj_tot <- renderPlotly({plot_trend_chart(gjub_cath, pal_sex, type = "total", data_name = "cath")})
-output$cath_gj_sex_var <- renderPlotly({plot_trend_chart(gjub_monthly %>% filter(type == "sex"), 
-                                                         pal_sex, period = "monthly")})
-output$cath_gj_sex_tot <- renderPlotly({plot_trend_chart(gjub_monthly %>% filter(type == "sex"), 
-                                                         pal_sex, type = "total", data_name = "cath", period = "monthly")})
-output$cath_gj_age_var <- renderPlotly({plot_trend_chart(gjub_monthly %>% filter(type == "age"), 
-                                                         pal_2ages, period = "monthly")})
-output$cath_gj_age_tot <- renderPlotly({plot_trend_chart(gjub_monthly %>% filter(type == "age"), 
-                                                         pal_2ages, type = "total", data_name = "cath", period = "monthly")})
-
-output$angio_gj_overall <- renderPlotly({
-  
-  #Text for tooltip
-  tooltip_trend <- c(paste0("Month: ", format(gjub_monthly$month_date, "%b %y"),
-                            "<br>", "Angiographies: ", gjub_monthly$n))
-  
-  #Modifying standard layout
-  yaxis_plots[["title"]] <- "Number of angiographies"
-  
-  plot_ly(data=gjub_monthly, x=~month_date,  y = ~n) %>% 
-    add_trace(type = 'scatter', mode = 'lines', line = list(color = "black"),
-              text=tooltip_trend, hoverinfo="text") %>% 
-    #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots, xaxis = xaxis_plots) %>% 
-    # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
-  
-})
-
-output$angio_gj_perc <- renderPlotly({
-  
-  #Text for tooltip
-  tooltip_fem <- c(paste0("Month: ", format(gjub_monthly$month_date, "%b %y"),
-                          "<br>", "Angiographies: ", gjub_monthly$n_female,
-                            "<br>", "Percentage: ", gjub_monthly$percent_female))
-  
-  tooltip_70 <- c(paste0("Month: ", format(gjub_monthly$month_date, "%b %y"),
-                          "<br>", "Angiographies: ", gjub_monthly$n70,
-                          "<br>", "Percentage: ", gjub_monthly$percent_70))
-  
-  
-  #Modifying standard layout
-  yaxis_plots[["title"]] <- "Percentage over the total"
-  
-  plot_ly(data=gjub_monthly, x=~month_date) %>% 
-    add_trace(y= ~percent_female, type = 'scatter', mode = 'lines', line = list(color = "blue"),
-              text=tooltip_fem, hoverinfo="text", name = "% Females") %>% 
-    add_trace(y= ~percent_70, type = 'scatter', mode = 'lines', line = list(color = "brown"),
-              text=tooltip_70, hoverinfo="text", name = "% aged 70+") %>% 
-    #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.5)) %>% #position of legend
-    # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
-  
-})
-
+###############################################.
 # A&E Cardio charts
 output$ae_cardio_overall <- renderPlotly({plot_overall_chart(ae_cardio, data_name = "aye", area = "All")})
 output$ae_cardio_age_var <- renderPlotly({plot_trend_chart(ae_cardio, pal_sex, c("age", "all"), data_name = "aye",tab = "cardio")})
@@ -284,6 +223,7 @@ output$ae_cardio_age_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_sex, c
 output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
 output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
 
+###############################################.
 # Prescribing charts
 output$prescribing_all <- renderPlotly({plot_overall_chart(cardio_drugs %>% filter(area_name == input$geoname_cardio), 
                                                            data_name = "drug_presc", area = "All")})
@@ -315,7 +255,7 @@ overall_cardio_download <- reactive({
   # Prep data for download
   switch(
     input$measure_cardio_select,
-    "cath" = filter_data(gjub_cath, area = F),
+    "cath" = filter_data(cath_lab, area = F) %>% filter(lab == input$area_cardio_select),
     "aye" = filter_data(ae_cardio, area = F),
     "drug_presc" = filter_data(cardio_drugs, area = F)
   ) %>% 
@@ -325,7 +265,7 @@ overall_cardio_download <- reactive({
 })
 
 output$download_cardio_data <- downloadHandler(
-  filename ="data_extract.csv",
+  filename ="cardio_extract.csv",
   content = function(file) {
     write_csv(overall_cardio_download(),
               file) } 
