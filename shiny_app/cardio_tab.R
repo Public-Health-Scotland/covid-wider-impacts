@@ -125,6 +125,7 @@ observeEvent(input$btn_cardio_modal,
                    challenging. A serial prescription is prescribed once and generates a single electronic message, 
                    but can be dispensed multiple times within a period of 24, 48 or 52 weeks – many Health Boards use 
                    serial prescribing for suitable patients, making this analysis complicated."),
+                 p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
                  tags$hr(),
                  actionButton("toggleBNFCodes", "Show / Hide BNF Codes"),
                  shinyjs::onclick("toggleBNFCodes",
@@ -207,7 +208,7 @@ observeEvent(input$btn_cardio_modal,
                        </table>
                        "
                      }))),
-                 size = "m",
+                 size = "l",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "cath") {
                showModal(modalDialog(#ALL  MODAL
@@ -239,16 +240,11 @@ observeEvent(input$btn_cardio_modal,
                           total volume of cardiac devices fitted.")
                  ),
                  p("Note that during the COVID-19 lockdown period the Golden Jubilee National Hospital 
-                   extended their catheterisation lab catchment area to cover Ayrshire & Arran, Dumfriesd & Galloway 
+                   extended their catheterisation lab catchment area to cover Ayrshire & Arran, Dumfries & Galloway 
                    and southeast Glasgow, areas which previously would have gone to Hairmyres Hospital. 
                    In addition, during 2019 increased catheterisation lab activity was seen at the Golden Jubilee National 
                     Hospital activity due to the presence of the temporary mobile lab which was not present during other 
                    time periods,"),
-                 p("For Golden Jubilee Hospital please be aware that they extended their catchment area 
-                    during the lockdown period to cover Ayrshire & Arran, Dumfried & Galloway and southeast Glasgow,
-                    areas which previously would have gone to Hairmyres Hospital.
-                    Also their volume of cases from 2019 (used as a comparator) is 
-                    artificially high as they had a mobile lab in 2019."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
