@@ -580,6 +580,7 @@ six_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_1_da
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
   mutate(time_period_eligible=as.factor(time_period_eligible))
 
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
@@ -610,7 +611,6 @@ six_dose2 <- left_join(six_dose2, hb_lookup, by = c("geography" = "hb_cypher")) 
          week_no= isoweek(week_12_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  #rename(week_12_start=week_8_start) %>%
   select (extract_date, immunisation, week_12_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
 saveRDS(six_dose2, paste0("shiny_app/data/","sixinone_dose2_data.rds"))
@@ -620,6 +620,7 @@ six_dose2_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in on
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
   mutate(time_period_eligible=as.factor(time_period_eligible))
 
 saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.rds"))
@@ -661,6 +662,7 @@ six_dose3_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in on
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
   mutate(time_period_eligible=as.factor(time_period_eligible))
 
 saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
