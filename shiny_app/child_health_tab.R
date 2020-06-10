@@ -79,9 +79,9 @@ output$child_health_explorer <- renderUI({
       fluidRow(column(12, renderUI(commentary_first)))
     )
   }  else if (input$measure_select_child == "six_eightwks"){
-    p("6-8 Week Review coming 24th June 2020")
+    p("6-8 Week Review coming 8th July 2020")
   } else if (input$measure_select_child == "13_15mnth") {
-    p("13-15 Month Review coming 1st July 2020")
+    p("13-15 Month Review coming 8th July 2020")
   }
   
 }) #close child_health_explorer function
