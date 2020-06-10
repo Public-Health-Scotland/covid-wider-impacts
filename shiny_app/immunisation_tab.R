@@ -43,10 +43,7 @@ output$geoname_ui_immun <- renderUI({
 # Reactive dataset for flextable filter on geographical area
 filter_table_data_immun <- function(dataset){
   dataset %>% filter(area_name == input$geoname_immun)
-   # mutate(cohort=factor(cohort,levels=c("yearly","monthly","weekly"))) %>%  # required if table sort order is to change
-    #arrange(cohort)
 }
-
 
 ###############################################.
 ## Immunisation Tab Reactive layout  ----
@@ -118,6 +115,29 @@ output$immunisation_explorer <- renderUI({
     )}
 }) #close immunisation_explorer function
 
+###############################################.
+## Data downloads ----
+###############################################.
+# For the charts at the moment the data download is for the overall one,
+# need to think how to allow downloading for each chart
+# Reactive dataset that gets the data the user is visualisaing ready to download
+imm_data_download <- reactive({
+  switch(
+    input$measure_select_immun,
+    "sixin_dose1" = sixtable,
+    "sixin_dose2" = sixtable_dose2,
+    "sixin_dose3" = sixtable_dose3
+  ) %>% 
+    select(area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
+    rename(cohort = time_period_eligible)
+})
+
+output$download_imm_data <- downloadHandler(
+  filename ="immunisation_extract.csv",
+  content = function(file) {
+    write_csv(imm_data_download(),
+              file) } 
+)
 
 ###############################################.
 ## Immunisation Commentary tab content  ----
