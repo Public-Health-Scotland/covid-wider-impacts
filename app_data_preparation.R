@@ -553,12 +553,12 @@ angio_lab <- read_excel(paste0(data_folder, "cath_labs/MonthlyTrendsCorAngioNumb
 saveRDS(angio_lab, paste0("shiny_app/data/angio_lab_data.rds"))
 
 ###############################################.
-## Prepare Immunisation data ----
+## Prepare 6-in-1 dose 1 ----
 ###############################################.
-immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/"
+#immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/6in1/"
 
 # 6-in-1 at 8 weeks - scurve data
-six <- read_csv(paste0(immunisation_folder,"six in one_1_dashboard20200525.csv"), 
+six <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_1_dashboard20200525.csv"), 
                 col_types =list(week_8_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_factor())) %>%
   janitor::clean_names()
@@ -583,16 +583,97 @@ final_data <<- six
 
 saveRDS(six, paste0("shiny_app/data/","sixinone_data.rds"))
 
-
 # 6-in-1 at 8 weeks - summary table data
-six_datatable <- read_csv(paste0(immunisation_folder,"six in one_1_dashboardtab_20200525.csv")) %>%
+six_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_1_dashboardtab_20200525.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
   mutate(time_period_eligible=as.factor(time_period_eligible))
 
-
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
+
+###############################################.
+## Prepare 6-in-1 dose 2 ----
+###############################################.
+
+#immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/6in1/"
+
+# 6-in-1 at dose 2 (usually 12 weeks) - scurve data
+six_dose2 <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_2_dashboard20200525.csv"), 
+                col_types =list(week_12_start=col_date(format="%m/%d/%Y"),
+                                time_period_eligible=col_factor())) %>%
+  janitor::clean_names()
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+six_dose2 <- left_join(six_dose2, hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(week_12_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  select (extract_date, immunisation, week_12_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
+
+saveRDS(six_dose2, paste0("shiny_app/data/","sixinone_dose2_data.rds"))
+
+# 6-in-1 at dose 2 (usually 12 weeks) - summary table data
+six_dose2_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_2_dashboardtab_20200525.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.rds"))
+
+
+###############################################.
+## Prepare 6-in-1 dose 3 ----
+###############################################.
+
+#immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/6in1/"
+
+# 6-in-1 at dose 3 (usually 16 weeks) - scurve data
+six_dose3 <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_3_dashboard20200525.csv"), 
+                      col_types =list(week_16_start=col_date(format="%m/%d/%Y"),
+                                      time_period_eligible=col_factor())) %>%
+  janitor::clean_names()
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+six_dose3 <- left_join(six_dose3, hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(week_16_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  #rename(week_12_start=week_16_start) %>%
+  select (extract_date, immunisation, week_16_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
+
+saveRDS(six_dose3, paste0("shiny_app/data/","sixinone_dose3_data.rds"))
+
+# 6-in-1 at dose 3 (usually 16 weeks) - summary table data
+six_dose3_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_3_dashboardtab_20200525.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
 
 ###############################################.
 ## Prepare Child Health data ----
@@ -617,7 +698,6 @@ hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Fi
   mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
          area_type="Health board")
 
-
 first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
@@ -636,7 +716,6 @@ first_datatable <- read_csv(paste0(child_health_folder,"firstvisit_dashboardtab_
   rename(area_name=geography_name) %>%
   select (-geography) %>%
   mutate(time_period_eligible=as.factor(time_period_eligible))
-
 
 saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 

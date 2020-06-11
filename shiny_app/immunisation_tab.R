@@ -1,9 +1,8 @@
 ##Server script for immunisations tab
 
-
 # Pop-up modal explaining source of data
 observeEvent(input$btn_immune_modal, 
-             showModal(modalDialog(#RAPID ADMISSIONS MODAL
+             showModal(modalDialog(
                title = "What is the data source?",
                p("The information shown on the numbers of children eligible for, and receiving, routine preschool 
                  immunisations is taken from the ",
@@ -41,39 +40,42 @@ output$geoname_ui_immun <- renderUI({
 
 
 # Reactive dataset for flextable filter on geographical area
-table_data <- reactive({  
-  table <- sixtable %>%
-    filter(area_name==input$geoname_immun)
-  #mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%  # required if table sort order is to change
-  #arrange(cohort)
-})
-
+filter_table_data_immun <- function(dataset){
+  dataset %>% filter(area_name == input$geoname_immun)
+}
 
 ###############################################.
 ## Immunisation Tab Reactive layout  ----
 ###############################################.
 
+# Creating plots for each dataset
 #run chart function to generate s curve  
-output$immun_6in8_scurve <- renderPlotly({plot_scurve_immun(six)})
-output$immun_6in8_table <- renderUI({immune_table()})
 
+output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(six, age_week = "8")})
+output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable, age_week = 8)})
+
+output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_dose2, age_week = "12")})
+output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week = 12)})
+
+output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_dose3, age_week = "16")})
+output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week = 16)})
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$immunisation_explorer <- renderUI({
   
   # text for titles of cut charts
-  immune_title <- paste0(case_when(input$measure_select_immun == "sixin_8wks" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
+  immune_title <- paste0(case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
                                                                                        input$geoname_immun),
-                                   input$measure_select_immun == "sixin_12wks" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
-                                   input$measure_select_immun == "sixin_16wks" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun)))
+                                   input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
+                                   input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun)))
   
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
                   tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
                          "continue to receive their routine immunisations during the Covid-19 pandemic",class="externallink"),".",
-                  "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice at ",
-                  tags$a(href="https://twitter.com/NHSImmuniseScot","https://twitter.com/NHSImmuniseScot ",class="externallink"),
-                  " and ",tags$a(href="https://www.nhsinform.scot/immunisation","https://www.nhsinform.scot/immunisation",class="externallink"),".")
+                  "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
+                  tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ",class="externallink"),
+                  " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform",class="externallink"),".")
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_6in1 <-  p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. ",br(), 
@@ -83,20 +85,34 @@ output$immunisation_explorer <- renderUI({
                         "Uptake rates based on small numbers are prone to fluctuation. Therefore, in boards with small numbers of children eligible for immunisation each week, particularly NHS Borders and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates.")
   
   # Specify items to display in immunisation ui based on step 2 selection 
-  if (input$measure_select_immun == "sixin_8wks") {
+  if (input$measure_select_immun == "sixin_dose1") {
     tagList(
       fluidRow(column(12, renderUI(intro_6in1),
                       h4(paste0(immune_title)))),
       fluidRow(column(6,br(), br(),
-                      withSpinner(plotlyOutput("immun_6in8_scurve"))),
-               column(6, uiOutput("immun_6in8_table"))),
+                      withSpinner(plotlyOutput("immun_6in1_scurve_dose1"))),
+               column(6, uiOutput("immun_6in1_table_dose1"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
-  }  else if (input$measure_select_immun == "sixin_12wks"){
-    p("6-in-1 at 12 weeks coming 17th June 2020")
-  }  else if (input$measure_select_immun == "sixin_16wks"){
-    p("6-in-1 at 16 weeks coming 17th June 2020")}
-  
+  }  else if (input$measure_select_immun == "sixin_dose2"){
+    tagList(
+      fluidRow(column(12, renderUI(intro_6in1),
+                      h4(paste0(immune_title)))),
+      fluidRow(column(6,br(), br(),
+                      withSpinner(plotlyOutput("immun_6in1_scurve_dose2"))),
+               column(6, uiOutput("immun_6in1_table_dose2"))),
+      fluidRow(column(12, renderUI(commentary_6in1)))
+    )
+  }  else if (input$measure_select_immun == "sixin_dose3"){
+    tagList(
+      fluidRow(column(12, renderUI(intro_6in1),
+                      h4(paste0(immune_title)))),
+      fluidRow(column(6,br(), br(),
+                      withSpinner(plotlyOutput("immun_6in1_scurve_dose3"))),
+               column(6, uiOutput("immun_6in1_table_dose3"))),
+      fluidRow(column(12, renderUI(commentary_6in1)))
+    )}
+
 }) #close immunisation_explorer function
 
 ###############################################.
@@ -109,9 +125,9 @@ output$immunisation_explorer <- renderUI({
 imm_data_download <- reactive({
   switch(
     input$measure_select_immun,
-    "sixin_8wks" = sixtable,
-    "sixin_12wks" = sixtable,
-    "sixin_16wks" = sixtable
+    "sixin_dose1" = sixtable,
+    "sixin_dose2" = sixtable_dose2,
+    "sixin_dose3" = sixtable_dose3
   ) %>% 
     select(area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
     rename(cohort = time_period_eligible)
@@ -154,6 +170,7 @@ output$immun_commentary_section <- renderUI({
             (as shown in the 2019 data provided for comparison)."
           ))
 })
+
 
 
 #END
