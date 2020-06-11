@@ -302,10 +302,8 @@ output$cardio_explorer <- renderUI({
                             TRUE ~ paste0(input$area_cardio_select))
     
       tagList( # Cath labs
-        p("While the data presented here is not a complete picture of the cardiovascular procedures carried out
-            in Scotland, it includes the number of cardic procedures carried out by two out of the four 
-            catheterisation labs in Scotland. These two labs provide services to the majority of the population
-            living in the Central Belt and south of Scotland."),
+        p("At present charts include data from only two of the four Scottish catheterisation labs.
+          Data from the remaining two centres will be added as it becomes available."),
         h3(paste0("Weekly visits to the cardiac catheterization labs at the ", lab_chosen)),
         actionButton("btn_cardio_modal", paste0("Data source: ", lab_chosen), icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "cath_overall"),
@@ -437,6 +435,17 @@ output$download_cardio_data <- downloadHandler(
     write_csv(overall_cardio_download(),
               file) } 
 )
+
+###############################################.
+## Commentary ----
+###############################################.
+output$cardio_commentary <- renderUI({
+  tagList(h2("Cardiovascular - 17th June 2020"), 
+          p("Prescribing- placeholder"),
+          p("A&E -placeholder"),
+          p("Cardiac procedures placeholder")
+          )
+})
 
 
 ##END
