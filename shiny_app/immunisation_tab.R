@@ -50,6 +50,7 @@ filter_table_data_immun <- function(dataset){
 
 # Creating plots for each dataset
 #run chart function to generate s curve  
+
 output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(six, age_week = "8")})
 output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable, age_week = 8)})
 
@@ -58,7 +59,6 @@ output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week
 
 output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_dose3, age_week = "16")})
 output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week = 16)})
-
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$immunisation_explorer <- renderUI({
@@ -112,11 +112,13 @@ output$immunisation_explorer <- renderUI({
                column(6, uiOutput("immun_6in1_table_dose3"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )}
+
 }) #close immunisation_explorer function
 
 ###############################################.
 ## Data downloads ----
 ###############################################.
+
 # For the charts at the moment the data download is for the overall one,
 # need to think how to allow downloading for each chart
 # Reactive dataset that gets the data the user is visualisaing ready to download
@@ -141,7 +143,6 @@ output$download_imm_data <- downloadHandler(
 ###############################################.
 ## Immunisation Commentary tab content  ----
 ###############################################.
-
 
 output$immun_commentary_section <- renderUI({
   tagList(h2("Immunisations - 3rd June 2020"), 
