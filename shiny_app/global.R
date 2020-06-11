@@ -55,6 +55,8 @@ sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at
 six_dose2 <- readRDS("data/sixinone_dose2_data.rds") # 6 in 1 immunisation data at 8 weeks
 sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
 
+six_dose3 <- readRDS("data/sixinone_dose3_data.rds") # 6 in 1 immunisation data at 8 weeks
+sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
 
 
 # cath_lab <- readRDS(paste0("shiny_app/data/cath_lab_data.rds"))
@@ -70,7 +72,7 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
                      "6-in-1 second dose" = "sixin_dose2",
-                     "6-in-1 third dose *COMING 17th June 2020*" = "sixin_dose3")
+                     "6-in-1 third dose" = "sixin_dose3")
 
 ###############################################.
 ## Palettes and plot parameters ----
