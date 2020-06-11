@@ -13,7 +13,7 @@ library(phsmethods) #matching codes with names
 library(tidyr) # for wide to long formatting
 library(readxl) # reading excel
 
-data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/" # folder for files
+data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
 
 ###############################################.
 ## Functions ----
@@ -128,13 +128,14 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
   final_data <<- data_2020
   
   saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
+  saveRDS(data_2020, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/", filename,"_data.rds"))
 }
 
 ###############################################.
 ## Reading RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/shiny_input_files/rapid/Admissions_by_category_18-May.rds") %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_08-Jun.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -205,14 +206,22 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-05-10", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-05-31", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
 ## Preparing OOH data ----
 ###############################################.
+# Saving big files as RDS to avoid unzipping 
+# ooh <- read_csv(unzip(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.zip"),"OOH DATA 2018 - 22032020.csv")) 
+# saveRDS(ooh, paste0(data_folder,"GP_OOH/OOH DATA 2018 - 22032020.rds"))
+# file.remove(paste0(data_folder,"GP_OOH/OOH DATA 2018 - 22032020.zip"))
+# ooh_new <- read_csv(unzip(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip"),"COVID DASHBOARD EXTRACT_2203to0505.csv"))
+# saveRDS(ooh_new, paste0(data_folder,"GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.rds"))
+# file.remove(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip"))
+
 # Read in historic OOH file
-ooh <- read_csv(unzip("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/OOH DATA 2018 - 22032020.zip","OOH DATA 2018 - 22032020.csv")) %>%
+ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
   janitor::clean_names() %>%
   rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
@@ -239,7 +248,7 @@ ooh <- ooh %>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungrou
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-03-22")))
 
 ## Additional new OOH data
-ooh_new <- read_csv(unzip("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip","COVID DASHBOARD EXTRACT_2203to0505.csv")) %>%
+ooh_new <- readRDS(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.rds")) %>%
   janitor::clean_names() %>%
   rename(date=sc_start_date, hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender, age_group=age_band,
@@ -269,12 +278,13 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
-#new data extract from week ending 03 may 2020 up to week ending 17 may 2020
-new_ooh_03_17may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP_OOH/new_18052020.csv") %>% 
+#new data extract from week ending 03 may 2020 up to week ending 31 may 2020
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_56_2771757260302589203.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
+  mutate(age_group = recode(age_group, "44079" = "5-9", "41913" = "10-14"),
+         age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
                              "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
                              "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
                              "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
@@ -289,18 +299,17 @@ new_ooh_03_17may2020 <- read_csv("/conf/PHSCOVID19_Analysis/shiny_input_files/GP
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-new_ooh_03_17may2020 <- new_ooh_03_17may2020 %>% 
+ooh_may_onwards <- ooh_may_onwards %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-05-17"))) #filter complete weeks (Mon-Sun)
-
+  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-06-07"))) #filter complete weeks (Mon-Sun)
 
 #bind old and new ooh data
-ooh <- rbind(new_ooh_03_17may2020, ooh_new, ooh)
+ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
 
 # Creating totals for groups
 ooh_all <- ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
@@ -311,13 +320,13 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-05-17")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-06-07")
 
 ###############################################.
 ## Preparing A&E data ----
 ###############################################.
 #short cut to a&e folder areas
-ae_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E/2020-05-14-Extracts/"
+ae_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E/2020-06-04-Extracts/"
 
 # Read A&E data both at HSCP and HB level
 ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
@@ -364,7 +373,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2020-05-10")
+prepare_final_data(ae_data, "ae", last_week = "2020-05-31")
 
 ###############################################.
 ## Preparing NHS24 data ----
@@ -386,6 +395,12 @@ nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 
                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 20 Apr 20 - 10 May 20.zip"), 
                           "Report 2.csv")),
                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 covid Extract 11 May 20 - 17 May 20.zip"), 
+                            "Report 2.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 18052020to24052020.zip"), 
+                            "Report 2.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 250520to31052020.zip"), 
+                            "Report 2.csv")),
+               read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 1 Jun 20 - 7 Jun 20.zip"), 
                             "Report 2.csv"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
@@ -430,19 +445,17 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-05-17")
-
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-06-07")
 
 ###############################################.
 ## Reading SAS data ----
 ###############################################.
+# Code to transform extract to rds and delete giant txt file
+# sas <-(read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to10052020.txt"))) 
+# saveRDS(sas, paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to10052020.rds"))  
+# file.remove(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to10052020.txt"))
 
-sas_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/SAS/"
-
-sas <- rbind(read_tsv(unzip(paste0(sas_zip_folder,"COVID WIDER IMPACT SAS_01012018to03052020.zip"),
-                            "COVID WIDER IMPACT SAS_01012018to03052020.txt")),
-             read_tsv(paste0(sas_zip_folder, "COVID WIDER IMPACT SAS_04052020to10052020.txt"))) %>%
-  
+sas <- readRDS(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to10052020.rds")) %>%
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -466,6 +479,35 @@ sas <- sas %>% mutate(scot = "Scotland") %>%
   group_by(week_ending, sex, dep, age_grp, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
+#NEW WEEKLY DATA UPDATE
+sas_new <-rbind(read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_11052020to17052020.txt")),
+                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_18052020to25052020.txt")),
+                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_25052020to31052020.txt"))) %>%
+  janitor::clean_names() %>%
+  rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
+         dep=patient_prompt_dataset_deprivation_scot_quintile,
+         count=number_of_incidents,gender=gender_description) %>%
+  select(-sas_call_start_calendar_week) %>%
+  # Formatting dates and sex
+  mutate(week_ending = as.Date(week_ending, format="%d-%b-%Y"),
+         sex=case_when(is.na(gender)~"Missing", gender=="" ~"Missing", gender=="MALE" ~ "Male", gender=="FEMALE" ~"Female", 
+                       gender %in% c(0, 9 ) ~ "Missing", TRUE ~ as.character(gender))) %>% 
+  proper() %>% #convert HB names to correct format
+  create_agegroups () %>%
+  create_depgroups ()
+
+# Aggregate up to get figures for each area type.
+sas_new <- sas_new %>% mutate(scot = "Scotland") %>% 
+  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age_grp, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
+
+#bind old and new SAS data
+sas <- rbind(sas_new, sas)
+
 # Use aggregation function to aggregate data files for use in shiny app
 sas_allsex <- sas %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
 sas_sex <- agg_cut(dataset= sas, grouper="sex") %>% rename(category=sex)
@@ -476,7 +518,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-10")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-31")
 
 ###############################################.
 ## Cath labs ----
@@ -628,7 +670,6 @@ prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-05-24")
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-
 cardio_drugs <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/prescribing data/ePr data by Partnership, Board and Scotland.xlsx") %>% 
   select(1:5) %>% 
   clean_names() %>% 
@@ -663,4 +704,172 @@ rm(cardio_drugs_all)
 
 prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-05-31")
 
+###############################################.
+## Prepare 6-in-1 dose 1 ----
+###############################################.
+#immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/6in1/"
+
+# 6-in-1 at 8 weeks - scurve data
+six <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_1_dashboard20200525.csv"), 
+                col_types =list(week_8_start=col_date(format="%m/%d/%Y"),
+                                time_period_eligible=col_factor())) %>%
+  janitor::clean_names()
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+six <- left_join(six, hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(week_8_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  select (extract_date, immunisation, week_8_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
+
+final_data <<- six
+
+saveRDS(six, paste0("shiny_app/data/","sixinone_data.rds"))
+
+# 6-in-1 at 8 weeks - summary table data
+six_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_1_dashboardtab_20200525.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
+
+###############################################.
+## Prepare 6-in-1 dose 2 ----
+###############################################.
+
+#immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/6in1/"
+
+# 6-in-1 at dose 2 (usually 12 weeks) - scurve data
+six_dose2 <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_2_dashboard20200525.csv"), 
+                col_types =list(week_12_start=col_date(format="%m/%d/%Y"),
+                                time_period_eligible=col_factor())) %>%
+  janitor::clean_names()
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+six_dose2 <- left_join(six_dose2, hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(week_12_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  select (extract_date, immunisation, week_12_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
+
+saveRDS(six_dose2, paste0("shiny_app/data/","sixinone_dose2_data.rds"))
+
+# 6-in-1 at dose 2 (usually 12 weeks) - summary table data
+six_dose2_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_2_dashboardtab_20200525.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.rds"))
+
+
+###############################################.
+## Prepare 6-in-1 dose 3 ----
+###############################################.
+
+#immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/6in1/"
+
+# 6-in-1 at dose 3 (usually 16 weeks) - scurve data
+six_dose3 <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_3_dashboard20200525.csv"), 
+                      col_types =list(week_16_start=col_date(format="%m/%d/%Y"),
+                                      time_period_eligible=col_factor())) %>%
+  janitor::clean_names()
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+six_dose3 <- left_join(six_dose3, hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(week_16_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  #rename(week_12_start=week_16_start) %>%
+  select (extract_date, immunisation, week_16_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
+
+saveRDS(six_dose3, paste0("shiny_app/data/","sixinone_dose3_data.rds"))
+
+# 6-in-1 at dose 3 (usually 16 weeks) - summary table data
+six_dose3_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_3_dashboardtab_20200525.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
+
+###############################################.
+## Prepare Child Health data ----
+###############################################.
+child_health_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/child_health/"
+
+# First visit - scurve data
+first <- read_csv(paste0(child_health_folder,"firstvisit_dashboard20200601.csv"), 
+                col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
+                                time_period_eligible=col_character())) %>%
+  janitor::clean_names() 
+
+# Creating levels for factor in chronological order
+first$time_period_eligible <- factor(first$time_period_eligible, 
+                                     levels=unique(first$time_period_eligible[order(first$week_2_start, decreasing = T)]), 
+                                     ordered=TRUE)
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(week_2_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(interv<168)
+
+saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
+
+# First visit - summary table data
+first_datatable <- read_csv(paste0(child_health_folder,"firstvisit_dashboardtab_20200601.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
+
 ##END
+
