@@ -24,7 +24,7 @@ observeEvent(input$measure_cardio_select, {
   x <- input$measure_cardio_select
   
   if (x == "cath") {
-    cardio_label = "Step 2 - Select the area of interest for cardiac catheterization labs"
+    cardio_label = "Step 2 - Select a cardiac catheterization lab"
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
@@ -260,19 +260,19 @@ observeEvent(input$btn_cath_modal,
                showModal(modalDialog(#ALL  MODAL
                  title = "What these interventions involve?",
                  tags$ul(
-                   tags$li("Angiographies - These diagnostic procedures allow clinicians to see and investigate
-                           the condition of the hearts and its arteries. All patients who are taken to a
-                           catheterisation lab will go through this process before any further procedures in the lab.
-                           Within this tool, the number of angiographies carried out is considered 
-                           the total number of cases for each lab. Many angiographies
-                           are carried out as planned procedures."),
-                   tags$li("PCI - Percutaneous coronary intervention is a procedure used to treat
-                           the narrowing of the heart arteries. In many cases this is an urgent procedure
-                           which is used when patients are suffering a heart attack."),
-                   tags$li("Devices - in these labs patients can be fitted with pacemakers and other
-                           devices to treat cardiac problems. Fitting of cardiac devices may also be carried out
-                           in other environments so please be aware they are not representative of the 
-                           total volume of cardiac devices fitted.")
+                   tags$li("Angiographies - These diagnostic procedures allow clinicians to investigate
+                          the condition of the arteries of the heart. All patients who are taken to a
+                          catheterisation lab will go through angiography before a narrowed artery is treated.
+                          Within this tool, the number of angiographies carried out is considered 
+                          the total number of cases for each lab. Many angiographies
+                          are carried out as planned (elective) procedures."),
+                   tags$li("Percutaneous coronary intervention - Procedure used to treat
+                          the narrowing of the heart arteries. In a significant portion of cases this is an urgent procedure
+                          which is used when patients are suffering a heart attack."),
+                   tags$li("Devices - This section includes procedures such as pacemakers (used to treat rhythm 
+                           problems of the heart) and loop recorders (used to investigate treat rhythm problems 
+                           of the heart). Fitting of cardiac devices may also be carried out in other environments 
+                           so these figures do not represent the total volume of cardiac devices fitted.")
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
