@@ -483,23 +483,23 @@ prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-05-10")
 ###############################################.
 # Data for cardiovascular app
 gj_cath_age <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabProcCountsByWeekNo_ForPHS.xlsx"),
-                      sheet = "JV_q010_Age") %>% clean_names() %>% 
+                      sheet = "Age") %>% clean_names() %>% 
   mutate(type = "age",
          age_band = recode(age_band, "Gt60" = "60 and over",
                            "Lt60" = "Under 60")) %>% 
   rename(category = age_band)
 
 gj_cath_sex <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabProcCountsByWeekNo_ForPHS.xlsx"),
-                          sheet = "JV_q020_Sex") %>% clean_names() %>% 
+                          sheet = "Sex") %>% clean_names() %>% 
   mutate(type = "sex") %>%  rename(category = gender)
 
 gj_cath_all <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabProcCountsByWeekNo_ForPHS.xlsx"),
-                          sheet = "JV_q030_NoStrata") %>% clean_names() %>% 
+                          sheet = "No Strata") %>% clean_names() %>% 
   mutate(type = "sex", category = "All")
 
 # Merging together and formating
 gj_cath <- rbind(gj_cath_age, gj_cath_sex, gj_cath_all) %>% 
-  mutate(week_ending = as.Date(date_to) + 1,
+  mutate(week_ending = as.Date(date_to),
          lab = "Golden Jubilee National Hospital") %>% 
   select(-proc_year, -wk, -date_from, -date_to) %>% 
   rename(count = num_procs, groups = group)
@@ -534,14 +534,17 @@ loth_cath <- rbind(loth_age, loth_all, loth_sex) %>%
 cath_labs <- rbind(loth_cath, gj_cath) %>% 
   mutate(groups = recode(groups, "angio" = "Angiography", "Angio" = "Angiography", 
                                   "devices" = "Devices", "Device" = "Devices", 
-                                  "pci" = "PCI"))
+                                  "pci" = "Percutaneous coronary intervention",
+                         "PCI" = "Percutaneous coronary intervention"))
 
 # Creating value for total
 all_cath <- cath_labs %>% 
   group_by(category, type, week_ending, proc_week, groups) %>%
   # Not using mean to avoid issues with missing data for some weeks
   summarise(count = sum(count, na.rm = T)) %>% 
-  mutate(lab = "All") %>% ungroup
+  mutate(lab = "All") %>% ungroup %>% 
+  # TEMPORARY - RIE NOT COMPLETE AFTER first week of May
+  filter(week_ending<as.Date("2020-05-10"))
 
 cath_labs <- rbind(cath_labs, all_cath)
 
