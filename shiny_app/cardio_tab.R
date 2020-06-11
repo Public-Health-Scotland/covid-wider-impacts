@@ -228,7 +228,9 @@ observeEvent(input$btn_cardio_modal,
                    Information on the numbers of procedures taking place in these catheterisation labs has 
                    been supplied to PHS directly by a number of these facilities as part of a bespoke data request."),
                  p("This data shows the number of procedures carried out by two of the 
-                   biggest catheterisation labs in Scotland. We show the data split by three types of procedures: "),
+                   biggest catheterisation labs in Scotland, which provide services to the majority of the population
+                  living in the Central Belt and south of Scotland."),
+                 p(" We show the data split by three types of procedures: "),
                  tags$ul(
                    tags$li("Angiographies - These diagnostic procedures allow clinicians to investigate
                           the condition of the arteries of the heart. All patients who are taken to a
@@ -299,6 +301,10 @@ output$cardio_explorer <- renderUI({
                             TRUE ~ paste0(input$area_cardio_select))
     
       tagList( # Cath labs
+        p("While the data presented here is not a complete picture of the cardiovascular procedures carried out
+            in Scotland, it includes the number of cardic procedures carried out by two out of the four 
+            catheterisation labs in Scotland. These two labs provide services to the majority of the population
+            living in the Central Belt and south of Scotland."),
         h3(paste0("Weekly visits to the cardiac catheterization labs at the ", lab_chosen)),
         actionButton("btn_cardio_modal", paste0("Data source: ", lab_chosen), icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "cath_overall"),
