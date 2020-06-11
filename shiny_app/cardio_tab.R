@@ -24,7 +24,7 @@ observeEvent(input$measure_cardio_select, {
   x <- input$measure_cardio_select
   
   if (x == "cath") {
-    cardio_label = "Step 2 - Select the area of interest for cardiac catheterization labs"
+    cardio_label = "Step 2 - Select a cardiac catheterization lab"
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
@@ -218,38 +218,41 @@ observeEvent(input$btn_cardio_modal,
              } else if (input$measure_cardio_select == "cath") {
                showModal(modalDialog(#ALL  MODAL
                  title = "What is the data source?",
-                 p("Catheterisation labs carry out a series of procedures to observe
-                    the condition of the heart and its arteries and to treat problems
-                    found this way, particularly the narrowing of the arteries.
-                   There are four catheterisation labs in Scotland: Golden Jubilee Hospital,
-                   Royal Infirmary of Edinburgh, Aberdeen Royal Infirmary and Ninewells Hospital in Dundee.
-                   Information on the numbers of procedures taking place in these catheterisation 
-                   labs has been supplied to PHS directly by a number of these facilities as part 
-                   of a bespoke data request."),
-                 
+                 p("This tool provides an overview on how procedures procedures in the field of 
+                    cardiovascular medicine have changed during the COVID-19 pandemic.
+                   These include procedures such as inserting pacemakers or monitoring heart rhythms, 
+                   investigating possible narrowing of the arteries supplying the heart (angiography) 
+                   and carrying out procedures to treat any narrowing of these arteries (percutaneous coronary intervention)"),
+                 p("These procedures are generally carried out in catheterisation labs.
+                   There are four catheterisation labs in Scotland: Golden Jubilee Hospital, Royal Infirmary of Edinburgh, 
+                   Aberdeen Royal Infirmary and Ninewells Hospital in Dundee. 
+                   Information on the numbers of procedures taking place in these catheterisation labs has 
+                   been supplied to PHS directly by a number of these facilities as part of a bespoke data request."),
                  p("This data shows the number of procedures carried out by two of the 
-                   biggest catheterisation labs in Scotland. We show the data split by three types of procedures: "),
+                   biggest catheterisation labs in Scotland, which provide services to the majority of the population
+                  living in the Central Belt and south of Scotland."),
+                 p(" We show the data split by three types of procedures: "),
                  tags$ul(
-                   tags$li("Angiographies - These diagnostic procedures allow clinicians to see and investigate
-                          the condition of the hearts and its arteries. All patients who are taken to a
-                          catheterisation lab will go through this process before any further procedures in the lab.
+                   tags$li("Angiographies - These diagnostic procedures allow clinicians to investigate
+                          the condition of the arteries of the heart. All patients who are taken to a
+                          catheterisation lab will go through angiography before a narrowed artery is treated.
                           Within this tool, the number of angiographies carried out is considered 
                           the total number of cases for each lab. Many angiographies
-                          are carried out as planned procedures."),
-                   tags$li("PCI - Percutaneous coronary intervention is a procedure used to treat
-                          the narrowing of the heart arteries. In many cases this is an urgent procedure
+                          are carried out as planned (elective) procedures."),
+                   tags$li("Percutaneous coronary intervention - Procedure used to treat
+                          the narrowing of the heart arteries. In a significant portion of cases this is an urgent procedure
                           which is used when patients are suffering a heart attack."),
-                   tags$li("Devices - in these labs patients can be fitted with pacemakers and other
-                          devices to treat cardiac problems. Fitting of cardiac devices may also be carried out
-                          in other environments so please be aware they are not representative of the 
-                          total volume of cardiac devices fitted.")
+                   tags$li("Devices - This section includes procedures such as pacemakers (used to treat rhythm 
+                           problems of the heart) and loop recorders (used to investigate treat rhythm problems 
+                           of the heart). Fitting of cardiac devices may also be carried out in other environments 
+                           so these figures do not represent the total volume of cardiac devices fitted.")
                  ),
                  p("Note that during the COVID-19 lockdown period the Golden Jubilee National Hospital 
                    extended their catheterisation lab catchment area to cover Ayrshire & Arran, Dumfries & Galloway 
                    and southeast Glasgow, areas which previously would have gone to Hairmyres Hospital. 
                    In addition, during 2019 increased catheterisation lab activity was seen at the Golden Jubilee National 
                     Hospital activity due to the presence of the temporary mobile lab which was not present during other 
-                   time periods,"),
+                   time periods."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
@@ -260,19 +263,19 @@ observeEvent(input$btn_cath_modal,
                showModal(modalDialog(#ALL  MODAL
                  title = "What these interventions involve?",
                  tags$ul(
-                   tags$li("Angiographies - These diagnostic procedures allow clinicians to see and investigate
-                           the condition of the hearts and its arteries. All patients who are taken to a
-                           catheterisation lab will go through this process before any further procedures in the lab.
-                           Within this tool, the number of angiographies carried out is considered 
-                           the total number of cases for each lab. Many angiographies
-                           are carried out as planned procedures."),
-                   tags$li("PCI - Percutaneous coronary intervention is a procedure used to treat
-                           the narrowing of the heart arteries. In many cases this is an urgent procedure
-                           which is used when patients are suffering a heart attack."),
-                   tags$li("Devices - in these labs patients can be fitted with pacemakers and other
-                           devices to treat cardiac problems. Fitting of cardiac devices may also be carried out
-                           in other environments so please be aware they are not representative of the 
-                           total volume of cardiac devices fitted.")
+                   tags$li("Angiographies - These diagnostic procedures allow clinicians to investigate
+                          the condition of the arteries of the heart. All patients who are taken to a
+                          catheterisation lab will go through angiography before a narrowed artery is treated.
+                          Within this tool, the number of angiographies carried out is considered 
+                          the total number of cases for each lab. Many angiographies
+                          are carried out as planned (elective) procedures."),
+                   tags$li("Percutaneous coronary intervention - Procedure used to treat
+                          the narrowing of the heart arteries. In a significant portion of cases this is an urgent procedure
+                          which is used when patients are suffering a heart attack."),
+                   tags$li("Devices - This section includes procedures such as pacemakers (used to treat rhythm 
+                           problems of the heart) and loop recorders (used to investigate treat rhythm problems 
+                           of the heart). Fitting of cardiac devices may also be carried out in other environments 
+                           so these figures do not represent the total volume of cardiac devices fitted.")
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -299,6 +302,10 @@ output$cardio_explorer <- renderUI({
                             TRUE ~ paste0(input$area_cardio_select))
     
       tagList( # Cath labs
+        p("While the data presented here is not a complete picture of the cardiovascular procedures carried out
+            in Scotland, it includes the number of cardic procedures carried out by two out of the four 
+            catheterisation labs in Scotland. These two labs provide services to the majority of the population
+            living in the Central Belt and south of Scotland."),
         h3(paste0("Weekly visits to the cardiac catheterization labs at the ", lab_chosen)),
         actionButton("btn_cardio_modal", paste0("Data source: ", lab_chosen), icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "cath_overall"),

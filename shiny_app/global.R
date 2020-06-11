@@ -97,7 +97,7 @@ data_list_data_tab <- c(data_list, "6-in-1 first dose"  = "sixin_8wks",
 
 
 cardio_list <- c("Prescribing" = "drug_presc",
-                 "A&E attendances" = "aye", "Cardiac catheterisation labs" = "cath")
+                 "A&E attendances" = "aye", "Cardiac procedures" = "cath")
 
 ###############################################.
 ## Palettes and plot parameters ----
