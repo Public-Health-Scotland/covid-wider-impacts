@@ -4,10 +4,15 @@
 ## Reactive controls  ----
 ###############################################.
 
+# Helper function
+`%notin%` <- Negate(`%in%`)
 # Show list of area names depending on areatype selected
 output$geoname_cardio_ui <- renderUI({
 
-  areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$area_cardio_select])
+  areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == ifelse(input$area_cardio_select %notin% 
+                                                                            c("Scotland", "Health board", "HSC partnership"), 
+                                                                          "Scotland", 
+                                                                          input$area_cardio_select)])
 
   selectizeInput("geoname_cardio", label = NULL,
                  choices = areas_summary, selected = "")
@@ -23,7 +28,6 @@ observeEvent(input$measure_cardio_select, {
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
-    
   }
   
   if (x == "aye") {
@@ -45,7 +49,6 @@ observeEvent(input$measure_cardio_select, {
                     choices = cardio_choices,
                     selected = cardio_choices[1]
   )
-  
 }, ignoreNULL= F)
 
 ###############################################.
@@ -96,35 +99,36 @@ observeEvent(input$btn_cardio_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "drug_presc") {
-               showModal(modalDialog(#Prescribin - Cardio Drugs
+               showModal(modalDialog(#Prescribing - Cardio Drugs
                  title = "What is the data source?",
                  p("This section of the PHS Covid-19 - Wider Impacts dashboard provides weekly information on the 
-                   number of cardiovascular drug items prescribed. The data ranges from the start of 2020 to the
-                   latest available week and is shown alongside historical activity (average from 2018 and 2019) for 
-                   comparison purposes. Additional breakdowns by drug grouping are provided also (please see below 
-                   for more details)."),
-                 tags$b("What are ePrescribed Messages?"),
-                 p("ePrescribed Messages are electronic messages that are generated when a GP issues a GP10 prescription. 
-                   They are one of the main data streams feeding into the Prescribing Information Sytem (PIS). 
-                   GPs account for more than 95% of prescribing in primary care, the great majority of prescriptions 
-                   processed have at least one accompanying electronic source."),
-                 tags$b("Why are we using ePrescribed messaging data?"),
-                 p("The ePrescribed data are loaded daily and are typically available ~48h after the prescription was written. 
-                   This allows for a far more rapid turnaround in terms of data analysis of prescribing data as
-                   opposed to waiting for 3 months for data to become available through standard data collection means.  
-                   This “real-time” intelligence on prescribing trends across Scotland is of particular importance 
-                   during the current Covid-19 crisis."),
-                 tags$b("Limitations of ePrescribed messaging data?"),
-                 p("Some prescribers currently cannot generate electronic messages – this information is only 
-                   available when all prescriptions are processed for payment 3 months later. Therefore, e-messaging 
-                   data should be regarded as incomplete for all prescriber types. (*Can we say something here about 
-                   how complete for GP prescribing?*). In addition, data is not subject to the same quality assurance 
-                   processes as prescribing data in the PIS and PRISMS data warehouses. Also, although a prescription 
-                   might have been issued, it may not have been dispensed for various reasons. Currently, the electronic 
-                   message data is unstructured which makes looking at groups of drugs e.g. medicines used for diabetes, more 
-                   challenging. A serial prescription is prescribed once and generates a single electronic message, 
-                   but can be dispensed multiple times within a period of 24, 48 or 52 weeks – many Health Boards use 
-                   serial prescribing for suitable patients, making this analysis complicated."),
+                   number of prescriptions for cardiovascular drugs issued. The data ranges from the start of 2020 
+                   to the latest available week and is shown alongside historical activity (average from 2018 and 2019) 
+                   for comparison purposes. Additional breakdowns by drug grouping are provided also."),
+                 tags$b("What is an electronic prescription message?"),
+                 p("In the majority of cases, electronic messages are generated when a GP10 prescription is issued 
+                   by a GP Practice. Approximately 95% of prescriptions for medicines are written by GPs and over 97% 
+                   of these have electronic messaging (eMessage) support."),
+                 tags$b("Why are we using electronic prescription message data?"),
+                 p("The information from these eMessages is normally transferred into Public Health Scotland databases 
+                   within 48 hours of being written and so, by using this, we are able to analyse and detect changes 
+                   in prescribing behaviour in almost real-time.  This compares with a delay of two-three months, or 
+                   longer, for data to become available through the prescription payment process."),
+                 p("Real-time intelligence is particularly important during the Covid-19 crisis and the majority of 
+                   information needed is available from eMessages."),
+                 tags$b("Limitations of electronic prescription message data"),
+                 p("Not all prescribers have electronic messaging support and not all prescriptions that are written 
+                   will be dispensed, so it is only once all prescriptions have been submitted and processed for payment 
+                   that the data can be considered as complete.  Analyses using eMessages should therefore be considered 
+                   as provisional and incomplete for all prescriber types, when compared with paid data. "),
+                 p("The eMessage data does not have the same links to the reference data compared with processed and paid 
+                   data and that is normally used to aggregate and analyse groups of medicines.  This can make analysis 
+                   challenging and limit the types of analyses that can be performed."),
+                 p("The eMessage prescription data will also not capture most supplies made through a serial prescription.  
+                   A serial prescription generates an electronic prescription message at the time of prescribing but this 
+                   is then dispensed in a series of regular supplies over a period of 24, 48 or 52 weeks.  These subsequent 
+                   supplies are captured in a separate dataset.  The extent to which serial prescriptions are used may vary 
+                   by both geographic and therapeutic areas."),
                  p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
                  tags$hr(),
                  actionButton("toggleBNFCodes", "Show / Hide BNF Codes"),
@@ -329,12 +333,12 @@ output$cardio_explorer <- renderUI({
       )
     } else if (input$measure_cardio_select == "drug_presc") {
       tagList(# Prescribing - items dispensed
-        h3(paste0("Weekly number of cardiovascular drug items prescribed in ", input$geoname_cardio)),
+        h3(paste0("Weekly number of cardiovascular medicines prescribed in ", input$geoname_cardio)),
         actionButton("btn_cardio_modal", "Data source: ePrescribed Messages", icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "prescribing_all"),
-        plot_cut_box(paste0("Percentage change in cardiovascular drug prescriptions in ", input$geoname_cardio, " compared with the corresponding
-                     time in 2018-2019 by drug group"), "cardio_drugs_var",
-                     paste0("Weekly number of cardiovascular drug prescriptions in ", input$geoname_cardio, " by drug group"), "cardio_drugs_tot")
+        plot_cut_box(paste0("Percentage change in cardiovascular medicines prescribed in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by medicine groupings"), "cardio_drugs_var",
+                     paste0("Weekly number of cardiovascular medicines prescribed in ", input$geoname_cardio, " by medicine groupings"), "cardio_drugs_tot")
       )
     }
 })

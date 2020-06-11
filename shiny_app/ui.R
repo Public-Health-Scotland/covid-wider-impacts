@@ -98,7 +98,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
            #                          for cardiac catheterization labs",
            #                          choices = c("Royal Infirmary of Edinburgh", "Golden Jubilee Hospital"))),
            column(4, selectizeInput("area_cardio_select", "Step 2 - Select the area of interest",
-                                    choices = c("Scotland")),
+                                    choices = c("Scotland"), selected = "Scotland"),
                   uiOutput("geoname_cardio_ui")),
            column(4, downloadButton('download_cardio_data', 'Download data'))
          ), #wellPanel bracket

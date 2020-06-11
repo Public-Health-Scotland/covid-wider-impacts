@@ -60,7 +60,7 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "NHS 24 completed contacts" = "nhs24", 
                "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas")
 
-cardio_list <- c("Drug prescriptions" = "drug_presc",
+cardio_list <- c("Prescribing" = "drug_presc",
                  "A&E attendances" = "aye", "Cardiac catheterisation labs" = "cath")
 
 ###############################################.
