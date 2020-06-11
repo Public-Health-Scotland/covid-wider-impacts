@@ -38,7 +38,7 @@ observeEvent(input$measure_cardio_select, {
   }
   
   if (x == "drug_presc") {
-    cardio_label = "Step 2 - Select geography level for cardiovascular drug prescriptions"
+    cardio_label = "Step 2 - Select geography level for cardiovascular medicine prescriptions"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
@@ -67,16 +67,16 @@ observeEvent(input$btn_cardio_modal,
              }  else if (input$measure_cardio_select == "aye") {
                showModal(modalDialog(# Cardio A&E MODAL
                  title = "What is the data source?",
-                 p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments 
-                   and Nurse/GP led minor injury units) with cardiovascular problems. It shows data from the recent 
-                   past along with historical activity for comparison purposes. The recent trend data is shown by 
+                 p("This tool provides a weekly summary of attendance in A&E departments (Emergency Departments 
+                   and Nurse/GP led minor injury units) with cardiovascular problems. It shows data from the beginning 
+                   of 2020 along with historical activity for comparison purposes. The recent trend data is shown by 
                    age group (under and over 65) and broad deprivation category (SIMD)."),
                  p("Additional information relating to the overall A&E activity is available from the ", 
                    tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/", 
                           "NHS Performs - weekly update of emergency department activity and waiting time statistics.", 
                           class="externallink")),
-                 p("There are two types of data submitted to the A&E datamart: episode and aggregate level data. 
-                   All hospitals with Emergency Departments submit episode level data containing a detailed record 
+                 p("There are two types of data submitted to the A&E datamart: attendance counts and aggregate level data. 
+                   All hospitals with Emergency Departments submit attendance data containing a detailed record 
                    for each patient attendance. Some smaller sites (6% of the total annual attendances) – nurse/GP 
                    led minor injury units – can only provide aggregated monthly summary attendance and compliance 
                    figures, as they do not have the IT systems and support to enable collection and submission of 
@@ -89,11 +89,12 @@ observeEvent(input$btn_cardio_modal,
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                           "Public Health Scotland (PHS).", class="externallink")),
                  p(tags$em("Please note that due to limitations in diagnosis recording in the A&E datamart, the 
-                         figures reported for cardiology offer only a very rough indication of cardiovascular 
-                         attendances and do not represent the exact figures for cardiovascular attendances at 
-                         Emergency Departments. Part of the data quality issues is that the data on cardiovascular 
-                         attendance only includes part or no data for NHS Ayrshire and Arran, NHS Fife, 
-                         NHS Forth Valley and NHS Lothian.")),
+                            figures reported for cardiovascular-related attendances offer only a very approximate 
+                            indication of attendances, i.e. data are incomplete for a number of  NHS Boards. 
+                            Additionally, some NHS Boards have moved to a new recording standard which 
+                            has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
+                            even prior to the introduction of lockdown measures, appear somehwat lower when compared to 
+                            previous years.")),
                  p("The following ICD-10 codes were considered for the cardiovascular A&E data subset:"),
                  DT::dataTableOutput("ae_cardio_codes_tbl"),
                  size = "m",
@@ -316,11 +317,12 @@ output$cardio_explorer <- renderUI({
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
         tags$em("Please note that due to limitations in diagnosis recording in the A&E datamart, the 
-                         figures reported for cardiology offer only a very rough indication of cardiovascular 
-                         attendances and do not represent the exact figures for cardiovascular attendances at 
-                         Emergency Departments. Part of the data quality issues is that the data on cardiovascular 
-                         attendance only includes part or no data for NHS Ayrshire and Arran, NHS Fife, 
-                         NHS Forth Valley and NHS Lothian."),
+                 figures reported for cardiovascular-related attendances offer only a very approximate 
+                 indication of attendances, i.e. data are incomplete for a number of  NHS Boards. 
+                 Additionally, some NHS Boards have moved to a new recording standard which 
+                 has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
+                 even prior to the introduction of lockdown measures, appear somehwat lower when compared to 
+                 previous years."),
         h3("Weekly cardiovascular A&E attendances in Scotland"),
         actionButton("btn_cardio_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "ae_cardio_overall"),
