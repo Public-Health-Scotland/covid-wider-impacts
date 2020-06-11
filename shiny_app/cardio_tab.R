@@ -443,7 +443,11 @@ output$cardio_commentary <- renderUI({
   tagList(h2("Cardiovascular - 17th June 2020"), 
           p("Prescribing- placeholder"),
           p("A&E -placeholder"),
-          p("Cardiac procedures placeholder")
+          p("Cardiac procedures placeholder"),
+          p("Procedures carried out at cardiac catheterisation labs at the Royal Infirmary of Edinburgh and 
+            at the Golden Jubilee National Hospital started to fall in early March 2020 and it has
+            has been at around xx-xx% of their previous level. The fall has been particularly marked 
+            for the provision of devices like pacemakers. The pattern of change has been broadly similar by age and sex.")
           )
 })
 
