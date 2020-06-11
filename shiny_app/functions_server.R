@@ -290,8 +290,8 @@ immune_table <- function(dataset, age_week) {
       flextable() %>%
       set_header_labels(uptake_20weeks_num="Children recorded as receiving their vaccine by 20 weeks of age",
                         uptake_20weeks_percent="Children recorded as receiving their vaccine by 20 weeks of age ",
-                        uptake_32weeks_num="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 28 weeks of age by the date data was extracted for analysis)",
-                        uptake_32weeks_percent="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 28 weeks of age by the date data was extracted for analysis)") %>% 
+                        uptake_32weeks_num="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 32 weeks of age by the date data was extracted for analysis)",
+                        uptake_32weeks_percent="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 32 weeks of age by the date data was extracted for analysis)") %>% 
       # Italics and colour if not  weeks
       color(i = no_complete_row, j = c("uptake_32weeks_num", "uptake_32weeks_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_32weeks_num", "uptake_32weeks_percent")) 
