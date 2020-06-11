@@ -153,7 +153,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
   yaxis_plots[["title"]] <- yaxis_title
   
   hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "Average 2018-2019",
-                          data_name == "deaths", "Average 2015-2019")
+                          data_name == "deaths" ~ "Average 2015-2019")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                             data_name == "aye" ~ "Attendances: ",
@@ -256,6 +256,7 @@ filter_data <- function(dataset, area = T) {
     dataset %>% 
       filter(category == "All")
   }
+}
 
 #####################################################################################.
 ## Function for drawing S-Curve charts used in immunisation tabs.
@@ -445,10 +446,10 @@ plot_scurve_child <- function(dataset) {
 child_table <- function() {
   format_col <- c("denominator","coverage_4weeks_num","coverage_12weeks_num","coverage_tot_num")
   no_12_row_id <- with(child_table_data(), (substr(time_period_eligible,1,3) == "W/B" &
-                                      time_period_eligible != "W/B 02-MAR-2020" &
-                                        time_period_eligible != "W/B 09-MAR-2020" &
-                                        time_period_eligible != "W/B 16-MAR-2020"))
-
+                                              time_period_eligible != "W/B 02-MAR-2020" &
+                                              time_period_eligible != "W/B 09-MAR-2020" &
+                                              time_period_eligible != "W/B 16-MAR-2020"))
+  
   child_table_data() %>%
     select (time_period_eligible, denominator, coverage_4weeks_num, 
             coverage_4weeks_percent, coverage_12weeks_num, coverage_12weeks_percent, 
@@ -465,7 +466,7 @@ child_table <- function() {
     footnote(i = 1, j = c(1:2, 4),
              value = as_paragraph(c("W/B : Week beginning",
                                     "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
-                                     "Blue cells indicate cohorts that have not reached 12 weeks of age")),
+                                    "Blue cells indicate cohorts that have not reached 12 weeks of age")),
              part = "header") %>%
     merge_at(i = 1, j = 3:4, part = "header") %>%
     merge_at(i = 1, j = 5:6, part = "header") %>%
@@ -479,8 +480,7 @@ child_table <- function() {
     theme_box() %>%
     autofit() %>%
     htmltools_value()
->
-
+  
 }
 
 ### END
