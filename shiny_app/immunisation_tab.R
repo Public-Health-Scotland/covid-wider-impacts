@@ -73,9 +73,9 @@ output$immunisation_explorer <- renderUI({
   intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
                   tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
                          "continue to receive their routine immunisations during the Covid-19 pandemic",class="externallink"),".",
-                  "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice at ",
-                  tags$a(href="https://twitter.com/NHSImmuniseScot","https://twitter.com/NHSImmuniseScot ",class="externallink"),
-                  " and ",tags$a(href="https://www.nhsinform.scot/immunisation","https://www.nhsinform.scot/immunisation",class="externallink"),".")
+                  "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
+                  tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ",class="externallink"),
+                  " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform",class="externallink"),".")
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_6in1 <-  p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. ",br(), 
