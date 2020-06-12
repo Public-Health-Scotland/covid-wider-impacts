@@ -50,9 +50,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                  category != "All") %>% 
           # Wrapping long legend names
           mutate(category = case_when(
-            category == "Cardiovascular diseases" ~ "Hypertension, ischaemic \nheart disease \nand heart failure",
-            category == "Platelet aggregation inhibitors excl. heparin" ~ "Antiplatelet drugs",
-            category == "Thromboembolic disease, atrial fibrillation or valvular heart disease" ~ "Oral anticoagulants",
+            category == "Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs" ~ "Antihypertensive, \nanti-anginal, anti-arrhythmic \nand heart failure drugs",
             TRUE ~ category
           ))
       }

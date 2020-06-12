@@ -88,15 +88,19 @@ observeEvent(input$btn_cardio_modal,
                    "The A&E2 dataset is managed by ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                           "Public Health Scotland (PHS).", class="externallink")),
-                 p(tags$em("Please note that due to limitations in diagnosis recording in the A&E datamart, the 
-                            figures reported for cardiovascular-related attendances offer only a very approximate 
-                            indication of attendances, i.e. data are incomplete for a number of  NHS Boards. 
+                 p(tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
+                            incomplete for a number of NHS Boards. Thus, the figures reported for cardiovascular-related 
+                            attendances offer only a very approximate indication of attendances. 
                             Additionally, some NHS Boards have moved to a new recording standard which 
                             has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
                             even prior to the introduction of lockdown measures, appear somehwat lower when compared to 
                             previous years.")),
-                 p("The following ICD-10 codes were considered for the cardiovascular A&E data subset:"),
-                 DT::dataTableOutput("ae_cardio_codes_tbl"),
+                 p("The table below shows the ICD-10 codes that were considered for the cardiovascular A&E data subset, 
+                   where this information was available."),
+                 actionButton("toggleCodeTable", "Show / Hide Table"),
+                 shinyjs::onclick("toggleCodeTable",
+                                  shinyjs::toggle(id = "CodeTable")),
+                 shinyjs::hidden(div(id = "CodeTable", br(), DT::dataTableOutput("ae_cardio_codes_tbl"))),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "drug_presc") {
@@ -107,7 +111,7 @@ observeEvent(input$btn_cardio_modal,
                    to the latest available week and is shown alongside historical activity (average from 2018 and 2019) 
                    for comparison purposes. Additional breakdowns by drug grouping are provided also."),
                  tags$b("What is an electronic prescription message?"),
-                 p("In the majority of cases, electronic messages are generated when a GP10 prescription is issued 
+                 p("In the majority of cases, electronic messages are generated when a prescription is issued 
                    by a GP Practice. Approximately 95% of prescriptions for medicines are written by GPs and over 97% 
                    of these have electronic messaging (eMessage) support."),
                  tags$b("Why are we using electronic prescription message data?"),
@@ -137,78 +141,63 @@ observeEvent(input$btn_cardio_modal,
                                   shinyjs::toggle(id = "BNFCodes")),
                  shinyjs::hidden(div(id="BNFCodes",
                      br(),
-                     tags$b("Hypertension, ischaemic heart disease and heart failure"),
                      HTML({
                        "
                        <table style='width:100%'>
                        <tr>
-                       <th colspan='2'>BNF Legacy</th>
+                       <th colspan='2'>Medicines Groups</th>
+                       <th>BNF Legacy</th>
                        </tr>
                        <tr>
+                       <th colspan='2'>&nbsp;&nbsp;Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs</th>
+                       </tr>
+                       <tr>
+                       <td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;Positive inotrpic drugs</td>
                        <td>0201</td>
-                       <td>Positive inotrpic drugs</td>
                        </tr>
                        <tr>
+                       <td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;Diuretics</td>
+                       <td>0202</td>
+                       </tr>
+                       <tr>
+                       <td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;Anti-arrhythmic drugs</td>
                        <td>0203</td>
-                       <td>Anti-arrhythmic drugs</td>
                        </tr>
                        <tr>
+                       <td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;Beta-adrenoreceptor blocking drugs</td>
                        <td>0204</td>
-                       <td>Beta-adrenoreceptor blocking drugs</td>
                        </tr>
                        <tr>
+                       <td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;Antihypertensives</td>
                        <td>0205</td>
-                       <td>Antihypertensives</td>
                        </tr>
                        <tr>
-                       <td>0207</td>
-                       <td>Sympathomimetics</td>
-                       </tr>
-                       <tr>
-                       <td>020505</td>
-                       <td>Drugs affecting the renin-angiotensin system</td>
-                       </tr>
-                       <tr>
+                       <td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;Nitrates</td>
                        <td>020601</td>
-                       <td>Nitrates</td>
                        </tr>
                        <tr>
+                       <td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;Calcium channel blockers</td>
                        <td>020602</td>
-                       <td>Calcium channel blockers</td>
                        </tr>
                        <tr>
+                       <td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;Peripheral vasodilator and related drugs</td>
                        <td>020604</td>
-                       <td>Peripheral vasodilator and related drugs</td>
-                       </tr>
-                       </table>
-                       "
-                     }),
-                     br(),
-                     tags$b("Antiplatelet drugs"),
-                     HTML({
-                       "
-                       <table style='width:100%'>
-                       <tr>
-                       <th colspan='2'>BNF Legacy</th>
                        </tr>
                        <tr>
+                       <td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;Sympathomimetics</td>
+                       <td>0207</td>
+                       </tr>
+                       <tr>
+                       <th colspan='2'>&nbsp;&nbsp;Antiplatelet drugs</th>
                        <td>0209</td>
-                       <td>Antiplatelet drugs</td>
-                       </tr>
-                       </table>
-                       "
-                 }),
-                     br(),
-                     tags$b("Oral anticoagulants"),
-                     HTML({
-                       "
-                       <table style='width:100%'>
-                       <tr>
-                       <th colspan='2'>BNF Legacy</th>
                        </tr>
                        <tr>
+                       <th colspan='2'>&nbsp;&nbsp;Oral anticoagulants</th>
                        <td>020802</td>
-                       <td>Oral anticoagulants</td>
+                       </tr>
+                       <tr>
+                       <th colspan='2'>&nbsp;&nbsp;Lipid-lowering drugs</th>
+                       <td>0212</td>
                        </tr>
                        </table>
                        "
@@ -286,6 +275,10 @@ output$ae_cardio_codes_tbl <- DT::renderDataTable(
   ae_cardio_codes
 )
 
+# Including 'observeEvent' here so that SIMD modal can be called from A&E Cardio section 
+observeEvent(input$btn_modal_simd_cardio, { showModal(simd_modal) }) 
+
+
 ###############################################.
 ## Reactive datasets ----
 ###############################################.
@@ -321,9 +314,9 @@ output$cardio_explorer <- renderUI({
       )
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
-        tags$em("Please note that due to limitations in diagnosis recording in the A&E datamart, the 
-                 figures reported for cardiovascular-related attendances offer only a very approximate 
-                 indication of attendances, i.e. data are incomplete for a number of  NHS Boards. 
+        tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
+                 incomplete for a number of NHS Boards. Thus, the figures reported for cardiovascular-related 
+                 attendances offer only a very approximate indication of attendances. 
                  Additionally, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
                  even prior to the introduction of lockdown measures, appear somehwat lower when compared to 
@@ -336,7 +329,9 @@ output$cardio_explorer <- renderUI({
                      "Weekly number of cardiovascular A&E attendances in Scotland by age group", "ae_cardio_age_tot"),
         plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by SIMD quintile", "ae_cardio_dep_var",
-                     "Weekly number of cardiovascular A&E attendances in Scotland by SIMD quintile", "ae_cardio_dep_tot")
+                     "Weekly number of cardiovascular A&E attendances in Scotland by SIMD quintile", "ae_cardio_dep_tot",
+                     extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?", 
+                                                  icon = icon('question-circle')))
       )
     } else if (input$measure_cardio_select == "drug_presc") {
       tagList(# Prescribing - items dispensed
@@ -392,8 +387,8 @@ output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, 
 # Prescribing charts
 output$prescribing_all <- renderPlotly({plot_overall_chart(cardio_drugs %>% filter(area_name == input$geoname_cardio), 
                                                            data_name = "drug_presc", area = "All")})
-output$cardio_drugs_var <- renderPlotly({plot_trend_chart(cardio_drugs, pal_con, c("condition"), data_name = "drug_presc", tab = "cardio")})
-output$cardio_drugs_tot <- renderPlotly({plot_trend_chart(cardio_drugs, pal_con, c("condition"), "total", data_name = "drug_presc", tab = "cardio")})
+output$cardio_drugs_var <- renderPlotly({plot_trend_chart(cardio_drugs, pal_med, c("condition"), data_name = "drug_presc", tab = "cardio")})
+output$cardio_drugs_tot <- renderPlotly({plot_trend_chart(cardio_drugs, pal_med, c("condition"), "total", data_name = "drug_presc", tab = "cardio")})
 ###############################################.
 ## Data downloads ----
 ###############################################.
@@ -441,14 +436,60 @@ output$download_cardio_data <- downloadHandler(
 ###############################################.
 output$cardio_commentary <- renderUI({
   tagList(h2("Cardiovascular - 17th June 2020"), 
-          p("Prescribing- placeholder"),
-          p("A&E -placeholder"),
-          p("Cardiac procedures placeholder"),
-          p("Procedures carried out at cardiac catheterisation labs at the Royal Infirmary of Edinburgh and 
-            at the Golden Jubilee National Hospital started to fall in early March 2020 and it has
-            has been at around xx-xx% of their previous level. The fall has been particularly marked 
-            for the provision of devices like pacemakers. The pattern of change has been broadly similar by age and sex.")
-          )
+          h3("Prescribing"),
+          p("Information on the prescriptions issued for cardiovascular medicines through 
+            General Practice has been included for the first time on 17th June 2020. 
+            These data indicate:"),
+          tags$ul(
+            tags$li("The number of prescriptions for cardiovascular drugs overall rose 
+                    sharply in the third week of March, increasing by approximately 35% when 
+                    compared to the average for the same time period in 2018 and 2019"),
+            tags$li("When examining specific groups of cardiovascular medicines routinely 
+                    prescribed in primary care a similar pattern is seen:",
+                    tags$ul(
+                      tags$li("The number of prescriptions rose sharply in March and peaked 
+                              in the third week"),
+                      tags$li("The number of prescriptions in April was below that expected 
+                              from the 2018/2019 average and is likely a consequence of early 
+                              ordering of repeat supplies in March"),
+                      tags$li("By the end of May, the numbers of prescriptions were returning 
+                              to normal levels ")
+                    )
+            )
+          ),
+          h3("Cardiovascular A&E attendances"),
+          p("Information on the cardiovascular attendances to the Accident & Emergency Department 
+            have been presented in this tool. This data is based on coding available in the 
+            Accident & Emergency Datamart (managed by Public Health Scotland). The coding practice 
+            for some NHS Boards has changed at the start of this year which most likely explains the 
+            reduced 2020 counts compared to the 2018-2019 average counts."),
+          tags$ul(
+            tags$li("Overall there has sharp drop in cardiovascular attendances to Accident and 
+                    Emergency Department and was nearly 60% lower compared to the 2018-2019 average."),
+            tags$li("This drop in cardiovascular attendances was consistent across both males and 
+                    females, in younger and older patients and across the deprivation quintiles.")),
+          h3("Cardiac procedures"),
+          p("Information on the cardiac procedures have been accrued from two large tertiary care 
+            centres in Scotland (Royal Infirmary of Edinburgh and Golden Jubilee Hospital). Data on 
+            the number of procedures was collected for.."),
+          tags$ul(
+            tags$li("coronary angiography (investigation to evaluate whether there is any narrowing 
+                    of the arteries supplying the heart),"),
+            tags$li("cardiac devices which includes pacemakers to treat rhythm problems of the heart and"),
+            tags$li("percutaneous coronary interventions which are cardiac procedures that treat any narrowing 
+                    of the arteries supplying the heart")),
+          p("The major observations are as follows:"),
+          tags$ul(
+            tags$li("Overall, the number of coronary angiographies has dropped. A significant proportion of 
+                    these procedures are elective."),
+            tags$li("The change in percutaneous coronary interventions have been less pronounced. A significant 
+                    proportion of coronary interventions occur in a context of patients suffering from a heart 
+                    attack. A proportion of coronary interventions are also planned and elective in nature. "))
+          # p("Procedures carried out at cardiac catheterisation labs at the Royal Infirmary of Edinburgh and 
+          #   at the Golden Jubilee National Hospital started to fall in early March 2020 and it has
+          #   has been at around xx-xx% of their previous level. The fall has been particularly marked 
+          #   for the provision of devices like pacemakers. The pattern of change has been broadly similar by age and sex.")
+           )
 })
 
 

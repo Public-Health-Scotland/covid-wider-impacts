@@ -624,7 +624,7 @@ rm(ae_cardio_codes)
 ae_cardio_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E_Cardio/"
 
 # Read in data, clean names + some simple mutations
-ae_cardio <- read_xlsx(paste0(ae_cardio_folder, "2020-05-28-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
+ae_cardio <- read_xlsx(paste0(ae_cardio_folder, "2020-06-11-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
   clean_names() %>% 
   rename(diag_cat = diagnosis_catagory,
          dep = prompt_dataset_deprivation_scot_quintile) %>% 
@@ -668,17 +668,18 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-05-24")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-06-07")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/prescribing data/ePr data by Partnership, Board and Scotland.xlsx") %>% 
+cardio_drugs <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/prescribing data/covid emessage data AMS only 20200611.xlsx") %>% 
   select(1:5) %>% 
   clean_names() %>% 
-  filter(condition %in% c("Cardiovascular diseases",
-                          "Platelet aggregation inhibitors excl. heparin",
-                          "Thromboembolic disease, atrial fibrillation or valvular heart disease")) %>% 
+  filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
+                          "Antiplatelet drugs",
+                          "Oral anticoagulants",
+                          "Lipid-lowering drugs")) %>% 
   mutate(week_ending = as.Date(week_ending),
          area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
                                substr(area_code,1,3) == "S08" ~ "Health board",
@@ -705,7 +706,7 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-05-31")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-06-07")
 
 ###############################################.
 ## Prepare 6-in-1 dose 1 ----
