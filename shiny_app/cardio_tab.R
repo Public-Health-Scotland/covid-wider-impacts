@@ -468,7 +468,7 @@ output$cardio_commentary <- renderUI({
             tags$li("This drop in cardiovascular attendances was consistent across both males and
                     females, in younger and older patients and across deprivation quintiles.")),
           h3("Cardiac procedures"),
-          p("Information on cardiac procedures has been obtained from two of the four tertiary care 
+          p("Information on cardiac procedures has been obtained from two of the four cardiac care 
             centres in Scotland (Royal Infirmary of Edinburgh and Golden Jubilee National Hospital). Data on 
             the number of procedures was collected for:"),
           tags$ul(
@@ -480,7 +480,7 @@ output$cardio_commentary <- renderUI({
           p("The major observations are as follows:"),
           tags$ul(
             tags$li("Overall, the number of coronary angiographies dropped from early March 2020. A significant proportion of 
-                    these procedures are elective and these activities were paused in late March 2020."),
+                    these procedures are elective and these activities are likely to have been reduced in late March 2020."),
             tags$li("The change in percutaneous coronary interventions has been less pronounced. A significant 
                     proportion of coronary interventions occur in a context of patients suffering a heart 
                     attack. A proportion of coronary interventions are also planned and elective in nature. "),
