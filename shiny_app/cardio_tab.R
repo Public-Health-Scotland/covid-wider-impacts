@@ -412,7 +412,7 @@ overall_cardio_download <- reactive({
   # Prep data for download
   switch(
     input$measure_cardio_select,
-    "cath" = filter_data(cath_lab, area = F) %>% filter(lab == input$area_cardio_select),
+    "cath" = filter_data(cath_lab_over(), area = F),
     "aye" = filter_data(ae_cardio, area = F),
     "drug_presc" = filter_data(cardio_drugs, area = F)
   ) %>% 
