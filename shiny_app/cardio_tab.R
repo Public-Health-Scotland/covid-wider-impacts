@@ -282,7 +282,18 @@ observeEvent(input$btn_modal_simd_cardio, { showModal(simd_modal) })
 ###############################################.
 ## Reactive datasets ----
 ###############################################.
+cath_lab_chosen <- reactive({
+  cath_lab %>% filter(lab == input$area_cardio_select) %>% droplevels()
+})
 
+cath_lab_over <- reactive({
+  cath_lab_chosen() %>% filter(groups == "Angiography") %>% droplevels()
+})
+
+cath_lab_type <- reactive({
+  cath_lab_chosen() %>% filter(category == "All") %>% 
+    select(-category) %>% rename(category = groups) %>% droplevels()
+})
 
 ###############################################.
 ## Reactive layout  ----
@@ -349,30 +360,16 @@ output$cardio_explorer <- renderUI({
 ## Charts ----
 ###############################################.
 #Cath labs RIE charts
-output$cath_overall <- renderPlotly({
-  plot_overall_chart(cath_lab %>% filter(groups == "Angiography" & lab == input$area_cardio_select), 
-                     "cath", area = F)})
-output$cath_sex_var <- renderPlotly({
-  plot_trend_chart(cath_lab %>% filter(groups == "Angiography"  & type == "sex"
-                                       & lab == input$area_cardio_select), pal_sex)})
-output$cath_sex_tot <- renderPlotly({
-  plot_trend_chart(cath_lab %>% filter(groups == "Angiography" & type == "sex" 
-                                       & lab == input$area_cardio_select),
-                   pal_sex, type = "total", data_name = "cath")})
-output$cath_age_var <- renderPlotly({
-  plot_trend_chart(cath_lab %>% filter(groups == "Angiography"  & type == "age" 
-                                       & lab == input$area_cardio_select), pal_2ages)})
-output$cath_age_tot <- renderPlotly({
-  plot_trend_chart(cath_lab %>% filter(groups == "Angiography"  & type == "age" 
-                                       & lab == input$area_cardio_select), 
+output$cath_overall <- renderPlotly({plot_overall_chart(cath_lab_over(), data_name = "cath", area = F)})
+output$cath_sex_var <- renderPlotly({plot_trend_chart(cath_lab_over(), pal_sex, split = "sex", tab = "cardio")})
+output$cath_sex_tot <- renderPlotly({plot_trend_chart(cath_lab_over(),
+                   pal_sex, type = "total", data_name = "cath", split = "sex", tab = "cardio")})
+output$cath_age_var <- renderPlotly({plot_trend_chart(cath_lab_over() %>% filter(type == "age"), pal_2ages)})
+output$cath_age_tot <- renderPlotly({plot_trend_chart(cath_lab_over() %>% filter(type == "age"), 
                    pal_2ages, type = "total", data_name = "cath")})
 
-output$cath_type_var <- renderPlotly({
-  plot_trend_chart(cath_lab %>% filter(category == "All" & lab == input$area_cardio_select) %>% 
-                     select(-category) %>% rename(category = groups), pal_sex)})
-output$cath_type_tot <- renderPlotly({
-  plot_trend_chart(cath_lab %>% filter(category == "All" & lab == input$area_cardio_select) %>% 
-                     select(-category) %>% rename(category = groups), 
+output$cath_type_var <- renderPlotly({plot_trend_chart(cath_lab_type(), pal_sex)})
+output$cath_type_tot <- renderPlotly({plot_trend_chart(cath_lab_type(),
                    pal_sex, type = "total", data_name = "cath")})
 
 ###############################################.
@@ -437,49 +434,49 @@ output$download_cardio_data <- downloadHandler(
 output$cardio_commentary <- renderUI({
   tagList(h2("Cardiovascular - 17th June 2020"), 
           h3("Prescribing"),
-          p("Information on prescriptions issued for cardiovascular medicines through 
-            General Practice has been included for the first time on 17th June 2020. 
+          p("Information on prescriptions issued for cardiovascular medicines through
+            General Practice has been included for the first time on 17th June 2020.
             These data indicate that:"),
           tags$ul(
-            tags$li("The number of prescriptions for cardiovascular medicines overall rose 
-                    sharply in the third week of March, increasing by approximately 35% when 
-                    compared to the average for the same time period in 2018 and 2019"),
-            tags$li("When examining specific groups of cardiovascular medicines routinely 
+            tags$li("The number of prescriptions for cardiovascular medicines overall rose
+                    sharply in the third week of March, increasing by approximately 35% when
+                    compared to the average for the same time period in 2018 and 2019."),
+            tags$li("When examining specific groups of cardiovascular medicines routinely
                     prescribed in primary care a similar pattern is seen:",
                     tags$ul(
-                      tags$li("The number of prescriptions rose sharply in March and peaked 
-                              in the third week"),
-                      tags$li("The number of prescriptions in April was below that expected 
-                              from the 2018/2019 average and is likely a consequence of early 
-                              ordering of repeat supplies in March"),
-                      tags$li("By the end of May, the numbers of prescriptions were returning 
-                              to normal levels ")
+                      tags$li("The number of prescriptions rose sharply in March and peaked
+                              in the third week."),
+                      tags$li("The number of prescriptions in April was below that expected
+                              from the 2018/2019 average and is likely a consequence of early
+                              ordering of repeat supplies in March."),
+                      tags$li("By the end of May, the numbers of prescriptions were returning
+                              to normal levels.")
                     )
             )
           ),
           h3("Cardiovascular A&E attendances"),
-          p("Information on cardiovascular attendances at Accident & Emergency Departments 
-            is presented in this tool. This data is based on coding available in the 
-            Accident & Emergency Datamart (managed by Public Health Scotland). Coding practice 
-            for some NHS Boards changed at the start of this year, which may explain the 
+          p("Information on cardiovascular attendances at Accident & Emergency Departments
+            is presented in this tool. This data is based on coding available in the
+            Accident & Emergency Datamart (managed by Public Health Scotland). Coding practice
+            for some NHS Boards changed at the start of this year, which may explain the
             reduced 2020 counts compared to the 2018-2019 average counts."),
           tags$ul(
-            tags$li("Overall there was a sharp drop in cardiovascular attendances at Accident and 
-                    Emergency Departments starting in early March 2020. Attendances were around 60% 
-                    lower compared to the 2018-2019 average. Levels rose again by the end of May, but 
+            tags$li("Overall there was a sharp drop in cardiovascular attendances at Accident and
+                    Emergency Departments starting in early March 2020. Attendances were around 60%
+                    lower compared to the 2018-2019 average. Levels rose again by the end of May, but
                     remain around 30% below the 2018-19 average."),
-            tags$li("This drop in cardiovascular attendances was consistent across both males and 
+            tags$li("This drop in cardiovascular attendances was consistent across both males and
                     females, in younger and older patients and across deprivation quintiles.")),
           h3("Cardiac procedures"),
           p("Information on cardiac procedures has been obtained from two of the four tertiary care 
-            centres in Scotland (Royal Infirmary of Edinburgh and Golden Jubilee Hospital). Data on 
+            centres in Scotland (Royal Infirmary of Edinburgh and Golden Jubilee National Hospital). Data on 
             the number of procedures was collected for:"),
           tags$ul(
             tags$li("coronary angiography (an investigation to evaluate whether there is any narrowing 
                     of the arteries supplying the heart);"),
             tags$li("cardiac devices, including pacemakers to treat rhythm problems of the heart and"),
             tags$li("percutaneous coronary interventions, cardiac procedures to treat narrowing 
-                    of the arteries supplying the heart")),
+                    of the arteries supplying the heart.")),
           p("The major observations are as follows:"),
           tags$ul(
             tags$li("Overall, the number of coronary angiographies dropped from early March 2020. A significant proportion of 
@@ -488,10 +485,6 @@ output$cardio_commentary <- renderUI({
                     proportion of coronary interventions occur in a context of patients suffering a heart 
                     attack. A proportion of coronary interventions are also planned and elective in nature. "),
             tags$li("The number of device procedures has been lower than expected since the end of March 2020."))
-          # p("Procedures carried out at cardiac catheterisation labs at the Royal Infirmary of Edinburgh and 
-          #   at the Golden Jubilee National Hospital started to fall in early March 2020 and it has
-          #   has been at around xx-xx% of their previous level. The fall has been particularly marked 
-          #   for the provision of devices like pacemakers. The pattern of change has been broadly similar by age and sex.")
            )
 })
 
