@@ -207,7 +207,7 @@ observeEvent(input$btn_cardio_modal,
              } else if (input$measure_cardio_select == "cath") {
                showModal(modalDialog(#ALL  MODAL
                  title = "What is the data source?",
-                 p("This tool provides an overview on how procedures procedures in the field of 
+                 p("This tool provides an overview on how procedures in the field of 
                     cardiovascular medicine have changed during the COVID-19 pandemic.
                    These include procedures such as inserting pacemakers or monitoring heart rhythms, 
                    investigating possible narrowing of the arteries supplying the heart (angiography) 
