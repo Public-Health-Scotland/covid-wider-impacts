@@ -61,7 +61,8 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                     uiOutput("summary_comment"),
                     uiOutput("deaths_commentary"),
                     uiOutput("immun_commentary_section"),
-                    uiOutput("child_comments")
+                    uiOutput("child_comments"),
+                    uiOutput("immun_commentary_1705")
           )#main panel bracket
  ), #tab panel
 ###############################################.
