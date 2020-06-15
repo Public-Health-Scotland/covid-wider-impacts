@@ -594,7 +594,7 @@ cath_labs <- rbind(cath_labs, all_cath)
 cath_labs_hist <- cath_labs %>% filter(year(week_ending) %in% c("2018", "2019")) %>%
   group_by(category, type, proc_week, groups, lab) %>%
   # Not using mean to avoid issues with missing data for some weeks
-  summarise(count_average = round((sum(count, na.rm = T))/2, 1))
+  summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% ungroup()
 
 cath_labs_2020 <- left_join(cath_labs %>% filter(year(week_ending) %in% c("2020")),
                             cath_labs_hist,
