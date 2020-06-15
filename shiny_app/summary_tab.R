@@ -70,9 +70,12 @@ observeEvent(input$btn_dataset_modal,
                    Therefore, RAPID is being used for the immediate monitoring of the impact of 
                    COVID-19 on admissions to hospital and it provides broadly comparable figures to SMR01 on 
                    numbers of admissions."),
+                 p("Please, note that for NHS Forth Valley data is largely incomplete for the period presented and therefore
+                   the trends for this board need to be interpreted carefully."),
                  p("The RAPID dataset is managed by ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/", 
                           "Public Health Scotland (PHS).", class="externallink")),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_select == "aye") { #A&E ATTENDANCES MODAL
@@ -100,6 +103,7 @@ observeEvent(input$btn_dataset_modal,
                    "The A&E2 dataset is managed by ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                           "Public Health Scotland (PHS).", class="externallink")),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_select == "nhs24") { #NHS24 CALLS MODAL
@@ -131,6 +135,7 @@ observeEvent(input$btn_dataset_modal,
                    "This analysis is drawn from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
                  ),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                
@@ -157,6 +162,7 @@ observeEvent(input$btn_dataset_modal,
                    "The OOH dataset is managed by ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/", 
                           "Public Health Scotland (PHS).", class="externallink")),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                
@@ -179,6 +185,7 @@ observeEvent(input$btn_dataset_modal,
                    "This analysis is drawn from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
                  ),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                
@@ -238,7 +245,6 @@ simd_modal <- modalDialog(
   )
 # Link action button click to modal launch 
 observeEvent(input$btn_modal_simd, { showModal(simd_modal) }) 
-
 
 
 ###############################################.

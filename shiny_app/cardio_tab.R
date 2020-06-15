@@ -242,6 +242,7 @@ observeEvent(input$btn_cardio_modal,
                    In addition, during 2019 increased catheterisation lab activity was seen at the Golden Jubilee National 
                     Hospital activity due to the presence of the temporary mobile lab which was not present during other 
                    time periods."),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
