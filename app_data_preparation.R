@@ -401,8 +401,6 @@ nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 
                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 250520to31052020.zip"), 
                             "Report 2.csv")),
                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 1 Jun 20 - 7 Jun 20.zip"), 
-                            "Report 2.csv")),
-               read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 8 Jun 20 - 14 Jun 20.zip"), 
                             "Report 2.csv"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
