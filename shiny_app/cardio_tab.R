@@ -441,7 +441,7 @@ output$cardio_commentary <- renderUI({
             General Practice has been included for the first time on 17th June 2020. 
             These data indicate:"),
           tags$ul(
-            tags$li("The number of prescriptions for cardiovascular drugs overall rose 
+            tags$li("The number of prescriptions for cardiovascular medicines overall rose 
                     sharply in the third week of March, increasing by approximately 35% when 
                     compared to the average for the same time period in 2018 and 2019"),
             tags$li("When examining specific groups of cardiovascular medicines routinely 
@@ -464,14 +464,14 @@ output$cardio_commentary <- renderUI({
             for some NHS Boards has changed at the start of this year which most likely explains the 
             reduced 2020 counts compared to the 2018-2019 average counts."),
           tags$ul(
-            tags$li("Overall there has sharp drop in cardiovascular attendances to Accident and 
-                    Emergency Department and was nearly 60% lower compared to the 2018-2019 average."),
+            tags$li("Overall there has sharp drop in cardiovascular attendances to the Accident and 
+                    Emergency Department, approximately 60% lower compared to the 2018-2019 average."),
             tags$li("This drop in cardiovascular attendances was consistent across both males and 
                     females, in younger and older patients and across the deprivation quintiles.")),
           h3("Cardiac procedures"),
-          p("Information on the cardiac procedures have been accrued from two large tertiary care 
+          p("Information on the cardiac procedures have been accrued from two of the four tertiary care 
             centres in Scotland (Royal Infirmary of Edinburgh and Golden Jubilee Hospital). Data on 
-            the number of procedures was collected for.."),
+            the number of procedures was collected for:"),
           tags$ul(
             tags$li("coronary angiography (investigation to evaluate whether there is any narrowing 
                     of the arteries supplying the heart),"),
@@ -481,7 +481,7 @@ output$cardio_commentary <- renderUI({
           p("The major observations are as follows:"),
           tags$ul(
             tags$li("Overall, the number of coronary angiographies has dropped. A significant proportion of 
-                    these procedures are elective."),
+                    these procedures are elective and these activities were paused in late March 2020."),
             tags$li("The change in percutaneous coronary interventions have been less pronounced. A significant 
                     proportion of coronary interventions occur in a context of patients suffering from a heart 
                     attack. A proportion of coronary interventions are also planned and elective in nature. "))
