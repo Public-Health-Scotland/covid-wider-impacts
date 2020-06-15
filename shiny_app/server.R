@@ -36,9 +36,12 @@ function(input, output, session) {
     updateTabsetPanel(session, "intabset", selected = "summary")
   })
   
+  # observeEvent(input$jump_cardio, {
+  #   updateTabsetPanel(session, "intabset", selected = "cardio")
+  # })
+  
   observeEvent(input$jump_table, {
     updateTabsetPanel(session, "intabset", selected = "table")
-
   })
   
 } # server end
