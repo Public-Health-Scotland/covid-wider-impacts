@@ -24,7 +24,7 @@ observeEvent(input$measure_cardio_select, {
   x <- input$measure_cardio_select
   
   if (x == "cath") {
-    cardio_label = "Step 2 - Select a cardiac catheterization lab"
+    cardio_label = "Step 2 - Select a cardiac catheterisation lab"
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
@@ -297,7 +297,7 @@ output$cardio_explorer <- renderUI({
       tagList( # Cath labs
         p("At present charts include data from only two of the four Scottish catheterisation labs.
           Data from the remaining two centres will be added as it becomes available."),
-        h3(paste0("Weekly visits to the cardiac catheterization labs at the ", lab_chosen)),
+        h3(paste0("Weekly visits to the cardiac catheterisation labs at the ", lab_chosen)),
         actionButton("btn_cardio_modal", paste0("Data source: ", lab_chosen), icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "cath_overall"),
         plot_cut_box("Percentage change in cases compared with the
@@ -437,9 +437,9 @@ output$download_cardio_data <- downloadHandler(
 output$cardio_commentary <- renderUI({
   tagList(h2("Cardiovascular - 17th June 2020"), 
           h3("Prescribing"),
-          p("Information on the prescriptions issued for cardiovascular medicines through 
+          p("Information on prescriptions issued for cardiovascular medicines through 
             General Practice has been included for the first time on 17th June 2020. 
-            These data indicate:"),
+            These data indicate that:"),
           tags$ul(
             tags$li("The number of prescriptions for cardiovascular medicines overall rose 
                     sharply in the third week of March, increasing by approximately 35% when 
@@ -458,33 +458,36 @@ output$cardio_commentary <- renderUI({
             )
           ),
           h3("Cardiovascular A&E attendances"),
-          p("Information on the cardiovascular attendances to the Accident & Emergency Department 
-            have been presented in this tool. This data is based on coding available in the 
-            Accident & Emergency Datamart (managed by Public Health Scotland). The coding practice 
-            for some NHS Boards has changed at the start of this year which most likely explains the 
+          p("Information on cardiovascular attendances at Accident & Emergency Departments 
+            is presented in this tool. This data is based on coding available in the 
+            Accident & Emergency Datamart (managed by Public Health Scotland). Coding practice 
+            for some NHS Boards changed at the start of this year, which may explain the 
             reduced 2020 counts compared to the 2018-2019 average counts."),
           tags$ul(
-            tags$li("Overall there has sharp drop in cardiovascular attendances to the Accident and 
-                    Emergency Department, approximately 60% lower compared to the 2018-2019 average."),
+            tags$li("Overall there was a sharp drop in cardiovascular attendances at Accident and 
+                    Emergency Departments starting in early March 2020. Attendances were around 60% 
+                    lower compared to the 2018-2019 average. Levels rose again by the end of May, but 
+                    remain around 30% below the 2018-19 average."),
             tags$li("This drop in cardiovascular attendances was consistent across both males and 
-                    females, in younger and older patients and across the deprivation quintiles.")),
+                    females, in younger and older patients and across deprivation quintiles.")),
           h3("Cardiac procedures"),
-          p("Information on the cardiac procedures have been accrued from two of the four tertiary care 
+          p("Information on cardiac procedures has been obtained from two of the four tertiary care 
             centres in Scotland (Royal Infirmary of Edinburgh and Golden Jubilee Hospital). Data on 
             the number of procedures was collected for:"),
           tags$ul(
-            tags$li("coronary angiography (investigation to evaluate whether there is any narrowing 
-                    of the arteries supplying the heart),"),
-            tags$li("cardiac devices which includes pacemakers to treat rhythm problems of the heart and"),
-            tags$li("percutaneous coronary interventions which are cardiac procedures that treat any narrowing 
+            tags$li("coronary angiography (an investigation to evaluate whether there is any narrowing 
+                    of the arteries supplying the heart);"),
+            tags$li("cardiac devices, including pacemakers to treat rhythm problems of the heart and"),
+            tags$li("percutaneous coronary interventions, cardiac procedures to treat narrowing 
                     of the arteries supplying the heart")),
           p("The major observations are as follows:"),
           tags$ul(
-            tags$li("Overall, the number of coronary angiographies has dropped. A significant proportion of 
+            tags$li("Overall, the number of coronary angiographies dropped from early March 2020. A significant proportion of 
                     these procedures are elective and these activities were paused in late March 2020."),
-            tags$li("The change in percutaneous coronary interventions have been less pronounced. A significant 
-                    proportion of coronary interventions occur in a context of patients suffering from a heart 
-                    attack. A proportion of coronary interventions are also planned and elective in nature. "))
+            tags$li("The change in percutaneous coronary interventions has been less pronounced. A significant 
+                    proportion of coronary interventions occur in a context of patients suffering a heart 
+                    attack. A proportion of coronary interventions are also planned and elective in nature. "),
+            tags$li("The number of device procedures has been lower than expected since the end of March 2020."))
           # p("Procedures carried out at cardiac catheterisation labs at the Royal Infirmary of Edinburgh and 
           #   at the Golden Jubilee National Hospital started to fall in early March 2020 and it has
           #   has been at around xx-xx% of their previous level. The fall has been particularly marked 
