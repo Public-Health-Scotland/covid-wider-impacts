@@ -939,7 +939,45 @@ u_perinatal_datatable <- read_csv(paste0(data_folder,"perinatal/all_u_data.csv")
 saveRDS(u_perinatal_datatable, paste0("shiny_app/data/","u_perinatal_datatable.rds"))
 
 # Merging both p and u
-perinatal <- bind_rows(p_perinatal, u_perinatal)
+perinatal <- bind_rows(p_perinatal, u_perinatal) %>% 
+  select(date, observation, rate, centreline, upper_cl_3_std_dev:area_type) %>% 
+  arrange(type, area_name, date) %>% 
+  group_by(type, area_name) %>% 
+  # for rules: outliers when over or under 3 sigma limit
+  mutate(outlier = case_when(rate>upper_cl_3_std_dev | rate< lower_cl_3_std_dev ~ T, T ~ F),
+         # Shift: run of 8or more consecutive data points above or below the centreline
+         # First id when this run is happening and then iding all points part of it
+         shift_i = case_when((rate > centreline & lag(rate, 1) > centreline 
+                              & lag(rate, 2) > centreline & lag(rate, 3) > centreline 
+                              & lag(rate, 4) > centreline & lag(rate, 5) > centreline
+                              & lag(rate, 6) > centreline & lag(rate, 7) > centreline) |
+                               (rate < centreline & lag(rate, 1) < centreline 
+                                & lag(rate, 2) < centreline & lag(rate, 3) < centreline 
+                                & lag(rate, 4) < centreline & lag(rate, 5) < centreline
+                                & lag(rate, 6) < centreline & lag(rate, 7) < centreline) ~ T , T ~ F),
+         shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
+                           | lead(shift_i, 3) == T | lead(shift_i, 4) == T
+                           | lead(shift_i, 5) == T | lead(shift_i, 6) == T
+                           | lead(shift_i, 7) == T ~ T, T ~ F),
+         # Trend: A run of 6 or more consecutive data points
+         trend_i = case_when((rate > lag(rate ,1) & lag(rate, 1) > lag(rate, 2) 
+                              & lag(rate, 2) > lag(rate, 3)  & lag(rate, 3) > lag(rate, 4) 
+                              & lag(rate, 4) > lag(rate, 5) ) |
+                               (rate < lag(rate ,1) & lag(rate, 1) < lag(rate, 2) 
+                                & lag(rate, 2) < lag(rate, 3)  & lag(rate, 3) < lag(rate, 4) 
+                                & lag(rate, 4) < lag(rate, 5) ) 
+                             ~ T , T ~ F),
+         rate1 = lag(rate, 1),
+         rate2 = lag(rate, 2),
+         rate3 = lag(rate, 3),
+         rate4 = lag(rate, 4),
+         trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
+                           | lead(trend_i, 3) == T | lead(trend_i, 4) == T
+                           | lead(trend_i, 5) == T  ~ T, T ~ F)) %>%
+  ungroup %>% 
+  select(-shift_i, -trend_i) 
+
+test <- perinatal %>% select(trend_i, trend, rate, rate1:rate4, type, date)
 saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 
 
