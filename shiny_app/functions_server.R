@@ -278,6 +278,9 @@ plot_scurve <- function(dataset, age_week) {
   xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
   # To adjust x-axis min and max depending on which dose selected 
   xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) 
+  # enforcing range from 0 to 100%
+  yaxis_plots[["range"]] <- c(0, 100) 
+  
   
   #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
