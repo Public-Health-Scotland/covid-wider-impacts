@@ -404,8 +404,13 @@ create_open_data(dataset = a_and_e, count_variable = "NumberAttendances",
 create_open_data(dataset = nhs24, count_variable = "CompletedContacts",
                  filepath_chosen = nhs24_filepath, data_name = "nhs24")
 
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> a51166c6519471a8550a96229558c5db1fc4a574
 ##############################################.
 #4##Create Weekly_ooh_consults OD Resources----
 ##############################################.
