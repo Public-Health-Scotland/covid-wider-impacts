@@ -12,6 +12,13 @@ observeEvent(input$btn_immune_modal,
                  invitation of children when a scheduled immunisation is due.  When a child receives a immunisation, 
                  relevant information is returned to administrative staff in the NHS Board child health department.  
                  The administrative staff then update the child’s SIRS record accordingly."),
+               p("After a child receives an immunisation, it takes time for a record of the immunisation to be entered 
+                 into the SIRS system. We have allowed a 6-week window for data entry. Each release of this page will 
+                 therefore report on immunisations given up to 6 weeks before the date these data were extracted for 
+                 analysis. Although the vast majority of data on immunisations given are usually recorded within 6 weeks, 
+                 the pandemic will have affected some data recording and this will vary across NHS Boards. Data shown for 
+                 the most recent cohorts of children will therefore not be fully complete in SIRS at this stage. 
+                 The uptake rates for each cohort will be refreshed with more up-to-date data every 4 weeks."),
                p(tags$a(href="https://publichealthscotland.scot/","Public Health Scotland (PHS)",class="externallink"),
                  " routinely receives quarterly data extracts from SIRS for the purpose of producing and ",
                  (tags$a(href="https://www.isdscotland.org/Health-Topics/Child-Health/Immunisation/","publishing",class="externallink"))," 
