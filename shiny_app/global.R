@@ -74,9 +74,8 @@ six_dose3 <- readRDS("data/sixinone_dose3_data.rds") # 6 in 1 immunisation data 
 sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
 
 ## perinatal mortality data
-p_perinatal <- readRDS("data/p_perinatal_data.rds")
+perinatal <- readRDS("data/perinatal_data.rds")
 p_perinatal_table <- readRDS("data/p_perinatal_datatable.rds") # may add data table to tab
-u_perinatal <- readRDS("data/u_perinatal_data.rds")
 u_perinatal_table <- readRDS("data/u_perinatal_datatable.rds") # may add data table to tab
 
 
