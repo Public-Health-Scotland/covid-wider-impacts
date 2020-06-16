@@ -23,6 +23,10 @@ function(input, output, session) {
   source(file.path("immunisation_tab.R"),  local = TRUE)$value
   
   ###############################################.
+  ## Child Health tab
+  source(file.path("child_health_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
   ## Perinatal tab
   source(file.path("perinatal_tab.R"),  local = TRUE)$value
   
@@ -36,9 +40,12 @@ function(input, output, session) {
     updateTabsetPanel(session, "intabset", selected = "summary")
   })
   
+  # observeEvent(input$jump_cardio, {
+  #   updateTabsetPanel(session, "intabset", selected = "cardio")
+  # })
+  
   observeEvent(input$jump_table, {
     updateTabsetPanel(session, "intabset", selected = "table")
-
   })
   
 } # server end
