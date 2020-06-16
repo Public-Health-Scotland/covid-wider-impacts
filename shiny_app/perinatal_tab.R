@@ -47,79 +47,6 @@ observeEvent(input$btn_perinatal_modal,
 # ###############################################.
 # ## perinatal Tab Reactive layout  ----
 # ###############################################.
-
-#run chart function to generate p charts
-output$perinatal_scatter_p <- renderPlotly({
-  p_perinatal_filter <- p_perinatal %>% filter(type == input$measure_select_perinatal)
-  
-  yaxis_plots[["title"]] <- "Rate per 1000 births"
-  xaxis_plots[["title"]] <- "Month"
-  
-  plot_ly(data = p_perinatal_filter, x = ~date) %>%
-  add_lines(y = ~rate, line = list(color = "black"),
-            #text=tooltip_trend, hoverinfo="text",
-            name = "Rate") %>%
-  add_lines(y = ~centreline, line = list(color = "purple"),
-            #text=tooltip_trend, hoverinfo="text",
-            name = "Centreline") %>%
-  add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dot"),
-            #text=tooltip_trend, hoverinfo="text",
-            name = "Upper confidence interval to 3 stdev") %>%
-  add_lines(y = ~lower_cl_3_std_dev, line = list(color = "red", dash = "dot"),
-            #text=tooltip_trend, hoverinfo="text",
-            name = "Lower confidence interval to 3 stdev") %>%
-  add_lines(y = ~upper_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
-            #text=tooltip_trend, hoverinfo="text",
-            name = "Upper confidence interval to 2 stdev") %>%
-  add_lines(y = ~lower_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
-            #text=tooltip_trend, hoverinfo="text",
-             name = "Lower confidence interval to 2 stdev") %>%
-    
-    layout( #to avoid labels getting cut out
-           yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
-    # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
-
-    }
-)
-
-#run chart function to generate p charts
-output$perinatal_scatter_u <- renderPlotly({
-  u_perinatal_filter <- u_perinatal %>% filter(type == input$measure_select_perinatal) 
-
-  yaxis_plots[["title"]] <- "Rate per 1000 births"
-  xaxis_plots[["title"]] <- "Month"
-    
-  plot_ly(data = u_perinatal_filter, x = ~date) %>%
-    add_lines(y = ~rate, line = list(color = "black"),
-              #text=tooltip_trend, hoverinfo="text",
-              name = "Rate") %>%
-    add_lines(y = ~centreline, line = list(color = "purple"),
-              #text=tooltip_trend, hoverinfo="text",
-              name = "Centreline") %>%
-    add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dot"),
-              #text=tooltip_trend, hoverinfo="text",
-              name = "Upper confidence interval to 3 stdev") %>%
-    add_lines(y = ~lower_cl_3_std_dev, line = list(color = "red", dash = "dot"),
-              #text=tooltip_trend, hoverinfo="text",
-              name = "Lower confidence interval to 3 stdev") %>%
-    add_lines(y = ~upper_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
-              #text=tooltip_trend, hoverinfo="text",
-              name = "Upper confidence interval to 2 stdev") %>%
-    add_lines(y = ~lower_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
-              #text=tooltip_trend, hoverinfo="text",
-              name = "Lower confidence interval to 2 stdev") %>%
-    
-    layout( #to avoid labels getting cut out
-      yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
-    # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
-
-}
-)
-
-
-
 # The charts and text shown on the app will depend on what the user wants to see
 output$perinatal_explorer <- renderUI({
 
@@ -207,4 +134,78 @@ if (input$measure_select_perinatal == "stillbirths") {
              #column(6, uiOutput("u_perinatal_table"))) #add potential table later   
 
 } #close perinatal_explorer function
+  
+  ###############################################.
+  ## Charts ----
+  ###############################################.
+  
+  #run chart function to generate p charts
+  output$perinatal_scatter_p <- renderPlotly({
+    p_perinatal_filter <- p_perinatal %>% filter(type == input$measure_select_perinatal)
+    
+    yaxis_plots[["title"]] <- "Rate per 1000 births"
+    xaxis_plots[["title"]] <- "Month"
+    
+    plot_ly(data = p_perinatal_filter, x = ~date) %>%
+      add_lines(y = ~rate, line = list(color = "black"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Rate") %>%
+      add_lines(y = ~centreline, line = list(color = "purple"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Centreline") %>%
+      add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dot"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Upper confidence interval to 3 stdev") %>%
+      add_lines(y = ~lower_cl_3_std_dev, line = list(color = "red", dash = "dot"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Lower confidence interval to 3 stdev") %>%
+      add_lines(y = ~upper_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Upper confidence interval to 2 stdev") %>%
+      add_lines(y = ~lower_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Lower confidence interval to 2 stdev") %>%
+      
+      layout( #to avoid labels getting cut out
+        yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+    
+  }
+  )
+  
+  #run chart function to generate p charts
+  output$perinatal_scatter_u <- renderPlotly({
+    u_perinatal_filter <- u_perinatal %>% filter(type == input$measure_select_perinatal) 
+    
+    yaxis_plots[["title"]] <- "Rate per 1000 births"
+    xaxis_plots[["title"]] <- "Month"
+    
+    plot_ly(data = u_perinatal_filter, x = ~date) %>%
+      add_lines(y = ~rate, line = list(color = "black"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Rate") %>%
+      add_lines(y = ~centreline, line = list(color = "purple"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Centreline") %>%
+      add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dot"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Upper confidence interval to 3 stdev") %>%
+      add_lines(y = ~lower_cl_3_std_dev, line = list(color = "red", dash = "dot"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Lower confidence interval to 3 stdev") %>%
+      add_lines(y = ~upper_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Upper confidence interval to 2 stdev") %>%
+      add_lines(y = ~lower_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
+                #text=tooltip_trend, hoverinfo="text",
+                name = "Lower confidence interval to 2 stdev") %>%
+      
+      layout( #to avoid labels getting cut out
+        yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+    
+  }
+  )
 })
