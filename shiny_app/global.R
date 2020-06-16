@@ -73,6 +73,12 @@ sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6 in 1 immunisa
 six_dose3 <- readRDS("data/sixinone_dose3_data.rds") # 6 in 1 immunisation data at 8 weeks
 sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
 
+## perinatal mortality data
+p_perinatal <- readRDS("data/p_perinatal_data.rds")
+p_perinatal_table <- readRDS("data/p_perinatal_datatable.rds") # may add data table to tab
+u_perinatal <- readRDS("data/u_perinatal_data.rds")
+u_perinatal_table <- readRDS("data/u_perinatal_datatable.rds") # may add data table to tab
+
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)")) # specialty list
@@ -98,6 +104,13 @@ data_list_data_tab <- c(data_list, "6-in-1 first dose"  = "sixin_8wks",
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
                  "Cardiac procedures" = "cath")
+
+#List of data items available in step 2 of perinatal tab
+data_list_perinatal <- c("Still births"="stillbirths",
+                         "Post neonatal deaths"="pnnd",
+                         "Neonatal deaths"="nnd",
+                         "Extended perinatal deaths"="extperi",
+                         "Infant deaths"="infantdeaths")
 
 ###############################################.
 ## Palettes and plot parameters ----
