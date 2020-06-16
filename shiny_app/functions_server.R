@@ -401,7 +401,7 @@ immune_table <- function(dataset, age_week) {
 #####################################################################################.
 ## Function for drawing S-Curve charts used in health visitor tabs.
 
-plot_scurve_child <- function(dataset) {
+plot_scurve_child <- function(dataset, age_week) {
   
   scurve_data <- dataset %>% filter(area_name == input$geoname_child) 
   # %>%
@@ -429,7 +429,7 @@ plot_scurve_child <- function(dataset) {
                 color = ~time_period_eligible, colors = pal_child,
                 text= tooltip_scurve, hoverinfo="text") %>%
       # Adding legend title
-      add_annotations( text="Children turning 2 weeks in:", xref="paper", yref="paper",
+      add_annotations( text=paste0("Children turning ", age_week, " weeks in:"), xref="paper", yref="paper",
                        x=1.02, xanchor="left",
                        y=0.8, yanchor="bottom",    # Same y as legend below
                        legendtitle=TRUE, showarrow=FALSE ) %>% 
@@ -452,16 +452,16 @@ child_table <- function() {
                                               time_period_eligible != "W/B 16-MAR-2020"))
   
   child_table_data() %>%
-    select (time_period_eligible, denominator, coverage_4weeks_num, 
-            coverage_4weeks_percent, coverage_12weeks_num, coverage_12weeks_percent, 
+    select (time_period_eligible, denominator, coverage_10weeks_num, 
+            coverage_10weeks_percent, coverage_16weeks_num, coverage_16weeks_percent, 
             coverage_tot_num, coverage_tot_percent) %>%
     flextable() %>%
-    set_header_labels(time_period_eligible="Children turning 2 weeks in:",
+    set_header_labels(time_period_eligible="Children turning  weeks in:",
                       denominator="Total number of children",
-                      coverage_4weeks_num="Children recorded as receiving their health visitor first visit by 4 weeks of age",
-                      coverage_4weeks_percent="Children recorded as receiving their health visitor first visit by 4 weeks of age",
-                      coverage_12weeks_num="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 12 weeks of age by the date data was extracted for analysis)",
-                      coverage_12weeks_percent="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 12 weeks of age by the date data was extracted for analysis)",
+                      coverage_10weeks_num="Children recorded as receiving their health visitor first visit by 4 weeks of age",
+                      coverage_10weeks_percent="Children recorded as receiving their health visitor first visit by 4 weeks of age",
+                      coverage_16weeks_num="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 12 weeks of age by the date data was extracted for analysis)",
+                      coverage_16weeks_percent="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 12 weeks of age by the date data was extracted for analysis)",
                       coverage_tot_num="Children recorded as receiving their health visitor first visit by the date information was extracted for analysis (01-June-2020)",
                       coverage_tot_percent="Children recorded as receiving their health visitor first visit by the date information was extracted for analysis (01-June-2020)") %>%
     footnote(i = 1, j = c(1:2, 4),
