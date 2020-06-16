@@ -161,25 +161,25 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
 ###############################################.
 ## Perinatal Tab ----
 ###############################################.
-tabPanel(title = "Perinatal Mortality", icon = icon("female"), value = "child",
-         wellPanel(
-           # column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-           #               p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-           #               selectInput("geotype_perinatal", label = NULL, choices= c("Scotland"),
-           #                           selected = "Scotland")),
-           #        uiOutput("geoname_ui_perinatal")),
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_perinatal",
-                                           label= "Select the data you want to explore.",
-                                           choices = data_list_perinatal, status = "primary",
-                                           direction = "vertical", justified = T))),
-           column(4,actionButton("btn_perinatal_modal", "Data source: PHS and NRS", icon = icon('question-circle')))
-           #actionButton("browser", "Browser")
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("perinatal_explorer")
-         )# mainPanel bracket
-), # tabpanel bracket
+# tabPanel(title = "Perinatal Mortality", icon = icon("female"), value = "child",
+#          wellPanel(
+#            # column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+#            #               p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+#            #               selectInput("geotype_perinatal", label = NULL, choices= c("Scotland"),
+#            #                           selected = "Scotland")),
+#            #        uiOutput("geoname_ui_perinatal")),
+#            column(4, div(title="Select the data you want to explore.", # tooltip
+#                          radioGroupButtons("measure_select_perinatal",
+#                                            label= "Select the data you want to explore.",
+#                                            choices = data_list_perinatal, status = "primary",
+#                                            direction = "vertical", justified = T))),
+#            column(4,actionButton("btn_perinatal_modal", "Data source: PHS and NRS", icon = icon('question-circle')))
+#            #actionButton("browser", "Browser")
+#          ), #well panel
+#          mainPanel(width = 12,
+#                    uiOutput("perinatal_explorer")
+#          )# mainPanel bracket
+# ), # tabpanel bracket
 ###############################################.
 ## Data ----
 ###############################################.

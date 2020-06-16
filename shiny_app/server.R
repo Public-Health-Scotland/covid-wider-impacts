@@ -28,7 +28,7 @@ function(input, output, session) {
   
   ###############################################.
   ## Perinatal tab
-  source(file.path("perinatal_tab.R"),  local = TRUE)$value
+  # source(file.path("perinatal_tab.R"),  local = TRUE)$value
   
   ###############################################.
   ## Data tab
