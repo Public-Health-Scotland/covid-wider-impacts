@@ -133,7 +133,9 @@ if (input$measure_select_perinatal == "stillbirths") {
     fluidRow(withSpinner(plotlyOutput("perinatal_scatter_u"))))#,
              #column(6, uiOutput("u_perinatal_table"))) #add potential table later   
 
-} #close perinatal_explorer function
+} #end of if statements
+  
+}) #close perinatal_explorer function
   
   ###############################################.
   ## Charts ----
@@ -171,8 +173,7 @@ if (input$measure_select_perinatal == "stillbirths") {
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
     
-  }
-  )
+  })
   
   #run chart function to generate p charts
   output$perinatal_scatter_u <- renderPlotly({
@@ -206,6 +207,18 @@ if (input$measure_select_perinatal == "stillbirths") {
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
     
-  }
-  )
+  })
+
+
+###############################################.
+## Commentary ----
+###############################################.
+output$perinatal_commentary <- renderUI({
+  tagList(h2("Perinatal mortality - 1st July 2020"),
+          p("Placeholder")
+            )
 })
+
+##END
+
+
