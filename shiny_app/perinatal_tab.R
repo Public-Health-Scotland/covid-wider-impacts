@@ -86,8 +86,7 @@ output$perinatal_explorer <- renderUI({
     intro_text <- p("Neonatal deaths refer to", tags$a(href="https://www.healthcareimprovementscotland.org/our_work/reproductive,_maternal__child/reproductive_health/spimmr_2012.aspx", "deaths in the first four weeks",class="externallink"), "of life.
                  It is important to monitor the rate of perinatal mortality during the Covid-19 pandemic.",
                    "NHS Scotland and Scottish Government", tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                                                                  "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.",
-                   p("Confidence intervals indicate a range of values of which it is likely the true value lies within."))
+                                                                  "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.")
   } else if (input$measure_select_perinatal == "extperi") {
     intro_text <- p("Extended perinatal deaths refer to", tags$a(href="https://www.healthcareimprovementscotland.org/our_work/reproductive,_maternal__child/reproductive_health/spimmr_2012.aspx", "the sum of stillbirths and neonatal mortality",class="externallink"), "(deaths within the first 28 days of life).
                      It is important to monitor the rate of perinatal mortality during the Covid-19 pandemic.",
@@ -106,7 +105,18 @@ output$perinatal_explorer <- renderUI({
   tagList(
     fluidRow(column(12, 
                     intro_text,
-                    p("Explanation of SPC charts placeholder"),
+                    p("The chart below shows the trend of rates for the measure selected, but it also incorporates
+                      two other sets of lines: control and warning limits. As perinatal and infant mortality are 
+                      rare events these small numbers can fluctuate making it difficult to detect patterns. 
+                      Control and warning limits take in consideration the variation of the data, and indicate when
+                      a values is unexpectedly low or high and requires attention."),
+                    p("Centreline - this should be mentioned if included but I would take it out"),
+                    p("In these charts we also identify, if present, other patterns in the data:"),
+                    tags$ul(tags$li("Outliers: Data points outside the limits marked by the control limits."),
+                            tags$li("Shifts: Eight or more consecutive data points above or below the centreline."),
+                            tags$li("Trends: Six or more consecutive data points which are increasing or decreasing."),
+                            tags$li("Outer One – Third: Two out of three consecutive data points which sit between the control and warning limits."),
+                            tags$li("Inner One -Third: 15 or more consecutive data points that lie close to the centreline.")),
                     h4(paste0(perinatal_title)))),
     fluidRow(withSpinner(plotlyOutput("perinatal_chart"))))
   
@@ -118,12 +128,12 @@ output$perinatal_explorer <- renderUI({
   
   #run chart function to generate p charts
   output$perinatal_chart <- renderPlotly({
-    perinatal_filter <- perinatal %>% filter(type == input$measure_select_perinatal)
+    trend_data <- perinatal %>% filter(type == input$measure_select_perinatal)
     
     yaxis_plots[["title"]] <- "Rate per 1000 births"
     xaxis_plots[["title"]] <- "Month"
     
-    plot_ly(data = perinatal_filter, x = ~date) %>%
+    plot_ly(data = trend_data, x = ~date) %>%
       add_lines(y = ~rate, line = list(color = "black"),
                 #text=tooltip_trend, hoverinfo="text",
                 name = "Rate") %>%
@@ -132,17 +142,25 @@ output$perinatal_explorer <- renderUI({
                 name = "Centreline") %>%
       add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dot"),
                 #text=tooltip_trend, hoverinfo="text",
-                name = "Warning limits") %>%
+                name = "Control limits") %>%
       add_lines(y = ~lower_cl_3_std_dev, line = list(color = "red", dash = "dot"),
                 #text=tooltip_trend, hoverinfo="text",
                 showlegend = FALSE) %>%
-      add_lines(y = ~upper_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
+      add_lines(y = ~upper_wl_2_std_dev, line = list(color = "blue", dash = "dash"),
                 #text=tooltip_trend, hoverinfo="text",
-                name = "Control limits") %>%
-      add_lines(y = ~lower_wl_2_std_dev, line = list(color = "blue", dash = "dot"),
+                name = "Warning limits") %>%
+      add_lines(y = ~lower_wl_2_std_dev, line = list(color = "blue", dash = "dash"),
                 #text=tooltip_trend, hoverinfo="text",
                 showlegend = FALSE) %>%
-      
+      # adding outliers
+      add_markers(data = trend_data %>% filter(outlier == T), y = ~ rate,
+                  marker = list(color = "red", size = 10, symbol = "diamond"), name = "Outliers") %>% 
+      # adding shifts
+      add_markers(data = trend_data %>% filter(shift == T), y = ~ rate,
+                  marker = list(color = "blue", size = 10, symbol = "circle"), name = "Shifts") %>% 
+      # adding shifts
+      add_markers(data = trend_data %>% filter(trend == T), y = ~ rate,
+                  marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>% 
       layout( #to avoid labels getting cut out
         yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
       # leaving only save plot button
