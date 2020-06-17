@@ -331,7 +331,7 @@ output$cardio_explorer <- renderUI({
                  attendances offer only a very approximate indication of attendances. 
                  Additionally, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
-                 even prior to the introduction of lockdown measures, appear somehwat lower when compared to 
+                 even prior to the introduction of lockdown measures, appear somewhat lower when compared to 
                  previous years."),
         h3("Weekly cardiovascular A&E attendances in Scotland"),
         actionButton("btn_cardio_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
@@ -456,11 +456,13 @@ output$cardio_commentary <- renderUI({
             )
           ),
           h3("Cardiovascular A&E attendances"),
-          p("Information on cardiovascular attendances at Accident & Emergency Departments
-            is presented in this tool. This data is based on coding available in the
-            Accident & Emergency Datamart (managed by Public Health Scotland). Coding practice
-            for some NHS Boards changed at the start of this year, which may explain the
-            reduced 2020 counts compared to the 2018-2019 average counts."),
+          p("Information on cardiovascular attendances at Accident & Emergency Departments is presented in this tool. 
+            This data is based on coding available in the Accident & Emergency Datamart (managed by Public Health Scotland).
+            Note that, due to limitations in diagnosis recording in the A&E datamart, the data are incomplete for a number of 
+            NHS Boards. Thus, the figures reported for cardiovascular-related attendances offer only a very approximate 
+            indication of attendances. Additionally, some NHS Boards have moved to a new recording standard which has not 
+            been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, even prior to the 
+            introduction of lockdown measures, appear somewhat lower when compared to previous years."),
           tags$ul(
             tags$li("Overall there was a sharp drop in cardiovascular attendances at Accident and
                     Emergency Departments starting in early March 2020. Attendances were around 60%
