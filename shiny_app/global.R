@@ -63,6 +63,9 @@ sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at
 ## Child Health Data
 first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
+sixtoeight <- readRDS("data/six_to_eight_data.rds")
+sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
+
 ## Immunisation Data
 six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
 sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
@@ -95,7 +98,7 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
 
 # List of data items available in step 2 of immunisation tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
-            "6-8 Week Review *COMING 24th June 2020*" = "six_eightwks",
+            "6-8 Week Review" = "six_eightwks",
             "13-15 Month Review *COMING 8th July 2020*" = "13_15mnth")
 
 data_list_data_tab <- c(data_list, "6-in-1 first dose"  = "sixin_8wks", 

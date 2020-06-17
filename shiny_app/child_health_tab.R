@@ -48,8 +48,11 @@ child_table_data <- reactive({
 ###############################################.
 
 #run chart function to generate s curve  
-output$child_first_scurve <- renderPlotly({plot_scurve_child(first)})
+output$child_first_scurve <- renderPlotly({plot_scurve_child(first, 2)})
 output$child_first_table <- renderUI({child_table()})
+
+output$child_sixtoeight_scurve <- renderPlotly({plot_scurve_child(sixtoeight, "6-8")})
+output$child_sixtoeight_table <- renderUI({child_table()})
 
 
 # The charts and text shown on the app will depend on what the user wants to see
@@ -79,7 +82,13 @@ output$child_health_explorer <- renderUI({
       fluidRow(column(12, renderUI(commentary_first)))
     )
   }  else if (input$measure_select_child == "six_eightwks"){
-    p("6-8 Week Review coming 8th July 2020")
+    tagList(
+      fluidRow(column(10, h4(paste0(child_title)))),
+      fluidRow(column(6,br(), br(),
+                      withSpinner(plotlyOutput("child_sixtoeight_scurve"))),
+               column(6, uiOutput("child_first_table"))),
+      fluidRow(column(12, renderUI(commentary_first)))
+    )
   } else if (input$measure_select_child == "13_15mnth") {
     p("13-15 Month Review coming 8th July 2020")
   }
