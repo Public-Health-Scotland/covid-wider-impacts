@@ -50,7 +50,7 @@ data_table <- reactive({
       select(-extract_date, -tabno, -week_no, -immunisation, -cohort) %>% 
       rename(week_starting = week_8_start, children_due_immunisation_in = time_period_eligible,
              age_in_days = interv, percentage_of_children_who_have_received_immunisation = surv)
-  } else if (input$data_select %in% "ae_cardio") {
+  } else if (input$data_select == "ae_cardio") {
     table_data <- table_data %>% 
       select(-area_type) %>% 
       rename("Variation (%)" = variation) %>%
@@ -61,7 +61,7 @@ data_table <- reactive({
                                       "<65" = "Aged under 65",
                                       "65+" = "Aged 65 and over"),
              week_ending = format(week_ending, "%d %b %y"))
-  } else if (input$data_select %in% "cardio_drugs") {
+  } else if (input$data_select == "cardio_drugs") {
     table_data <- table_data %>% 
       select(-type) %>% 
       rename("Variation (%)" = variation) %>%
