@@ -444,17 +444,16 @@ plot_scurve_child <- function(dataset, age_week) {
 #####################################################################################.
 ## Function for generating flextable summary of child health data being displayed in s curve.
 
-child_table <- function(dataset, age_week) {
+child_table <- function(dataset, age_week, age_not_reached) {
   
   table_data <- filter_table_data_child(dataset)
   
-  no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B" &
-                                              time_period_eligible != "W/B 02-MAR-2020" &
-                                              time_period_eligible != "W/B 09-MAR-2020" &
-                                              time_period_eligible != "W/B 16-MAR-2020"))
-  
   if (age_week == 2) {
     format_col <- c("denominator","coverage_4weeks_num","coverage_12weeks_num","coverage_tot_num")
+    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B" &
+                                           time_period_eligible != "W/B 02-MAR-2020" &
+                                           time_period_eligible != "W/B 09-MAR-2020" &
+                                           time_period_eligible != "W/B 16-MAR-2020"))
     
     child_table <- table_data %>%
     select (time_period_eligible, denominator, coverage_4weeks_num, 
@@ -469,8 +468,10 @@ child_table <- function(dataset, age_week) {
     color(i = no_complete_row, j = c("coverage_12weeks_num", "coverage_12weeks_percent"), color="#0033cc")  %>%
     italic(i = no_complete_row, j = c("coverage_12weeks_num", "coverage_12weeks_percent"))
   } 
-  else if (age_week == 6) {
+  else if (age_week == 8) {
     format_col <- c("denominator","coverage_10weeks_num","coverage_16weeks_num","coverage_tot_num")
+    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B" &
+                                           substr(time_period_eligible,8,10) != "MAR"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_10weeks_num, 
@@ -494,7 +495,7 @@ child_table <- function(dataset, age_week) {
     footnote(i = 1, j = c(1:2, 4),
              value = as_paragraph(c("W/B : Week beginning",
                                     "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
-                                    paste0("Blue cells indicate cohorts that have not reached", age_week + 10, " weeks of age"))),
+                                    paste0("Blue cells indicate cohorts that have not reached ", age_not_reached, " weeks of age"))),
              part = "header") %>%
     merge_at(i = 1, j = 3:4, part = "header") %>%
     merge_at(i = 1, j = 5:6, part = "header") %>%
