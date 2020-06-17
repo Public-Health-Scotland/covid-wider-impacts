@@ -26,13 +26,21 @@ observeEvent(input$btn_perinatal_modal,
 observeEvent(input$btn_perinatal_rules,
              showModal(modalDialog(#RAPID ADMISSIONS MODAL
                title = "How do we identify patterns and trends in the data?",
-               p("Statistical process charts follow a series a rules that help identify patterns and trends in the data. 
+               p("Control charts follow a series a rules that help identify patterns and trends in the data. 
                  These are the ones we used in this chart:"),
                tags$ul(tags$li("Outliers: Data points outside the limits marked by the control limits."),
                        tags$li("Shifts: Eight or more consecutive data points above or below the centreline."),
                        tags$li("Trends: Six or more consecutive data points which are increasing or decreasing."),
                        tags$li("Outer One – Third: Two out of three consecutive data points which sit between the control and warning limits."),
                        tags$li("Inner One -Third: 15 or more consecutive data points that lie close to the centreline.")),
+               p("Different control charts can be used depending on the type of data involved.
+                 For the stillbirth, neonatal, post-neonatal and extended perinatal death rates P 
+                 charts are presented. For the infant death rates a U chart is presented. "),
+               tags$ul(tags$li("P charts: Discrete data. Data should be a proportion/percentage of successes/failures (binomial statistical distribution)."),
+                       tags$li("U charts: Count data (statistical Poisson distribution), where the “area of opportunity” is unequal for each data point.")),
+               p("Further information on these methods of presenting data can be found at the ",                      
+                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
+                        'PHS guide to statistical process control charts.')),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -68,15 +76,15 @@ observeEvent(input$btn_perinatal_rules,
 output$perinatal_explorer <- renderUI({
 
   # text for titles of cut charts
-  perinatal_title <- paste0(case_when(input$measure_select_perinatal == "stillbirths" ~ paste0("Rate of stillbirths per 1000 births in Scotland",
+  perinatal_title <- paste0(case_when(input$measure_select_perinatal == "stillbirths" ~ paste0("Monthly rate of stillbirths per 1000 births in Scotland",
                                                                                        input$geoname_perinatal),
-                                      input$measure_select_perinatal == "pnnd" ~ paste0("Rate of post-neonatal deaths per 1000 births in Scotland",
+                                      input$measure_select_perinatal == "pnnd" ~ paste0("Monthly rate of post-neonatal deaths per 1000 births in Scotland",
                                                                                         input$geoname_perinatal),
-                                      input$measure_select_perinatal == "nnd" ~ paste0("Rate of neonatal deaths per 1000 births in Scotland",
+                                      input$measure_select_perinatal == "nnd" ~ paste0("Monthly rate of neonatal deaths per 1000 births in Scotland",
                                                                                     input$geoname_perinatal),
-                                      input$measure_select_perinatal == "extperi" ~ paste0("Rate of extended perinatal deaths per 1000 births in Scotland",
+                                      input$measure_select_perinatal == "extperi" ~ paste0("Monthly rate of extended perinatal deaths per 1000 births in Scotland",
                                                                                     input$geoname_perinatal),
-                                      input$measure_select_perinatal == "infantdeaths" ~ paste0("Rate of infant deaths per 1000 births in Scotland",
+                                      input$measure_select_perinatal == "infantdeaths" ~ paste0("Monthly rate of infant deaths per 1000 births in Scotland",
                                                                                            input$geoname_perinatal)))
   
   # Link used in intro text
@@ -109,7 +117,7 @@ output$perinatal_explorer <- renderUI({
                          "have produced guidelines",class="externallink"), "for attending antenatal care appointments during the pandemic.")
   } else if (input$measure_select_perinatal == "extperi") {
     intro_text <- p("Extended perinatal deaths refer to", tags$a(href=link_perinatal, 
-"the sum of stillbirths and neonatal mortality",class="externallink"), "(deaths within the first 28 days of life).",
+"the sum of stillbirths and neonatal mortality",class="externallink"), "(deaths within the first 28 days of life).",
 " It is important to monitor the rate of perinatal mortality during the Covid-19 pandemic.",
 "NHS Scotland and Scottish Government", 
 tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
@@ -132,12 +140,14 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
                     p("Perinatal mortality is a comparatively rare occurrence in Scotland and for 
                       this reason we use a particular methodology called ",
                       tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                             'statistical process charts.'), 
-                      "These charts help us to understand if behind the normal fluctuation of these small numbers
-                      there are trends and patterns we should pay attention to. Statistical process charts follow a series a rules that help identify patterns 
+                             'control charts.'),
+                      "These charts help us to identify unusual behaviour in data and indicate
+                      areas that could merit further investigation. Control charts follow a series a rules that help identify patterns 
                       and trends in the data, read more about the ones used in this chart clicking the button below. "),
                     p("This chart shows the trend of rates for the measure selected, but it also incorporates
-                      two other sets of lines: control and warning limits. Control and warning limits take in consideration the variation of the data and indicate when
+                      other sets of lines: centreline, and control and warning limits.
+                      The centreline is a measure of central tendency and represents the mean of the data point.
+                      Control and warning limits take in consideration the variation of the data and indicate when
                       values are unexpectedly low or high and require attention, as well as helping to detect trends. "),
                     h4(paste0(perinatal_title)))),
     actionButton("btn_perinatal_rules", "How do we identify patterns and trends in the data?", 
