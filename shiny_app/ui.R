@@ -56,16 +56,25 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
 ###############################################.
 ## Commentary ----
 ###############################################.
- tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
-          mainPanel(width = 12,
-                    uiOutput("summary_comment"),
-                    uiOutput("deaths_commentary"),
-                    uiOutput("immun_commentary_section"),
-                    uiOutput("child_comments"),
-                    uiOutput("immun_commentary_1705"),
-                    uiOutput("cardio_commentary")
-          )#main panel bracket
- ), #tab panel
+tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
+         fluidPage(
+           sidebarLayout(
+             sidebarPanel(width = 3,
+                          p("Select topic for commentary"),
+                          actionButton("summary_button", "Summary trends", width = "150px"),br(),
+                          actionButton("immunisation_button", "Immunisation", width = "150px"),br(),
+                          actionButton("ch_review_button", "Child health", width="150px"),br(),
+                          actionButton("cardio_button", "Cardiovascular", width="150px")
+             ),
+             mainPanel(width = 9,
+                       p("This page provides general commentary around the information present within this tool. The commentary will refer to patterns and trends observed at a particular point in time and will be periodically updated."),
+                       bsCollapse(id = "collapse_commentary", open = "Panel 1",
+                                  bsCollapsePanel("Key trends", uiOutput("summary_comment")),
+                                  bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
+                                  bsCollapsePanel("Child health", uiOutput("child_comments")),
+                                  bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary"))
+                       ))))
+), #tab panel
 ###############################################.
 ## Summary trends ----
 ###############################################.

@@ -40,12 +40,49 @@ function(input, output, session) {
     updateTabsetPanel(session, "intabset", selected = "summary")
   })
   
-  # observeEvent(input$jump_cardio, {
-  #   updateTabsetPanel(session, "intabset", selected = "cardio")
-  # })
+  observeEvent(input$jump_cardio, {
+    updateTabsetPanel(session, "intabset", selected = "cardio")
+  })
   
   observeEvent(input$jump_table, {
     updateTabsetPanel(session, "intabset", selected = "table")
   })
+  
+  
+# Jump to commentary tab
+  observeEvent(input$jump_commentary, {
+    updateTabsetPanel(session, "intabset", selected = "comment")
+  })
+
+# Jump to child health IMMUNISATION tab  
+  observeEvent(input$jump_immunisation, {
+    updateTabsetPanel(session, "intabset", selected = "child")
+  })
+  
+# Jump to child health review tab   
+  observeEvent(input$jump_childhealth, {
+    updateTabsetPanel(session, "intabset", selected = "child_health")
+  })  
+  
+  
+  
+## Collapse panels used in commentary tab
+  
+  observeEvent(input$summary_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Key trends")
+  }))
+  observeEvent(input$immunisation_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Immunisation")
+  }))
+  observeEvent(input$ch_review_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Child health")
+  }))
+  observeEvent(input$cardio_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Cardiovascular")
+  }))
+  
+
+  
+  
   
 } # server end
