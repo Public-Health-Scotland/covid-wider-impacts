@@ -973,15 +973,19 @@ perinatal <- bind_rows(p_perinatal, u_perinatal) %>%
          rate4 = lag(rate, 4),
          trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
                            | lead(trend_i, 3) == T | lead(trend_i, 4) == T
-                           | lead(trend_i, 5) == T  ~ T, T ~ F)) %>%
+                           | lead(trend_i, 5) == T  ~ T, T ~ F),
+         #Outer One –Third: Two out of three consecutive data points which sit close to one of the control limits(within 2 and 3 sigma)
+         outer_i = case_when((rate > upper_wl_2_std_dev & rate < upper_cl_3_std_dev) & 
+                              ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) | 
+                                 (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
+         outer = case_when(outer_i == T | lead(outer_i, 1) == T | lead(outer_i, 2) == T ~ T, T ~ F),
+         # Inner One -Third: 15 or more consecutive data points that lie close to the centreline(within 1 sigma).
+         inner_i = F,
+         inner = F) %>%
   ungroup %>% 
-  select(-shift_i, -trend_i) 
+  select(-shift_i, -trend_i, -outer_i, -inner_i) 
 
-test <- perinatal %>% select(trend_i, trend, rate, rate1:rate4, type, date)
 saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
-
-
-
 
 ##END
 
