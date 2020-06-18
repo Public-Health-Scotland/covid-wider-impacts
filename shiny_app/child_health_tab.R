@@ -57,7 +57,7 @@ output$child_health_explorer <- renderUI({
   # text for titles of cut charts
   child_title <- paste0(case_when(input$measure_select_child == "first_visit" ~ paste0("Coverage of health visitor first visit (offered to children at 2 weeks of age): ",
                                                                                              input$geoname_child),
-                            input$measure_select_child == "six_eightwks" ~ paste0("Coverage of 6-8 week reviews (offered to children at 6-8 weeks of age): ", input$geoname_child),
+                            input$measure_select_child == "six_eightwks" ~ paste0("Coverage of 6-8 week reviews: ", input$geoname_child),
                             input$measure_select_child == "13_15mnth" ~ paste0("Coverage of 13-15 month reviews (offered to children at 13-15 months of age): ", input$geoname_child),
                             input$measure_select_child == "27_30mnth" ~ paste0("Coverage of 27-30 month reviews (offered to children at 27-30 months of age): ", input$geoname_child)))
   
