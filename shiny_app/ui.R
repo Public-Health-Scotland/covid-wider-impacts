@@ -57,23 +57,21 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
 ## Commentary ----
 ###############################################.
 tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
-         fluidPage(
-           sidebarLayout(
-             sidebarPanel(width = 3,
-                          p("Select topic for commentary"),
-                          actionButton("summary_button", "Summary trends", width = "150px"),br(),
-                          actionButton("immunisation_button", "Immunisation", width = "150px"),br(),
-                          actionButton("ch_review_button", "Child health", width="150px"),br(),
-                          actionButton("cardio_button", "Cardiovascular", width="150px")
-             ),
-             mainPanel(width = 9,
-                       p("This page provides general commentary around the information present within this tool. The commentary will refer to patterns and trends observed at a particular point in time and will be periodically updated."),
-                       bsCollapse(id = "collapse_commentary", open = "Panel 1",
-                                  bsCollapsePanel("Key trends", uiOutput("summary_comment")),
-                                  bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
-                                  bsCollapsePanel("Child health", uiOutput("child_comments")),
-                                  bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary"))
-                       ))))
+         wellPanel(column(12,
+                          p("Select topic areas to find commentary relating to data presented in this tool."))),
+         wellPanel(column(2,
+                          p("Select topic:"),
+                          actionLink("summary_button", "Summary trends", width = "150px"),br(),
+                          actionLink("cardio_button", "Cardiovascular", width="150px"),br(),
+                          actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
+                          actionLink("ch_review_button", "Child health", width="150px")),
+                   column(10,
+                          bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
+                                     bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
+                                     bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
+                                     bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
+                                     bsCollapsePanel("Child health", uiOutput("child_comments"))
+                          )))
 ), #tab panel
 ###############################################.
 ## Summary trends ----
@@ -93,7 +91,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
         column(4,
                selectInput("adm_type", label = "Step 3. Select type of admission.",
                            choices = c("All", "Emergency", "Planned"), selected = "All"),
-               downloadButton('download_chart_data', 'Download data')
+               downloadButton('download_chart_data', 'Download data'),
+               fluidRow(br()),
+               actionButton('jump_commentary_summary','Go to commentary')
         )
       ), #wellPanel bracket
       mainPanel(width = 12,
@@ -114,7 +114,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
            column(4, selectizeInput("area_cardio_select", "Step 2 - Select the area of interest",
                                     choices = c("Scotland"), selected = "Scotland"),
                   uiOutput("geoname_cardio_ui")),
-           column(4, downloadButton('download_cardio_data', 'Download data'))
+           column(4, downloadButton('download_cardio_data', 'Download data'),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_cardio','Go to commentary'))
          ), #wellPanel bracket
          mainPanel(width = 12,
                    uiOutput("cardio_explorer")
@@ -137,7 +139,10 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
                   fluidRow(br()),
-                  downloadButton('download_imm_data', 'Download data'))
+                  downloadButton('download_imm_data', 'Download data'),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_child','Go to commentary')
+                  )
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("immunisation_explorer")
@@ -160,7 +165,9 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')),
                   fluidRow(br()),
-                  downloadButton("download_visit_data", "Download data"))
+                  downloadButton("download_visit_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_hv","Go to commentary"))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
