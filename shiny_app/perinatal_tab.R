@@ -74,15 +74,15 @@ observeEvent(input$btn_perinatal_rules,
 output$perinatal_explorer <- renderUI({
 
   # text for titles of cut charts
-  perinatal_title <- paste0(case_when(input$measure_select_perinatal == "stillbirths" ~ paste0("Monthly rate of stillbirths per 1000 births in Scotland",
+  perinatal_title <- paste0(case_when(input$measure_select_perinatal == "stillbirths" ~ paste0("Monthly rate of stillbirths per 1,000 births in Scotland",
                                                                                        input$geoname_perinatal),
-                                      input$measure_select_perinatal == "pnnd" ~ paste0("Monthly rate of post-neonatal deaths per 1000 births in Scotland",
+                                      input$measure_select_perinatal == "pnnd" ~ paste0("Monthly rate of post-neonatal deaths per 1,000 births in Scotland",
                                                                                         input$geoname_perinatal),
-                                      input$measure_select_perinatal == "nnd" ~ paste0("Monthly rate of neonatal deaths per 1000 births in Scotland",
+                                      input$measure_select_perinatal == "nnd" ~ paste0("Monthly rate of neonatal deaths per 1,000 births in Scotland",
                                                                                     input$geoname_perinatal),
-                                      input$measure_select_perinatal == "extperi" ~ paste0("Monthly rate of extended perinatal deaths per 1000 births in Scotland",
+                                      input$measure_select_perinatal == "extperi" ~ paste0("Monthly rate of extended perinatal deaths per 1,000 births in Scotland",
                                                                                     input$geoname_perinatal),
-                                      input$measure_select_perinatal == "infantdeaths" ~ paste0("Monthly rate of infant deaths per 1000 births in Scotland",
+                                      input$measure_select_perinatal == "infantdeaths" ~ paste0("Monthly rate of infant deaths per 1,000 births in Scotland",
                                                                                            input$geoname_perinatal)))
   
   # Link used in intro text
@@ -165,9 +165,12 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
     yaxis_plots[["title"]] <- "Rate per 1,000 births"
     xaxis_plots[["title"]] <- "Month"
     
-    xaxis_plots[["tickmode"]] <- "array" 
-    xaxis_plots[["tickvals"]] <- c("2017-01-01", "2017-06-01", "2018-01-01", "2018-06-01",
-                                   "2019-01-01", "2019-06-01", "2020-01-01", "2020-05-01")
+    # xaxis_plots[["dtick"]] <- 180
+    # xaxis_plots[["tickmode"]] <- "array" 
+    # xaxis_plots[["tickvals"]] <- c("2017-01-01", "2017-06-01", "2018-01-01", "2018-06-01",
+    #                                "2019-01-01", "2019-06-01", "2020-01-01", "2020-05-01") %>% as.Date()
+    # xaxis_plots[["ticktext"]] <- c("2017-01-01", "2017-06-01", "2018-01-01", "2018-06-01",
+    #                                "2019-01-01", "2019-06-01", "2020-01-01", "2020-05-01")
       
     # Tooltip
     measure_selected <- case_when(input$measure_select_perinatal == "stillbirths" ~ "Still births",
