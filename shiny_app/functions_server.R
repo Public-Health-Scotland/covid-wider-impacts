@@ -422,6 +422,8 @@ plot_scurve_child <- function(dataset, age_week) {
     # For custom tick labels
     xaxis_plots[["tickvals"]] <- c(0, seq(14, 168, by = 28))
     xaxis_plots[["ticktext"]] <- c(0, seq(2, 24, by = 4))
+    # enforcing range from 0 to 100%
+    yaxis_plots[["range"]] <- c(0, 100)
     
     #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
