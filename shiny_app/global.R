@@ -16,6 +16,7 @@ library(shinyjs) # for enable/disable functions
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
 library(flextable)
+library(shinyBS) #for collapsible panels in commentary
 
 ###############################################.
 ## Functions ----
