@@ -847,10 +847,8 @@ saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.
 ###############################################.
 ## Prepare Child Health data ----
 ###############################################.
-child_health_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/child_health/"
-
 ## First visit - scurve data
-first <- read_csv(paste0(child_health_folder,"firstvisit_dashboard20200601.csv"), 
+first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20200601.csv"), 
                 col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -880,7 +878,7 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
 # First visit - summary table data
-first_datatable <- read_csv(paste0(child_health_folder,"firstvisit_dashboardtab_20200601.csv")) %>%
+first_datatable <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboardtab_20200601.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
@@ -890,7 +888,7 @@ saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 
 
 ## 6 to 8 weeks visit - scurve data
-sixtoeight <- read_csv(paste0(child_health_folder,"sixtoeight_dashboard20200601.csv"), 
+sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200601.csv"), 
                   col_types =list(week_8_start=col_date(format="%m/%d/%Y"),
                                   time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -920,7 +918,7 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight_data.rds"))
 
 # First visit - summary table data
-sixtoeight_datatable <- read_csv(paste0(child_health_folder,"sixtoeight_dashboardtab_20200601.csv")) %>%
+sixtoeight_datatable <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboardtab_20200601.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
