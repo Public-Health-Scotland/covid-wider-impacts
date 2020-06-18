@@ -162,7 +162,7 @@ tagList( #needed for shinyjs
 ###############################################.
 ## Perinatal Tab ----
 ###############################################.
-tabPanel(title = "Perinatal Mortality", icon = icon("female"), value = "child",
+tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "child",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_perinatal",
@@ -171,7 +171,6 @@ tabPanel(title = "Perinatal Mortality", icon = icon("female"), value = "child",
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_perinatal_modal", "Data source: NRS and Child Health Programme System", 
                                  icon = icon('question-circle')))
-           #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("perinatal_explorer")
