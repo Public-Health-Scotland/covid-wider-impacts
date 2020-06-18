@@ -170,7 +170,9 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                                            choices = data_list_perinatal, status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_perinatal_modal", "Data source: NRS and Child Health Programme System", 
-                                 icon = icon('question-circle')))
+                                 icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_perinatal_data", "Download data"))
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("perinatal_explorer")

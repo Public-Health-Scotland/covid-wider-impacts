@@ -219,6 +219,19 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
     
   })
 
+
+###############################################.
+## Data downloads ----
+###############################################.
+
+output$download_perinatal_data <- downloadHandler(
+  filename ="stillbirth_infantdeaths_extract.csv",
+  content = function(file) {
+    write_csv(perinatal %>% filter(type == input$measure_select_perinatal) %>% 
+                select(date:centreline, upper_cl_3_std_dev:area_type),
+              file) } 
+)
+
 ###############################################.
 ## Commentary ----
 ###############################################.
