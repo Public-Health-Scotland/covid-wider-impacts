@@ -480,10 +480,10 @@ child_table <- function(dataset, age_week, age_not_reached) {
               coverage_10weeks_percent, coverage_16weeks_num, coverage_16weeks_percent, 
               coverage_tot_num, coverage_tot_percent) %>%
       flextable() %>%
-      set_header_labels(coverage_10weeks_num="Children recorded as receiving their health visitor first visit by 10 weeks of age",
-                        coverage_10weeks_percent="Children recorded as receiving their health visitor first visit by 10 weeks of age",
-                        coverage_16weeks_num="Children recorded as receiving their health visitor first visit by 16 weeks of age (or younger if children have not reached 16 weeks of age by the date data was extracted for analysis)",
-                        coverage_16weeks_percent="Children recorded as receiving their health visitor first visit by 16 weeks of age (or younger if children have not reached 16 weeks of age by the date data was extracted for analysis)") %>% 
+      set_header_labels(coverage_10weeks_num="Children recorded as receiving their 6-8 week review by 10 weeks of age",
+                        coverage_10weeks_percent="Children recorded as receiving their 6-8 week review by 10 weeks of age",
+                        coverage_16weeks_num="Children recorded as receiving their 6-8 week review by 16 weeks of age (or younger if children have not reached 16 weeks of age by the date data was extracted for analysis)",
+                        coverage_16weeks_percent="Children recorded as receiving their 6-8 week review by 16 weeks of age (or younger if children have not reached 16 weeks of age by the date data was extracted for analysis)") %>% 
       # Italics and colour if not 12 weeks
       color(i = no_complete_row, j = c("coverage_16weeks_num", "coverage_16weeks_percent"), color="#0033cc")  %>%
       italic(i = no_complete_row, j = c("coverage_16weeks_num", "coverage_16weeks_percent"))
