@@ -93,7 +93,9 @@ output$child_health_explorer <- renderUI({
 
 
  output$child_comments <- renderUI({
-     tagList(h2("Child Health reviews - 10th June 2020"), 
+     tagList(
+       bsButton("jump_to_childhealth",label = "Go to data"),
+       h2("Child Health reviews - 10th June 2020"), 
    p("Information on the uptake of child health reviews that are routinely offered to all preschool children by Health Visitors has been included in this tool for the first time on 10 June 2020.", br(),
       "Child health reviews incorporate assessment of children's health, development, and wider wellbeing alongside provision of health promotion advice and parenting support.  Routine child health reviews help ensure that children’s health and development is progressing as expected for their age and stage, and allow any concerns to be addressed.  It is important that children continue to receive their routine health reviews during the Covid-19 pandemic.", br(),
       "On 10 June 2020, information has been provided on the coverage of the Health Visitor first visit, which is offered to children at 10-14 days of age. Children receive subsequent Health Visitor reviews at 6-8 weeks, 13-15 months, 27-30 month, and 4-5 years of age. ", br(),

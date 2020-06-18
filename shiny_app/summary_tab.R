@@ -499,7 +499,9 @@ output$download_chart_data <- downloadHandler(
 
 
 output$summary_comment <- renderUI({
-  tagList(h2("Summary - 3rd June 2020"), 
+  tagList(
+    bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
+    h2("Summary - 3rd June 2020"), 
           p("From the second week of March 2020 there was an abrupt and steep fall in hospital admissions, 
 attendances at Accident and Emergency (A&E) departments and cases in out of hours services. 
 Use of all of these services fell to around half the average levels seen 2018-19 and has since recovered 
