@@ -69,7 +69,7 @@ data_table <- reactive({
   } else if (input$data_select == "cath_lab") {
     table_data <- table_data %>% 
       rename("Variation (%)" = variation,
-             "Area name (cath. lab)" = lab,
+             " Catheterisation lab" = lab,
              "Intervention" = groups) %>%
       mutate(type = recode_factor(type, "age" = "Age Group", "sex" = "Sex"),
              week_ending = format(week_ending, "%d %b %y"))
