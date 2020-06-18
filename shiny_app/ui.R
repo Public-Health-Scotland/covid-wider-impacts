@@ -169,7 +169,8 @@ tabPanel(title = "Perinatal Mortality", icon = icon("female"), value = "child",
                                            label= "Step 1 - Select the data you want to explore.",
                                            choices = data_list_perinatal, status = "primary",
                                            direction = "vertical", justified = T))),
-           column(4,actionButton("btn_perinatal_modal", "Data source: PHS and NRS", icon = icon('question-circle')))
+           column(4,actionButton("btn_perinatal_modal", "Data source: NRS and Child Health Programme System", 
+                                 icon = icon('question-circle')))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
