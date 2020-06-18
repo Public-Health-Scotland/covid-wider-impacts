@@ -88,7 +88,7 @@ output$child_health_explorer <- renderUI({
     )
   } else if (input$measure_select_child == "13_15mnth") {
     p("13-15 Month Review coming 8th July 2020")
-  } else if (input$measure_select_child == "27_30mnth") {
+  } else {
     p("27-30 Month Review coming 8th July 2020")
   }
   
