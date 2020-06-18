@@ -121,8 +121,9 @@ visit_data_download <- reactive({
   switch(
     input$measure_select_child,
     "first_visit" = firsttable,
-    "six_eightwks" = firsttable,
-    "13_15mnth" = firsttable
+    "six_eightwks" = sixtoeighttable,
+    "13_15mnth" = firsttable,
+    "27_30mnth" = firsttable
   ) %>% 
     select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>% 
     rename(cohort = time_period_eligible)
