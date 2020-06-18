@@ -232,8 +232,10 @@ observeEvent(input$btn_cardio_modal,
                           the narrowing of the heart arteries. In a significant portion of cases this is an urgent procedure
                           which is used when patients are suffering a heart attack."),
                    tags$li("Devices - This section includes procedures such as pacemakers (used to treat rhythm 
-                           problems of the heart) and loop recorders (used to investigate treat rhythm problems 
-                           of the heart). Fitting of cardiac devices may also be carried out in other environments 
+                           problems of the heart), loop recorders (used to investigate treat rhythm problems 
+                           of the heart) and implantable cardiac defibrillators (ICDs). 
+                           The pacemakers include cardiac resynchronisation therapy (CRT) devices.
+                           Fitting of cardiac devices may also be carried out in other environments 
                            so these figures do not represent the total volume of cardiac devices fitted.")
                  ),
                  p("Note that during the COVID-19 lockdown period the Golden Jubilee National Hospital 
@@ -263,8 +265,10 @@ observeEvent(input$btn_cath_modal,
                           the narrowing of the heart arteries. In a significant portion of cases this is an urgent procedure
                           which is used when patients are suffering a heart attack."),
                    tags$li("Devices - This section includes procedures such as pacemakers (used to treat rhythm 
-                           problems of the heart) and loop recorders (used to investigate treat rhythm problems 
-                           of the heart). Fitting of cardiac devices may also be carried out in other environments 
+                           problems of the heart), loop recorders (used to investigate treat rhythm problems 
+                           of the heart) and implantable cardiac defibrillators (ICDs). 
+                           The pacemakers include cardiac resynchronisation therapy (CRT) devices.
+                           Fitting of cardiac devices may also be carried out in other environments 
                            so these figures do not represent the total volume of cardiac devices fitted.")
                  ),
                  size = "m",
