@@ -100,15 +100,14 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
 data_list_data_tab <- c(data_list, "6-in-1 first dose"  = "sixin_8wks", 
                         "Health Visitor first visit" = "first_visit")
 
-
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
                  "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Still births"="stillbirths",
-                         "Post neonatal deaths"="pnnd",
                          "Neonatal deaths"="nnd",
                          "Extended perinatal deaths"="extperi",
+                         "Post neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
 
 ###############################################.
