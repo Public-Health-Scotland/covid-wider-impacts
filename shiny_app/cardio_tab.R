@@ -433,7 +433,9 @@ output$download_cardio_data <- downloadHandler(
 ## Commentary ----
 ###############################################.
 output$cardio_commentary <- renderUI({
-  tagList(h2("Cardiovascular - 17th June 2020"), 
+  tagList(
+    bsButton("jump_to_cardio",label = "Go to data"), #this button can only be used once
+    h2("Cardiovascular - 17th June 2020"), 
           h3("Prescribing"),
           p("Information on prescriptions issued for cardiovascular medicines through
             General Practice has been included for the first time on 17th June 2020.
