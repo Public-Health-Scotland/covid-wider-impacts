@@ -15,8 +15,8 @@ function(input, output, session) {
   source(file.path("summary_tab.R"),  local = TRUE)$value
   
   # ###############################################.
-  # ## Cardiovascular tab
-  # source(file.path("cardio_tab.R"),  local = TRUE)$value
+  ## Cardiovascular tab
+  source(file.path("cardio_tab.R"),  local = TRUE)$value
   
   ###############################################.
   ## Immunisation tab
