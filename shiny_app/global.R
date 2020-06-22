@@ -16,6 +16,7 @@ library(shinyjs) # for enable/disable functions
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
 library(flextable)
+library(shinyBS) #for collapsible panels in commentary
 
 ###############################################.
 ## Functions ----
@@ -102,8 +103,12 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
             "13-15 Month Review *COMING 8th July 2020*" = "13_15mnth",
             "27-30 Month Review *COMING 8th July 2020*" = "27-30mnth")
 
-data_list_data_tab <- c(data_list, "6-in-1 first dose"  = "sixin_8wks", 
-                        "Health Visitor first visit" = "first_visit")
+data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
+                        "A&E cardiovascular attendances" = "ae_cardio",
+                        "Cardiac procedures" = "cath_lab",
+                        "6-in-1 first dose"  = "sixin_8wks", 
+                        "Health Visitor first visit" = "first_visit"
+                        )
 
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
