@@ -917,7 +917,7 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight_data.rds"))
 
-# First visit - summary table data
+# 6-8 weeks visit - summary table data
 sixtoeight_datatable <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboardtab_20200601.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%

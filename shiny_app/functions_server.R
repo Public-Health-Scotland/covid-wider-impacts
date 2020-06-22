@@ -471,22 +471,21 @@ child_table <- function(dataset, age_week, age_not_reached) {
     italic(i = no_complete_row, j = c("coverage_12weeks_num", "coverage_12weeks_percent"))
   } 
   else if (age_week == 8) {
-    format_col <- c("denominator","coverage_10weeks_num","coverage_16weeks_num","coverage_tot_num")
-    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B" &
-                                           substr(time_period_eligible,8,10) != "MAR"))
+    format_col <- c("denominator","coverage_12weeks_num","coverage_24weeks_num","coverage_tot_num")
+    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "FEB"))
     
     child_table <- table_data %>%
-      select (time_period_eligible, denominator, coverage_10weeks_num, 
-              coverage_10weeks_percent, coverage_16weeks_num, coverage_16weeks_percent, 
+      select (time_period_eligible, denominator, coverage_12weeks_num, 
+              coverage_12weeks_percent, coverage_24weeks_num, coverage_24weeks_percent, 
               coverage_tot_num, coverage_tot_percent) %>%
       flextable() %>%
-      set_header_labels(coverage_10weeks_num="Children recorded as receiving their 6-8 week review by 10 weeks of age",
-                        coverage_10weeks_percent="Children recorded as receiving their 6-8 week review by 10 weeks of age",
-                        coverage_16weeks_num="Children recorded as receiving their 6-8 week review by 16 weeks of age (or younger if children have not reached 16 weeks of age by the date data was extracted for analysis)",
-                        coverage_16weeks_percent="Children recorded as receiving their 6-8 week review by 16 weeks of age (or younger if children have not reached 16 weeks of age by the date data was extracted for analysis)") %>% 
+      set_header_labels(coverage_12weeks_num="Children recorded as receiving their 6-8 week review by 12 weeks of age",
+                        coverage_12weeks_percent="Children recorded as receiving their 6-8 week review by 12 weeks of age",
+                        coverage_24weeks_num="Children recorded as receiving their 6-8 week review by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
+                        coverage_24weeks_percent="Children recorded as receiving their 6-8 week review by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)") %>% 
       # Italics and colour if not 12 weeks
-      color(i = no_complete_row, j = c("coverage_16weeks_num", "coverage_16weeks_percent"), color="#0033cc")  %>%
-      italic(i = no_complete_row, j = c("coverage_16weeks_num", "coverage_16weeks_percent"))
+      color(i = no_complete_row, j = c("coverage_24weeks_num", "coverage_24weeks_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_24weeks_num", "coverage_24weeks_percent"))
   }
   
   child_table %>% 
