@@ -35,21 +35,20 @@ output$geoname_ui_child <- renderUI({
 
 
 # Reactive dataset for flextable filter on geographical area
-child_table_data <- reactive({
-  firsttable %>%
-    filter(area_name==input$geoname_child)
-    #mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%  # required if table sort order is to change
-    #arrange(cohort)
-})
-
+filter_table_data_child <- function(dataset){
+  dataset %>% filter(area_name == input$geoname_child)
+}
 
 ###############################################.
 ## Child Health Tab Reactive layout  ----
 ###############################################.
 
 #run chart function to generate s curve  
-output$child_first_scurve <- renderPlotly({plot_scurve_child(first)})
-output$child_first_table <- renderUI({child_table()})
+output$child_first_scurve <- renderPlotly({plot_scurve_child(first, 2)})
+output$child_first_table <- renderUI({child_table(firsttable, 2, 12)})
+
+output$child_sixtoeight_scurve <- renderPlotly({plot_scurve_child(sixtoeight, 8)})
+output$child_sixtoeight_table <- renderUI({child_table(sixtoeighttable, 8, 24)})
 
 
 # The charts and text shown on the app will depend on what the user wants to see
@@ -59,7 +58,8 @@ output$child_health_explorer <- renderUI({
   child_title <- paste0(case_when(input$measure_select_child == "first_visit" ~ paste0("Coverage of health visitor first visit (offered to children at 2 weeks of age): ",
                                                                                              input$geoname_child),
                             input$measure_select_child == "six_eightwks" ~ paste0("Coverage of 6-8 week reviews (offered to children at 6-8 weeks of age): ", input$geoname_child),
-                            input$measure_select_child == "13_15mnth" ~ paste0("Coverage of 13-15 month reviews (offered to children at 13-15 months of age): ", input$geoname_child)))
+                            input$measure_select_child == "13_15mnth" ~ paste0("Coverage of 13-15 month reviews (offered to children at 13-15 months of age): ", input$geoname_child),
+                            input$measure_select_child == "27_30mnth" ~ paste0("Coverage of 27-30 month reviews (offered to children at 27-30 months of age): ", input$geoname_child)))
   
   #commentary to appear in child health tab
   commentary_first <-p("All preschool children should be offered the following health reviews: health visitor first visit, 6-8 week review, 13-15 month review, 27-30 month review, and 4-5 year review. Although the 4-5 year review only became mandated by government policy for children turning 4 from April 2020 onwards.", br(),
@@ -79,9 +79,17 @@ output$child_health_explorer <- renderUI({
       fluidRow(column(12, renderUI(commentary_first)))
     )
   }  else if (input$measure_select_child == "six_eightwks"){
-    p("6-8 Week Review coming 8th July 2020")
+    tagList(
+      fluidRow(column(10, h4(paste0(child_title)))),
+      fluidRow(column(6,br(), br(),
+                      withSpinner(plotlyOutput("child_sixtoeight_scurve"))),
+               column(6, uiOutput("child_sixtoeight_table"))),
+      fluidRow(column(12, renderUI(commentary_first)))
+    )
   } else if (input$measure_select_child == "13_15mnth") {
     p("13-15 Month Review coming 8th July 2020")
+  } else {
+    p("27-30 Month Review coming 8th July 2020")
   }
   
 }) #close child_health_explorer function
@@ -95,11 +103,11 @@ output$child_health_explorer <- renderUI({
  output$child_comments <- renderUI({
      tagList(
        bsButton("jump_to_childhealth",label = "Go to data"),
-       h2("Child Health reviews - 10th June 2020"), 
-   p("Information on the uptake of child health reviews that are routinely offered to all preschool children by Health Visitors has been included in this tool for the first time on 10 June 2020.", br(),
-      "Child health reviews incorporate assessment of children's health, development, and wider wellbeing alongside provision of health promotion advice and parenting support.  Routine child health reviews help ensure that children’s health and development is progressing as expected for their age and stage, and allow any concerns to be addressed.  It is important that children continue to receive their routine health reviews during the Covid-19 pandemic.", br(),
-      "On 10 June 2020, information has been provided on the coverage of the Health Visitor first visit, which is offered to children at 10-14 days of age. Children receive subsequent Health Visitor reviews at 6-8 weeks, 13-15 months, 27-30 month, and 4-5 years of age. ", br(),
-      "Coverage rates for the Health Visitor first visit have remained high during the pandemic. Coverage continues to exceed 90% among children who were due their review in March and early April. The recording of data on reviews undertaken by the reporting date will not be fully complete at this stage, particularly for the most recent cohorts, so coverage rates are slightly under-reported."
+       h2("Child Health reviews - 24th June 2020"), 
+   p("Information on the uptake of child health reviews that are routinely offered to all preschool children by Health Visitors was included in this tool for the first time on 10 June 2020. Child health reviews incorporate assessment of children's health, development, and wider wellbeing alongside provision of health promotion advice and parenting support. Routine child health reviews help ensure that children’s health and development is progressing as expected for their age and stage, and allow any concerns to be addressed. It is important that children continue to receive their routine health reviews during the Covid-19 pandemic. On 10 June 2020, information was provided on the coverage of the Health Visitor first visit, which is offered to children at 10-14 days of age. Coverage rates for the Health Visitor first visit have remained high during the pandemic. Coverage continues to exceed 90% among children who were due their review in March and early April.", br(), br(),
+      "Children receive subsequent Health Visitor reviews at 6-8 weeks, 13-15 months, 27-30 month, and 4-5 years of age. On 24 June information on coverage of the 6-8 week review was added to the dashboard. Data from before the pandemic, for children becoming eligible for this review in 2019, show that coverage of the 6-8 week review by 12 weeks was 87%. Coverage has gradually fallen since the beginning of 2020, and was around 65-75% for children becoming eligible for the review in March and early April.", br(), br(),
+      "There are a number of important factors to take into account when interpreting this information.  Unlike all the other pre-school child health reviews, the 6-8 week review is a two stage process involving the baby’s Health Visitor and their GP.  Usually, the Health Visitor first visits the family at home to conduct a general assessment of the baby’s progress and the family’s wellbeing.  Then, the GP offers an appointment in the practice to conduct a detailed physical examination of the baby.  Usually the GP appointment happens shortly after the Health Visitor visit, and the data from both assessments is then returned together to the NHS Board child health administrative department for entry into the CHSP-PS system.  Since the start of the Covid-19 pandemic, Scottish Government policy has been that the 6-8 week review should continue to be provided.  In practice, to minimise the number of times babies are brought into the practice, in some areas the GP element of the review may have been deferred, for example until the baby is due a routine immunisation appointment at a later stage.  Areas may then vary in terms of whether Health Visitors return information on their part of the 6-8 week review for entry into the baby’s CHSP-PS record, or whether no information is returned until the GP part of the review is completed.  As GPs start to ‘catch up’ with their part of outstanding 6-8 week reviews, we would expect to see coverage rates for children becoming eligible for this review during the pandemic increasing.  It is important to note therefore that no record of a 6-8 week review on the CHSP-PS system does not necessarily mean that the baby has not been seen at all: they may have been visited by their health Visitor, but not yet examined by their GP.", br(), br(),
+      "For babies born prematurely, the 6-8 week review is offered to children 6-8 weeks following their expected date of delivery rather than their actual date of birth.  This is to ensure a ‘fair’ assessment of children’s progress against what would be expected of a baby at that stage.  As the information shown in the dashboard is based on children’s actual date of birth rather than due dates, premature babies will appear to have their review ‘late’, when in fact it was offered appropriately.  This partially accounts for why coverage of the 6-8 week review continues to increase as babies attain older ages.  Finally, it should also be restated that we have allowed a 6 week window for data entry, that is we have reported on reviews provided to children becoming eligible for their reviews up to 6 weeks prior to the date we extracted data from the CHSP-PS system.  The results of a completed review would generally be expected to be entered into the CHSP-PS system within this 6 week time frame.  In practice however occasional data entry delays occur.  These may be worse during the Covid-19 pandemic, and may vary between areas.  For all these reasons, review coverage for the most recent cohorts should therefore be taken as provisional, and is likely to increase over time as relevant data accumulates."
       )
      )
  })
@@ -114,9 +122,10 @@ output$child_health_explorer <- renderUI({
 visit_data_download <- reactive({
   switch(
     input$measure_select_child,
-    "first_visit" = firsttable,
-    "six_eightwks" = firsttable,
-    "13_15mnth" = firsttable
+    "first_visit" = filter(firsttable, area_name == input$geoname_child),
+    "six_eightwks" = filter(sixtoeighttable, area_name == input$geoname_child),
+    "13_15mnth" = filter(firsttable, area_name == input$geoname_child),
+    "27_30mnth" = filter(firsttable, area_name == input$geoname_child)
   ) %>% 
     select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>% 
     rename(cohort = time_period_eligible)
