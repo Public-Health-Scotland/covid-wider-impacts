@@ -379,41 +379,15 @@ prepare_final_data(ae_data, "ae", last_week = "2020-06-07")
 ## Preparing NHS24 data ----
 ###############################################.
 
-# Read in historic data extracts and convert to RDS to reduce size of files saved in network directory 
-# nhs24_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/NHS24/3. Vicky Elliott - NHS24/Zipped/"
-# 
-# ## Reading in NHS24 data
-# historic_nhs24 <- rbind(read_csv(unz(paste0(nhs24_zip_folder, "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.zip"), 
-#                             "0. NHS24 Extract 1 Jan 18 - 30 Jun 18.csv")),
-#                read_csv(unz(paste0(nhs24_zip_folder, "0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.zip"), 
-#                             "0a. NHS24 Extract 1 Jul 18 - 31 Dec 18.csv")),
-#                read_csv(unz(paste0(nhs24_zip_folder, "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.zip"), 
-#                             "1. NHS24 Extract 1 Jan 19 - 30 Jun 19.csv")),
-#                read_csv(unz(paste0(nhs24_zip_folder, "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.zip"), 
-#                             "2. NHS24 Extract 1 Jul 19 - 31 Dec 19.csv")),
-#                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 1 Jan 20 - 19 Apr 20.zip"), 
-#                             "Report 2.csv")),
-#                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 20 Apr 20 - 10 May 20.zip"), 
-#                           "Report 2.csv")),
-#                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 covid Extract 11 May 20 - 17 May 20.zip"), 
-#                             "Report 2.csv")),
-#                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 18052020to24052020.zip"), 
-#                             "Report 2.csv")),
-#                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 250520to31052020.zip"), 
-#                             "Report 2.csv")),
-#                read_csv(unz(paste0(nhs24_zip_folder,"NHS24 Extract 1 Jun 20 - 7 Jun 20.zip"), 
-#                             "Report 2.csv")))
-# 
-# saveRDS(historic_nhs24, paste0(data_folder,"NHS24/NHS24 01Jan2018 to 07Jun2020.rds"))
-
-# Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
-# Each week this section of code can be uncommented run for the latest weeks data then recommented after txt file deleted
-# nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 08062020 to 14062020.txt")))
-# saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 08062020 to 14062020.rds"))  
-# file.remove(paste0(data_folder,"NHS24/NHS24 Extract 08062020 to 14062020.txt"))
+# #Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
+# #Each week this section of code can be uncommented run for the latest weeks data then recommented after txt file deleted
+# nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 15062020 to 21062020.txt")))
+# saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 15062020 to 21062020.rds"))
+# file.remove(paste0(data_folder,"NHS24/NHS24 Extract 15062020 to 21062020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 08062020 to 14062020.rds"))) %>%
+                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 08062020 to 14062020.rds")),
+                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 15062020 to 21062020.rds"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -457,7 +431,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-06-14")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-06-21")
 
 ###############################################.
 ## Reading SAS data ----
