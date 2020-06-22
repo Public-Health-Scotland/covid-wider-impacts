@@ -173,7 +173,7 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
          mainPanel(width = 12,
                    uiOutput("child_health_explorer")
          )# mainPanel bracket
-    )#, # tabpanel bracket
+    ), # tabpanel bracket
 ###############################################.
 ## Perinatal Tab ----
 ###############################################.
@@ -199,19 +199,19 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
 ###############################################.
 ## Data ----
 ###############################################.
-    # tabPanel(title = "Data", icon = icon("table"), value = "table",
-    #   p("This section allows you to view the data in table format.
-    #     You can use the filters to select the data you are interested in.
-    #     You can also download the data as a csv using the download button.
-    #     The data is also hosted in the",
-    #     tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
-    #            "Scottish Health and Social Care Open Data portal", class="externallink"), "."),
-    #   column(6, selectInput("data_select", "Select the data you want to explore.",
-    #                        choices = data_list_data_tab)),
-    #   column(6, downloadButton('download_table_csv', 'Download data')),
-    #   mainPanel(width = 12,
-    #             DT::dataTableOutput("table_filtered"))
-    #  ) # tabpanel bracket
+    tabPanel(title = "Data", icon = icon("table"), value = "table",
+      p("This section allows you to view the data in table format.
+        You can use the filters to select the data you are interested in.
+        You can also download the data as a csv using the download button.
+        The data is also hosted in the",
+        tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
+               "Scottish Health and Social Care Open Data portal", class="externallink"), "."),
+      column(6, selectInput("data_select", "Select the data you want to explore.",
+                           choices = data_list_data_tab)),
+      column(6, downloadButton('download_table_csv', 'Download data')),
+      mainPanel(width = 12,
+                DT::dataTableOutput("table_filtered"))
+     ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
 ##END
