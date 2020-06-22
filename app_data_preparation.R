@@ -326,7 +326,7 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-06-14")
 ## Preparing A&E data ----
 ###############################################.
 #short cut to a&e folder areas
-ae_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E/2020-06-11-Extracts/"
+ae_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E/2020-06-18-Extracts/"
 
 # Read A&E data both at HSCP and HB level
 ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
@@ -373,7 +373,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2020-06-07")
+prepare_final_data(ae_data, "ae", last_week = "2020-06-14")
 
 ###############################################.
 ## Preparing NHS24 data ----
@@ -637,7 +637,7 @@ rm(ae_cardio_codes)
 ae_cardio_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E_Cardio/"
 
 # Read in data, clean names + some simple mutations
-ae_cardio <- read_xlsx(paste0(ae_cardio_folder, "2020-06-11-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
+ae_cardio <- read_xlsx(paste0(ae_cardio_folder, "2020-06-18-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
   clean_names() %>% 
   rename(diag_cat = diagnosis_catagory,
          dep = prompt_dataset_deprivation_scot_quintile) %>% 
@@ -681,12 +681,12 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-06-07")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-06-14")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/prescribing data/covid emessage data AMS only 20200611.xlsx") %>% 
+cardio_drugs <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/prescribing data/covid emessage AMS only 20200618.xlsx") %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -719,7 +719,7 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-06-07")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-06-14")
 
 ###############################################.
 ## Prepare 6-in-1 dose 1 ----
