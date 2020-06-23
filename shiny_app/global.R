@@ -104,10 +104,10 @@ cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
                  "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
-data_list_perinatal <- c("Still births"="stillbirths",
+data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Neonatal deaths"="nnd",
                          "Extended perinatal deaths"="extperi",
-                         "Post neonatal deaths"="pnnd",
+                         "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
 
 ###############################################.

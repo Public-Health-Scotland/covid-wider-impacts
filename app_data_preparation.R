@@ -901,25 +901,25 @@ p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NN
                      read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
                                 sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
   janitor::clean_names() %>%
-  select(date=sample_2, observation, rate, centreline, stdev = binomial_st_dev_16, 
+  select(month_of_year=sample_2, number_of_deaths_in_month=observation, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type)
 
 u_perinatal <- read_excel(paste0(data_folder,"perinatal/Uchart - INFANT DEATHS.xlsx"),
            sheet = "Uchart", skip = 2) %>% mutate(type = "infantdeaths") %>% 
   janitor::clean_names() %>%
-  select(date=sample, observation, rate, centreline, stdev = poisson_st_dev_16, 
+  select(month_of_year=sample,  number_of_deaths_in_month=observation, rate, centreline, stdev = poisson_st_dev_16, 
          upper_cl_3_std_dev:type)
 
 # Mergin both datasets together 
 perinatal <- rbind(p_perinatal, u_perinatal) %>% 
   mutate(area_name="Scotland", #creating geo variables
          area_type="Scotland",
-         date = gsub(" ", "0", date), #formatting date
-         date = as.Date(paste0(date,"1"), format="%Y%m%d")) 
+         month_of_year = gsub(" ", "0", month_of_year), #formatting date
+         month_of_year = as.Date(paste0(month_of_year,"1"), format="%Y%m%d")) 
 
 # Creating rules for spc charts
 perinatal <- perinatal %>% 
-  arrange(type, area_name, date) %>% 
+  arrange(type, area_name, month_of_year) %>% 
   mutate(upper_sigma1 = rate + stdev,
          lower_sigma1 = rate + stdev) %>% 
   group_by(type, area_name) %>% 
