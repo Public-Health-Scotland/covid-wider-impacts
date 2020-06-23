@@ -820,6 +820,30 @@ six_dose3_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in on
 saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
 
 ###############################################.
+## Prepare MMR dose1 data ----
+###############################################.
+
+# MMR at dose 1  - summary table data
+mmr_dose1_datatable <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dose1_dashboardtab_20200525.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(mmr_dose1_datatable, paste0("shiny_app/data/","mmr_dose1_datatable.rds"))
+
+# MMR at dose 2  - summary table data
+mmr_dose2_datatable <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dose2_dashboardtab_20200525.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(mmr_dose2_datatable, paste0("shiny_app/data/","mmr_dose2_datatable.rds"))
+
+###############################################.
 ## Prepare Child Health data ----
 ###############################################.
 ## First visit - scurve data
