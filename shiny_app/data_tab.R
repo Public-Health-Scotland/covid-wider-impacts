@@ -16,8 +16,8 @@ data_table <- reactive({
          "deaths" = deaths %>% rename(average_2015_2019 = count_average),
          "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
          "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average)#,
-         #"sixin_8wks" = six,
-         #"first_visit" = first
+         #"sixin_8wks" = six, # deliberately removed until data consistency queries resolved 23/06/20 ve
+         #"first_visit" = first # deliberately removed until data consistency queries resolved 23/06/20 ve
         ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -41,7 +41,7 @@ data_table <- reactive({
                                     "Under 65" = "Aged under 65",
                                     "65 and over" = "Aged 65 and over"),
            week_ending = format(week_ending, "%d %b %y"))
-  # } else if (input$data_select %in% "first_visit") {
+  # } else if (input$data_select %in% "first_visit") { # deliberately removed until data consistency queries resolved 23/06/20 ve
   #   table_data <- table_data %>%
   #     select(-extract_date, -tabno, -week_no, -review, -cohort) %>% 
   #     rename(week_starting = week_2_start, children_due_visit_in = time_period_eligible,
