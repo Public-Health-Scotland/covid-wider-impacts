@@ -57,10 +57,6 @@ cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
 
 cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
 
-## Immunisation Data
-six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
-sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
-
 ## Child Health Data
 first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
@@ -76,6 +72,12 @@ sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6 in 1 immunisa
 
 six_dose3 <- readRDS("data/sixinone_dose3_data.rds") # 6 in 1 immunisation data at 8 weeks
 sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
+
+#mmr_dose1 <- readRDS("data/mmr_dose1_data.rds") # mmr immunisation data offered at 12-13 months
+mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
+
+#mmr_dose2 <- readRDS("data/mmr_dose2_data.rds") # mmr immunisation data offered at 3 years and 4 months
+mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation data table summary
 
 ## perinatal mortality data
 # p_perinatal <- readRDS("data/p_perinatal_data.rds")
@@ -95,7 +97,9 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
                      "6-in-1 second dose" = "sixin_dose2",
-                     "6-in-1 third dose" = "sixin_dose3")
+                     "6-in-1 third dose" = "sixin_dose3",
+                     "MMR first dose" = "mmr_dose1",
+                     "MMR second dose" = "mmr_dose2")
 
 # List of data items available in step 2 of immunisation tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
