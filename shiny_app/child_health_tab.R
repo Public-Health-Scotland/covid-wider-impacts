@@ -57,9 +57,9 @@ output$child_health_explorer <- renderUI({
   # text for titles of cut charts
   child_title <- paste0(case_when(input$measure_select_child == "first_visit" ~ paste0("Coverage of health visitor first visit (offered to children at 2 weeks of age): ",
                                                                                              input$geoname_child),
-                            input$measure_select_child == "six_eightwks" ~ paste0("Coverage of 6-8 week reviews (offered to children at 6-8 weeks of age): ", input$geoname_child),
-                            input$measure_select_child == "13_15mnth" ~ paste0("Coverage of 13-15 month reviews (offered to children at 13-15 months of age): ", input$geoname_child),
-                            input$measure_select_child == "27_30mnth" ~ paste0("Coverage of 27-30 month reviews (offered to children at 27-30 months of age): ", input$geoname_child)))
+                            input$measure_select_child == "six_eightwks" ~ paste0("Coverage of child health review offered at 6-8 weeks of age: ", input$geoname_child),
+                            input$measure_select_child == "13_15mnth" ~ paste0("Coverage of child health review offered at 13-15 months of age: ", input$geoname_child),
+                            input$measure_select_child == "27_30mnth" ~ paste0("Coverage of child health review offered at 27-30 months of age: ", input$geoname_child)))
   
   #commentary to appear in child health tab
   commentary_first <-p("All preschool children should be offered the following health reviews: health visitor first visit, 6-8 week review, 13-15 month review, 27-30 month review, and 4-5 year review. Although the 4-5 year review only became mandated by government policy for children turning 4 from April 2020 onwards.", br(),

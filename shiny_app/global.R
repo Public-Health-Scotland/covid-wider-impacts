@@ -105,9 +105,9 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
-                        "Cardiac procedures" = "cath_lab",
-                        "6-in-1 first dose"  = "sixin_8wks", 
-                        "Health Visitor first visit" = "first_visit"
+                        "Cardiac procedures" = "cath_lab"#,
+                        # "6-in-1 first dose"  = "sixin_8wks", # deliberately removed until data consistency queries resolved 23/06/20 ve
+                        # "Health Visitor first visit" = "first_visit" # deliberately removed until data consistency queries resolved 23/06/20 ve
                         )
 
 
