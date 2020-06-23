@@ -343,7 +343,7 @@ immune_table <- function(dataset, age_week) {
       # Italics and colour if not 24 weeks
       color(i = no_complete_row, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_24weeks_num", "uptake_24weeks_percent"))
-    
+    age_unit <- " weeks"
   } else if (age_week == 12) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_16weeks_num","uptake_28weeks_num","uptake_tot_num")
@@ -359,7 +359,7 @@ immune_table <- function(dataset, age_week) {
       # Italics and colour if not 24 weeks
       color(i = no_complete_row, j = c("uptake_28weeks_num", "uptake_28weeks_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_28weeks_num", "uptake_28weeks_percent")) 
-
+    age_unit <- " weeks"
   }else if (age_week == 16) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_20weeks_num","uptake_32weeks_num","uptake_tot_num")
@@ -375,10 +375,43 @@ immune_table <- function(dataset, age_week) {
       # Italics and colour if not  weeks
       color(i = no_complete_row, j = c("uptake_32weeks_num", "uptake_32weeks_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_32weeks_num", "uptake_32weeks_percent")) 
+    age_unit <- " weeks"
+  }else if (age_week == 1) {
+    #Apply different column names and formatting according to which dataset selected
+    format_col <- c("denominator","uptake_14m_num","uptake_17m_num","uptake_tot_num")
     
+    imm_table <- table_data %>%
+      select (time_period_eligible, denominator,uptake_14m_num,uptake_14m_percent,uptake_17m_num, 
+              uptake_17m_percent,uptake_tot_num,uptake_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(uptake_14m_num="Children recorded as receiving their vaccine by 14 months of age",
+                        uptake_14m_percent="Children recorded as receiving their vaccine by 14 months of age ",
+                        uptake_17m_num="Children recorded as receiving their vaccine by 17 months of age (or younger if children have not reached 17 months of age by the date data was extracted for analysis)",
+                        uptake_17m_percent="Children recorded as receiving their vaccine by 17 months of age (or younger if children have not reached 17 months of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not  weeks
+      color(i = no_complete_row, j = c("uptake_17m_num", "uptake_17m_percent"), color="#0033cc")  %>% 
+      italic(i = no_complete_row, j = c("uptake_17m_num", "uptake_17m_percent")) 
+    age_unit <- " year"
+  }else if (age_week == 3) {
+    #Apply different column names and formatting according to which dataset selected
+    format_col <- c("denominator","uptake_3y5m_num","uptake_3y8m_num","uptake_tot_num")
+    
+    imm_table <- table_data %>%
+      select (time_period_eligible, denominator,uptake_3y5m_num,uptake_3y5m_percent,uptake_3y8m_num, 
+              uptake_3y8m_percent,uptake_tot_num,uptake_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(uptake_3y5m_num="Children recorded as receiving their vaccine by 14 months of age",
+                        uptake_3y5m_percent="Children recorded as receiving their vaccine by 14 months of age ",
+                        uptake_3y8m_num="Children recorded as receiving their vaccine by 17 months of age (or younger if children have not reached 17 months of age by the date data was extracted for analysis)",
+                        uptake_3y8m_percent="Children recorded as receiving their vaccine by 17 months of age (or younger if children have not reached 17 months of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not  weeks
+      color(i = no_complete_row, j = c("uptake_17m_num", "uptake_17m_percent"), color="#0033cc")  %>% 
+      italic(i = no_complete_row, j = c("uptake_17m_num", "uptake_17m_percent")) 
+    age_unit <- " years"
   }
+  
  imm_table %>% 
-   set_header_labels(time_period_eligible= paste0("Children turning ", age_week, " weeks in:"),
+   set_header_labels(time_period_eligible= paste0("Children turning ", age_week, age_unit," in:"),
                      denominator="Total number of children",
                      uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",
                      uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>% 
@@ -442,6 +475,7 @@ plot_scurve_child <- function(dataset, age_week) {
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
   }}
+
 
 #####################################################################################.
 ## Function for generating flextable summary of child health data being displayed in s curve.
