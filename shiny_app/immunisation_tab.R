@@ -67,14 +67,21 @@ output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week
 output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_dose3, age_week = "16")})
 output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week = 16)})
 
+output$immun_mmr_table_dose1 <- renderUI({immune_table(mmrtable_dose1, age_week = 1)})
+
+output$immun_mmr_table_dose2 <- renderUI({immune_table(mmrtable_dose2, age_week = 3)})
+
+
 # The charts and text shown on the app will depend on what the user wants to see
 output$immunisation_explorer <- renderUI({
   
   # text for titles of cut charts
   immune_title <- paste0(case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
-                                                                                       input$geoname_immun),
+                                                                                        input$geoname_immun),
                                    input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
-                                   input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun)))
+                                   input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun),
+                                   input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$geoname_immun),
+                                   input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun)))
   
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
@@ -118,7 +125,20 @@ output$immunisation_explorer <- renderUI({
                       withSpinner(plotlyOutput("immun_6in1_scurve_dose3"))),
                column(6, uiOutput("immun_6in1_table_dose3"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
-    )}
+    )
+  }  else if (input$measure_select_immun == "mmr_dose1"){
+    tagList(
+      fluidRow(column(12, renderUI(intro_6in1),
+                      h4(paste0(immune_title)))),
+      fluidRow(column(6,br(), br(),
+                      p("scurve")),
+               column(6, uiOutput("immun_mmr_table_dose1"))),
+      fluidRow(column(12, renderUI(commentary_6in1)))
+    )
+  }else if (input$measure_select_immun == "mmr_dose2"){
+    tagList(
+      p("test"))
+  }
 
 }) #close immunisation_explorer function
 
@@ -134,7 +154,9 @@ imm_data_download <- reactive({
     input$measure_select_immun,
     "sixin_dose1" = sixtable,
     "sixin_dose2" = sixtable_dose2,
-    "sixin_dose3" = sixtable_dose3
+    "sixin_dose3" = sixtable_dose3,
+    "mmr_dose1" = mmrtable_dose1,
+    "mmr_dose2"= mmrtable_dose2
   ) %>% 
     select(area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
     rename(cohort = time_period_eligible)
