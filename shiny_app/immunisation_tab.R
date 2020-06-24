@@ -38,10 +38,8 @@ observeEvent(input$btn_immune_modal,
 
 # Immunisation reactive drop-down control showing list of area names depending on areatype selected
 output$geoname_ui_immun <- renderUI({
-  
-  #Lists areas available in   
+    #Lists areas available in   
   areas_summary_immun <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_immun])
-  
   selectizeInput("geoname_immun", label = NULL, choices = areas_summary_immun, selected = "")
 })
 
@@ -58,19 +56,21 @@ filter_table_data_immun <- function(dataset){
 # Creating plots for each dataset
 #run chart function to generate s curve  
 
-output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(six, age_week = "8")})
+output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(six, age_week = "8", dose= "dose1")})
 output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable, age_week = 8)})
 
-output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_dose2, age_week = "12")})
+output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_dose2, age_week = "12", dose="dose2")})
 output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week = 12)})
 
-output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_dose3, age_week = "16")})
+output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_dose3, age_week = "16", dose= "dose3" )})
 output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week = 16)})
 
-output$immun_mmr_table_dose1 <- renderUI({immune_table(mmrtable_dose1, age_week = 1)})
 
-output$immun_mmr_table_dose2 <- renderUI({immune_table(mmrtable_dose2, age_week = 3)})
+output$immun_mmr_scurve_dose1 <- renderPlotly({plot_scurve(mmr_alldose, age_week = "1", dose= "dose1" )})
+output$immun_mmr_scurve_dose2 <- renderPlotly({plot_scurve(mmr_alldose, age_week = "3", dose= "dose2" )})
 
+output$immun_mmr_table_dose1 <- renderUI({immune_table(mmrtable_dose1, age_week = 1)}) #age week 1 doesn't really make sense as given to children at 1 year
+output$immun_mmr_table_dose2 <- renderUI({immune_table(mmrtable_dose2, age_week = 3)}) #age week 3 doesn't really make sense as given to children at 3 years and 4 month
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$immunisation_explorer <- renderUI({
@@ -131,7 +131,7 @@ output$immunisation_explorer <- renderUI({
       fluidRow(column(12, renderUI(intro_6in1),
                       h4(paste0(immune_title)))),
       fluidRow(column(6,br(), br(),
-                      p("scurve")),
+                      withSpinner(plotlyOutput("immun_mmr_scurve_dose1"))),
                column(6, uiOutput("immun_mmr_table_dose1"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
