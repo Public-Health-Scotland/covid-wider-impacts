@@ -55,13 +55,13 @@ filter_table_data_immun <- function(dataset){
 
 # Creating plots for each dataset
 #run chart function to generate s curve  
-output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(six, age_week = "8", dose= "dose 1")})
+output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(dataset=six_alldose, age_week = "8", dose= "dose 1")})
 output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable, age_week = 8)})
 
-output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_dose2, age_week = "12", dose="dose 2")})
+output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_alldose, age_week = "12", dose="dose 2")})
 output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week = 12)})
 
-output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_dose3, age_week = "16", dose= "dose 3" )})
+output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_alldose, age_week = "16", dose= "dose 3" )})
 output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week = 16)})
 
 
@@ -84,7 +84,7 @@ output$immunisation_explorer <- renderUI({
                                    input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
                                    input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun),
                                    input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$geoname_immun),
-                                   input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun)))
+                                   input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun)))
   
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
@@ -140,7 +140,13 @@ output$immunisation_explorer <- renderUI({
     )
   }else if (input$measure_select_immun == "mmr_dose2"){
     tagList(
-      p("test"))
+      fluidRow(column(12, renderUI(intro_6in1),
+                      h4(paste0(immune_title)))),
+      fluidRow(column(6,br(), br(),
+                      withSpinner(plotlyOutput("immun_mmr_scurve_dose2"))),
+               column(6, uiOutput("immun_mmr_table_dose2"))),
+      fluidRow(column(12, renderUI(commentary_6in1)))
+    )
   }
 
 }) #close immunisation_explorer function
