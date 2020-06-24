@@ -513,6 +513,7 @@ prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-06-14")
 ###############################################.
 deaths <- readRDS(paste0(data_folder, "deaths/deaths_data.rds"))
 saveRDS(deaths, "shiny_app/data/deaths_data.rds")
+saveRDS(deaths, "/conf/PHSCOVID19_Analysis/Publication outputs/open_data/deaths_data.rds")
 
 ###############################################.
 ## Cath labs ----
