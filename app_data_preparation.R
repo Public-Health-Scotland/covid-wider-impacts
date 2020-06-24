@@ -668,7 +668,7 @@ prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-06-14")
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/prescribing data/covid emessage AMS only 20200618.xlsx") %>% 
+cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing data/covid emessage AMS only 20200618.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -706,8 +706,6 @@ prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-06-14")
 ###############################################.
 ## Prepare 6-in-1 dose 1 ----
 ###############################################.
-#immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/6in1/"
-
 # 6-in-1 at 8 weeks - scurve data
 six <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_1_dashboard20200525.csv"), 
                 col_types =list(week_8_start=col_date(format="%m/%d/%Y"),
@@ -748,8 +746,6 @@ saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
 ## Prepare 6-in-1 dose 2 ----
 ###############################################.
 
-#immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/6in1/"
-
 # 6-in-1 at dose 2 (usually 12 weeks) - scurve data
 six_dose2 <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_2_dashboard20200525.csv"), 
                 col_types =list(week_12_start=col_date(format="%m/%d/%Y"),
@@ -788,8 +784,6 @@ saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.
 ###############################################.
 ## Prepare 6-in-1 dose 3 ----
 ###############################################.
-
-#immunisation_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/immunisations/6in1/"
 
 # 6-in-1 at dose 3 (usually 16 weeks) - scurve data
 six_dose3 <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_3_dashboard20200525.csv"), 
