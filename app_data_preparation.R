@@ -823,6 +823,37 @@ saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.
 ## Prepare MMR dose1 data ----
 ###############################################.
 
+# mmr dose 1 & 2 - scurve data
+mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard20200622.csv"),
+                      col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
+                                      time_period_eligible=col_factor())) %>%
+  janitor::clean_names()
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(eligible_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  #rename(week_12_start=week_16_start) %>%
+  select (extract_date, immunisation, eligible_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
+
+saveRDS(mmr_alldose, paste0("shiny_app/data/","mmr_alldose_data.rds"))
+
+
+
+
+
+
+
 # MMR at dose 1  - summary table data
 mmr_dose1_datatable <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dose1_dashboardtab_20200525.csv")) %>%
   janitor::clean_names() %>%
