@@ -96,35 +96,35 @@ output$perinatal_explorer <- renderUI({
   if (input$measure_select_perinatal == "stillbirths") {
     intro_text <- p("Stillbirths refer to", tags$a(href=link_perinatal, 
                     "a child born after the 24th week of pregnancy which did not breathe or show any signs of life.",class="externallink"), 
-                    "The stillbirth rate in Scotland in 2018 ", 
-                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2018/section-4-stillbirths-and-infant-deaths", 
-                    "was 3.7 per 1,000 total births.",class="externallink"),
+                    "The stillbirth rate in Scotland in 2019 ", 
+                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
+                    "was 3.5 per 1,000 total births.",class="externallink"),
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
   } else if (input$measure_select_perinatal == "pnnd") {
     intro_text <- p("Post-neonatal deaths refer to", tags$a(href=link_perinatal, 
                     "deaths occuring after the first 4 weeks but within the first year",class="externallink"), "of life.",
-                    "The post-neonatal death rate in Scotland in 2018 ", 
-                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2018/section-4-stillbirths-and-infant-deaths", 
-                           "was 1.2 per 1,000 total live births.",class="externallink"),
+                    "The post-neonatal death rate in Scotland in 2019 ", 
+                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
+                           "was 1.1 per 1,000 total live births.",class="externallink"),
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
   } else if (input$measure_select_perinatal == "nnd") {
     intro_text <- p("Neonatal deaths refer to", tags$a(href=link_perinatal, 
                   "deaths in the first four weeks",class="externallink"), "of life.",
-                  "The neonatal death rate in Scotland in 2018 ", 
-                  tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2018/section-4-stillbirths-and-infant-deaths", 
-                         "was 2.0 per 1,000 total live births.",class="externallink"),
+                  "The neonatal death rate in Scotland in 2019 ", 
+                  tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
+                         "was 2.2 per 1,000 total live births.",class="externallink"),
                   peri_common_intro,
                   tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                          "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
   } else if (input$measure_select_perinatal == "extperi") {
     intro_text <- p("Extended perinatal deaths refer to", tags$a(href=link_perinatal, 
 "the sum of stillbirths and neonatal mortality",class="externallink"), "(deaths within the first 4 weeks of life).",
-"The extended perinatal death rate in Scotland in 2018 ", 
-tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2018/section-4-stillbirths-and-infant-deaths", 
+"The extended perinatal death rate in Scotland in 2019 ", 
+tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
        "was 5.7 per 1,000 total births.",class="externallink"),
 peri_common_intro,
 tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
@@ -134,9 +134,9 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
     intro_text <- p("Infant deaths refer to", tags$a(href=link_perinatal, 
                     "all deaths in the first year",class="externallink"), "of life; 
                     this includes neonatal and post-neonatal deaths, but not stillbirths. ",
-                    "The infant death rate in Scotland in 2018 ", 
-                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2018/section-4-stillbirths-and-infant-deaths", 
-                           "was 3.2 per 1,000 total live births.",class="externallink"),
+                    "The infant death rate in Scotland in 2019 ", 
+                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
+                           "was 3.3 per 1,000 total live births.",class="externallink"),
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
@@ -148,7 +148,7 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
                       "‘control charts’",class="externallink"), "to present the rates above.", br(),
                       "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
                       Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
-                      "The dots joined by a solid line in the chart below show the monthly mortality rate for the measure selected from January 2017 onwards.", br(),  
+                      "The dots joined by a solid line in the chart above show the monthly mortality rate for the measure selected from January 2017 onwards.", br(),  
                       "The other lines - centreline, and control and warning limits - are there to help show how unexpected any observed changes are. 
                       The centreline is an average (mean) over the time period.  Control and warning limits take into consideration the random variation 
                       that would be expected by chance, and help us decide when values are unexpectedly low or high and require further investigation.")
@@ -180,8 +180,10 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
   output$perinatal_chart <- renderPlotly({
     trend_data <- perinatal %>% filter(type == input$measure_select_perinatal)
     
-    yaxis_plots[["title"]] <- "Rate per 1,000 births"
+    yaxis_plots[["title"]] <- case_when(input$measure_select_perinatal %in% c("pnnd", "nnd", "infantdeaths") ~ "Rate per 1,000 live births", 
+                                        input$measure_select_perinatal %in% c("extperi", "stillbirths") ~ "Rate per 1,000 births")
     xaxis_plots[["title"]] <- "Month"
+  
     
     # xaxis_plots[["dtick"]] <- 180
     # xaxis_plots[["tickmode"]] <- "array" 
@@ -273,7 +275,7 @@ output$perinatal_commentary <- renderUI({
             (the trigger for further investigation).", br(), 
             "In April and May there were fewer neonatal deaths, and the rate fell to below the upper warning limit. Rates of stillbirths and extended perinatal deaths are being closely 
             monitored, as these approached, but did not breach, the upper warning limit in May 2020.", br(),
-            "NRS", tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2018/section-4-stillbirths-and-infant-deaths", 
+            "NRS", tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
             "publishes",class="externallink"), "information on stillbirths and infant deaths registered in Scotland.", br(),  
             "Across the UK, surveillance of perinatal deaths is undertaken by MBRRACE-UK (Mothers and Babies: Reducing Risk through Audits and Confidential Enquiries across the UK). The latest MBRRACE-UK perinatal mortality", 
             tags$a(href="https://www.npeu.ox.ac.uk/mbrrace-uk#mbrrace-uk-perinatal-mortality-surveillance-report", "report", class="externallink"),
