@@ -509,6 +509,12 @@ sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-06-14")
 
 ###############################################.
+## Deaths ----
+###############################################.
+deaths <- readRDS(paste0(data_folder, "deaths/deaths_data.rds"))
+saveRDS(deaths, "shiny_app/data/deaths_data.rds")
+
+###############################################.
 ## Cath labs ----
 ###############################################.
 # Data for cardiovascular app
