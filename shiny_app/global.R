@@ -73,10 +73,8 @@ sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6 in 1 immunisa
 six_dose3 <- readRDS("data/sixinone_dose3_data.rds") # 6 in 1 immunisation data at 8 weeks
 sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
 
-#mmr_dose1 <- readRDS("data/mmr_dose1_data.rds") # mmr immunisation data offered at 12-13 months
+mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
 mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
-
-#mmr_dose2 <- readRDS("data/mmr_dose2_data.rds") # mmr immunisation data offered at 3 years and 4 months
 mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation data table summary
 
 ## perinatal mortality data
@@ -140,16 +138,26 @@ pal_overall <- c('#000000', '#009900')
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
 pal_med <- c('#543005', '#bf812d', '#74add1', '#313695') # Palettes for medicine groupings
 
-pal_immun <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
+pal_immun <- c("2019" = '#000000',
+               "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", "MAR 2020" = "#7477d1",
                "W/B 02-MAR-2020" = "#fee391", "W/B 09-MAR-2020" = "#fec44f",
                "W/B 16-MAR-2020" = "#fe9929", "W/B 23-MAR-2020" = "#ec7014",
-               "W/B 30-MAR-2020" = "#cc4c02", "W/B 06-APR-2020" = "#8c2d04")
+               "W/B 30-MAR-2020" = "#cc4c02",  "W/B 06-APR-2020" = "#8c2d04",
+               #"W/B 06-APR-2020" = "#fee391",
+               "W/B 13-APR-2020" = "#fec44f",
+               "W/B 20-APR-2020" = "#fe9929",
+               "W/B 27-APR-2020" = "#ec7014",
+               "W/B 04-MAY-2020" = "#cc4c02"
+               )
 
 pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
                "W/B 02-MAR-2020" = "#fee391", "W/B 09-MAR-2020" = "#fec44f",
                "W/B 16-MAR-2020" = "#fe9929", "W/B 23-MAR-2020" = "#ec7014",
                "W/B 30-MAR-2020" = "#cc4c02", "W/B 06-APR-2020" = "#8c2d04",
                "W/B 13-APR-2020" = "#662506")
+
+
+
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
