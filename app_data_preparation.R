@@ -849,11 +849,6 @@ mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher
 saveRDS(mmr_alldose, paste0("shiny_app/data/","mmr_alldose_data.rds"))
 
 
-
-
-
-
-
 # MMR at dose 1  - summary table data
 mmr_dose1_datatable <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dose1_dashboardtab_20200525.csv")) %>%
   janitor::clean_names() %>%
