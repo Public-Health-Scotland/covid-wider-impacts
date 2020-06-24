@@ -257,29 +257,44 @@ filter_data <- function(dataset, area = T) {
 }
 
 #####################################################################################.
+##Immunistions-curve ----
 ## Function for drawing S-Curve charts used in immunisation tabs.
 
-plot_scurve <- function(dataset, age_week) {
+plot_scurve <- function(dataset, age_week, dose) {
  
-  scurve_data <- dataset %>% filter(area_name == input$geoname_immun) 
+  scurve_data <- dataset %>% filter(area_name == input$geoname_immun, #filter to correct geography
+                                    str_detect(immunisation,dose)) #filter immunisation scurve data on dose
 
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
-  { plot_nodata(height = 50)
-  } else {
+   { plot_nodata(height = 50)
+   } else {
   
   #Create tooltip for scurve
   tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
   
+  if(dataset %in% c(six,six_dose2,six_dose3)){
+  
   #Modifying standard yaxis layout
   yaxis_plots[["title"]] <- "% of children who have received their vaccine"
   xaxis_plots[["title"]] <- "Age of children in weeks"
-  # For custom tick labels
+    # For custom tick labels
   xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
   xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
   # To adjust x-axis min and max depending on which dose selected 
   xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) 
   # enforcing range from 0 to 100%
-  yaxis_plots[["range"]] <- c(0, 100) 
+  yaxis_plots[["range"]] <- c(0, 100) }
+  
+  else if(dataset == mmr_alldose && dose== "dose1" ){ #set chart parameters for mmr dose 1
+    xaxis_plots[["tickvals"]] <- c(0, seq(343, 490, by = 28)) # xaxis days 343 to 490 
+    xaxis_plots[["ticktext"]] <- c(0, seq(49, 70, by = 4))  # xaxis labels 49 weeks to 70 weeks
+
+    # To adjust x-axis min and max depending on which dose selected
+    xaxis_plots[["range"]] <- c((7*49),(7*70))  
+    # enforcing range from 0 to 100%
+    yaxis_plots[["range"]] <- c(0, 100)
+  }
+
   
   
   #Creating time trend plot
@@ -300,7 +315,8 @@ plot_scurve <- function(dataset, age_week) {
              legend = list(x = 100, y = 0.8, yanchor="top")) %>% #position of legend
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
-  }}
+}
+}
 
 
 ######################################################################.
@@ -432,6 +448,7 @@ immune_table <- function(dataset, age_week) {
 }
 
 #####################################################################################.
+## HV S-curve----
 ## Function for drawing S-Curve charts used in health visitor tabs.
 
 plot_scurve_child <- function(dataset, age_week) {
