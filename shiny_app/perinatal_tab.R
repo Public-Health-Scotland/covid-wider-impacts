@@ -74,13 +74,13 @@ output$perinatal_explorer <- renderUI({
 
   # text for titles of cut charts
   perinatal_title <- paste0(case_when(input$measure_select_perinatal == "stillbirths" ~ 
-                                        paste0("Monthly rate of stillbirths per 1,000 total births in Scotland", input$geoname_perinatal),
+                                        paste0("Monthly rate of stillbirths per 1,000 total (live + still) births in Scotland", input$geoname_perinatal),
                                       input$measure_select_perinatal == "pnnd" ~
                                         paste0("Monthly rate of post-neonatal deaths per 1,000 live births in Scotland", input$geoname_perinatal),
                                       input$measure_select_perinatal == "nnd" ~ 
                                         paste0("Monthly rate of neonatal deaths per 1,000 live births in Scotland", input$geoname_perinatal),
                                       input$measure_select_perinatal == "extperi" ~ 
-                                        paste0("Monthly rate of extended perinatal deaths per 1,000 total births in Scotland", input$geoname_perinatal),
+                                        paste0("Monthly rate of extended perinatal deaths per 1,000 total (live + still) births in Scotland", input$geoname_perinatal),
                                       input$measure_select_perinatal == "infantdeaths" ~ 
                                         paste0("Monthly rate of infant deaths per 1,000 live births in Scotland", input$geoname_perinatal)))
   
@@ -98,7 +98,7 @@ output$perinatal_explorer <- renderUI({
                     "a child born after the 24th week of pregnancy which did not breathe or show any signs of life.",class="externallink"), 
                     "The stillbirth rate in Scotland in 2019 ", 
                     tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-                    "was 3.5 per 1,000 total births.",class="externallink"),
+                    "was 3.5 per 1,000 total (live + still) births.",class="externallink"),
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
@@ -125,7 +125,7 @@ output$perinatal_explorer <- renderUI({
 "the sum of stillbirths and neonatal mortality",class="externallink"), "(deaths within the first 4 weeks of life).",
 "The extended perinatal death rate in Scotland in 2019 ", 
 tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-       "was 5.7 per 1,000 total births.",class="externallink"),
+       "was 5.7 per 1,000 total (live + still) births.",class="externallink"),
 peri_common_intro,
 tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
        "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
@@ -142,7 +142,9 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
                            "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
   }
 
-
+  nrs_commentary <- p("It is important to note that chart data is based on month of occurence rather than month of registration used in NRS publications, and so
+                      figures may differ slightly.")
+  
   control_chart_commentary <- p("As stillbirths and infant deaths are relatively rare events in Scotland mortality rates tend to fluctuate over time just by chance.
                       We have therefore used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
                       "‘control charts’",class="externallink"), "to present the rates above.", br(),
@@ -158,7 +160,7 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
                            "It is therefore possible that some stillbirths occurring in the last week of May 2020 may not have been registered by the time the data extract was taken.  The stillbirth and extended perinatal mortality rates for May 2020 should 
                            therefore be taken as provisional, and they may increase when the data is refreshed (and new rates for June 2020 are added) in July 2020.", br(),  
                            "We would expect any increases to be small, as in previous years 95% of stillbirths have been registered within 14 days of the baby being delivered, despite the legal limit allowing up to 21 days.", br(),  
-                           "This issue does not affect infant deaths, hence the neonatal, post-neonatal, and infant death rates for May 2020 should be final.")                  
+                           "This issue affects infant deaths (neonatal, post-neonatal, and infant death categories) less so as the legal time limit for registration is 8 days.")        
   # Specify items to display in perinatal ui 
   tagList(
     fluidRow(column(12, 
@@ -167,6 +169,7 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
     actionButton("btn_perinatal_rules", "How do we identify patterns in the data?", 
                  icon = icon('question-circle')),
     fluidRow(withSpinner(plotlyOutput("perinatal_chart"))),
+    fluidRow(column(12, renderUI(nrs_commentary))),
     fluidRow(column(12, renderUI(control_chart_commentary))),
     fluidRow(column(12, renderUI(may_data_commentary))))
   
@@ -181,7 +184,7 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
     trend_data <- perinatal %>% filter(type == input$measure_select_perinatal)
     
     yaxis_plots[["title"]] <- case_when(input$measure_select_perinatal %in% c("pnnd", "nnd", "infantdeaths") ~ "Rate per 1,000 live births", 
-                                        input$measure_select_perinatal %in% c("extperi", "stillbirths") ~ "Rate per 1,000 births")
+                                        input$measure_select_perinatal %in% c("extperi", "stillbirths") ~ "Rate per 1,000 (live + still) births")
     xaxis_plots[["title"]] <- "Month"
   
     
@@ -265,7 +268,7 @@ output$perinatal_commentary <- renderUI({
             tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies",
             "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.", br(),
             "The dashboard shows monthly data for stillbirths and infant deaths (those occurring under the age of one year). These are based on data 
-            from National Records for Scotland (NRS), and are presented as rates per 1,000 births.", br(),
+            from National Records for Scotland (NRS), and are presented as rates per 1,000 live births for infant deaths and per 1,000 live and still births for stillbirths.", br(),
             "Control charts have been used to support interpretation of these data. As numbers of deaths are relatively low, mortality rates tend to fluctuate from month to month just by chance: 
             control charts help differentiate between expected random variation and changes which warrant further investigation.", br(), 
             "In this first release of information on stillbirths and infant deaths (1 July 2020), data are shown for January 2017 to May 2020, with the most recent three months (March-May 2020) 
