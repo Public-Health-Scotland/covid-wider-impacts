@@ -46,20 +46,45 @@ ooh_filepath <- file.path(generic_filepath,
                           "OD2000027 - COVID-19 Wider Impact - OOH Consultations")
 sas_filepath <- file.path(generic_filepath,
                           "OD2000028 - COVID-19 Wider Impact - Scottish Ambulance Services")
+deaths_filepath <- file.path(generic_filepath,
+                             "OD2000030 - COVID-19 Wider Impact - Deaths")
+cardio_filepath <- file.path(generic_filepath,
+                             "OD2000032 - COVID-19 Wider Impact - Cardio")
+cardio_drugs_filepath <- file.path(generic_filepath,
+                                   "OD2000032 - COVID-19 Wider Impact - Cardio")
+immunisation_filepath <- file.path(generic_filepath,
+                                   "OD2000029 - COVID-19 Wider Impact - Immunisation")
+childhealth_filepath <- file.path(generic_filepath,
+                                  "OD2000033 - COVID-19 Wider Impact - Child Health")
 
 
 #set filenames for dashboard data tables --- UPDATE TO MATCH WHAT FILE NAMES WILL BE
-hospital_admissions_data <- "rapid_data"
-a_and_e_data <- "ae_data"
-nhs24_data <- "nhs24_data"
-ooh_data <- "ooh_data"
-sas_data <- "sas_data"
+hospital_admissions_dat <- "rapid_data"
+a_and_e_dat <- "ae_data"
+nhs24_dat <- "nhs24_data"
+ooh_dat <- "ooh_data"
+sas_dat <- "sas_data"
+deaths_dat <- "deaths_data"
+cardio_dat <- "ae_cardio_data"
+cardio_drugs_dat <- "cardio_drugs_data"
+imm_6in1_dat <- "sixinone_datatable"
+imm_6in1_2nd_dat <- 
+  imm_6in1_3rd_dat <- 
+  first_visit_dat <- 
+  
+  hospital_admissions <- read_rds(glue("{source_filepath}/{hospital_admissions_dat}.rds"))
+a_and_e <- read_rds(glue("{source_filepath}/{a_and_e_dat}.rds"))
+nhs24 <- read_rds(glue("{source_filepath}/{nhs24_dat}.rds"))
+ooh <- read_rds(glue("{source_filepath}/{ooh_dat}.rds"))
+sas <- read_rds(glue("{source_filepath}/{sas_dat}.rds"))
+deaths <- read_rds(glue("{source_filepath}/{deaths_dat}.rds"))
+cardio <- read_rds(glue("{source_filepath}/{cardio_dat}.rds"))
+cardio_drugs <- read_rds(glue("{source_filepath}/{cardio_drugs_dat}.rds"))
+imm_6in1 <- read_rds(glue("{source_filepath}/{imm_6in1_dat}.rds"))
+imm_6in1_2nd <- read_rds(glue("{source_filepath}/{imm_6in1_2nd_dat}.rds"))
+imm_6in1_3rd <- read_rds(glue("{source_filepath}/{imm_6in1_3rd_dat}.rds"))
+first_visit <-  read_rds(glue("{source_filepath}/{first_visit_dat}.rds"))
 
-hospital_admissions <- read_rds(glue("{source_filepath}/{hospital_admissions_data}.rds"))
-a_and_e <- read_rds(glue("{source_filepath}/{a_and_e_data}.rds"))
-nhs24 <- read_rds(glue("{source_filepath}/{nhs24_data}.rds"))
-ooh <- read_rds(glue("{source_filepath}/{ooh_data}.rds"))
-sas <- read_rds(glue("{source_filepath}/{sas_data}.rds"))
 
 # Set resources to use
 
@@ -105,7 +130,13 @@ a_and_e <- left_join(a_and_e, geo_codes, by = "area_name")
 nhs24 <- left_join(nhs24, geo_codes, by = "area_name")
 ooh <- left_join(ooh, geo_codes, by = "area_name")
 sas <- left_join(sas, geo_codes, by = "area_name")
-
+deaths <- left_join(deaths, geo_codes, by = "area_name")
+cardio <- left_join(cardio, geo_codes, by = "area_name")
+cardio_drugs <- left_join(cardio_drugs, geo_codes, by = "area_name")
+imm_6in1 <- left_join(imm_6in1, geo_codes, by = "area_name")
+imm_6in1_2nd <- left_join(imm_6in1_2nd, geo_codes, by = "area_name")
+imm_6in1_3rd <- left_join(imm_6in1_3rd, geo_codes, by = "area_name")
+first_visit <- left_join(first_visit, geo_codes, by = "area_name")
 
 ##############################################.
 ###FUNCTIONS ----
@@ -115,7 +146,7 @@ sas <- left_join(sas, geo_codes, by = "area_name")
 
 od_names <- function(dataset) {
   dataset_hb <- dataset %>%
-    rename("Average20182019" = "count_average") %>%
+    #rename("Average20182019" = "count_average") %>%
     rename("PercentVariation" = "variation") %>%
     rename("WeekEnding" = "week_ending")
 }
@@ -152,7 +183,7 @@ age_sex_od <- function(dataset) {
     filter(category %in% c("5 - 14", "15 - 44", 
                            "45 - 64", "65 - 74",
                            "75 - 84", "85 and over",
-                           "Under 5"))%>%
+                           "Under 5", "Under 65", "65 and over"))%>%
     mutate(Sex = "All") %>%
     rename("AgeGroup" = "category")
   
@@ -181,7 +212,7 @@ simd_od <- function(dataset) {
 ###Create open data
 
 create_open_data <- function(dataset, count_variable, filepath_chosen,
-                             data_name) {
+                             data_name, average = "Average20182019", countrify = F) {
   
   filepath <- filepath_chosen
   
@@ -189,9 +220,11 @@ create_open_data <- function(dataset, count_variable, filepath_chosen,
     mutate(week_ending = as.Date(week_ending, format = "%d %b %y")) %>%
     mutate(week_ending = strftime(week_ending, format = "%Y%m%d")) %>% 
     #rename common colnames
-    od_names 
+    od_names
   
   names(open_data)[names(open_data) == 'count'] <- count_variable
+  
+  names(open_data)[names(open_data) == 'count_average'] <- average
   
   hb <- hb_filter(open_data)
   
@@ -205,11 +238,14 @@ create_open_data <- function(dataset, count_variable, filepath_chosen,
   #select+reorder
   hb_age_sex <- hb_age_sex %>%
     select_at(c("WeekEnding", "HB", "HBQF", "AgeGroup", "AgeGroupQF", "Sex", "SexQF",
-                count_variable, "Average20182019", "PercentVariation")) %>%
-    arrange(WeekEnding, HB, Sex, AgeGroup)
+                count_variable, average, "PercentVariation")) %>%
+    arrange(WeekEnding, HB, Sex, factor(AgeGroup, levels = c("5 - 14", "15 - 44", 
+                                                             "45 - 64", "65 - 74",
+                                                             "75 - 84", "85 and over",
+                                                             "Under 5", "Under 65", "65 and over")))
   
   #create OD csv file 1
-  write_csv(hb_age_sex, glue("{filepath}/{data_name}_hb_agesex_{date}.csv"))
+  write_csv(hb_age_sex, glue("{filepath}/{data_name}_hb_agesex_{date}.csv"), na = "")
   
   ###By HB and SIMD
   
@@ -219,11 +255,20 @@ create_open_data <- function(dataset, count_variable, filepath_chosen,
   #select, reorder
   hb_simd <- hb_simd %>%
     select_at(c("WeekEnding", "HB", "HBQF", "SIMDQuintile", count_variable, 
-                "Average20182019", "PercentVariation")) %>%
+                average, "PercentVariation")) %>%
     arrange(WeekEnding, HB, SIMDQuintile)
   
+  #rename HB to Country for Deaths
+  if(countrify == T){
+    hb_simd <- hb_simd %>%
+      rename("Country" = "HB") %>%
+      select_at(c("WeekEnding", "Country", "SIMDQuintile", count_variable, 
+                  average, "PercentVariation")) %>%
+      arrange(WeekEnding, SIMDQuintile)
+  }
+  
   #create OD csv file 2
-  write_csv(hb_simd, glue("{filepath}/{data_name}_hb_simd_{date}.csv"))
+  write_csv(hb_simd, glue("{filepath}/{data_name}_hb_simd_{date}.csv"), na = "")
   
   ###By HSCP +Age +sex
   
@@ -236,25 +281,28 @@ create_open_data <- function(dataset, count_variable, filepath_chosen,
   #select+reorder
   hscp_age_sex <- hscp_age_sex %>%
     select_at(c("WeekEnding", "HSCP", "AgeGroup", "AgeGroupQF", "Sex", "SexQF", 
-                count_variable, "Average20182019", "PercentVariation")) %>%
-    arrange(WeekEnding, HSCP, Sex, AgeGroup)
+                count_variable, average, "PercentVariation")) %>%
+    arrange(WeekEnding, HSCP, Sex, factor(AgeGroup, levels = c("5 - 14", "15 - 44", 
+                                                               "45 - 64", "65 - 74",
+                                                               "75 - 84", "85 and over",
+                                                               "Under 5", "Under 65", "65 and over")))
   
   #create OD csv file 3
-  write_csv(hscp_age_sex, glue("{filepath}/{data_name}_hscp_agesex_{date}.csv"))
+  write_csv(hscp_age_sex, glue("{filepath}/{data_name}_hscp_agesex_{date}.csv"), na = "")
   
   ###By HSCP and SIMD
-  
   #filter for simd
-  hscp_simd <- simd_od(hscp)  
-  
+  hscp_simd <- simd_od(hscp)
   #select, reorder
   hscp_simd <- hscp_simd %>%
     select_at(c("WeekEnding", "HSCP", "SIMDQuintile", count_variable, 
-                "Average20182019", "PercentVariation")) %>%
+                average, "PercentVariation")) %>%
     arrange(WeekEnding, HSCP, SIMDQuintile)
   
-  #create OD csv file 4
-  write_csv(hscp_simd, glue("{filepath}/{data_name}_hscp_simd_{date}.csv"))
+  if(countrify == F){
+    #create OD csv file 4
+    write_csv(hscp_simd, glue("{filepath}/{data_name}_hscp_simd_{date}.csv"), na = "")
+  } 
   
 }
 
@@ -271,6 +319,7 @@ hospital_admissions <- hospital_admissions %>%
 
 #rename common colnames
 hospital_admissions <- od_names(hospital_admissions) %>%
+  rename("Average20182019" = "count_average")%>%
   rename("AdmissionType" = "admission_type") %>%
   rename("NumberAdmissions" = "count") %>%
   rename("Specialty" = "spec")
@@ -392,6 +441,7 @@ rm(adm_hb, adm_hb_age_sex, adm_hb_simd, adm_hb_spec, adm_hscp, adm_hscp_age_sex,
 #2##Create Weekly_a_and_e OD Resources ----
 ##############################################.
 
+
 create_open_data(dataset = a_and_e, count_variable = "NumberAttendances",
                  filepath_chosen = ae_filepath, data_name = "a_and_e")
 
@@ -404,13 +454,8 @@ create_open_data(dataset = a_and_e, count_variable = "NumberAttendances",
 create_open_data(dataset = nhs24, count_variable = "CompletedContacts",
                  filepath_chosen = nhs24_filepath, data_name = "nhs24")
 
-<<<<<<< HEAD
 
 
-=======
-
-
->>>>>>> a51166c6519471a8550a96229558c5db1fc4a574
 ##############################################.
 #4##Create Weekly_ooh_consults OD Resources----
 ##############################################.
@@ -426,4 +471,133 @@ create_open_data(dataset = ooh, count_variable = "Consultations",
 
 create_open_data(dataset = sas, count_variable = "SASIncidents",
                  filepath_chosen = sas_filepath, data_name = "sas")
+
+
+
+##############################################.
+#6##Create Weekly_nrs OD Resources----
+##############################################.
+
+create_open_data(dataset = deaths, count_variable = "Deaths",
+                 filepath_chosen = deaths_filepath, data_name = "deaths",
+                 average = "Average20152019", countrify = T)
+
+#simd only scotland, Average20152019
+
+
+
+##############################################.
+#7##Create Weekly_cardio OD Resources----
+##############################################.
+
+#format date
+cardio <- cardio %>%
+  mutate(week_ending = as.Date(week_ending, format = "%d %b %y")) %>%
+  mutate(week_ending = strftime(week_ending, format = "%Y%m%d"))
+
+#general formatting
+cardio <- cardio %>%
+  od_names() %>%
+  rename("Country" = "Code")%>%
+  rename("Average20182019" = "count_average")%>%
+  rename("CardioAdmissions" = "count")
+
+###By Age
+
+#filter for age, rename
+cardio_age <- cardio %>%
+  filter(category %in% c("<65", "65+"))%>%
+  rename("AgeGroup" = "category")%>%
+  mutate(AgeGroup = recode(AgeGroup, 
+                           "<65" = "Under 65",
+                           "65+" = "65 and over"))%>%
+  select(WeekEnding, Country, AgeGroup, CardioAdmissions, Average20182019, 
+         PercentVariation)%>%
+  arrange(WeekEnding, AgeGroup)
+
+#create OD csv file 1
+write_csv(cardio_age, glue("{cardio_filepath}/{cardio_dat}_age_{date}.csv"), na = "")
+
+###By SIMD
+
+cardio_simd <- cardio %>%
+  simd_od() %>%
+  select_at(c("WeekEnding", "Country", "SIMDQuintile", "CardioAdmissions", 
+              "Average20182019", "PercentVariation")) %>%
+  arrange(WeekEnding, SIMDQuintile)
+
+#create OD csv file 2
+write_csv(cardio_simd, glue("{cardio_filepath}/{cardio_dat}_simd_{date}.csv"), na = "")
+
+
+##############################################.
+#8##Create Weekly_cardio_drugs OD Resources----
+##############################################.
+
+#format date
+cardio_drugs <- cardio_drugs %>%
+  mutate(week_ending = as.Date(week_ending, format = "%d %b %y")) %>%
+  mutate(week_ending = strftime(week_ending, format = "%Y%m%d"))
+
+#general formatting
+cardio_drugs <- cardio_drugs %>%
+  od_names() %>%
+  rename("Average20182019" = "count_average")%>%
+  rename("NumberPrescriptions" = "count")%>%
+  rename("Condition" = "category")%>%
+  mutate(ConditionQF = if_else(Condition == "All", "d", ""))
+
+###HB
+cardio_drugs_hb <- cardio_drugs %>%
+  hb_filter()%>%
+  #rename, add qualifiers
+  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
+  select(WeekEnding, HB, HBQF, Condition, ConditionQF, NumberPrescriptions,
+         Average20182019, PercentVariation)%>%
+  arrange(WeekEnding, HB, Condition)
+
+#create OD csv file 1
+write_csv(cardio_drugs_hb, glue("{cardio_drugs_filepath}/{cardio_drugs_dat}_hb_{date}.csv"), na = "")
+
+###HB
+cardio_drugs_hscp <- cardio_drugs %>%
+  hscp_filter()%>%
+  #rename, add qualifiers
+  select(WeekEnding, HSCP, Condition, ConditionQF, NumberPrescriptions,
+         Average20182019, PercentVariation)%>%
+  arrange(WeekEnding, HSCP, Condition)
+
+#create OD csv file 1
+write_csv(cardio_drugs_hscp, glue("{cardio_drugs_filepath}/{cardio_drugs_dat}_hscp_{date}.csv"), na = "")
+
+
+
+##############################################.
+#9##Create Weekly_immunisation OD Resources----
+##############################################.
+
+imm_6in1 <- imm_6in1 %>%
+  mutate(eligible_date_start = as.Date(eligible_date_start, format = "%m/%d/%y")) %>%
+  mutate(eligible_date_start = strftime(eligible_date_start, format = "%Y%m%d"))
+
+imm_6in1 <- imm_6in1 %>%
+  filter(cohort == "weekly") %>%
+  rename("Immunisation" = "immunisation")%>%
+  rename("NumberChildren" = "denominator")%>%
+  rename("EligibleWeekStarting" = "eligible_date_start")%>%
+  rename("NumberVaccinated12Weeks" = "uptake_12weeks_num")%>%
+  rename("PercentVaccinated12Weeks" = "uptake_12weeks_percent")%>%
+  rename("NumberVaccinated24Weeks" = "uptake_24weeks_num")%>%
+  rename("PercentVaccinated24Weeks" = "uptake_24weeks_percent")%>%
+  rename("TotalNumberVaccinated" = "uptake_tot_num")%>%
+  rename("TotalPercentVaccinated" = "uptake_tot_percent")%>%
+  rename("HB" = "Code")%>%
+  mutate(HBQF = if_else(HB == "S92000003", "d", ""))%>%
+  select(EligibleWeekStarting, HB, HBQF, Immunisation, NumberChildren, NumberVaccinated12Weeks,
+         PercentVaccinated12Weeks, NumberVaccinated24Weeks, PercentVaccinated24Weeks,
+         TotalNumberVaccinated, TotalPercentVaccinated)%>%
+  arrange(Immunisation, EligibleWeekStarting, HB)
+
+#create OD csv file 1
+write_csv(imm_6in1, glue("{immunisation_filepath}/{imm_6in1_dat}_{date}.csv"), na = "")
 
