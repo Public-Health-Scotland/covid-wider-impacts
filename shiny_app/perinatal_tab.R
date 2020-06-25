@@ -261,6 +261,7 @@ output$download_perinatal_data <- downloadHandler(
 ###############################################.
 output$perinatal_commentary <- renderUI({
   tagList(h2("Perinatal mortality - 1st July 2020"),
+          p(h4("Background")),
           p("It is important to monitor the levels of stillbirth and infant mortality during the COVID-19 pandemic, 
             as they may be influenced by maternal health and well-being, by how maternity and child health services are provided, and 
             by how people seek and interact with care.", br(),
@@ -268,8 +269,9 @@ output$perinatal_commentary <- renderUI({
             tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies",
             "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.", br(),
             "The dashboard shows monthly data for stillbirths and infant deaths (those occurring under the age of one year). These are based on data 
-            from National Records for Scotland (NRS), and are presented as rates per 1,000 live births for infant deaths and per 1,000 live and still births for stillbirths.", br(),
-            "Control charts have been used to support interpretation of these data. As numbers of deaths are relatively low, mortality rates tend to fluctuate from month to month just by chance: 
+            from National Records for Scotland (NRS), and are presented as rates per 1,000 live births for infant deaths and per 1,000 live and still births for stillbirths."),
+          p(h4("Control Charts")),
+          p("Control charts have been used to support interpretation of these data. As numbers of deaths are relatively low, mortality rates tend to fluctuate from month to month just by chance: 
             control charts help differentiate between expected random variation and changes which warrant further investigation.", br(), 
             "In this first release of information on stillbirths and infant deaths (1 July 2020), data are shown for January 2017 to May 2020, with the most recent three months (March-May 2020) 
             being those when health and health services may have been affected by COVID-19.", br(), 
@@ -277,8 +279,9 @@ output$perinatal_commentary <- renderUI({
             where the rate was just above the upper warning limit (3.7/1,000 compared to the UWL of 3.6/1,000), but did not breach the upper control limit 
             (the trigger for further investigation).", br(), 
             "In April and May there were fewer neonatal deaths, and the rate fell to below the upper warning limit. Rates of stillbirths and extended perinatal deaths are being closely 
-            monitored, as these approached, but did not breach, the upper warning limit in May 2020.", br(),
-            "NRS", tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
+            monitored, as these approached, but did not breach, the upper warning limit in May 2020."),
+          p(h4("Data Sources")),
+          p("NRS", tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
             "publishes",class="externallink"), "information on stillbirths and infant deaths registered in Scotland.", br(),  
             "Across the UK, surveillance of perinatal deaths is undertaken by MBRRACE-UK (Mothers and Babies: Reducing Risk through Audits and Confidential Enquiries across the UK). The latest MBRRACE-UK perinatal mortality", 
             tags$a(href="https://www.npeu.ox.ac.uk/mbrrace-uk#mbrrace-uk-perinatal-mortality-surveillance-report", "report", class="externallink"),
