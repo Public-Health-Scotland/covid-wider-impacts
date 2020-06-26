@@ -157,6 +157,12 @@ rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "spec_code")) %>%
 # For modal in app
 spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) %>% 
   arrange(dash_groups, spec_name) %>% 
+  mutate(dash_groups = case_when(
+    spec_name == "Paediatric Dentistry" ~ "Paediatrics (medical)",
+    spec_name == "Paediatrics" ~ "Paediatrics (medical)",
+    spec_name == "Paediatric Surgery" ~ "Paediatrics (surgical)",
+    TRUE ~ dash_groups
+   )) %>% 
   select("Specialty name" = spec_name, "Specialty group" = dash_groups)
 
 saveRDS(spec_lookup, "shiny_app/data/spec_lookup.rds")
@@ -170,7 +176,13 @@ rap_adm <- rap_adm %>%
                                   "65_thru_74" = "65 - 74", "75_thru_84" = "75 - 84",
                                   "85+" = "85 and over")) %>% 
   create_depgroups()  %>% 
-  mutate(admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency"))
+  mutate(admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency")) %>% 
+  mutate(spec = case_when(
+    spec_name == "Paediatric Dentistry" ~ "Paediatrics (medical)",
+    spec_name == "Paediatrics" ~ "Paediatrics (medical)",
+    spec_name == "Paediatric Surgery" ~ "Paediatrics (surgical)",
+    TRUE ~ spec
+  ))
 
 # Aggregating to weekly data
 rap_adm <- rap_adm %>% 
@@ -202,7 +214,15 @@ spec_med <- rap_adm %>%
     admission_type, spec, category) %>% 
   summarise(count = sum(count, na.rm = T)) %>% ungroup
 
-rap_adm <- rbind(rap_adm, spec_med) %>% 
+# Producing data for combined Paediatrics specialty
+paed_com <- rap_adm %>% 
+  filter(spec %in% c("Paediatrics (medical)", "Paediatrics (surgical)")) %>% 
+  mutate(spec = "Paediatrics (medical & surgical)") %>% 
+  group_by(week_ending, area_name, area_type, type, 
+           admission_type, spec, category) %>% 
+  summarise(count = sum(count, na.rm = T)) %>% ungroup
+
+rap_adm <- rbind(rap_adm, spec_med, paed_com) %>% 
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 

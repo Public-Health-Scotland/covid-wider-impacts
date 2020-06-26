@@ -342,8 +342,8 @@ output$data_explorer <- renderUI({
       fluidRow(column(6, h4(paste0(variation_title, "specialty group - (admission type: ", tolower(input$adm_type), ")"))), # Adding adm_type here to make clear what is selected
                column(6, h4(paste0(total_title, "specialty group - (admission type: ", tolower(input$adm_type), ")")))), # Adding adm_type here to make clear what is selected
       fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
-                                     choices = spec_list, multiple = TRUE,
-                                     selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics"))),
+                                     choices = if (input$geotype == "Scotland") {spec_list} else {spec_list[c(1:8,11)]}, multiple = TRUE,
+                                     selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics (medical & surgical)"))),
                column(6, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                column(6, withSpinner(plotlyOutput("adm_spec_tot"))))

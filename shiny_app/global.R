@@ -85,7 +85,8 @@ sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6 in 1 immunisa
 # 
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
-                    "Medical (incl. Cardiology & Cancer)")) # specialty list
+                    "Medical (incl. Cardiology & Cancer)",
+                    "Paediatrics (medical & surgical)")) # specialty list
 
 data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
                "NHS 24 completed contacts" = "nhs24", 
