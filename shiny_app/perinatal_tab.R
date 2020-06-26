@@ -107,7 +107,7 @@ output$perinatal_explorer <- renderUI({
                     "deaths occuring after the first 4 weeks but within the first year",class="externallink"), "of life.",
                     "The post-neonatal death rate in Scotland in 2019 ", 
                     tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-                           "was 1.1 per 1,000 total live births.",class="externallink"),
+                           "was 1.1 per 1,000 live births.",class="externallink"),
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
@@ -116,7 +116,7 @@ output$perinatal_explorer <- renderUI({
                   "deaths in the first four weeks",class="externallink"), "of life.",
                   "The neonatal death rate in Scotland in 2019 ", 
                   tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-                         "was 2.2 per 1,000 total live births.",class="externallink"),
+                         "was 2.2 per 1,000 live births.",class="externallink"),
                   peri_common_intro,
                   tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                          "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
@@ -136,7 +136,7 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
                     this includes neonatal and post-neonatal deaths, but not stillbirths. ",
                     "The infant death rate in Scotland in 2019 ", 
                     tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-                           "was 3.3 per 1,000 total live births.",class="externallink"),
+                           "was 3.3 per 1,000 live births.",class="externallink"),
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
@@ -156,11 +156,11 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
                       that would be expected by chance, and help us decide when values are unexpectedly low or high and require further investigation.")
   
   may_data_commentary <- p("By law, all stillbirths must be registered within 21 days of the baby being delivered, and all infant deaths must be registered within 8 days of the baby dying.  
-                           The data extract used to produce the mortality numbers and rates for up to and including May 2020 presented here was taken on 17 June 2020, and included stillbirths and infant deaths registered on up and including 14 June 2020.", br(), 
+                           The data extract used to produce the mortality numbers and rates for up to and including May 2020 presented here was taken on 17 June 2020, and included stillbirths and infant deaths registered up to and including 14 June 2020.", br(), 
                            "It is therefore possible that some stillbirths occurring in the last week of May 2020 may not have been registered by the time the data extract was taken.  The stillbirth and extended perinatal mortality rates for May 2020 should 
                            therefore be taken as provisional, and they may increase when the data is refreshed (and new rates for June 2020 are added) in July 2020.", br(),  
                            "We would expect any increases to be small, as in previous years 95% of stillbirths have been registered within 14 days of the baby being delivered, despite the legal limit allowing up to 21 days.", br(),  
-                           "This issue affects infant deaths (neonatal, post-neonatal, and infant death categories) less so as the legal time limit for registration is 8 days.")        
+                           "This issue affects infant deaths (neonatal, post-neonatal, and infant death categories) less as the legal time limit for registration is 8 days.")        
   # Specify items to display in perinatal ui 
   tagList(
     fluidRow(column(12, 
@@ -269,7 +269,7 @@ output$perinatal_commentary <- renderUI({
             tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies",
             "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.", br(),
             "The dashboard shows monthly data for stillbirths and infant deaths (those occurring under the age of one year). These are based on data 
-            from National Records for Scotland (NRS), and are presented as rates per 1,000 live births for infant deaths and per 1,000 live and still births for stillbirths."),
+            from National Records for Scotland (NRS), and are presented as rates per 1,000 live births for neonatal, post-neonatal and infant deaths and per 1,000 total (live and still) births for stillbirths and perinatal deaths."),
           p(h4("Control Charts")),
           p("Control charts have been used to support interpretation of these data. As numbers of deaths are relatively low, mortality rates tend to fluctuate from month to month just by chance: 
             control charts help differentiate between expected random variation and changes which warrant further investigation.", br(), 
