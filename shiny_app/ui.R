@@ -13,7 +13,6 @@ tagList( #needed for shinyjs
 ## Introduction ----
 ###############################################.
 tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
-         wellPanel(
            column(4,
                   h3("COVID-19 wider impacts on the health care system")),
            column(8,
@@ -51,11 +50,6 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                     tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink")), "."),
                   p("You can access the code used to produce this tool in this ",
                     tags$a(href="https://github.com/Health-SocialCare-Scotland/covid-wider-impact", "GitHub repository", class="externallink")), ".")
-                      )
-             ), #wellPanel bracket
-             mainPanel(width = 12
-                      #reserve space for summary text
-             )# mainPanel bracket
     ), #tabPanel bracket
 ###############################################.
 ## Commentary ----
