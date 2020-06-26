@@ -46,7 +46,9 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                     tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/",
                            "COVID-19 weekly report for Scotland.", class="externallink")),
                   p("If you have any questions relating to the data presented please contact us at: ",
-                    tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink")), ".")
+                    tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink")), "."),
+                  p("You can access the code used to produce this tool in this ",
+                    tags$a(href="https://github.com/Health-SocialCare-Scotland/covid-wider-impact", "GitHub repository", class="externallink")), ".")
                       )
              ), #wellPanel bracket
              mainPanel(width = 12
