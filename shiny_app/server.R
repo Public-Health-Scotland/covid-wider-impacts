@@ -83,4 +83,7 @@ function(input, output, session) {
   observeEvent(input$cardio_button, ({
     updateCollapse(session, "collapse_commentary", open = "Cardiovascular")}))
   
+  observeEvent(input$perinatal_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Perinatal mortality")}))
+  
 } # server end
