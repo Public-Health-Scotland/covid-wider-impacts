@@ -925,69 +925,97 @@ saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.r
 ###############################################.
 ## Prepare perinatal data ----
 ###############################################.
-
-perinatal_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/perinatal/"
-
 # P CHART PERINATAL DATA
-p_perinatal <- read_csv(paste0(perinatal_folder,"all_p_data.csv")) %>%
+p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
+                                    sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
+                                    sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
+                                    sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
+                                    sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
   janitor::clean_names() %>%
-  rename(date=sample, binomial_stdev_proportion=binomial_st_dev, binomial_stdev_rate=binomial_st_dev_1)
+  select(month_of_year=sample_2, number_of_deaths_in_month=observation, rate, centreline, stdev = binomial_st_dev_16, 
+         upper_cl_3_std_dev:type)
 
-p_perinatal <- p_perinatal %>%
-  mutate(area_name="Scotland",
-         area_type="Scotland")
-
-p_perinatal <- p_perinatal %>%
-  mutate(date = gsub(" ", "0", date),
-         date = as.Date(paste0(date,"1"), format="%Y%m%d")) 
-
-saveRDS(p_perinatal, paste0("shiny_app/data/","p_perinatal_data.rds"))
-
-# # perinatal mortality - summary table data - MAY ADD TO TAB
-p_perinatal_datatable <- read_csv(paste0(perinatal_folder,"all_p_data.csv")) %>%
+u_perinatal <- read_excel(paste0(data_folder,"perinatal/Uchart - INFANT DEATHS.xlsx"),
+                          sheet = "Uchart", skip = 2) %>% mutate(type = "infantdeaths") %>% 
   janitor::clean_names() %>%
-  rename(date=sample, number=observation, totalbirths=sample_size) %>%
-  mutate(area_name="Scotland",
-         area_type="Scotland") %>%
-  select(date, number, totalbirths, proportion, rate, type)
+  select(month_of_year=sample,  number_of_deaths_in_month=observation, rate, centreline, stdev = poisson_st_dev_16, 
+         upper_cl_3_std_dev:type)
 
+# Mergin both datasets together 
+perinatal <- rbind(p_perinatal, u_perinatal) %>% 
+  mutate(area_name="Scotland", #creating geo variables
+         area_type="Scotland",
+         month_of_year = gsub(" ", "0", month_of_year), #formatting date
+         month_of_year = as.Date(paste0(month_of_year,"1"), format="%Y%m%d")) 
 
-saveRDS(p_perinatal_datatable, paste0("shiny_app/data/","p_perinatal_datatable.rds"))
+# Creating rules for spc charts
+perinatal <- perinatal %>% 
+  arrange(type, area_name, month_of_year) %>% 
+  mutate(upper_sigma1 = rate + stdev,
+         lower_sigma1 = rate + stdev) %>% 
+  group_by(type, area_name) %>% 
+  # for rules: outliers when over or under 3 sigma limit
+  mutate(outlier = case_when(rate>upper_cl_3_std_dev | rate< lower_cl_3_std_dev ~ T, T ~ F),
+         # Shift: run of 8or more consecutive data points above or below the centreline
+         # First id when this run is happening and then iding all points part of it
+         shift_i = case_when((rate > centreline & lag(rate, 1) > centreline 
+                              & lag(rate, 2) > centreline & lag(rate, 3) > centreline 
+                              & lag(rate, 4) > centreline & lag(rate, 5) > centreline
+                              & lag(rate, 6) > centreline & lag(rate, 7) > centreline) |
+                               (rate < centreline & lag(rate, 1) < centreline 
+                                & lag(rate, 2) < centreline & lag(rate, 3) < centreline 
+                                & lag(rate, 4) < centreline & lag(rate, 5) < centreline
+                                & lag(rate, 6) < centreline & lag(rate, 7) < centreline) ~ T , T ~ F),
+         shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
+                           | lead(shift_i, 3) == T | lead(shift_i, 4) == T
+                           | lead(shift_i, 5) == T | lead(shift_i, 6) == T
+                           | lead(shift_i, 7) == T ~ T, T ~ F),
+         # Trend: A run of 6 or more consecutive data points
+         trend_i = case_when((rate > lag(rate ,1) & lag(rate, 1) > lag(rate, 2) 
+                              & lag(rate, 2) > lag(rate, 3)  & lag(rate, 3) > lag(rate, 4) 
+                              & lag(rate, 4) > lag(rate, 5) ) |
+                               (rate < lag(rate ,1) & lag(rate, 1) < lag(rate, 2) 
+                                & lag(rate, 2) < lag(rate, 3)  & lag(rate, 3) < lag(rate, 4) 
+                                & lag(rate, 4) < lag(rate, 5) ) 
+                             ~ T , T ~ F),
+         trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
+                           | lead(trend_i, 3) == T | lead(trend_i, 4) == T
+                           | lead(trend_i, 5) == T  ~ T, T ~ F),
+         #Outer One –Third: Two out of three consecutive data points which sit close to one of the control limits(within 2 and 3 sigma)
+         outer_i = case_when((rate > upper_wl_2_std_dev & rate < upper_cl_3_std_dev) & 
+                               ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) | 
+                                  (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
+         outer = case_when(outer_i == T | lead(outer_i, 1) == T | lead(outer_i, 2) == T ~ T, T ~ F),
+         # Inner One -Third: 15 or more consecutive data points that lie close to the centreline(within 1 sigma).
+         inner_i = case_when(rate < upper_sigma1 & rate > lower_sigma1 &
+                               lag(rate, 1) < upper_sigma1 & lag(rate, 1) > lower_sigma1 &
+                               lag(rate, 2) < upper_sigma1 & lag(rate, 2) > lower_sigma1 &
+                               lag(rate, 3) < upper_sigma1 & lag(rate, 3) > lower_sigma1 &
+                               lag(rate, 4) < upper_sigma1 & lag(rate, 4) > lower_sigma1 &
+                               lag(rate, 5) < upper_sigma1 & lag(rate, 5) > lower_sigma1 &
+                               lag(rate, 6) < upper_sigma1 & lag(rate, 6) > lower_sigma1 &
+                               lag(rate, 7) < upper_sigma1 & lag(rate, 7) > lower_sigma1 &
+                               lag(rate, 8) < upper_sigma1 & lag(rate, 8) > lower_sigma1 &
+                               lag(rate, 9) < upper_sigma1 & lag(rate, 9) > lower_sigma1 &
+                               lag(rate, 10) < upper_sigma1 & lag(rate, 10) > lower_sigma1 &
+                               lag(rate, 11) < upper_sigma1 & lag(rate, 11) > lower_sigma1 &
+                               lag(rate, 12) < upper_sigma1 & lag(rate, 12) > lower_sigma1 &
+                               lag(rate, 13) < upper_sigma1 & lag(rate, 13) > lower_sigma1 &
+                               lag(rate, 14) < upper_sigma1 & lag(rate, 14) > lower_sigma1 ~ T, T ~F),
+         inner = case_when(inner_i == T | lead(inner_i, 1) == T | lead(inner_i, 2) == T
+                           | lead(inner_i, 3) == T | lead(inner_i, 4) == T
+                           | lead(inner_i, 5) == T | lead(inner_i, 6) == T
+                           | lead(inner_i, 7) == T | lead(inner_i, 8) == T
+                           | lead(inner_i, 9) == T | lead(inner_i, 10) == T
+                           | lead(inner_i, 11) == T | lead(inner_i, 12) == T
+                           | lead(inner_i, 13) == T | lead(inner_i, 14) == T ~T, T ~ F)) %>%
+  ungroup %>% 
+  select(-shift_i, -trend_i, -outer_i, -inner_i) 
 
-# U CHART PERINATAL DATA
-
-u_perinatal <- read_csv(paste0(perinatal_folder,"all_u_data.csv")) %>%
-  janitor::clean_names() %>%
-  rename(date=sample)
-
-u_perinatal <- u_perinatal %>%
-  mutate(area_name="Scotland",
-         area_type="Scotland")
-
-u_perinatal <- u_perinatal %>%
-  mutate(date = gsub(" ", "0", date),
-         date = as.Date(paste0(date,"1"), format="%Y%m%d")) 
-
-saveRDS(u_perinatal, paste0("shiny_app/data/","u_perinatal_data.rds"))
-
-# # perinatal mortality - summary table data - MAY ADD TO TAB
-u_perinatal_datatable <- read_csv(paste0(perinatal_folder,"all_u_data.csv")) %>%
-  janitor::clean_names() %>%
-  rename(date=sample, stillbirths=observation, totalbirths=sample_size) %>%
-  mutate(area_name="Scotland",
-         area_type="Scotland") %>%
-  select(date, stillbirths, totalbirths, proportion, rate, type)
-
-saveRDS(u_perinatal_datatable, paste0("shiny_app/data/","u_perinatal_datatable.rds"))
-
-# MAY NEED LATER FOR HB DATA
-# Bringing HB names 
-# hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
-#   janitor::clean_names() %>% select(description, hb_cypher) %>%
-#   rename(area_name=description) %>%
-#   mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
-#          area_type="Health board")
-
+saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 
 ##END
 
