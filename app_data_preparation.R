@@ -688,7 +688,7 @@ prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-06-14")
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing data/covid emessage AMS only 20200618.xlsx")) %>% 
+cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing data/covid emessage AMS only 20200625.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -721,7 +721,7 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-06-14")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-06-21")
 
 ###############################################.
 ## Prepare 6-in-1 dose 1 ----
