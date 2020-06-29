@@ -232,8 +232,10 @@ observeEvent(input$btn_cardio_modal,
                           the narrowing of the heart arteries. In a significant portion of cases this is an urgent procedure
                           which is used when patients are suffering a heart attack."),
                    tags$li("Devices - This section includes procedures such as pacemakers (used to treat rhythm 
-                           problems of the heart) and loop recorders (used to investigate treat rhythm problems 
-                           of the heart). Fitting of cardiac devices may also be carried out in other environments 
+                           problems of the heart), loop recorders (used to investigate treat rhythm problems 
+                           of the heart) and implantable cardiac defibrillators (ICDs). 
+                           The pacemakers include cardiac resynchronisation therapy (CRT) devices.
+                           Fitting of cardiac devices may also be carried out in other environments 
                            so these figures do not represent the total volume of cardiac devices fitted.")
                  ),
                  p("Note that during the COVID-19 lockdown period the Golden Jubilee National Hospital 
@@ -263,8 +265,10 @@ observeEvent(input$btn_cath_modal,
                           the narrowing of the heart arteries. In a significant portion of cases this is an urgent procedure
                           which is used when patients are suffering a heart attack."),
                    tags$li("Devices - This section includes procedures such as pacemakers (used to treat rhythm 
-                           problems of the heart) and loop recorders (used to investigate treat rhythm problems 
-                           of the heart). Fitting of cardiac devices may also be carried out in other environments 
+                           problems of the heart), loop recorders (used to investigate treat rhythm problems 
+                           of the heart) and implantable cardiac defibrillators (ICDs). 
+                           The pacemakers include cardiac resynchronisation therapy (CRT) devices.
+                           Fitting of cardiac devices may also be carried out in other environments 
                            so these figures do not represent the total volume of cardiac devices fitted.")
                  ),
                  size = "m",
@@ -331,7 +335,7 @@ output$cardio_explorer <- renderUI({
                  attendances offer only a very approximate indication of attendances. 
                  Additionally, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
-                 even prior to the introduction of lockdown measures, appear somehwat lower when compared to 
+                 even prior to the introduction of lockdown measures, appear somewhat lower when compared to 
                  previous years."),
         h3("Weekly cardiovascular A&E attendances in Scotland"),
         actionButton("btn_cardio_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
@@ -433,7 +437,9 @@ output$download_cardio_data <- downloadHandler(
 ## Commentary ----
 ###############################################.
 output$cardio_commentary <- renderUI({
-  tagList(h2("Cardiovascular - 17th June 2020"), 
+  tagList(
+    bsButton("jump_to_cardio",label = "Go to data"), #this button can only be used once
+    h2("Cardiovascular - 17th June 2020"), 
           h3("Prescribing"),
           p("Information on prescriptions issued for cardiovascular medicines through
             General Practice has been included for the first time on 17th June 2020.
@@ -456,11 +462,13 @@ output$cardio_commentary <- renderUI({
             )
           ),
           h3("Cardiovascular A&E attendances"),
-          p("Information on cardiovascular attendances at Accident & Emergency Departments
-            is presented in this tool. This data is based on coding available in the
-            Accident & Emergency Datamart (managed by Public Health Scotland). Coding practice
-            for some NHS Boards changed at the start of this year, which may explain the
-            reduced 2020 counts compared to the 2018-2019 average counts."),
+          p("Information on cardiovascular attendances at Accident & Emergency Departments is presented in this tool. 
+            This data is based on coding available in the Accident & Emergency Datamart (managed by Public Health Scotland).
+            Note that, due to limitations in diagnosis recording in the A&E datamart, the data are incomplete for a number of 
+            NHS Boards. Thus, the figures reported for cardiovascular-related attendances offer only a very approximate 
+            indication of attendances. Additionally, some NHS Boards have moved to a new recording standard which has not 
+            been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, even prior to the 
+            introduction of lockdown measures, appear somewhat lower when compared to previous years."),
           tags$ul(
             tags$li("Overall there was a sharp drop in cardiovascular attendances at Accident and
                     Emergency Departments starting in early March 2020. Attendances were around 60%

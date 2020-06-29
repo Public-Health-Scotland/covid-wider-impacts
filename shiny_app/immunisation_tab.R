@@ -12,6 +12,13 @@ observeEvent(input$btn_immune_modal,
                  invitation of children when a scheduled immunisation is due.  When a child receives a immunisation, 
                  relevant information is returned to administrative staff in the NHS Board child health department.  
                  The administrative staff then update the child’s SIRS record accordingly."),
+               p("After a child receives an immunisation, it takes time for a record of the immunisation to be entered 
+                 into the SIRS system. We have allowed a 6-week window for data entry. Each release of this page will 
+                 therefore report on immunisations given up to 6 weeks before the date these data were extracted for 
+                 analysis. Although the vast majority of data on immunisations given are usually recorded within 6 weeks, 
+                 the pandemic will have affected some data recording and this will vary across NHS Boards. Data shown for 
+                 the most recent cohorts of children will therefore not be fully complete in SIRS at this stage. 
+                 The uptake rates for each cohort will be refreshed with more up-to-date data every 4 weeks."),
                p(tags$a(href="https://publichealthscotland.scot/","Public Health Scotland (PHS)",class="externallink"),
                  " routinely receives quarterly data extracts from SIRS for the purpose of producing and ",
                  (tags$a(href="https://www.isdscotland.org/Health-Topics/Child-Health/Immunisation/","publishing",class="externallink"))," 
@@ -142,10 +149,31 @@ output$download_imm_data <- downloadHandler(
 
 ###############################################.
 ## Immunisation Commentary tab content  ----
+## Add any additional commentary in reverse date order.  Can only use jump to data action button once.
 ###############################################.
 
 output$immun_commentary_section <- renderUI({
-  tagList(h2("Immunisations - 3rd June 2020"), 
+  tagList(
+    bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 17th June 2020"), 
+    p("Information on the uptake of ",
+      tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
+                   are routinely offered to all preschool children",class="externallink"),
+      " has been included in this tool for the first time on 3 June 2020.", br(),
+      "Immunisation protects children against many serious infectious diseases including diphtheria, 
+            whooping cough, and measles.",
+      tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
+             "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic", class="externallink"),".",
+      "It is important to maintain the best possible immunisation uptake rates to ensure children 
+            remain protected and to prevent a resurgence of these infections.  Including information on 
+            childhood immunisation rates in this tool will help us to ensure that immunisation rates remain 
+            high throughout the pandemic.",br(),
+      "The 6-in-1 vaccine is given to babies at 8, 12 and 16 weeks of age. The vaccine protects against diphtheria, tetanus, pertussis (whooping cough), polio, Haemophilus influenzae type b (Hib) and Hepatitis B.",br(),
+      "On 3 June 2020, information was provided on the uptake of the first dose of the 6-in-1 vaccine, offered at 8 weeks of age. This showed uptake continues to exceed 90% among children who were due their first dose of the 6-in-1 vaccine in March and early April.",br(),
+      "On 17 June, information on the uptake of the second and third doses was added to the tool. The second dose of 6-in-1 vaccine is offered at 12 weeks of age. Data before the pandemic, for children eligible in 2019, show that uptake of the second dose by 16 weeks was 84.5%. Uptake by 16 weeks continues to exceed 80% among children who were due their second dose of the 6-in-1 vaccine in March and early April.",br(),
+      "The third dose of 6-in-1 vaccine is offered at 16 weeks of age. Data before the pandemic, for children eligible in 2019, show that uptake of the third dose by 20 weeks was 72.3%. Uptake by 20 weeks continues to exceed 70% among children who were due their third dose of the 6-in-1 vaccine in March and early April.",br(),
+      "It is important to note that uptake of the second and third doses take longer to reach 90% and above compared to the first dose, as demonstrated by the data on uptake before the pandemic. This is because some children receive the first dose later than when first offered the vaccine, for example due to missed appointments. As each dose of vaccine is offered 4 weeks apart, missed appointments has a cumulative effect in increasing the time it takes for uptake of the second and third doses to reach and exceed 90%."), br(),
+    h2("Immunisations - 3rd June 2020"),
           p("Information on the uptake of ",
             tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
                    are routinely offered to all preschool children",class="externallink"),
@@ -171,28 +199,6 @@ output$immun_commentary_section <- renderUI({
           ))
 })
 
-
-output$immun_commentary_1705 <- renderUI({
-  tagList(h2("Immunisations - 17th June 2020"), 
-          p("Information on the uptake of ",
-            tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
-                   are routinely offered to all preschool children",class="externallink"),
-            " has been included in this tool for the first time on 3 June 2020.", br(),
-            "Immunisation protects children against many serious infectious diseases including diphtheria, 
-            whooping cough, and measles.",
-            tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
-                   "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic", class="externallink"),".",
-            "It is important to maintain the best possible immunisation uptake rates to ensure children 
-            remain protected and to prevent a resurgence of these infections.  Including information on 
-            childhood immunisation rates in this tool will help us to ensure that immunisation rates remain 
-            high throughout the pandemic.",br(),
-            "The 6-in-1 vaccine is given to babies at 8, 12 and 16 weeks of age. The vaccine protects against diphtheria, tetanus, pertussis (whooping cough), polio, Haemophilus influenzae type b (Hib) and Hepatitis B.",br(),
-            "On 3 June 2020, information was provided on the uptake of the first dose of the 6-in-1 vaccine, offered at 8 weeks of age. This showed uptake continues to exceed 90% among children who were due their first dose of the 6-in-1 vaccine in March and early April.",br(),
-            "On 17 June, information on the uptake of the second and third doses was added to the tool. The second dose of 6-in-1 vaccine is offered at 12 weeks of age. Data before the pandemic, for children eligible in 2019, show that uptake of the second dose by 16 weeks was 84.5%. Uptake by 16 weeks continues to exceed 80% among children who were due their second dose of the 6-in-1 vaccine in March and early April.",br(),
-            "The third dose of 6-in-1 vaccine is offered at 16 weeks of age. Data before the pandemic, for children eligible in 2019, show that uptake of the third dose by 20 weeks was 72.3%. Uptake by 20 weeks continues to exceed 70% among children who were due their third dose of the 6-in-1 vaccine in March and early April.",br(),
-            "It is important to note that uptake of the second and third doses take longer to reach 90% and above compared to the first dose, as demonstrated by the data on uptake before the pandemic. This is because some children receive the first dose later than when first offered the vaccine, for example due to missed appointments. As each dose of vaccine is offered 4 weeks apart, missed appointments has a cumulative effect in increasing the time it takes for uptake of the second and third doses to reach and exceed 90%."
-          ))
-})
 
 #END
 

@@ -9,12 +9,16 @@ data_table <- reactive({
   table_data <- switch(input$data_select,
         "rapid" = rapid %>% rename(specialty = spec, average_2018_2019 = count_average),
          "aye" = aye %>% rename(average_2018_2019 = count_average),
+         "ae_cardio" = ae_cardio %>% rename(average_2018_2019 = count_average),
          "nhs24" = nhs24 %>% rename(average_2018_2019 = count_average),
          "ooh" = ooh %>% rename(average_2018_2019 = count_average),
          "sas" = sas %>% rename(average_2018_2019 = count_average),
          "deaths" = deaths %>% rename(average_2015_2019 = count_average),
-         "sixin_8wks" = six,
-         "first_visit" = first) %>% 
+         "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
+         "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average)#,
+         #"sixin_8wks" = six, # deliberately removed until data consistency queries resolved 23/06/20 ve
+         #"first_visit" = first # deliberately removed until data consistency queries resolved 23/06/20 ve
+        ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
     # This is because dropdown prompts on the table filters only
@@ -37,16 +41,39 @@ data_table <- reactive({
                                     "Under 65" = "Aged under 65",
                                     "65 and over" = "Aged 65 and over"),
            week_ending = format(week_ending, "%d %b %y"))
-  } else if (input$data_select %in% "first_visit") {
-    table_data <- table_data %>%
-      select(-extract_date, -tabno, -week_no, -review, -cohort) %>% 
-      rename(week_starting = week_2_start, children_due_visit_in = time_period_eligible,
-             age_in_days = interv, percentage_of_children_who_have_received_review = surv)
-  } else if (input$data_select %in% "sixin_8wks") {
-    table_data <- table_data %>%
-      select(-extract_date, -tabno, -week_no, -immunisation, -cohort) %>% 
-      rename(week_starting = week_8_start, children_due_immunisation_in = time_period_eligible,
-             age_in_days = interv, percentage_of_children_who_have_received_immunisation = surv)
+  # } else if (input$data_select %in% "first_visit") { # deliberately removed until data consistency queries resolved 23/06/20 ve
+  #   table_data <- table_data %>%
+  #     select(-extract_date, -tabno, -week_no, -review, -cohort) %>% 
+  #     rename(week_starting = week_2_start, children_due_visit_in = time_period_eligible,
+  #            age_in_days = interv, percentage_of_children_who_have_received_review = surv)
+  # } else if (input$data_select %in% "sixin_8wks") {
+  #   table_data <- table_data %>%
+  #     select(-extract_date, -tabno, -week_no, -immunisation, -cohort) %>% 
+  #     rename(week_starting = week_8_start, children_due_immunisation_in = time_period_eligible,
+  #            age_in_days = interv, percentage_of_children_who_have_received_immunisation = surv)
+  } else if (input$data_select == "ae_cardio") {
+    table_data <- table_data %>% 
+      select(-area_type) %>% 
+      rename("Variation (%)" = variation) %>%
+      mutate(type = recode_factor(type, "all" = "All", "age" = "Age Group", "dep" = "Deprivation"),
+             category = recode_factor(category, "1 - most deprived" = "Quintile 1 - most deprived",
+                                      "2" = "Quintile 2", "3" = "Quintile 3", "4" = "Quintile 4",
+                                      "5 - least deprived" = "Quintile 5 - least deprived",
+                                      "<65" = "Aged under 65",
+                                      "65+" = "Aged 65 and over"),
+             week_ending = format(week_ending, "%d %b %y"))
+  } else if (input$data_select == "cardio_drugs") {
+    table_data <- table_data %>% 
+      select(-type) %>% 
+      rename("Variation (%)" = variation) %>%
+      mutate(week_ending = format(week_ending, "%d %b %y"))
+  } else if (input$data_select == "cath_lab") {
+    table_data <- table_data %>% 
+      rename("Variation (%)" = variation,
+             " Catheterisation lab" = lab,
+             "Intervention" = groups) %>%
+      mutate(type = recode_factor(type, "age" = "Age Group", "sex" = "Sex"),
+             week_ending = format(week_ending, "%d %b %y"))
   }
   
   table_data %>% 
