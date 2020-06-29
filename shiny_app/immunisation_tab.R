@@ -134,7 +134,8 @@ output$immunisation_explorer <- renderUI({
       fluidRow(column(12, renderUI(intro_6in1),
                       h4(paste0(immune_title)))),
       fluidRow(column(6,br(), br(),
-                      withSpinner(plotlyOutput("immun_mmr_scurve_dose1"))),
+                      withSpinner(plotlyOutput("immun_mmr_scurve_dose1")),
+                      p("     * 12 months defined as 53 weeks")),
                column(6, uiOutput("immun_mmr_table_dose1"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
@@ -143,7 +144,8 @@ output$immunisation_explorer <- renderUI({
       fluidRow(column(12, renderUI(intro_6in1),
                       h4(paste0(immune_title)))),
       fluidRow(column(6,br(), br(),
-                      withSpinner(plotlyOutput("immun_mmr_scurve_dose2"))),
+                      withSpinner(plotlyOutput("immun_mmr_scurve_dose2")),
+                      p("    *3 year 4 months defined as 174 weeks")),
                column(6, uiOutput("immun_mmr_table_dose2"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )

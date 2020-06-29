@@ -301,7 +301,7 @@ else if(dataset == mmr_alldose && dose== "dose 1" ){ #set chart parameters for m
   xaxis_plots[["range"]] <- c((7*49),(7*70))  # To adjust x-axis min and max depending on which dose selected
   yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
   
-  age_unit <- paste0("13months:") #string for legend label
+  age_unit <- paste0("12months:") #string for legend label
 }
 
 ##chart axis for MMR dose 2 scurve
@@ -456,10 +456,11 @@ immune_table <- function(dataset, age_week) {
                      denominator="Total number of children",
                      uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",
                      uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>% 
-   footnote(i = 1, j = c(1,2,4), 
+   footnote(i = 1, j = c(1,2,4,5), 
             value = as_paragraph(c("W/B : Week beginning",
                                    "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
-                                   paste0("Blue cells indicate cohorts that have not reached ", age_week + 16," weeks of age"))),
+                                   paste0("Blue cells indicate cohorts that have not reached ", age_week + 16," weeks of age"),
+                                   "test")),
             part = "header") %>%
    merge_at(i = 1, j = 3:4, part = "header") %>%
    merge_at(i = 1, j = 5:6, part = "header") %>%
