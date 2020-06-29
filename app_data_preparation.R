@@ -14,6 +14,7 @@ library(tidyr) # for wide to long formatting
 library(readxl) # reading excel
 
 data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
+ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-06-25-Extracts/" #short cut to a&e folder areas
 
 ###############################################.
 ## Functions ----
@@ -135,7 +136,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
 ## Reading RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_22-Jun.rds")) %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_29-Jun.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -226,7 +227,7 @@ rap_adm <- rbind(rap_adm, spec_med, paed_com) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-06-14", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-06-21", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -345,15 +346,12 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-06-21")
 ###############################################.
 ## Preparing A&E data ----
 ###############################################.
-#short cut to a&e folder areas
-ae_zip_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E/2020-06-18-Extracts/"
-
 # Read A&E data both at HSCP and HB level
-ae_data <- rbind(read_csv(unz(paste0(ae_zip_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
+ae_data <- rbind(read_csv(unz(paste0(ae_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
                               "HSCP.csv")) %>% 
                    janitor::clean_names() %>% 
                    rename(area=hscp_of_residence_code_as_at_arrival_date),
-                 read_csv(unz(paste0(ae_zip_folder,"NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), 
+                 read_csv(unz(paste0(ae_folder,"NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), 
                               "NHS Boards.csv")) %>% 
                    janitor::clean_names() %>% 
                    rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode))
@@ -393,7 +391,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2020-06-14")
+prepare_final_data(ae_data, "ae", last_week = "2020-06-21")
 
 ###############################################.
 ## Preparing NHS24 data ----
@@ -631,15 +629,12 @@ saveRDS(cath_labs_2020, "shiny_app/data/cath_lab_data.rds")
 ###############################################.
 
 # Reads in A&E cardio ICD 10 codes for modal, only required to run in case code list changes
-ae_cardio_codes <- read_xlsx("/conf/PHSCOVID19_Analysis/shiny_input_files/A&E_Cardio/A&E-CardioConditionCodes.xlsx")
+ae_cardio_codes <- read_xlsx(paste0(data_folder, "A&E_Cardio/A&E-CardioConditionCodes.xlsx"))
 saveRDS(ae_cardio_codes, "shiny_app/data/ae_cardio_codes.rds")
 rm(ae_cardio_codes)
 
-# Set A&E cardio folder
-ae_cardio_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/A&E_Cardio/"
-
 # Read in data, clean names + some simple mutations
-ae_cardio <- read_xlsx(paste0(ae_cardio_folder, "2020-06-18-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
+ae_cardio <- read_xlsx(paste0(ae_folder, "CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
   clean_names() %>% 
   rename(diag_cat = diagnosis_catagory,
          dep = prompt_dataset_deprivation_scot_quintile) %>% 
@@ -683,7 +678,7 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-06-14")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-06-21")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
