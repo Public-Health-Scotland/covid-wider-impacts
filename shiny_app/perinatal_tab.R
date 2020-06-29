@@ -262,7 +262,7 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
-    h2("Perinatal mortality - 1st July 2020"),
+    h2("Stillbirths and infant deaths - 1st July 2020"),
           p(h4("Background")),
           p("It is important to monitor the levels of stillbirth and infant mortality during the COVID-19 pandemic, 
             as they may be influenced by maternal health and well-being, by how maternity and child health services are provided, and 
