@@ -215,8 +215,11 @@ observeEvent(input$btn_dataset_modal,
                  p("Figures include non-residents.  Deaths are allocated to area based on the usual residence of the deceased. 
                    If the deceased was not a Scottish resident, the death is allocated to the area where the death occurred."), 
                  p("The weekly deaths dataset is managed by ", 
-                   tags$a(href=" https://www.nrscotland.gov.uk/", 
+                   tags$a(href= "https://www.nrscotland.gov.uk/", 
                           "National Records of Scotland (NRS).", class="externallink")), 
+                 p("For more information on deaths and health inequalities during the pandemic, please read ", 
+                   tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-weekly-excess-deaths/",
+                          "this report.", class="externallink")),
                  size = "m", 
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
