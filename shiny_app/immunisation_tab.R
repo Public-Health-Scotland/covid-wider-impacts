@@ -28,6 +28,7 @@ observeEvent(input$btn_immune_modal,
                p("Uptake rates based on small numbers are prone to fluctuation. Therefore in boards 
                  with small numbers of children eligible for immunisation each week, particularly NHS Borders 
                  and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates."),
+               p(paste0("Figures presented based on data extracted on ",immunisation_extract_date)),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -85,6 +86,7 @@ output$immunisation_explorer <- renderUI({
                                    input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun),
                                    input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$geoname_immun),
                                    input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun)))
+  immune_subtite <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
   
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
@@ -105,7 +107,8 @@ output$immunisation_explorer <- renderUI({
   if (input$measure_select_immun == "sixin_dose1") {
     tagList(
       fluidRow(column(12, renderUI(intro_6in1),
-                      h4(paste0(immune_title)))),
+                      h4(paste0(immune_title)),
+                      p(immune_subtite))),
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("immun_6in1_scurve_dose1"))),
                column(6, uiOutput("immun_6in1_table_dose1"))),
@@ -135,7 +138,7 @@ output$immunisation_explorer <- renderUI({
                       h4(paste0(immune_title)))),
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("immun_mmr_scurve_dose1")),
-                      p("     * 12 months defined as 53 weeks")),
+                      p("12 months defined as 53 weeks")),
                column(6, uiOutput("immun_mmr_table_dose1"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
@@ -145,7 +148,7 @@ output$immunisation_explorer <- renderUI({
                       h4(paste0(immune_title)))),
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("immun_mmr_scurve_dose2")),
-                      p("    *3 year 4 months defined as 174 weeks")),
+                      p("3 year 4 months defined as 174 weeks")),
                column(6, uiOutput("immun_mmr_table_dose2"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )

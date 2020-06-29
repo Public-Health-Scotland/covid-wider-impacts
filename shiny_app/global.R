@@ -64,6 +64,7 @@ sixtoeight <- readRDS("data/six_to_eight_data.rds")
 sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
 
 ## Immunisation Data
+immunisation_extract_date <- "22nd June 2020"
 
 six_alldose <- readRDS("data/six_alldose_data.rds")
 sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table dose 1

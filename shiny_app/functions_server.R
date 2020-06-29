@@ -384,7 +384,8 @@ immune_table <- function(dataset, age_week) {
       # Italics and colour if not 24 weeks
       color(i = no_complete_row, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_24weeks_num", "uptake_24weeks_percent"))
-    age_unit <- "8 weeks"
+    age_unit <- "8 weeks" #text inserted into 
+    age_max <- "24 weeks" #test inserted into note #3 under summary table
   } else if (age_week == 12) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_16weeks_num","uptake_28weeks_num","uptake_tot_num")
@@ -401,6 +402,7 @@ immune_table <- function(dataset, age_week) {
       color(i = no_complete_row, j = c("uptake_28weeks_num", "uptake_28weeks_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_28weeks_num", "uptake_28weeks_percent")) 
     age_unit <- "12 weeks"
+    age_max <- "28 weeks" #test inserted into note #3 under summary table
   }else if (age_week == 16) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_20weeks_num","uptake_32weeks_num","uptake_tot_num")
@@ -417,6 +419,7 @@ immune_table <- function(dataset, age_week) {
       color(i = no_complete_row, j = c("uptake_32weeks_num", "uptake_32weeks_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_32weeks_num", "uptake_32weeks_percent")) 
     age_unit <- "16 weeks"
+    age_max <- "32 weeks" #test inserted into note #3 under summary table
   }else if (age_week == 1) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_13m_num","uptake_16m_num","uptake_tot_num")
@@ -425,14 +428,15 @@ immune_table <- function(dataset, age_week) {
       select (time_period_eligible, denominator,uptake_13m_num,uptake_13m_percent,uptake_16m_num, 
               uptake_16m_percent,uptake_tot_num,uptake_tot_percent) %>%
       flextable() %>%
-      set_header_labels(uptake_13m_num="Children recorded as receiving their vaccine by 13 months of age",
-                        uptake_13m_percent="Children recorded as receiving their vaccine by 13 months of age ",
+      set_header_labels(uptake_13m_num="Children recorded as receiving their vaccine by 12 months of age",
+                        uptake_13m_percent="Children recorded as receiving their vaccine by 12 months of age ",
                         uptake_16m_num="Children recorded as receiving their vaccine by 16 months of age (or younger if children have not reached 16 months of age by the date data was extracted for analysis)",
                         uptake_16m_percent="Children recorded as receiving their vaccine by 16 months of age (or younger if children have not reached 16 months of age by the date data was extracted for analysis)") %>% 
       # Italics and colour if not  weeks
       color(i = no_complete_row, j = c("uptake_16m_num", "uptake_16m_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_16m_num", "uptake_16m_percent")) 
     age_unit <- "13 months"
+    age_max <- "16 months" #test inserted into note #3 under summary table
   }else if (age_week == 3) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_3y5m_num","uptake_3y8m_num","uptake_tot_num")
@@ -449,17 +453,18 @@ immune_table <- function(dataset, age_week) {
       color(i = no_complete_row, j = c("uptake_3y8m_num", "uptake_3y8m_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_3y8m_num", "uptake_3y8m_percent")) 
     age_unit <- "3 years and 5 months"
+    age_max <- "3 years and 8 months" #test inserted into note #3 under summary tabl
   }
   
  imm_table %>% 
    set_header_labels(time_period_eligible= paste0("Children turning ", age_unit," in:"),
                      denominator="Total number of children",
-                     uptake_tot_num="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)",
-                     uptake_tot_percent="Children recorded as receiving their vaccine by the date information was extracted for analysis (25-May-2020)") %>% 
+                     uptake_tot_num=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")"),
+                     uptake_tot_percent=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")")) %>% 
    footnote(i = 1, j = c(1,2,4), 
             value = as_paragraph(c("W/B : Week beginning",
                                    "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
-                                   paste0("Blue cells indicate cohorts that have not reached ", age_week + 16," weeks of age"))),
+                                   paste0("Blue cells indicate cohorts that have not reached ", age_max," of age"))),
             part = "header") %>%
    merge_at(i = 1, j = 3:4, part = "header") %>%
    merge_at(i = 1, j = 5:6, part = "header") %>%
