@@ -15,9 +15,12 @@ data_table <- reactive({
          "sas" = sas %>% rename(average_2018_2019 = count_average),
          "deaths" = deaths %>% rename(average_2015_2019 = count_average),
          "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
-         "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average)#,
-         #"sixin_8wks" = six, # deliberately removed until data consistency queries resolved 23/06/20 ve
-         #"first_visit" = first # deliberately removed until data consistency queries resolved 23/06/20 ve
+         "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average),
+         "sixin_8wks" = sixtable,
+         "sixin_8wks_second" = sixtable_dose2,
+         "sixin_8wks_third" = sixtable_dose3,
+         "first_visit" = firsttable,
+         "sixtoeight_visit" = sixtoeighttable
         ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -41,16 +44,14 @@ data_table <- reactive({
                                     "Under 65" = "Aged under 65",
                                     "65 and over" = "Aged 65 and over"),
            week_ending = format(week_ending, "%d %b %y"))
-  # } else if (input$data_select %in% "first_visit") { # deliberately removed until data consistency queries resolved 23/06/20 ve
-  #   table_data <- table_data %>%
-  #     select(-extract_date, -tabno, -week_no, -review, -cohort) %>% 
-  #     rename(week_starting = week_2_start, children_due_visit_in = time_period_eligible,
-  #            age_in_days = interv, percentage_of_children_who_have_received_review = surv)
-  # } else if (input$data_select %in% "sixin_8wks") {
-  #   table_data <- table_data %>%
-  #     select(-extract_date, -tabno, -week_no, -immunisation, -cohort) %>% 
-  #     rename(week_starting = week_8_start, children_due_immunisation_in = time_period_eligible,
-  #            age_in_days = interv, percentage_of_children_who_have_received_immunisation = surv)
+  } else if (input$data_select %in% c("first_visit", "sixtoeight_visit")) { 
+    table_data <- table_data %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      rename(cohort = time_period_eligible)
+  } else if (input$data_select %in% c("sixin_8wks", "sixin_8wks_second", "sixin_8wks_third")) {
+    table_data <- table_data %>%
+      select(area_name, time_period_eligible, denominator, starts_with("uptake")) %>%
+      rename(cohort = time_period_eligible)
   } else if (input$data_select == "ae_cardio") {
     table_data <- table_data %>% 
       select(-area_type) %>% 
