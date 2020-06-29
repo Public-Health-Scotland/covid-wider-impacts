@@ -78,11 +78,12 @@ six_dose3 <- readRDS("data/sixinone_dose3_data.rds") # 6 in 1 immunisation data 
 sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
 
 ## perinatal mortality data
-# p_perinatal <- readRDS("data/p_perinatal_data.rds")
-# p_perinatal_table <- readRDS("data/p_perinatal_datatable.rds") # may add data table to tab
-# u_perinatal <- readRDS("data/u_perinatal_data.rds")
-# u_perinatal_table <- readRDS("data/u_perinatal_datatable.rds") # may add data table to tab
-# 
+
+perinatal <- readRDS("data/perinatal_data.rds")
+p_perinatal_table <- readRDS("data/p_perinatal_datatable.rds") # may add data table to tab
+u_perinatal_table <- readRDS("data/u_perinatal_datatable.rds") # may add data table to tab
+
+
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)",
@@ -111,15 +112,14 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         # "Health Visitor first visit" = "first_visit" # deliberately removed until data consistency queries resolved 23/06/20 ve
                         )
 
-
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
                  "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
-data_list_perinatal <- c("Still births"="stillbirths",
-                         "Post neonatal deaths"="pnnd",
+data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Neonatal deaths"="nnd",
                          "Extended perinatal deaths"="extperi",
+                         "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
 
 ###############################################.
