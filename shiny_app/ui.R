@@ -64,14 +64,14 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("cardio_button", "Cardiovascular", width="150px"),br(),
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
                           actionLink("ch_review_button", "Child health", width="150px"), br(),
-                          actionLink("perinatal_button", "Perinatal mortality", width="150px")),
+                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px")),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
                                      bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
                                      bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
                                      bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
                                      bsCollapsePanel("Child health", uiOutput("child_comments")),
-                                     bsCollapsePanel("Perinatal mortality", uiOutput("perinatal_commentary"))
+                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary"))
                                      
                           )))
 ), #tab panel
@@ -181,7 +181,7 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
 ## Perinatal Tab ----
 ###############################################.
 
-tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "child",
+tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal_mortality",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_perinatal",
@@ -191,7 +191,9 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
            column(4,actionButton("btn_perinatal_modal", "Data source: NRS vital event registrations", 
                                  icon = icon('question-circle')),
                   fluidRow(br()),
-                  downloadButton("download_perinatal_data", "Download data"))
+                  downloadButton("download_perinatal_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_perinatal','Go to commentary'))
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("perinatal_explorer")
