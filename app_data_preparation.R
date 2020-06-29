@@ -300,7 +300,7 @@ ooh_new <- ooh_new %>% mutate(scot = "Scotland") %>%
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_csv(paste0(data_folder, "GP_OOH/new_22062020.csv")) %>% 
+ooh_may_onwards <- read_csv(paste0(data_folder, "GP_OOH/new_29062020.csv")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -327,7 +327,7 @@ ooh_may_onwards <- ooh_may_onwards %>%
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-06-21"))) #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-06-28"))) #filter complete weeks (Mon-Sun)
 
 #bind old and new ooh data
 ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
@@ -341,7 +341,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-06-21")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-06-28")
 
 ###############################################.
 ## Preparing A&E data ----
@@ -924,6 +924,7 @@ saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.r
 ###############################################.
 # P CHART PERINATAL DATA
 p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
+
                           sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
                      read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
                                 sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
@@ -931,6 +932,7 @@ p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NN
                                 sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi"),
                      read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
                                 sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
+
   janitor::clean_names() %>%
   select(month_of_year=sample_2, number_of_deaths_in_month=observation, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type)
