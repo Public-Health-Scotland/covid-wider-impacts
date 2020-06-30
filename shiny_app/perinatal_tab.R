@@ -242,13 +242,28 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
 ## Data downloads ----
 ###############################################.
 
+
+perinatal_down_data <- reactive({
+  perinatal %>% filter(type == input$measure_select_perinatal) 
+  
+  if (input$measure_select_perinatal %in% c("pnnd", "nnd", "infantdeaths")) { 
+    perinatal <- perinatal %>% filter(type == input$measure_select_perinatal) %>%
+      rename(live_births=sample_size) %>% 
+      select(month_of_year:centreline, upper_cl_3_std_dev:area_name) } 
+ 
+   else if (input$measure_select_perinatal %in% c("extperi", "stillbirths")) {
+    perinatal <- perinatal %>% filter(type == input$measure_select_perinatal) %>%
+      rename(total_births=sample_size) %>% 
+      select(month_of_year:centreline, upper_cl_3_std_dev:area_name) }
+})
+
 output$download_perinatal_data <- downloadHandler(
   filename ="stillbirth_infantdeaths_extract.csv",
   content = function(file) {
-    write_csv(perinatal %>% filter(type == input$measure_select_perinatal) %>% 
-                select(month_of_year:centreline, upper_cl_3_std_dev:area_name),
+    write_csv(perinatal_down_data(),
               file) } 
 )
+  
 
 ###############################################.
 ## Commentary ----
@@ -265,7 +280,7 @@ output$perinatal_commentary <- renderUI({
             tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies",
             "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.", br(),
             "The dashboard shows monthly data for stillbirths and infant deaths (those occurring under the age of one year). These are based on data 
-            from National Records for Scotland (NRS), and are presented as rates per 1,000 live births for neonatal, post-neonatal and infant deaths and per 1,000 total (live and still) births for stillbirths and perinatal deaths."),
+            from National Records for Scotland (NRS), and are presented as rates per 1,000 live births for neonatal, post-neonatal and infant deaths and per 1,000 total (live and still) births for stillbirths and extended perinatal deaths."),
           p(h4("Control Charts")),
           p("Control charts have been used to support interpretation of these data. As numbers of deaths are relatively low, mortality rates tend to fluctuate from month to month just by chance: 
             control charts help differentiate between expected random variation and changes which warrant further investigation.", br(), 
@@ -273,8 +288,7 @@ output$perinatal_commentary <- renderUI({
             being those when health and health services may have been affected by COVID-19.", br(), 
             "In this period the only observations which have reached a ‘warning limit’ as indicated by the relevant control chart were neonatal deaths in March 2020, 
             where the rate was just above the upper warning limit (3.7/1,000 compared to the UWL of 3.6/1,000), but did not breach the upper control limit 
-            (the trigger for further investigation).", br(), 
-            "In April and May there were fewer neonatal deaths, and the rate fell to below the upper warning limit. Rates of stillbirths and extended perinatal deaths are being closely 
+            (the trigger for further investigation). In April and May there were fewer neonatal deaths, and the rate fell to below the upper warning limit. Rates of stillbirths and extended perinatal deaths are being closely 
             monitored, as these approached, but did not breach, the upper warning limit in May 2020."),
           p(h4("Data Sources")),
           p("NRS", tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
