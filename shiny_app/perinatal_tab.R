@@ -96,50 +96,44 @@ output$perinatal_explorer <- renderUI({
   if (input$measure_select_perinatal == "stillbirths") {
     intro_text <- p("Stillbirths refer to", tags$a(href=link_perinatal, 
                     "a child born after the 24th week of pregnancy which did not breathe or show any signs of life.",class="externallink"), 
-                    "The stillbirth rate in Scotland in 2019 ", 
-                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-                    "was 3.5 per 1,000 total (live + still) births.",class="externallink"),
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                           "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
+                           "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.
+                    Whilst each stillbirth is clearly a tragedy for the family involved, it is important to note that stillbirths are uncommon events in Scotland: 21 stillbirths (and 3,912 total 
+                    [live and still] births) occurring in Scotland in May 2020 had been registered by 14 June 2020 (the date the data used for this dashboard was extracted).")
   } else if (input$measure_select_perinatal == "pnnd") {
     intro_text <- p("Post-neonatal deaths refer to", tags$a(href=link_perinatal, 
                     "deaths occuring after the first 4 weeks but within the first year",class="externallink"), "of life.",
-                    "The post-neonatal death rate in Scotland in 2019 ", 
-                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-                           "was 1.1 per 1,000 live births.",class="externallink"),
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                           "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
+                           "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.
+                    Whilst each post-neonatal death is clearly a tragedy for the family involved, it is important to note that post-neonatal deaths are uncommon events in Scotland: 3 post-neonatal deaths 
+                    (and 3,891 live births) occurring in Scotland in May 2020 had been registered by 14 June 2020 (the date the data used for this dashboard was extracted).")
   } else if (input$measure_select_perinatal == "nnd") {
     intro_text <- p("Neonatal deaths refer to", tags$a(href=link_perinatal, 
                   "deaths in the first four weeks",class="externallink"), "of life.",
-                  "The neonatal death rate in Scotland in 2019 ", 
-                  tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-                         "was 2.2 per 1,000 live births.",class="externallink"),
                   peri_common_intro,
                   tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                         "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
+                         "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.
+                  Whilst each neonatal death is clearly a tragedy for the family involved, it is important to note that neonatal deaths are uncommon events in Scotland: 12 neonatal deaths (and 3,891 live births) 
+                  occurring in Scotland in May 2020 had been registered by 14 June 2020 (the date the data used for this dashboard was extracted).")
   } else if (input$measure_select_perinatal == "extperi") {
     intro_text <- p("Extended perinatal deaths refer to", tags$a(href=link_perinatal, 
 "the sum of stillbirths and neonatal mortality",class="externallink"), "(deaths within the first 4 weeks of life).",
-"The extended perinatal death rate in Scotland in 2019 ", 
-tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-       "was 5.7 per 1,000 total (live + still) births.",class="externallink"),
 peri_common_intro,
 tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-       "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
-    
+       "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.
+Whilst each extended perinatal death is clearly a tragedy for the family involved, it is important to note that extended perinatal deaths are uncommon events in Scotland: 33 extended perinatal deaths (and 3,912 total 
+[live and still] births) occurring in Scotland in May 2020 had been registered by 14 June 2020 (the date the data used for this dashboard was extracted).")
   } else if (input$measure_select_perinatal == "infantdeaths") {
     intro_text <- p("Infant deaths refer to", tags$a(href=link_perinatal, 
                     "all deaths in the first year",class="externallink"), "of life; 
                     this includes neonatal and post-neonatal deaths, but not stillbirths. ",
-                    "The infant death rate in Scotland in 2019 ", 
-                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2019", 
-                           "was 3.3 per 1,000 live births.",class="externallink"),
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
-                           "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.")
+                           "have produced guidelines",class="externallink"), "for attending antenatal and postnatal care appointments during the pandemic.
+                    Whilst each infant death is clearly a tragedy for the family involved, it is important to note that infant deaths are uncommon events in Scotland: 15 infant deaths (and 3,891 live births) 
+                    occurring in Scotland in May 2020 had been registered by 14 June 2020 (the date the data used for this dashboard was extracted).")
   }
 
   nrs_commentary <- p("It is important to note that chart data is based on month of occurence rather than month of registration used in NRS publications, and so
