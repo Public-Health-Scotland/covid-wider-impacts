@@ -934,13 +934,13 @@ p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NN
                                 sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
 
   janitor::clean_names() %>%
-  select(month_of_year=sample_2, number_of_deaths_in_month=observation, rate, centreline, stdev = binomial_st_dev_16, 
+  select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type)
 
 u_perinatal <- read_excel(paste0(data_folder,"perinatal/Uchart - INFANT DEATHS.xlsx"),
            sheet = "Uchart", skip = 2) %>% mutate(type = "infantdeaths") %>% 
   janitor::clean_names() %>%
-  select(month_of_year=sample,  number_of_deaths_in_month=observation, rate, centreline, stdev = poisson_st_dev_16, 
+  select(month_of_year=sample,  number_of_deaths_in_month=observation, sample_size=ao_o_size, rate, centreline, stdev = poisson_st_dev_16, 
          upper_cl_3_std_dev:type)
 
 # Mergin both datasets together 
