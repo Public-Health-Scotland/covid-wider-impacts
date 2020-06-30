@@ -44,14 +44,56 @@ data_table <- reactive({
                                     "Under 65" = "Aged under 65",
                                     "65 and over" = "Aged 65 and over"),
            week_ending = format(week_ending, "%d %b %y"))
-  } else if (input$data_select %in% c("first_visit", "sixtoeight_visit")) { 
+  } else if (input$data_select %in% "first_visit") { 
     table_data <- table_data %>%
       select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
-      rename(Cohort = time_period_eligible, "Total number of children" = denominator)
-  } else if (input$data_select %in% c("sixin_8wks", "sixin_8wks_second", "sixin_8wks_third")) {
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator,
+             "Coverage of review at 4 weeks of age (N)" = coverage_4weeks_num,
+             "Coverage of review at 4 weeks of age (%)" = coverage_4weeks_percent,
+             "Coverage of review at 12 weeks of age (N)" = coverage_12weeks_num,
+             "Coverage of review at 12 weeks of age (%)" = coverage_12weeks_percent,
+             "Total coverage of review (N)" = coverage_tot_num,
+             "Total coverage of review (%)" = coverage_tot_percent)
+  } else if (input$data_select %in% "sixtoeight_visit") { 
+    table_data <- table_data %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator,
+             "Coverage of review at 12 weeks of age (N)" = coverage_12weeks_num,
+             "Coverage of review at 12 weeks of age (%)" = coverage_12weeks_percent,
+             "Coverage of review at 24 weeks of age (N)" = coverage_24weeks_num,
+             "Coverage of review at 24 weeks of age (%)" = coverage_24weeks_percent,
+             "Total coverage of review (N)" = coverage_tot_num,
+             "Total coverage of review (%)" = coverage_tot_percent)
+  } else if (input$data_select %in% "sixin_8wks") {
     table_data <- table_data %>%
       select(area_name, time_period_eligible, denominator, starts_with("uptake")) %>%
-      rename(Cohort = time_period_eligible, "Total number of children" = denominator)
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator,
+             "Uptake of immunisation at 12 weeks of age (N)" = uptake_12weeks_num,
+             "Uptake of immunisation at 12 weeks of age (%)" = uptake_12weeks_percent,
+             "Uptake of immunisation at 24 weeks of age (N)" = uptake_24weeks_num,
+             "Uptake of immunisation at 24 weeks of age (%)" = uptake_24weeks_percent,
+             "Total uptake of immunisation (N)" = uptake_tot_num,
+             "Total uptake of immunisation (%)" = uptake_tot_percent)
+  } else if (input$data_select %in% "sixin_8wks_second") {
+    table_data <- table_data %>%
+      select(area_name, time_period_eligible, denominator, starts_with("uptake")) %>%
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator,
+             "Uptake of immunisation at 16 weeks of age (N)" = uptake_16weeks_num,
+             "Uptake of immunisation at 16 weeks of age (%)" = uptake_16weeks_percent,
+             "Uptake of immunisation at 28 weeks of age (N)" = uptake_28weeks_num,
+             "Uptake of immunisation at 28 weeks of age (%)" = uptake_28weeks_percent,
+             "Total uptake of immunisation (N)" = uptake_tot_num,
+             "Total uptake of immunisation (%)" = uptake_tot_percent)
+  } else if (input$data_select %in% "sixin_8wks_third") {
+    table_data <- table_data %>%
+      select(area_name, time_period_eligible, denominator, starts_with("uptake")) %>%
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator,
+             "Uptake of immunisation at 20 weeks of age (N)" = uptake_20weeks_num,
+             "Uptake of immunisation at 20 weeks of age (%)" = uptake_20weeks_percent,
+             "Uptake of immunisation at 32 weeks of age (N)" = uptake_32weeks_num,
+             "Uptake of immunisation at 32 weeks of age (%)" = uptake_32weeks_percent,
+             "Total uptake of immunisation (N)" = uptake_tot_num,
+             "Total uptake of immunisation (%)" = uptake_tot_percent)
   } else if (input$data_select == "ae_cardio") {
     table_data <- table_data %>% 
       select(-area_type) %>% 
