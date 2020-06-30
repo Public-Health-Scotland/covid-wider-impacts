@@ -266,10 +266,18 @@ plot_scurve <- function(dataset, age_week, dose) {
                                     str_detect(immunisation,dose),
                                     exclude !=1) #filter immunisation scurve data on dose
 
-  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
-   { plot_nodata(height = 50)
-   } else {
-
+  # if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  #  { plot_nodata(height = 50)
+  #  } else {
+  
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian"  && dataset == mmr_alldose && dose== "dose 2")
+  { plot_nodata(height = 50, text_nodata = "Data not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age.")
+  } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  { plot_nodata(height = 50)
+  } else {     
+    
+     
+     
 # Create tooltip for scurve
 tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
 
@@ -315,7 +323,7 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
     xaxis_plots[["range"]] <- c((7*170),(7*191))  # To adjust x-axis min and max depending on which dose selected
   yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
   
-  age_unit <- paste0("3y 5months:") #string for legend label
+  age_unit <- paste0("3y 4months:") #string for legend label
 }
 
 
@@ -358,7 +366,7 @@ plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due
 
 
 #####################################################################################.
-## Function for generating flextable summary of immunisation data being displayed in s curve.
+## Function for generating flextable summary of immunisation data.
 
 immune_table <- function(dataset, age_week) {
 
@@ -428,14 +436,14 @@ immune_table <- function(dataset, age_week) {
       select (time_period_eligible, denominator,uptake_13m_num,uptake_13m_percent,uptake_16m_num, 
               uptake_16m_percent,uptake_tot_num,uptake_tot_percent) %>%
       flextable() %>%
-      set_header_labels(uptake_13m_num="Children recorded as receiving their vaccine by 12 months of age",
-                        uptake_13m_percent="Children recorded as receiving their vaccine by 12 months of age ",
+      set_header_labels(uptake_13m_num="Children recorded as receiving their vaccine by 13 months of age",
+                        uptake_13m_percent="Children recorded as receiving their vaccine by 13 months of age ",
                         uptake_16m_num="Children recorded as receiving their vaccine by 16 months of age (or younger if children have not reached 16 months of age by the date data was extracted for analysis)",
                         uptake_16m_percent="Children recorded as receiving their vaccine by 16 months of age (or younger if children have not reached 16 months of age by the date data was extracted for analysis)") %>% 
       # Italics and colour if not  weeks
       color(i = no_complete_row, j = c("uptake_16m_num", "uptake_16m_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_16m_num", "uptake_16m_percent")) 
-    age_unit <- "13 months"
+    age_unit <- "12 months"
     age_max <- "16 months" #test inserted into note #3 under summary table
   }else if (age_week == 3) {
     #Apply different column names and formatting according to which dataset selected
@@ -452,7 +460,7 @@ immune_table <- function(dataset, age_week) {
       # Italics and colour if not  weeks
       color(i = no_complete_row, j = c("uptake_3y8m_num", "uptake_3y8m_percent"), color="#0033cc")  %>% 
       italic(i = no_complete_row, j = c("uptake_3y8m_num", "uptake_3y8m_percent")) 
-    age_unit <- "3 years and 5 months"
+    age_unit <- "3 years and 4 months"
     age_max <- "3 years and 8 months" #test inserted into note #3 under summary tabl
   }
   
