@@ -47,11 +47,11 @@ data_table <- reactive({
   } else if (input$data_select %in% c("first_visit", "sixtoeight_visit")) { 
     table_data <- table_data %>%
       select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
-      rename(cohort = time_period_eligible)
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator)
   } else if (input$data_select %in% c("sixin_8wks", "sixin_8wks_second", "sixin_8wks_third")) {
     table_data <- table_data %>%
       select(area_name, time_period_eligible, denominator, starts_with("uptake")) %>%
-      rename(cohort = time_period_eligible)
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator)
   } else if (input$data_select == "ae_cardio") {
     table_data <- table_data %>% 
       select(-area_type) %>% 
