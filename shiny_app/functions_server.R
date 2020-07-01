@@ -315,7 +315,7 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
 
   xaxis_plots[["title"]] <- "Age of children in years and months"
   xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
-  xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1337, by = 29)) 
+  xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1337, by = 29)) #xaxis 1190 days (170 week) to 1337 days (191 weeks)
   xaxis_plots[["ticktext"]] <- c(0, seq(3.3,3.8 , by = 0.1))  # xaxis labels in years and months (works even though months are not decimals because we only show part of a year?)
   xaxis_plots[["range"]] <- c((7*170),(7*191))  # To adjust x-axis min and max depending on which dose selected
   yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
