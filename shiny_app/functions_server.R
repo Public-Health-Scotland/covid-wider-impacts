@@ -275,8 +275,6 @@ plot_scurve <- function(dataset, age_week, dose) {
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {     
-    
-     
      
 # Create tooltip for scurve
 tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
@@ -304,8 +302,8 @@ else if(dataset == mmr_alldose && dose== "dose 1" ){ #set chart parameters for m
 
   xaxis_plots[["title"]] <- "Age of children in months"
   xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
-  xaxis_plots[["tickvals"]] <- c(0, seq(343, 490, by = 28)) # xaxis days 343 to 490
-  xaxis_plots[["ticktext"]] <- c(0, seq(11, 16, by = 1))  # xaxis labels 49 weeks to 70 weeks
+  xaxis_plots[["tickvals"]] <- c(0, seq(343, 490, by = 29)) # xaxis days 343 (49 weeks) to 490 (70 weeks)
+  xaxis_plots[["ticktext"]] <- c(0, seq(11, 16, by = 1))  # xaxis labels 11 months (49 weeks) to 16 months (70 weeks)
   xaxis_plots[["range"]] <- c((7*49),(7*70))  # To adjust x-axis min and max depending on which dose selected
   yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
   
@@ -317,10 +315,9 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
 
   xaxis_plots[["title"]] <- "Age of children in years and months"
   xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
-  xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1337, by = 28)) 
-  #xaxis_plots[["ticktext"]] <- c(0, seq(170, 191, by = 4))  # xaxis labels in weeks - not desired but correct?
-  xaxis_plots[["ticktext"]] <- c(0, seq(3.3,3.8 , by = 0.1))  # xaxis labels in years and months 
-    xaxis_plots[["range"]] <- c((7*170),(7*191))  # To adjust x-axis min and max depending on which dose selected
+  xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1337, by = 29)) 
+  xaxis_plots[["ticktext"]] <- c(0, seq(3.3,3.8 , by = 0.1))  # xaxis labels in years and months (works even though months are not decimals because we only show part of a year?)
+  xaxis_plots[["range"]] <- c((7*170),(7*191))  # To adjust x-axis min and max depending on which dose selected
   yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
   
   age_unit <- paste0("3y 4months:") #string for legend label
