@@ -416,14 +416,53 @@ plot_scurve_child <- function(dataset, age_week) {
     #Create tooltip for scurve
     tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
     
+  if (age_week == "2 weeks")  {
+    
     #Modifying standard yaxis layout
     yaxis_plots[["title"]] <- "% of children who have received their review"
     xaxis_plots[["title"]] <- "Age of children in weeks"
     # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(14, 168, by = 28))
-    xaxis_plots[["ticktext"]] <- c(0, seq(2, 24, by = 4))
+    xaxis_plots[["tickvals"]] <- c(0, seq(14, 126, by = 28))
+    xaxis_plots[["ticktext"]] <- c(0, seq(2, 18, by = 4))
     # enforcing range from 0 to 100%
     yaxis_plots[["range"]] <- c(0, 100)
+    
+  } else if (age_week == "6 weeks") {
+    
+    #Modifying standard yaxis layout
+    yaxis_plots[["title"]] <- "% of children who have received their review"
+    xaxis_plots[["title"]] <- "Age of children in weeks"
+    # For custom tick labels
+    xaxis_plots[["tickvals"]] <- c(0, seq(42, 154, by = 28))
+    xaxis_plots[["ticktext"]] <- c(0, seq(6, 22, by = 4))
+    # enforcing range from 0 to 100%
+    yaxis_plots[["range"]] <- c(0, 100)
+    
+  } else if (age_week == "13 months") {
+    
+    #Modifying standard yaxis layout
+    yaxis_plots[["title"]] <- "% of children who have received their review"
+    xaxis_plots[["title"]] <- "Age of children in months"
+    # For custom tick labels
+    xaxis_plots[["tickvals"]] <- c(0, seq(371, 518, by = 28))
+    xaxis_plots[["ticktext"]] <- c(0, seq(12, 17, by = 1))
+    # enforcing range from 0 to 100%
+    xaxis_plots[["range"]] <- c(371, 518)
+    yaxis_plots[["range"]] <- c(0, 100)
+    
+  } else if (age_week == "27 months") {
+    
+    #Modifying standard yaxis layout
+    yaxis_plots[["title"]] <- "% of children who have received their review"
+    xaxis_plots[["title"]] <- "Age of children in months"
+    # For custom tick labels
+    xaxis_plots[["tickvals"]] <- c(0, seq(791, 945, by = 28))
+    xaxis_plots[["ticktext"]] <- c(0, seq(26, 31, by = 1))
+    # enforcing range from 0 to 100%
+    xaxis_plots[["range"]] <- c(791, 945)
+    yaxis_plots[["range"]] <- c(0, 100)
+    
+  } 
     
     #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
@@ -431,7 +470,7 @@ plot_scurve_child <- function(dataset, age_week) {
                 color = ~time_period_eligible, colors = pal_child,
                 text= tooltip_scurve, hoverinfo="text") %>%
       # Adding legend title
-      add_annotations( text=paste0("Children turning ", age_week, " weeks in:"), xref="paper", yref="paper",
+      add_annotations( text=paste0("Children turning ", age_week, " in:"), xref="paper", yref="paper",
                        x=1.02, xanchor="left",
                        y=0.8, yanchor="bottom",    # Same y as legend below
                        legendtitle=TRUE, showarrow=FALSE ) %>% 

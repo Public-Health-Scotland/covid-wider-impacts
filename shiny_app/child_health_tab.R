@@ -44,12 +44,17 @@ filter_table_data_child <- function(dataset){
 ###############################################.
 
 #run chart function to generate s curve  
-output$child_first_scurve <- renderPlotly({plot_scurve_child(first, 2)})
-output$child_first_table <- renderUI({child_table(firsttable, 2, 12)})
+output$child_first_scurve <- renderPlotly({plot_scurve_child(first, "2 weeks")})
+output$child_first_table <- renderUI({child_table(firsttable, 2, 18)})
 
-output$child_sixtoeight_scurve <- renderPlotly({plot_scurve_child(sixtoeight, 8)})
-output$child_sixtoeight_table <- renderUI({child_table(sixtoeighttable, 8, 24)})
+output$child_sixtoeight_scurve <- renderPlotly({plot_scurve_child(sixtoeight, "6 weeks")})
+output$child_sixtoeight_table <- renderUI({child_table(sixtoeighttable, 6, 22)})
 
+output$child_thirteen_scurve <- renderPlotly({plot_scurve_child(thirteen, "13 months")})
+output$child_thirteen_table <- renderUI({child_table(thirteentable, 13, 74)})
+
+output$child_twentyseven_scurve <- renderPlotly({plot_scurve_child(twentyseven, "27 months")})
+output$child_twentyseven_table <- renderUI({child_table(twentyseventable, 27, 135)})
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$child_health_explorer <- renderUI({
@@ -87,9 +92,21 @@ output$child_health_explorer <- renderUI({
       fluidRow(column(12, renderUI(commentary_first)))
     )
   } else if (input$measure_select_child == "13_15mnth") {
-    p("13-15 Month Review coming 8th July 2020")
+    tagList(
+      fluidRow(column(10, h4(paste0(child_title)))),
+      fluidRow(column(6,br(), br(),
+                      withSpinner(plotlyOutput("child_thirteen_scurve"))),
+               column(6, uiOutput("child_thirteen_table"))),
+      fluidRow(column(12, renderUI(commentary_first)))
+    )
   } else {
-    p("27-30 Month Review coming 8th July 2020")
+    tagList(
+      fluidRow(column(10, h4(paste0(child_title)))),
+      fluidRow(column(6,br(), br(),
+                      withSpinner(plotlyOutput("child_twentyseven_scurve"))),
+               column(6, uiOutput("child_twentyseven_table"))),
+      fluidRow(column(12, renderUI(commentary_first)))
+    )
   }
   
 }) #close child_health_explorer function

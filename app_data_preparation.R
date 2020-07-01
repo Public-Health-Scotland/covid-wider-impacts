@@ -865,7 +865,8 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          week_no= isoweek(week_2_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
+  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
@@ -883,14 +884,14 @@ saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 ###############################################.
 
 ## 6 to 8 weeks visit - scurve data
-sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200601.csv"), 
-                  col_types =list(week_8_start=col_date(format="%m/%d/%Y"),
+sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200622.csv"), 
+                  col_types =list(week_6_start=col_date(format="%m/%d/%Y"),
                                   time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
 sixtoeight$time_period_eligible <- factor(sixtoeight$time_period_eligible, 
-                                     levels=unique(sixtoeight$time_period_eligible[order(sixtoeight$week_8_start, decreasing = T)]), 
+                                     levels=unique(sixtoeight$time_period_eligible[order(sixtoeight$week_6_start, decreasing = T)]), 
                                      ordered=TRUE)
 
 # Bringing HB names immunisation data contain HB cypher not area name
@@ -904,16 +905,16 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
          weeks=interv/7,
-         week_no= isoweek(week_8_start),
+         week_no= isoweek(week_6_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, review, week_8_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv<168)
+  select (extract_date, review, week_6_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(interv<168, substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight_data.rds"))
 
 # 6-8 weeks visit - summary table data
-sixtoeight_datatable <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboardtab_20200601.csv")) %>%
+sixtoeight_datatable <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboardtab_20200622.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
@@ -950,8 +951,8 @@ thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          week_no= isoweek(week_57_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) #%>% 
-  #filter(interv<168)
+  select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(interv>371 & interv<518, substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(thirteen, paste0("shiny_app/data/","thirteen_data.rds"))
 
@@ -993,8 +994,8 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          week_no= isoweek(week_117_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, review, week_117_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) #%>% 
-#filter(interv<168)
+  select (extract_date, review, week_117_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(interv>791 & interv<945, substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
 
@@ -1005,7 +1006,7 @@ twentyseven_datatable <- read_csv(paste0(data_folder,"child_health/twentyseven_d
   select (-geography) %>%
   mutate(time_period_eligible=as.factor(time_period_eligible))
 
-saveRDS(thirteen_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
+saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
 
 ###############################################.
 ## Prepare perinatal data ----
