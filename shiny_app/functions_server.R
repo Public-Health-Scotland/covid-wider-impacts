@@ -444,7 +444,7 @@ plot_scurve_child <- function(dataset, age_week) {
     yaxis_plots[["title"]] <- "% of children who have received their review"
     xaxis_plots[["title"]] <- "Age of children in months"
     # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(371, 518, by = 28))
+    xaxis_plots[["tickvals"]] <- c(0, seq(371, 518, by = 30.4))
     xaxis_plots[["ticktext"]] <- c(0, seq(12, 17, by = 1))
     # enforcing range from 0 to 100%
     xaxis_plots[["range"]] <- c(371, 518)
@@ -456,7 +456,7 @@ plot_scurve_child <- function(dataset, age_week) {
     yaxis_plots[["title"]] <- "% of children who have received their review"
     xaxis_plots[["title"]] <- "Age of children in months"
     # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(791, 945, by = 28))
+    xaxis_plots[["tickvals"]] <- c(0, seq(791, 945, by = 30.4))
     xaxis_plots[["ticktext"]] <- c(0, seq(26, 31, by = 1))
     # enforcing range from 0 to 100%
     xaxis_plots[["range"]] <- c(791, 945)
@@ -487,7 +487,7 @@ plot_scurve_child <- function(dataset, age_week) {
 
 child_table <- function(dataset, age_week, age_not_reached) {
   
-  table_data <- filter_table_data_child(dataset)
+  table_data <- filter_table_data_child(dataset) 
   
   if (age_week == "2 weeks") {
     format_col <- c("denominator","coverage_6weeks_num","coverage_18weeks_num","coverage_tot_num")

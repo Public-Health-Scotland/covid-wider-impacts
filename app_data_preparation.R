@@ -871,12 +871,16 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
 # First visit - summary table data
-first_datatable <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboardtab_20200622.csv")) %>%
+first_datatable_download <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboardtab_20200622.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible)) %>% 
-  filter(substr(time_period_eligible,8,10) != "MAR")
+  mutate(time_period_eligible=as.factor(time_period_eligible)) 
+
+saveRDS(first_datatable_download, paste0("shiny_app/data/","first_visit_datatable_download.rds"))
+
+first_datatable <- first_datatable_download %>% 
+  filter(exclude == 0)
 
 saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 
@@ -915,14 +919,19 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight_data.rds"))
 
 # 6-8 weeks visit - summary table data
-sixtoeight_datatable <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboardtab_20200622.csv")) %>%
+sixtoeight_datatable_download <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboardtab_20200622.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible)) %>% 
-  filter(substr(time_period_eligible,8,10) != "MAR")
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(sixtoeight_datatable_download, paste0("shiny_app/data/","six_to_eight_datatable_download.rds"))
+
+sixtoeight_datatable <- sixtoeight_datatable_download %>% 
+  filter(exclude == 0)
 
 saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.rds"))
+
 
 ###############################################.
 ## Prepare Child Health data (13-15 month) ----
@@ -954,17 +963,21 @@ thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>371 & interv<518, substr(time_period_eligible,8,10) != "MAR")
+  filter(interv>=371 & interv<=518, substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(thirteen, paste0("shiny_app/data/","thirteen_data.rds"))
 
 # 13 to 15 month visit - summary table data
-thirteen_datatable <- read_csv(paste0(data_folder,"child_health/thirteen_dashboardtab_20200622.csv")) %>%
+thirteen_datatable_download <- read_csv(paste0(data_folder,"child_health/thirteen_dashboardtab_20200622.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible)) %>% 
-  filter(substr(time_period_eligible,8,10) != "MAR")
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(thirteen_datatable_download, paste0("shiny_app/data/","thirteen_datatable_download.rds"))
+
+thirteen_datatable <- thirteen_datatable_download %>% 
+  filter(exclude == 0)
 
 saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
 
@@ -1003,12 +1016,16 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
 
 # 13 to 15 month visit - summary table data
-twentyseven_datatable <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboardtab_20200622.csv")) %>%
+twentyseven_datatable_download <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboardtab_20200622.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible)) %>% 
-  filter(substr(time_period_eligible,8,10) != "MAR")
+  mutate(time_period_eligible=as.factor(time_period_eligible)) 
+
+saveRDS(twentyseven_datatable_download, paste0("shiny_app/data/","twentyseven_datatable_download.rds"))
+
+twentyseven_datatable <- twentyseven_datatable_download %>% 
+  filter(exclude == 0)
 
 saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
 
