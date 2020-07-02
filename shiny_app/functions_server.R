@@ -444,10 +444,10 @@ plot_scurve_child <- function(dataset, age_week) {
     yaxis_plots[["title"]] <- "% of children who have received their review"
     xaxis_plots[["title"]] <- "Age of children in months"
     # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(371, 518, by = 30.4))
+    xaxis_plots[["tickvals"]] <- c(0, seq(371, 523, by = 30.4))
     xaxis_plots[["ticktext"]] <- c(0, seq(12, 17, by = 1))
     # enforcing range from 0 to 100%
-    xaxis_plots[["range"]] <- c(371, 518)
+    xaxis_plots[["range"]] <- c(371, 523)
     yaxis_plots[["range"]] <- c(0, 100)
     
   } else if (age_week == "27 months") {
@@ -456,10 +456,10 @@ plot_scurve_child <- function(dataset, age_week) {
     yaxis_plots[["title"]] <- "% of children who have received their review"
     xaxis_plots[["title"]] <- "Age of children in months"
     # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(791, 945, by = 30.4))
+    xaxis_plots[["tickvals"]] <- c(0, seq(791, 943, by = 30.4))
     xaxis_plots[["ticktext"]] <- c(0, seq(26, 31, by = 1))
     # enforcing range from 0 to 100%
-    xaxis_plots[["range"]] <- c(791, 945)
+    xaxis_plots[["range"]] <- c(791, 943)
     yaxis_plots[["range"]] <- c(0, 100)
     
   } 
