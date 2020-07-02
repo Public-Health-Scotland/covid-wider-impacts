@@ -875,7 +875,8 @@ first_datatable <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboar
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible))
+  mutate(time_period_eligible=as.factor(time_period_eligible)) %>% 
+  filter(substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 
@@ -918,7 +919,8 @@ sixtoeight_datatable <- read_csv(paste0(data_folder,"child_health/sixtoeight_das
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible))
+  mutate(time_period_eligible=as.factor(time_period_eligible)) %>% 
+  filter(substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.rds"))
 
@@ -961,7 +963,8 @@ thirteen_datatable <- read_csv(paste0(data_folder,"child_health/thirteen_dashboa
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible))
+  mutate(time_period_eligible=as.factor(time_period_eligible)) %>% 
+  filter(substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
 
@@ -1004,7 +1007,8 @@ twentyseven_datatable <- read_csv(paste0(data_folder,"child_health/twentyseven_d
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible))
+  mutate(time_period_eligible=as.factor(time_period_eligible)) %>% 
+  filter(substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
 

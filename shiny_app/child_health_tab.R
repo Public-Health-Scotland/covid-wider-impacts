@@ -45,16 +45,16 @@ filter_table_data_child <- function(dataset){
 
 #run chart function to generate s curve  
 output$child_first_scurve <- renderPlotly({plot_scurve_child(first, "2 weeks")})
-output$child_first_table <- renderUI({child_table(firsttable, 2, 18)})
+output$child_first_table <- renderUI({child_table(firsttable, "2 weeks", "18 weeks")})
 
 output$child_sixtoeight_scurve <- renderPlotly({plot_scurve_child(sixtoeight, "6 weeks")})
-output$child_sixtoeight_table <- renderUI({child_table(sixtoeighttable, 6, 22)})
+output$child_sixtoeight_table <- renderUI({child_table(sixtoeighttable, "6 weeks", "24 weeks")})
 
 output$child_thirteen_scurve <- renderPlotly({plot_scurve_child(thirteen, "13 months")})
-output$child_thirteen_table <- renderUI({child_table(thirteentable, 13, 74)})
+output$child_thirteen_table <- renderUI({child_table(thirteentable, "13 months", "17 months")})
 
 output$child_twentyseven_scurve <- renderPlotly({plot_scurve_child(twentyseven, "27 months")})
-output$child_twentyseven_table <- renderUI({child_table(twentyseventable, 27, 135)})
+output$child_twentyseven_table <- renderUI({child_table(twentyseventable, "27 months", "31 months")})
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$child_health_explorer <- renderUI({

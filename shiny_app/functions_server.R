@@ -489,29 +489,29 @@ child_table <- function(dataset, age_week, age_not_reached) {
   
   table_data <- filter_table_data_child(dataset)
   
-  if (age_week == 2) {
-    format_col <- c("denominator","coverage_4weeks_num","coverage_12weeks_num","coverage_tot_num")
-    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B" &
-                                           time_period_eligible != "W/B 02-MAR-2020" &
-                                           time_period_eligible != "W/B 09-MAR-2020" &
-                                           time_period_eligible != "W/B 16-MAR-2020"))
+  if (age_week == "2 weeks") {
+    format_col <- c("denominator","coverage_6weeks_num","coverage_18weeks_num","coverage_tot_num")
+    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B" |
+                                           time_period_eligible == "MAR 2020"))
     
     child_table <- table_data %>%
-    select (time_period_eligible, denominator, coverage_4weeks_num, 
-            coverage_4weeks_percent, coverage_12weeks_num, coverage_12weeks_percent, 
+    select (time_period_eligible, denominator, coverage_6weeks_num, 
+            coverage_6weeks_percent, coverage_18weeks_num, coverage_18weeks_percent, 
             coverage_tot_num, coverage_tot_percent) %>%
     flextable() %>%
-    set_header_labels(coverage_4weeks_num="Children recorded as receiving their health visitor first visit by 4 weeks of age",
-                      coverage_4weeks_percent="Children recorded as receiving their health visitor first visit by 4 weeks of age",
-                      coverage_12weeks_num="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 12 weeks of age by the date data was extracted for analysis)",
-                      coverage_12weeks_percent="Children recorded as receiving their health visitor first visit by 12 weeks of age (or younger if children have not reached 12 weeks of age by the date data was extracted for analysis)") %>% 
+    set_header_labels(coverage_6weeks_num="Children recorded as receiving their health visitor first visit by 6 weeks of age",
+                      coverage_6weeks_percent="Children recorded as receiving their health visitor first visit by 6 weeks of age",
+                      coverage_18weeks_num="Children recorded as receiving their health visitor first visit by 18 weeks of age (or younger if children have not reached 18 weeks of age by the date data was extracted for analysis)",
+                      coverage_18weeks_percent="Children recorded as receiving their health visitor first visit by 18 weeks of age (or younger if children have not reached 18 weeks of age by the date data was extracted for analysis)") %>% 
     # Italics and colour if not 12 weeks
-    color(i = no_complete_row, j = c("coverage_12weeks_num", "coverage_12weeks_percent"), color="#0033cc")  %>%
-    italic(i = no_complete_row, j = c("coverage_12weeks_num", "coverage_12weeks_percent"))
+    color(i = no_complete_row, j = c("coverage_18weeks_num", "coverage_18weeks_percent"), color="#0033cc")  %>%
+    italic(i = no_complete_row, j = c("coverage_18weeks_num", "coverage_18weeks_percent"))
   } 
-  else if (age_week == 8) {
+  else if (age_week == "6 weeks") {
     format_col <- c("denominator","coverage_12weeks_num","coverage_24weeks_num","coverage_tot_num")
-    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "FEB"))
+    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
+                                           substr(time_period_eligible,1,3) == "FEB" |
+                                           substr(time_period_eligible,1,3) == "MAR"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_12weeks_num, 
@@ -526,16 +526,54 @@ child_table <- function(dataset, age_week, age_not_reached) {
       color(i = no_complete_row, j = c("coverage_24weeks_num", "coverage_24weeks_percent"), color="#0033cc")  %>%
       italic(i = no_complete_row, j = c("coverage_24weeks_num", "coverage_24weeks_percent"))
   }
+  else if (age_week == "13 months") {
+    format_col <- c("denominator","coverage_14months_num","coverage_17months_num","coverage_tot_num")
+    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
+                                           substr(time_period_eligible,1,3) == "FEB" |
+                                           substr(time_period_eligible,1,3) == "MAR"))
+    
+    child_table <- table_data %>%
+      select (time_period_eligible, denominator, coverage_14months_num, 
+              coverage_14months_percent, coverage_17months_num, coverage_17months_percent, 
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_14months_num="Children recorded as receiving their 13-15 month review by 14 months of age",
+                        coverage_14months_percent="Children recorded as receiving their 13-15 month review by 14 months of age",
+                        coverage_17months_num="Children recorded as receiving their 13-15 month review by 17 months of age (or younger if children have not reached 17 months of age by the date data was extracted for analysis)",
+                        coverage_17months_percent="Children recorded as receiving their 13-15 month review by 17 months of age (or younger if children have not reached 17 months of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not 17 months
+      color(i = no_complete_row, j = c("coverage_17months_num", "coverage_17months_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_17months_num", "coverage_17months_percent"))
+  }
+  else if (age_week == "27 months") {
+    format_col <- c("denominator","coverage_28months_num","coverage_31months_num","coverage_tot_num")
+    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
+                                           substr(time_period_eligible,1,3) == "FEB"|
+                                           substr(time_period_eligible,1,3) == "MAR"))
+    
+    child_table <- table_data %>%
+      select (time_period_eligible, denominator, coverage_28months_num, 
+              coverage_28months_percent, coverage_31months_num, coverage_31months_percent, 
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_28months_num="Children recorded as receiving their 27-30 month review by 28 months of age",
+                        coverage_28months_percent="Children recorded as receiving their 27-30 month review by 28 months of age",
+                        coverage_31months_num="Children recorded as receiving their 27-30 month review by 31 months of age (or younger if children have not reached 31 months of age by the date data was extracted for analysis)",
+                        coverage_31months_percent="Children recorded as receiving their 27-30 month review by 31 months of age (or younger if children have not reached 31 months of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not 17 months
+      color(i = no_complete_row, j = c("coverage_31months_num", "coverage_31months_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_31months_num", "coverage_31months_percent"))
+  }
   
   child_table %>% 
-    set_header_labels(time_period_eligible=paste0("Children turning ", age_week, " weeks in:"),
+    set_header_labels(time_period_eligible=paste0("Children turning ", age_week, " in:"),
                       denominator="Total number of children",
-                      coverage_tot_num="Children recorded as receiving their review by the date information was extracted for analysis (01-June-2020)",
-                      coverage_tot_percent="Children recorded as receiving their review by the date information was extracted for analysis (01-June-2020)") %>%
+                      coverage_tot_num="Children recorded as receiving their review by the date information was extracted for analysis (22-June-2020)",
+                      coverage_tot_percent="Children recorded as receiving their review by the date information was extracted for analysis (22-June-2020)") %>%
     footnote(i = 1, j = c(1:2, 4),
              value = as_paragraph(c("W/B : Week beginning",
                                     "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
-                                    paste0("Blue cells indicate cohorts that have not reached ", age_not_reached, " weeks of age"))),
+                                    paste0("Blue cells indicate cohorts that have not reached ", age_not_reached, " of age"))),
              part = "header") %>%
     merge_at(i = 1, j = 3:4, part = "header") %>%
     merge_at(i = 1, j = 5:6, part = "header") %>%
