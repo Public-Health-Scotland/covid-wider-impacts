@@ -184,7 +184,7 @@ imm_data_download <- reactive({
     "mmr_dose1" = mmrtable_dose1,
     "mmr_dose2"= mmrtable_dose2
   ) %>% 
-    select(area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
+    select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
     rename(cohort = time_period_eligible)
 })
 
