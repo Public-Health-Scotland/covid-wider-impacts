@@ -74,6 +74,7 @@ sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6-in-1 summary 
 mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
 mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
 mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation data table summary
+mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary
 
 ## perinatal mortality data
 # p_perinatal <- readRDS("data/p_perinatal_data.rds")

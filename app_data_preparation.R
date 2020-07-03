@@ -809,6 +809,16 @@ mmr_dose2_datatable <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dose2_
 
 saveRDS(mmr_dose2_datatable, paste0("shiny_app/data/","mmr_dose2_datatable.rds"))
 
+# Grampian data
+mmr_dose2_datatable_grampian <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dose2_dashboardtab_grampian_20200622.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
+
 ###############################################.
 ## Prepare Child Health data ----
 ###############################################.
