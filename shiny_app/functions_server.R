@@ -271,7 +271,8 @@ plot_scurve <- function(dataset, age_week, dose) {
   #  } else {
   
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian"  && dataset == mmr_alldose && dose== "dose 2")
-  { plot_nodata(height = 50, text_nodata = "Data not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age.")
+  { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age. 
+                Data is available from the data download option.")
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {     
