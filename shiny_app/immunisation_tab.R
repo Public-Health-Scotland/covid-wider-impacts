@@ -48,12 +48,14 @@ observeEvent(input$imm_elig_defs,
                title = "Immunisation eligibility definitions",
                p("Month of eligibility for each immunisation is defined based on complete weeks (Monday to Sunday):"),
                month_elig_imm %>% autofit() %>% htmltools_value(), #showing month eligibility chart
+               br(),
                p("6-in-1 immunisation uptake: Eligible age and uptake rates by 
-                   age stage shown in the tables", tags$sup("1"), "."),
+                   age stage", tags$sup("1"), " shown in the tables."),
                age_defs_imm_6inone %>% autofit() %>% htmltools_value(),
-               p("MMR immunisation uptake: Eligible age and uptake rates by age stage 
-                 shown in the tables. Note that ages are defined in weeks but are 
-                 labelled in years and/or months of age", tags$sup("1"), "."),
+               br(),
+               p("MMR immunisation uptake: Eligible age and uptake rates by age stage", tags$sup("1"), 
+                 " shown in the tables. Note that ages are defined in weeks but are 
+                 labelled in years and/or months of age."),
                age_defs_imm_mmr %>% autofit() %>% htmltools_value(),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))

@@ -738,7 +738,12 @@ age_defs_imm_mmr <- age_defs_imm_mmr %>% flextable() %>%
   merge_at(i =6, j = 1:2, part ="body") %>% 
   merge_at(i =11, j = 1:3, part ="body") %>% 
   align(j = 1) %>% 
-  bold(i =1) %>% bold(i =6) %>% bold(i = 11) 
+  bold(i =1) %>% bold(i =6) %>% bold(i = 11) %>% 
+  footnote(i= 1, j =1, part = "header", ref_symbols = "",
+           value = as_paragraph("1 Uptake rates by a specified age refers to children who have 
+           received the vaccine before turning the relevant age. For example, 
+           uptake of the second dose of MMR vaccine by 3 years 5  months is defined as 
+           children receiving the second dose before reaching age 178 weeks."))
 
 age_defs_imm_mmr # checking
 
@@ -754,13 +759,7 @@ age_defs_imm_6inone <- age_defs_imm_6inone %>% flextable() %>%
   merge_at(i =6, j = 1:2, part ="body") %>% 
   merge_at(i =11, j = 1:2, part ="body") %>% 
   align(j =1) %>% 
-  bold(i =1) %>% bold(i =6) %>% bold(i = 11) %>% 
-  footnote(j =1, part = "header", ref_symbols = "",
-           value = as_paragraph("1 Uptake rates by a specified age refers to children who have 
-           received the vaccine before turning the relevant age. For example, 
-           uptake of the second dose of MMR vaccine by 3 years 5  months is defined as 
-           children receiving the second dose before reaching age 178 weeks."))
-
+  bold(i =1) %>% bold(i =6) %>% bold(i = 11) 
 age_defs_imm_6inone #checking
 
 saveRDS(age_defs_imm_6inone, "shiny_app/data/age_elig_6inone.rds")
