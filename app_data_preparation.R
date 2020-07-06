@@ -729,10 +729,43 @@ saveRDS(six_alldose, "shiny_app/data/six_alldose_data.rds")
 # Definitions, apply both for MRR and 6 in one
 age_defs_imm_mmr <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
                                sheet = "mmr_dash") %>% 
-  mutate("Defined in weeks as:" = case_when(is.na("Defined in weeks as:") ~ ""))
+  mutate(defined = case_when(is.na(defined) ~ "", T ~ paste0(defined)))
 
-age_defs_imm_mmr %>% flextable()
+age_defs_imm_mmr <- age_defs_imm_mmr %>% flextable() %>% 
+  set_header_labels(defined = "Defined in weeks as:",
+                    "...1" = "") %>% 
+  merge_at(i =1, j = 1:2, part ="body") %>% 
+  merge_at(i =6, j = 1:2, part ="body") %>% 
+  merge_at(i =11, j = 1:3, part ="body") %>% 
+  align(j = 1) %>% 
+  bold(i =1) %>% bold(i =6) %>% bold(i = 11) 
 
+age_defs_imm_mmr # checking
+
+saveRDS(age_defs_imm_mmr, "shiny_app/data/age_elig_mmr.rds")
+
+# 6 in one age eligibility
+age_defs_imm_6inone <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
+                               sheet = "6inone_dash") 
+
+age_defs_imm_6inone <- age_defs_imm_6inone %>% flextable() %>% 
+  set_header_labels("...1" = "") %>% 
+  merge_at(i =1, j = 1:2, part ="body") %>% 
+  merge_at(i =6, j = 1:2, part ="body") %>% 
+  merge_at(i =11, j = 1:2, part ="body") %>% 
+  align(j =1) %>% 
+  bold(i =1) %>% bold(i =6) %>% bold(i = 11) %>% 
+  footnote(j =1, part = "header", ref_symbols = "",
+           value = as_paragraph("1 Uptake rates by a specified age refers to children who have 
+           received the vaccine before turning the relevant age. For example, 
+           uptake of the second dose of MMR vaccine by 3 years 5  months is defined as 
+           children receiving the second dose before reaching age 178 weeks."))
+
+age_defs_imm_6inone #checking
+
+saveRDS(age_defs_imm_6inone, "shiny_app/data/age_elig_6inone.rds")
+
+# month eligibility table
 month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
                                 sheet = "for_dash") %>% 
   flextable() %>%
@@ -741,7 +774,7 @@ month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible d
   merge_v(j = 1:2, part = "header") %>% 
   merge_v(j = 4, part = "header") %>% 
   footnote(i = 1, j = 1, 
-           value = as_paragraph("The immunisation indicators included in the dashboard are updated each month. With each update an additional month will be added to the presentation."),
+           value = as_paragraph("The immunisation indicators included in the tool are updated each month. With each update an additional month will be added to the presentation."),
            part = "header") %>% 
   theme_vanilla
 
