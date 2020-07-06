@@ -142,6 +142,8 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
                   fluidRow(br()),
+                  actionButton("imm_elig_defs", "Eligibility defnitions",  icon = icon('question-circle')),
+                  fluidRow(br()),
                   downloadButton('download_imm_data', 'Download data'),
                   fluidRow(br()),
                   actionButton('jump_commentary_child','Go to commentary')
@@ -153,7 +155,7 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
 ), # tabpanel bracket
 ###############################################.
 ## Child Health Tab ----
-###############################################.
+##############################################.
 tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -180,7 +182,6 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
 ###############################################.
 ## Perinatal Tab ----
 ###############################################.
-
 tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal_mortality",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -199,7 +200,6 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-
 ###############################################.
 ## Data ----
 ###############################################.

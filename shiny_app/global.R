@@ -57,10 +57,6 @@ cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
 
 cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
 
-## Immunisation Data
-six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
-sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
-
 ## Child Health Data
 first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
@@ -72,22 +68,25 @@ twentyseven <- readRDS("data/twentyseven_data.rds")
 twentyseventable <- readRDS("data/twentyseven_datatable.rds")
 
 ## Immunisation Data
-six <- readRDS("data/sixinone_data.rds") # 6 in 1 immunisation data at 8 weeks
-sixtable <- readRDS("data/sixinone_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
+immunisation_extract_date <- "22nd June 2020"
+month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
+age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
+age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
 
-six_dose2 <- readRDS("data/sixinone_dose2_data.rds") # 6 in 1 immunisation data at 8 weeks
-sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
+six_alldose <- readRDS("data/six_alldose_data.rds")
+sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table dose 1
+sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6-in-1 summary table dose 2
+sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6-in-1 summary table dose 3
 
-six_dose3 <- readRDS("data/sixinone_dose3_data.rds") # 6 in 1 immunisation data at 8 weeks
-sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6 in 1 immunisation data at 8 weeks datatable summary at 12 weeks
+mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
+mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
+mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation data table summary
+mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary
 
 ## perinatal mortality data
-
 perinatal <- readRDS("data/perinatal_data.rds")
 p_perinatal_table <- readRDS("data/p_perinatal_datatable.rds") # may add data table to tab
 u_perinatal_table <- readRDS("data/u_perinatal_datatable.rds") # may add data table to tab
-
-
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)",
@@ -101,7 +100,9 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
                      "6-in-1 second dose" = "sixin_dose2",
-                     "6-in-1 third dose" = "sixin_dose3")
+                     "6-in-1 third dose" = "sixin_dose3",
+                     "MMR first dose" = "mmr_dose1",
+                     "MMR second dose" = "mmr_dose2")
 
 # List of data items available in step 2 of immunisation tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
@@ -145,10 +146,11 @@ pal_overall <- c('#000000', '#009900')
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
 pal_med <- c('#543005', '#bf812d', '#74add1', '#313695') # Palettes for medicine groupings
 
-pal_immun <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
-               "W/B 02-MAR-2020" = "#fee391", "W/B 09-MAR-2020" = "#fec44f",
-               "W/B 16-MAR-2020" = "#fe9929", "W/B 23-MAR-2020" = "#ec7014",
-               "W/B 30-MAR-2020" = "#cc4c02", "W/B 06-APR-2020" = "#8c2d04")
+pal_immun <- c("2019" = '#000000',
+               "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", "MAR 2020" = "#7477d1",
+               "W/B 30-MAR-2020" = "#fee391", "W/B 06-APR-2020" = "#fec44f",
+               "W/B 13-APR-2020" = "#ec7014", "W/B 20-APR-2020" = "#cc4c02",
+               "W/B 27-APR-2020" = "#8c2d04", "W/B 04-MAY-2020" = "#662506")
 
 pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
                "MAR 2020" = "#0570b0", "W/B 06-APR-2020" = "#fec44f",
@@ -156,6 +158,7 @@ pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1
                "W/B 27-APR-2020" = "#cc4c02", "W/B 04-MAY-2020" = "#8c2d04"#,
                #"W/B 13-APR-2020" = "#662506"
                )
+
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
