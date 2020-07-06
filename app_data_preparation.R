@@ -1016,6 +1016,7 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
 
 # 13 to 15 month visit - summary table data
+# Data for data download should include complete months and all weeks
 twentyseven_datatable_download <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboardtab_20200622.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
@@ -1024,6 +1025,7 @@ twentyseven_datatable_download <- read_csv(paste0(data_folder,"child_health/twen
 
 saveRDS(twentyseven_datatable_download, paste0("shiny_app/data/","twentyseven_datatable_download.rds"))
 
+# Data for flextable should include complete months and weeks for incomplete months only
 twentyseven_datatable <- twentyseven_datatable_download %>% 
   filter(exclude == 0)
 
