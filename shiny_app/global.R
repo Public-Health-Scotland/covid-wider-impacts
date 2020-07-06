@@ -118,7 +118,9 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "6-in-1 second dose" = "sixin_8wks_second",
                         "6-in-1 third dose" = "sixin_8wks_third",
                         "Health Visitor first visit" = "first_visit",
-                        "6-8 week child health review" = "sixtoeight_visit"
+                        "6-8 week child health review" = "sixtoeight_visit",
+                        "13-15 month child health review" = "thirteen_visit",
+                        "27-30 month child health review" = "twentyseven_visit"
                         )
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
