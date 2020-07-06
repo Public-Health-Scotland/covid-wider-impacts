@@ -46,17 +46,24 @@ observeEvent(input$btn_immune_modal,
 observeEvent(input$imm_elig_defs, 
              showModal(modalDialog(
                title = "Immunisation eligibility definitions",
-               p("Month of eligibility for each immunisation is defined based on complete weeks (Monday to Sunday):"),
+               p("Month of eligibility for each immunisation is defined based on complete weeks (Monday to Sunday)",
+                 tags$sup("1"), ":"),
                month_elig_imm %>% autofit() %>% htmltools_value(), #showing month eligibility chart
                br(),
                p("6-in-1 immunisation uptake: Eligible age and uptake rates by 
-                   age stage", tags$sup("1"), " shown in the tables."),
+                   age stage", tags$sup("2"), " shown in the tables."),
                age_defs_imm_6inone %>% autofit() %>% htmltools_value(),
                br(),
-               p("MMR immunisation uptake: Eligible age and uptake rates by age stage", tags$sup("1"), 
+               p("MMR immunisation uptake: Eligible age and uptake rates by age stage", tags$sup("2"), 
                  " shown in the tables. Note that ages are defined in weeks but are 
                  labelled in years and/or months of age."),
                age_defs_imm_mmr %>% autofit() %>% htmltools_value(),
+               p(tags$sup("1 "), "The immunisation indicators included in the tool are updated each month.
+                  With each update an additional month will be added to the presentation."),
+               p(tags$sup("2 "), "Uptake rates by a specified age refers to children who have 
+                received the vaccine before turning the relevant age. For example, 
+                 uptake of the second dose of MMR vaccine by 3 years 5  months is defined as 
+                 children receiving the second dose before reaching 178 weeks of age."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 

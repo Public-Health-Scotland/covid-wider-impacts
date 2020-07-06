@@ -12,6 +12,7 @@ library(stringr) #manipulating string
 library(phsmethods) #matching codes with names
 library(tidyr) # for wide to long formatting
 library(readxl) # reading excel
+library(flextable)
 
 data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
 ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-07-03-Extracts/" #short cut to a&e folder areas
@@ -763,12 +764,7 @@ age_defs_imm_mmr <- age_defs_imm_mmr %>% flextable() %>%
   merge_at(i =6, j = 1:2, part ="body") %>% 
   merge_at(i =11, j = 1:3, part ="body") %>% 
   align(j = 1) %>% 
-  bold(i =1) %>% bold(i =6) %>% bold(i = 11) %>% 
-  footnote(i= 1, j =1, part = "header", ref_symbols = "",
-           value = as_paragraph("1 Uptake rates by a specified age refers to children who have 
-           received the vaccine before turning the relevant age. For example, 
-           uptake of the second dose of MMR vaccine by 3 years 5  months is defined as 
-           children receiving the second dose before reaching age 178 weeks."))
+  bold(i =1) %>% bold(i =6) %>% bold(i = 11)
 
 age_defs_imm_mmr # checking
 
@@ -792,14 +788,12 @@ saveRDS(age_defs_imm_6inone, "shiny_app/data/age_elig_6inone.rds")
 # month eligibility table
 month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
                                 sheet = "for_dash") %>% 
+  mutate("Month eligible" = format(as.Date(`Month eligible`), "%b-%Y")) %>% 
   flextable() %>%
   add_header_row(values = c("Month eligible", "Defined as children reaching relevant age in period:", "", "Number of weeks")) %>% 
   merge_at(i = 1, j = 2:3, part = "header") %>% 
   merge_v(j = 1:2, part = "header") %>% 
-  merge_v(j = 4, part = "header") %>% 
-  footnote(i = 1, j = 1, 
-           value = as_paragraph("The immunisation indicators included in the tool are updated each month. With each update an additional month will be added to the presentation."),
-           part = "header") %>% 
+  merge_v(j = 4, part = "header") %>%
   theme_vanilla
 
 month_defs_imm #checking everything looks ok
