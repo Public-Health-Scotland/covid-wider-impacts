@@ -42,6 +42,15 @@ observeEvent(input$btn_immune_modal,
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
+# Pop-up modal explaining source of data
+observeEvent(input$imm_elig_defs, 
+             showModal(modalDialog(
+               title = "Immunisation eligibility definitions",
+               p("Month eligible has been defined based on complete weeks (Monday to Sunday):"),
+               month_elig_imm %>% autofit() %>% htmltools_value(), #showing month eligibility chart
+               size = "m",
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
 
 ###############################################.
 ## Reactive controls  ----
@@ -96,7 +105,7 @@ output$immunisation_explorer <- renderUI({
                                    input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun),
                                    input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$geoname_immun),
                                    input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun)))
-  immune_subtite <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
+  immune_subtitle <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
   
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
@@ -115,39 +124,35 @@ Data is shown for Scotland and for NHS Board areas. Due to small numbers of chil
 Uptake rates based on small numbers are prone to fluctuation. Therefore, in boards with small numbers of children eligible for immunisation each week, particularly NHS Borders and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates.
 ")
   
+  explorer_imm <-     tagList(
+    fluidRow(column(12, renderUI(intro_6in1),
+                    h4(paste0(immune_title)),
+                    p(immune_subtitle))))
+  
   # Specify items to display in immunisation ui based on step 2 selection 
   if (input$measure_select_immun == "sixin_dose1") {
-    tagList(
-      fluidRow(column(12, renderUI(intro_6in1),
-                      h4(paste0(immune_title)),
-                      p(immune_subtite))),
+    tagList(explorer_imm, 
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("immun_6in1_scurve_dose1"))),
                column(6, uiOutput("immun_6in1_table_dose1"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }  else if (input$measure_select_immun == "sixin_dose2"){
-    tagList(
-      fluidRow(column(12, renderUI(intro_6in1),
-                      h4(paste0(immune_title)))),
+    tagList(explorer_imm, 
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("immun_6in1_scurve_dose2"))),
                column(6, uiOutput("immun_6in1_table_dose2"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }  else if (input$measure_select_immun == "sixin_dose3"){
-    tagList(
-      fluidRow(column(12, renderUI(intro_6in1),
-                      h4(paste0(immune_title)))),
+    tagList(explorer_imm, 
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("immun_6in1_scurve_dose3"))),
                column(6, uiOutput("immun_6in1_table_dose3"))),
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }  else if (input$measure_select_immun == "mmr_dose1"){
-    tagList(
-      fluidRow(column(12, renderUI(intro_6in1),
-                      h4(paste0(immune_title)))),
+    tagList(explorer_imm, 
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("immun_mmr_scurve_dose1")),
                       p("12 months defined as 53 weeks")),
@@ -155,9 +160,7 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
       fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }else if (input$measure_select_immun == "mmr_dose2"){
-    tagList(
-      fluidRow(column(12, renderUI(intro_6in1),
-                      h4(paste0(immune_title)))),
+    tagList(explorer_imm,
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("immun_mmr_scurve_dose2")),
                       p("3 year 4 months defined as 174 weeks")),

@@ -723,7 +723,27 @@ six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher
 
 final_data <<- six_alldose
 
-saveRDS(six_alldose, paste0("shiny_app/data/","six_alldose_data.rds"))
+saveRDS(six_alldose, "shiny_app/data/six_alldose_data.rds")
+
+###############################################.
+# Definitions, apply both for MRR and 6 in one
+age_defs <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"))
+
+month_defs <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
+                                sheet = "for_dash") %>% 
+  flextable() %>%
+  add_header_row(values = c("Month eligible", "Defined as children reaching relevant age in period:", "", "Number of weeks")) %>% 
+  merge_at(i = 1, j = 2:3, part = "header") %>% 
+  merge_v(j = 1:2, part = "header") %>% 
+  merge_v(j = 4, part = "header") %>% 
+  footnote(i = 1, j = 1, 
+           value = as_paragraph("The immunisation indicators included in the dashboard are updated each month. With each update an additional month will be added to the presentation."),
+           part = "header") %>% 
+  theme_vanilla
+
+month_defs #checking everything looks ok
+
+saveRDS(month_defs, "shiny_app/data/month_eligibility_immun.rds")
 
 ###############################################.
 ## Prepare 6-in-1 summary table data----
