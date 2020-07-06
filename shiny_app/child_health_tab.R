@@ -99,7 +99,7 @@ output$child_health_explorer <- renderUI({
                column(6, uiOutput("child_thirteen_table"))),
       fluidRow(column(12, renderUI(commentary_first)))
     )
-  } else {
+  } else if (input$measure_select_child == "27_30mnth") {
     tagList(
       fluidRow(column(10, h4(paste0(child_title)))),
       fluidRow(column(6,br(), br(),
@@ -107,6 +107,8 @@ output$child_health_explorer <- renderUI({
                column(6, uiOutput("child_twentyseven_table"))),
       fluidRow(column(12, renderUI(commentary_first)))
     )
+  } else {
+    p("4-5 Year Review coming 15th July 2020")
   }
   
 }) #close child_health_explorer function
