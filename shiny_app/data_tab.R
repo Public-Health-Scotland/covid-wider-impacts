@@ -20,7 +20,9 @@ data_table <- reactive({
          "sixin_8wks_second" = sixtable_dose2,
          "sixin_8wks_third" = sixtable_dose3,
          "first_visit" = firsttable,
-         "sixtoeight_visit" = sixtoeighttable
+         "sixtoeight_visit" = sixtoeighttable,
+         "thirteen_visit" = thirteentable,
+         "twentyseven_visit" = twentyseventable
         ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -48,20 +50,40 @@ data_table <- reactive({
     table_data <- table_data %>%
       select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
       rename(Cohort = time_period_eligible, "Total number of children" = denominator,
-             "Coverage of review at 4 weeks of age (N)" = coverage_4weeks_num,
-             "Coverage of review at 4 weeks of age (%)" = coverage_4weeks_percent,
-             "Coverage of review at 12 weeks of age (N)" = coverage_12weeks_num,
-             "Coverage of review at 12 weeks of age (%)" = coverage_12weeks_percent,
+             "Coverage of review at 6 weeks of age (N)" = coverage_6weeks_num,
+             "Coverage of review at 6 weeks of age (%)" = coverage_6weeks_percent,
+             "Coverage of review at 18 weeks of age (N)" = coverage_18weeks_num,
+             "Coverage of review at 18 weeks of age (%)" = coverage_18weeks_percent,
              "Total coverage of review (N)" = coverage_tot_num,
              "Total coverage of review (%)" = coverage_tot_percent)
   } else if (input$data_select %in% "sixtoeight_visit") { 
     table_data <- table_data %>%
       select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
       rename(Cohort = time_period_eligible, "Total number of children" = denominator,
-             "Coverage of review at 12 weeks of age (N)" = coverage_12weeks_num,
-             "Coverage of review at 12 weeks of age (%)" = coverage_12weeks_percent,
-             "Coverage of review at 24 weeks of age (N)" = coverage_24weeks_num,
-             "Coverage of review at 24 weeks of age (%)" = coverage_24weeks_percent,
+             "Coverage of review at 10 weeks of age (N)" = coverage_10weeks_num,
+             "Coverage of review at 10 weeks of age (%)" = coverage_10weeks_percent,
+             "Coverage of review at 22 weeks of age (N)" = coverage_22weeks_num,
+             "Coverage of review at 22 weeks of age (%)" = coverage_22weeks_percent,
+             "Total coverage of review (N)" = coverage_tot_num,
+             "Total coverage of review (%)" = coverage_tot_percent)
+  } else if (input$data_select %in% "thirteen_visit") { 
+    table_data <- table_data %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator,
+             "Coverage of review at 14 months of age (N)" = coverage_14months_num,
+             "Coverage of review at 14 months of age (%)" = coverage_14months_percent,
+             "Coverage of review at 17 months of age (N)" = coverage_17months_num,
+             "Coverage of review at 17 months of age (%)" = coverage_17months_percent,
+             "Total coverage of review (N)" = coverage_tot_num,
+             "Total coverage of review (%)" = coverage_tot_percent)
+  } else if (input$data_select %in% "twentyseven_visit") { 
+    table_data <- table_data %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator,
+             "Coverage of review at 28 months of age (N)" = coverage_28months_num,
+             "Coverage of review at 28 months of age (%)" = coverage_28months_percent,
+             "Coverage of review at 31 months of age (N)" = coverage_31months_num,
+             "Coverage of review at 31 months of age (%)" = coverage_31months_percent,
              "Total coverage of review (N)" = coverage_tot_num,
              "Total coverage of review (%)" = coverage_tot_percent)
   } else if (input$data_select %in% "sixin_8wks") {
