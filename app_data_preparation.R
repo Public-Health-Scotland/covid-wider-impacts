@@ -14,7 +14,7 @@ library(tidyr) # for wide to long formatting
 library(readxl) # reading excel
 
 data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
-ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-06-25-Extracts/" #short cut to a&e folder areas
+ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-07-03-Extracts/" #short cut to a&e folder areas
 
 ###############################################.
 ## Functions ----
@@ -391,7 +391,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2020-06-21")
+prepare_final_data(ae_data, "ae", last_week = "2020-06-28")
 
 ###############################################.
 ## Preparing NHS24 data ----
@@ -680,12 +680,12 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-06-21")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-06-28")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing data/covid emessage AMS only 20200625.xlsx")) %>% 
+cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing data/covid emessage AMS only 20200702.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -718,7 +718,7 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-06-21")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-06-28")
 
 ###############################################.
 ## Prepare 6-in-1 dose 1 ----
