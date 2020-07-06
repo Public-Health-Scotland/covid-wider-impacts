@@ -963,7 +963,7 @@ thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=371 & interv<=523, substr(time_period_eligible,8,10) != "MAR")
+  filter(interv>=371 & interv<=518, substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(thirteen, paste0("shiny_app/data/","thirteen_data.rds"))
 
@@ -1011,7 +1011,7 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_117_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=791 & interv<=943, substr(time_period_eligible,8,10) != "MAR")
+  filter(interv>=791 & interv<=945, substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
 
