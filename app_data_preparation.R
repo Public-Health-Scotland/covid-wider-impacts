@@ -838,10 +838,10 @@ six_dose3_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in on
 saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
 
 ###############################################.
-## Prepare Child Health data ----
+## Prepare Child Health data (first visit) ----
 ###############################################.
 ## First visit - scurve data
-first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20200601.csv"), 
+first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20200622.csv"), 
                 col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -866,29 +866,37 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv<168)
+  filter(substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
 # First visit - summary table data
-first_datatable <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboardtab_20200601.csv")) %>%
+first_datatable_download <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboardtab_20200622.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
-  mutate(time_period_eligible=as.factor(time_period_eligible))
+  mutate(time_period_eligible=as.factor(time_period_eligible)) 
+
+saveRDS(first_datatable_download, paste0("shiny_app/data/","first_visit_datatable_download.rds"))
+
+first_datatable <- first_datatable_download %>% 
+  filter(exclude == 0)
 
 saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 
+###############################################.
+## Prepare Child Health data (6-8 weeks) ----
+###############################################.
 
 ## 6 to 8 weeks visit - scurve data
-sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200601.csv"), 
-                  col_types =list(week_8_start=col_date(format="%m/%d/%Y"),
+sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200622.csv"), 
+                  col_types =list(week_6_start=col_date(format="%m/%d/%Y"),
                                   time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
 sixtoeight$time_period_eligible <- factor(sixtoeight$time_period_eligible, 
-                                     levels=unique(sixtoeight$time_period_eligible[order(sixtoeight$week_8_start, decreasing = T)]), 
+                                     levels=unique(sixtoeight$time_period_eligible[order(sixtoeight$week_6_start, decreasing = T)]), 
                                      ordered=TRUE)
 
 # Bringing HB names immunisation data contain HB cypher not area name
@@ -902,22 +910,126 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
          weeks=interv/7,
-         week_no= isoweek(week_8_start),
+         week_no= isoweek(week_6_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, review, week_8_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv<168)
+  select (extract_date, review, week_6_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(interv<168, substr(time_period_eligible,8,10) != "MAR")
 
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight_data.rds"))
 
 # 6-8 weeks visit - summary table data
-sixtoeight_datatable <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboardtab_20200601.csv")) %>%
+sixtoeight_datatable_download <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboardtab_20200622.csv")) %>%
   janitor::clean_names() %>%
   rename(area_name=geography_name) %>%
   select (-geography) %>%
   mutate(time_period_eligible=as.factor(time_period_eligible))
 
+saveRDS(sixtoeight_datatable_download, paste0("shiny_app/data/","six_to_eight_datatable_download.rds"))
+
+sixtoeight_datatable <- sixtoeight_datatable_download %>% 
+  filter(exclude == 0)
+
 saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.rds"))
+
+
+###############################################.
+## Prepare Child Health data (13-15 month) ----
+###############################################.
+
+## 13 to 15 month visit - scurve data
+thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20200622.csv"), 
+                       col_types =list(week_57_start=col_date(format="%m/%d/%Y"),
+                                       time_period_eligible=col_character())) %>%
+  janitor::clean_names() 
+
+# Creating levels for factor in chronological order
+thirteen$time_period_eligible <- factor(thirteen$time_period_eligible, 
+                                          levels=unique(thirteen$time_period_eligible[order(thirteen$week_57_start, decreasing = T)]), 
+                                          ordered=TRUE)
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(week_57_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(interv>=371 & interv<=518, substr(time_period_eligible,8,10) != "MAR")
+
+saveRDS(thirteen, paste0("shiny_app/data/","thirteen_data.rds"))
+
+# 13 to 15 month visit - summary table data
+thirteen_datatable_download <- read_csv(paste0(data_folder,"child_health/thirteen_dashboardtab_20200622.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  mutate(time_period_eligible=as.factor(time_period_eligible))
+
+saveRDS(thirteen_datatable_download, paste0("shiny_app/data/","thirteen_datatable_download.rds"))
+
+thirteen_datatable <- thirteen_datatable_download %>% 
+  filter(exclude == 0)
+
+saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
+
+###############################################.
+## Prepare Child Health data (27-30 month) ----
+###############################################.
+
+## 27 to 30 month visit - scurve data
+twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20200622.csv"), 
+                     col_types =list(week_117_start=col_date(format="%m/%d/%Y"),
+                                     time_period_eligible=col_character())) %>%
+  janitor::clean_names() 
+
+# Creating levels for factor in chronological order
+twentyseven$time_period_eligible <- factor(twentyseven$time_period_eligible, 
+                                        levels=unique(twentyseven$time_period_eligible[order(twentyseven$week_117_start, decreasing = T)]), 
+                                        ordered=TRUE)
+
+# Bringing HB names immunisation data contain HB cypher not area name
+hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+  janitor::clean_names() %>% select(description, hb_cypher) %>%
+  rename(area_name=description) %>%
+  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
+         area_type="Health board")
+
+twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(week_117_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  select (extract_date, review, week_117_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(interv>=791 & interv<=945, substr(time_period_eligible,8,10) != "MAR")
+
+saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
+
+# 13 to 15 month visit - summary table data
+# Data for data download should include complete months and all weeks
+twentyseven_datatable_download <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboardtab_20200622.csv")) %>%
+  janitor::clean_names() %>%
+  rename(area_name=geography_name) %>%
+  select (-geography) %>%
+  mutate(time_period_eligible=as.factor(time_period_eligible)) 
+
+saveRDS(twentyseven_datatable_download, paste0("shiny_app/data/","twentyseven_datatable_download.rds"))
+
+# Data for flextable should include complete months and weeks for incomplete months only
+twentyseven_datatable <- twentyseven_datatable_download %>% 
+  filter(exclude == 0)
+
+saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
 
 ###############################################.
 ## Prepare perinatal data ----

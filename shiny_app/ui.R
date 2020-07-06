@@ -70,9 +70,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
                                      bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
                                      bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
-                                     bsCollapsePanel("Child health", uiOutput("child_comments")),
+                                     bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary"))
-                                     
+
                           )))
 ), #tab panel
              
@@ -104,9 +104,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
       )# mainPanel bracket
     ), # tabpanel bracket
 
-# ###############################################.
-# ## Cardiovascular ----
-# ###############################################.
+###############################################.
+## Cardiovascular ----
+###############################################.
 tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -125,9 +125,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                    uiOutput("cardio_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-# ###############################################.
-# ## Immunisation Tab ----
-# ###############################################.
+###############################################.
+## Immunisation Tab ----
+###############################################.
 tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -151,9 +151,9 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
                    uiOutput("immunisation_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-# # ###############################################.
-# ## Child Health Tab ----
-# ###############################################.
+###############################################.
+## Child Health Tab ----
+###############################################.
 tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -176,7 +176,7 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
          mainPanel(width = 12,
                    uiOutput("child_health_explorer")
          )# mainPanel bracket
-    ), # tabpanel bracket
+   ), # tabpanel bracket
 ###############################################.
 ## Perinatal Tab ----
 ###############################################.
@@ -188,7 +188,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                                            label= "Step 1 - Select the data you want to explore.",
                                            choices = data_list_perinatal, status = "primary",
                                            direction = "vertical", justified = T))),
-           column(4,actionButton("btn_perinatal_modal", "Data source: NRS vital event registrations", 
+           column(4,actionButton("btn_perinatal_modal", "Data source: NRS vital event registrations",
                                  icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton("download_perinatal_data", "Download data"),
@@ -215,7 +215,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
       column(6, downloadButton('download_table_csv', 'Download data')),
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
-     ) # tabpanel bracket
+      ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
 ##END
