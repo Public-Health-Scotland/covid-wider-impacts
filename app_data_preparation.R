@@ -727,9 +727,13 @@ saveRDS(six_alldose, "shiny_app/data/six_alldose_data.rds")
 
 ###############################################.
 # Definitions, apply both for MRR and 6 in one
-age_defs <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"))
+age_defs_imm_mmr <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
+                               sheet = "mmr_dash") %>% 
+  mutate("Defined in weeks as:" = case_when(is.na("Defined in weeks as:") ~ ""))
 
-month_defs <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
+age_defs_imm_mmr %>% flextable()
+
+month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
                                 sheet = "for_dash") %>% 
   flextable() %>%
   add_header_row(values = c("Month eligible", "Defined as children reaching relevant age in period:", "", "Number of weeks")) %>% 
@@ -741,9 +745,9 @@ month_defs <- read_excel(paste0(data_folder, "immunisations/month eligible defin
            part = "header") %>% 
   theme_vanilla
 
-month_defs #checking everything looks ok
+month_defs_imm #checking everything looks ok
 
-saveRDS(month_defs, "shiny_app/data/month_eligibility_immun.rds")
+saveRDS(month_defs_imm, "shiny_app/data/month_eligibility_immun.rds")
 
 ###############################################.
 ## Prepare 6-in-1 summary table data----

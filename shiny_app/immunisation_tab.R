@@ -46,8 +46,11 @@ observeEvent(input$btn_immune_modal,
 observeEvent(input$imm_elig_defs, 
              showModal(modalDialog(
                title = "Immunisation eligibility definitions",
-               p("Month eligible has been defined based on complete weeks (Monday to Sunday):"),
+               p("Month of eligibility for each immunisation is defined based on complete weeks (Monday to Sunday):"),
                month_elig_imm %>% autofit() %>% htmltools_value(), #showing month eligibility chart
+               p("For MMR vaccine the eligible age for defining each cohort, and the uptake figures by 
+                 each age stage reported in the table, are labelled in years and/or months of age, 
+                 but are defined in weeks:"),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
