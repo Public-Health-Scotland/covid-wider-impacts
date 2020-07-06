@@ -81,22 +81,20 @@ observeEvent(input$btn_dataset_modal,
              } else if (input$measure_select == "aye") { #A&E ATTENDANCES MODAL
                showModal(modalDialog(
                  title = "What is the data source?",
-                 p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments 
-                   and Nurse/GP led minor injury units) in the recent past, along with historical activity for 
+                 p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments) 
+                    in the recent past, along with historical activity for 
                    comparison purposes. The recent trend data is shown by age group, sex
-                   and broad deprivation category (SIMD)."),
+                   and broad deprivation category (SIMD). This data only include Emergency Department 
+                   attendances and do not include minor injury units and other small hospitals and 
+                   health centres in rural areas that carry out emergency department related activity, 
+                   for more information on what sites are included please see this ", 
+                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/Hospital-Site-List/",
+                          "hospital list.", class="externallink")),
                  p("Additional information relating to A&E activity is available from the ", 
                    tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/", 
                           "NHS Performs - weekly update of emergency department activity and waiting time statistics.", 
                           class="externallink")),
                  p("Numbers of A&E attendances will include both COVID-19 and non-COVID-19 related activity." ),                   
-                 p("There are two types of data submitted to the A&E datamart: episode and aggregate level data. 
-                   All hospitals with Emergency Departments submit episode level data containing a detailed record 
-                   for each patient attendance. Some smaller sites (6% of the total annual attendances) – nurse/GP 
-                   led minor injury units – can only provide aggregated monthly summary attendance and compliance 
-                   figures, as they do not have the IT systems and support to enable collection and submission of 
-                   detailed patient level information. The data for sites that submit aggregate level data is not 
-                   included in the figures presented in the tool. "),
                  p("Attendances to A&E departments data sourced from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
                           "Accident and Emergency Datamart (A&E2).",class="externallink"), 
@@ -215,8 +213,11 @@ observeEvent(input$btn_dataset_modal,
                  p("Figures include non-residents.  Deaths are allocated to area based on the usual residence of the deceased. 
                    If the deceased was not a Scottish resident, the death is allocated to the area where the death occurred."), 
                  p("The weekly deaths dataset is managed by ", 
-                   tags$a(href=" https://www.nrscotland.gov.uk/", 
+                   tags$a(href= "https://www.nrscotland.gov.uk/", 
                           "National Records of Scotland (NRS).", class="externallink")), 
+                 p("For more information on deaths and health inequalities during the pandemic, please read ", 
+                   tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-weekly-excess-deaths/",
+                          "this report.", class="externallink")),
                  size = "m", 
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
@@ -342,8 +343,8 @@ output$data_explorer <- renderUI({
       fluidRow(column(6, h4(paste0(variation_title, "specialty group - (admission type: ", tolower(input$adm_type), ")"))), # Adding adm_type here to make clear what is selected
                column(6, h4(paste0(total_title, "specialty group - (admission type: ", tolower(input$adm_type), ")")))), # Adding adm_type here to make clear what is selected
       fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
-                                     choices = spec_list, multiple = TRUE,
-                                     selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics"))),
+                                     choices = if (input$geotype == "Scotland") {spec_list} else {spec_list[c(1:8,11)]}, multiple = TRUE,
+                                     selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics (medical & surgical)"))),
                column(6, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                column(6, withSpinner(plotlyOutput("adm_spec_tot"))))

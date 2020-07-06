@@ -6,12 +6,13 @@ tagList( #needed for shinyjs
               style = "position: relative; top: -5px;"), 
   windowTitle = "COVID-19 wider impacts", #title for browser tab
   header = tags$head(includeCSS("www/styles.css"), # CSS styles
-                     tags$link(rel="shortcut icon", href="favicon_phs.ico")), #Icon for browser tab
+                     tags$link(rel="shortcut icon", href="favicon_phs.ico"), #Icon for browser tab
+                     #Including Google analytics
+                     includeScript("google-analytics.js")), 
 ###############################################.
 ## Introduction ----
 ###############################################.
 tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
-         wellPanel(
            column(4,
                   h3("COVID-19 wider impacts on the health care system")),
            column(8,
@@ -46,16 +47,14 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                     tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/",
                            "COVID-19 weekly report for Scotland.", class="externallink")),
                   p("If you have any questions relating to the data presented please contact us at: ",
-                    tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink")), ".")
-                      )
-             ), #wellPanel bracket
-             mainPanel(width = 12
-                      #reserve space for summary text
-             )# mainPanel bracket
+                    tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink")), "."),
+                  p("You can access the code used to produce this tool in this ",
+                    tags$a(href="https://github.com/Health-SocialCare-Scotland/covid-wider-impact", "GitHub repository", class="externallink")), ".")
     ), #tabPanel bracket
 ###############################################.
 ## Commentary ----
 ###############################################.
+
 tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
          wellPanel(column(12,
                           p("Select topic areas to find commentary relating to data presented in this tool."))),
@@ -64,15 +63,19 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("summary_button", "Summary trends", width = "150px"),br(),
                           actionLink("cardio_button", "Cardiovascular", width="150px"),br(),
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
-                          actionLink("ch_review_button", "Child health", width="150px")),
+                          actionLink("ch_review_button", "Child health", width="150px"), br(),
+                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px")),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
                                      bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
                                      bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
                                      bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
-                                     bsCollapsePanel("Child health", uiOutput("child_comments"))
+                                     bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
+                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary"))
+
                           )))
 ), #tab panel
+             
 ###############################################.
 ## Summary trends ----
 ###############################################.
@@ -175,24 +178,23 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
          mainPanel(width = 12,
                    uiOutput("child_health_explorer")
          )# mainPanel bracket
-    ), # tabpanel bracket
+   ), # tabpanel bracket
 ###############################################.
 ## Perinatal Tab ----
 ###############################################.
-tabPanel(title = "Perinatal Mortality", icon = icon("female"), value = "child",
+tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal_mortality",
          wellPanel(
-           # column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-           #               p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-           #               selectInput("geotype_perinatal", label = NULL, choices= c("Scotland"),
-           #                           selected = "Scotland")),
-           #        uiOutput("geoname_ui_perinatal")),
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_perinatal",
-                                           label= "Select the data you want to explore.",
+                                           label= "Step 1 - Select the data you want to explore.",
                                            choices = data_list_perinatal, status = "primary",
                                            direction = "vertical", justified = T))),
-           column(4,actionButton("btn_perinatal_modal", "Data source: PHS and NRS", icon = icon('question-circle')))
-           #actionButton("browser", "Browser")
+           column(4,actionButton("btn_perinatal_modal", "Data source: NRS vital event registrations",
+                                 icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_perinatal_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_perinatal','Go to commentary'))
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("perinatal_explorer")
@@ -213,7 +215,7 @@ tabPanel(title = "Perinatal Mortality", icon = icon("female"), value = "child",
       column(6, downloadButton('download_table_csv', 'Download data')),
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
-     ) # tabpanel bracket
+      ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
 ##END

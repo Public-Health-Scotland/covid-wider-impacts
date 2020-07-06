@@ -62,6 +62,10 @@ first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 sixtoeight <- readRDS("data/six_to_eight_data.rds")
 sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
+thirteen <- readRDS("data/thirteen_data.rds")
+thirteentable <- readRDS("data/thirteen_datatable.rds")
+twentyseven <- readRDS("data/twentyseven_data.rds")
+twentyseventable <- readRDS("data/twentyseven_datatable.rds")
 
 ## Immunisation Data
 immunisation_extract_date <- "22nd June 2020"
@@ -80,13 +84,13 @@ mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation dat
 mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary
 
 ## perinatal mortality data
-# p_perinatal <- readRDS("data/p_perinatal_data.rds")
-# p_perinatal_table <- readRDS("data/p_perinatal_datatable.rds") # may add data table to tab
-# u_perinatal <- readRDS("data/u_perinatal_data.rds")
-# u_perinatal_table <- readRDS("data/u_perinatal_datatable.rds") # may add data table to tab
+perinatal <- readRDS("data/perinatal_data.rds")
+p_perinatal_table <- readRDS("data/p_perinatal_datatable.rds") # may add data table to tab
+u_perinatal_table <- readRDS("data/u_perinatal_datatable.rds") # may add data table to tab
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
-                    "Medical (incl. Cardiology & Cancer)")) # specialty list
+                    "Medical (incl. Cardiology & Cancer)",
+                    "Paediatrics (medical & surgical)")) # specialty list
 
 data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
                "NHS 24 completed contacts" = "nhs24", 
@@ -103,25 +107,28 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
 # List of data items available in step 2 of immunisation tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
             "6-8 Week Review" = "six_eightwks",
-            "13-15 Month Review *COMING 8th July 2020*" = "13_15mnth",
-            "27-30 Month Review *COMING 8th July 2020*" = "27-30mnth")
+            "13-15 Month Review" = "13_15mnth",
+            "27-30 Month Review" = "27_30mnth",
+            "4-5 Year Review *COMING 15th July 2020*" = "4_5yr")
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
                         "Cardiac procedures" = "cath_lab",
-                        "6-in-1 first dose"  = "sixin_8wks", 
-                        "Health Visitor first visit" = "first_visit"
+                        "6-in-1 first dose"  = "sixin_8wks",
+                        "6-in-1 second dose" = "sixin_8wks_second",
+                        "6-in-1 third dose" = "sixin_8wks_third",
+                        "Health Visitor first visit" = "first_visit",
+                        "6-8 week child health review" = "sixtoeight_visit"
                         )
-
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
                  "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
-data_list_perinatal <- c("Still births"="stillbirths",
-                         "Post neonatal deaths"="pnnd",
+data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Neonatal deaths"="nnd",
                          "Extended perinatal deaths"="extperi",
+                         "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
 
 ###############################################.
@@ -146,10 +153,11 @@ pal_immun <- c("2019" = '#000000',
                "W/B 27-APR-2020" = "#8c2d04", "W/B 04-MAY-2020" = "#662506")
 
 pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
-               "W/B 02-MAR-2020" = "#fee391", "W/B 09-MAR-2020" = "#fec44f",
-               "W/B 16-MAR-2020" = "#fe9929", "W/B 23-MAR-2020" = "#ec7014",
-               "W/B 30-MAR-2020" = "#cc4c02", "W/B 06-APR-2020" = "#8c2d04",
-               "W/B 13-APR-2020" = "#662506")
+               "MAR 2020" = "#0570b0", "W/B 06-APR-2020" = "#fec44f",
+               "W/B 13-APR-2020" = "#fe9929", "W/B 20-APR-2020" = "#ec7014",
+               "W/B 27-APR-2020" = "#cc4c02", "W/B 04-MAY-2020" = "#8c2d04"#,
+               #"W/B 13-APR-2020" = "#662506"
+               )
 
 
 # Style of x and y axis
