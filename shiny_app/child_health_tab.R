@@ -66,7 +66,7 @@ output$child_health_explorer <- renderUI({
                             input$measure_select_child == "13_15mnth" ~ paste0("Coverage of child health review offered at 13-15 months of age: ", input$geoname_child),
                             input$measure_select_child == "27_30mnth" ~ paste0("Coverage of child health review offered at 27-30 months of age: ", input$geoname_child)))
   child_subtitle <-  paste0("Figures based on data extracted from SIRS and CHSP-PS on ",child_extract_date)
-  
+
   #commentary to appear in child health tab
   commentary_first <-p("All preschool children should be offered the following health reviews: health visitor first visit, 6-8 week review, 13-15 month review, 27-30 month review, and 4-5 year review. Although the 4-5 year review only became mandated by government policy for children turning 4 from April 2020 onwards.", br(),
 "The charts show the progression of coverage of the relevant review as children age. The data tables provide the coverage rates at three specific time-points. Data is shown for children who have become eligible for review during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for review before the pandemic (in 2019 and in January and February 2020) for comparison.", br(), 
@@ -96,13 +96,16 @@ output$child_health_explorer <- renderUI({
     )
   } else if (input$measure_select_child == "13_15mnth") {
     tagList(explorer_child,
+      fluidRow(column(12, em("13 months defined as 57 weeks"))),
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("child_thirteen_scurve"))),
                column(6, uiOutput("child_thirteen_table"))),
+
       fluidRow(column(12, renderUI(commentary_first)))
     )
   } else if (input$measure_select_child == "27_30mnth") {
     tagList(explorer_child,
+      fluidRow(column(12, em("27 months defined as 117 weeks"))),
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("child_twentyseven_scurve"))),
                column(6, uiOutput("child_twentyseven_table"))),
