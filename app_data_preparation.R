@@ -732,7 +732,8 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(substr(time_period_eligible,8,10) != "MAR")
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
 
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
@@ -769,7 +770,11 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_6_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv<168, substr(time_period_eligible,8,10) != "MAR")
+  filter(interv<168) %>%
+  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
 
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight_data.rds"))
 
@@ -807,7 +812,11 @@ thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=371 & interv<=518, substr(time_period_eligible,8,10) != "MAR")
+  filter(interv>=371 & interv<=518) %>% 
+  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
 
 saveRDS(thirteen, paste0("shiny_app/data/","thirteen_data.rds"))
 
@@ -844,7 +853,11 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_117_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=791 & interv<=945, substr(time_period_eligible,8,10) != "MAR")
+  filter(interv>=791 & interv<=945) %>% 
+  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
 
 saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
 
