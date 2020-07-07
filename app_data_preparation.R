@@ -1,137 +1,9 @@
 # Data preparation for app
 
 ###############################################.
-## Packages ----
+## Functions/Packages/filepaths/lookups ----
 ###############################################.
-library(dplyr) #manipulating data
-library(janitor) #cleaning names
-library(lubridate)#dates
-library(zoo) #dates
-library(readr) #reading/writing files
-library(stringr) #manipulating string
-library(phsmethods) #matching codes with names
-library(tidyr) # for wide to long formatting
-library(readxl) # reading excel
-library(flextable)
-
-data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
-ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-07-03-Extracts/" #short cut to a&e folder areas
-
-###############################################.
-## Functions ----
-###############################################.
-# This function aggregates data for each different cut requires
-agg_rapid <- function(grouper = NULL, split, specialty = F) {
-  
-  agg_helper <- function(more_vars, type_chosen = split) {
-    rap_adm %>%
-      group_by_at(c("week_ending","area_name", "area_type", more_vars)) %>%
-      summarise(count = sum(count)) %>% ungroup() %>%
-      mutate(type = type_chosen)
-  }
-  
-  # Aggregating to obtain totals for each split type and then putting all back together.
-  adm_type <- agg_helper(c(grouper, "admission_type")) %>% 
-    mutate(spec = "All") 
-  
-  all <- agg_helper(grouper) %>% 
-    mutate(admission_type = "All", spec = "All") 
-
-  if (specialty == T) {
-    spec_all <- agg_helper(c(grouper, "spec")) %>% 
-      mutate(admission_type = "All") 
-    
-    spec_adm <- agg_helper(c(grouper, "spec", "admission_type")) 
-
-    rbind(all, adm_type, spec_all, spec_adm)
-  } else {
-    rbind(all, adm_type) 
-  }
-}
-
-
-# Speed up aggregations of different data cuts (A&E,NHS24,OOH)
-agg_cut <- function(dataset, grouper) {
-  dataset %>%
-    group_by_at(c("week_ending","area_name", "area_type", grouper)) %>%
-    summarise(count = sum(count)) %>% ungroup() %>% 
-    mutate(type = grouper) 
-}
-
-
-# Create age groups
-create_agegroups <- function(dataset) {
-  dataset %>% mutate(age_grp1 = as.character(case_when(between(age, 0, 4) ~ "Under 5",
-                                                       between(age, 5, 14) ~ "5 - 14",
-                                                       between(age, 15, 44) ~ "15 - 44", 
-                                                       between(age, 45, 64) ~ "45 - 64", 
-                                                       between(age, 65, 74) ~ "65 - 74", 
-                                                       between(age, 75, 84) ~ "75 - 84",
-                                                       between(age, 85, 200) ~ "85 and over")),
-                     age_grp=case_when(is.na(age) ~"Missing", TRUE~age_grp1))
-}
-
-# Format sex groups
-create_sexgroups <- function(dataset) {
-  dataset %>% mutate(sex=case_when(is.na(sex)~"Missing", sex==1 ~ "Male", sex==2 ~"Female", 
-                                   sex %in% c(0, 9 ) ~ "Missing", TRUE~as.character(sex)))
-}
-
-# Format deprivation groups
-create_depgroups <- function(dataset) {
-  dataset %>% mutate(dep=case_when(is.na(dep)~"Missing", dep==1 ~ "1 - most deprived",
-                                   dep==5 ~"5 - least deprived", TRUE~as.character(dep)))
-}
-
-# Convert HB names to correct format
-proper <- function(dataset) {
-  dataset %>% 
-    mutate(hb1= str_to_title(hb),
-           area_name=paste0(toupper(substr(hb1, 1, 3)),substring(hb1, 4))) %>%
-    select(-hb1, -hb)
-}
-
-# Function to format data in the right format for the Shiny app
-prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) {
-  
-  # Creating week number to be able to compare pre-covid to covid period
-  dataset <- dataset %>% mutate(week_no = isoweek(week_ending),
-                                # Fixing HSCP names
-                                area_name = gsub(" and ", " & ", area_name))
-    
-  
-  # Creating average admissions of pre-covid data (2018-2019) by day of the year
-  historic_data <- dataset %>% filter(year(week_ending) %in% c("2018", "2019")) %>% 
-    group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
-    # Not using mean to avoid issues with missing data for some weeks
-    summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
-  
-  # Joining with 2020 data
-  # Filtering weeks with incomplete week too!! Temporary
-  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020")), 
-                         historic_data, 
-                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
-    # Filtering cases without information on age, sex, area or deprivation (still counted in all)
-    filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
-               is.na(area_name) | 
-               area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND",
-                                "ENGland/Wales/Northern Ireland", "NANA"))) %>% 
-    # Creating %variation from precovid to covid period 
-    mutate(count_average = ifelse(is.na(count_average), 0, count_average),
-           variation = round(-1 * ((count_average - count)/count_average * 100), 1),
-           # Dealing with infinite values from historic average = 0
-           variation =  ifelse(is.infinite(variation), 8000, variation)) %>% 
-    select(-week_no) 
-  
-  # Supressing numbers under 5
-  data_2020 <- data_2020 %>% filter(count>=5) %>% 
-    filter(week_ending <= as.Date(last_week))
-  
-  final_data <<- data_2020
-  
-  saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
-  saveRDS(data_2020, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/", filename,"_data.rds"))
-}
+source("functions_packages_data_prep.R")
 
 ###############################################.
 ## Reading RAPID data ----
@@ -144,11 +16,8 @@ rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_06-Jul.rds"
            date_adm > as.Date("2017-12-31")) 
 
 # Bringing HB names
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
-  janitor::clean_names() %>% select(description, hb_cypher)
-
 rap_adm <- left_join(rap_adm, hb_lookup, by = c("hb" = "hb_cypher")) %>% 
-  select(-hb) %>% rename(hb = description)
+  select(-hb) %>% rename(hb = area_name) %>% select(-area_type)
 
 # Bringing spec names
 spec_lookup <- read_csv("data/spec_groups_dashboard.csv")
@@ -731,13 +600,6 @@ six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashbo
                                 time_period_eligible=col_factor())) %>%
 janitor::clean_names()
 
-# Bringing HB names immunisation data contain HB cypher not area name
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
-  janitor::clean_names() %>% select(description, hb_cypher) %>%
-  rename(area_name=description) %>%
-  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
-         area_type="Health board")
-
 six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
@@ -843,13 +705,6 @@ mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard20200
                                       time_period_eligible=col_factor())) %>%
   janitor::clean_names()
 
-# Bringing HB names immunisation data contain HB cypher not area name
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
-  janitor::clean_names() %>% select(description, hb_cypher) %>%
-  rename(area_name=description) %>%
-  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
-         area_type="Health board")
-
 mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
@@ -906,13 +761,6 @@ first$time_period_eligible <- factor(first$time_period_eligible,
                                      levels=unique(first$time_period_eligible[order(first$week_2_start, decreasing = T)]), 
                                      ordered=TRUE)
 
-# Bringing HB names immunisation data contain HB cypher not area name
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
-  janitor::clean_names() %>% select(description, hb_cypher) %>%
-  rename(area_name=description) %>%
-  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
-         area_type="Health board")
-
 first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
@@ -953,13 +801,6 @@ sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard2020
 sixtoeight$time_period_eligible <- factor(sixtoeight$time_period_eligible, 
                                      levels=unique(sixtoeight$time_period_eligible[order(sixtoeight$week_6_start, decreasing = T)]), 
                                      ordered=TRUE)
-
-# Bringing HB names immunisation data contain HB cypher not area name
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
-  janitor::clean_names() %>% select(description, hb_cypher) %>%
-  rename(area_name=description) %>%
-  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
-         area_type="Health board")
 
 sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -1003,13 +844,6 @@ thirteen$time_period_eligible <- factor(thirteen$time_period_eligible,
                                           levels=unique(thirteen$time_period_eligible[order(thirteen$week_57_start, decreasing = T)]), 
                                           ordered=TRUE)
 
-# Bringing HB names immunisation data contain HB cypher not area name
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
-  janitor::clean_names() %>% select(description, hb_cypher) %>%
-  rename(area_name=description) %>%
-  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
-         area_type="Health board")
-
 thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
@@ -1050,13 +884,6 @@ twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20
 twentyseven$time_period_eligible <- factor(twentyseven$time_period_eligible, 
                                         levels=unique(twentyseven$time_period_eligible[order(twentyseven$week_117_start, decreasing = T)]), 
                                         ordered=TRUE)
-
-# Bringing HB names immunisation data contain HB cypher not area name
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
-  janitor::clean_names() %>% select(description, hb_cypher) %>%
-  rename(area_name=description) %>%
-  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
-         area_type="Health board")
 
 twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -1099,7 +926,6 @@ p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NN
                                 sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi"),
                      read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
                                 sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
-
   janitor::clean_names() %>%
   select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type)
