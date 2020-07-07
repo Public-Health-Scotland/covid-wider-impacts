@@ -85,8 +85,6 @@ mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr i
 
 ## perinatal mortality data
 perinatal <- readRDS("data/perinatal_data.rds")
-p_perinatal_table <- readRDS("data/p_perinatal_datatable.rds") # may add data table to tab
-u_perinatal_table <- readRDS("data/u_perinatal_datatable.rds") # may add data table to tab
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)",
