@@ -22,7 +22,8 @@ data_table <- reactive({
          "first_visit" = firsttable,
          "sixtoeight_visit" = sixtoeighttable,
          "thirteen_visit" = thirteentable,
-         "twentyseven_visit" = twentyseventable
+         "twentyseven_visit" = twentyseventable,
+         "perinatal" = perinatal
         ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -139,6 +140,17 @@ data_table <- reactive({
              "Intervention" = groups) %>%
       mutate(type = recode_factor(type, "age" = "Age Group", "sex" = "Sex"),
              week_ending = format(week_ending, "%d %b %y"))
+  
+  } else if (input$data_select %in% "perinatal") {
+    table_data <- table_data %>%
+      select(area_name, month_of_year, number_of_deaths_in_month, sample_size, rate, type) %>%
+      mutate(type = recode_factor(type, "extperi" = "Extended perinatal deaths", "infantdeaths" = "Infant deaths", "nnd" = "Neonatal deaths", 
+                                  "pnnd" = "Post-neonatal deaths", "stillbirths" = "Stillbirths")) %>%
+      rename("Area name" = area_name, "Relevant births" = sample_size,
+             "Month of year" = month_of_year,
+             "Number of deaths" = number_of_deaths_in_month,
+             "Rate" = rate,
+             "Type" = type)
   }
   
   table_data %>% 
