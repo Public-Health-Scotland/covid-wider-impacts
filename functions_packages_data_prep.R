@@ -148,4 +148,15 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
   saveRDS(data_2020, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/", filename,"_data.rds"))
 }
 
+#Function to format the immunisations and child health review tables
+format_immchild_table <- function(filename) {
+  read_csv(paste0(data_folder, filename, ".csv")) %>%
+    janitor::clean_names() %>%
+    rename(area_name=geography_name) %>%
+    select (-geography) %>%
+    arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+    mutate(time_period_eligible=as.factor(time_period_eligible))
+  
+}
+
 ##END
