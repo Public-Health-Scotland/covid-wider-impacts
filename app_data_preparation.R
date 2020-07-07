@@ -6,7 +6,7 @@
 source("functions_packages_data_prep.R")
 
 ###############################################.
-## Reading RAPID data ----
+## RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
 rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_06-Jul.rds")) %>% 
@@ -101,7 +101,7 @@ prepare_final_data(rap_adm, "rapid", last_week = "2020-06-28",
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
-## Preparing OOH data ----
+## OOH data ----
 ###############################################.
 # Saving big files as RDS to avoid unzipping 
 # ooh <- read_csv(unzip(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.zip"),"OOH DATA 2018 - 22032020.csv")) 
@@ -214,7 +214,7 @@ ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-07-05")
 
 ###############################################.
-## Preparing A&E data ----
+## A&E data ----
 ###############################################.
 # Read A&E data both at HSCP and HB level
 ae_data <- rbind(read_csv(unz(paste0(ae_folder,"HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
@@ -264,7 +264,7 @@ ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age)
 prepare_final_data(ae_data, "ae", last_week = "2020-06-28")
 
 ###############################################.
-## Preparing NHS24 data ----
+## NHS24 data ----
 ###############################################.
 
 # #Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
@@ -324,7 +324,7 @@ nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-07-05")
 
 ###############################################.
-## Reading SAS data ----
+## SAS data ----
 ###############################################.
 # Code to transform extract to rds and delete giant txt file
 # sas <-(read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to10052020.txt")))
@@ -408,7 +408,7 @@ saveRDS(deaths, "shiny_app/data/deaths_data.rds")
 saveRDS(deaths, "/conf/PHSCOVID19_Analysis/Publication outputs/open_data/deaths_data.rds")
 
 ###############################################.
-## Cath labs ----
+## Cath labs - cardiac procedures ----
 ###############################################.
 # Data for cardiovascular app
 gj_cath_age <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabProcCountsByWeekNo_ForPHS.xlsx"),
@@ -593,7 +593,7 @@ rm(cardio_drugs_all)
 prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-06-28")
 
 ###############################################.
-## Prepare 6-in-1 scurve data ----
+## 6-in-1 data ----
 ###############################################.
 six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashboard20200622.csv"), 
                 col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
@@ -612,6 +612,21 @@ six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher
 final_data <<- six_alldose
 
 saveRDS(six_alldose, "shiny_app/data/six_alldose_data.rds")
+
+###############################################.
+## Prepare 6-in-1 summary table data 
+
+# 6-in-1 at 8 weeks - summary table data
+six_datatable <- format_imm_table("6in1/six in one_1_dashboardtab_20200622") 
+saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
+
+# 6-in-1 at dose 2 (usually 12 weeks) - summary table data
+six_dose2_datatable <- format_imm_table("6in1/six in one_2_dashboardtab_20200622") 
+saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.rds"))
+
+# 6-in-1 at dose 3 (usually 16 weeks) - summary table data
+six_dose3_datatable <- format_imm_table("6in1/six in one_3_dashboardtab_20200622") 
+saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
 
 ###############################################.
 # Definitions, apply both for MRR and 6 in one
@@ -634,7 +649,7 @@ saveRDS(age_defs_imm_mmr, "shiny_app/data/age_elig_mmr.rds")
 
 # 6 in one age eligibility
 age_defs_imm_6inone <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
-                               sheet = "6inone_dash") 
+                                  sheet = "6inone_dash") 
 
 age_defs_imm_6inone <- age_defs_imm_6inone %>% flextable() %>% 
   set_header_labels("...1" = "") %>% 
@@ -649,7 +664,7 @@ saveRDS(age_defs_imm_6inone, "shiny_app/data/age_elig_6inone.rds")
 
 # month eligibility table
 month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
-                                sheet = "for_dash") %>% 
+                             sheet = "for_dash") %>% 
   mutate("Month eligible" = format(as.Date(`Month eligible`), "%b-%Y")) %>% 
   flextable() %>%
   add_header_row(values = c("Month eligible", "Defined as children reaching relevant age in period:", "", "Number of weeks")) %>% 
@@ -663,41 +678,7 @@ month_defs_imm #checking everything looks ok
 saveRDS(month_defs_imm, "shiny_app/data/month_eligibility_immun.rds")
 
 ###############################################.
-## Prepare 6-in-1 summary table data----
-###############################################.
-
-# 6-in-1 at 8 weeks - summary table data
-six_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_1_dashboardtab_20200622.csv")) %>%
-  janitor::clean_names() %>%
-  rename(area_name=geography_name) %>%
-  select (-geography) %>%
-  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
-  mutate(time_period_eligible=as.factor(time_period_eligible))
-
-saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
-
-# 6-in-1 at dose 2 (usually 12 weeks) - summary table data
-six_dose2_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_2_dashboardtab_20200622.csv")) %>%
-  janitor::clean_names() %>%
-  rename(area_name=geography_name) %>%
-  select (-geography) %>%
-  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
-  mutate(time_period_eligible=as.factor(time_period_eligible))
-
-saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.rds"))
-
-# 6-in-1 at dose 3 (usually 16 weeks) - summary table data
-six_dose3_datatable <- read_csv(paste0(data_folder,"immunisations/6in1/six in one_3_dashboardtab_20200622.csv")) %>%
-  janitor::clean_names() %>%
-  rename(area_name=geography_name) %>%
-  select (-geography) %>%
-  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
-  mutate(time_period_eligible=as.factor(time_period_eligible))
-
-saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
-
-###############################################.
-## Prepare MMR data ----
+## MMR data ----
 ###############################################.
 # mmr dose 1 & 2 - scurve data
 mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard20200622.csv"),
@@ -718,37 +699,19 @@ mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher
 saveRDS(mmr_alldose, paste0("shiny_app/data/","mmr_alldose_data.rds"))
 
 # MMR at dose 1  - summary table data
-mmr_dose1_datatable <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dose1_dashboardtab_20200622.csv")) %>%
-  janitor::clean_names() %>%
-  rename(area_name=geography_name) %>%
-  select (-geography) %>%
-  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
-  mutate(time_period_eligible=as.factor(time_period_eligible))
-
+mmr_dose1_datatable <- format_imm_table("mmr/mmr_dose1_dashboardtab_20200622") 
 saveRDS(mmr_dose1_datatable, paste0("shiny_app/data/","mmr_dose1_datatable.rds"))
 
 # MMR at dose 2  - summary table data
-mmr_dose2_datatable <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dose2_dashboardtab_20200622.csv")) %>%
-  janitor::clean_names() %>%
-  rename(area_name=geography_name) %>%
-  select (-geography) %>%
-  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
-  mutate(time_period_eligible=as.factor(time_period_eligible))
-
+mmr_dose2_datatable <- format_imm_table("mmr/mmr_dose2_dashboardtab_20200622") 
 saveRDS(mmr_dose2_datatable, paste0("shiny_app/data/","mmr_dose2_datatable.rds"))
 
 # Grampian data
-mmr_dose2_datatable_grampian <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dose2_dashboardtab_grampian_20200622.csv")) %>%
-  janitor::clean_names() %>%
-  rename(area_name=geography_name) %>%
-  select (-geography) %>%
-  arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
-  mutate(time_period_eligible=as.factor(time_period_eligible))
-
+mmr_dose2_datatable_grampian <- format_imm_table("mmr/mmr_dose2_dashboardtab_grampian_20200622") 
 saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
 
 ###############################################.
-## Prepare Child Health data (first visit) ----
+## Child health review: first visit ----
 ###############################################.
 ## First visit - scurve data
 first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20200622.csv"), 
@@ -788,7 +751,7 @@ first_datatable <- first_datatable_download %>%
 saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 
 ###############################################.
-## Prepare Child Health data (6-8 weeks) ----
+## Child health review: 6-8 weeks  ----
 ###############################################.
 
 ## 6 to 8 weeks visit - scurve data
@@ -830,7 +793,7 @@ saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.r
 
 
 ###############################################.
-## Prepare Child Health data (13-15 month) ----
+## Child health review: 13-15 month ----
 ###############################################.
 
 ## 13 to 15 month visit - scurve data
@@ -871,7 +834,7 @@ thirteen_datatable <- thirteen_datatable_download %>%
 saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
 
 ###############################################.
-## Prepare Child Health data (27-30 month) ----
+## Child health review: 27-30 month ----
 ###############################################.
 
 ## 27 to 30 month visit - scurve data
@@ -914,7 +877,7 @@ twentyseven_datatable <- twentyseven_datatable_download %>%
 saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
 
 ###############################################.
-## Prepare perinatal data ----
+## Perinatal mortality ----
 ###############################################.
 # P CHART PERINATAL DATA
 p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
@@ -944,7 +907,7 @@ perinatal <- rbind(p_perinatal, u_perinatal) %>%
          month_of_year = as.Date(paste0(month_of_year,"1"), format="%Y%m%d")) 
 
 # Creating rules for spc charts
-perinatal <- perinatal %>% 
+perinatal %<>% 
   arrange(type, area_name, month_of_year) %>% 
   mutate(upper_sigma1 = rate + stdev,
          lower_sigma1 = rate + stdev) %>% 
