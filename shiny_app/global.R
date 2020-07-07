@@ -120,7 +120,8 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Health Visitor first visit" = "first_visit",
                         "6-8 week child health review" = "sixtoeight_visit",
                         "13-15 month child health review" = "thirteen_visit",
-                        "27-30 month child health review" = "twentyseven_visit"
+                        "27-30 month child health review" = "twentyseven_visit",
+                        "Stillbirths and infant deaths" = "perinatal"
                         )
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
