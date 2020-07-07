@@ -65,6 +65,7 @@ output$child_health_explorer <- renderUI({
                             input$measure_select_child == "six_eightwks" ~ paste0("Coverage of child health review offered at 6-8 weeks of age: ", input$geoname_child),
                             input$measure_select_child == "13_15mnth" ~ paste0("Coverage of child health review offered at 13-15 months of age: ", input$geoname_child),
                             input$measure_select_child == "27_30mnth" ~ paste0("Coverage of child health review offered at 27-30 months of age: ", input$geoname_child)))
+  child_subtitle <-  paste0("Figures based on data extracted from SIRS and CHSP-PS on ",child_extract_date)
   
   #commentary to appear in child health tab
   commentary_first <-p("All preschool children should be offered the following health reviews: health visitor first visit, 6-8 week review, 13-15 month review, 27-30 month review, and 4-5 year review. Although the 4-5 year review only became mandated by government policy for children turning 4 from April 2020 onwards.", br(),
@@ -74,34 +75,34 @@ output$child_health_explorer <- renderUI({
 "Coverage rates based on small numbers are prone to fluctuation. Therefore, in Boards with small numbers of children eligible for review each week, particularly NHS Borders and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates.
 ")
   
+  explorer_child <-     tagList(
+    fluidRow(column(12, h4(paste0(child_title)),
+                    p(child_subtitle))))
+  
   # Specify items to display in child health ui based on step 2 selection 
   if (input$measure_select_child == "first_visit") {
-    tagList(
-      fluidRow(column(10, h4(paste0(child_title)))),
+    tagList(explorer_child,
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("child_first_scurve"))),
                column(6, uiOutput("child_first_table"))),
       fluidRow(column(12, renderUI(commentary_first)))
     )
   }  else if (input$measure_select_child == "six_eightwks"){
-    tagList(
-      fluidRow(column(10, h4(paste0(child_title)))),
+    tagList(explorer_child,
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("child_sixtoeight_scurve"))),
                column(6, uiOutput("child_sixtoeight_table"))),
       fluidRow(column(12, renderUI(commentary_first)))
     )
   } else if (input$measure_select_child == "13_15mnth") {
-    tagList(
-      fluidRow(column(10, h4(paste0(child_title)))),
+    tagList(explorer_child,
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("child_thirteen_scurve"))),
                column(6, uiOutput("child_thirteen_table"))),
       fluidRow(column(12, renderUI(commentary_first)))
     )
   } else if (input$measure_select_child == "27_30mnth") {
-    tagList(
-      fluidRow(column(10, h4(paste0(child_title)))),
+    tagList(explorer_child,
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("child_twentyseven_scurve"))),
                column(6, uiOutput("child_twentyseven_table"))),

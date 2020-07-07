@@ -58,6 +58,7 @@ cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
 
 ## Child Health Data
+child_extract_date <- "22nd June 2020"
 first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 sixtoeight <- readRDS("data/six_to_eight_data.rds")
