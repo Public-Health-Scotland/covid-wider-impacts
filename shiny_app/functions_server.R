@@ -542,7 +542,18 @@ plot_scurve_child <- function(dataset, age_week) {
     # enforcing range from 0 to 100%
     yaxis_plots[["range"]] <- c(0, 100)
     
-  } 
+  } else if (age_week == "4 years") {
+    
+    #Modifying standard yaxis layout
+    yaxis_plots[["title"]] <- "% of children who have received their review"
+    xaxis_plots[["title"]] <- "Age of children in months"
+    # For custom tick labels
+    xaxis_plots[["tickvals"]] <- c(0, seq(1428, 1582, by = 30.8))
+    xaxis_plots[["ticktext"]] <- c(0, seq(47, 52, by = 1))
+    # enforcing range from 0 to 100%
+    yaxis_plots[["range"]] <- c(0, 100)
+    
+  }     
     
     #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
