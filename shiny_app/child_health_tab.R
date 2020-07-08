@@ -56,6 +56,9 @@ output$child_thirteen_table <- renderUI({child_table(thirteentable, "13 months",
 output$child_twentyseven_scurve <- renderPlotly({plot_scurve_child(twentyseven, "27 months")})
 output$child_twentyseven_table <- renderUI({child_table(twentyseventable, "27 months", "31 months")})
 
+output$child_fourtofive_scurve <- renderPlotly({plot_scurve_child(fourtofive, "4 years")})
+output$child_fourtofive_table <- renderUI({child_table(fourtofivetable, "4 year", "4 years 4 months")})
+
 # The charts and text shown on the app will depend on what the user wants to see
 output$child_health_explorer <- renderUI({
 
@@ -64,7 +67,8 @@ output$child_health_explorer <- renderUI({
                                                                                              input$geoname_child),
                             input$measure_select_child == "six_eightwks" ~ paste0("Coverage of child health review offered at 6-8 weeks of age: ", input$geoname_child),
                             input$measure_select_child == "13_15mnth" ~ paste0("Coverage of child health review offered at 13-15 months of age: ", input$geoname_child),
-                            input$measure_select_child == "27_30mnth" ~ paste0("Coverage of child health review offered at 27-30 months of age: ", input$geoname_child)))
+                            input$measure_select_child == "27_30mnth" ~ paste0("Coverage of child health review offered at 27-30 months of age: ", input$geoname_child),
+                            input$measure_select_child == "4_5yr" ~ paste0("Coverage of child health review offered at 4-5 years of age: ", input$geoname_child)))
   child_subtitle <-  paste0("Figures based on data extracted from SIRS and CHSP-PS on ",child_extract_date)
 
   #commentary to appear in child health tab
@@ -112,7 +116,13 @@ output$child_health_explorer <- renderUI({
       fluidRow(column(12, renderUI(commentary_first)))
     )
   } else {
-    p("4-5 Year Review coming 15th July 2020")
+    tagList(explorer_child,
+            fluidRow(column(12, em("4 years defined as 209 weeks"))),
+            fluidRow(column(6,br(), br(),
+                            withSpinner(plotlyOutput("child_fourtofive_scurve"))),
+                     column(6, uiOutput("child_fourtofive_table"))),
+            fluidRow(column(12, renderUI(commentary_first)))
+    )
   }
   
 }) #close child_health_explorer function
@@ -154,7 +164,8 @@ visit_data_download <- reactive({
     "first_visit" = filter(first_datatable_download, area_name == input$geoname_child),
     "six_eightwks" = filter(sixtoeight_datatable_download, area_name == input$geoname_child),
     "13_15mnth" = filter(thirteen_datatable_download, area_name == input$geoname_child),
-    "27_30mnth" = filter(twentyseven_datatable_download, area_name == input$geoname_child)
+    "27_30mnth" = filter(twentyseven_datatable_download, area_name == input$geoname_child),
+    "4_5yr" = filter(fourtofive_datatable_download, area_name == input$geoname_child)
   ) %>% 
     select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>% 
     rename(cohort = time_period_eligible)
