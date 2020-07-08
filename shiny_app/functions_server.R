@@ -642,6 +642,24 @@ child_table <- function(dataset, age_week, age_not_reached) {
       color(i = no_complete_row, j = c("coverage_31months_num", "coverage_31months_percent"), color="#0033cc")  %>%
       italic(i = no_complete_row, j = c("coverage_31months_num", "coverage_31months_percent"))
   }
+  else if (age_week == "4 years") {
+    format_col <- c("denominator","coverage_49months_num","coverage_52months_num","coverage_tot_num")
+    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
+                                           substr(time_period_eligible,1,3) == "MAR"))
+    
+    child_table <- table_data %>%
+      select (time_period_eligible, denominator, coverage_49months_num, 
+              coverage_49months_percent, coverage_52months_num, coverage_52months_percent, 
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_49months_num="Children recorded as receiving their 4-5 year review by 49 months of age",
+                        coverage_49months_percent="Children recorded as receiving their 4-5 year review by 49 months of age",
+                        coverage_52months_num="Children recorded as receiving their 4-5 year review by 52 months of age (or younger if children have not reached 52 months of age by the date data was extracted for analysis)",
+                        coverage_52months_percent="Children recorded as receiving their 4-5 year review by 52 months of age (or younger if children have not reached 52 months of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not 17 months
+      color(i = no_complete_row, j = c("coverage_52months_num", "coverage_52months_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_52months_num", "coverage_52months_percent"))
+  }
   
   child_table %>% 
     set_header_labels(time_period_eligible=paste0("Children turning ", age_week, " in:"),
