@@ -126,6 +126,10 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          )# mainPanel bracket
 ), # tabpanel bracket
 ###############################################.
+## Child health navbarmenu ----
+###############################################.
+navbarMenu("Info", icon = icon("child"),
+###############################################.
 ## Immunisation Tab ----
 ###############################################.
 tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
@@ -154,9 +158,9 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
          )# mainPanel bracket
 ), # tabpanel bracket
 ###############################################.
-## Child Health Tab ----
+## Child Health review tab ----
 ##############################################.
-tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
+tabPanel(title = "Child health reviews", icon = icon("child"), value = "child_health",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -199,7 +203,8 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
          mainPanel(width = 12,
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
-), # tabpanel bracket
+) # tabpanel bracket
+), #navbarMenu bracket
 ###############################################.
 ## Data ----
 ###############################################.
