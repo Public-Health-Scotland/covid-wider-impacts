@@ -23,6 +23,7 @@ data_table <- reactive({
          "sixtoeight_visit" = sixtoeighttable,
          "thirteen_visit" = thirteentable,
          "twentyseven_visit" = twentyseventable,
+         "fourtofive_visit" = fourtofivetable,
          "perinatal" = perinatal
         ) %>% 
     # Note: character variables are converted to factors in each
@@ -85,6 +86,16 @@ data_table <- reactive({
              "Coverage of review at 28 months of age (%)" = coverage_28months_percent,
              "Coverage of review at 31 months of age (N)" = coverage_31months_num,
              "Coverage of review at 31 months of age (%)" = coverage_31months_percent,
+             "Total coverage of review (N)" = coverage_tot_num,
+             "Total coverage of review (%)" = coverage_tot_percent)
+  } else if (input$data_select %in% "fourtofive_visit") { 
+    table_data <- table_data %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      rename(Cohort = time_period_eligible, "Total number of children" = denominator,
+             "Coverage of review at 49 months of age (N)" = coverage_49months_num,
+             "Coverage of review at 49 months of age (%)" = coverage_49months_percent,
+             "Coverage of review at 52 months of age (N)" = coverage_52months_num,
+             "Coverage of review at 52 months of age (%)" = coverage_52months_percent,
              "Total coverage of review (N)" = coverage_tot_num,
              "Total coverage of review (%)" = coverage_tot_percent)
   } else if (input$data_select %in% "sixin_8wks") {

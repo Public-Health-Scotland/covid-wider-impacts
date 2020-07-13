@@ -489,8 +489,12 @@ plot_scurve_child <- function(dataset, age_week) {
   # %>%
   # droplevels() # might be needed if sort order in legend is to change
   
-  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_child == "NHS Grampian")
+  if (is.data.frame(scurve_data) && age_week == "4 years" && input$geoname_child == "NHS Dumfries & Galloway")
+  { plot_nodata(height = 50, text_nodata = "No data shown as review only implemented in May 2020")
+  } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_child == "NHS Grampian")
   { plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else if (is.data.frame(scurve_data) && age_week == "4 years" && input$geoname_child == "NHS Highland")
+  { plot_nodata(height = 50, text_nodata = "No data shown as review has not been implemented yet. Implementation scheduled for 3/8/20.")
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {
@@ -542,7 +546,18 @@ plot_scurve_child <- function(dataset, age_week) {
     # enforcing range from 0 to 100%
     yaxis_plots[["range"]] <- c(0, 100)
     
-  } 
+  } else if (age_week == "4 years") {
+    
+    #Modifying standard yaxis layout
+    yaxis_plots[["title"]] <- "% of children who have received their review"
+    xaxis_plots[["title"]] <- "Age of children in months"
+    # For custom tick labels
+    xaxis_plots[["tickvals"]] <- c(0, seq(1428, 1582, by = 30.8))
+    xaxis_plots[["ticktext"]] <- c(0, seq(47, 52, by = 1))
+    # enforcing range from 0 to 100%
+    yaxis_plots[["range"]] <- c(0, 100)
+    
+  }     
     
     #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
@@ -641,6 +656,24 @@ child_table <- function(dataset, age_week, age_not_reached) {
       # Italics and colour if not 17 months
       color(i = no_complete_row, j = c("coverage_31months_num", "coverage_31months_percent"), color="#0033cc")  %>%
       italic(i = no_complete_row, j = c("coverage_31months_num", "coverage_31months_percent"))
+  }
+  else if (age_week == "4 years") {
+    format_col <- c("denominator","coverage_49months_num","coverage_52months_num","coverage_tot_num")
+    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
+                                           substr(time_period_eligible,1,3) == "MAR"))
+    
+    child_table <- table_data %>%
+      select (time_period_eligible, denominator, coverage_49months_num, 
+              coverage_49months_percent, coverage_52months_num, coverage_52months_percent, 
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_49months_num="Children recorded as receiving their 4-5 year review by 49 months of age",
+                        coverage_49months_percent="Children recorded as receiving their 4-5 year review by 49 months of age",
+                        coverage_52months_num="Children recorded as receiving their 4-5 year review by 52 months of age (or younger if children have not reached 52 months of age by the date data was extracted for analysis)",
+                        coverage_52months_percent="Children recorded as receiving their 4-5 year review by 52 months of age (or younger if children have not reached 52 months of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not 17 months
+      color(i = no_complete_row, j = c("coverage_52months_num", "coverage_52months_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_52months_num", "coverage_52months_percent"))
   }
   
   child_table %>% 

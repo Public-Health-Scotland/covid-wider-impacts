@@ -861,7 +861,7 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 
 saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
 
-# 13 to 15 month visit - summary table data
+# 27 to 30 month visit - summary table data
 # Data for data download should include complete months and all weeks
 twentyseven_datatable_download <- format_immchild_table("child_health/twentyseven_dashboardtab_20200622") 
 
@@ -872,6 +872,52 @@ twentyseven_datatable <- twentyseven_datatable_download %>%
   filter(exclude == 0)
 
 saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
+
+###############################################.
+## Child health review: 4-5 year ----
+###############################################.
+
+## 4 to 5 year visit - scurve data
+fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard20200622.csv"), 
+                        col_types =list(week_209_start=col_date(format="%m/%d/%Y"),
+                                        time_period_eligible=col_character())) %>%
+  janitor::clean_names() 
+
+# Creating levels for factor in chronological order
+fourtofive$time_period_eligible <- factor(fourtofive$time_period_eligible, 
+                                           levels=unique(fourtofive$time_period_eligible[order(fourtofive$week_209_start, decreasing = T)]), 
+                                           ordered=TRUE)
+
+fourtofive %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
+  mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+         area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+         weeks=interv/7,
+         week_no= isoweek(week_209_start),
+         cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+  arrange(cohort) %>%
+  select (extract_date, review, week_209_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(interv>=1428 & interv<=1582) %>% 
+# the filters below shouldn't be needed as of the next update (end of July/beginning of Aug)  
+  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
+
+saveRDS(fourtofive, paste0("shiny_app/data/","fourtofive_data.rds"))
+
+# 4 to 5 year review - summary table data
+# Data for data download should include complete months and all weeks
+fourtofive_datatable_download <- format_immchild_table("child_health/fourtofive_dashboardtab_20200622") %>% 
+  filter(area_name != "NHS Dumfries & Galloway") %>%  
+  filter(area_name != "NHS Highland")
+
+saveRDS(fourtofive_datatable_download, paste0("shiny_app/data/","fourtofive_datatable_download.rds"))
+
+# Data for flextable should include complete months and weeks for incomplete months only
+fourtofive_datatable <- fourtofive_datatable_download %>% 
+  filter(exclude == 0)
+
+saveRDS(fourtofive_datatable, paste0("shiny_app/data/","fourtofive_datatable.rds"))
 
 ###############################################.
 ## Perinatal mortality ----
