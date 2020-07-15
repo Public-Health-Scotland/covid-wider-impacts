@@ -293,6 +293,10 @@ cath_lab_over <- reactive({
   cath_lab_chosen() %>% filter(groups == "Angiography") %>% droplevels()
 })
 
+cath_lab_adm <- reactive({
+  cath_lab_chosen() %>% filter(type == "adm" & groups == "Percutaneous coronary intervention") %>% droplevels()
+})
+
 cath_lab_type <- reactive({
   cath_lab_chosen() %>% filter(category == "All") %>% 
     select(-category) %>% rename(category = groups) %>% droplevels()
@@ -324,7 +328,10 @@ output$cardio_explorer <- renderUI({
                      "Weekly number of cases by sex", "cath_sex_tot"),
         plot_cut_box("Percentage change in cases compared with the
                    corresponding time in 2018-2019 by age group", "cath_age_var",
-                     "Weekly number of cases by age group", "cath_age_tot")
+                     "Weekly number of cases by age group", "cath_age_tot"),
+        plot_cut_box("Percentage change in percutaneous coronary intervention compared with the
+                   corresponding time in 2018-2019 by admission type", "cath_adm_var",
+                     "Weekly number of percutaneous coronary interventions by admission type", "cath_adm_tot")
       )
     } else if (input$measure_cardio_select == "aye") {
       tagList(# A&E attendances (cardiovascular only)
@@ -362,7 +369,7 @@ output$cardio_explorer <- renderUI({
 ###############################################.
 ## Charts ----
 ###############################################.
-#Cath labs RIE charts
+#Cath lab charts
 output$cath_overall <- renderPlotly({plot_overall_chart(cath_lab_over(), data_name = "cath", area = F)})
 output$cath_sex_var <- renderPlotly({plot_trend_chart(cath_lab_over(), pal_sex, split = "sex", tab = "cardio")})
 output$cath_sex_tot <- renderPlotly({plot_trend_chart(cath_lab_over(),
@@ -374,6 +381,10 @@ output$cath_age_tot <- renderPlotly({plot_trend_chart(cath_lab_over() %>% filter
 output$cath_type_var <- renderPlotly({plot_trend_chart(cath_lab_type(), pal_sex)})
 output$cath_type_tot <- renderPlotly({plot_trend_chart(cath_lab_type(),
                    pal_sex, type = "total", data_name = "cath")})
+
+output$cath_adm_var <- renderPlotly({plot_trend_chart(cath_lab_adm(), pal_2ages)})
+output$cath_adm_tot <- renderPlotly({plot_trend_chart(cath_lab_adm(), 
+                                                      pal_2ages, type = "total", data_name = "cath")})
 
 ###############################################.
 # A&E Cardio charts
