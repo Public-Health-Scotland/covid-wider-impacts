@@ -413,23 +413,24 @@ saveRDS(deaths, "/conf/PHSCOVID19_Analysis/Publication outputs/open_data/deaths_
 ## Cath labs - cardiac procedures ----
 ###############################################.
 # Data for cardiovascular app
-gj_cath_age <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabProcCountsByWeekNo_ForPHS.xlsx"),
+gj_cath_age <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabData_ForPHS_III.xlsx"),
                       sheet = "Age") %>% clean_names() %>% 
   mutate(type = "age",
          age_band = recode(age_band, "Gt60" = "60 and over",
                            "Lt60" = "Under 60")) %>% 
   rename(category = age_band)
 
-gj_cath_sex <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabProcCountsByWeekNo_ForPHS.xlsx"),
+gj_cath_sex <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabData_ForPHS_III.xlsx"),
                           sheet = "Sex") %>% clean_names() %>% 
   mutate(type = "sex") %>%  rename(category = gender)
 
-gj_cath_all <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabProcCountsByWeekNo_ForPHS.xlsx"),
-                          sheet = "No Strata") %>% clean_names() %>% 
+gj_cath_all <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabData_ForPHS_III.xlsx"),
+                          sheet = "No strata") %>% clean_names() %>% 
   mutate(type = "sex", category = "All")
 
 # Data by admission type
-gj_cath_admtype <- read_excel(paste0(data_folder, "cath_labs/GJNH_UrgencyPCI_ForPHS.xlsx")) %>% 
+gj_cath_admtype <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabData_ForPHS_III.xlsx"),
+                              sheet = "PCI urgency") %>% 
   clean_names() %>% rename(category = urgency) %>% 
   mutate(type = "adm",
          category = recode(category, "Emergency" = "Emergency", "Urgent"  = "Emergency",   
