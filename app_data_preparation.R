@@ -428,18 +428,8 @@ gj_cath_all <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabData_ForPHS
                           sheet = "No strata") %>% clean_names() %>% 
   mutate(type = "sex", category = "All")
 
-# Data by admission type
-gj_cath_admtype <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabData_ForPHS_III.xlsx"),
-                              sheet = "PCI urgency") %>% 
-  clean_names() %>% rename(category = urgency) %>% 
-  mutate(type = "adm",
-         category = recode(category, "Emergency" = "Emergency", "Urgent"  = "Emergency",   
-                           "Elective"  = "Planned")) %>% 
-  group_by(group, wk, proc_year, proc_week, date_from, date_to, category, type) %>% 
-  summarise(num_procs = sum(num_procs, na.rm = T)) %>% ungroup
-
 # Merging together and formating
-gj_cath <- rbind(gj_cath_age, gj_cath_sex, gj_cath_all, gj_cath_admtype) %>% 
+gj_cath <- rbind(gj_cath_age, gj_cath_sex, gj_cath_all) %>% 
   mutate(week_ending = as.Date(date_to),
          lab = "Golden Jubilee National Hospital") %>% 
   select(-proc_year, -wk, -date_from, -date_to) %>% 
@@ -464,31 +454,8 @@ loth_sex <- read_csv(paste0(data_folder, "cath_labs/Lothian_sex.csv")) %>%
                            "F" = "Female")) %>% 
   rename(category = gender)
 
-# Datasets by admission type
-loth_admangio <- read_csv(paste0(data_folder, "cath_labs/Lothian_angio_urgency.csv")) %>% 
-  clean_names() %>% rename(num = angio_num) %>% 
-  filter(priority != "NULL") %>% #filtering out null values
-  mutate(category = recode(priority, "Emergency" = "Emergency", "Urgent"  = "Emergency",   
-                           "Elective"  = "Planned"),
-         groups = "Angiography") %>% 
-  select(-gender, -priority)
-
-loth_admpci <- read_csv(paste0(data_folder, "cath_labs/Lothian_pci_urgency.csv")) %>% 
-  clean_names() %>% rename(num = pci_num) %>% 
-  filter(main_procedure1 != "PCI (NULL)") %>% #filtering out null values
-  mutate(category = recode(main_procedure1, "PCI (Emergency)" = "Emergency", "PCI (Urgent)"  = "Emergency",   
-                           "PCI (Elective)"  = "Planned"),
-         groups = "Percutaneous coronary intervention") %>% 
-  select(-main_procedure1, -gender)
-
-loth_admtype <- rbind(loth_admangio, loth_admpci) %>%  mutate(type = "adm") %>% 
-  #filtering last week because it's not complete
-  filter(!(proc_week == 28 & proc_year == 2020)) %>% 
-  group_by(proc_year, proc_week, category, groups, type) %>% 
-  summarise(num = sum(num, na.rm = T)) %>% ungroup
-
 # Merging together and formating
-loth_cath <- rbind(loth_age, loth_all, loth_sex, loth_admtype) %>% 
+loth_cath <- rbind(loth_age, loth_all, loth_sex) %>% 
   mutate(week_ending = as.Date(paste(proc_year, proc_week, 7, sep="-"), "%Y-%W-%u"),
          lab = "Royal Infirmary of Edinburgh") %>% 
   select(-proc_year) %>% rename(count = num)
