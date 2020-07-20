@@ -20,7 +20,7 @@ library(magrittr)
 ###############################################.
 
 data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
-ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-07-09-Extracts/" #short cut to a&e folder areas
+ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-07-16-Extracts/" #short cut to a&e folder areas
 
 ###############################################.
 ## Lookups ----
