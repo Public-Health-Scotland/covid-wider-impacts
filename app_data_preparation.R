@@ -328,11 +328,11 @@ prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-07-12"
 ## SAS data ----
 ###############################################.
 # Code to transform extract to rds and delete giant txt file
-# sas <-(read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to17052020.txt")))
-# saveRDS(sas, paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to17052020.rds"))
-# file.remove(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to17052020.txt"))
+# sas <-(read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to10052020.txt")))
+# saveRDS(sas, paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to10052020.rds"))
+# file.remove(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to10052020.txt"))
 
-sas <- readRDS(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to17052020.rds")) %>%
+sas <- readRDS(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to10052020.rds")) %>%
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -345,7 +345,7 @@ sas <- readRDS(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_01012018to17052020
   proper() %>% #convert HB names to correct format
   create_agegroups () %>%
   create_depgroups () %>%
-  filter(between(week_ending, as.Date("2018-01-07"), as.Date("2020-05-17")))  #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2018-01-07"), as.Date("2020-05-10")))  #filter complete weeks (Mon-Sun)
 
 # Aggregate up to get figures for each area type.
 sas %<>% mutate(scot = "Scotland") %>% 
