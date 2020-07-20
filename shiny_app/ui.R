@@ -61,10 +61,11 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
          wellPanel(column(2,
                           p("Select topic:"),
                           actionLink("summary_button", "Summary trends", width = "150px"),br(),
-                          actionLink("cardio_button", "Cardiovascular", width="150px"),br(),
+                          actionLink("cardio_button", "Cardiovascular", width="150px"),br() ,
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
                           actionLink("ch_review_button", "Child health", width="150px"), br(),
-                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px")),
+                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px")
+                          ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
                                      bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
