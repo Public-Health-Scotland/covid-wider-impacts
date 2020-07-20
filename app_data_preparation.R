@@ -269,16 +269,17 @@ prepare_final_data(ae_data, "ae", last_week = "2020-07-12")
 
 # #Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
 # #Each week this section of code can be uncommented run for the latest weeks data then recommented after txt file deleted
- # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 06072020 to 12072020.txt")))
- # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 06072020 to 12072020.rds"))
- # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 06072020 to 12072020.txt"))
+ # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 13072020 to 19072020.txt")))
+ # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 13072020 to 19072020.rds"))
+ # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 13072020 to 19072020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 08062020 to 14062020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 15062020 to 21062020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 22062020 to 28062020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 29062020 to 05072020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 06072020 to 12072020.rds"))) %>%
+                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 06072020 to 12072020.rds")),
+                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 13072020 to 19072020.rds"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -322,7 +323,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-07-12")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-07-19")
 
 ###############################################.
 ## SAS data ----
@@ -559,7 +560,7 @@ prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-07-12")
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing data/covid emessage AMS only 20200709.xlsx")) %>% 
+cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing data/covid emessage AMS only 20200716.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -592,7 +593,7 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-07-05")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-07-12")
 
 ###############################################.
 ## 6-in-1 data ----
