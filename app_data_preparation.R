@@ -595,7 +595,7 @@ rm(cardio_drugs_all)
 prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-07-05")
 
 ###############################################.
-## 6-in-1 data ----
+## 6-in-1 s-curve data ----
 ###############################################.
 six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashboard20200622.csv"), 
                 col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
@@ -629,6 +629,18 @@ saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.
 # 6-in-1 at dose 3 (usually 16 weeks) - summary table data
 six_dose3_datatable <- format_immchild_table("immunisations/6in1/six in one_3_dashboardtab_20200622") 
 saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
+
+
+###############################################.
+## Prepare 6-in-1 SIMD data 
+six_simd <- read_csv(paste0(data_folder,"immunisations/6in1/six-in-one_simd_20200622.csv"),
+                     col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
+                                     time_period_eligible=col_factor())) %>%
+  janitor::clean_names() %>%
+  rename(simdq=simd2020v2_sc_quintile) %>%
+  filter(simdq !=0) # filtering out data where simd missing as small numbers lead to massive percentage differences.
+
+saveRDS(six_simd, paste0("shiny_app/data/","six_simd.rds"))
 
 ###############################################.
 # Definitions, apply both for MRR and 6 in one
@@ -711,6 +723,17 @@ saveRDS(mmr_dose2_datatable, paste0("shiny_app/data/","mmr_dose2_datatable.rds")
 # Grampian data
 mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/mmr_dose2_dashboardtab_grampian_20200622") 
 saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
+
+###############################################.
+## Prepare MMR SIMD data 
+mmr_simd <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_simd_20200622.csv"),
+                     col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
+                                     time_period_eligible=col_factor())) %>%
+  janitor::clean_names() %>%
+  rename(simdq=simd2020v2_sc_quintile) %>%
+  filter(simdq !=0) # filtering out data where simd missing as small numbers lead to massive percentage differences.
+
+saveRDS(mmr_simd, paste0("shiny_app/data/","mmr_simd.rds"))
 
 ###############################################.
 ## Child health review: first visit ----
