@@ -266,7 +266,7 @@ plot_scurve <- function(dataset, age_week, dose) {
                                     str_detect(immunisation,dose),
                                     exclude !=1) #filter immunisation scurve data on dose
 
-  # if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  # if (is.data.frame(scurve_data) && nrow(scurve_data) == 0) #simplified code for when grampian data available - dont delete
   #  { plot_nodata(height = 50)
   #  } else {
   
@@ -279,9 +279,6 @@ plot_scurve <- function(dataset, age_week, dose) {
      
 # Create tooltip for scurve
 tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
-
-#if( any(c(six,six_dose2,six_dose3) %in% dataset)){ #original logic prior to data file change
-#if(dataset == six_alldose){ #throws up error which prevents mmr chart working
 
 #Modifying standard yaxis name applies to all curves
 yaxis_plots[["title"]] <- "% of children who have received their vaccine"
@@ -340,6 +337,48 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 }
+}
+
+######################################################################.
+#Function to create bar-plot for Scotland immunisation data by SIMD 
+plot_imm_simd <- function(dataset, age_week, dose) {
+  imm_simd_data <- dataset %>% filter(cohort=="monthly" & # filter not needed 
+                                      simdq !=0 & # moved to data prep/ remove SIMD missing
+                                      str_detect(immunisation,dose)) #filters to show only appropriate dose
+  # Create tooltip for scurve
+  tooltip_scurve <- c(paste0("Cohort: ", imm_simd_data$time_period_eligible))
+  
+  ## String text for legend title label
+  if(any(c(six_simd) %in% dataset)){age_unit <- paste0(age_week, " weeks:")}
+  else if(dataset == mmr_simd && dose== "dose 1" ){age_unit <- paste0("12 months:")}
+  else if(dataset == mmr_simd && dose== "dose 2" ){age_unit <- paste0("3y 4months:")}
+  
+  #Modifying standard yaxis name applies to all curves
+  yaxis_plots[["title"]] <- "% change in uptake compared to 2019"
+  xaxis_plots[["title"]] <- "SIMD Quintile"
+  
+  #Creating time trend plot
+  plot_ly(data=imm_simd_data, x = ~simdq, y = ~week12_diff) %>%
+    add_trace(type = 'bar', split = ~time_period_eligible,
+              color=~time_period_eligible,
+              colors = pal_immun2,
+              text= tooltip_scurve, 
+              hoverinfo="text") %>%
+    
+    # Adding legend title
+    add_annotations( text= paste0("Children turning ", age_unit), xref="paper", yref="paper",
+                     x=0.8, xanchor="left",
+                     y=0.8, yanchor="bottom",    # Same y as legend below
+                     legendtitle=TRUE, showarrow=FALSE ) %>%
+    
+    #Layout
+    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.8, yanchor="top")) %>% #position of legend
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  
+  
 }
 
 
