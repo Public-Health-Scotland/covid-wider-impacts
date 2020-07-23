@@ -43,7 +43,6 @@ plot_cut_box <- function(title_plot1, plot_output1,
 intro_box <- function(title_box, button_name, description) {
   div(class="landing-page-box",
       div(title_box, class = "landing-page-box-title"),
-      div(description, class = "landing-page-box-description"),
       actionButton(button_name, NULL, class="landing-page-button")
       )
 }

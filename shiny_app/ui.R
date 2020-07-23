@@ -14,7 +14,18 @@ tagList( #needed for shinyjs
 ###############################################.
 tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                   h3("COVID-19 wider impacts on the health care system"),
-                tags$br(),
+         fluidRow(br()),
+         column(6,
+                intro_box(title_box = "Summary trends", button_name = "jump_summary_intro"),
+                intro_box(title_box = "Cardiovascular", button_name = "jump_cardio_intro"),
+                intro_box(title_box = "Data", button_name = "jump_table_intro")),
+         column(6, 
+                intro_box(title_box = "Child health reviews", button_name = "jump_child_intro"),
+                intro_box(title_box = "Immunisations", button_name = "jump_imm_intro"),
+                intro_box(title_box = "Stillbirths and infant deaths", button_name = "jump_peri_intro")
+         ),
+         fluidRow(br()),
+                h3("About this tool"),
                 p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
                     than those that occur as the direct result of infection"),
                 p("Reasons for this may include:"),
@@ -44,21 +55,21 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                   tags$b(tags$a(href="mailto:phs.covid19analytics@nhs.net", "phs.covid19analytics@nhs.net", class="externallink")), "."),
                 p("You can access the code used to produce this tool in this ",
                   tags$a(href="https://github.com/Health-SocialCare-Scotland/covid-wider-impact", "GitHub repository", class="externallink"), "."),
-                column(6,
-                       intro_box(title_box = "Summary trends", description = "Hospital and unscheduled care and excess mortality",
-                                 button_name = "jump_summary_intro"),
-                       intro_box(title_box = "Cardiovascular", description = "Cardiovascular prescribing, A&E attendances and procedures",
-                                 button_name = "jump_cardio_intro"),
-                       intro_box(title_box = "Data", description = "Underlying data used to create the interactive charts",
-                                 button_name = "jump_table_intro")),
-                column(6, 
-                       intro_box(title_box = "Child health reviews", description = "Child health reviews at different ages",
-                                 button_name = "jump_child_intro"),
-                       intro_box(title_box = "Immunisations", description = "MMR and 6-in-one immunisations",
-                                 button_name = "jump_imm_intro"),
-                       intro_box(title_box = "Stillbirths and infant deaths", description = "Stillbirths and infant deaths",
-                                 button_name = "jump_peri_intro")
-                       )
+         h3("Other sources of information: "),
+         tags$ul(
+           tags$li("Public Health Scotland publishes ",
+                   tags$a(href="(https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information", class="externallink"), 
+                    "on the direct health
+                   impacts of COVID-19 as well as guidance for professionals and public"),
+           tags$li("The Scottish Government publishes a ",
+                   tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard", class="externallink"),
+                   " which brings together data and 
+          evidence on the impacts of COVID-19 on health, society and the economy."),
+           tags$li("Transport Scotland publishes ", 
+                   tags$a(href="https://www.transport.gov.scot/publications/", "information", class="externallink"),
+            " on transport trends and public attitudes towards
+                   transport for the pandemic period.")
+         )
     ), #tabPanel bracket
 ###############################################.
 ## Commentary ----
