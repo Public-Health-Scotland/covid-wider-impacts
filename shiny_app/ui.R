@@ -12,7 +12,7 @@ tagList( #needed for shinyjs
 ###############################################.
 ## Introduction ----
 ###############################################.
-tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
+tabPanel("Home", icon = icon("info-circle"), value = "intro",
                   h3("COVID-19 wider impacts on the health care system"),
          fluidRow(br()),
          column(6,
@@ -40,7 +40,7 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
                 p("This information tool provides an overview of changes in health and use of healthcare during the COVID-19
                     pandemic in Scotland, drawing on a range of national data sources."),
                 p("We are providing information on different topics as quickly as we can, given the different time lags
-                    that apply to different national data sources.  For example, Public Health Scotland receives information
+                    that apply to different national data sources. For example, Public Health Scotland receives information
                     on patients attending Accident & Emergency within days; but there can be a delay of at least six weeks
                     before we receive detailed information on patients discharged from hospital after having a baby."),
                 p("Depending on the topic being looked at, information will be shown for patients in different age groups;
