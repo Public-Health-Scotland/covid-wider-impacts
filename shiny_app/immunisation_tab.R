@@ -96,23 +96,18 @@ observeEvent(input$imm_elig_defs,
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
-
 ###############################################.
 ## Reactive controls  ----
 ###############################################.
 
 # Immunisation reactive drop-down control showing list of area names depending on areatype selected
 output$geoname_ui_immun <- renderUI({
-    #Lists areas available in   
+  #Lists areas available in   
   areas_summary_immun <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_immun])
   
-  if (input$geotype_immun == "Scotland"){
-  areas_summary_immun <- c("Scotland","Deprivation")}
-  
+  if (input$geotype_immun == "Scotland"){areas_summary_immun <- c("Scotland")}
   selectizeInput("geoname_immun", label = NULL, choices = areas_summary_immun, selected = "")
-  
 })
-
 
 # Reactive dataset for flextable filter on geographical area
 filter_table_data_immun <- function(dataset){
@@ -124,30 +119,29 @@ filter_table_data_immun <- function(dataset){
 ###############################################.
 
 # Creating plots for each dataset
-#run chart function to generate s curve  
+#run chart function to generate s curves  
 output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(dataset=six_alldose, age_week = "8", dose= "dose 1")})
-output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable, age_week = 8)})
-
 output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_alldose, age_week = "12", dose="dose 2")})
-output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week = 12)})
-
 output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_alldose, age_week = "16", dose= "dose 3" )})
-output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week = 16)})
-
-#SIMD charts for 6-in-1
-output$immun_6in1_simd_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd, age_week = "8", dose= "dose 1")})
-output$immun_6in1_simd_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd, age_week = "12", dose= "dose 2")})
-output$immun_6in1_simd_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd, age_week = "16", dose= "dose 3")})
-
 output$immun_mmr_scurve_dose1 <- renderPlotly({plot_scurve(mmr_alldose, age_week = "1", dose= "dose 1" )})
 output$immun_mmr_scurve_dose2 <- renderPlotly({plot_scurve(mmr_alldose, age_week = "3", dose= "dose 2" )})
 
+#run function to generate data tables linked to s-curves  
+output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable, age_week = 8)})
+output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week = 12)})
+output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week = 16)})
 output$immun_mmr_table_dose1 <- renderUI({immune_table(mmrtable_dose1, age_week = 1)}) #age week 1 doesn't really make sense as given to children at 1 year
 output$immun_mmr_table_dose2 <- renderUI({immune_table(mmrtable_dose2, age_week = 3)}) #age week 3 doesn't really make sense as given to children at 3 years and 4 month
 
-#SIMD charts for mmr
-output$immun_mmr_simd_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd, age_week = "1", dose= "dose 1")})
-output$immun_mmr_simd_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd, age_week = "3", dose= "dose 2")})
+#run function to generate SIMD bar charts (only available at scotland level)
+output$immun_6in1_simd_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1")})
+output$immun_6in1_simd_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose2, age_week = "12", dose= "dose 2")})
+output$immun_6in1_simd_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose3, age_week = "16", dose= "dose 3")})
+output$immun_mmr_simd_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose1, age_week = "1", dose= "dose 1")})
+output$immun_mmr_simd_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2")})
+
+
+
 
 ###############################################.
 ## Reactive layout  ----
@@ -189,20 +183,26 @@ Data is shown for Scotland and for NHS Board areas. Due to small numbers of chil
 Uptake rates based on small numbers are prone to fluctuation. Therefore, in boards with small numbers of children eligible for immunisation each week, particularly NHS Borders and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates.
 ")
   
-  #text next to SIMD chart
-  simd_plot_text <-  renderUI(p("For Scotland, the change in immunisation uptake rates between the months of 2019 and the most recent year is shown for each deprivation quintile. This chart can show if there is variation in patterns of uptake by deprivation.  This data is only available for the Scotland geography."))
-  
-  #title for scurve section
+  #Title for scurve section
   explorer_imm <-     tagList(
     fluidRow(column(12, renderUI(intro_6in1),
                     h4(paste0(immune_title)),
                     p(immune_subtitle))))
   
-  #additional title for when Scotland level data selected and deprivation data available
+  #Additional title for when Scotland level data selected and deprivation data available
   explorer_imm_simd <- tagList(
     fluidRow(column(12, h4(paste0(immune_simd_title)),
                     actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",icon = icon('question-circle')))))
   
+  #download data for SIMD data
+ # download_simd <- 
+  #text next to SIMD chart
+  simd_text <-  tagList(
+    renderUI(p("For Scotland, the change in immunisation uptake rates between the months of 2019 and the most recent year is shown for each deprivation quintile. This chart can show if there is variation in patterns of uptake by deprivation.  This data is only available for the Scotland geography.")),
+    downloadButton('download_imm_simd_data', 'Download deprivation data')
+    )
+  
+    
   
   # Specify items to display in immunisation ui based on step 2 selection 
   if (input$measure_select_immun == "sixin_dose1") {
@@ -213,7 +213,7 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
             if(input$geotype_immun == "Scotland"){ #if scotland selected then deprivation split can be shown
               tagList(explorer_imm_simd,
                       fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_6in1_simd_dose1"))),
-                      (column(6,br(),simd_plot_text))))}, 
+                      (column(6,br(),simd_text))))}, 
               fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }  else if (input$measure_select_immun == "sixin_dose2"){
@@ -224,7 +224,7 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
             if(input$geotype_immun == "Scotland"){
               tagList(explorer_imm_simd,
                       fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_6in1_simd_dose2"))),
-                               (column(6,br(),simd_plot_text))))}, 
+                               (column(6,br(),simd_text))))}, 
             fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }  else if (input$measure_select_immun == "sixin_dose3"){
@@ -235,7 +235,7 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
             if(input$geotype_immun == "Scotland"){
               tagList(explorer_imm_simd,
                       fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_6in1_simd_dose3"))),
-                               (column(6,br(),simd_plot_text))))}, 
+                               (column(6,br(),simd_text))))}, 
             fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }  else if (input$measure_select_immun == "mmr_dose1"){
@@ -247,7 +247,7 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
             if(input$geotype_immun == "Scotland"){
               tagList(explorer_imm_simd,
                       fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_mmr_simd_dose1"))),
-                               (column(6,br(),simd_plot_text))))}, 
+                               (column(6,br(),simd_text))))}, 
             fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }else if (input$measure_select_immun == "mmr_dose2"){
@@ -259,7 +259,7 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
             if(input$geotype_immun == "Scotland"){
               tagList(explorer_imm_simd,
                       fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_mmr_simd_dose2"))),
-                               (column(6,br(),simd_plot_text))))}, 
+                               (column(6,br(),simd_text))))}, 
             fluidRow(column(12, renderUI(commentary_6in1)))
     )
   }
@@ -299,6 +299,26 @@ output$download_imm_data <- downloadHandler(
   content = function(file) {
     write_csv(imm_data_download(),
               file) } 
+)
+
+##download immunisation SIMD data
+imm_simd_data_download <- reactive ({
+  switch(
+    input$measure_select_immun,
+    "sixin_dose1" = six_simd_dose1,
+    "sixin_dose2" = six_simd_dose2,
+    "sixin_dose3" = six_simd_dose3,
+    "mmr_dose1" = mmr_simd_dose1,
+    "mmr_dose2"= mmr_simd_dose2
+  ) %>% 
+    select(immunisation, area_name, time_period_eligible, simdq, denominator, starts_with("uptake"), starts_with("baseline"),difference)  %>% 
+    rename(cohort = time_period_eligible,deprivation_quintile=simdq, percentage_difference=difference)
+})
+
+output$download_imm_simd_data <- downloadHandler(
+  filename ="immunisation_extract_by_deprivation.csv",
+    content = function(file) {
+    write_csv(imm_simd_data_download(), file) } 
 )
 
 ###############################################.
