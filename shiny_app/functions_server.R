@@ -342,23 +342,30 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
 ######################################################################.
 #Function to create bar-plot for Scotland immunisation data by SIMD 
 plot_imm_simd <- function(dataset, age_week, dose) {
-  imm_simd_data <- dataset %>% filter(cohort=="monthly" & # filter not needed 
-                                      simdq !=0 & # moved to data prep/ remove SIMD missing
-                                      str_detect(immunisation,dose)) #filters to show only appropriate dose
+  # imm_simd_data <- dataset %>% filter(cohort=="monthly" & # filter not needed 
+  #                                     simdq !=0 & # moved to data prep/ remove SIMD missing
+  #                                     str_detect(immunisation,dose)) #filters to show only appropriate dose
+  
+  imm_simd_data <- dataset 
+  
   # Create tooltip for scurve
   tooltip_scurve <- c(paste0("Cohort: ", imm_simd_data$time_period_eligible))
   
   ## String text for legend title label
-  if(any(c(six_simd) %in% dataset)){age_unit <- paste0(age_week, " weeks:")}
-  else if(dataset == mmr_simd && dose== "dose 1" ){age_unit <- paste0("12 months:")}
-  else if(dataset == mmr_simd && dose== "dose 2" ){age_unit <- paste0("3y 4months:")}
+  #if(any(c(six_simd) %in% dataset)){age_unit <- paste0(age_week, " weeks:")}
+  #if(substr(dataset,1,3) == "six") {age_unit <- paste0(age_week, " weeks:")}
+  if(dataset == six_simd_dose1) {age_unit <- paste0(age_week, " weeks:")}
+  else if(dataset == six_simd_dose2) {age_unit <- paste0(age_week, " weeks:")}
+  else if(dataset == six_simd_dose3) {age_unit <- paste0(age_week, " weeks:")}
+  else if(dataset == mmr_simd_dose1) {age_unit <- paste0("12 months:")}
+  else if(dataset == mmr_simd_dose2 ) {age_unit <- paste0("3y 4months:")}
   
   #Modifying standard yaxis name applies to all curves
   yaxis_plots[["title"]] <- "% change in uptake compared to 2019"
   xaxis_plots[["title"]] <- "SIMD Quintile"
   
   #Creating time trend plot
-  plot_ly(data=imm_simd_data, x = ~simdq, y = ~week12_diff) %>%
+  plot_ly(data=imm_simd_data, x = ~simdq, y = ~difference) %>%
     add_trace(type = 'bar', split = ~time_period_eligible,
               color=~time_period_eligible,
               colors = pal_immun2,
@@ -517,6 +524,17 @@ immune_table <- function(dataset, age_week) {
    autofit() %>%
    htmltools_value()
 }
+
+
+
+#####################################################################################.
+## Function for generating flextable summary of simd immunisation download data.
+
+immune_simd_data <- function(dataset, age_week) {
+
+  }
+  
+
 
 #####################################################################################.
 ## HV S-curve----
