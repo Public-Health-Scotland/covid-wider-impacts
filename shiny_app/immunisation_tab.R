@@ -274,6 +274,7 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
 # need to think how to allow downloading for each chart
 # Reactive dataset that gets the data the user is visualisaing ready to download
 imm_data_download <- reactive({
+  
   if (input$measure_select_immun == "mmr_dose2" & input$geoname_immun == "NHS Grampian") {
     mmrtable_dose2_gramp %>% 
       select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
@@ -282,11 +283,12 @@ imm_data_download <- reactive({
     
   switch(
     input$measure_select_immun,
-    "sixin_dose1" = sixtable,
-    "sixin_dose2" = sixtable_dose2,
-    "sixin_dose3" = sixtable_dose3,
-    "mmr_dose1" = mmrtable_dose1,
-    "mmr_dose2"= mmrtable_dose2
+    # for data download bind hscp table to table appearing in the app
+    "sixin_dose1" = rbind(sixtable,six_hscp_dose1),
+    "sixin_dose2" = rbind(sixtable_dose2,six_hscp_dose2),
+    "sixin_dose3" = rbind(sixtable_dose3,six_hscp_dose3),
+    "mmr_dose1" = rbind(mmrtable_dose1,mmr_hscp_dose1),
+    "mmr_dose2"= rbind(mmrtable_dose2, mmr_hscp_dose2)
   ) %>% 
     select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
     rename(cohort = time_period_eligible)

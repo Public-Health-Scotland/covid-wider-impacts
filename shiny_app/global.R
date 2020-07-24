@@ -76,22 +76,31 @@ month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with im
 age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
 
+#Immunisations s-curve data
 six_alldose <- readRDS("data/six_alldose_data.rds")
+mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
+
+#Immunisations data table data
 sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table dose 1
 sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6-in-1 summary table dose 2
 sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6-in-1 summary table dose 3
+mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
+mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation data table summary
+mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary
 
-#SIMD data for 6-in-1 & mmr
+#Immunisations hscp data
+six_hscp_dose1<- readRDS("data/six_dose1_hscp.rds")
+six_hscp_dose2<- readRDS("data/six_dose2_hscp.rds")
+six_hscp_dose3<- readRDS("data/six_dose3_hscp.rds")
+mmr_hscp_dose1<- readRDS("data/mmr_dose1_hscp.rds")
+mmr_hscp_dose2<- readRDS("data/mmr_dose2_hscp.rds")
+
+#Immunisations SIMD data
 six_simd_dose1<- readRDS("data/six_dose1_simdtable.rds")
 six_simd_dose2<- readRDS("data/six_dose2_simdtable.rds")
 six_simd_dose3<- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1<- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose1<- readRDS("data/mmr_dose2_simdtable.rds")
-
-mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
-mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
-mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation data table summary
-mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary
 
 ## perinatal mortality data
 perinatal <- readRDS("data/perinatal_data.rds")
