@@ -81,9 +81,12 @@ sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table dose 1
 sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6-in-1 summary table dose 2
 sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6-in-1 summary table dose 3
 
-#SIMD data for 6-in-1
-six_simd<- readRDS("data/six_simd.rds")
-mmr_simd<- readRDS("data/mmr_simd.rds")
+#SIMD data for 6-in-1 & mmr
+six_simd_dose1<- readRDS("data/six_dose1_simdtable.rds")
+six_simd_dose2<- readRDS("data/six_dose2_simdtable.rds")
+six_simd_dose3<- readRDS("data/six_dose3_simdtable.rds")
+mmr_simd_dose1<- readRDS("data/mmr_dose1_simdtable.rds")
+mmr_simd_dose1<- readRDS("data/mmr_dose2_simdtable.rds")
 
 mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
 mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
@@ -161,18 +164,15 @@ pal_immun <- c("2019" = '#000000',
                "W/B 13-APR-2020" = "#ec7014", "W/B 20-APR-2020" = "#cc4c02",
                "W/B 27-APR-2020" = "#8c2d04", "W/B 04-MAY-2020" = "#662506")
 
-pal_immun2 <- c("Jan-20" = "#abd9e9", "Feb-20" = "#74add1", "Mar-20" = "#7477d1",
-                "W/B 30-MAR-20" = "#fee391", "W/B 06-APR-20" = "#fec44f",
-                "W/B 13-APR-20" = "#ec7014", "W/B 20-APR-20" = "#cc4c02",
-                "W/B 27-APR-20" = "#8c2d04", "W/B 04-MAY-20" = "#662506",
-                "2019" = '#000000')
+# second colour palette for SIMD immunisation chart - ideally they could use same colour palette but during build dfferent time frame available
+pal_immun2 <- c("MAR 2020" = "#abd9e9", "APR 2020" = "#74add1", "MAY 2020" = "#7477d1",
+                "W/B 01-JUN-20" = "#fee391", "W/B 08-JUN-20" = "#fec44f")
 
 pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
                "MAR 2020" = "#0570b0", "W/B 30-MAR-2020" = "#fec44f",
                "W/B 06-APR-2020" = "#fe9929", "W/B 13-APR-2020" = "#ec7014",
                "W/B 20-APR-2020" = "#cc4c02", "W/B 27-APR-2020" = "#8c2d04",
                "W/B 04-MAY-2020" = "#662506")
-
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
