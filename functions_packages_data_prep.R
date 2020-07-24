@@ -159,4 +159,22 @@ format_immchild_table <- function(filename) {
   
 }
 
+format_immsimd_data <- function(filename) {
+  read_csv(paste0(data_folder, filename, ".csv")) %>%
+    janitor::clean_names() %>%
+    mutate(eligible_start=case_when((str_length(eligible_start)<10) ~ paste0("0",eligible_start), TRUE ~ eligible_start)) %>%
+    arrange (cohort,as.Date(eligible_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+    mutate(time_period_eligible=as.factor(case_when(cohort=="monthly" ~ paste0(toupper(substr(time_period_eligible, 1, 3)),
+                                                          " 20",substring(time_period_eligible,5,6)), TRUE ~ time_period_eligible))) %>%
+    rename(area_name=geography,simdq=simd2020v2_sc_quintile) %>%
+    mutate(simdq=case_when(simdq==6 ~"Scotland", TRUE ~as.character(simdq))) %>%
+    filter(simdq !=0) %>% # filtering out data where simd missing as small numbers lead to massive percentage differences.
+    #horrible code below that filters only the cohorts I think we want to display in the chart - this definitely could be tidied
+    filter(!(time_period_eligible %in% c("JAN 2020","FEB 2020","JUN 2020"))) %>% # temporary filter until we are sure which cohorts will be included
+    mutate(date=as.Date(eligible_start,format="%m/%d/%Y")) %>%
+    filter(date >= as.Date("2020-06-01") | cohort=="monthly") %>% # temporary filter until we are sure which cohorts will be included
+    droplevels() %>%
+    select(-date)
+    }
+
 ##END

@@ -630,17 +630,16 @@ saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.
 six_dose3_datatable <- format_immchild_table("immunisations/6in1/six in one_3_dashboardtab_20200622") 
 saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
 
-
 ###############################################.
 ## Prepare 6-in-1 SIMD data 
-six_simd <- read_csv(paste0(data_folder,"immunisations/6in1/six-in-one_simd_20200622.csv"),
-                     col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
-                                     time_period_eligible=col_factor())) %>%
-  janitor::clean_names() %>%
-  rename(simdq=simd2020v2_sc_quintile) %>%
-  filter(simdq !=0) # filtering out data where simd missing as small numbers lead to massive percentage differences.
+six_dose1_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 1_simd_20200622")
+saveRDS(six_dose1_simdtable, paste0("shiny_app/data/","six_dose1_simdtable.rds"))
 
-saveRDS(six_simd, paste0("shiny_app/data/","six_simd.rds"))
+six_dose2_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 2_simd_20200622")
+saveRDS(six_dose2_simdtable, paste0("shiny_app/data/","six_dose2_simdtable.rds"))
+
+six_dose3_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 3_simd_20200622")
+saveRDS(six_dose2_simdtable, paste0("shiny_app/data/","six_dose3_simdtable.rds"))
 
 ###############################################.
 # Definitions, apply both for MRR and 6 in one
@@ -726,14 +725,11 @@ saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datata
 
 ###############################################.
 ## Prepare MMR SIMD data 
-mmr_simd <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_simd_20200622.csv"),
-                     col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
-                                     time_period_eligible=col_factor())) %>%
-  janitor::clean_names() %>%
-  rename(simdq=simd2020v2_sc_quintile) %>%
-  filter(simdq !=0) # filtering out data where simd missing as small numbers lead to massive percentage differences.
+mmr_dose1_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 1_simd_20200622")
+saveRDS(mmr_dose1_simdtable, paste0("shiny_app/data/","mmr_dose1_simdtable.rds"))
 
-saveRDS(mmr_simd, paste0("shiny_app/data/","mmr_simd.rds"))
+mmr_dose2_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 2_simd_20200622")
+saveRDS(mmr_dose2_simdtable, paste0("shiny_app/data/","mmr_dose2_simdtable.rds"))
 
 ###############################################.
 ## Child health review: first visit ----
