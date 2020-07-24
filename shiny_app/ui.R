@@ -65,6 +65,9 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                    tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard", class="externallink"),
                    " which brings together data and 
           evidence on the impacts of COVID-19 on health, society and the economy."),
+           tags$li("The Improvement Service publishes a ", 
+                   tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard", class="externallink"),
+                   " on the economic impacts of the pandemic in Scotland."),
            tags$li("Transport Scotland publishes ", 
                    tags$a(href="https://www.transport.gov.scot/publications/", "information", class="externallink"),
             " on transport trends and public attitudes towards
