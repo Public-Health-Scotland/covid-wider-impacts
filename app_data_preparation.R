@@ -358,15 +358,7 @@ sas %<>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
 #NEW WEEKLY DATA UPDATE
-sas_new <-rbind(read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_11052020to17052020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_18052020to25052020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_25052020to31052020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_01062020to07062020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_08062020to14062020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_15062020to21062020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_22062020to28062020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_29062020to05072020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_06072020to12072020.txt"))) %>%
+sas_new <-read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to19072020.txt")) %>% 
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -402,7 +394,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-07-12")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-07-19")
 
 ###############################################.
 ## Deaths ----
