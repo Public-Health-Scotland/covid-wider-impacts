@@ -9,7 +9,7 @@ source("functions_packages_data_prep.R")
 ## RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_20-Jul.rds")) %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_27-Jul.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -97,7 +97,7 @@ rap_adm <- rbind(rap_adm, spec_med, paed_com) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-07-12", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-07-19", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -268,9 +268,9 @@ prepare_final_data(ae_data, "ae", last_week = "2020-07-19")
 
 # #Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
 # #Each week this section of code can be uncommented run for the latest weeks data then recommented after txt file deleted
- # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 13072020 to 19072020.txt")))
- # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 13072020 to 19072020.rds"))
- # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 13072020 to 19072020.txt"))
+  # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 20072020 to 26072020.txt")))
+  # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 20072020 to 26072020.rds"))
+  # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 20072020 to 26072020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 08062020 to 14062020.rds")),
@@ -278,7 +278,8 @@ nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 22062020 to 28062020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 29062020 to 05072020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 06072020 to 12072020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 13072020 to 19072020.rds"))) %>%
+                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 13072020 to 19072020.rds")),
+                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 20072020 to 26072020.rds"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -322,7 +323,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-07-19")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-07-26")
 
 ###############################################.
 ## SAS data ----
