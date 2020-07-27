@@ -170,7 +170,7 @@ ooh_new %<>% mutate(scot = "Scotland") %>%
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_49_1112813557492909139.xlsx")) %>% 
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_54_8981685717109972450.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -196,8 +196,7 @@ ooh_may_onwards <- ooh_may_onwards %>%
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
-  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-07-19"))) #filter complete weeks (Mon-Sun)
+  summarise(count = sum(count, na.rm = T))  %>% ungroup()
 
 #bind old and new ooh data
 ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
@@ -211,7 +210,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-07-12")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-07-26")
 
 ###############################################.
 ## A&E data ----
@@ -358,15 +357,7 @@ sas %<>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
 #NEW WEEKLY DATA UPDATE
-sas_new <-rbind(read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_11052020to17052020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_18052020to25052020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_25052020to31052020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_01062020to07062020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_08062020to14062020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_15062020to21062020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_22062020to28062020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_29062020to05072020.txt")),
-                read_tsv(paste0(data_folder,"SAS/COVID WIDER IMPACT SAS_06072020to12072020.txt"))) %>%
+sas_new <-read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to19072020.txt")) %>% 
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -402,7 +393,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-07-12")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-07-19")
 
 ###############################################.
 ## Deaths ----
