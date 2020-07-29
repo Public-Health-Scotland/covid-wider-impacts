@@ -170,22 +170,31 @@ format_immhscp_table <- function(filename) {
 }
 
 # Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
-format_immsimd_data <- function(filename) {
-  read_csv(paste0(data_folder, filename, ".csv")) %>%
+format_immsimd_data <- function(filename, uptake_var) {
+  data_simd <-  read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
     mutate(eligible_start=case_when((str_length(eligible_start)<10) ~ paste0("0",eligible_start), TRUE ~ eligible_start)) %>%
     arrange (cohort,as.Date(eligible_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
     mutate(time_period_eligible=as.factor(case_when(cohort=="monthly" ~ paste0(toupper(substr(time_period_eligible, 1, 3)),
                                                           " 20",substring(time_period_eligible,5,6)), TRUE ~ time_period_eligible))) %>%
-    rename(area_name=geography,simdq=simd2020v2_sc_quintile) %>%
-    mutate(simdq=case_when(simdq==6 ~"Scotland", TRUE ~as.character(simdq))) %>%
-    filter(simdq !=0) %>% # filtering out data where simd missing as small numbers lead to massive percentage differences.
+    rename(area_name=geography,simdq=simd2020v2_sc_quintile, uptake_perc = uptake_var) %>%
+    mutate(simdq=case_when(simdq==6 ~"Scotland", simdq == 1 ~ "1 - most deprived",
+                           simdq == 5 ~ "5 - least deprived", TRUE ~as.character(simdq))) %>%
+    # filtering out data where simd missing as small numbers lead to massive percentage differences.
+    # filtering out Scotland totals as not plotted
+    filter(!(simdq %in% c("0", "Scotland"))) %>% 
     #horrible code below that filters only the cohorts I think we want to display in the chart - this definitely could be tidied
     filter(!(time_period_eligible %in% c("JAN 2020","FEB 2020","JUN 2020"))) %>% # temporary filter until we are sure which cohorts will be included
     mutate(date=as.Date(eligible_start,format="%m/%d/%Y")) %>%
     filter(date >= as.Date("2020-06-01") | cohort=="monthly") %>% # temporary filter until we are sure which cohorts will be included
     droplevels() %>%
     select(-date)
+  
+  # Creating levels for factor in chronological order
+  data_simd$time_period_eligible <- factor(data_simd$time_period_eligible, 
+                                          levels=unique(data_simd$time_period_eligible[order(data_simd$eligible_start, decreasing = T)]), 
+                                          ordered=TRUE)
+  return(data_simd)
     }
 
 ##END
