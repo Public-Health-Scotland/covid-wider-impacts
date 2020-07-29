@@ -133,15 +133,19 @@ output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week
 output$immun_mmr_table_dose1 <- renderUI({immune_table(mmrtable_dose1, age_week = 1)}) #age week 1 doesn't really make sense as given to children at 1 year
 output$immun_mmr_table_dose2 <- renderUI({immune_table(mmrtable_dose2, age_week = 3)}) #age week 3 doesn't really make sense as given to children at 3 years and 4 month
 
-#run function to generate SIMD bar charts (only available at scotland level)
-output$immun_6in1_simd_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1")})
-output$immun_6in1_simd_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose2, age_week = "12", dose= "dose 2")})
-output$immun_6in1_simd_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose3, age_week = "16", dose= "dose 3")})
-output$immun_mmr_simd_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose1, age_week = "1", dose= "dose 1")})
-output$immun_mmr_simd_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2")})
+#run function to generate SIMD bar charts relative changes (only available at scotland level)
+output$imm_6in1_simd_chan_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1")})
+output$imm_6in1_simd_chan_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose2, age_week = "12", dose= "dose 2")})
+output$imm_6in1_simd_chan_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose3, age_week = "16", dose= "dose 3")})
+output$imm_mmr_simd_chan_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose1, age_week = "1", dose= "dose 1")})
+output$imm_mmr_simd_chan_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2")})
 
-
-
+#run function to generate SIMD bar charts absolute uptake (only available at scotland level)
+output$imm_6in1_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1", var_plot = "uptake_perc")})
+output$imm_6in1_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose2, age_week = "12", dose= "dose 2", var_plot = "uptake_perc")})
+output$imm_6in1_simd_tot_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose3, age_week = "16", dose= "dose 3", var_plot = "uptake_perc")})
+output$imm_mmr_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose1, age_week = "1", dose= "dose 1", var_plot = "uptake_perc")})
+output$imm_mmr_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2", var_plot = "uptake_perc")})
 
 ###############################################.
 ## Reactive layout  ----
@@ -185,7 +189,7 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
 ")
   
   # Function to create common layout to all immunisation charts
-  imm_layout <- function(s_plot, s_table, simd_plot, age_def = "") {
+  imm_layout <- function(s_plot, s_table, simd_tot_plot, simd_chan_plot, age_def = "") {
     tagList(fluidRow(column(12, renderUI(intro_6in1),
                             h4(paste0(immune_title)),
                             p(immune_subtitle))),
@@ -204,9 +208,8 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
                                            icon = icon('question-circle'))),
                               column(6,
                                      downloadButton('download_imm_simd_data', 'Download deprivation data'))),
-              fluidRow(column(6, br()
-                              ),
-                       column(6, br(), withSpinner(plotlyOutput(simd_plot)))
+              fluidRow(column(6, br(), withSpinner(plotlyOutput(simd_tot_plot))),
+                       column(6, br(), withSpinner(plotlyOutput(simd_chan_plot)))
                        )
               ) #tagList from if statement
             }, 
@@ -217,19 +220,21 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
   # Specify items to display in immunisation ui based on step 2 selection 
   if (input$measure_select_immun == "sixin_dose1") {
     imm_layout(s_plot = "immun_6in1_scurve_dose1", s_table = "immun_6in1_table_dose1", 
-               simd_plot = "immun_6in1_simd_dose1")
+               simd_tot_plot = "imm_6in1_simd_tot_dose1", simd_chan_plot = "imm_6in1_simd_chan_dose1")
   }  else if (input$measure_select_immun == "sixin_dose2"){
     imm_layout(s_plot = "immun_6in1_scurve_dose2", s_table = "immun_6in1_table_dose2", 
-               simd_plot = "immun_6in1_simd_dose2")
+               simd_tot_plot = "imm_6in1_simd_tot_dose2", simd_chan_plot = "imm_6in1_simd_chan_dose2")
   }  else if (input$measure_select_immun == "sixin_dose3"){
     imm_layout(s_plot = "immun_6in1_scurve_dose3", s_table = "immun_6in1_table_dose3", 
-               simd_plot = "immun_6in1_simd_dose3")
+               simd_tot_plot = "imm_6in1_simd_tot_dose3", simd_chan_plot = "imm_6in1_simd_chan_dose3")
   }  else if (input$measure_select_immun == "mmr_dose1"){
     imm_layout(s_plot = "immun_mmr_scurve_dose1", s_table = "immun_mmr_table_dose1", 
-               simd_plot = "immun_mmr_simd_dose1", age_def = "12 months defined as 53 weeks")
+               simd_tot_plot = "imm_mmr_simd_tot_dose1", simd_chan_plot = "imm_mmr_simd_chan_dose1",
+               age_def = "12 months defined as 53 weeks")
   } else if (input$measure_select_immun == "mmr_dose2"){
     imm_layout(s_plot = "immun_mmr_scurve_dose1", s_table = "immun_mmr_table_dose1", 
-               simd_plot = "immun_mmr_simd_dose1", age_def = "3 year 4 months defined as 174 weeks")
+               simd_tot_plot = "imm_mmr_simd_tot_dose2", simd_chan_plot = "imm_mmr_simd_chan_dose2", 
+               age_def = "3 year 4 months defined as 174 weeks")
   }
   
 }) #close immunisation_explorer function

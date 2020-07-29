@@ -343,7 +343,7 @@ else if(dataset_name == "mmr_alldose" && dose== "dose 2" ){ #set chart parameter
 
 ######################################################################.
 #Function to create bar-plot for Scotland immunisation data by SIMD 
-plot_imm_simd <- function(dataset, age_week, dose) {
+plot_imm_simd <- function(dataset, age_week, dose, var_plot = "difference") {
   
   imm_simd_data <- dataset %>% filter(cohort == "monthly") # only months shown
   
@@ -363,7 +363,7 @@ plot_imm_simd <- function(dataset, age_week, dose) {
   xaxis_plots[["title"]] <- "SIMD quintile"
   
   #Creating time trend plot
-  plot_ly(data=imm_simd_data, x = ~simdq, y = ~difference) %>%
+  plot_ly(data=imm_simd_data, x = ~simdq, y = ~get(var_plot)) %>%
     add_trace(type = 'bar', split = ~time_period_eligible,
               color=~time_period_eligible,
               colors = pal_immun2,
@@ -522,16 +522,6 @@ immune_table <- function(dataset, age_week) {
    autofit() %>%
    htmltools_value()
 }
-
-
-
-#####################################################################################.
-## Function for generating flextable summary of simd immunisation download data.
-
-immune_simd_data <- function(dataset, age_week) {
-
-  }
-  
 
 
 #####################################################################################.
