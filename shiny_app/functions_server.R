@@ -261,6 +261,8 @@ filter_data <- function(dataset, area = T) {
 ## Function for drawing S-Curve charts used in immunisation tabs.
 
 plot_scurve <- function(dataset, age_week, dose) {
+  
+  dataset_name <- deparse(substitute(dataset)) # character name of the data
  
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun & #filter to correct geography
                                     str_detect(immunisation,dose),
@@ -286,7 +288,7 @@ yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
 xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
 
 ## chart axis for all 6-in-1 scurves
-if( any(c(six_alldose) %in% dataset)){ # this doesn't seem like very efficient logic but it works
+if(dataset_name == "six_alldose"){ # this doesn't seem like very efficient logic but it works
   
   xaxis_plots[["title"]] <- "Age of children in weeks"
   xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
@@ -296,7 +298,7 @@ if( any(c(six_alldose) %in% dataset)){ # this doesn't seem like very efficient l
   age_unit <- paste0(age_week, " weeks:") #string for legend label
 }
 ##chart axis for MMR dose 1 scurve
-else if(dataset == mmr_alldose && dose== "dose 1" ){ #set chart parameters for mmr dose 1
+else if(dataset_name == "mmr_alldose" && dose== "dose 1" ){ #set chart parameters for mmr dose 1
 
   xaxis_plots[["title"]] <- "Age of children in months"
   xaxis_plots[["tickvals"]] <- c(0, seq(343, 459, by = 29), 490) # xaxis days 343 (49 weeks) to 490 (70 weeks)
@@ -307,7 +309,7 @@ else if(dataset == mmr_alldose && dose== "dose 1" ){ #set chart parameters for m
 }
 
 ##chart axis for MMR dose 2 scurve
-else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for mmr dose 2
+else if(dataset_name == "mmr_alldose" && dose== "dose 2" ){ #set chart parameters for mmr dose 2
 
   xaxis_plots[["title"]] <- "Age of children in years and months"
   xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1306, by = 29), 1337) #xaxis 1190 days (170 week) to 1337 days (191 weeks)
@@ -348,17 +350,16 @@ plot_imm_simd <- function(dataset, age_week, dose) {
   
   imm_simd_data <- dataset 
   
+  dataset_name <- deparse(substitute(dataset)) # character name of the data
+  
+  
   # Create tooltip for scurve
   tooltip_scurve <- c(paste0("Cohort: ", imm_simd_data$time_period_eligible))
   
   ## String text for legend title label
-  #if(any(c(six_simd) %in% dataset)){age_unit <- paste0(age_week, " weeks:")}
-  #if(substr(dataset,1,3) == "six") {age_unit <- paste0(age_week, " weeks:")}
-  if(dataset == six_simd_dose1) {age_unit <- paste0(age_week, " weeks:")}
-  else if(dataset == six_simd_dose2) {age_unit <- paste0(age_week, " weeks:")}
-  else if(dataset == six_simd_dose3) {age_unit <- paste0(age_week, " weeks:")}
-  else if(dataset == mmr_simd_dose1) {age_unit <- paste0("12 months:")}
-  else if(dataset == mmr_simd_dose2 ) {age_unit <- paste0("3y 4months:")}
+  age_unit <- case_when(substr(dataset_name,1,3) == "six" ~ paste0(age_week, " weeks:"),
+                        dataset_name == "mmr_simd_dose1" ~ paste0("12 months:"),
+                        dataset_name == "mmr_simd_dose2" ~ paste0("3y 4months:"))
   
   #Modifying standard yaxis name applies to all curves
   yaxis_plots[["title"]] <- "% change in uptake compared to 2019"
