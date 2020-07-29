@@ -183,85 +183,48 @@ Data is shown for Scotland and for NHS Board areas. Due to small numbers of chil
 Uptake rates based on small numbers are prone to fluctuation. Therefore, in boards with small numbers of children eligible for immunisation each week, particularly NHS Borders and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates.
 ")
   
-  #Title for scurve section
-  explorer_imm <-     tagList(
-    fluidRow(column(12, renderUI(intro_6in1),
-                    h4(paste0(immune_title)),
-                    p(immune_subtitle))))
-  
-  #Additional title for when Scotland level data selected and deprivation data available
-  explorer_imm_simd <- tagList(
-    fluidRow(column(12, h4(paste0(immune_simd_title)),
-                    actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",icon = icon('question-circle')))))
-  
-  #download data for SIMD data
- # download_simd <- 
   #text next to SIMD chart
   simd_text <-  tagList(
     renderUI(p("For Scotland, the change in immunisation uptake rates between the months of 2019 and the most recent year is shown for each deprivation quintile. This chart can show if there is variation in patterns of uptake by deprivation.  This data is only available for the Scotland geography.")),
     downloadButton('download_imm_simd_data', 'Download deprivation data')
     )
   
-    
+  # Function to create common layout to all immunisation charts
+  imm_layout <- function(s_plot, s_table, simd_plot, age_def = "") {
+    tagList(fluidRow(column(12, renderUI(intro_6in1),
+                            h4(paste0(immune_title)),
+                            p(immune_subtitle))),
+            fluidRow(column(6,br(), br(),
+                            withSpinner(plotlyOutput(s_plot)),
+                            p(age_def)),
+                     column(6, uiOutput(s_table))),
+            if(input$geotype_immun == "Scotland"){
+              tagList(fluidRow(column(12, h4(paste0(immune_simd_title)),
+                              actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
+                                           icon = icon('question-circle')))),
+              fluidRow(column(6,br(),withSpinner(plotlyOutput(simd_plot))),
+                       column(6,br(),simd_text)))
+            }, 
+            fluidRow(column(12, renderUI(commentary_6in1)))
+    )
+  }
   
   # Specify items to display in immunisation ui based on step 2 selection 
   if (input$measure_select_immun == "sixin_dose1") {
-    tagList(explorer_imm, 
-            fluidRow(column(6,br(), br(),
-                            withSpinner(plotlyOutput("immun_6in1_scurve_dose1"))),
-                     column(6, uiOutput("immun_6in1_table_dose1"))),
-            if(input$geotype_immun == "Scotland"){ #if scotland selected then deprivation split can be shown
-              tagList(explorer_imm_simd,
-                      fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_6in1_simd_dose1"))),
-                      (column(6,br(),simd_text))))}, 
-              fluidRow(column(12, renderUI(commentary_6in1)))
-    )
+    imm_layout(s_plot = "immun_6in1_scurve_dose1", s_table = "immun_6in1_table_dose1", 
+               simd_plot = "immun_6in1_simd_dose1")
   }  else if (input$measure_select_immun == "sixin_dose2"){
-    tagList(explorer_imm, 
-            fluidRow(column(6,br(), br(),
-                            withSpinner(plotlyOutput("immun_6in1_scurve_dose2"))),
-                     column(6, uiOutput("immun_6in1_table_dose2"))),
-            if(input$geotype_immun == "Scotland"){
-              tagList(explorer_imm_simd,
-                      fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_6in1_simd_dose2"))),
-                               (column(6,br(),simd_text))))}, 
-            fluidRow(column(12, renderUI(commentary_6in1)))
-    )
+    imm_layout(s_plot = "immun_6in1_scurve_dose2", s_table = "immun_6in1_table_dose2", 
+               simd_plot = "immun_6in1_simd_dose2")
   }  else if (input$measure_select_immun == "sixin_dose3"){
-    tagList(explorer_imm, 
-            fluidRow(column(6,br(), br(),
-                            withSpinner(plotlyOutput("immun_6in1_scurve_dose3"))),
-                     column(6, uiOutput("immun_6in1_table_dose3"))),
-            if(input$geotype_immun == "Scotland"){
-              tagList(explorer_imm_simd,
-                      fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_6in1_simd_dose3"))),
-                               (column(6,br(),simd_text))))}, 
-            fluidRow(column(12, renderUI(commentary_6in1)))
-    )
+    imm_layout(s_plot = "immun_6in1_scurve_dose3", s_table = "immun_6in1_table_dose3", 
+               simd_plot = "immun_6in1_simd_dose3")
   }  else if (input$measure_select_immun == "mmr_dose1"){
-    tagList(explorer_imm, 
-            fluidRow(column(6,br(), br(),
-                            withSpinner(plotlyOutput("immun_mmr_scurve_dose1")),
-                            p("12 months defined as 53 weeks")),
-                     column(6, uiOutput("immun_mmr_table_dose1"))),
-            if(input$geotype_immun == "Scotland"){
-              tagList(explorer_imm_simd,
-                      fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_mmr_simd_dose1"))),
-                               (column(6,br(),simd_text))))}, 
-            fluidRow(column(12, renderUI(commentary_6in1)))
-    )
-  }else if (input$measure_select_immun == "mmr_dose2"){
-    tagList(explorer_imm,
-            fluidRow(column(6,br(), br(),
-                            withSpinner(plotlyOutput("immun_mmr_scurve_dose2")),
-                            p("3 year 4 months defined as 174 weeks")),
-                     column(6, uiOutput("immun_mmr_table_dose2"))),
-            if(input$geotype_immun == "Scotland"){
-              tagList(explorer_imm_simd,
-                      fluidRow(column(6,br(),withSpinner(plotlyOutput("immun_mmr_simd_dose2"))),
-                               (column(6,br(),simd_text))))}, 
-            fluidRow(column(12, renderUI(commentary_6in1)))
-    )
+    imm_layout(s_plot = "immun_mmr_scurve_dose1", s_table = "immun_mmr_table_dose1", 
+               simd_plot = "immun_mmr_simd_dose1", age_def = "12 months defined as 53 weeks")
+  } else if (input$measure_select_immun == "mmr_dose2"){
+    imm_layout(s_plot = "immun_mmr_scurve_dose1", s_table = "immun_mmr_table_dose1", 
+               simd_plot = "immun_mmr_simd_dose1", age_def = "3 year 4 months defined as 174 weeks")
   }
   
 }) #close immunisation_explorer function
