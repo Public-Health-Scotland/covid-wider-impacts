@@ -344,11 +344,8 @@ else if(dataset_name == "mmr_alldose" && dose== "dose 2" ){ #set chart parameter
 ######################################################################.
 #Function to create bar-plot for Scotland immunisation data by SIMD 
 plot_imm_simd <- function(dataset, age_week, dose) {
-  # imm_simd_data <- dataset %>% filter(cohort=="monthly" & # filter not needed 
-  #                                     simdq !=0 & # moved to data prep/ remove SIMD missing
-  #                                     str_detect(immunisation,dose)) #filters to show only appropriate dose
   
-  imm_simd_data <- dataset 
+  imm_simd_data <- dataset %>% filter(cohort == "monthly") # only months shown
   
   dataset_name <- deparse(substitute(dataset)) # character name of the data
   
@@ -362,8 +359,8 @@ plot_imm_simd <- function(dataset, age_week, dose) {
                         dataset_name == "mmr_simd_dose2" ~ paste0("3y 4months:"))
   
   #Modifying standard yaxis name applies to all curves
-  yaxis_plots[["title"]] <- "% change in uptake compared to 2019"
-  xaxis_plots[["title"]] <- "SIMD Quintile"
+  yaxis_plots[["title"]] <- "Absolute % change in uptake compared to 2019"
+  xaxis_plots[["title"]] <- "SIMD quintile"
   
   #Creating time trend plot
   plot_ly(data=imm_simd_data, x = ~simdq, y = ~difference) %>%

@@ -160,11 +160,12 @@ output$immunisation_explorer <- renderUI({
   immune_subtitle <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
   
   # text for SIMD titles of cut charts - SIMD only available at scotland level so no need for variable geography
-  immune_simd_title <- paste0(case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age) by deprivation quintile: Scotland"),
-                                   input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age) by deprivation quintile: Scotland"),
-                                   input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age) by deprivation quintile: Scotland"),
-                                   input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age) by deprivation quintile: Scotland"),
-                                   input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age) by deprivation quintile: Scotland")))
+  immune_simd_title <- paste0(case_when(input$measure_select_immun == "sixin_dose1" ~ 
+                                          paste0("Change in uptake of first dose of 6-in-1 vaccine by 8 weeks of age by deprivation: Scotland (Compared to baseline of children turning 4 weeks in 2019)"),
+                                   input$measure_select_immun == "sixin_dose2" ~ paste0("Change in uptake of first dose of 6-in-1 vaccine by 12 weeks of age, by deprivation: Scotland (Compared to baseline of children turning 8 weeks in 2019)"),
+                                   input$measure_select_immun == "sixin_dose3" ~ paste0("Change in uptake of first dose of 6-in-1 vaccine by 16 weeks of age, by deprivation: Scotland (Compared to baseline of children turning 12 weeks in 2019)"),
+                                   input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age) by deprivation quintile: Scotland (Compared to baseline of children turning 12-13 months in 2019)"),
+                                   input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age) by deprivation quintile: Scotland (Compared to baseline of children turning 3 years and 4 months in 2019)")))
   
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
@@ -183,12 +184,6 @@ Data is shown for Scotland and for NHS Board areas. Due to small numbers of chil
 Uptake rates based on small numbers are prone to fluctuation. Therefore, in boards with small numbers of children eligible for immunisation each week, particularly NHS Borders and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates.
 ")
   
-  #text next to SIMD chart
-  simd_text <-  tagList(
-    renderUI(p("For Scotland, the change in immunisation uptake rates between the months of 2019 and the most recent year is shown for each deprivation quintile. This chart can show if there is variation in patterns of uptake by deprivation.  This data is only available for the Scotland geography.")),
-    downloadButton('download_imm_simd_data', 'Download deprivation data')
-    )
-  
   # Function to create common layout to all immunisation charts
   imm_layout <- function(s_plot, s_table, simd_plot, age_def = "") {
     tagList(fluidRow(column(12, renderUI(intro_6in1),
@@ -198,15 +193,25 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
                             withSpinner(plotlyOutput(s_plot)),
                             p(age_def)),
                      column(6, uiOutput(s_table))),
-            if(input$geotype_immun == "Scotland"){
-              tagList(fluidRow(column(12, h4(paste0(immune_simd_title)),
+            if (input$geotype_immun == "Scotland"){
+              tagList(fluidRow(h4(paste0(immune_simd_title)),
+                                      p("For Scotland, the change in immunisation uptake rates between the months of 
+      2019 and the most recent year is shown for each deprivation quintile. 
+      This chart can show if there is variation in patterns of uptake by deprivation. 
+      This data is only available for the Scotland geography."),
+                               column(6,
                               actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
-                                           icon = icon('question-circle')))),
-              fluidRow(column(6,br(),withSpinner(plotlyOutput(simd_plot))),
-                       column(6,br(),simd_text)))
+                                           icon = icon('question-circle'))),
+                              column(6,
+                                     downloadButton('download_imm_simd_data', 'Download deprivation data'))),
+              fluidRow(column(6, br()
+                              ),
+                       column(6, br(), withSpinner(plotlyOutput(simd_plot)))
+                       )
+              ) #tagList from if statement
             }, 
             fluidRow(column(12, renderUI(commentary_6in1)))
-    )
+    ) #tagList barcket
   }
   
   # Specify items to display in immunisation ui based on step 2 selection 
