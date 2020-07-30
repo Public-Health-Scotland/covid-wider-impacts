@@ -136,15 +136,15 @@ output$imm_mmr_simd_chan_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_d
 
 #run function to generate SIMD bar charts absolute uptake (only available at scotland level)
 output$imm_6in1_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1", 
-                                                              var_plot = "uptake_perc", leg = F)})
+                                                              var_plot = "uptake_12weeks_percent", leg = F)})
 output$imm_6in1_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose2, age_week = "12", dose= "dose 2", 
-                                                              var_plot = "uptake_perc", leg = F)})
+                                                              var_plot = "uptake_16weeks_percent", leg = F)})
 output$imm_6in1_simd_tot_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose3, age_week = "16", dose= "dose 3", 
-                                                              var_plot = "uptake_perc", leg = F)})
+                                                              var_plot = "uptake_20weeks_percent", leg = F)})
 output$imm_mmr_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose1, age_week = "1", dose= "dose 1", 
-                                                             var_plot = "uptake_perc", leg = F)})
+                                                             var_plot = "uptake_57weeks_percent", leg = F)})
 output$imm_mmr_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2", 
-                                                             var_plot = "uptake_perc", leg = F)})
+                                                             var_plot = "uptake_178weeks_percent", leg = F)})
 
 ###############################################.
 ## Reactive layout  ----
@@ -203,11 +203,8 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in area
             fluidRow(column(12, renderUI(commentary_6in1))),
             if (input$geotype_immun == "Scotland"){
               tagList(fluidRow(column(6, h4(paste0(immune_simd_tot_title))),
-                               column(6, h4(paste0(immune_simd_chan_title)),
-                                      p("For Scotland, the change in immunisation uptake rates between the months of 
-      2019 and the most recent year is shown for each deprivation quintile. 
-      This chart can show if there is variation in patterns of uptake by deprivation. 
-      This data is only available for the Scotland geography.")),
+                               column(6, h4(paste0(immune_simd_chan_title))),
+                                      p("The deprivation chart shows the change in immunisation uptake for children becoming eligible for their immunisation during the Covid-19 pandemic, compared to those who became eligible in 2019, at all Scotland level.  Early uptake achieved by 4 weeks after the children became eligible for their immunisation is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort.  The percentage relative change in early uptake is shown for children living in areas with different levels of deprivation.  So, for example, if early uptake for children becoming eligible for an immunisation in 2019 and in March 2020 was 80% and 84% respectively, this would be shown on the chart as a 5% relative increase in early uptake for children becoming eligible in March 2020.  The percentage relative change (5%) is shown rather than the absolute change (4%) as this allows an easier comparison across deprivation groups."),
                                column(6,
                                       actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
                                                    icon = icon('question-circle'))),
@@ -293,6 +290,20 @@ imm_simd_data_download <- reactive ({
     select(immunisation, area_name, time_period_eligible, simdq, denominator, starts_with("uptake"), starts_with("baseline"),difference)  %>% 
     rename(cohort = time_period_eligible,deprivation_quintile=simdq, percentage_difference=difference)
 })
+
+# immunisation
+# area_name
+# cohort
+# deprivation_quintile (with 1 labelled 1 – most deprived and 5 labelled 5 – least deprived)
+# children_turn_8weeks_num
+# children_rec_imm_12weeks_num
+# uptake_12weeks_percent
+# children_turn_8weeks_2019_num
+# children_rec_imm_12weeks_2019_num
+# uptake_12weeks_2019_percent
+# absolute_change_from_baseline_percent
+# relative_change_from_baseline_percent
+
 
 output$download_imm_simd_data <- downloadHandler(
   filename ="immunisation_extract_by_deprivation.csv",

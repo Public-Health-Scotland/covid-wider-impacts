@@ -170,14 +170,14 @@ format_immhscp_table <- function(filename) {
 }
 
 # Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
-format_immsimd_data <- function(filename, uptake_var) {
+format_immsimd_data <- function(filename) {
   data_simd <-  read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
     mutate(eligible_start=case_when((str_length(eligible_start)<10) ~ paste0("0",eligible_start), TRUE ~ eligible_start)) %>%
     arrange (cohort,as.Date(eligible_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
     mutate(time_period_eligible=as.factor(case_when(cohort=="monthly" ~ paste0(toupper(substr(time_period_eligible, 1, 3)),
                                                           " 20",substring(time_period_eligible,5,6)), TRUE ~ time_period_eligible))) %>%
-    rename(area_name=geography,simdq=simd2020v2_sc_quintile, uptake_perc = uptake_var) %>%
+    rename(area_name=geography,simdq=simd2020v2_sc_quintile) %>%
     mutate(simdq=case_when(simdq==6 ~"Scotland", simdq == 1 ~ "1 - most deprived",
                            simdq == 5 ~ "5 - least deprived", TRUE ~as.character(simdq))) %>%
     # filtering out data where simd missing as small numbers lead to massive percentage differences.
