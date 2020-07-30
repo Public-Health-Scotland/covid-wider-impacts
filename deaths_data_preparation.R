@@ -1,7 +1,7 @@
 ##### Weekly all-cause deaths data preparation for Wider Impacts app
 ##### Liz Richardson 
 ##### elizabeth.richardson1@nhs.net 
-##### 28 May 2020
+##### 15 July 2020
 
 ###############################################.
 ## Packages ----
@@ -20,11 +20,9 @@ library(ggplot2)
 rm(list = ls())
 
 ## set pathways ----------------------
-datafolder <- "Z:/NRS data/Weekly COVID deaths/data/"
-appfolder <- "D:/Users/elizabethr/Documents/GitHub/covid-wider-impact/"
-#lookups <- "Z:/NRS data/Weekly COVID deaths/lookups/"
-#working <- "Z:/NRS data/Weekly COVID deaths/wider_impacts_dashboard/working_data/"
-  
+datafolder <- "Q:/Team-NRSData/NRS data/Projects/Weekly COVID deaths/data/"
+working <- "Q:/Team-NRSData/NRS data/Projects/Weekly COVID deaths/wider_impacts_dashboard/working_data/"
+
 ###############################################.
 ## Reading in data and lookups ----
 ###############################################.
@@ -36,36 +34,13 @@ df_received <- readRDS(paste0(datafolder,"received_data/NRS_Data.rds")) %>%
 names(df_received) <- tolower(names(df_received)) # decapitalise column names
 
 ### load postcode-simd look up ---------------
-# pc_lookup <- read_csv(paste0(lookups,"Geography/postcode_2019_2_simd2020.csv")) %>% 
-#   select(c("pc8", "DZ2011", "HB2019", "HSCP2019", "simd2020_sc_quintile")) %>% 
-#   rename("postcode" = "pc8")
-# write_rds(pc_lookup, paste0(appfolder, "data/pc_lookup.rds"))
-pc_lookup <- readRDS(paste0(appfolder, "data/pc_lookup.rds"))
+pc_lookup <- readRDS("data/pc_lookup.rds")
 
 ### load weekly lookup file ----------------------
-#weeks_lookup <- read_csv(paste0(working,"reg_week_to_start_date_2020.csv"))
-weeks_lookup <- readRDS(paste0(appfolder,"data/weeks_lookup.rds"))
+weeks_lookup <- readRDS("data/weeks_lookup.rds")
 
 ### load geography lookup file ----------------------
-#geo_lookup <- readRDS(paste0(working,"geo_lookup.rds"))
-geo_lookup <- readRDS(paste0(appfolder, "data/geo_lookup.rds"))
-
-#check which areas don't have which SIMD quintiles
-####################################################
-# hb_simd <- pc_lookup %>%
-#   group_by(HB2019, simd2020_sc_quintile) %>%
-#   summarise() %>%
-#   merge(y=geo_lookup, by.x="HB2019", by.y="code") %>%
-#   mutate(areaname = as.character(areaname))
-# table(hb_simd$areaname, hb_simd$simd2020_sc_quintile)
-# 
-# hscp_simd <- pc_lookup %>%
-#   group_by(HSCP2019, simd2020_sc_quintile) %>%
-#   summarise() %>%
-#   merge(y=geo_lookup, by.x="HSCP2019", by.y="code") %>%
-#   mutate(areaname = as.character(areaname))
-# table(hscp_simd$areaname, hscp_simd$simd2020_sc_quintile)
-#In both cases Orkney and Shetland are missing SIMD1 and SIMD5, and WIsles is missing SIMD1, SIMD4 and SIMD5
+geo_lookup <- readRDS("data/geo_lookup.rds")
 
 ###############################################.
 ## Data prep ----
@@ -80,7 +55,7 @@ df_received <- df_received %>%
   mutate(reg_year = isoyear(ymd(df_received$reg.date))) %>%   ## change year to ISO8601 week numbering standard too
   ## add geog and SIMD codes 
   left_join(pc_lookup, by = "postcode") 
-  
+
 #### check for missings:
 table(df_received$age_grp2, useNA = c("always"))
 table(df_received$sex_grp, useNA = c("always"))
@@ -90,6 +65,19 @@ table(is.na(df_received$postcode)) # any missing postcodes can't be joined to a 
 max_week <- as.integer(df_received %>%
                          filter(reg_year==2020) %>%
                          summarise(max(reg_week))) # assign 2020 max week value to filter 2015-19 
+
+### check that last week is a complete week ---------------
+days_in_max_week <- as.integer(
+  df_received %>% 
+    filter(reg_year==2020 & reg_week==max_week) %>%
+    group_by(reg.date) %>%
+    summarise() %>%
+    ungroup() %>%
+    summarise(count = n()))
+
+#complete weeks have 6 or 7 days of data in them
+#subtract one from max_week if the last week isn't complete:
+max_week <- ifelse(days_in_max_week<6, max_week-1, max_week)
 
 #### create weekly aggregated dataframe ---------------
 df_weekly <- df_received %>% 
@@ -285,9 +273,8 @@ combined_wide <- combined %>%
   arrange(category, week_ending, area_type, area_name, type)
 
 ## save final data file
-#write_rds(combined_wide, paste0(working, "deaths_data.rds"))
-write_rds(combined_wide, paste0(appfolder, "shiny_app/data/deaths_data.rds"))
-#combined_wide <- readRDS(paste0(appfolder, "deaths_data.rds"))
+write_rds(combined_wide, paste0(working, "deaths_data.rds"))
+write_rds(combined_wide, "shiny_app/data/deaths_data.rds")
 
 ########################################
 # QA checks against NRS published data:
@@ -300,7 +287,7 @@ write_rds(combined_wide, paste0(appfolder, "shiny_app/data/deaths_data.rds"))
 #   group_by(area_name) %>%
 #   summarise(deaths2020 = sum(count),
 #             deaths2015to2016average = sum(count_average*5)/5)
-    
+
 #count those that didn't match (By week 20 we're missing 114 deaths for HB/HSCP level. These are deaths of non-Scottish residents, according to NRS)
 # check2 <- df_weekly %>%
 #   filter(is.na(HB2019)) %>%

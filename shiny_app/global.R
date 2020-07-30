@@ -77,6 +77,8 @@ thirteen <- readRDS("data/thirteen_data.rds")
 thirteentable <- readRDS("data/thirteen_datatable.rds")
 twentyseven <- readRDS("data/twentyseven_data.rds")
 twentyseventable <- readRDS("data/twentyseven_datatable.rds")
+fourtofive <- readRDS("data/fourtofive_data.rds")
+fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 
 ## Immunisation Data
 immunisation_extract_date <- "22nd June 2020"
@@ -118,7 +120,7 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
             "6-8 Week Review" = "six_eightwks",
             "13-15 Month Review" = "13_15mnth",
             "27-30 Month Review" = "27_30mnth",
-            "4-5 Year Review *COMING 15th July 2020*" = "4_5yr")
+            "4-5 Year Review" = "4_5yr")
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
@@ -130,6 +132,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "6-8 week child health review" = "sixtoeight_visit",
                         "13-15 month child health review" = "thirteen_visit",
                         "27-30 month child health review" = "twentyseven_visit",
+                        "4-5 year child health review" = "fourtofive_visit",
                         "Stillbirths and infant deaths" = "perinatal"
                         )
 

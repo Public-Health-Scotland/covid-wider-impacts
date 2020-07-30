@@ -118,12 +118,12 @@ rapid <- rapid %>% mutate(age_group = case_when(
                               TRUE ~ 'missing') ) 
 
 ### Subsection: Lookup SIMDs by postcode.
-simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2019_2_simd2020.rds') %>% 
-  select(pc7, simd2020_sc_quintile) %>% as.data.table
+simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2020_1_simd2020v2.rds') %>% 
+  select(pc7, simd2020v2_sc_quintile) %>% as.data.table
 
 #Using a data table lookup is much faster than using an index lookup in base R.  
 system.time( setkey(simd_lookup, pc7) )
-system.time( rapid$simd_quintile <- simd_lookup[ .(rapid$postcode), nomatch = NA]$simd2020_sc_quintile )
+system.time( rapid$simd_quintile <- simd_lookup[ .(rapid$postcode), nomatch = NA]$simd2020v2_sc_quintile )
 rapid <- rapid %>% select(-postcode) #The postcodes are no longer needed now that we have the SIMDs.
 
 rapid <- rapid %>% arrange(admission_type, hb, hosp, hscp_code, emergency, spec, sex, simd_quintile, date_adm)
