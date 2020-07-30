@@ -14,18 +14,6 @@ tagList( #needed for shinyjs
 ###############################################.
 tabPanel("Home", icon = icon("info-circle"), value = "intro",
                   h3("COVID-19 wider impacts on the health care system"),
-         fluidRow(br()),
-         column(6,
-                intro_box(title_box = "Summary trends", button_name = "jump_summary_intro"),
-                intro_box(title_box = "Cardiovascular", button_name = "jump_cardio_intro"),
-                intro_box(title_box = "Data downloads", button_name = "jump_table_intro")),
-         column(6, 
-                intro_box(title_box = "Child health reviews", button_name = "jump_child_intro"),
-                intro_box(title_box = "Immunisations", button_name = "jump_imm_intro"),
-                intro_box(title_box = "Stillbirths and infant deaths", button_name = "jump_peri_intro")
-         ),
-         fluidRow(br()),
-                h3("About this tool"),
                 p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
                     than those that occur as the direct result of infection"),
                 p("Reasons for this may include:"),
