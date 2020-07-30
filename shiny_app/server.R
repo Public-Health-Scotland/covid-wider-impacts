@@ -37,13 +37,6 @@ function(input, output, session) {
   ###############################################.
 
 ## Observe events to improve navigation between tabs of the app
-  observeEvent(input$jump_summary_intro, {updateTabsetPanel(session, "intabset", selected = "summary")})
-  observeEvent(input$jump_cardio_intro, {updateTabsetPanel(session, "intabset", selected = "cardio")})
-  observeEvent(input$jump_table_intro, {updateTabsetPanel(session, "intabset", selected = "table")})
-  observeEvent(input$jump_imm_intro, {updateTabsetPanel(session, "intabset", selected = "imm")})
-  observeEvent(input$jump_child_intro, {updateTabsetPanel(session, "intabset", selected = "child_review")})  
-  observeEvent(input$jump_peri_intro, {updateTabsetPanel(session, "intabset", selected = "perinatal")})
-  
 # To jump to data pages from commentary to data pages   
   observeEvent(input$jump_to_summary, {updateTabsetPanel(session, "intabset", selected = "summary")})
   observeEvent(input$jump_to_cardio, {updateTabsetPanel(session, "intabset", selected = "cardio")})
