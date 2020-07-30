@@ -368,7 +368,7 @@ plot_imm_simd <- function(dataset, age_week, dose, var_plot = "difference", leg 
   
   if (var_plot == "uptake_perc") {
     yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
-    yaxis_plots[["title"]] <- paste0("% uptake by", elig, "weeks")
+    yaxis_plots[["title"]] <- paste0("% uptake by ", elig, " weeks")
     
   } else if (var_plot == "difference") {
     yaxis_plots[["title"]] <- paste0("Absolute % change in uptake")

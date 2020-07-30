@@ -89,18 +89,18 @@ mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation dat
 mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary
 
 #Immunisations hscp data
-six_hscp_dose1<- readRDS("data/six_dose1_hscp.rds")
-six_hscp_dose2<- readRDS("data/six_dose2_hscp.rds")
-six_hscp_dose3<- readRDS("data/six_dose3_hscp.rds")
-mmr_hscp_dose1<- readRDS("data/mmr_dose1_hscp.rds")
-mmr_hscp_dose2<- readRDS("data/mmr_dose2_hscp.rds")
+six_hscp_dose1 <- readRDS("data/six_dose1_hscp.rds")
+six_hscp_dose2 <- readRDS("data/six_dose2_hscp.rds")
+six_hscp_dose3 <- readRDS("data/six_dose3_hscp.rds")
+mmr_hscp_dose1 <- readRDS("data/mmr_dose1_hscp.rds")
+mmr_hscp_dose2 <- readRDS("data/mmr_dose2_hscp.rds")
 
 #Immunisations SIMD data
-six_simd_dose1<- readRDS("data/six_dose1_simdtable.rds")
-six_simd_dose2<- readRDS("data/six_dose2_simdtable.rds")
-six_simd_dose3<- readRDS("data/six_dose3_simdtable.rds")
-mmr_simd_dose1<- readRDS("data/mmr_dose1_simdtable.rds")
-mmr_simd_dose1<- readRDS("data/mmr_dose2_simdtable.rds")
+six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
+six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
+six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
+mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
+mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
 ## perinatal mortality data
 perinatal <- readRDS("data/perinatal_data.rds")
