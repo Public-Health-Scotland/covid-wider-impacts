@@ -4,30 +4,24 @@
 ## Modals  ----
 ###############################################.
 
-# Modal to explain SIMD and deprivation - this text is taken direction from Summary tab - could delete if imms page decides to go for exactly the same text.
-# simd_modal_imm <- modalDialog(
-#   h5("What is SIMD and deprivation?"),
-#   p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
-#                   class="externallink"), "is the Scottish Government's 
-#     official tool for identifying areas in Scotland with concentrations of deprivation 
-#     by incorporating several different aspects of deprivation (multiple-deprivations) 
-#     and combining them into a single index. Concentrations of deprivation are identified 
-#     in SIMD at Data Zone level and can be analysed using this small geographical unit. 
-#     The use of data for such small areas helps to identify 'pockets' (or concentrations) 
-#     of deprivation that may be missed in analyses based on larger areas such as council 
-#     areas. By identifying small areas where there are concentrations of multiple deprivation, 
-#     the SIMD can be used to target policies and resources at the places with the greatest need. 
-#     The SIMD identifies deprived areas, not deprived individuals."),
-#   p("In this tool we use the concept of quintile, which refers to a fifth of the population. 
-#     For example when we talk about the most deprived quintile, this means the 20% of the population 
-#     living in the most deprived areas."),
-#   size = "l", 
-#   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-# )
-
+# Modal to explain SIMD and deprivation
 # Link action button click to modal launch 
-observeEvent(input$btn_modal_simd_imm, { showModal(simd_modal) }) 
-
+observeEvent(input$btn_modal_simd_imm, { showModal(
+  modalDialog(
+    h5("What is SIMD and deprivation?"),
+    p("Children have been allocated to different levels of deprivation based on the small area (data zone) 
+in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+                                    class="externallink"), "score for that area. 
+SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: 
+income; employment; health; education, skills and training; housing; geographic access; and crime. 
+In this tool we have presented results for children living in different SIMD ‘quintiles’. 
+To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) 
+of the overall population of Scotland are identified. Children living in the most and least deprived areas 
+that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
+    size = "l", 
+    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+    )
+) }) 
 
 # Pop-up modal explaining source of data
 observeEvent(input$btn_immune_modal, 
@@ -141,11 +135,16 @@ output$imm_mmr_simd_chan_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_d
 output$imm_mmr_simd_chan_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2")})
 
 #run function to generate SIMD bar charts absolute uptake (only available at scotland level)
-output$imm_6in1_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1", var_plot = "uptake_perc")})
-output$imm_6in1_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose2, age_week = "12", dose= "dose 2", var_plot = "uptake_perc")})
-output$imm_6in1_simd_tot_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose3, age_week = "16", dose= "dose 3", var_plot = "uptake_perc")})
-output$imm_mmr_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose1, age_week = "1", dose= "dose 1", var_plot = "uptake_perc")})
-output$imm_mmr_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2", var_plot = "uptake_perc")})
+output$imm_6in1_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1", 
+                                                              var_plot = "uptake_perc", leg = F)})
+output$imm_6in1_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose2, age_week = "12", dose= "dose 2", 
+                                                              var_plot = "uptake_perc", leg = F)})
+output$imm_6in1_simd_tot_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose3, age_week = "16", dose= "dose 3", 
+                                                              var_plot = "uptake_perc", leg = F)})
+output$imm_mmr_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose1, age_week = "1", dose= "dose 1", 
+                                                             var_plot = "uptake_perc", leg = F)})
+output$imm_mmr_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2", 
+                                                             var_plot = "uptake_perc", leg = F)})
 
 ###############################################.
 ## Reactive layout  ----
@@ -155,21 +154,27 @@ output$imm_mmr_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_do
 output$immunisation_explorer <- renderUI({
   
   # text for titles of cut charts
-  immune_title <- paste0(case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
+  immune_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
                                                                                         input$geoname_immun),
                                    input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
                                    input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun),
                                    input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$geoname_immun),
-                                   input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun)))
+                                   input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun))
   immune_subtitle <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
   
   # text for SIMD titles of cut charts - SIMD only available at scotland level so no need for variable geography
-  immune_simd_title <- paste0(case_when(input$measure_select_immun == "sixin_dose1" ~ 
-                                          paste0("Change in uptake of first dose of 6-in-1 vaccine by 8 weeks of age by deprivation: Scotland (Compared to baseline of children turning 4 weeks in 2019)"),
-                                   input$measure_select_immun == "sixin_dose2" ~ paste0("Change in uptake of first dose of 6-in-1 vaccine by 12 weeks of age, by deprivation: Scotland (Compared to baseline of children turning 8 weeks in 2019)"),
-                                   input$measure_select_immun == "sixin_dose3" ~ paste0("Change in uptake of first dose of 6-in-1 vaccine by 16 weeks of age, by deprivation: Scotland (Compared to baseline of children turning 12 weeks in 2019)"),
-                                   input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age) by deprivation quintile: Scotland (Compared to baseline of children turning 12-13 months in 2019)"),
-                                   input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age) by deprivation quintile: Scotland (Compared to baseline of children turning 3 years and 4 months in 2019)")))
+  immune_simd_chan_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Change in uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland (Compared to baseline of children turning 8 weeks in 2019)",
+                                   input$measure_select_immun == "sixin_dose2" ~ "Change in uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland (Compared to baseline of children turning 12 weeks in 2019)",
+                                   input$measure_select_immun == "sixin_dose3" ~ "Change in uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation: Scotland (Compared to baseline of children turning 16 weeks in 2019)",
+                                   input$measure_select_immun == "mmr_dose1" ~ "Change in uptake of first dose MMR vaccine by 57 weeks of age by deprivation: Scotland (Compared to baseline of children turning 12-13 months in 2019)",
+                                   input$measure_select_immun == "mmr_dose2" ~ "Change in uptake of second dose MMR vaccine by 178 weeks of age by deprivation: Scotland (Compared to baseline of children turning 3 years and 4 months in 2019)")
+  
+  immune_simd_tot_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland",
+                                             input$measure_select_immun == "sixin_dose2" ~ "Uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation",
+                                             input$measure_select_immun == "sixin_dose3" ~ "Uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation",
+                                             input$measure_select_immun == "mmr_dose1" ~ "Uptake of first dose MMR vaccine by 57 weeks of age by deprivation",
+                                             input$measure_select_immun == "mmr_dose2" ~ "Uptake of second dose MMR vaccine by 178 weeks of by age deprivation")
+  
   
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
@@ -180,13 +185,11 @@ output$immunisation_explorer <- renderUI({
                   " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform",class="externallink"),".")
   
   #Additional commentart/meta data to appear on immunisation tab
-  commentary_6in1 <-  p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment.
-The charts show the progression of uptake of the relevant immunisation as children age. The data tables provide the uptake rates at three specific time-points. Data is shown for children who have become eligible for immunisation during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison.
-After a child becomes eligible for an immunisation, it takes time for them to attend their appointment, and for a record of the immunisation provided to subsequently be entered into the SIRS system. We have allowed a 6-week window for this, therefore each release of this page will report on children becoming eligible for an immunisation up to 6 weeks before the date these data were extracted for analysis. 
-Although children will generally have their immunisation, and their SIRS record updated accordingly, within 6 weeks of becoming eligible, the pandemic may have influenced not only how quickly eligible children receive their immunisations, but also how long it takes for children’s SIRS records to be updated once an immunisation has been given. Any disruption to SIRS data entry may vary across NHS Boards.  Data shown for the most recent cohorts of children will therefore not be fully complete in SIRS and should be viewed as provisional. The uptake rates for each cohort will be refreshed with more up-to-date data every 4 weeks, and rates for the most recent cohorts may increase slightly as relevant records are updated in SIRS.
-Data is shown for Scotland and for NHS Board areas. Due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland, and NHS Western Isles are not shown separately, however the Island Boards are included within the Scotland total. For the second dose of MMR vaccine at the 3 year 4 months appointment specifically, results for NHS Grampian are also not shown separately, and NHS Grampian is excluded from the ‘Scotland’ totals.  This is because children in NHS Grampian are offered the second dose of MMR vaccine at 4 years of age rather than 3 years 4 months. Separate figures on uptake of the second dose of MMR vaccine from age 4 years are available for NHS Grampian only through the data download button at the top of the page.
-Uptake rates based on small numbers are prone to fluctuation. Therefore, in boards with small numbers of children eligible for immunisation each week, particularly NHS Borders and NHS Dumfries & Galloway, it is important to consider this when interpreting the rates.
-")
+  commentary_6in1 <-  tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age. The data tables provide the uptake rates at three specific time-points. Data is shown for children who have become eligible for immunisation during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison. 
+After a child becomes eligible for an immunisation, it takes time for them to attend their appointment, and for a record of the immunisation provided to subsequently be entered into the SIRS system. We have allowed a 6-week window for this, therefore each release of this page will report on children becoming eligible for an immunisation up to 6 weeks before the date these data were extracted for analysis. Although children will generally have their immunisation, and their SIRS record updated accordingly, within 6 weeks of becoming eligible, the pandemic may have influenced not only how quickly eligible children receive their immunisations, but also how long it takes for children’s SIRS records to be updated once an immunisation has been given. Any disruption to SIRS data entry may vary across NHS Boards. Data shown for the most recent cohorts of children will therefore not be fully complete in SIRS and should be viewed as provisional. The uptake rates for each cohort will be refreshed with more up-to-date data every 4 weeks, and rates for the most recent cohorts may increase slightly as relevant records are updated in SIRS."),
+                              p("On this page, data is shown for Scotland and for NHS Board areas. Due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland, and NHS Western Isles are not shown separately, however the Island Boards are included within the Scotland total. Monthly data only for the Island Boards are provided separately through the data download button at the top of the page. For the second dose of MMR vaccine at the 3 year 4 months appointment specifically, results for NHS Grampian are also not shown separately, and NHS Grampian is excluded from the ‘Scotland’ totals. This is because children in NHS Grampian are offered the second dose of MMR vaccine at 4 years of age rather than 3 years 4 months. Separate figures on uptake of the second dose of MMR vaccine from age 4 years are available for NHS Grampian only through the data download button at the top of the page. Data for individual Health and Social Care Partnerships is also provided through the data download button at the top of the page.
+Uptake rates based on small numbers are prone to fluctuation. Therefore, in areas with small numbers of children eligible for immunisation each week it is important to consider this when interpreting the rates.
+"))
   
   # Function to create common layout to all immunisation charts
   imm_layout <- function(s_plot, s_table, simd_tot_plot, simd_chan_plot, age_def = "") {
@@ -197,23 +200,24 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in boar
                             withSpinner(plotlyOutput(s_plot)),
                             p(age_def)),
                      column(6, uiOutput(s_table))),
+            fluidRow(column(12, renderUI(commentary_6in1))),
             if (input$geotype_immun == "Scotland"){
-              tagList(fluidRow(h4(paste0(immune_simd_title)),
+              tagList(fluidRow(column(6, h4(paste0(immune_simd_tot_title))),
+                               column(6, h4(paste0(immune_simd_chan_title)),
                                       p("For Scotland, the change in immunisation uptake rates between the months of 
       2019 and the most recent year is shown for each deprivation quintile. 
       This chart can show if there is variation in patterns of uptake by deprivation. 
-      This data is only available for the Scotland geography."),
+      This data is only available for the Scotland geography.")),
                                column(6,
-                              actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
-                                           icon = icon('question-circle'))),
-                              column(6,
-                                     downloadButton('download_imm_simd_data', 'Download deprivation data'))),
-              fluidRow(column(6, br(), withSpinner(plotlyOutput(simd_tot_plot))),
-                       column(6, br(), withSpinner(plotlyOutput(simd_chan_plot)))
-                       )
+                                      actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
+                                                   icon = icon('question-circle'))),
+                               column(6,
+                                      downloadButton('download_imm_simd_data', 'Download deprivation data'))),
+                      fluidRow(column(6, br(), withSpinner(plotlyOutput(simd_tot_plot))),
+                               column(6, br(), withSpinner(plotlyOutput(simd_chan_plot)))
+                      )
               ) #tagList from if statement
-            }, 
-            fluidRow(column(12, renderUI(commentary_6in1)))
+            }
     ) #tagList barcket
   }
   
