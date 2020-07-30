@@ -343,12 +343,17 @@ else if(dataset_name == "mmr_alldose" && dose== "dose 2" ){ #set chart parameter
 
 ######################################################################.
 #Function to create bar-plot for Scotland immunisation data by SIMD 
-plot_imm_simd <- function(dataset, age_week, dose, var_plot = "difference") {
+plot_imm_simd <- function(dataset, age_week, dose, var_plot = "difference", leg = TRUE) {
   
   imm_simd_data <- dataset %>% filter(cohort == "monthly") # only months shown
   
   dataset_name <- deparse(substitute(dataset)) # character name of the data
   
+  elig <- case_when(dataset_name == "six_simd_dose1" ~ 12,
+                    dataset_name == "six_simd_dose2" ~ 16,
+                    dataset_name == "six_simd_dose3" ~ 20,
+                    dataset_name == "mmr_simd_dose1" ~ 57,
+                    dataset_name == "mmr_simd_dose2" ~ 178)
   
   # Create tooltip for scurve
   tooltip_scurve <- c(paste0("Cohort: ", imm_simd_data$time_period_eligible))
@@ -359,27 +364,29 @@ plot_imm_simd <- function(dataset, age_week, dose, var_plot = "difference") {
                         dataset_name == "mmr_simd_dose2" ~ paste0("3y 4months:"))
   
   #Modifying standard yaxis name applies to all curves
-  yaxis_plots[["title"]] <- "Absolute % change in uptake compared to 2019"
   xaxis_plots[["title"]] <- "SIMD quintile"
+  
+  if (var_plot == "uptake_perc") {
+    yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
+    yaxis_plots[["title"]] <- paste0("% uptake by", elig, "weeks")
+    
+  } else if (var_plot == "difference") {
+    yaxis_plots[["title"]] <- paste0("Absolute % change in uptake")
+    
+  }
   
   #Creating time trend plot
   plot_ly(data=imm_simd_data, x = ~simdq, y = ~get(var_plot)) %>%
     add_trace(type = 'bar', split = ~time_period_eligible,
               color=~time_period_eligible,
               colors = pal_immun2,
-              text= tooltip_scurve, 
-              hoverinfo="text") %>%
-    
-    # Adding legend title
-    add_annotations( text= paste0("Children turning ", age_unit), xref="paper", yref="paper",
-                     x=0.8, xanchor="left",
-                     y=0.8, yanchor="bottom",    # Same y as legend below
-                     legendtitle=TRUE, showarrow=FALSE ) %>%
-    
+              text= tooltip_scurve, hoverinfo="text") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
            yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.8, yanchor="top")) %>% #position of legend
+           legend = list(x = 100, y = 0.8, yanchor="top", #position of legend
+                         title=list(text=paste0("Children turning ", age_unit))), 
+           showlegend = leg) %>% 
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
   
