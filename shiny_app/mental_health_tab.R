@@ -96,9 +96,18 @@ output$mh_drugs_tot <- renderPlotly({
 ###############################################.
 
 mh_down_data <- reactive({
-  mentalhealth_drugs %>% filter(type == input$measure_mh_select)
-    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
-    new_var_name <- "average_2018_2019" 
+
+## download prescribing data  
+  if (input$measure_mh_select == "mentalhealth_drugs") {
+  mentalhealth_drugs %>% filter(type == input$measure_mh_select) %>%
+    select("week_ending", "area_name", "count", "count_average", "variation") }
+
+## when we add more data types
+  
+  # else if (input$measure_mh_select == "mentalhealth_drugs") {
+  #   mentalhealth_drugs %>% filter(type == input$measure_mh_select) %>%
+  #     select("week_ending", "area_name", "count", "count_average", "variation") }
+  
 
 })
 
