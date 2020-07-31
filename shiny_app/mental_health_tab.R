@@ -3,23 +3,23 @@
 # Helper function
 `%notin%` <- Negate(`%in%`)
 # Show list of area names depending on areatype selected
-output$geoname_mhdrugs_ui <- renderUI({
+output$geoname_mh_ui <- renderUI({
   
-  areas_summary_mhdrugs <- sort(geo_lookup$areaname[geo_lookup$areatype == ifelse(input$area_mhdrugs_select %notin%
+  areas_summary_mh <- sort(geo_lookup$areaname[geo_lookup$areatype == ifelse(input$area_mh_select %notin%
                                                                             c("Scotland", "Health board", "HSC partnership"),
                                                                           "Scotland",
-                                                                          input$area_mhdrugs_select)])
-  selectizeInput("geoname_mhdrugs", label = NULL,
-                 choices = areas_summary_mhdrugs, selected = "")
+                                                                          input$area_mh_select)])
+  selectizeInput("geoname_mh", label = NULL,
+                 choices = areas_summary_mh, selected = "")
   
 })
 
 # Adding 'observeEvent' to allow reactive 'area of interest' 
-observeEvent(input$measure_mhdrugs_select, {
-    mhdrugs_label = "Step 2 - Select geography level for mental health medicine prescriptions"
-    mhdrugs_choices = c("Scotland", "Health board", "HSC partnership")
-    shinyjs::show("geoname_mhdrugs_ui")
-    enable("area_mhdrugs_select")
+observeEvent(input$measure_mh_select, {
+    mh_label = "Step 2 - Select geography level for mental health medicine prescriptions"
+    mh_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::show("geoname_mh_ui")
+    enable("area_mh_select")
   
 })
 
@@ -68,21 +68,21 @@ observeEvent(input$btn_mentalhealth_modal,
 ##  Reactive layout  ----
 ###############################################.
 # The charts and text shown on the app will depend on what the user wants to see
-output$mhdrugs_explorer <- renderUI({
+output$mh_explorer <- renderUI({
   
     tagList(# Prescribing - items dispensed
-      h3(paste0("Weekly number of mental health medicines prescribed in ", input$geoname_mhdrugs)),
+      h3(paste0("Weekly number of patients prescribed mental health medicines in ", input$geoname_mh)),
       plot_box("2020 compared with 2018-2019 average", "mh_prescribing_all"),
-      plot_cut_box(paste0("Percentage change in mental health medicines prescribed in ", input$geoname_mhdrugs, " compared with the corresponding
+      plot_cut_box(paste0("Percentage change in number of patients prescribed mental health medicines in ", input$geoname_mh, " compared with the corresponding
                      time in 2018-2019 by medicine groupings"), "mh_drugs_var",
-                   paste0("Weekly number of mental health medicines prescribed in ", input$geoname_mhdrugs, " by medicine groupings"), "mh_drugs_tot"))
+                   paste0("Weekly number of patients prescribed mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
   
   
 })
 
 ###############################################.
 # MH Prescribing charts
-output$mh_prescribing_all <- renderPlotly({plot_overall_chart(mentalhealth_drugs %>% filter(area_name == input$geoname_mhdrugs),
+output$mh_prescribing_all <- renderPlotly({plot_overall_chart(mentalhealth_drugs %>% filter(area_name == input$geoname_mh),
                                                               data_name = "mentalhealth_drugs", area = "All")})
 output$mh_drugs_var <- renderPlotly({
   plot_trend_chart(mentalhealth_drugs, pal_med, split = "condition", 
@@ -95,17 +95,17 @@ output$mh_drugs_tot <- renderPlotly({
 ## Data downloads ----
 ###############################################.
 
-mhdrugs_down_data <- reactive({
-  mentalhealth_drugs %>% filter(type == input$measure_mhdrugs_select)
+mh_down_data <- reactive({
+  mentalhealth_drugs %>% filter(type == input$measure_mh_select)
     selection <- c("week_ending", "area_name", "count", "count_average", "variation")
     new_var_name <- "average_2018_2019" 
 
 })
 
 output$download_mentalhealth_data <- downloadHandler(
-  filename ="mentalhealth_drugs_extract.csv",
+  filename ="mentalhealth_extract.csv",
   content = function(file) {
-    write_csv(mhdrugs_down_data(),
+    write_csv(mh_down_data(),
               file) }
 )
 

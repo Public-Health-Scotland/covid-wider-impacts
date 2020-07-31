@@ -224,13 +224,13 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
 tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_mhdrugs_select",
+                         radioGroupButtons("measure_mh_select",
                                            label= "Step 1 - Select the data you want to explore.",
                                            choices = mentalhealth_list, status = "primary",
                                            direction = "vertical", justified = T))),
-           column(4, selectizeInput("area_mhdrugs_select", "Step 2 - Select the area of interest",
+           column(4, selectizeInput("area_mh_select", "Step 2 - Select the area of interest",
                                     choices = c("Scotland", "Health board", "HSC partnership"), selected = "Scotland"),
-                  uiOutput("geoname_mhdrugs_ui")),
+                  uiOutput("geoname_mh_ui")),
            column(4,actionButton("btn_mentalhealth_modal", "Data source: ePrescribed Messages",
                                  icon = icon('question-circle')),
                   fluidRow(br()),
@@ -239,7 +239,7 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
                   actionButton('jump_commentary_mentalhealth','Go to commentary'))
          ), #well panel
          mainPanel(width = 12,
-                   uiOutput("mhdrugs_explorer")
+                   uiOutput("mh_explorer")
          )# mainPanel bracket
 ), 
    
