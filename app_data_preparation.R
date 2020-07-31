@@ -1011,5 +1011,77 @@ perinatal %<>%
 
 saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 
+###############################################.
+## Prescribing - Mental health ----
+###############################################.
+
+### historic file for MH drugs ##
+mentalhealth_drugs_historic <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition Jan 18-Jun 20.xlsx")) %>% 
+  select(1:5) %>% 
+  clean_names() %>% 
+  filter(condition %in% c("Anxiolytic",
+                          "Hypnotic",
+                          "SSRI SNRI")) %>% 
+  mutate(week_ending = as.Date(week_ending),
+         area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
+                               substr(area_code,1,3) == "S08" ~ "Health board",
+                               substr(area_code,1,3) == "S00" ~ "Scotland"),
+         area_name = case_when(area_type == "Health board" ~ stringr::str_to_title(area_name),
+                               area_type == "Scotland" ~ stringr::str_to_title(area_name),
+                               TRUE ~ area_name),
+         area_name = case_when(area_type == "Health board" ~ gsub("Nhs", "NHS", area_name),
+                               TRUE ~ area_name),
+         type = "condition") %>% 
+  rename(category = condition,
+         count = incident_cases_week_01) %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+mentalhealth_drugs_hist_all <- mentalhealth_drugs_historic %>% 
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count),
+            category = "All") %>% 
+  ungroup() %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+mentalhealth_drugs_historic <- rbind(mentalhealth_drugs_historic, mentalhealth_drugs_hist_all)
+
+### Newer MH drugs data ##
+mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_56_7880904380724237508.xlsx")) %>% 
+  select(1:5) %>% 
+  clean_names() %>% 
+  filter(condition %in% c("Anxiolytic",
+                          "Hypnotic",
+                          "SSRI SNRI")) %>% 
+  mutate(week_ending = as.Date(week_ending),
+         area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
+                               substr(area_code,1,3) == "S08" ~ "Health board",
+                               substr(area_code,1,3) == "S00" ~ "Scotland"),
+         area_name = case_when(area_type == "Health board" ~ stringr::str_to_title(area_name),
+                               area_type == "Scotland" ~ stringr::str_to_title(area_name),
+                               TRUE ~ area_name),
+         area_name = case_when(area_type == "Health board" ~ gsub("Nhs", "NHS", area_name),
+                               TRUE ~ area_name),
+         type = "condition") %>% 
+  rename(category = condition,
+         count = incident_cases_week_01) %>% 
+  select(week_ending, area_name, area_type, type, category, count) %>%
+  filter(between(week_ending, as.Date("2020-07-05"), as.Date("2020-07-26")))
+
+mentalhealth_drugs_all <- mentalhealth_drugs %>% 
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count),
+            category = "All") %>% 
+  ungroup() %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+  
+mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all)
+
+mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_historic)
+
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-07-26")
+
+#saveRDS(mentalhealth_drugs, paste0("shiny_app/data/","mentalhealth_drugs_data.rds"))
+
 ##END
+
 

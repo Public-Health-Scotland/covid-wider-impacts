@@ -45,23 +45,25 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     }
   } else if (split == "condition") {
       if (tab == "cardio") {
-        trend_data <- dataset %>% 
+        trend_data <- dataset %>%
           filter(type %in% split & area_name == input$geoname_cardio,
-                 category != "All") %>% 
+                 category != "All") %>%
           # Wrapping long legend names
           mutate(category = case_when(
             category == "Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs" ~ "Antihypertensive, \nanti-anginal, anti-arrhythmic \nand heart failure drugs",
             TRUE ~ category
           ))
+
       }
   } else {
     trend_data <- trend_data 
   }
   
+    
   # If variation selected different values
   if (type == "variation") {
     
-    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "2018-2019",
+    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "mentalhealth_drugs") ~ "2018-2019",
                              data_name == "deaths" ~ "2015-2019"))
     
     #Text for tooltip
@@ -86,7 +88,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name == "sas" ~ "Number of incidents",
                              data_name == "cath" ~ "Number of cases",
                              data_name == "drug_presc" ~ "Number of items prescribed",
-                             data_name == "deaths" ~ "Number of deaths")
+                             data_name == "deaths" ~ "Number of deaths",
+                             data_name == "mentalhealth_drugs" ~ "Number of items prescribed")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
@@ -98,7 +101,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                               data_name == "sas" ~ "Incidents: ",
                               data_name == "cath" ~ "Cases: ",
                               data_name == "drug_presc" ~ "Items prescribed: ",
-                              data_name == "deaths" ~ "Deaths: ")
+                              data_name == "deaths" ~ "Deaths: ",
+                              data_name == "mentalhealth_drugs" ~ "Items prescribed: ")
     
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>",
@@ -144,13 +148,14 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                            data_name == "sas" ~ "Number of incidents",
                            data_name == "cath" ~ "Number of cases",
                            data_name == "drug_presc" ~ "Number of items prescribed",
-                           data_name == "deaths" ~ "Number of deaths")
+                           data_name == "deaths" ~ "Number of deaths",
+                           data_name == "mentalhealth_drugs" ~ "Number of items prescribed")
 
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "Average 2018-2019",
+  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "mentalhealth_drugs") ~ "Average 2018-2019",
                           data_name == "deaths" ~ "Average 2015-2019")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
@@ -160,7 +165,8 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                             data_name == "sas" ~ "Incidents: ",
                             data_name == "cath" ~ "Cases: ",
                             data_name == "drug_presc" ~ "Items prescribed: ",
-                            data_name == "deaths" ~ "Deaths: ")
+                            data_name == "deaths" ~ "Deaths: ",
+                            data_name == "mentalhealth_drugs" ~ "Items prescribed: ")
   
   #Text for tooltip
   tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),

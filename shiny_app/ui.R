@@ -74,14 +74,16 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("cardio_button", "Cardiovascular", width="150px"),br() ,
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
                           actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
-                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px")),
+                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
+                          actionLink("mentalhealth_button", "Mental health", width="150px")),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
                                      bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
                                      bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
                                      bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
                                      bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
-                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary"))
+                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
+                                     bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary"))
 
                           )))
 ), #tab panel
@@ -215,6 +217,32 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
          )# mainPanel bracket
 ) # tabpanel bracket
 ), #navbarMenu bracket
+
+###############################################.
+## Mental Health Tab ----
+###############################################.
+tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
+         wellPanel(
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_mhdrugs_select",
+                                           label= "Step 1 - Select the data you want to explore.",
+                                           choices = mentalhealth_list, status = "primary",
+                                           direction = "vertical", justified = T))),
+           column(4, selectizeInput("area_mhdrugs_select", "Step 2 - Select the area of interest",
+                                    choices = c("Scotland", "Health board", "HSC partnership"), selected = "Scotland"),
+                  uiOutput("geoname_mhdrugs_ui")),
+           column(4,actionButton("btn_mentalhealth_modal", "Data source: ePrescribed Messages",
+                                 icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_mentalhealth_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_mentalhealth','Go to commentary'))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("mhdrugs_explorer")
+         )# mainPanel bracket
+), 
+   
 ###############################################.
 ## Data ----
 ###############################################.
