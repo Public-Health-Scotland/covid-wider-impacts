@@ -279,31 +279,44 @@ output$download_imm_data <- downloadHandler(
 
 ##download immunisation SIMD data
 imm_simd_data_download <- reactive ({
-  switch(
+  
+  elig <- case_when(input$measure_select_immun == "sixin_dose1" ~ 12,
+                    input$measure_select_immun == "sixin_dose2" ~ 16,
+                    input$measure_select_immun == "sixin_dose3" ~ 20,
+                    input$measure_select_immun == "mmr_dose1" ~ 57,
+                    input$measure_select_immun == "mmr_dose2" ~ 178)
+  
+  data_down <- switch(
     input$measure_select_immun,
     "sixin_dose1" = six_simd_dose1,
     "sixin_dose2" = six_simd_dose2,
     "sixin_dose3" = six_simd_dose3,
     "mmr_dose1" = mmr_simd_dose1,
-    "mmr_dose2"= mmr_simd_dose2
-  ) %>% 
-    select(immunisation, area_name, time_period_eligible, simdq, denominator, starts_with("uptake"), starts_with("baseline"),difference)  %>% 
-    rename(cohort = time_period_eligible,deprivation_quintile=simdq, percentage_difference=difference)
+    "mmr_dose2"= mmr_simd_dose2) %>% 
+    select(-cohort) %>% 
+    rename(cohort = time_period_eligible, deprivation_quintile = simdq, 
+           absolute_change_from_baseline_percent = difference)
+  
+  # Renaming variables, including the age in weeks in their names
+  num_name <- paste0("children_rec_imm_", elig, "weeks_num")
+  baseperc_name <- paste0("uptake_", elig, "weeks_2019_percent")
+  basenum_name <- paste0("children_rec_imm_", elig, "weeks_2019_num")
+  den_name <- paste0("children_turn_", elig - 4, "weeks_num")
+  baseden_name <- paste0("children_turn_", elig - 4, "weeks_2019_num")
+  
+  data_down[num_name] <- data_down[paste0("uptake_", elig, "weeks_num")]
+  data_down[baseperc_name] <- data_down[paste0("baseline_", elig, "weeks")]
+  data_down[basenum_name] <- data_down$baseline_numerator
+  data_down[den_name] <- data_down$denominator
+  data_down[baseden_name] <- data_down$baseline_denominator
+    
+  
+  data_down %>%
+    select("immunisation", "area_name", "cohort", "deprivation_quintile", den_name, num_name,
+           starts_with("uptake"), starts_with("children"), "absolute_change_from_baseline_percent") %>% 
+    select(-paste0("uptake_", elig, "weeks_num"))
+    
 })
-
-# immunisation
-# area_name
-# cohort
-# deprivation_quintile (with 1 labelled 1 – most deprived and 5 labelled 5 – least deprived)
-# children_turn_8weeks_num
-# children_rec_imm_12weeks_num
-# uptake_12weeks_percent
-# children_turn_8weeks_2019_num
-# children_rec_imm_12weeks_2019_num
-# uptake_12weeks_2019_percent
-# absolute_change_from_baseline_percent
-# relative_change_from_baseline_percent
-
 
 output$download_imm_simd_data <- downloadHandler(
   filename ="immunisation_extract_by_deprivation.csv",
