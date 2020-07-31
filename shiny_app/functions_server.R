@@ -16,7 +16,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     if (tab == "summary") {
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type == split & area_name == input$geoname)
-    } else if (tab == "cardio") {
+    } else if (tab %in% c("cardio", "mh")) {
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type %in% split)
     }
@@ -45,25 +45,27 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     }
   } else if (split == "condition") {
       if (tab == "cardio") {
-        trend_data <- dataset %>%
+        trend_data <- trend_data %>% 
           filter(type %in% split & area_name == input$geoname_cardio,
-                 category != "All") %>%
+                 category != "All") %>% 
           # Wrapping long legend names
           mutate(category = case_when(
             category == "Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs" ~ "Antihypertensive, \nanti-anginal, anti-arrhythmic \nand heart failure drugs",
             TRUE ~ category
           ))
-
+      } else if (tab == "mh") {
+        trend_data <- trend_data %>% 
+          filter(type %in% split & area_name == input$geoname_mhdrugs,
+                 category != "All") 
       }
   } else {
     trend_data <- trend_data 
   }
   
-    
   # If variation selected different values
   if (type == "variation") {
     
-    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "mentalhealth_drugs") ~ "2018-2019",
+    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "2018-2019",
                              data_name == "deaths" ~ "2015-2019"))
     
     #Text for tooltip
@@ -88,8 +90,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name == "sas" ~ "Number of incidents",
                              data_name == "cath" ~ "Number of cases",
                              data_name == "drug_presc" ~ "Number of items prescribed",
-                             data_name == "deaths" ~ "Number of deaths",
-                             data_name == "mentalhealth_drugs" ~ "Number of items prescribed")
+                             data_name == "deaths" ~ "Number of deaths")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
@@ -101,8 +102,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                               data_name == "sas" ~ "Incidents: ",
                               data_name == "cath" ~ "Cases: ",
                               data_name == "drug_presc" ~ "Items prescribed: ",
-                              data_name == "deaths" ~ "Deaths: ",
-                              data_name == "mentalhealth_drugs" ~ "Items prescribed: ")
+                              data_name == "deaths" ~ "Deaths: ")
     
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$category, "<br>",
@@ -148,14 +148,13 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                            data_name == "sas" ~ "Number of incidents",
                            data_name == "cath" ~ "Number of cases",
                            data_name == "drug_presc" ~ "Number of items prescribed",
-                           data_name == "deaths" ~ "Number of deaths",
-                           data_name == "mentalhealth_drugs" ~ "Number of items prescribed")
+                           data_name == "deaths" ~ "Number of deaths")
 
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "mentalhealth_drugs") ~ "Average 2018-2019",
+  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "Average 2018-2019",
                           data_name == "deaths" ~ "Average 2015-2019")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
@@ -165,8 +164,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                             data_name == "sas" ~ "Incidents: ",
                             data_name == "cath" ~ "Cases: ",
                             data_name == "drug_presc" ~ "Items prescribed: ",
-                            data_name == "deaths" ~ "Deaths: ",
-                            data_name == "mentalhealth_drugs" ~ "Items prescribed: ")
+                            data_name == "deaths" ~ "Deaths: ")
   
   #Text for tooltip
   tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
@@ -267,12 +265,14 @@ filter_data <- function(dataset, area = T) {
 ## Function for drawing S-Curve charts used in immunisation tabs.
 
 plot_scurve <- function(dataset, age_week, dose) {
+  
+  dataset_name <- deparse(substitute(dataset)) # character name of the data
  
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun & #filter to correct geography
                                     str_detect(immunisation,dose),
                                     exclude !=1) #filter immunisation scurve data on dose
 
-  # if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  # if (is.data.frame(scurve_data) && nrow(scurve_data) == 0) #simplified code for when grampian data available - dont delete
   #  { plot_nodata(height = 50)
   #  } else {
   
@@ -286,16 +286,13 @@ plot_scurve <- function(dataset, age_week, dose) {
 # Create tooltip for scurve
 tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
 
-#if( any(c(six,six_dose2,six_dose3) %in% dataset)){ #original logic prior to data file change
-#if(dataset == six_alldose){ #throws up error which prevents mmr chart working
-
 #Modifying standard yaxis name applies to all curves
 yaxis_plots[["title"]] <- "% of children who have received their vaccine"
 yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
 xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
 
 ## chart axis for all 6-in-1 scurves
-if( any(c(six_alldose) %in% dataset)){ # this doesn't seem like very efficient logic but it works
+if(dataset_name == "six_alldose"){ # this doesn't seem like very efficient logic but it works
   
   xaxis_plots[["title"]] <- "Age of children in weeks"
   xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
@@ -305,7 +302,7 @@ if( any(c(six_alldose) %in% dataset)){ # this doesn't seem like very efficient l
   age_unit <- paste0(age_week, " weeks:") #string for legend label
 }
 ##chart axis for MMR dose 1 scurve
-else if(dataset == mmr_alldose && dose== "dose 1" ){ #set chart parameters for mmr dose 1
+else if(dataset_name == "mmr_alldose" && dose== "dose 1" ){ #set chart parameters for mmr dose 1
 
   xaxis_plots[["title"]] <- "Age of children in months"
   xaxis_plots[["tickvals"]] <- c(0, seq(343, 459, by = 29), 490) # xaxis days 343 (49 weeks) to 490 (70 weeks)
@@ -316,7 +313,7 @@ else if(dataset == mmr_alldose && dose== "dose 1" ){ #set chart parameters for m
 }
 
 ##chart axis for MMR dose 2 scurve
-else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for mmr dose 2
+else if(dataset_name == "mmr_alldose" && dose== "dose 2" ){ #set chart parameters for mmr dose 2
 
   xaxis_plots[["title"]] <- "Age of children in years and months"
   xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1306, by = 29), 1337) #xaxis 1190 days (170 week) to 1337 days (191 weeks)
@@ -346,6 +343,58 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 }
+}
+
+######################################################################.
+#Function to create bar-plot for Scotland immunisation data by SIMD 
+plot_imm_simd <- function(dataset, age_week, dose, var_plot = "difference", leg = TRUE) {
+  
+  imm_simd_data <- dataset %>% filter(cohort == "monthly") # only months shown
+  
+  dataset_name <- deparse(substitute(dataset)) # character name of the data
+  
+  elig <- case_when(dataset_name == "six_simd_dose1" ~ 12,
+                    dataset_name == "six_simd_dose2" ~ 16,
+                    dataset_name == "six_simd_dose3" ~ 20,
+                    dataset_name == "mmr_simd_dose1" ~ 57,
+                    dataset_name == "mmr_simd_dose2" ~ 178)
+  
+  # Create tooltip for scurve
+  tooltip_scurve <- c(paste0("Cohort: ", imm_simd_data$time_period_eligible))
+  
+  ## String text for legend title label
+  age_unit <- case_when(substr(dataset_name,1,3) == "six" ~ paste0(age_week, " weeks:"),
+                        dataset_name == "mmr_simd_dose1" ~ paste0("12 months:"),
+                        dataset_name == "mmr_simd_dose2" ~ paste0("3y 4months:"))
+  
+  #Modifying standard yaxis name applies to all curves
+  xaxis_plots[["title"]] <- "SIMD quintile"
+  
+  if (var_plot == "uptake_perc") {
+    yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
+    yaxis_plots[["title"]] <- paste0("% uptake by ", elig, " weeks")
+    
+  } else if (var_plot == "difference") {
+    yaxis_plots[["title"]] <- paste0("Absolute % change in uptake")
+    
+  }
+  
+  #Creating time trend plot
+  plot_ly(data=imm_simd_data, x = ~simdq, y = ~get(var_plot)) %>%
+    add_trace(type = 'bar', split = ~time_period_eligible,
+              color=~time_period_eligible,
+              colors = pal_immun2,
+              text= tooltip_scurve, hoverinfo="text") %>%
+    #Layout
+    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.8, yanchor="top", #position of legend
+                         title=list(text=paste0("Children turning ", age_unit))), 
+           showlegend = leg) %>% 
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  
+  
 }
 
 
@@ -484,6 +533,7 @@ immune_table <- function(dataset, age_week) {
    autofit() %>%
    htmltools_value()
 }
+
 
 #####################################################################################.
 ## HV S-curve----

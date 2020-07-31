@@ -84,8 +84,12 @@ output$mhdrugs_explorer <- renderUI({
 # MH Prescribing charts
 output$mh_prescribing_all <- renderPlotly({plot_overall_chart(mentalhealth_drugs %>% filter(area_name == input$geoname_mhdrugs),
                                                               data_name = "mentalhealth_drugs", area = "All")})
-output$mh_drugs_var <- renderPlotly({plot_trend_chart(mentalhealth_drugs, pal_med, c("condition"), data_name = "mentalhealth_drugs", tab = "mental_health")})
-output$mh_drugs_tot <- renderPlotly({plot_trend_chart(mentalhealth_drugs, pal_med, c("condition"), "total", data_name = "mentalhealth_drugs", tab = "mental_health")})
+output$mh_drugs_var <- renderPlotly({
+  plot_trend_chart(mentalhealth_drugs, pal_med, split = "condition", 
+                   data_name = "mentalhealth_drugs", tab = "mh")})
+output$mh_drugs_tot <- renderPlotly({
+  plot_trend_chart(mentalhealth_drugs, pal_med, split = "condition", type = "total", 
+                   data_name = "mentalhealth_drugs", tab = "mh")})
 
 ###############################################.
 ## Data downloads ----
