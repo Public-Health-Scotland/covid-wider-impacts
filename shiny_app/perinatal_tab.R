@@ -272,10 +272,11 @@ output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
     h2("Stillbirths and infant deaths - 5th August 2020"),
-          p(strong("Information on background, control chart interpretation and data sources is provided below.")),
           p("In this second release of information on stillbirths and infant deaths (5 Aug 2020) data have been updated to include June 2020. Whilst each of these events is a tragedy for those involved, in June the numbers remained small, 
             and all stillbirth and infant death measures were within the warning limits.", br(),
-            "Rates of stillbirths and extended perinatal deaths approached, but did not breach, the upper warning limit in May 2020. However, rates for both fell below the average in June 2020."),
+            "Rates of stillbirths and extended perinatal deaths approached, but did not breach, the upper warning limit in May 2020. However, rates for both fell below the average in June 2020.", br(),
+            "Further background information on the data sources used to monitor stillbirths and infant death rates, and how to interpret the control charts, is provided in the commentary for 1 July 2020 below."),
+    h2("Stillbirths and infant deaths - 1st July 2020"),      
           p(h4("Background")),
           p("It is important to monitor the levels of stillbirth and infant mortality during the COVID-19 pandemic, 
             as they may be influenced by maternal health and well-being, by how maternity and child health services are provided, and 
