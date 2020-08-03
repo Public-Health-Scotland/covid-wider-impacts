@@ -60,18 +60,18 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           p("Select topic areas to find commentary relating to data presented in this tool."))),
          wellPanel(column(2,
                           p("Select topic:"),
-                          # actionLink("summary_button", "Summary trends", width = "150px"),br(),
-                          # actionLink("cardio_button", "Cardiovascular", width="150px"),br() ,
-                          # actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
-                          # actionLink("ch_review_button", "Child health", width="150px"), br(),
+                          actionLink("summary_button", "Summary trends", width = "150px"),br(),
+                          actionLink("cardio_button", "Cardiovascular", width="150px"),br() ,
+                          actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
+                          actionLink("ch_review_button", "Child health", width="150px"), br(),
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px")
                           ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
-                                     # bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
-                                     # bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
-                                     # bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
-                                     # bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
+                                     bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
+                                     bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
+                                     bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
+                                     bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary"))
 
                           )))
@@ -200,7 +200,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
          mainPanel(width = 12,
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
-))) # tabpanel bracket
+), # tabpanel bracket
 ###############################################.
 ## Data ----
 ###############################################.
@@ -217,6 +217,6 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
       ) # tabpanel bracket
-    # page bracket
- # taglist bracket
+    )# page bracket
+ )# taglist bracket
 ##END
