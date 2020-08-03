@@ -170,7 +170,7 @@ ooh_new %<>% mutate(scot = "Scotland") %>%
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_54_8981685717109972450.xlsx")) %>% 
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_55_7021922173293789958.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -210,7 +210,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-07-26")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-08-02")
 
 ###############################################.
 ## A&E data ----
@@ -260,7 +260,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2020-07-19")
+prepare_final_data(ae_data, "ae", last_week = "2020-07-26")
 
 ###############################################.
 ## NHS24 data ----
@@ -358,7 +358,7 @@ sas %<>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
 #NEW WEEKLY DATA UPDATE
-sas_new <-read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to19072020.txt")) %>% 
+sas_new <- read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to26072020.txt")) %>% 
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -394,7 +394,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-07-19")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-07-26")
 
 ###############################################.
 ## Deaths ----
@@ -548,7 +548,7 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-07-19")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-07-26")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
