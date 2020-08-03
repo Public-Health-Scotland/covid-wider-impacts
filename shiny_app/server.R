@@ -46,22 +46,22 @@ function(input, output, session) {
   observeEvent(input$jump_to_perinatal_mortality, {updateTabsetPanel(session, "intabset", selected = "perinatal")})
   
 # To jump to commentary tab - requires multiple lines becuase action buttons must have unique ID
-  observeEvent(input$jump_commentary_child, {updateTabsetPanel(session, "intabset", selected = "comment")})  
-  observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")})  
-  observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")})  
-  observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")})  
+  observeEvent(input$jump_commentary_child, {updateTabsetPanel(session, "intabset", selected = "comment")})
+  observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")})
+  observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")})
+  observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")})
   
 #trying to find way to link multiple action buttons to one observeEvent - sort of works but then creates an loop with undesired effect
-# observe({
-#     input_btn <- paste0("jump_commentary_", input$intabset)
-#     lapply(input_btn,
-#            function(x){
-#              observeEvent(
-#                input[[x]],
-#                {updateTabsetPanel(session, "intabset", selected = "comment")}
-#              )}
-#     )})
+observe({
+    input_btn <- paste0("jump_commentary_", input$intabset)
+    lapply(input_btn,
+           function(x){
+             observeEvent(
+               input[[x]],
+               {updateTabsetPanel(session, "intabset", selected = "comment")}
+             )}
+    )})
 
 ## ObserveEvents to open collapsepanels in commentary tab when sidepanel option clicked
   observeEvent(input$summary_button, ({
@@ -69,7 +69,7 @@ function(input, output, session) {
   
   observeEvent(input$immunisation_button, ({
     updateCollapse(session, "collapse_commentary", open = "Immunisation")}))
-  
+
   observeEvent(input$ch_review_button, ({
     updateCollapse(session, "collapse_commentary", open = "Child health reviews")}))
   

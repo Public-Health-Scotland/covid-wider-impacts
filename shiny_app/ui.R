@@ -231,6 +231,6 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
       ) # tabpanel bracket
-   ) # page bracket
+    )# page bracket
  )# taglist bracket
 ##END
