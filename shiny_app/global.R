@@ -103,13 +103,6 @@ six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
-#Immunisations island data
-six_island_dose1 <- readRDS("data/six_dose1_islands.rds")
-six_island_dose2 <- readRDS("data/six_dose2_islands.rds")
-six_island_dose3 <- readRDS("data/six_dose3_islands.rds")
-mmr_island_dose1 <- readRDS("data/mmr_dose1_islands.rds")
-mmr_island_dose2 <- readRDS("data/mmr_dose2_islands.rds")
-
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
