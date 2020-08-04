@@ -597,7 +597,7 @@ prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-07-05")
 ###############################################.
 ## 6-in-1 s-curve data ----
 ###############################################.
-six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashboard20200622.csv"), 
+six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashboard_20200727.csv"), 
                 col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_factor())) %>%
 janitor::clean_names()
@@ -611,49 +611,58 @@ six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher
   arrange(cohort) %>%
   select (extract_date, exclude, immunisation, eligible_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
-final_data <<- six_alldose
-
 saveRDS(six_alldose, "shiny_app/data/six_alldose_data.rds")
 
 ###############################################.
 ## 6-in-1 data table ----
 
 # 6-in-1 at 8 weeks - summary table data
-six_datatable <- format_immchild_table("immunisations/6in1/six in one_1_dashboardtab_20200622") 
+six_datatable <- format_immchild_table("immunisations/6in1/six in one_1_dashboardtab_20200727") 
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
 
 # 6-in-1 at dose 2 (usually 12 weeks) - summary table data
-six_dose2_datatable <- format_immchild_table("immunisations/6in1/six in one_2_dashboardtab_20200622") 
+six_dose2_datatable <- format_immchild_table("immunisations/6in1/six in one_2_dashboardtab_20200727") 
 saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.rds"))
 
 # 6-in-1 at dose 3 (usually 16 weeks) - summary table data
-six_dose3_datatable <- format_immchild_table("immunisations/6in1/six in one_3_dashboardtab_20200622") 
+six_dose3_datatable <- format_immchild_table("immunisations/6in1/six in one_3_dashboardtab_20200727") 
 saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
 
 ###############################################.
 ## 6-in-1 hscp data ----
-six_1_hscp <- format_immhscp_table("immunisations/6in1/six in one_1_dashboardtab-hscp_20200622")
+six_1_hscp <- format_immhscp_table("immunisations/6in1/six in one_1_dashboardtab-hscp_20200727")
 saveRDS(six_1_hscp, paste0("shiny_app/data/","six_dose1_hscp.rds"))
 
-six_2_hscp <- format_immhscp_table("immunisations/6in1/six in one_2_dashboardtab-hscp_20200622")
+six_2_hscp <- format_immhscp_table("immunisations/6in1/six in one_2_dashboardtab-hscp_20200727")
 saveRDS(six_2_hscp, paste0("shiny_app/data/","six_dose2_hscp.rds"))
 
-six_3_hscp <- format_immhscp_table("immunisations/6in1/six in one_3_dashboardtab-hscp_20200622")
+six_3_hscp <- format_immhscp_table("immunisations/6in1/six in one_3_dashboardtab-hscp_20200727")
 saveRDS(six_3_hscp, paste0("shiny_app/data/","six_dose3_hscp.rds"))
 
 ###############################################.
 ## 6-in-1 simd data ---- 
-six_dose1_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 1_simd_20200622")
+six_dose1_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 1_simd_20200727")
 saveRDS(six_dose1_simdtable, paste0("shiny_app/data/","six_dose1_simdtable.rds"))
 
-six_dose2_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 2_simd_20200622")
+six_dose2_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 2_simd_20200727")
 saveRDS(six_dose2_simdtable, paste0("shiny_app/data/","six_dose2_simdtable.rds"))
 
-six_dose3_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 3_simd_20200622")
+six_dose3_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 3_simd_20200727")
 saveRDS(six_dose2_simdtable, paste0("shiny_app/data/","six_dose3_simdtable.rds"))
 
 ###############################################.
-# Immunisatio definitions ----
+## 6-in-1 island data ---- 
+six_dose1_island <- format_immchild_table("immunisations/6in1/six in one_1_islandboarddownload_20200727")
+saveRDS(six_dose1_island, paste0("shiny_app/data/","six_dose1_islands.rds"))
+
+six_dose2_island <- format_immchild_table("immunisations/6in1/six in one_2_islandboarddownload_20200727")
+saveRDS(six_dose2_island, paste0("shiny_app/data/","six_dose2_islands.rds"))
+
+six_dose3_island <- format_immchild_table("immunisations/6in1/six in one_3_islandboarddownload_20200727")
+saveRDS(six_dose3_island, paste0("shiny_app/data/","six_dose3_islands.rds"))
+
+###############################################.
+# Immunisation definitions ----
 # apply both for MRR and 6 in one
 age_defs_imm_mmr <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
                                sheet = "mmr_dash") %>% 
@@ -706,7 +715,7 @@ saveRDS(month_defs_imm, "shiny_app/data/month_eligibility_immun.rds")
 ## MMR s-curve data ----
 ###############################################.
 # mmr dose 1 & 2 - scurve data
-mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard20200622.csv"),
+mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard_20200727.csv"),
                       col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
                                       time_period_eligible=col_factor())) %>%
   janitor::clean_names()
@@ -728,34 +737,44 @@ saveRDS(mmr_alldose, paste0("shiny_app/data/","mmr_alldose_data.rds"))
 ###############################################.
 
 # MMR at dose 1  - summary table data
-mmr_dose1_datatable <- format_immchild_table("immunisations/mmr/mmr_dose1_dashboardtab_20200622") 
+mmr_dose1_datatable <- format_immchild_table("immunisations/mmr/mmr_dose1_dashboardtab_20200727") 
 saveRDS(mmr_dose1_datatable, paste0("shiny_app/data/","mmr_dose1_datatable.rds"))
 
 # MMR at dose 2  - summary table data
-mmr_dose2_datatable <- format_immchild_table("immunisations/mmr/mmr_dose2_dashboardtab_20200622") 
+mmr_dose2_datatable <- format_immchild_table("immunisations/mmr/mmr_dose2_dashboardtab_20200727") 
 saveRDS(mmr_dose2_datatable, paste0("shiny_app/data/","mmr_dose2_datatable.rds"))
 
 # Grampian data
-mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/mmr_dose2_dashboardtab_grampian_20200622") 
+mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/mmr_dose2_dashboardtab_grampian_20200727") 
 saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
 
 ###############################################.
 ## MMR hscp data ----
-mmr_1_hscp <- format_immhscp_table("immunisations/6in1/six in one_1_dashboardtab-hscp_20200622")
+mmr_1_hscp <- format_immhscp_table("immunisations/mmr/mmr_dose1_dashboardtab-hscp_20200727")
 saveRDS(mmr_1_hscp, paste0("shiny_app/data/","mmr_dose1_hscp.rds"))
 
-mmr_2_hscp <- format_immhscp_table("immunisations/6in1/six in one_2_dashboardtab-hscp_20200622")
+mmr_2_hscp <- format_immhscp_table("immunisations/mmr/mmr_dose2_dashboardtab-hscp_20200727")
 saveRDS(mmr_2_hscp, paste0("shiny_app/data/","mmr_dose2_hscp.rds"))
+
+mmr_2_hscp_grampian <- format_immhscp_table("immunisations/mmr/mmr_dose2_dashboardtab_grampian_hscp_20200727")
+saveRDS(mmr_2_hscp_grampian, paste0("shiny_app/data/","mmr_dose2_hscp_grampian.rds"))
 
 ###############################################.
 ## MMR simd data ----
 ###############################################.
-
-mmr_dose1_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 1_simd_20200622")
+mmr_dose1_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 1_simd_20200727")
 saveRDS(mmr_dose1_simdtable, paste0("shiny_app/data/","mmr_dose1_simdtable.rds"))
 
-mmr_dose2_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 2_simd_20200622")
+mmr_dose2_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 2_simd_20200727")
 saveRDS(mmr_dose2_simdtable, paste0("shiny_app/data/","mmr_dose2_simdtable.rds"))
+
+###############################################.
+## MMR island data ---- 
+mmr_dose1_island <- format_immchild_table("immunisations/mmr/mmr_dose1_islandboarddownload_20200727")
+saveRDS(mmr_dose1_island, paste0("shiny_app/data/","mmr_dose1_islands.rds"))
+
+mmr_dose2_island <- format_immchild_table("immunisations/mmr/mmr_dose2_islandboarddownload_20200727")
+saveRDS(mmr_dose2_island, paste0("shiny_app/data/","mmr_dose2_islands.rds"))
 
 ###############################################.
 ## Child health review: first visit ----

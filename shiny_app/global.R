@@ -52,9 +52,9 @@ nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
 sas <- readRDS("data/sas_data.rds") # OOH data
 deaths <- readRDS("data/deaths_data.rds") # deaths data
 
+#Cardiovascular data
 ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
 cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
-
 cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
 
 ## Child Health Data
@@ -94,6 +94,7 @@ six_hscp_dose2 <- readRDS("data/six_dose2_hscp.rds")
 six_hscp_dose3 <- readRDS("data/six_dose3_hscp.rds")
 mmr_hscp_dose1 <- readRDS("data/mmr_dose1_hscp.rds")
 mmr_hscp_dose2 <- readRDS("data/mmr_dose2_hscp.rds")
+mmr_hscp_dose2_grampian <- readRDS("data/mmr_dose2_hscp_grampian.rds")
 
 #Immunisations SIMD data
 six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
@@ -101,6 +102,17 @@ six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
 six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
+
+#Immunisations island data
+six_island_dose1 <- readRDS("data/six_dose1_islands.rds")
+six_island_dose2 <- readRDS("data/six_dose2_islands.rds")
+six_island_dose3 <- readRDS("data/six_dose3_islands.rds")
+mmr_island_dose1 <- readRDS("data/mmr_dose1_islands.rds")
+mmr_island_dose2 <- readRDS("data/mmr_dose2_islands.rds")
+
+###############################################.
+## Objects, names, lists ----
+###############################################.
 
 ## perinatal mortality data
 perinatal <- readRDS("data/perinatal_data.rds")
