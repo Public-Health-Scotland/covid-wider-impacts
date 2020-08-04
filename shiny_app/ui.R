@@ -231,10 +231,7 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
            column(4, selectizeInput("area_mh_select", "Step 2 - Select the area of interest",
                                     choices = c("Scotland", "Health board", "HSC partnership"), selected = "Scotland"),
                   uiOutput("geoname_mh_ui")),
-           column(4,actionButton("btn_mentalhealth_modal", "Data source: ePrescribed Messages",
-                                 icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton("download_mentalhealth_data", "Download data"),
+           column(4, downloadButton("download_mentalhealth_data", "Download data"),
                   fluidRow(br()),
                   actionButton('jump_commentary_mentalhealth','Go to commentary'))
          ), #well panel

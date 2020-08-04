@@ -61,6 +61,13 @@ observeEvent(input$btn_mentalhealth_modal,
                    supplies are captured in a separate dataset.  The extent to which serial prescriptions are used may vary 
                    by both geographic and therapeutic areas."),
                p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
+               actionButton("toggle_mh_drug_codes", "Show / Hide BNF Codes"),
+               shinyjs::onclick("toggle_mh_drug_codes",
+                                shinyjs::toggle(id = "mh_drug_codes")),
+               shinyjs::hidden(div(id="mh_drug_codes",
+                                   br(),
+                                   p("Include codes here.")
+               )),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -72,6 +79,8 @@ output$mh_explorer <- renderUI({
   
     tagList(# Prescribing - items dispensed
       h3(paste0("Weekly number of patients prescribed mental health medicines in ", input$geoname_mh)),
+      actionButton("btn_mentalhealth_modal", "Data source: ePrescribed Messages",
+                   icon = icon('question-circle')),
       plot_box("2020 compared with 2018-2019 average", "mh_prescribing_all"),
       plot_cut_box(paste0("Percentage change in number of patients prescribed mental health medicines in ", input$geoname_mh, " compared with the corresponding
                      time in 2018-2019 by medicine groupings"), "mh_drugs_var",
@@ -96,18 +105,12 @@ output$mh_drugs_tot <- renderPlotly({
 ###############################################.
 
 mh_down_data <- reactive({
-
-## download prescribing data  
-  if (input$measure_mh_select == "mentalhealth_drugs") {
-  mentalhealth_drugs %>% filter(type == input$measure_mh_select) %>%
-    select("week_ending", "area_name", "count", "count_average", "variation") }
-
-## when we add more data types
-  
-  # else if (input$measure_mh_select == "mentalhealth_drugs") {
-  #   mentalhealth_drugs %>% filter(type == input$measure_mh_select) %>%
-  #     select("week_ending", "area_name", "count", "count_average", "variation") }
-  
+  switch(
+    input$measure_mh_select,
+    "mhdrugs" = mentalhealth_drugs %>% filter(area_name == input$geoname_mh &
+                                                area_type == input$area_mh_select)
+  ) %>% 
+    rename(average_2018_2019 = count_average) %>% select(-type)
 
 })
 
@@ -125,10 +128,8 @@ output$download_mentalhealth_data <- downloadHandler(
 output$mentalhealth_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mentalhealth",label = "Go to data"), #this button can only be used once
-    h2("Mental health prescribing - August 2020"),
-    p(h4("Background")),
-    p("Information on mental health prescribing data"),
-    p(h4("Data Sources")),
-    p("Information on prescribing emessages")
+    h2("Mental health - August 2020"),
+    h3("Prescribing"),
+    p("Information on mental health prescribing data")
   )
 })
