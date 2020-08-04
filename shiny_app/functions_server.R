@@ -345,7 +345,7 @@ else if(dataset_name == "mmr_alldose" && dose== "dose 2" ){ #set chart parameter
 #Function to create bar-plot for Scotland immunisation data by SIMD 
 plot_imm_simd <- function(dataset, age_week, dose, var_plot = "difference", leg = TRUE) {
   
-  imm_simd_data <- dataset %>% filter(cohort == "monthly") # only months shown
+  imm_simd_data <- dataset %>% filter(exclude == 0) 
   
   dataset_name <- deparse(substitute(dataset)) # character name of the data
   
@@ -420,7 +420,7 @@ immune_table <- function(dataset, age_week) {
   table_data <- table_data %>%
     filter(exclude_from_table !=1) #filter immunisation table to exclude weekly cohorts that should only be downloadable
   
-  no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "MAR"))
+  no_complete_row <- with(table_data, shade_cells == 1)
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
