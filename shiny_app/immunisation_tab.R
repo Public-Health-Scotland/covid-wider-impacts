@@ -250,7 +250,7 @@ Uptake rates based on small numbers are prone to fluctuation. Therefore, in area
 imm_data_download <- reactive({
   
   if (input$measure_select_immun == "mmr_dose2" & input$geoname_immun == "NHS Grampian") {
-    mmrtable_dose2_gramp %>% 
+    bind_rows(mmrtable_dose2_gramp, mmr_hscp_dose2_grampian) %>% 
       select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
       rename(cohort = time_period_eligible)
   } else {
