@@ -185,12 +185,7 @@ format_immsimd_data <- function(filename) {
     # filtering out data where simd missing as small numbers lead to massive percentage differences.
     # filtering out Scotland totals as not plotted
     filter(!(simdq %in% c("0", "Scotland"))) %>% 
-    #horrible code below that filters only the cohorts I think we want to display in the chart - this definitely could be tidied
-    filter(!(time_period_eligible %in% c("JAN 2020","FEB 2020","JUN 2020"))) %>% # temporary filter until we are sure which cohorts will be included
-    mutate(date = as.Date(eligible_start,format="%m/%d/%Y")) %>%
-    filter(date >= as.Date("2020-06-01") ) %>% # temporary filter until we are sure which cohorts will be included
-    droplevels() %>%
-    select(-date)
+    droplevels()
   
   # Creating levels for factor in chronological order
   data_simd$time_period_eligible <- factor(data_simd$time_period_eligible, 
