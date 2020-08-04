@@ -174,9 +174,11 @@ pal_med <- c('#543005', '#bf812d', '#74add1', '#313695') # Palettes for medicine
 
 pal_immun <- c("2019" = '#000000',
                "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", "MAR 2020" = "#7477d1",
-               "W/B 30-MAR-2020" = "#fee391", "W/B 06-APR-2020" = "#fec44f",
-               "W/B 13-APR-2020" = "#ec7014", "W/B 20-APR-2020" = "#cc4c02",
-               "W/B 27-APR-2020" = "#8c2d04", "W/B 04-MAY-2020" = "#662506")
+               "APR 2020" = "#045a8d",
+               "W/B 27-APR-2020" = "#fee391", "W/B 04-MAY-2020" = "#fec44f",
+               "W/B 11-MAY-2020" = "#e49901", "W/B 18-MAY-2020" = "#ec7014",
+               "W/B 25-MAY-2020" = "#cc4c02", "W/B 01-JUN-2020" = "#8c2d04",
+               "W/B 08-JUN-2020" = "#662506")
 
 # second colour palette for SIMD immunisation chart - ideally they could use same colour palette but during build dfferent time frame available
 pal_immun2 <- c("MAR 2020" = "#abd9e9", "APR 2020" = "#74add1", "MAY 2020" = "#7477d1",
