@@ -588,7 +588,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   if (age_week == "2 weeks") {
     format_col <- c("denominator","coverage_6weeks_num","coverage_18weeks_num","coverage_tot_num")
     no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B" |
-                                           time_period_eligible == "MAR 2020"))
+                                           time_period_eligible == "APR 2020"))
     
     child_table <- table_data %>%
     select (time_period_eligible, denominator, coverage_6weeks_num, 
