@@ -190,7 +190,7 @@ ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Da
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-ooh_may_onwards <- ooh_may_onwards %>% 
+ooh_may_onwards %<>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
@@ -402,7 +402,7 @@ prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-07-26")
 ###############################################.
 deaths <- readRDS(paste0(data_folder, "deaths/deaths_data.rds"))
 saveRDS(deaths, "shiny_app/data/deaths_data.rds")
-saveRDS(deaths, "/conf/PHSCOVID19_Analysis/Publication outputs/open_data/deaths_data.rds")
+saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 
 ###############################################.
 ## Cath labs - cardiac procedures ----
