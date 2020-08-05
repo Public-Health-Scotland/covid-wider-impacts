@@ -651,7 +651,7 @@ six_dose2_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 2
 saveRDS(six_dose2_simdtable, paste0("shiny_app/data/","six_dose2_simdtable.rds"))
 
 six_dose3_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 3_simd_20200727")
-saveRDS(six_dose2_simdtable, paste0("shiny_app/data/","six_dose3_simdtable.rds"))
+saveRDS(six_dose3_simdtable, paste0("shiny_app/data/","six_dose3_simdtable.rds"))
 
 ###############################################.
 # Immunisation definitions ----
