@@ -350,11 +350,11 @@ plot_imm_simd <- function(dataset, age_week, dose,
   
   dataset_name <- deparse(substitute(dataset)) # character name of the data
   
-  elig <- case_when(dataset_name == "six_simd_dose1" ~ 12,
-                    dataset_name == "six_simd_dose2" ~ 16,
-                    dataset_name == "six_simd_dose3" ~ 20,
-                    dataset_name == "mmr_simd_dose1" ~ 57,
-                    dataset_name == "mmr_simd_dose2" ~ 178)
+  elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
+                    dataset_name == "six_simd_dose2" ~ "16 weeks",
+                    dataset_name == "six_simd_dose3" ~ "20 weeks",
+                    dataset_name == "mmr_simd_dose1" ~ "13 months",
+                    dataset_name == "mmr_simd_dose2" ~ "3y 5 months")
   
   # Create tooltip for scurve
   tooltip_scurve <- c(paste0("Cohort: ", imm_simd_data$time_period_eligible))
@@ -371,11 +371,11 @@ plot_imm_simd <- function(dataset, age_week, dose,
   
   if (base_var != F) {
     yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
-    yaxis_plots[["title"]] <- paste0("% uptake by ", elig, " weeks")
+    yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
     
   } else {
     yaxis_plots[["range"]] <- c(-10, 30) 
-    yaxis_plots[["title"]] <- paste0("Change in % uptake by ", elig, " weeks")
+    yaxis_plots[["title"]] <- paste0("Change in % uptake by ", elig)
     
   }
   
