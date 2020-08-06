@@ -176,11 +176,11 @@ output$child_health_explorer <- renderUI({
 visit_data_download <- reactive({
   switch(
     input$measure_select_child,
-    "first_visit" = filter(first_datatable_download, area_name == input$geoname_child),
-    "six_eightwks" = filter(sixtoeight_datatable_download, area_name == input$geoname_child),
-    "13_15mnth" = filter(thirteen_datatable_download, area_name == input$geoname_child),
-    "27_30mnth" = filter(twentyseven_datatable_download, area_name == input$geoname_child),
-    "4_5yr" = filter(fourtofive_datatable_download, area_name == input$geoname_child)
+    "first_visit" = filter(firsttable, area_name == input$geoname_child),
+    "six_eightwks" = filter(sixtoeighttable, area_name == input$geoname_child),
+    "13_15mnth" = filter(thirteentable, area_name == input$geoname_child),
+    "27_30mnth" = filter(twentyseventable, area_name == input$geoname_child),
+    "4_5yr" = filter(fourtofivetable, area_name == input$geoname_child)
   ) %>% 
     select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>% 
     rename(cohort = time_period_eligible)
