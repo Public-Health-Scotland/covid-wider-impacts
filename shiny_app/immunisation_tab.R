@@ -237,7 +237,7 @@ output$immunisation_explorer <- renderUI({
                simd_tot_plot = "imm_mmr_simd_tot_dose1", simd_chan_plot = "imm_mmr_simd_chan_dose1",
                age_def = "12 months defined as 53 weeks")
   } else if (input$measure_select_immun == "mmr_dose2"){
-    imm_layout(s_plot = "immun_mmr_scurve_dose1", s_table = "immun_mmr_table_dose1", 
+    imm_layout(s_plot = "immun_mmr_scurve_dose2", s_table = "immun_mmr_table_dose2", 
                simd_tot_plot = "imm_mmr_simd_tot_dose2", simd_chan_plot = "imm_mmr_simd_chan_dose2", 
                age_def = "3 year 4 months defined as 174 weeks")
   }
@@ -262,11 +262,11 @@ imm_data_download <- reactive({
     switch(
       input$measure_select_immun,
       # for data download bind hscp table to table appearing in the app
-      "sixin_dose1" = rbind(sixtable,six_hscp_dose1),
-      "sixin_dose2" = rbind(sixtable_dose2,six_hscp_dose2),
-      "sixin_dose3" = rbind(sixtable_dose3,six_hscp_dose3),
-      "mmr_dose1" = rbind(mmrtable_dose1,mmr_hscp_dose1),
-      "mmr_dose2"= rbind(mmrtable_dose2, mmr_hscp_dose2)
+      "sixin_dose1" = bind_rows(sixtable,six_hscp_dose1),
+      "sixin_dose2" = bind_rows(sixtable_dose2,six_hscp_dose2),
+      "sixin_dose3" = bind_rows(sixtable_dose3,six_hscp_dose3),
+      "mmr_dose1" = bind_rows(mmrtable_dose1,mmr_hscp_dose1),
+      "mmr_dose2"= bind_rows(mmrtable_dose2, mmr_hscp_dose2)
     ) %>% 
       select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
       rename(cohort = time_period_eligible)
@@ -298,8 +298,7 @@ imm_simd_data_download <- reactive ({
     "mmr_dose1" = mmr_simd_dose1,
     "mmr_dose2"= mmr_simd_dose2) %>% 
     select(-cohort) %>% 
-    rename(cohort = time_period_eligible, deprivation_quintile = simdq, 
-           absolute_change_from_baseline_percent = difference)
+    rename(cohort = time_period_eligible, deprivation_quintile = simdq)
   
   # Renaming variables, including the age in weeks in their names
   num_name <- paste0("children_rec_imm_", elig, "weeks_num")
@@ -307,17 +306,21 @@ imm_simd_data_download <- reactive ({
   basenum_name <- paste0("children_rec_imm_", elig, "weeks_2019_num")
   den_name <- paste0("children_turn_", elig - 4, "weeks_num")
   baseden_name <- paste0("children_turn_", elig - 4, "weeks_2019_num")
+  abs_name <- "absolute_change_from_2019_baseline_percent"
+  rel_name <- "relative_change_from_2019_baseline_percent"
   
   data_down[num_name] <- data_down[paste0("uptake_", elig, "weeks_num")]
   data_down[baseperc_name] <- data_down[paste0("baseline_", elig, "weeks")]
   data_down[basenum_name] <- data_down$baseline_numerator
   data_down[den_name] <- data_down$denominator
   data_down[baseden_name] <- data_down$baseline_denominator
-  
+  data_down[abs_name] <- data_down[paste0("week", elig, "_abs_diff")]
+  data_down[rel_name] <- data_down[paste0("week", elig, "_rel_diff")]
   
   data_down %>%
     select("immunisation", "area_name", "cohort", "deprivation_quintile", den_name, num_name,
-           starts_with("uptake"), starts_with("children"), "absolute_change_from_baseline_percent") %>% 
+           starts_with("uptake"), starts_with("children"), starts_with("absolute"),
+           starts_with("relative")) %>% 
     select(-paste0("uptake_", elig, "weeks_num"))
   
 })
