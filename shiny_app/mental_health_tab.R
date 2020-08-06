@@ -47,6 +47,10 @@ observeEvent(input$btn_mentalhealth_modal,
                    longer, for data to become available through the prescription payment process."),
                p("Real-time intelligence is particularly important during the Covid-19 crisis and the majority of 
                    information needed is available from eMessages."),
+               tags$b("How we identify new treatment courses"),
+               p("When patients are receiving ongoing treatment they typically receive a prescription for their medicine every 4-8 weeks.  
+                 Patients starting a new treatment course were identified as those people receiving a prescription and who had not received 
+                 a prescription for the same type of medicine in the preceding 13 weeks."),
                tags$b("Limitations of electronic prescription message data"),
                p("Not all prescribers have electronic messaging support and not all prescriptions that are written 
                    will be dispensed, so it is only once all prescriptions have been submitted and processed for payment 
@@ -61,10 +65,7 @@ observeEvent(input$btn_mentalhealth_modal,
                    supplies are captured in a separate dataset.  The extent to which serial prescriptions are used may vary 
                    by both geographic and therapeutic areas."),
                p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
-               tags$b("How we identify new treatment courses"),
-               p("When patients are receiving ongoing treatment they typically receive a prescription for their medicine every 4-8 weeks.  
-                 Patients starting a new treatment course were identified as those people receiving a prescription and who had not received 
-                 a prescription for the same type of medicine in the preceding 13 weeks."),
+              
                # actionButton("toggle_mh_drug_codes", "Show / Hide BNF Codes"),
                # shinyjs::onclick("toggle_mh_drug_codes",
                #                  shinyjs::toggle(id = "mh_drug_codes")),
