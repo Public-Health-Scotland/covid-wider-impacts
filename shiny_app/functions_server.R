@@ -358,6 +358,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
   
   # Create tooltip for scurve
   tooltip_scurve <- c(paste0("Cohort: ", imm_simd_data$time_period_eligible))
+  tooltip_2019 <- c(paste0("Cohort: 2019"))
   
   ## String text for legend title label
   age_unit <- case_when(substr(dataset_name,1,3) == "six" ~ paste0(age_week, " weeks:"),
@@ -366,6 +367,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
   
   #Modifying standard yaxis name applies to all curves
   xaxis_plots[["title"]] <- "SIMD quintile"
+  xaxis_plots[["tickangle"]] <- 315
   
   if (base_var != F) {
     yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
@@ -388,7 +390,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
     simd_plot <- simd_plot %>% 
       add_trace(type = 'bar', y = ~get(base_var)/3, 
                 name = "2019", marker = list(color = "black"),
-                text= tooltip_scurve, hoverinfo="text") 
+                text= tooltip_2019, hoverinfo="text") 
   }
 
   simd_plot %>% #Layout
