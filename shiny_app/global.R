@@ -165,7 +165,7 @@ pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
 
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
-pal_med <- c('#543005', '#bf812d', '#74add1', '#313695') # Palettes for medicine groupings
+pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine groupings
 
 pal_immun <- c("2019" = '#000000',
                "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", "MAR 2020" = "#7477d1",

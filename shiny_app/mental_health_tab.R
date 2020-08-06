@@ -61,13 +61,17 @@ observeEvent(input$btn_mentalhealth_modal,
                    supplies are captured in a separate dataset.  The extent to which serial prescriptions are used may vary 
                    by both geographic and therapeutic areas."),
                p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
-               actionButton("toggle_mh_drug_codes", "Show / Hide BNF Codes"),
-               shinyjs::onclick("toggle_mh_drug_codes",
-                                shinyjs::toggle(id = "mh_drug_codes")),
-               shinyjs::hidden(div(id="mh_drug_codes",
-                                   br(),
-                                   p("Include codes here.")
-               )),
+               tags$b("How we identify new treatment courses"),
+               p("When patients are receiving ongoing treatment they typically receive a prescription for their medicine every 4-8 weeks.  
+                 Patients starting a new treatment course were identified as those people receiving a prescription and who had not received 
+                 a prescription for the same type of medicine in the preceding 13 weeks."),
+               # actionButton("toggle_mh_drug_codes", "Show / Hide BNF Codes"),
+               # shinyjs::onclick("toggle_mh_drug_codes",
+               #                  shinyjs::toggle(id = "mh_drug_codes")),
+               # shinyjs::hidden(div(id="mh_drug_codes",
+               #                     br(),
+               #                     p("Include codes here.")
+               # )),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
