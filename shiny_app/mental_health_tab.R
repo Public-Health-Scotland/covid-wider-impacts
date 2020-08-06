@@ -78,13 +78,13 @@ observeEvent(input$btn_mentalhealth_modal,
 output$mh_explorer <- renderUI({
   
     tagList(# Prescribing - items dispensed
-      h3(paste0("Weekly number of patients prescribed mental health medicines in ", input$geoname_mh)),
+      h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh)),
       actionButton("btn_mentalhealth_modal", "Data source: ePrescribed Messages",
                    icon = icon('question-circle')),
       plot_box("2020 compared with 2018-2019 average", "mh_prescribing_all"),
-      plot_cut_box(paste0("Percentage change in number of patients prescribed mental health medicines in ", input$geoname_mh, " compared with the corresponding
-                     time in 2018-2019 by medicine groupings"), "mh_drugs_var",
-                   paste0("Weekly number of patients prescribed mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
+      plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, 
+                          " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
+                   paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
   
   
 })
@@ -130,6 +130,12 @@ output$mentalhealth_commentary <- renderUI({
     bsButton("jump_to_mentalhealth",label = "Go to data"), #this button can only be used once
     h2("Mental health - August 2020"),
     h3("Prescribing"),
-    p("Information on mental health prescribing data")
-  )
+    p("Information on the number of patients starting a new treatment course for selected mental health medicines (those commonly used for depression, anxiety or 
+      insomnia) through General Practice has been included for the first time on 19 August 2020. This data indicates:"),
+    tags$ul(
+      tags$li("The number of patients starting new treatment with the selected medicines fell by almost 40% between the week prior to the introduction of lockdown and early April. 
+              Since then, the total numbers have been gradually increasing and returned to normal levels by the end of June."),
+      tags$li("The number of new treatment courses with medicines for depression and insomnia show a similar pattern of decline and recovery whereas medicines for anxiety 
+              show a more prolonged decline in the number of new treatment courses and, by mid-July, remain about 15% below normal.")
+  ))
 })

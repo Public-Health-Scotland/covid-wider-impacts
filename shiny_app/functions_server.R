@@ -58,7 +58,9 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
           filter(type %in% split & area_name == input$geoname_mh,
                  category != "All") %>%
           mutate(category = case_when(
-            category == "SSRI SNRI" ~ "Selective serotonin \nreuptake inhibitor \n/serotonin and \nnorepinephrine \nreuptake inhibitor",
+            category == "SSRI SNRI" ~ "Depression medicine",
+            category == "Anxiolytic" ~ "Anxiety medicine",
+            category == "Hypnotic" ~ "Insomnia medicine",
             TRUE ~ category
           ))
       }
@@ -95,7 +97,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name == "cath" ~ "Number of cases",
                              data_name == "drug_presc" ~ "Number of items prescribed",
                              data_name == "deaths" ~ "Number of deaths",
-                             data_name == "mentalhealth_drugs" ~ "Number of patients prescribed medicine")
+                             data_name == "mentalhealth_drugs" ~ "Number of patients")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
@@ -155,7 +157,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                            data_name == "cath" ~ "Number of cases",
                            data_name == "drug_presc" ~ "Number of items prescribed",
                            data_name == "deaths" ~ "Number of deaths",
-                           data_name == "mentalhealth_drugs" ~ "Number of patients prescribed medicine")
+                           data_name == "mentalhealth_drugs" ~ "Number of patients")
 
   
   #Modifying standard layout
