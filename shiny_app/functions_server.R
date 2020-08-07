@@ -606,7 +606,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "6 weeks") {
     format_col <- c("denominator","coverage_10weeks_num","coverage_22weeks_num","coverage_tot_num")
     no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
-                                           substr(time_period_eligible,1,3) == "MAR"))
+                                           substr(time_period_eligible,1,3) == "APR"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_10weeks_num, 
@@ -624,7 +624,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "13 months") {
     format_col <- c("denominator","coverage_14months_num","coverage_17months_num","coverage_tot_num")
     no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
-                                           substr(time_period_eligible,1,3) == "MAR"))
+                                           substr(time_period_eligible,1,3) == "APR"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_14months_num, 
@@ -642,7 +642,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "27 months") {
     format_col <- c("denominator","coverage_28months_num","coverage_31months_num","coverage_tot_num")
     no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
-                                           substr(time_period_eligible,1,3) == "MAR"))
+                                           substr(time_period_eligible,1,3) == "APR"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_28months_num, 
@@ -660,7 +660,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "4 years") {
     format_col <- c("denominator","coverage_49months_num","coverage_52months_num","coverage_tot_num")
     no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
-                                           substr(time_period_eligible,1,3) == "MAR"))
+                                           substr(time_period_eligible,1,3) == "APR"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_49months_num, 
