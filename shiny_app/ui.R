@@ -46,17 +46,17 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
          h3("Other sources of information: "),
          tags$ul(
            tags$li("Public Health Scotland publishes ",
-                   tags$a(href="(https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information", class="externallink"), 
+                   tags$a(href="(https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information", class="externallink"),
                     "on the direct health
                    impacts of COVID-19 as well as guidance for professionals and public"),
            tags$li("The Scottish Government publishes a ",
                    tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard", class="externallink"),
-                   " which brings together data and 
+                   " which brings together data and
           evidence on the impacts of COVID-19 on health, society and the economy."),
-           tags$li("The Improvement Service publishes a ", 
+           tags$li("The Improvement Service publishes a ",
                    tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard", class="externallink"),
                    " on the economic impacts of the pandemic in Scotland."),
-           tags$li("Transport Scotland publishes ", 
+           tags$li("Transport Scotland publishes ",
                    tags$a(href="https://www.transport.gov.scot/publications/", "information", class="externallink"),
             " on transport trends and public attitudes towards
                    transport for the pandemic period.")
@@ -85,7 +85,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 
                           )))
 ), #tab panel
-             
+
 ###############################################.
 ## Summary trends ----
 ###############################################.
