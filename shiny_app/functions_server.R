@@ -350,14 +350,15 @@ plot_imm_simd <- function(dataset, age_week, dose,
   
   dataset_name <- deparse(substitute(dataset)) # character name of the data
   
-  elig <- case_when(dataset_name == "six_simd_dose1" ~ 12,
-                    dataset_name == "six_simd_dose2" ~ 16,
-                    dataset_name == "six_simd_dose3" ~ 20,
-                    dataset_name == "mmr_simd_dose1" ~ 57,
-                    dataset_name == "mmr_simd_dose2" ~ 178)
+  elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
+                    dataset_name == "six_simd_dose2" ~ "16 weeks",
+                    dataset_name == "six_simd_dose3" ~ "20 weeks",
+                    dataset_name == "mmr_simd_dose1" ~ "13 months",
+                    dataset_name == "mmr_simd_dose2" ~ "3y 5 months")
   
   # Create tooltip for scurve
   tooltip_scurve <- c(paste0("Cohort: ", imm_simd_data$time_period_eligible))
+  tooltip_2019 <- c(paste0("Cohort: 2019"))
   
   ## String text for legend title label
   age_unit <- case_when(substr(dataset_name,1,3) == "six" ~ paste0(age_week, " weeks:"),
@@ -370,11 +371,11 @@ plot_imm_simd <- function(dataset, age_week, dose,
   
   if (base_var != F) {
     yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
-    yaxis_plots[["title"]] <- paste0("% uptake by ", elig, " weeks")
+    yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
     
   } else {
     yaxis_plots[["range"]] <- c(-10, 30) 
-    yaxis_plots[["title"]] <- paste0("Change in % uptake by ", elig, " weeks")
+    yaxis_plots[["title"]] <- paste0("Change in % uptake by ", elig)
     
   }
   
@@ -389,7 +390,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
     simd_plot <- simd_plot %>% 
       add_trace(type = 'bar', y = ~get(base_var)/3, 
                 name = "2019", marker = list(color = "black"),
-                text= tooltip_scurve, hoverinfo="text") 
+                text= tooltip_2019, hoverinfo="text") 
   }
 
   simd_plot %>% #Layout

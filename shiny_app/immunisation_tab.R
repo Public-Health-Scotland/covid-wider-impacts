@@ -170,14 +170,14 @@ output$immunisation_explorer <- renderUI({
   immune_simd_chan_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Change in uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland (Compared to baseline of children turning 8 weeks in 2019)",
                                       input$measure_select_immun == "sixin_dose2" ~ "Change in uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland (Compared to baseline of children turning 12 weeks in 2019)",
                                       input$measure_select_immun == "sixin_dose3" ~ "Change in uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation: Scotland (Compared to baseline of children turning 16 weeks in 2019)",
-                                      input$measure_select_immun == "mmr_dose1" ~ "Change in uptake of first dose MMR vaccine by 57 weeks of age by deprivation: Scotland (Compared to baseline of children turning 12-13 months in 2019)",
-                                      input$measure_select_immun == "mmr_dose2" ~ "Change in uptake of second dose MMR vaccine by 178 weeks of age by deprivation: Scotland (Compared to baseline of children turning 3 years and 4 months in 2019)")
+                                      input$measure_select_immun == "mmr_dose1" ~ "Change in uptake of first dose MMR vaccine by 13 months of age by deprivation: Scotland (Compared to baseline of children turning 12-13 months in 2019)",
+                                      input$measure_select_immun == "mmr_dose2" ~ "Change in uptake of second dose MMR vaccine by 3 years and 5 months of age by deprivation: Scotland (Compared to baseline of children turning 3 years and 4 months in 2019)")
   
   immune_simd_tot_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland",
-                                     input$measure_select_immun == "sixin_dose2" ~ "Uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation",
-                                     input$measure_select_immun == "sixin_dose3" ~ "Uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation",
-                                     input$measure_select_immun == "mmr_dose1" ~ "Uptake of first dose MMR vaccine by 57 weeks of age by deprivation",
-                                     input$measure_select_immun == "mmr_dose2" ~ "Uptake of second dose MMR vaccine by 178 weeks of by age deprivation")
+                                     input$measure_select_immun == "sixin_dose2" ~ "Uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland",
+                                     input$measure_select_immun == "sixin_dose3" ~ "Uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation: Scotland",
+                                     input$measure_select_immun == "mmr_dose1" ~ "Uptake of first dose MMR vaccine by 13 months of age by deprivation: Scotland",
+                                     input$measure_select_immun == "mmr_dose2" ~ "Uptake of second dose MMR vaccine by 3 years and 5 months of age by deprivation: Scotland")
   
   
   # Intro paragraph within imumunisation tab
