@@ -366,6 +366,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
   
   #Modifying standard yaxis name applies to all curves
   xaxis_plots[["title"]] <- "SIMD quintile"
+  xaxis_plots[["tickangle"]] <- 315
   
   if (base_var != F) {
     yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
