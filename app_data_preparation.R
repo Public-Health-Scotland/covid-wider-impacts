@@ -9,7 +9,7 @@ source("functions_packages_data_prep.R")
 ## RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_03-Aug.rds")) %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_10-Aug.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -97,7 +97,7 @@ rap_adm <- rbind(rap_adm, spec_med, paed_com) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-07-26", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-08-02", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -170,7 +170,7 @@ ooh_new %<>% mutate(scot = "Scotland") %>%
   filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_55_7021922173293789958.xlsx")) %>% 
+ooh_may_onwards <- read_csv(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_52_1526735825125732391.csv")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -268,9 +268,9 @@ prepare_final_data(ae_data, "ae", last_week = "2020-08-02")
 
 # #Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
 # #Each week this section of code can be uncommented run for the latest weeks data then recommented after txt file deleted
-   # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 27072020 to 02082020.txt")))
-   # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 27072020 to 02082020.rds"))
-   # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 27072020 to 02082020.txt"))
+    # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 03082020 to 09082020.txt")))
+    # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 03082020 to 09082020.rds"))
+    # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 03082020 to 09082020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 08062020 to 14062020.rds")),
@@ -280,7 +280,8 @@ nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 06072020 to 12072020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 13072020 to 19072020.rds")),
                 readRDS(paste0(data_folder, "NHS24/NHS24 Extract 20072020 to 26072020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 27072020 to 02082020.rds"))) %>%
+                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 27072020 to 02082020.rds")),
+                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 03082020 to 09082020.rds"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -359,7 +360,7 @@ sas %<>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
 #NEW WEEKLY DATA UPDATE
-sas_new <- read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to26072020.txt")) %>% 
+sas_new <- read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to02082020.txt")) %>% 
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -395,7 +396,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-07-26")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-08-02")
 
 ###############################################.
 ## Deaths ----
