@@ -210,7 +210,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-08-09")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-08-02")
 
 ###############################################.
 ## A&E data ----
@@ -325,7 +325,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-08-09")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-08-02")
 
 ###############################################.
 ## SAS data ----
