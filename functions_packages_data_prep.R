@@ -166,7 +166,42 @@ format_immchild_table <- function(filename) {
     select (-geography) %>%
     arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
     mutate(time_period_eligible=as.factor(time_period_eligible))
-  
 }
+
+#Function to format the immunisations hscp data - probably not needed if we can get data supplied by salomi differntly
+format_immhscp_table <- function(filename) {
+  read_csv(paste0(data_folder, filename, ".csv")) %>%
+    janitor::clean_names() %>%
+    select (-geography) %>%
+    rename(area_name=geography_name) %>%
+    arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+    mutate(time_period_eligible = as.factor(time_period_eligible),
+           area_name=paste0("HSCP ", area_name))
+}
+
+# Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
+format_immsimd_data <- function(filename) {
+  data_simd <-  read_csv(paste0(data_folder, filename, ".csv")) %>%
+    janitor::clean_names() %>%
+    mutate(eligible_start = case_when((str_length(eligible_start)<10) ~ paste0("0", eligible_start), 
+                                      TRUE ~ eligible_start)) %>%
+    arrange (cohort,as.Date(eligible_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+    mutate(time_period_eligible = as.factor(case_when(cohort == "monthly" ~ paste0(toupper(substr(time_period_eligible, 1, 3)),
+                                                          " 20",substring(time_period_eligible,5,6)), 
+                                                      TRUE ~ time_period_eligible))) %>%
+    rename(area_name = geography, simdq = simd2020v2_sc_quintile) %>%
+    mutate(simdq=case_when(simdq == 6 ~"Scotland", simdq == 1 ~ "1 - most deprived",
+                           simdq == 5 ~ "5 - least deprived", TRUE ~ as.character(simdq))) %>%
+    # filtering out data where simd missing as small numbers lead to massive percentage differences.
+    # filtering out Scotland totals as not plotted
+    filter(!(simdq %in% c("0", "Scotland"))) %>% 
+    droplevels()
+  
+  # Creating levels for factor in chronological order
+  data_simd$time_period_eligible <- factor(data_simd$time_period_eligible, 
+                                          levels=unique(data_simd$time_period_eligible[order(data_simd$eligible_start, decreasing = T)]), 
+                                          ordered=TRUE)
+  return(data_simd)
+    }
 
 ##END

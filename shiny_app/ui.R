@@ -74,7 +74,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("cardio_button", "Cardiovascular", width="150px"),br() ,
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
                           actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
-                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px")),
+                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px")
+                  ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
                                      bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
@@ -88,7 +89,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 
 ###############################################.
 ## Summary trends ----
-###############################################.
+##############################################.
     tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
       wellPanel(
         column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",

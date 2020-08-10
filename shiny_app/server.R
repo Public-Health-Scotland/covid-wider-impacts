@@ -13,7 +13,7 @@ function(input, output, session) {
   ###############################################.
   # Summary trends tab  
   source(file.path("summary_tab.R"),  local = TRUE)$value
-  
+
   ###############################################.
   # Cardiovascular tab
   source(file.path("cardio_tab.R"),  local = TRUE)$value
@@ -21,11 +21,11 @@ function(input, output, session) {
   ###############################################.
   # Immunisation tab
   source(file.path("immunisation_tab.R"),  local = TRUE)$value
-  
+
   ###############################################.
   # Child Health tab
   source(file.path("child_health_tab.R"),  local = TRUE)$value
- 
+
   ###############################################.
   # Perinatal tab
   source(file.path("perinatal_tab.R"),  local = TRUE)$value
