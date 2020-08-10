@@ -41,7 +41,9 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
     } else if (tab == "cardio") {
       trend_data <- trend_data %>% 
-        mutate(category = factor(category, levels = c("All", "<65", "65+")))
+        mutate(category = factor(category, levels = c("All", "Under 5", "5 - 14", "Under 65", "15 - 44",  
+                                                      "45 - 64","<65", "65 - 74", "65+","65 and over", 
+                                                      "75 - 84", "85 and over"))) 
     }
   } else if (split == "condition") {
       if (tab == "cardio") {
@@ -61,7 +63,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   # If variation selected different values
   if (type == "variation") {
     
-    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "2018-2019",
+    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "ooh_cardiac", "nhs24_cardiac", "cath") ~ "2018-2019",
                              data_name == "deaths" ~ "2015-2019"))
     
     #Text for tooltip
@@ -86,6 +88,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name == "sas" ~ "Number of incidents",
                              data_name == "cath" ~ "Number of cases",
                              data_name == "drug_presc" ~ "Number of items prescribed",
+                             data_name == "ooh_cardiac" ~ "Number of consultations",
+                             data_name == "nhs24_cardiac" ~ "Number of completed contacts",
                              data_name == "deaths" ~ "Number of deaths")
     
     #Modifying standard layout
@@ -98,6 +102,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                               data_name == "sas" ~ "Incidents: ",
                               data_name == "cath" ~ "Cases: ",
                               data_name == "drug_presc" ~ "Items prescribed: ",
+                              data_name == "ooh_cardiac" ~ "Consultations: ",
+                              data_name == "nhs24_cardiac" ~ "Completed contacts: ",
                               data_name == "deaths" ~ "Deaths: ")
     
     #Text for tooltip
@@ -144,13 +150,15 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                            data_name == "sas" ~ "Number of incidents",
                            data_name == "cath" ~ "Number of cases",
                            data_name == "drug_presc" ~ "Number of items prescribed",
+                           data_name == "ooh_cardiac" ~ "Number of consultations",
+                           data_name == "nhs24_cardiac" ~ "Number of completed contacts",
                            data_name == "deaths" ~ "Number of deaths")
 
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "Average 2018-2019",
+  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "ooh_cardiac", "nhs24_cardiac", "cath") ~ "Average 2018-2019",
                           data_name == "deaths" ~ "Average 2015-2019")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
@@ -160,6 +168,8 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                             data_name == "sas" ~ "Incidents: ",
                             data_name == "cath" ~ "Cases: ",
                             data_name == "drug_presc" ~ "Items prescribed: ",
+                            data_name == "ooh_cardiac" ~ "Consultations: ",
+                            data_name == "nhs24_cardiac" ~ "Completed contacts: ",
                             data_name == "deaths" ~ "Deaths: ")
   
   #Text for tooltip

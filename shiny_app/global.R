@@ -48,7 +48,9 @@ ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 rapid <- readRDS("data/rapid_data.rds") #RAPID data
 aye <- readRDS("data/ae_data.rds") #A&E data
 ooh <- readRDS("data/ooh_data.rds") # OOH data
+ooh_cardiac <-  readRDS("data/ooh_cardiac_data.rds") # OOH cardiac data
 nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
+nhs24_cardiac <-  readRDS("data/nhs24_cardiac_data.rds") # NHS24 cardiac data
 sas <- readRDS("data/sas_data.rds") # OOH data
 deaths <- readRDS("data/deaths_data.rds") # deaths data
 
@@ -115,6 +117,8 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
                         "Cardiac procedures" = "cath_lab",
+                        "Cardiovascular NHS24 completed contacts" = "nhs24_cardiac",
+                        "Cardiovascular OOH consultations" = "ooh_cardiac",
                         "6-in-1 first dose"  = "sixin_8wks",
                         "6-in-1 second dose" = "sixin_8wks_second",
                         "6-in-1 third dose" = "sixin_8wks_third",
@@ -127,7 +131,8 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         )
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
-                 "Cardiac procedures" = "cath")
+                 "Cardiac procedures" = "cath", "Out of hours consultations" = "ooh_cardiac",
+                 "NHS24 completed contacts" = "nhs24_cardiac")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Stillbirths"="stillbirths",

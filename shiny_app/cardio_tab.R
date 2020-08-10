@@ -44,6 +44,20 @@ observeEvent(input$measure_cardio_select, {
     enable("area_cardio_select")
   }
   
+  if (x == "ooh_cardiac") {
+    cardio_label = "Step 2 - Select geography level for cardiovascular OOH consultations"
+    cardio_choices = c("Scotland", "Health board")
+    shinyjs::show("geoname_cardio_ui")
+    enable("area_cardio_select")
+  }
+  
+  if (x == "nhs24_cardiac") {
+    cardio_label = "Step 2 - Select geography level for cardiovascular NHS24 consultations"
+    cardio_choices = c("Scotland", "Health board")
+    shinyjs::show("geoname_cardio_ui")
+    enable("area_cardio_select")
+  }
+  
   updateSelectInput(session, "area_cardio_select",
                     label = cardio_label,
                     choices = cardio_choices,
@@ -245,7 +259,72 @@ observeEvent(input$btn_cardio_modal,
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             } else if (input$measure_cardio_select == "ooh_cardiac"){
+               showModal(modalDialog(# OUT OF HOURS cases  MODAL
+                 title = "What is the data source?",
+                 p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor, 
+                   when needed at times outside normal general practice hours, such as evenings, 
+                   overnight or during the weekend. An appointment to the service is normally arranged 
+                   following contact with NHS 24. The recent trend data is shown by age group, sex and 
+                   broad deprivation category (SIMD)."),
+                 p("The charts provide a weekly summary of cardiovascular cases in the recent past and 
+                   historical trends for comparison purposes. Cardiovascular cases are identified using the following conditions:"),
+                tags$ul(
+                  tags$li("pleuritic pain, atypical chest pain, ischaemic heart disease, acute myocardial infarction, angina pectoris, ischaemic chest pain, chest pain.")),
+                 p("The figures presented in this tool exclude cases within any of the COVID-19 
+                   hubs or assessment centres and relate only to cases concerning non-COVID 
+                   issues. "),
+                 p("If required, more detailed analysis of the Primary Care Out of Hours service may 
+                   be available on request to ",
+                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
+                          class="externallink"), "."),
+                 p("General Practice Out of Hours service data is sourced from the",
+                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113", 
+                          "GP Out of Hours Dataset (OOH).",class="externallink"), 
+                   "The OOH dataset is managed by ", 
+                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/", 
+                          "Public Health Scotland (PHS).", class="externallink")),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                 size = "m",
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             } else if (input$measure_cardio_select == "nhs24_cardiac") { #NHS24 CALLS MODAL
+               showModal(modalDialog(
+                 title = "What is the data source?",
+                 p("For many people an NHS 24 call provides the first point of contact for urgent access 
+                   to healthcare advice and, where necessary, onward treatment. At this time NHS 24 will 
+                   receive calls that relate to both COVID-19 and the wide range of other healthcare 
+                   issues that can and do occur all year round. Contacting NHS 24 provides many people 
+                   with access to healthcare advice, urgent clinical advice and, where necessary, onward treatment. 
+                   As well as telephone contact NHS 24 also provide digital (online) services through NHS Inform and self-help guidance."),
+                 p("The figures presented in this tool relate to contacts concerning both COVID-19 and non-COVID 
+                   issues however they do not represent the complete picture of NHS 24 activity or demand. 
+                   The figures below only show data where there has been contact with 111 service and an individual
+                   has spoken to a member of NHS 24 staff. They do not include activity relating to non-clinical 
+                   hotlines or digital (online) services such as NHS Inform. The charts 
+                   provide a weekly summary of contacts recorded in the recent past and historical 
+                   trends for comparison purposes. The recent trend data is shown by age group, sex and broad 
+                   deprivation category (SIMD)." ),
+                 p("Symptoms reported indicating a possible cardiovascular issue include: "),
+                 tags$ul(
+                   tags$li("chest pain, breathing, stroke, dizziness and palpitations.")),
+                 p("Figures by NHS health board include those calls made by residents of each health board area."),
+                 p("If required, more detailed analysis of NHS24 activity may be available on request to ",
+                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
+                          class="externallink"), "."),
+                 p("The NHS24 dataset is managed by ", 
+                   tags$a(href="https://publichealthscotland.scot/", 
+                          "Public Health Scotland", class="externallink"), "and ",
+                   tags$a(href="https://www.nhs24.scot/", 
+                          "NHS 24", class="externallink"), ".",
+                   "This analysis is drawn from the ",
+                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
+                 ),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                 size = "m",
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
+             
+             
 )
 
 # Link action button click to modal launch 
@@ -360,6 +439,49 @@ output$cardio_explorer <- renderUI({
                      time in 2018-2019 by medicine groupings"), "cardio_drugs_var",
                      paste0("Weekly number of cardiovascular medicines prescribed in ", input$geoname_cardio, " by medicine groupings"), "cardio_drugs_tot")
       )
+      
+      
+     } else if (input$measure_cardio_select == "ooh_cardiac") {
+        tagList(# OOH Attendances
+          h3(paste0("Weekly cardiovascular cases in out of hours services ", input$geoname_cardio)),
+          actionButton("btn_cardio_modal", "Data source: PHS GP OOH Datamart", icon = icon('question-circle')),
+          plot_box("2020 compared with 2018-2019 average", "ooh_cardio_all"),
+          plot_cut_box(paste0("Percentage change in cardiovascular consultations in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by sex"), "ooh_cardio_sex_var",
+                       paste0("Weekly number of cardiovascular consultations in ", input$geoname_cardio, " by sex"), "ooh_cardio_sex_tot"),
+          plot_cut_box(paste0("Percentage change in cardiovascular consultations ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by age group"), "ooh_cardio_age_var",
+                       paste0("Weekly number of cardiovascular consultations in ", input$geoname_cardio, " by age group"), "ooh_cardio_age_tot"),
+          plot_cut_box(paste0("Percentage change in cardiovascular consultations in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by SIMD quintile"), "ooh_cardio_depr_var",
+                       paste0("Weekly number of cardiovascular consultations in ", input$geoname_cardio, " by SIMD quintile"), "ooh_cardio_depr_tot",
+                       extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?", 
+                                                    icon = icon('question-circle')))
+        )
+     } else if (input$measure_cardio_select == "nhs24_cardiac") {
+       tagList(# OOH Attendances
+         h3(paste0("Weekly completed cardiovascular contacts with NHS24 in ", input$geoname_cardio)),
+         actionButton("btn_cardio_modal", "Data source: PHS Unscheduled Care Datamart", icon = icon('question-circle')),
+        p("The data used in this chart are taken from the Unscheduled Care Datamart.  
+          As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
+                                       "COVID-19 weekly report for Scotland", class="externallink"), 
+             "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 
+          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. 
+          Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that 
+          can be shown in this publication."),
+         plot_box("2020 compared with 2018-2019 average", "nhs24_cardio_all"),
+         plot_cut_box(paste0("Percentage change in completed cardiovascular contacts in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by sex"), "nhs24_cardio_sex_var",
+                      paste0("Weekly number of completed cardiovascular contacts in ", input$geoname_cardio, " by sex"), "nhs24_cardio_sex_tot"),
+         plot_cut_box(paste0("Percentage change in completed cardiovascular contacts in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by age group"), "nhs24_cardio_age_var",
+                      paste0("Weekly number of completed cardiovascular contacts in ", input$geoname_cardio, " by age group"), "nhs24_cardio_age_tot"),
+         plot_cut_box(paste0("Percentage change in completed cardiovascular contacts in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by SIMD quintile"), "ooh_cardio_depr_var",
+                      paste0("Weekly number of completed cardiovascular contacts in ", input$geoname_cardio, " by SIMD quintile"), "nhs24_cardio_depr_tot",
+                      extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?", 
+                                                   icon = icon('question-circle')))
+       )
     }
 })
 
@@ -394,6 +516,50 @@ output$prescribing_all <- renderPlotly({plot_overall_chart(cardio_drugs %>% filt
 output$cardio_drugs_var <- renderPlotly({plot_trend_chart(cardio_drugs, pal_med, c("condition"), data_name = "drug_presc", tab = "cardio")})
 output$cardio_drugs_tot <- renderPlotly({plot_trend_chart(cardio_drugs, pal_med, c("condition"), "total", data_name = "drug_presc", tab = "cardio")})
 ###############################################.
+
+###############################################.
+# OOH charts
+output$ooh_cardio_all <- renderPlotly({plot_overall_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                           data_name = "ooh_cardiac", area = "All")})
+output$ooh_cardio_sex_var <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                            pal_sex, split = "sex", type = "variation", data_name = "ooh_cardiac", tab = "cardio")})
+output$ooh_cardio_sex_tot <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                            pal_sex, split = "sex", type = "total", data_name = "ooh_cardiac", tab = "cardio")})
+output$ooh_cardio_age_var <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                            pal_age, split = "age", type = "variation", data_name = "ooh_cardiac", tab = "cardio")})
+output$ooh_cardio_age_tot <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                            pal_age, split = "age", type = "total", data_name = "ooh_cardiac", tab = "cardio")})
+output$ooh_cardio_depr_var <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                            pal_depr, split = "dep", type = "variation",data_name = "ooh_cardiac", tab = "cardio")})
+output$ooh_cardio_depr_tot <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                             pal_depr, split = "dep", type = "total",data_name = "ooh_cardiac", tab = "cardio")})
+###############################################.
+
+###############################################.
+# NHS24 charts
+output$nhs24_cardio_all <- renderPlotly({plot_overall_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                          data_name = "ooh_cardiac", area = "All")})
+output$nhs24_cardio_sex_var <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                            pal_sex, split = "sex", type = "variation", data_name = "nhs24_cardiac", tab = "cardio")})
+output$nhs24_cardio_sex_tot <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                            pal_sex, split = "sex", type = "total", data_name = "nhs24_cardiac", tab = "cardio")})
+output$nhs24_cardio_age_var <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                            pal_age, split = "age", type = "variation", data_name = "nhs24_cardiac", tab = "cardio")})
+output$nhs24_cardio_age_tot <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                            pal_age, split = "age", type = "total", data_name = "nhs24_cardiac", tab = "cardio")})
+output$nhs24_cardio_depr_var <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                             pal_depr, split = "dep", type = "variation",data_name = "nhs24_cardiac", tab = "cardio")})
+output$nhs24_cardio_depr_tot <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
+                                                             pal_depr, split = "dep", type = "total",data_name = "nhs24_cardiac", tab = "cardio")})
+###############################################.
+
+
+
+
+
+
+
+
 ## Data downloads ----
 ###############################################.
 
@@ -416,12 +582,28 @@ overall_cardio_download <- reactive({
     new_var_name <- "average_2018_2019"
   }
   
+  # OOH
+  if (input$measure_cardio_select == "ooh_cardiac") {
+  selection <- c("week_ending", "area_name", "count", "count_average", "variation")
+  new_var_name <- "average_2018_2019"
+  }
+  
+  # NHS24
+  if (input$measure_cardio_select == "nhs24_cardiac") {
+    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
+    new_var_name <- "average_2018_2019"
+  }
+  
+  
+  
   # Prep data for download
   switch(
     input$measure_cardio_select,
     "cath" = filter_data(cath_lab_over(), area = F),
     "aye" = filter_data(ae_cardio, area = F),
-    "drug_presc" = filter_data(cardio_drugs, area = F)
+    "drug_presc" = filter_data(cardio_drugs, area = F),
+    "ooh_cardiac" = filter_data(ooh_cardiac, area = F),
+    "nhs24_cardiac" = filter_data(nhs24_cardiac, area = F)
   ) %>% 
     select_at(selection) %>% 
     rename(!!new_var_name := count_average) %>% 
@@ -495,8 +677,19 @@ output$cardio_commentary <- renderUI({
             tags$li("The change in percutaneous coronary interventions has been less pronounced. A significant 
                     proportion of coronary interventions occur in a context of patients suffering a heart 
                     attack. A proportion of coronary interventions are also planned and elective in nature. "),
-            tags$li("The number of device procedures has been lower than expected since the end of March 2020."))
-           )
+            tags$li("The number of device procedures has been lower than expected since the end of March 2020.")),
+    h3("Cardiovascular OOH consultations"),
+    p("Information on cardiovascular attendances..."),
+    tags$ul(
+      tags$li("Overall there was a ..."),
+      tags$li("This ...")),
+    h3("Cardiovascular NHS24 consultations"),
+    p("Information on cardiovascular attendances..."),
+    tags$ul(
+     tags$li("Overall there was a ..."),
+     tags$li("This ..."))
+)
+  
 })
 
 
