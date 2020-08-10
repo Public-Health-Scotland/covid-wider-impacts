@@ -18,15 +18,25 @@ library(magrittr)
 ###############################################.
 ## Filepaths ----
 ###############################################.
-
-data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
-ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-07-09-Extracts/" #short cut to a&e folder areas
+# Filepath changes depending on Desktop/Server
+if (sessionInfo()$platform %in% c("x86_64-redhat-linux-gnu (64-bit)", "x86_64-pc-linux-gnu (64-bit)")) {
+  data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
+  ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-08-06-Extracts/" #short cut to a&e folder areas
+  cl_out <- "/conf/linkage/output/lookups/Unicode/"
+  open_data <- "/conf/PHSCOVID19_Analysis/Publication outputs/open_data/"
+} else {
+  data_folder <- "//Isdsf00d03/PHSCOVID19_Analysis/shiny_input_files/"
+  ae_folder <- "//Isdsf00d03/PHSCOVID19_Analysis/UCD/A&E/2020-08-06-Extracts/" #short cut to a&e folder areas
+  cl_out <- "//Isdsf00d03/cl-out/lookups/Unicode/"
+  open_data <- "//Isdsf00d03/PHSCOVID19_Analysis/Publication outputs/open_data/"
+  
+  }
 
 ###############################################.
 ## Lookups ----
 ###############################################.
 #Used for RAPID, Immunisations and child health reviews as they use cyphers instead
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+hb_lookup <- readRDS(paste0(cl_out, "National Reference Files/Health_Board_Identifiers.rds")) %>% 
   janitor::clean_names() %>% select(description, hb_cypher) %>%
   rename(area_name=description) %>%
   mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
@@ -145,7 +155,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
   final_data <<- data_2020
   
   saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
-  saveRDS(data_2020, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/", filename,"_data.rds"))
+  saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
 }
 
 #Function to format the immunisations and child health review tables

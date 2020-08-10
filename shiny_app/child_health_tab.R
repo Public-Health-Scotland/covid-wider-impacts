@@ -141,11 +141,15 @@ output$child_health_explorer <- renderUI({
 ###############################################.
 ## Child Health Commentary tab content  ----
 ###############################################.
-
-
  output$child_comments <- renderUI({
      tagList(
-       bsButton("jump_to_childhealth",label = "Go to data"),
+       bsButton("jump_to_childreview",label = "Go to data"),
+       h2("Child Health reviews - 12th August 2020"),
+       p("Information on uptake of pre-school child health reviews was updated in this tool on 12 August. Information is now provided on children becoming eligible for a review during the Covid-19 pandemic (in March 2020 to early June 2020) as well as before the pandemic (2019, January 2020, and February 2020)."),
+       p("Coverage of the Health Visitor first visit has remained high for children becoming eligible during the pandemic, with more than 95% of babies receiving their review by 6 weeks of age. 
+Coverage of all other review had fallen for children eligible in March 2020, but recent data for April and May show that rates are beginning to recover in most, but not all, NHS Boards. For the later child health reviews, which have a much longer timeframe for reviews to be delivered, it will take some time for final achieved coverage to be known.  Information on final achieved coverage will continue to be provided through ",
+tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/", "official statistics publications", class="externallink"), "."),
+       p("Further background information on interpreting the data is provided in the commentary for 8 and 15 July 2020 below."),
        h2("Child Health reviews - 15th July 2020"), 
    p("Information on the uptake of child health reviews that are routinely offered to all preschool children by Health Visitors was included in this tool for the first time on 10 June 2020. Data was subsequently refreshed on 8 July 2020.  Commentary relating to those releases is provided below.", br(), br(),
       "Information on coverage of the 4-5 year review was included for the first time on 15 July 2020. Data from before the pandemic, for children becoming eligible in 2019, show that coverage of the 4-5 year review by 49 months was 11%, rising to 29% by 52 months. Coverage continues to increase as children age beyond this point. Overall coverage for children eligible in 2019 was 52% by the time data was extracted for analysis (22 June 2020). This is a fairly new review, which has actually not been implemented in all board areas yet (no data is shown for NHS Dumfries & Galloway as they implemented the review in May 2020, and NHS Highland are scheduled to implement the review on 3 August 2020) and Government policy states that this review should be offered to all children turning 4 years old from April 2020 onwards. Therefore, we expect the baseline for 2019 to be low for this review as it is still becoming established. However, data for children eligible in January and February 2020 show that coverage was gradually beginning to rise before it fell in March 2020, and weekly data for April shows coverage by 49 months is between 5-9%. These children have not yet reached 52 months of age, and we would expect coverage to increase over time.", br(), br(),
@@ -176,11 +180,11 @@ output$child_health_explorer <- renderUI({
 visit_data_download <- reactive({
   switch(
     input$measure_select_child,
-    "first_visit" = filter(first_datatable_download, area_name == input$geoname_child),
-    "six_eightwks" = filter(sixtoeight_datatable_download, area_name == input$geoname_child),
-    "13_15mnth" = filter(thirteen_datatable_download, area_name == input$geoname_child),
-    "27_30mnth" = filter(twentyseven_datatable_download, area_name == input$geoname_child),
-    "4_5yr" = filter(fourtofive_datatable_download, area_name == input$geoname_child)
+    "first_visit" = filter(firsttable, area_name == input$geoname_child),
+    "six_eightwks" = filter(sixtoeighttable, area_name == input$geoname_child),
+    "13_15mnth" = filter(thirteentable, area_name == input$geoname_child),
+    "27_30mnth" = filter(twentyseventable, area_name == input$geoname_child),
+    "4_5yr" = filter(fourtofivetable, area_name == input$geoname_child)
   ) %>% 
     select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>% 
     rename(cohort = time_period_eligible)

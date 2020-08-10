@@ -293,6 +293,10 @@ cath_lab_over <- reactive({
   cath_lab_chosen() %>% filter(groups == "Angiography") %>% droplevels()
 })
 
+cath_lab_adm <- reactive({
+  cath_lab_chosen() %>% filter(type == "adm" & groups == "Percutaneous coronary intervention") %>% droplevels()
+})
+
 cath_lab_type <- reactive({
   cath_lab_chosen() %>% filter(category == "All") %>% 
     select(-category) %>% rename(category = groups) %>% droplevels()
@@ -362,7 +366,7 @@ output$cardio_explorer <- renderUI({
 ###############################################.
 ## Charts ----
 ###############################################.
-#Cath labs RIE charts
+#Cath lab charts
 output$cath_overall <- renderPlotly({plot_overall_chart(cath_lab_over(), data_name = "cath", area = F)})
 output$cath_sex_var <- renderPlotly({plot_trend_chart(cath_lab_over(), pal_sex, split = "sex", tab = "cardio")})
 output$cath_sex_tot <- renderPlotly({plot_trend_chart(cath_lab_over(),
