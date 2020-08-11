@@ -29,7 +29,45 @@ observeEvent(input$measure_mh_select, {
 
 # Pop-up modal explaining source of data
 observeEvent(input$btn_mentalhealth_modal,
-             showModal(modalDialog(#RAPID ADMISSIONS MODAL
+             if (input$measure_mh_select == "aye") { 
+               showModal(modalDialog(# MH AYE MODAL
+                 title = "What is the data source?",
+                 p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments) 
+                   in the recent past, along with historical activity for 
+                   comparison purposes. The recent trend data is shown by age group, sex
+                   and broad deprivation category (SIMD). This data only include Emergency Department 
+                   attendances and do not include minor injury units and other small hospitals and 
+                   health centres in rural areas that carry out emergency department related activity, 
+                   for more information on what sites are included please see this ", 
+                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/Hospital-Site-List/",
+                          "hospital list.", class="externallink")),
+                 p("Additional information relating to the overall A&E activity is available from the ", 
+                   tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/", 
+                          "NHS Performs - weekly update of emergency department activity and waiting time statistics.", 
+                          class="externallink")),
+                 p("Attendances to A&E departments data sourced from the ",
+                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
+                          "Accident and Emergency Datamart (A&E2).",class="externallink"), 
+                   "The A&E2 dataset is managed by ", 
+                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
+                          "Public Health Scotland (PHS).", class="externallink")),
+                 p(tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
+                           incomplete for a number of NHS Boards. Thus, the figures reported for mental health related 
+                           attendances offer only a very approximate indication of attendances. 
+                           Additionally, some NHS Boards have moved to a new recording standard which 
+                           has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
+                           even prior to the introduction of lockdown measures, appear somehwat lower when compared to 
+                           previous years.")),
+                 # p("The table below shows the ICD-10 codes that were considered for the cardiovascular A&E data subset, 
+                 #   where this information was available."),
+                 # actionButton("toggleCodeTable", "Show / Hide Table"),
+                 # shinyjs::onclick("toggleCodeTable",
+                 #                  shinyjs::toggle(id = "CodeTable")),
+                 # shinyjs::hidden(div(id = "CodeTable", br(), DT::dataTableOutput("ae_mh_codes_tbl"))),
+                 size = "m",
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             } else if (input$measure_mh_select == "mhdrugs") {
+             showModal(modalDialog(# MH DRUGS MODAL
                title = "What is the data source?",
                p(strong("Data source: ePrescribed Messages.")),
                p("This section of the PHS Covid-19 - Wider Impacts dashboard provides weekly information on the 
@@ -79,25 +117,19 @@ observeEvent(input$btn_mentalhealth_modal,
                #                     p("Include codes here.")
                # )),
                size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))
+               )
+             }
+               )
 ###############################################.
-##  Reactive layout  ----
+## Reactive datasets ----
 ###############################################.
-# The charts and text shown on the app will depend on what the user wants to see
-output$mh_explorer <- renderUI({
-  
-    tagList(# Prescribing - items dispensed
-      h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh)),
-      actionButton("btn_mentalhealth_modal", "Data source: ePrescribed Messages",
-                   icon = icon('question-circle')),
-      plot_box("2020 compared with 2018-2019 average", "mh_prescribing_all"),
-      plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, 
-                          " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
-                   paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
-  
-  
-})
+ae_mh_filt <- reactive({ae_mh %>% filter(area_type == input$area_mh_select &
+                                           area_name == input$geoname_mh)
+  })
+###############################################.
+## Charts ----
+###############################################.
 
 ###############################################.
 # MH Prescribing charts
@@ -109,6 +141,61 @@ output$mh_drugs_var <- renderPlotly({
 output$mh_drugs_tot <- renderPlotly({
   plot_trend_chart(mentalhealth_drugs, pal_med, split = "condition", type = "total", 
                    data_name = "mentalhealth_drugs", tab = "mh")})
+
+###############################################.
+# MH A&E charts
+output$ae_mh_overall <- renderPlotly({plot_overall_chart(ae_mh_filt(), data_name = "aye", area = "All")})
+output$ae_mh_sex_var <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_sex, c("sex", "all"), data_name = "aye",tab = "mh")})
+output$ae_mh_sex_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_sex, c("sex", "all"), "total", "aye", tab = "mh")})
+output$ae_mh_age_var <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_age, c("age", "all"), data_name = "aye",tab = "mh")})
+output$ae_mh_age_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_age, c("age", "all"), "total", "aye", tab = "mh")})
+output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_filt(), pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "mh")})
+output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh")})
+
+
+
+###############################################.
+##  Reactive layout  ----
+###############################################.
+# The charts and text shown on the app will depend on what the user wants to see
+output$mh_explorer <- renderUI({
+  if (input$measure_mh_select == "mhdrugs") { 
+    tagList(# Prescribing - items dispensed
+      h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh)),
+      actionButton("btn_mentalhealth_modal", "Data source: ePrescribed Messages",
+                   icon = icon('question-circle')),
+      plot_box("2020 compared with 2018-2019 average", "mh_prescribing_all"),
+      plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, 
+                          " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
+                   paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
+  } else if (input$measure_mh_select == "aye") {
+    tagList(#A&E attendances
+      tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
+                 incomplete for a number of NHS Boards. Thus, the figures reported for mental health related 
+                 attendances offer only a very approximate indication of attendances. 
+                 Additionally, some NHS Boards have moved to a new recording standard which 
+                 has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
+                 even prior to the introduction of lockdown measures, appear somewhat lower when compared to 
+                 previous years."),
+      h3("Weekly mental health A&E attendances in Scotland"),
+      actionButton("btn_mentalhealth_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
+      plot_box("2020 compared with 2018-2019 average", "ae_mh_overall"),
+      plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
+                     time in 2018-2019 by sex", "ae_mh_sex_var",
+                   "Weekly number of mental health A&E attendances by sex", "ae_mh_sex_tot"),
+      plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
+                     time in 2018-2019 by age group", "ae_mh_age_var",
+                   "Weekly number of mental health A&E attendances by age group", "ae_mh_age_tot"),
+      plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
+                     time in 2018-2019 by SIMD quintile", "ae_mh_dep_var",
+                   "Weekly number of mental health A&E attendances by SIMD quintile", "ae_mh_dep_tot",
+                   extra_content = actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?", 
+                                                icon = icon('question-circle')))
+      
+    )
+  }
+  
+})
 
 ###############################################.
 ## Data downloads ----
