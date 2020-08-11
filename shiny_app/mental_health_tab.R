@@ -51,6 +51,11 @@ observeEvent(input$btn_mentalhealth_modal,
                p("When patients are receiving ongoing treatment they typically receive a prescription for their medicine every 4-8 weeks.  
                  Patients starting a new treatment course were identified as those people receiving a prescription and who had not received 
                  a prescription for the same type of medicine in the preceding 13 weeks."),
+               tags$b("Data artefacts"),
+               p("Data for 1 January to 31 December each year is presented as weekly data ending on Sundays.  The week from 1st January 
+                 may therefore not be a full seven days and will that week, or the following week may encompass public holidays.  
+                 Consequently, the number of prescribing days and measures of activity at the start of each year can be markedly reduced 
+                 compared to subsequent weeks.  A similar effect also occurs in the last two weeks of the year."),
                tags$b("Limitations of electronic prescription message data"),
                p("Not all prescribers have electronic messaging support and not all prescriptions that are written 
                    will be dispensed, so it is only once all prescriptions have been submitted and processed for payment 
