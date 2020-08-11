@@ -1091,8 +1091,12 @@ mh_aye <- read_xlsx(paste0(data_folder, "A&E_mh/Mental Health Diagnosis.xlsx")) 
          hb=treatment_nhs_board_description_as_at_date_of_episode) %>% 
   proper() %>% #fixing formatting of names
   mutate(area_type = "Health board",
-         week_ending = ceiling_date(arrival_date, "week", change_on_boundary = F)) %>%
-  create_agegroups() %>%
+         week_ending = ceiling_date(arrival_date, "week", change_on_boundary = F),
+         age_grp = as.character(case_when(between(age, 0, 14) ~ "Under 15",
+                                between(age, 15, 44) ~ "15 - 44", 
+                                between(age, 45, 64) ~ "45 - 64", 
+                                between(age, 65, 200) ~ "65 and over", 
+                                T ~ "Missing"))) %>%
   create_depgroups() %>%
   group_by(week_ending, area_name, area_type,  age_grp, sex, dep) %>%
   summarise(count=sum(count)) %>% #aggregating
@@ -1116,6 +1120,11 @@ mh_aye_age <- agg_cut(dataset=mh_aye, grouper="age") %>% rename(category=age)
 
 # Add final aggregation files to one master file
 mh_aye <- rbind(mh_aye_all, mh_aye_sex, mh_aye_dep, mh_aye_age) 
+
+# Filtering out cuts with very small counts for HBS
+mh_aye %<>% 
+  filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
+  filter(area_name == "Scotland" | category == "All")
 
 prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-08-02")
 
