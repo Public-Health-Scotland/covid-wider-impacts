@@ -1080,7 +1080,92 @@ mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_historic)
 
 prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-08-02")
 
-#saveRDS(mentalhealth_drugs, paste0("shiny_app/data/","mentalhealth_drugs_data.rds"))
+###############################################.
+## A&E - mental health ----
+###############################################.
+mh_aye <- read_xlsx(paste0(data_folder, "A&E_mh/Mental Health Diagnosis.xlsx")) %>% 
+  clean_names() %>% 
+  # Formatting dataset
+  rename(dep=prompt_dataset_deprivation_scot_quintile, age=pat_age,
+         sex=pat_gender_description, count=number_of_attendances,
+         hb=treatment_nhs_board_description_as_at_date_of_episode) %>% 
+  proper() %>% #fixing formatting of names
+  mutate(area_type = "Health board",
+         week_ending = ceiling_date(arrival_date, "week", change_on_boundary = F),
+         age_grp = as.character(case_when(between(age, 0, 14) ~ "Under 15",
+                                between(age, 15, 44) ~ "15 - 44", 
+                                between(age, 45, 64) ~ "45 - 64", 
+                                between(age, 65, 200) ~ "65 and over", 
+                                T ~ "Missing"))) %>%
+  create_depgroups() %>%
+  group_by(week_ending, area_name, area_type,  age_grp, sex, dep) %>%
+  summarise(count=sum(count)) %>% #aggregating
+  ungroup() 
+
+# Generate scotland level dataset
+mh_aye_scot <- mh_aye %>%
+  group_by(week_ending, age_grp, sex, dep) %>%
+  summarise(count=sum(count)) %>%
+  mutate(area_name="Scotland", area_type="Scotland") %>% ungroup()
+
+# Joining together
+mh_aye <- rbind(mh_aye, mh_aye_scot) %>% 
+  rename(age=age_grp) %>%  mutate(week_ending=as.Date(week_ending,format="%d/%m/%Y")) 
+
+#Use aggregation function to aggregate data files into format
+mh_aye_all <- mh_aye %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+mh_aye_sex <- agg_cut(dataset=mh_aye, grouper="sex") %>% rename(category=sex)
+mh_aye_dep <- agg_cut(dataset=mh_aye, grouper="dep") %>% rename(category=dep)
+mh_aye_age <- agg_cut(dataset=mh_aye, grouper="age") %>% rename(category=age)
+
+# Add final aggregation files to one master file
+mh_aye <- rbind(mh_aye_all, mh_aye_sex, mh_aye_dep, mh_aye_age) 
+
+# Filtering out cuts with very small counts for HBS
+mh_aye %<>% 
+  filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
+  filter(area_name == "Scotland" | category == "All")
+
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-08-02")
+
+
+# Need to understand how cases have been selected in mh_aye3: free text? intention of injury?
+# Need to clarify if overdose, alcohol, substance misuse, dependence, withdrawal are to be included or not
+# same delirium, mental retardation, confusion, autism, factitious disorder
+# Should we include stress, hallucinations?
+# double check dementia
+# mh_aye_freetext <- toupper(paste0("self harm|self-harm|selfharm|depress|psych|mental health|",
+#                              "suicid|self poisoning|eating disorder|MHAT|behavioural disorder|mental disorder|", 
+#                              "mental illness|anxiety|psycho|bipolar|schizophren|schizoaffective|",
+#                              "anorexi|bulimi|adhd|personality disorder|dissociative|",
+#                              "adjustment disorder|emotional disorder|bereavement|",
+#                              "intentional self-poisoning|stress|delusional|hallucination|",
+#                              "manic episode"))
+# 
+# 
+# mh_aye2 <- mh_aye %>% 
+#   filter(diagnosis_1_code %in% c("16", "02") |
+#            diagnosis_2_code %in% c("16", "02") |
+#            diagnosis_3_code %in% c("16", "02") |
+#            substr(disease_1_code, 1, 1) == "F" |
+#            substr(disease_2_code, 1, 1) == "F" |
+#            substr(disease_3_code, 1, 1) == "F" |
+#            substr(disease_1_code, 1, 3) %in% c("R44", "R45", "X81", "X82", "X83", "X84") |
+#            substr(disease_2_code, 1, 3) %in% c("R44", "R45", "X81", "X82", "X83", "X84") |
+#            substr(disease_3_code, 1, 3) %in% c("R44", "R45", "X81", "X82", "X83", "X84") |
+#            substr(disease_1_code, 1, 2) %in% c("X6", "X7") |
+#            substr(disease_2_code, 1, 2) %in% c("X6", "X7") |
+#            substr(disease_3_code, 1, 2) %in% c("X6", "X7") |
+#            substr(disease_1_code, 1, 4) == "Y871" |
+#            substr(disease_2_code, 1, 4) == "Y871" |
+#            substr(disease_3_code, 1, 4) == "Y871" |
+#            grepl(mh_aye_freetext, diagnosis_1) |
+#            grepl(mh_aye_freetext, diagnosis_2) |
+#            grepl(mh_aye_freetext, diagnosis_3))
+# 
+# mh_aye3 <- anti_join(mh_aye, mh_aye2)
+# 
+# test <- mh_aye2 %>% group_by(diagnosis_1) %>% count
 
 ##END
 
