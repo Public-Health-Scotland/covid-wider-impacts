@@ -1,7 +1,22 @@
 ##Server script for MENTAL HEALTH tab
 
+###############################################.
+## Reactive controls ----
+###############################################.
 # Helper function
 `%notin%` <- Negate(`%in%`)
+# Reactive control for areatype
+output$geotype_mh_ui <- renderUI({
+if (input$measure_mh_select == "mhdrugs") {
+  areas <- c("Scotland", "Health board", "HSC partnership")
+} else if (input$measure_mh_select == "aye") {
+  areas <- c("Scotland", "Health board")
+} 
+  
+selectizeInput("area_mh_select", "Step 2 - Select the area of interest",
+               choices = areas, selected = "Scotland")
+})
+
 # Show list of area names depending on areatype selected
 output$geoname_mh_ui <- renderUI({
   
@@ -15,13 +30,13 @@ output$geoname_mh_ui <- renderUI({
 })
 
 # Adding 'observeEvent' to allow reactive 'area of interest' 
-observeEvent(input$measure_mh_select, {
-    mh_label = "Step 2 - Select geography level for mental health medicine prescriptions"
-    mh_choices = c("Scotland", "Health board", "HSC partnership")
-    shinyjs::show("geoname_mh_ui")
-    enable("area_mh_select")
-  
-})
+# observeEvent(input$measure_mh_select, {
+#     mh_label = "Step 2 - Select geography level for mental health medicine prescriptions"
+#     mh_choices = c("Scotland", "Health board", "HSC partnership")
+#     shinyjs::show("geoname_mh_ui")
+#     enable("area_mh_select")
+#   
+# })
 
 ###############################################.
 ## Modal ----
@@ -152,8 +167,6 @@ output$ae_mh_age_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_age, c(
 output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_filt(), pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "mh")})
 output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh")})
 
-
-
 ###############################################.
 ##  Reactive layout  ----
 ###############################################.
@@ -180,21 +193,23 @@ output$mh_explorer <- renderUI({
       h3("Weekly mental health A&E attendances in Scotland"),
       actionButton("btn_mentalhealth_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
       plot_box("2020 compared with 2018-2019 average", "ae_mh_overall"),
-      plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
+    if (input$geoname_mh == "Scotland") {
+      tagList(
+        plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
                      time in 2018-2019 by sex", "ae_mh_sex_var",
-                   "Weekly number of mental health A&E attendances by sex", "ae_mh_sex_tot"),
-      plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
+                     "Weekly number of mental health A&E attendances by sex", "ae_mh_sex_tot"),
+        plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
                      time in 2018-2019 by age group", "ae_mh_age_var",
-                   "Weekly number of mental health A&E attendances by age group", "ae_mh_age_tot"),
-      plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
+                     "Weekly number of mental health A&E attendances by age group", "ae_mh_age_tot"),
+        plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
                      time in 2018-2019 by SIMD quintile", "ae_mh_dep_var",
-                   "Weekly number of mental health A&E attendances by SIMD quintile", "ae_mh_dep_tot",
-                   extra_content = actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?", 
-                                                icon = icon('question-circle')))
-      
-    )
+                     "Weekly number of mental health A&E attendances by SIMD quintile", "ae_mh_dep_tot",
+                     extra_content = actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?", 
+                                                  icon = icon('question-circle')))
+      ) #taglist bracket from if statement
+    }
+    )#taglist bracket from aye section
   }
-  
 })
 
 ###############################################.
