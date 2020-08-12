@@ -269,12 +269,6 @@ output$download_imm_data <- downloadHandler(
 ##download immunisation SIMD data
 imm_simd_data_download <- reactive ({
   
-  elig <- case_when(input$measure_select_immun == "sixin_dose1" ~ 12,
-                    input$measure_select_immun == "sixin_dose2" ~ 16,
-                    input$measure_select_immun == "sixin_dose3" ~ 20,
-                    input$measure_select_immun == "mmr_dose1" ~ 57,
-                    input$measure_select_immun == "mmr_dose2" ~ 178)
-  
   data_down <- switch(
     input$measure_select_immun,
     "sixin_dose1" = six_simd_dose1,
@@ -285,28 +279,65 @@ imm_simd_data_download <- reactive ({
     select(-cohort) %>% 
     rename(cohort = time_period_eligible, deprivation_quintile = simdq)
   
-  # Renaming variables, including the age in weeks in their names
-  num_name <- paste0("children_rec_imm_", elig, "weeks_num")
-  baseperc_name <- paste0("uptake_", elig, "weeks_2019_percent")
-  basenum_name <- paste0("children_rec_imm_", elig, "weeks_2019_num")
-  den_name <- paste0("children_turn_", elig - 4, "weeks_num")
-  baseden_name <- paste0("children_turn_", elig - 4, "weeks_2019_num")
-  abs_name <- "absolute_change_from_2019_baseline_percent"
-  rel_name <- "relative_change_from_2019_baseline_percent"
-  
-  data_down[num_name] <- data_down[paste0("uptake_", elig, "weeks_num")]
-  data_down[baseperc_name] <- data_down[paste0("baseline_", elig, "weeks")]
-  data_down[basenum_name] <- data_down$baseline_numerator
-  data_down[den_name] <- data_down$denominator
-  data_down[baseden_name] <- data_down$baseline_denominator
-  data_down[abs_name] <- data_down[paste0("week", elig, "_abs_diff")]
-  data_down[rel_name] <- data_down[paste0("week", elig, "_rel_diff")]
-  
-  data_down %>%
-    select("immunisation", "area_name", "cohort", "deprivation_quintile", den_name, num_name,
-           starts_with("uptake"), starts_with("children"), starts_with("absolute"),
-           starts_with("relative")) %>% 
-    select(-paste0("uptake_", elig, "weeks_num"))
+  if (input$measure_select_immun %in% "sixin_dose1") {
+    data_down <- data_down %>%
+      select(immunisation, area_name, cohort, deprivation_quintile,
+             children_turn_8weeks_num = denominator,
+             children_rec_imm_12weeks_num = uptake_12weeks_num,
+             uptake_12weeks_percent,
+             children_turn_8weeks_2019_num = baseline_denominator,
+             children_rec_imm_12weeks_2019_num = baseline_numerator,
+             uptake_12weeks_2019_percent = baseline_12weeks,
+             absolute_change_from_baseline_percent = week12_abs_diff,
+             relative_change_from_baseline_percent = week12_rel_diff)
+
+  } else   if (input$measure_select_immun %in% "sixin_dose2") {
+    data_down <- data_down %>%
+      select(immunisation, area_name, cohort, deprivation_quintile,
+             children_turn_12weeks_num = denominator,
+             children_rec_imm_16weeks_num = uptake_16weeks_num,
+             uptake_16weeks_percent,
+             children_turn_12weeks_2019_num = baseline_denominator,
+             children_rec_imm_16weeks_2019_num = baseline_numerator,
+             uptake_16weeks_2019_percent = baseline_16weeks,
+             absolute_change_from_baseline_percent = week16_abs_diff,
+             relative_change_from_baseline_percent = week16_rel_diff)
+    
+  } else   if (input$measure_select_immun %in% "sixin_dose3") {
+    data_down <- data_down %>%
+      select(immunisation, area_name, cohort, deprivation_quintile,
+             children_turn_16weeks_num = denominator,
+             children_rec_imm_20weeks_num = uptake_20weeks_num,
+             uptake_20weeks_percent,
+             children_turn_16weeks_2019_num = baseline_denominator,
+             children_rec_imm_20weeks_2019_num = baseline_numerator,
+             uptake_20weeks_2019_percent = baseline_20weeks,
+             absolute_change_from_baseline_percent = week20_abs_diff,
+             relative_change_from_baseline_percent = week20_rel_diff)
+  } else   if (input$measure_select_immun %in% "mmr_dose1") {
+    data_down <- data_down %>%
+      select(immunisation, area_name, cohort, deprivation_quintile,
+             children_turn_12months_num = denominator,
+             children_rec_imm_13months_num = uptake_57weeks_num,
+             uptake_13months_percent = uptake_57weeks_percent,
+             children_turn_12months_2019_num = baseline_denominator,
+             children_rec_imm_13months_2019_num = baseline_numerator,
+             uptake_13months_2019_percent = baseline_57weeks,
+             absolute_change_from_baseline_percent = week57_abs_diff,
+             relative_change_from_baseline_percent = week57_rel_diff)
+    
+  } else   if (input$measure_select_immun %in% "mmr_dose2") {
+    data_down <- data_down %>%
+      select(immunisation, area_name, cohort, deprivation_quintile,
+             children_turn_3y4months_num = denominator,
+             children_rec_imm_3y5months_num = uptake_178weeks_num,
+             uptake_3y5months_percent = uptake_178weeks_percent,
+             children_turn_3y4months_2019_num = baseline_denominator,
+             children_rec_imm_3y5months_2019_num = baseline_numerator,
+             uptake_3y5months_2019_percent = baseline_178weeks,
+             absolute_change_from_baseline_percent = week178_abs_diff,
+             relative_change_from_baseline_percent = week178_rel_diff)
+  }
   
 })
 
