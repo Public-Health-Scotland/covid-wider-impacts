@@ -679,15 +679,25 @@ output$cardio_commentary <- renderUI({
                     attack. A proportion of coronary interventions are also planned and elective in nature. "),
             tags$li("The number of device procedures has been lower than expected since the end of March 2020.")),
     h3("Cardiovascular OOH consultations"),
-    p("Information on cardiovascular attendances..."),
+    p("Information on OOH consultations..."),
     tags$ul(
-      tags$li("Overall there was a ..."),
-      tags$li("This ...")),
+      tags$li("From the Middle of April there was a significant increase in OOH cardiac consultations. This lasted until 
+              the middle of July. The largest increase was in the week ending 15 March 2020, 346 compared to a historic average
+              of 195 consultations."),
+      tags$li("There was a significant increase at the start of May for females, 202 consultations compared to the 
+              historic average of 110."),
+      tags$li("There was an increase in OOH cardiac consultations from the middle of April for all SIMD quintiles.")),
     h3("Cardiovascular NHS24 consultations"),
-    p("Information on cardiovascular attendances..."),
+    p("Information on NHS24 consultations..."),
     tags$ul(
-     tags$li("Overall there was a ..."),
-     tags$li("This ..."))
+     tags$li("There was a large increase initially in NHS24 cardiovascular consultations between January and the middle 
+             of March. The largest increase was in the week ending 15 March 2020, 3976 compared to a historic average 
+             of 1548 consultations."),
+     tags$li("The pattern of consultations for males and females followed the same pattern as the historic average."),
+     tags$li("For age groups the most significant increase from the historic average was in the 15-44 and 45-64 age groups."),
+     tags$li("The pattern of consultations for SIMD followed the same pattern as the historic average with the most 
+             deprived having the largest increase in consultations."),
+     tags$li("From the end of March NHS24 cardiac consultations returned to levels seen in the historic average."))
 )
   
 })
