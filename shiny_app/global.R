@@ -64,8 +64,11 @@ deaths <- readRDS("data/deaths_data.rds") # deaths data
 
 ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
 cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
-
 cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
+
+## mental health data
+mentalhealth_drugs <- readRDS("data/mentalhealth_drugs_data.rds")
+ae_mh <- readRDS("data/mh_A&E_data.rds")
 
 ## Child Health Data
 child_extract_date <- "22nd June 2020"
@@ -108,9 +111,6 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas",
                "Excess mortality" = "deaths")
 
-## mental health data
-mentalhealth_drugs <- readRDS("data/mentalhealth_drugs_data.rds")
-
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
                      "6-in-1 second dose" = "sixin_dose2",
@@ -150,7 +150,7 @@ data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
 
-mentalhealth_list <- c("Prescribing" = "mhdrugs")
+mentalhealth_list <- c("Prescribing" = "mhdrugs") #, "A&E attendances" = "aye")
 
 ###############################################.
 ## Palettes and plot parameters ----
