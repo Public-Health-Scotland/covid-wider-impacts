@@ -51,11 +51,6 @@ observeEvent(input$btn_mentalhealth_modal,
                p("When patients are receiving ongoing treatment they typically receive a prescription for their medicine every 4-8 weeks.  
                  Patients starting a new treatment course were identified as those people receiving a prescription and who had not received 
                  a prescription for the same type of medicine in the preceding 13 weeks."),
-               tags$b("Data artefacts"),
-               p("Data for 1 January to 31 December each year is presented as weekly data ending on Sundays.  The week from 1st January 
-                 may therefore not be a full seven days and will that week, or the following week may encompass public holidays.  
-                 Consequently, the number of prescribing days and measures of activity at the start of each year can be markedly reduced 
-                 compared to subsequent weeks.  A similar effect also occurs in the last two weeks of the year."),
                tags$b("Limitations of electronic prescription message data"),
                p("Not all prescribers have electronic messaging support and not all prescriptions that are written 
                    will be dispensed, so it is only once all prescriptions have been submitted and processed for payment 
@@ -69,17 +64,82 @@ observeEvent(input$btn_mentalhealth_modal,
                    is then dispensed in a series of regular supplies over a period of 24, 48 or 52 weeks.  These subsequent 
                    supplies are captured in a separate dataset.  The extent to which serial prescriptions are used may vary 
                    by both geographic and therapeutic areas."),
+               p("Data for 1 January to 31 December each year is presented as weekly data ending on Sundays.  The week from 1st January 
+                 may therefore not be a full seven days and will that week, or the following week, encompass public holidays.  
+                 Consequently, the number of prescribing days and measures of activity at the start of each year can be markedly reduced 
+                 compared to subsequent weeks.  A similar effect also occurs in the last two weeks of the year."),
                p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
               
-               # actionButton("toggle_mh_drug_codes", "Show / Hide BNF Codes"),
-               # shinyjs::onclick("toggle_mh_drug_codes",
-               #                  shinyjs::toggle(id = "mh_drug_codes")),
-               # shinyjs::hidden(div(id="mh_drug_codes",
-               #                     br(),
-               #                     p("Include codes here.")
-               # )),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+                actionButton("toggle_mh_drug_codes", "Show / Hide Medicine Groups"),
+                shinyjs::onclick("toggle_mh_drug_codes",
+                                 shinyjs::toggle(id = "mh_drug_codes")),
+                shinyjs::hidden(div(id="mh_drug_codes",
+                  br(),
+                  HTML({
+                    "
+                    <table style='width:100%'>
+                    <tr>
+                    <th colspan='1'>Anxiety Medicines</th>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Diazepam (excluding rectal preparations)</td>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Lorazepam</td>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Oxazepam</td>
+                    </tr>
+                    <tr>
+                    <th colspan='1'>Insomnia Medicines</th>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Nitrazepam</td>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Loprazolam</td>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Lormetazepam</td>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Temazepam</td>
+                    </tr>
+                    <tr>
+                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Zolpidem</td>
+                    </tr>
+                    <tr>
+                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Zopiclone</td>
+                    </tr>
+                    <tr>
+                    <th colspan='1'>Depression Medicines</th>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Citalopram</td>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Fluoxetine</td>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Fluvoxamine</td>
+                    </tr>
+                    <tr>
+                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Paroxetine</td>
+                    </tr>
+                    <tr>
+                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Sertraline</td>
+                    </tr>
+                    <tr>
+                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Duloxetine</td>
+                    </tr>
+                    <tr>
+                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Venlafaxine</td>
+                    </tr>
+                    </table>
+                    "
+                    }),
+               size = "1",
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))))
 
 ###############################################.
 ##  Reactive layout  ----
