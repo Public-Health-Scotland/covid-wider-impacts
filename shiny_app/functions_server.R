@@ -276,7 +276,7 @@ plot_scurve <- function(dataset, age_week, dose) {
   { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age. 
                 Data is available from the data download option.")
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
-  { plot_nodata(height = 50)
+  { plot_nodata(height = 50, text_nodata = "Due to small numbers, data are presented for monthly cohorts in the table only’.")
   } else {     
      
 # Create tooltip for scurve
