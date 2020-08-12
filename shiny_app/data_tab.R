@@ -16,9 +16,11 @@ data_table <- reactive({
          "deaths" = deaths %>% rename(average_2015_2019 = count_average),
          "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
          "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average),
-         "sixin_8wks" = sixtable,
-         "sixin_8wks_second" = sixtable_dose2,
-         "sixin_8wks_third" = sixtable_dose3,
+         "sixin_8wks" = bind_rows(sixtable,six_hscp_dose1),
+         "sixin_8wks_second" = bind_rows(sixtable_dose2,six_hscp_dose2),
+         "sixin_8wks_third" = bind_rows(sixtable_dose3,six_hscp_dose3),
+        "mmr_1dose" = bind_rows(mmrtable_dose1,mmr_hscp_dose1) ,
+        "mmr_2dose" = bind_rows(mmrtable_dose2, mmr_hscp_dose2),
          "first_visit" = firsttable,
          "sixtoeight_visit" = sixtoeighttable,
          "thirteen_visit" = thirteentable,
@@ -126,6 +128,28 @@ data_table <- reactive({
              "Uptake of immunisation at 20 weeks of age (%)" = uptake_20weeks_percent,
              "Uptake of immunisation at 32 weeks of age (N)" = uptake_32weeks_num,
              "Uptake of immunisation at 32 weeks of age (%)" = uptake_32weeks_percent,
+             "Total uptake of immunisation (N)" = uptake_tot_num,
+             "Total uptake of immunisation (%)" = uptake_tot_percent)
+  } else if (input$data_select %in% "mmr_1dose") {
+    table_data <- table_data %>%
+      select(-c("exclude_from_table", "shade_cells", "immunisation")) %>% 
+      select(area_name, Cohort = time_period_eligible, 
+             "Total number of children" = denominator, 
+             "Uptake of immunisation at 13 months of age (N)" = uptake_13m_num,
+             "Uptake of immunisation at 13 months of age (%)" = uptake_13m_percent,
+             "Uptake of immunisation at 16 months of age (N)" = uptake_16m_num,
+             "Uptake of immunisation at 16 months of age (%)" = uptake_16m_percent,
+             "Total uptake of immunisation (N)" = uptake_tot_num,
+             "Total uptake of immunisation (%)" = uptake_tot_percent)
+  } else if (input$data_select %in% "mmr_2dose") {
+    table_data <- table_data %>%
+      select(-c("exclude_from_table", "shade_cells", "immunisation")) %>% 
+      select(area_name, Cohort = time_period_eligible, 
+             "Total number of children" = denominator, 
+             "Uptake of immunisation at 3 years 5 months of age (N)" = uptake_3y5m_num,
+             "Uptake of immunisation at 3 years 5 months of age (%)" = uptake_3y5m_percent,
+             "Uptake of immunisation at 3 years 8 months of age (N)" = uptake_3y8m_num,
+             "Uptake of immunisation at 3 years 8 months of age (%)" = uptake_3y8m_percent,
              "Total uptake of immunisation (N)" = uptake_tot_num,
              "Total uptake of immunisation (%)" = uptake_tot_percent)
   } else if (input$data_select == "ae_cardio") {
