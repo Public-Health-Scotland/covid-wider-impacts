@@ -48,7 +48,7 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
            tags$li("Public Health Scotland publishes ",
                    tags$a(href="(https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information", class="externallink"),
                     "on the direct health
-                   impacts of COVID-19 as well as guidance for professionals and public"),
+                   impacts of COVID-19 as well as guidance for professionals and public."),
            tags$li("The Scottish Government publishes a ",
                    tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard", class="externallink"),
                    " which brings together data and
