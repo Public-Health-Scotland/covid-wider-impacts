@@ -372,7 +372,10 @@ sas_new <- read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to020
                        gender %in% c(0, 9 ) ~ "Missing", TRUE ~ as.character(gender))) %>% 
   proper() %>% #convert HB names to correct format
   create_agegroups () %>%
-  create_depgroups ()
+  create_depgroups () %>% 
+  # filter needed as because start/end dates assignations some cases could
+  # be double counted for that end week
+  filter(week_ending > as.Date("2020-05-10"))  
 
 # Aggregate up to get figures for each area type.
 sas_new %<>% mutate(scot = "Scotland") %>% 
