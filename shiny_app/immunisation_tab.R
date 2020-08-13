@@ -254,7 +254,10 @@ imm_data_download <- reactive({
       "mmr_dose2"= bind_rows(mmrtable_dose2, mmr_hscp_dose2)
     ) %>% 
       select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
-      rename(cohort = time_period_eligible)
+      rename(cohort = time_period_eligible) %>% 
+      #forcing variables to show one decimal digit.
+      mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))
+    
     
   }
 })
@@ -338,6 +341,11 @@ imm_simd_data_download <- reactive ({
              absolute_change_from_baseline_percent = week178_abs_diff,
              relative_change_from_baseline_percent = week178_rel_diff)
   }
+  
+  data_down %>% #forcing variables to show one decimal digit.
+    mutate_at(vars(starts_with("uptake"), absolute_change_from_baseline_percent,
+                   relative_change_from_baseline_percent), 
+              ~format(., digits=1, nsmall=1))
   
 })
 
