@@ -249,9 +249,7 @@ output$mh_explorer <- renderUI({
                  incomplete for a number of NHS Boards. Thus, the figures reported for mental health related 
                  attendances offer only a very approximate indication of attendances. 
                  Additionally, some NHS Boards have moved to a new recording standard which 
-                 has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
-                 even prior to the introduction of lockdown measures, appear somewhat lower when compared to 
-                 previous years."),
+                 has not been fully consolidated in the A&E datamart as yet."),
       h3("Weekly mental health A&E attendances in Scotland"),
       actionButton("btn_mentalhealth_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
       plot_box("2020 compared with 2018-2019 average", "ae_mh_overall"),
