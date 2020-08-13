@@ -202,3 +202,4 @@ output$download_table_csv <- downloadHandler(
     write_csv(data_table()[input[["table_filtered_rows_all"]], ], file) 
   } 
 )
+
