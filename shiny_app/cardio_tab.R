@@ -132,6 +132,11 @@ observeEvent(input$btn_cardio_modal,
                    is then dispensed in a series of regular supplies over a period of 24, 48 or 52 weeks.  These subsequent 
                    supplies are captured in a separate dataset.  The extent to which serial prescriptions are used may vary 
                    by both geographic and therapeutic areas."),
+                 p("Data for 1 January to 31 December each year is presented as weekly data ending on Sundays. 
+                   The week from 1st January may therefore not be a full seven days and will that week, 
+                   or the following week, encompass public holidays.  Consequently, the number of prescribing 
+                   days and measures of activity at the start of each year can be markedly reduced compared 
+                   to subsequent weeks.  A similar effect also occurs in the last two weeks of the year."),
                  p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
                  tags$hr(),
                  actionButton("toggleBNFCodes", "Show / Hide BNF Codes"),
