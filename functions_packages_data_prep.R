@@ -14,6 +14,7 @@ library(tidyr) # for wide to long formatting
 library(readxl) # reading excel
 library(flextable)
 library(magrittr)
+library(haven)
 
 ###############################################.
 ## Filepaths ----
@@ -26,7 +27,7 @@ ae_folder <- "/conf/PHSCOVID19_Analysis/UCD/A&E/2020-07-23-Extracts/" #short cut
 ## Lookups ----
 ###############################################.
 #Used for RAPID, Immunisations and child health reviews as they use cyphers instead
-hb_lookup <- readRDS("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.rds") %>% 
+hb_lookup <- read_spss("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.sav") %>% 
   janitor::clean_names() %>% select(description, hb_cypher) %>%
   rename(area_name=description) %>%
   mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
