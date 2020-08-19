@@ -149,6 +149,12 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
   # Filtering dataset to include only overall figures
   trend_data <- filter_data(dataset, area = area)
   
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50)
+  } else {
+  
   ###############################################.
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
@@ -200,7 +206,9 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
            yaxis = yaxis_plots, xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% #position of legend
     # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  
+  }
   
 }
 ###############################################.
