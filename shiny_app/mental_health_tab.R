@@ -206,6 +206,9 @@ observeEvent(input$btn_mentalhealth_modal,
                    broad deprivation category (SIMD)."),
                 p("The charts provide a weekly summary of cases related to mental health in the recent past and 
                    historical trends for comparison purposes."),
+                p("The figures presented include mental health out of hours consultations in areas relating to anxiety/stress, depression, self harm, 
+                   mental health issues caused by substance misuse, psychotic conditions and mental disorders. The figures exclude cases related to dementia and 
+                   learning disabilities."),
                 p("The figures presented in this tool exclude cases within any of the COVID-19 
                    hubs or assessment centres and relate only to cases concerning non-COVID 
                    issues."),
