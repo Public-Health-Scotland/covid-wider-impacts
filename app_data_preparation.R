@@ -1207,6 +1207,7 @@ mh_ooh_age <- mh_ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 mh_ooh <- rbind(mh_ooh_all, mh_ooh_sex, mh_ooh_dep, mh_ooh_age)
 
 mh_ooh %<>% 
+  filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
 prepare_final_data(mh_ooh, "mh_ooh", last_week = "2020-08-16")

@@ -296,7 +296,7 @@ output$mh_explorer <- renderUI({
                  attendances offer only a very approximate indication of attendances. 
                  Additionally, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet."),
-      h3("Weekly mental health A&E attendances in Scotland"),
+      h3(paste0("Weekly mental health A&E attendances in ", input$geoname_mh)),
       actionButton("btn_mentalhealth_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
       plot_box("2020 compared with 2018-2019 average", "ae_mh_overall"),
     if (input$geoname_mh == "Scotland") {
@@ -319,7 +319,7 @@ output$mh_explorer <- renderUI({
 
     } else if (input$measure_mh_select == "ooh") {
       tagList(#OOH attendances
-        h3("Weekly mental health out of hours consultations in Scotland"),
+        h3(paste0("Weekly mental health out of hours consultations in ", input$geoname_mh)),
         actionButton("btn_mentalhealth_modal", "Data source: PHS GP OOH Datamart", icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "mh_ooh_overall"),
         if (input$geoname_mh == "Scotland") {
