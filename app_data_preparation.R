@@ -1178,9 +1178,9 @@ mh_ooh <- read_csv(paste0(data_folder, "GP_OOH_mh/Diagnosis Details-2.csv")) %>%
          count=number_of_diagnoses, age_group=age_band, week_ending=gp_ooh_sc_start_date) %>%
   mutate(week_ending = as.Date(week_ending, format= "%d/%m/%Y"), 
          week_ending = ceiling_date(week_ending, "week", change_on_boundary = F),
-         age = recode_factor(age_group, "0-12" = "Under 13", "13-17" = "13 - 17",  
-                             "18-24" = "18 - 44", "25-34" = "18 - 44", "35-44" = "18 - 44", "45-54" = "45 - 64", 
-                             "55-64" = "45 - 64", "65-74" = "65 - 84", "75-84" = "65 - 84",
+         age = recode_factor(age_group, "0-12" = "Under 13", "13 to 17" = "13 - 17",  
+                             "18 to 24" = "18 - 44", "25 to 34" = "18 - 44", "35 to 44" = "18 - 44", "45 to 54" = "45 - 64", 
+                             "55 to 64" = "45 - 64", "65 to 74" = "65 - 84", "75 to 84" = "65 - 84",
                              "85plus" = "85 and over"),
          sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "0" = NA_character_, "9" = NA_character_),
          dep = recode(dep, 
