@@ -324,7 +324,7 @@ output$mh_explorer <- renderUI({
             plot_cut_box("Percentage change in mental health out of hours consultations compared with the corresponding
                      time in 2018-2019 by sex", "mh_ooh_sex_var",
                          "Weekly number of mental health out of hours consultations by sex", "mh_ooh_sex_tot"),
-            plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
+            plot_cut_box("Percentage change in mental health out of hours consultations compared with the corresponding
                      time in 2018-2019 by age group", "mh_ooh_age_var",
                          "Weekly number of mental health out of hours consultations by age group", "mh_ooh_age_tot"),
             plot_cut_box("Percentage change in mental healthout of hours consultations compared with the corresponding
