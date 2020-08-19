@@ -14,6 +14,7 @@ library(tidyr) # for wide to long formatting
 library(readxl) # reading excel
 library(flextable)
 library(magrittr)
+library(haven)
 
 ###############################################.
 ## Filepaths ----
@@ -36,6 +37,7 @@ if (sessionInfo()$platform %in% c("x86_64-redhat-linux-gnu (64-bit)", "x86_64-pc
 ## Lookups ----
 ###############################################.
 #Used for RAPID, Immunisations and child health reviews as they use cyphers instead
+
 # hb_lookup <- readRDS(paste0(cl_out, "National Reference Files/Health_Board_Identifiers.rds")) %>% 
 #   janitor::clean_names() %>% select(description, hb_cypher) %>%
 #   rename(area_name=description) %>%
@@ -43,6 +45,9 @@ if (sessionInfo()$platform %in% c("x86_64-redhat-linux-gnu (64-bit)", "x86_64-pc
 #          area_type="Health board")
 
 hb_lookup <- haven::read_spss("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.sav") %>%
+
+hb_lookup <- read_spss("/conf/linkage/output/lookups/Unicode/National Reference Files/Health_Board_Identifiers.sav") %>% 
+
   janitor::clean_names() %>% select(description, hb_cypher) %>%
   rename(area_name=description) %>%
   mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),

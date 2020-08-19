@@ -1099,13 +1099,13 @@ mh_aye <- read_xlsx(paste0(data_folder, "A&E_mh/Mental Health Diagnosis.xlsx")) 
                                 T ~ "Missing"))) %>%
   create_depgroups() %>%
   group_by(week_ending, area_name, area_type,  age_grp, sex, dep) %>%
-  summarise(count=sum(count)) %>% #aggregating
+  summarise(count=sum(count, na.rm = T)) %>% #aggregating
   ungroup() 
 
 # Generate scotland level dataset
 mh_aye_scot <- mh_aye %>%
   group_by(week_ending, age_grp, sex, dep) %>%
-  summarise(count=sum(count)) %>%
+  summarise(count=sum(count, na.rm = T)) %>%
   mutate(area_name="Scotland", area_type="Scotland") %>% ungroup()
 
 # Joining together
