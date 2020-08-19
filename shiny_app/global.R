@@ -69,6 +69,7 @@ cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
 ## mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs_data.rds")
 ae_mh <- readRDS("data/mh_A&E_data.rds")
+mh_ooh <- readRDS("data/mh_ooh_data.rds")
 
 ## Child Health Data
 child_extract_date <- "22nd June 2020"
@@ -150,7 +151,7 @@ data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
 
-mentalhealth_list <- c("Prescribing" = "mhdrugs") #, "A&E attendances" = "aye")
+mentalhealth_list <- c("Prescribing" = "mhdrugs", "Out of hours consultations" = "ooh", "A&E attendances" = "aye")
 
 ###############################################.
 ## Palettes and plot parameters ----
