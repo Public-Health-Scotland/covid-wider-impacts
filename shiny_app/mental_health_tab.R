@@ -310,6 +310,9 @@ output$mh_explorer <- renderUI({
                      extra_content = actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?", 
                                                   icon = icon('question-circle')))
       ) #taglist bracket from if statement
+      
+    }
+    )  #taglist bracket from aye section
 
     } else if (input$measure_mh_select == "ooh") {
       tagList(#OOH attendances
@@ -330,12 +333,9 @@ output$mh_explorer <- renderUI({
                          extra_content = actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))
           ) #taglist bracket from if statement
-    #taglist bracket from aye section
-  }
-      )}
-    
-
-)}
+          }
+      ) #taglist bracket from ooh section
+      }
 })
 ###############################################.
 ## Data downloads ----
