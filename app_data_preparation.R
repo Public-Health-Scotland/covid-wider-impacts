@@ -1046,7 +1046,7 @@ mentalhealth_drugs_hist_all <- mentalhealth_drugs_historic %>%
 mentalhealth_drugs_historic <- rbind(mentalhealth_drugs_historic, mentalhealth_drugs_hist_all)
 
 ### Newer MH drugs data ##
-mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_54_we02082020.xlsx")) %>% 
+mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_60_8809985517223597753.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -1065,7 +1065,7 @@ mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new i
   rename(category = condition,
          count = incident_cases_week_01) %>% 
   select(week_ending, area_name, area_type, type, category, count) %>%
-  filter(between(week_ending, as.Date("2020-07-05"), as.Date("2020-08-02")))
+  filter(between(week_ending, as.Date("2020-07-05"), as.Date("2020-08-16")))
 
 mentalhealth_drugs_all <- mentalhealth_drugs %>% 
   group_by(week_ending, area_name, area_type, type) %>% 
@@ -1078,7 +1078,7 @@ mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all)
 
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_historic)
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-08-02")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-08-16")
 
 ###############################################.
 ## A&E - mental health ----
