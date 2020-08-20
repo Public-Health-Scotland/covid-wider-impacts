@@ -11,6 +11,8 @@ if (input$measure_mh_select == "mhdrugs") {
   areas <- c("Scotland", "Health board", "HSC partnership")
 } else if (input$measure_mh_select == "aye") {
   areas <- c("Scotland", "Health board")
+} else if (input$measure_mh_select == "ooh") {
+  areas <- c("Scotland", "Health board")
 } 
   
 selectizeInput("area_mh_select", "Step 2 - Select the area of interest",
@@ -194,7 +196,36 @@ observeEvent(input$btn_mentalhealth_modal,
                size = "1",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              ))
-            })
+            } else if (input$measure_mh_select == "ooh") { 
+              showModal(modalDialog(# MH OOH MODAL
+                title = "What is the data source?",
+                p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor, 
+                   when needed at times outside normal general practice hours, such as evenings, 
+                   overnight or during the weekend. An appointment to the service is normally arranged 
+                   following contact with NHS 24. The recent trend data is shown by age group, sex and 
+                   broad deprivation category (SIMD)."),
+                p("The charts provide a weekly summary of cases related to mental health in the recent past and 
+                   historical trends for comparison purposes."),
+                p("The figures presented include mental health out of hours consultations in areas relating to anxiety/stress, depression, self harm, 
+                   mental health issues caused by substance misuse, psychotic conditions and mental disorders. The figures exclude cases related to dementia and 
+                   learning disabilities."),
+                p("The figures presented in this tool exclude cases within any of the COVID-19 
+                   hubs or assessment centres and relate only to cases concerning non-COVID 
+                   issues."),
+                p("If required, more detailed analysis of the Primary Care Out of Hours service may 
+                   be available on request to ",
+                  tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
+                         class="externallink"), "."),
+                p("General Practice Out of Hours service data is sourced from the",
+                  tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113", 
+                         "GP Out of Hours Dataset (OOH).",class="externallink"), 
+                  "The OOH dataset is managed by ", 
+                  tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/", 
+                         "Public Health Scotland (PHS).", class="externallink")),
+                p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                size = "m",
+                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+                })
                
 
 
@@ -204,6 +235,11 @@ observeEvent(input$btn_mentalhealth_modal,
 ae_mh_filt <- reactive({ae_mh %>% filter(area_type == input$area_mh_select &
                                            area_name == input$geoname_mh)
   })
+
+mh_ooh_filt <- reactive({mh_ooh %>% filter(area_type == input$area_mh_select &
+                                           area_name == input$geoname_mh)
+})
+
 ###############################################.
 ## Charts ----
 ###############################################.
@@ -230,6 +266,16 @@ output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_filt(), p
 output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh")})
 
 ###############################################.
+# MH OOH charts
+output$mh_ooh_overall <- renderPlotly({plot_overall_chart(mh_ooh_filt(), data_name = "ooh", area = "All")})
+output$mh_ooh_sex_var <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_sex, c("sex", "all"), data_name = "ooh",tab = "mh")})
+output$mh_ooh_sex_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_sex, c("sex", "all"), "total", "ooh", tab = "mh")})
+output$mh_ooh_age_var <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_age, c("age", "all"), data_name = "ooh",tab = "mh")})
+output$mh_ooh_age_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_age, c("age", "all"), "total", "ooh", tab = "mh")})
+output$mh_ooh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_ooh_filt(), pal_chose = pal_depr, split = "dep", type = "variation", data_name = "ooh", tab = "mh")})
+output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_depr, split = "dep", type = "total", data_name = "ooh", tab = "mh")})
+
+###############################################.
 ##  Reactive layout  ----
 ###############################################.
 # The charts and text shown on the app will depend on what the user wants to see
@@ -250,7 +296,7 @@ output$mh_explorer <- renderUI({
                  attendances offer only a very approximate indication of attendances. 
                  Additionally, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet."),
-      h3("Weekly mental health A&E attendances in Scotland"),
+      h3(paste0("Weekly mental health A&E attendances in ", input$geoname_mh)),
       actionButton("btn_mentalhealth_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
       plot_box("2020 compared with 2018-2019 average", "ae_mh_overall"),
     if (input$geoname_mh == "Scotland") {
@@ -267,11 +313,33 @@ output$mh_explorer <- renderUI({
                      extra_content = actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?", 
                                                   icon = icon('question-circle')))
       ) #taglist bracket from if statement
+      
     }
-    )#taglist bracket from aye section
-  }
-})
+    )  #taglist bracket from aye section
 
+    } else if (input$measure_mh_select == "ooh") {
+      tagList(#OOH attendances
+        h3(paste0("Weekly mental health out of hours consultations in ", input$geoname_mh)),
+        actionButton("btn_mentalhealth_modal", "Data source: PHS GP OOH Datamart", icon = icon('question-circle')),
+        plot_box("2020 compared with 2018-2019 average", "mh_ooh_overall"),
+        if (input$geoname_mh == "Scotland") {
+          tagList(
+            plot_cut_box("Percentage change in mental health out of hours consultations compared with the corresponding
+                     time in 2018-2019 by sex", "mh_ooh_sex_var",
+                         "Weekly number of mental health out of hours consultations by sex", "mh_ooh_sex_tot"),
+            plot_cut_box("Percentage change in mental health out of hours consultations compared with the corresponding
+                     time in 2018-2019 by age group", "mh_ooh_age_var",
+                         "Weekly number of mental health out of hours consultations by age group", "mh_ooh_age_tot"),
+            plot_cut_box("Percentage change in mental health out of hours consultations compared with the corresponding
+                     time in 2018-2019 by SIMD quintile", "mh_ooh_dep_var",
+                         "Weekly number of mental health out of hours consultations by SIMD quintile", "mh_ooh_dep_tot",
+                         extra_content = actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
+                                                      icon = icon('question-circle')))
+          ) #taglist bracket from if statement
+          }
+      ) #taglist bracket from ooh section
+      }
+})
 ###############################################.
 ## Data downloads ----
 ###############################################.
@@ -300,6 +368,11 @@ output$download_mentalhealth_data <- downloadHandler(
 output$mentalhealth_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mentalhealth",label = "Go to data"), #this button can only be used once
+    h2("Mental health - September 2020"),
+    h3("Unscheduled Care"),
+    p("TEXT"),
+    h3("Prescribing"),
+    p("TEXT"),
     h2("Mental health - August 2020"),
     h3("Prescribing"),
     p("Information on the number of patients starting a new treatment course for selected mental health medicines (those commonly used for depression, anxiety or 
