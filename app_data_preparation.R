@@ -216,7 +216,7 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-07-26")
 ## Preparing OOH Cardiac data ----
 ###############################################.
 
-ooh_data_cardiac <- read_csv("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact/john/data/OOH/Weekly_Diagnosis_OOH_IR.csv") %>% 
+ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/Weekly_Diagnosis_OOH_IR.csv")) %>% 
   janitor::clean_names()
 
 # Change file into correct format prior to getting final specification
@@ -301,7 +301,7 @@ prepare_final_data(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = 
 ## Preparing NHS24 Cardiac data ----
 ###############################################.
 
-nhs24_data_cardiac <- read_csv("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact/john/data/NHS24/Weekly_Symptoms_NHS24_IR.csv") %>% 
+nhs24_data_cardiac <- read_csv(paste0(data_folder, "NHS24_Cardio/Weekly_Symptoms_NHS24_IR.csv")) %>% 
   janitor::clean_names()
 
 # Change file into correct format prior to getting final specification
