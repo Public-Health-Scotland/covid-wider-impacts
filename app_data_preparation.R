@@ -268,12 +268,12 @@ prepare_final_data(ae_data, "ae", last_week = "2020-08-09")
 
 # #Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
 # #Each week this section of code can be uncommented run for the latest weeks data then recommented after txt file deleted
-    # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 03082020 to 09082020.txt")))
-    # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 03082020 to 09082020.rds"))
-    # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 03082020 to 09082020.txt"))
+    # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt")))
+    # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.rds"))
+    # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
-                read_tsv(paste0(data_folder, "NHS24/NHS24_report_08062020to16082020.txt"))) %>%
+                read_tsv(paste0(data_folder, "NHS24/NHS24_report_08062020to23082020.txt"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -317,7 +317,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-08-16")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-08-23")
 
 ###############################################.
 ## SAS data ----
