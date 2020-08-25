@@ -210,7 +210,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-08-16")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-08-09")
 
 ###############################################.
 ## A&E data ----
