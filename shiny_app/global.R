@@ -26,7 +26,6 @@ plot_box <- function(title_plot, plot_output) {
           withSpinner(plotlyOutput(plot_output)))
 }
 
-
 plot_cut_box <- function(title_plot1, plot_output1,
                          title_plot2, plot_output2, extra_content = NULL) {
   tagList( 
@@ -46,7 +45,6 @@ intro_box <- function(title_box, button_name, description) {
       actionButton(button_name, NULL, class="landing-page-button")
       )
 }
-
 
 ###############################################.
 ## Data ----
@@ -81,7 +79,7 @@ fourtofive <- readRDS("data/fourtofive_data.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "27th July 2020"
+immunisation_extract_date <- "24th August 2020"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
@@ -91,20 +89,11 @@ six_alldose <- readRDS("data/six_alldose_data.rds")
 mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
 
 #Immunisations data table data
-sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table dose 1
-sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6-in-1 summary table dose 2
-sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6-in-1 summary table dose 3
-mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
-mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation data table summary
-mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary
+sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table (all dose)
+mmrtable <- readRDS("data/mmr_datatable.rds") # mmr summary table (all dose)
 
-#Immunisations hscp data
-six_hscp_dose1 <- readRDS("data/six_dose1_hscp.rds")
-six_hscp_dose2 <- readRDS("data/six_dose2_hscp.rds")
-six_hscp_dose3 <- readRDS("data/six_dose3_hscp.rds")
-mmr_hscp_dose1 <- readRDS("data/mmr_dose1_hscp.rds")
-mmr_hscp_dose2 <- readRDS("data/mmr_dose2_hscp.rds")
-mmr_hscp_dose2_grampian <- readRDS("data/mmr_dose2_hscp_grampian.rds")
+#data quality issues require additional data file for NHS grampian
+mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary for just grampian mmr dose 2
 
 #Immunisations SIMD data
 six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
@@ -186,15 +175,15 @@ pal_med <- c('#543005', '#bf812d', '#74add1', '#313695') # Palettes for medicine
 
 pal_immun <- c("2019" = '#000000',
                "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", "MAR 2020" = "#7477d1",
-               "APR 2020" = "#045a8d",
-               "W/B 27-APR-2020" = "#fee391", "W/B 04-MAY-2020" = "#fec44f",
-               "W/B 11-MAY-2020" = "#e49901", "W/B 18-MAY-2020" = "#ec7014",
-               "W/B 25-MAY-2020" = "#cc4c02", "W/B 01-JUN-2020" = "#8c2d04",
-               "W/B 08-JUN-2020" = "#662506")
+               "APR 2020" = "#045a8d", "MAY 2020" = "#022b43",
+               "W/B 01-JUN-2020" = "#fee391", "W/B 08-JUN-2020" = "#fec44f",
+               "W/B 15-JUN-2020" = "#e49901", "W/B 22-JUN-2020" = "#ec7014",
+               "W/B 29-JUN-2020" = "#cc4c02", "W/B 06-JUL-2020" = "#8c2d04",
+               "W/B 13-JUL-2020" = "#662506")
 
 # second colour palette for SIMD immunisation chart - ideally they could use same colour palette but during build dfferent time frame available
 pal_immun2 <- c("2019" = '#000000',
-                "MAR 2020" = "#abd9e9", "APR 2020" = "#74add1", "MAY 2020" = "#7477d1")
+                "MAR 2020" = "#abd9e9", "APR 2020" = "#74add1", "MAY 2020" = "#7477d1", "JUN 2020" ="#045a8d" )
 
 pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
                "MAR 2020" = "#0570b0", "APR 2020" = "#045a8d", 
