@@ -272,7 +272,14 @@ output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
     h2("Stillbirths and infant deaths - 2nd September 2020"),
-          p("COMMENTARY TEXT"),
+          p("In this release of information on stillbirths and infant deaths (2 Sept 2020) data have been updated to include events that occurred in July 2020.", br(),
+            "In July the rate of stillbirths was 6.0 per 1,000 total births, which was higher than the warning limit of 5.8, but below the control limit of 6.7. 
+            Whilst each event is important and a tragedy for those involved, the numbers of stillbirths are small overall, and therefore rates fluctuate from month to month just by chance. 
+            Control charts are used to help differentiate between expected random variation and substantial changes which warrant further investigation. The stillbirth rate in July was 
+            within the control limit, indicating that this observation is within the range of expected random variation.", br(),
+            "As there is a relationship between the rate of stillbirth and neonatal mortality, the extended perinatal mortality rate is used to present a combined figure for these two measures. 
+            In July 2020, this was 7.4 per 1,000 total births, which is below the warning limit. Monthly monitoring of these data will continue.", br(),
+            "Post-neonatal and infant deaths have remained within the expected range, and were relatively low in July 2020."),
     h2("Stillbirths and infant deaths - 5th August 2020"),
           p("In this second release of information on stillbirths and infant deaths (5 Aug 2020) data have been updated to include June 2020. Whilst each of these events is a tragedy for those involved, in June the numbers remained small, 
             and all stillbirth and infant death measures were within the warning limits.", br(),
