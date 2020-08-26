@@ -425,9 +425,9 @@ plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due
 #####################################################################################.
 ## Function for generating flextable summary of immunisation data.
 
-immune_table <- function(dataset, age_week) {
+immune_table <- function(dataset, dose, age_week) {
 
-  table_data <- filter_table_data_immun(dataset)
+  table_data <- filter_table_data_immun(dataset, dose)
     
   table_data <- table_data %>%
     filter(exclude_from_table !=1) #filter immunisation table to exclude weekly cohorts that should only be downloadable
