@@ -68,7 +68,7 @@ cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
 
 ## Child Health Data
-child_extract_date <- "27th July 2020"
+child_extract_date <- "24th August 2020"
 first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 sixtoeight <- readRDS("data/six_to_eight_data.rds")
@@ -197,11 +197,12 @@ pal_immun2 <- c("2019" = '#000000',
                 "MAR 2020" = "#abd9e9", "APR 2020" = "#74add1", "MAY 2020" = "#7477d1")
 
 pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
-               "MAR 2020" = "#0570b0", "APR 2020" = "#045a8d", 
-               "W/B 27-APR-2020" = "#fec44f",
-               "W/B 04-MAY-2020" = "#fe9929", "W/B 11-MAY-2020" = "#ec7014",
-               "W/B 18-MAY-2020" = "#cc4c02", "W/B 25-MAY-2020" = "#8c2d04",
-               "W/B 01-JUN-2020" = "#662506", "W/B 08-JUN-2020" = "#662506")
+               "MAR 2020" = "#7477d1", "APR 2020" = "#0570b0", 
+               "MAY 2020" = "#045a8d",
+               "W/B 01-JUN-2020" = "#fec44f",
+               "W/B 08-JUN-2020" = "#fe9929", "W/B 15-JUN-2020" = "#ec7014",
+               "W/B 22-JUN-2020" = "#cc4c02", "W/B 29-JUN-2020" = "#8c2d04",
+               "W/B 06-JUL-2020" = "#662506")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
