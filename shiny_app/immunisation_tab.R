@@ -244,22 +244,47 @@ imm_data_download <- reactive({
       rename(cohort = time_period_eligible)
   } else {
     
-    switch(
+    data_down <- switch(
       input$measure_select_immun,
       # for data download filter on dose for table appearing in the app
       "sixin_dose1" = filter(sixtable,str_detect(immunisation,"dose 1")),
       "sixin_dose2" = filter(sixtable,str_detect(immunisation,"dose 2")),
       "sixin_dose3" = filter(sixtable,str_detect(immunisation,"dose 3")),
       "mmr_dose1" = filter(mmrtable,str_detect(immunisation,"dose 1")),
-      "mmr_dose2"= filter(mmrtable,str_detect(immunisation,"dose 2"))
-    ) %>% 
-      select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% #need to adjust which columns depending on dose
-      rename(cohort = time_period_eligible) %>% 
-      #forcing variables to show one decimal digit.
-      mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))
+      "mmr_dose2"= filter(mmrtable,str_detect(immunisation,"dose 2"))) %>% 
+      rename(cohort = time_period_eligible)
+     # mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))#forcing variables to show one decimal digit.
     
+    if (input$measure_select_immun %in% "sixin_dose1") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_12weeks_num, uptake_12weeks_percent,
+               uptake_24weeks_num, uptake_24weeks_percent, uptake_tot_num, uptake_tot_percent)
+    } else if (input$measure_select_immun %in% "sixin_dose2") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_16weeks_num, uptake_16weeks_percent,
+               uptake_28weeks_num, uptake_28weeks_percent, uptake_tot_num, uptake_tot_percent)
+    } else if (input$measure_select_immun %in% "sixin_dose3") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_20weeks_num, uptake_20weeks_percent,
+               uptake_32weeks_num, uptake_32weeks_percent,uptake_tot_num, uptake_tot_percent)
+    } else if (input$measure_select_immun %in% "mmr_dose1") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_13m_num, uptake_13m_percent,
+               uptake_16m_num, uptake_16m_percent, uptake_tot_num, uptake_tot_percent)
+    } else if (input$measure_select_immun %in% "mmr_dose2") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_3y5m_num, uptake_3y5m_percent,
+               uptake_3y8m_num, uptake_3y8m_percent, uptake_tot_num, uptake_tot_percent)
+    }  
     
-  }
+    data_down %>% #forcing variables to show one decimal digit.
+      mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))#forcing variables to show one decimal digit.
+    }
 })
 
 output$download_imm_data <- downloadHandler(
@@ -348,6 +373,7 @@ imm_simd_data_download <- reactive ({
               ~format(., digits=1, nsmall=1))
   
 })
+
 
 output$download_imm_simd_data <- downloadHandler(
   filename ="immunisation_extract_by_deprivation.csv",
