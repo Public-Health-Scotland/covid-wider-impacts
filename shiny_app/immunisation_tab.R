@@ -252,8 +252,9 @@ imm_data_download <- reactive({
       "sixin_dose3" = filter(sixtable,str_detect(immunisation,"dose 3")),
       "mmr_dose1" = filter(mmrtable,str_detect(immunisation,"dose 1")),
       "mmr_dose2"= filter(mmrtable,str_detect(immunisation,"dose 2"))) %>% 
-      rename(cohort = time_period_eligible)
-     # mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))#forcing variables to show one decimal digit.
+      select(-cohort) %>% 
+      rename(cohort = time_period_eligible) %>% 
+      mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))#forcing variables to show one decimal digit.
     
     if (input$measure_select_immun %in% "sixin_dose1") {
       data_down <- data_down %>%
