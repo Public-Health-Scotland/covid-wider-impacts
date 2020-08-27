@@ -1083,8 +1083,59 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-0
 ###############################################.
 ## A&E - mental health ----
 ###############################################.
+old_mh_aye <- read_xlsx(paste0(data_folder, "A&E_mh/Mental Health Diagnosis.xlsx")) %>% 
+  clean_names() 
+
 mh_aye <- read_xlsx(paste0(data_folder, "A&E_mh/Mental Health Diagnosis.xlsx")) %>% 
-  clean_names() %>% 
+  clean_names() 
+
+# Not searching for all of F: F04 to F99 Not dementia
+# F7 (learning disabilities out) 
+# R46 - include in
+# Include X80 - done
+# Undetermined intent (Y10) - not in
+# Overdose include
+# exclude accidental poisoning, part children
+# substance use problem in: intoxication, recreational drug problem
+# Panic in - done
+# discard kids out of 5 - under 10 only strict definition
+mh_aye_freetext <- toupper(paste0("overdose|self harm|self-harm|selfharm|depress|psych|mental health|",
+                                  "suicid|self poisoning|eating disorder|MHAT|behavioural disorder|mental disorder|",
+                                  "mental illness|anxiety|psycho|bipolar|schizophren|schizoaffective|",
+                                  "anorexi|bulimi|adhd|personality disorder|dissociative|",
+                                  "adjustment disorder|emotional disorder|bereavement|",
+                                  "intentional self-poisoning|stress|delusional|hallucination|",
+                                  "manic episode|panic|recreational drug use|intoxication"))
+
+mh_aye %<>%
+  # Creating variable for those case identified through codes and no free text
+  mutate(def_yes = case_when((substr(intent_of_injury_code,1,2) == "02" | #intentional self-harm
+           diagnosis_1_code %in% c("16") | #16 is psychiatry
+           diagnosis_2_code %in% c("16") |
+           diagnosis_3_code %in% c("16") |
+           # Including all Fs apart from dementia, delirium and learning disabilities
+           # Including R44-R46: hallucinations, emotional states
+           # Includinx X60-x84: intentional self-harm
+           substr(disease_1_code, 1, 2) %in% c("F1", "F2", "F3", "F4", "F5", "F6", "F8", "F9", "X6", "X7") |
+           substr(disease_2_code, 1, 2) %in% c("F1", "F2", "F3", "F4", "F5", "F6", "F8", "F9", "X6", "X7") |
+           substr(disease_3_code, 1, 2) %in% c("F1", "F2", "F3", "F4", "F5", "F6", "F8", "F9", "X6", "X7") |
+           substr(disease_1_code, 1, 3) %in% c("R44", "R45", "R46", "X80", "X81", "X82", "X83", "X84",
+                                               "F06", "F07", "F08", "F09") |
+           substr(disease_2_code, 1, 3) %in% c("R44", "R45", "R46", "X80", "X81", "X82", "X83", "X84",
+                                               "F06", "F07", "F08", "F09") |
+           substr(disease_3_code, 1, 3) %in% c("R44", "R45", "R46", "X80", "X81", "X82", "X83", "X84",
+                                               "F06", "F07", "F08", "F09") |
+           substr(disease_1_code, 1, 4) == "Y871" | # sequalae of self-harm
+           substr(disease_2_code, 1, 4) == "Y871" |
+           substr(disease_3_code, 1, 4) == "Y871" ) ~ 1, T ~0)) %>% 
+  filter(def_yes == 1 |
+           grepl(mh_aye_freetext, diagnosis_1) |
+           grepl(mh_aye_freetext, diagnosis_2) |
+           grepl(mh_aye_freetext, diagnosis_3) |
+           grepl(mh_aye_freetext, presenting_complaint) )
+
+#Now another round excluding accidental poisonings, etc
+%>% 
   # Formatting dataset
   rename(dep=prompt_dataset_deprivation_scot_quintile, age=pat_age,
          sex=pat_gender_description, count=number_of_attendances,
@@ -1092,8 +1143,8 @@ mh_aye <- read_xlsx(paste0(data_folder, "A&E_mh/Mental Health Diagnosis.xlsx")) 
   proper() %>% #fixing formatting of names
   mutate(area_type = "Health board",
          week_ending = ceiling_date(arrival_date, "week", change_on_boundary = F),
-         age_grp = as.character(case_when(between(age, 0, 14) ~ "Under 15",
-                                between(age, 15, 44) ~ "15 - 44", 
+         age_grp = as.character(case_when(between(age, 0, 17) ~ "5 - 17",
+                                between(age, 18, 44) ~ "18 - 44", 
                                 between(age, 45, 64) ~ "45 - 64", 
                                 between(age, 65, 200) ~ "65 and over", 
                                 T ~ "Missing"))) %>%
@@ -1126,46 +1177,8 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-08-02")
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-08-16")
 
-
-# Need to understand how cases have been selected in mh_aye3: free text? intention of injury?
-# Need to clarify if overdose, alcohol, substance misuse, dependence, withdrawal are to be included or not
-# same delirium, mental retardation, confusion, autism, factitious disorder
-# Should we include stress, hallucinations?
-# double check dementia
-# mh_aye_freetext <- toupper(paste0("self harm|self-harm|selfharm|depress|psych|mental health|",
-#                              "suicid|self poisoning|eating disorder|MHAT|behavioural disorder|mental disorder|", 
-#                              "mental illness|anxiety|psycho|bipolar|schizophren|schizoaffective|",
-#                              "anorexi|bulimi|adhd|personality disorder|dissociative|",
-#                              "adjustment disorder|emotional disorder|bereavement|",
-#                              "intentional self-poisoning|stress|delusional|hallucination|",
-#                              "manic episode"))
-# 
-# 
-# mh_aye2 <- mh_aye %>% 
-#   filter(diagnosis_1_code %in% c("16", "02") |
-#            diagnosis_2_code %in% c("16", "02") |
-#            diagnosis_3_code %in% c("16", "02") |
-#            substr(disease_1_code, 1, 1) == "F" |
-#            substr(disease_2_code, 1, 1) == "F" |
-#            substr(disease_3_code, 1, 1) == "F" |
-#            substr(disease_1_code, 1, 3) %in% c("R44", "R45", "X81", "X82", "X83", "X84") |
-#            substr(disease_2_code, 1, 3) %in% c("R44", "R45", "X81", "X82", "X83", "X84") |
-#            substr(disease_3_code, 1, 3) %in% c("R44", "R45", "X81", "X82", "X83", "X84") |
-#            substr(disease_1_code, 1, 2) %in% c("X6", "X7") |
-#            substr(disease_2_code, 1, 2) %in% c("X6", "X7") |
-#            substr(disease_3_code, 1, 2) %in% c("X6", "X7") |
-#            substr(disease_1_code, 1, 4) == "Y871" |
-#            substr(disease_2_code, 1, 4) == "Y871" |
-#            substr(disease_3_code, 1, 4) == "Y871" |
-#            grepl(mh_aye_freetext, diagnosis_1) |
-#            grepl(mh_aye_freetext, diagnosis_2) |
-#            grepl(mh_aye_freetext, diagnosis_3))
-# 
-# mh_aye3 <- anti_join(mh_aye, mh_aye2)
-# 
-# test <- mh_aye2 %>% group_by(diagnosis_1) %>% count
 
 ##END
 
