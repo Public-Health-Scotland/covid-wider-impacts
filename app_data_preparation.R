@@ -621,38 +621,8 @@ mmr_datatable <- imms_datatable %>%
 saveRDS(mmr_datatable, paste0("shiny_app/data/","mmr_datatable.rds"))
 
 # Grampian data
-mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/dashboardtab_grampian_2020082") 
+mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/dashboardtable_grampian_20200824") 
 saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
-
-
-
-
-#   ## 6-in-1 data table ----
-# # 6-in-1 at 8 weeks - summary table data
-# six_datatable <- rbind(format_immchild_table("immunisations/6in1/six in one_1_dashboardtab_20200727"),
-#                        format_immchild_table("immunisations/6in1/six in one_1_islandboarddownload_20200727"))
-# saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
-# 
-# # 6-in-1 at dose 2 (usually 12 weeks) - summary table data
-# six_dose2_datatable <- rbind(format_immchild_table("immunisations/6in1/six in one_2_dashboardtab_20200727"),
-#                              format_immchild_table("immunisations/6in1/six in one_2_islandboarddownload_20200727"))
-# saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.rds"))
-# 
-# # 6-in-1 at dose 3 (usually 16 weeks) - summary table data
-# six_dose3_datatable <- rbind(format_immchild_table("immunisations/6in1/six in one_3_dashboardtab_20200727"),
-#                              format_immchild_table("immunisations/6in1/six in one_3_islandboarddownload_20200727"))
-# saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
-# 
-# ###############################################.
-# ## 6-in-1 hscp data ----
-# six_1_hscp <- format_immhscp_table("immunisations/6in1/six in one_1_dashboardtab-hscp_20200727")
-# saveRDS(six_1_hscp, paste0("shiny_app/data/","six_dose1_hscp.rds"))
-# 
-# six_2_hscp <- format_immhscp_table("immunisations/6in1/six in one_2_dashboardtab-hscp_20200727")
-# saveRDS(six_2_hscp, paste0("shiny_app/data/","six_dose2_hscp.rds"))
-# 
-# six_3_hscp <- format_immhscp_table("immunisations/6in1/six in one_3_dashboardtab-hscp_20200727")
-# saveRDS(six_3_hscp, paste0("shiny_app/data/","six_dose3_hscp.rds"))
 
 ###############################################.
 ## 6-in-1 simd data ---- 
