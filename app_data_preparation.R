@@ -1089,16 +1089,7 @@ old_mh_aye <- read_xlsx(paste0(data_folder, "A&E_mh/Mental Health Diagnosis.xlsx
 mh_aye <- read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv")) %>% 
   clean_names() 
 
-# Not searching for all of F: F04 to F99 Not dementia
-# F7 (learning disabilities out) 
-# R46 - include in
-# Include X80 - done
-# Undetermined intent (Y10) - not in
-# Overdose include
-# exclude accidental poisoning, part children
-# substance use problem in: intoxication, recreational drug problem
-# Panic in - done
-# discard kids out of 5 - under 10 only strict definition
+# List of terms used to identify mh cases
 mh_aye_freetext <- toupper(paste0("overdose|'OD|O/D|drug od|drugs od|drug overdose|", 
                                   "self harm|self-harm|selfharm|depress|psych|", 
                                   "mental health|mentalhealth|mental-health|",
@@ -1114,14 +1105,10 @@ mh_aye_freetext <- toupper(paste0("overdose|'OD|O/D|drug od|drugs od|drug overdo
                                   "drug withdrawal|drugs withdrawal|withdrawal drug|",
                                   "manic episode|panic|recreational drug use|intoxication"))
 
-# test2 <- toupper(paste0("overdose|self harm|self-harm|selfharm|depress|psych|", 
-#                         "mental health|mentalhealth|mental-health|",
-#                         "mental illness|mentalillness|mental-illness|",
-#                         "manic episode|panic|recreational drug use|intoxication"))
-# 
-# 
-# test <- 'CENTRAL PERFORATION OF TYMPANIC MEMBRANE'
-# grepl(test2, test)
+# List of terms used to identify false positives
+mh_text_notincluded <- paste0("ACCIDENTAL OVERDOSE|ACCIDENTAL POISONING|",
+                              "ACCIDENTAL CHILD POISONING|TYMPANIC")
+
 mh_aye %<>%
   mutate(diagnosis_1_text = toupper(diagnosis_1_text),
          diagnosis_2_text = toupper(diagnosis_2_text),
@@ -1155,7 +1142,6 @@ mh_aye2 <- mh_aye %>%
            grepl(mh_aye_freetext, diagnosis_2_text) |
            grepl(mh_aye_freetext, diagnosis_3_text) |
            grepl(mh_aye_freetext, presenting_complaint_text) )
-mh_text_notincluded <- "ACCIDENTAL OVERDOSE|ACCIDENTAL POISONING|ACCIDENTAL CHILD POISONING|TYMPANIC"
 mh_aye2 <- mh_aye2 %>% 
   filter(!(def_yes == 0 & (
     grepl(mh_text_notincluded, presenting_complaint_text)|
@@ -1169,7 +1155,7 @@ mh_aye3 <- mh_aye2 %>% filter(def_yes == 0) %>% filter(pat_age>10)
 mh_aye4 <- mh_aye2 %>% filter(between(pat_age,5,10))
 
 
-test <- mh_aye_nomh %>% group_by(presenting_complaint_text) %>% count
+test <- mh_aye_nomh %>% group_by(diagnosis_1_text) %>% count
 
 #Now another round excluding accidental poisonings, etc
 %>% 
