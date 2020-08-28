@@ -150,7 +150,7 @@ data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
 
-mentalhealth_list <- c("Prescribing" = "mhdrugs") #, "A&E attendances" = "aye")
+mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye")
 
 ###############################################.
 ## Palettes and plot parameters ----

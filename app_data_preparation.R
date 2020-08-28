@@ -1136,36 +1136,34 @@ mh_aye %<>%
                                 substr(disease_2_code, 1, 4) %in% c("Y871", "Z914", "Z915", "Z004", "Z046") |
                                 substr(disease_3_code, 1, 4) %in% c("Y871", "Z914", "Z915", "Z004", "Z046") ) ~ 1, T ~0)) 
 
-mh_aye2 <- mh_aye %>% 
+# Filtering based on conditions above and free text search terms
+mh_aye %<>% 
   filter(def_yes == 1 |
            grepl(mh_aye_freetext, diagnosis_1_text) |
            grepl(mh_aye_freetext, diagnosis_2_text) |
            grepl(mh_aye_freetext, diagnosis_3_text) |
            grepl(mh_aye_freetext, presenting_complaint_text) )
-mh_aye2 <- mh_aye2 %>% 
+
+# Excluding false positives
+mh_aye %<>% 
   filter(!(def_yes == 0 & (
     grepl(mh_text_notincluded, presenting_complaint_text)|
       grepl(mh_text_notincluded, diagnosis_1_text)|
       grepl(mh_text_notincluded, diagnosis_2_text)|
       grepl(mh_text_notincluded, diagnosis_3_text))))
 
-mh_aye_nomh <- anti_join(mh_aye, mh_aye2)
-
-mh_aye3 <- mh_aye2 %>% filter(def_yes == 0) %>% filter(pat_age>10)
-mh_aye4 <- mh_aye2 %>% filter(between(pat_age,5,10))
-
-
-test <- mh_aye_nomh %>% group_by(diagnosis_1_text) %>% count
+mh_aye %<>% #excluding very young kids as mostly false positives
+  filter(pat_age>4) 
 
 #Now another round excluding accidental poisonings, etc
-%>% 
+mh_aye %<>% 
   # Formatting dataset
   rename(dep=prompt_dataset_deprivation_scot_quintile, age=pat_age,
          sex=pat_gender_description, count=number_of_attendances,
-         hb=treatment_nhs_board_description_as_at_date_of_episode) %>% 
+         hb=treatment_nhs_board_description_as_at_date_of_episode) %>%
   proper() %>% #fixing formatting of names
   mutate(area_type = "Health board",
-         week_ending = ceiling_date(arrival_date, "week", change_on_boundary = F),
+         week_ending = ceiling_date(as.Date(arrival_date), "week", change_on_boundary = F),
          age_grp = as.character(case_when(between(age, 0, 17) ~ "5 - 17",
                                           between(age, 18, 44) ~ "18 - 44", 
                                           between(age, 45, 64) ~ "45 - 64", 
