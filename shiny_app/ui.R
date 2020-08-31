@@ -214,8 +214,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
          mainPanel(width = 12,
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
-) # tabpanel bracket
-), #navbarMenu bracket
+)), # tabpanel bracket #navbarMenu bracket
 ###############################################.
 ## Data ----
 ###############################################.
@@ -234,4 +233,4 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
       ) # tabpanel bracket
     )# page bracket
  )# taglist bracket
-##END
+#END
