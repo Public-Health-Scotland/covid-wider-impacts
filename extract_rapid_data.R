@@ -118,7 +118,7 @@ rapid <- rapid %>% mutate(age_group = case_when(
                               TRUE ~ 'missing') ) 
 
 ### Subsection: Lookup SIMDs by postcode.
-simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2020_1_simd2020v2.rds') %>% 
+simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2020_2_simd2020v2.rds') %>% 
   select(pc7, simd2020v2_sc_quintile) %>% as.data.table
 
 #Using a data table lookup is much faster than using an index lookup in base R.  
