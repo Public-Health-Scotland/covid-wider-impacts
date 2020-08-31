@@ -144,6 +144,10 @@ output$child_health_explorer <- renderUI({
  output$child_comments <- renderUI({
      tagList(
        bsButton("jump_to_childreview",label = "Go to data"),
+       h2("Child Health reviews - 2nd September 2020"),
+       p("Information on uptake of pre-school child health reviews was updated in this tool on 2 September. Information is provided on children becoming eligible for a review during the Covid-19 pandemic (in March 2020 to early July 2020) as well as before the pandemic (2019, January 2020, and February 2020)."),
+       p("Coverage of the Health Visitor first visit has remained high for children becoming eligible during the pandemic, with more than 95% of babies receiving their review by 6 weeks of age. Coverage of all other reviews had fallen for children eligible since March 2020. Recent data show that rates are beginning to recover in most, but not all, NHS Boards. There is some evidence of ‘catch-up’, with coverage for March and April improving with time, but this has still not reached the levels achieved in 2019. For the later child health reviews, which have a much longer timeframe for reviews to be delivered, particularly the 4-5 year review, it will take some time for final achieved coverage to be known. Information on final achieved coverage will continue to be provided through official statistics publications."),
+       p("Further background information on interpreting the data is provided in the commentary for 8 and 15 July 2020 below."),
        h2("Child Health reviews - 12th August 2020"),
        p("Information on uptake of pre-school child health reviews was updated in this tool on 12 August. Information is now provided on children becoming eligible for a review during the Covid-19 pandemic (in March 2020 to early June 2020) as well as before the pandemic (2019, January 2020, and February 2020)."),
        p("Coverage of the Health Visitor first visit has remained high for children becoming eligible during the pandemic, with more than 95% of babies receiving their review by 6 weeks of age. 
