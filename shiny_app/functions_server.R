@@ -388,7 +388,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
 
   if (base_var != F) {
     simd_plot <- simd_plot %>% 
-      add_trace(type = 'bar', y = ~get(base_var)/3, 
+      add_trace(type = 'bar', y = ~get(base_var)/4, #THis value needs to change depending on how many months are shown
                 name = "2019", marker = list(color = "black"),
                 text= tooltip_2019, hoverinfo="text") 
   }
@@ -425,9 +425,9 @@ plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due
 #####################################################################################.
 ## Function for generating flextable summary of immunisation data.
 
-immune_table <- function(dataset, age_week) {
+immune_table <- function(dataset, dose, age_week) {
 
-  table_data <- filter_table_data_immun(dataset)
+  table_data <- filter_table_data_immun(dataset, dose)
     
   table_data <- table_data %>%
     filter(exclude_from_table !=1) #filter immunisation table to exclude weekly cohorts that should only be downloadable

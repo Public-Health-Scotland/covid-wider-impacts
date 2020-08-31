@@ -82,9 +82,9 @@ output$geoname_ui_immun <- renderUI({
   selectizeInput("geoname_immun", label = NULL, choices = areas_summary_immun, selected = "")
 })
 
-# Reactive dataset for flextable filter on geographical area
-filter_table_data_immun <- function(dataset){
-  dataset %>% filter(area_name == input$geoname_immun)
+# Reactive dataset for flextable filter on geographical area and dose
+filter_table_data_immun <- function(dataset, dose){
+  dataset %>% filter(area_name == input$geoname_immun & str_detect(immunisation,dose))
 }
 
 ###############################################.
@@ -100,11 +100,11 @@ output$immun_mmr_scurve_dose1 <- renderPlotly({plot_scurve(mmr_alldose, age_week
 output$immun_mmr_scurve_dose2 <- renderPlotly({plot_scurve(mmr_alldose, age_week = "3", dose= "dose 2" )})
 
 #run function to generate data tables linked to s-curves  
-output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable, age_week = 8)})
-output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable_dose2, age_week = 12)})
-output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable_dose3, age_week = 16)})
-output$immun_mmr_table_dose1 <- renderUI({immune_table(mmrtable_dose1, age_week = 1)}) #age week 1 doesn't really make sense as given to children at 1 year
-output$immun_mmr_table_dose2 <- renderUI({immune_table(mmrtable_dose2, age_week = 3)}) #age week 3 doesn't really make sense as given to children at 3 years and 4 month
+output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable,dose="dose 1", age_week = 8)})
+output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable, dose="dose 2", age_week = 12)})
+output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable, dose="dose 3", age_week = 16)})
+output$immun_mmr_table_dose1 <- renderUI({immune_table(mmrtable, dose="dose 1", age_week = 1)}) #age week 1 doesn't really make sense as given to children at 1 year
+output$immun_mmr_table_dose2 <- renderUI({immune_table(mmrtable, dose="dose 2", age_week = 3)}) #age week 3 doesn't really make sense as given to children at 3 years and 4 month
 
 #run function to generate SIMD bar charts relative changes (only available at scotland level)
 output$imm_6in1_simd_chan_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1",
@@ -239,27 +239,53 @@ output$immunisation_explorer <- renderUI({
 imm_data_download <- reactive({
   
   if (input$measure_select_immun == "mmr_dose2" & input$geoname_immun == "NHS Grampian") {
-    bind_rows(mmrtable_dose2_gramp, mmr_hscp_dose2_grampian) %>% 
+    mmrtable_dose2_gramp %>%
       select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
       rename(cohort = time_period_eligible)
   } else {
     
-    switch(
+    data_down <- switch(
       input$measure_select_immun,
-      # for data download bind hscp table to table appearing in the app
-      "sixin_dose1" = bind_rows(sixtable,six_hscp_dose1),
-      "sixin_dose2" = bind_rows(sixtable_dose2,six_hscp_dose2),
-      "sixin_dose3" = bind_rows(sixtable_dose3,six_hscp_dose3),
-      "mmr_dose1" = bind_rows(mmrtable_dose1,mmr_hscp_dose1),
-      "mmr_dose2"= bind_rows(mmrtable_dose2, mmr_hscp_dose2)
-    ) %>% 
-      select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
+      # for data download filter on dose for table appearing in the app
+      "sixin_dose1" = filter(sixtable,str_detect(immunisation,"dose 1")),
+      "sixin_dose2" = filter(sixtable,str_detect(immunisation,"dose 2")),
+      "sixin_dose3" = filter(sixtable,str_detect(immunisation,"dose 3")),
+      "mmr_dose1" = filter(mmrtable,str_detect(immunisation,"dose 1")),
+      "mmr_dose2"= filter(mmrtable,str_detect(immunisation,"dose 2"))) %>% 
+      select(-cohort) %>% 
       rename(cohort = time_period_eligible) %>% 
-      #forcing variables to show one decimal digit.
-      mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))
+      mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))#forcing variables to show one decimal digit.
     
+    if (input$measure_select_immun %in% "sixin_dose1") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_12weeks_num, uptake_12weeks_percent,
+               uptake_24weeks_num, uptake_24weeks_percent, uptake_tot_num, uptake_tot_percent)
+    } else if (input$measure_select_immun %in% "sixin_dose2") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_16weeks_num, uptake_16weeks_percent,
+               uptake_28weeks_num, uptake_28weeks_percent, uptake_tot_num, uptake_tot_percent)
+    } else if (input$measure_select_immun %in% "sixin_dose3") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_20weeks_num, uptake_20weeks_percent,
+               uptake_32weeks_num, uptake_32weeks_percent,uptake_tot_num, uptake_tot_percent)
+    } else if (input$measure_select_immun %in% "mmr_dose1") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_13m_num, uptake_13m_percent,
+               uptake_16m_num, uptake_16m_percent, uptake_tot_num, uptake_tot_percent)
+    } else if (input$measure_select_immun %in% "mmr_dose2") {
+      data_down <- data_down %>%
+        select(immunisation, area_name, cohort, denominator,
+               uptake_3y5m_num, uptake_3y5m_percent,
+               uptake_3y8m_num, uptake_3y8m_percent, uptake_tot_num, uptake_tot_percent)
+    }  
     
-  }
+    data_down %>% #forcing variables to show one decimal digit.
+      mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))#forcing variables to show one decimal digit.
+    }
 })
 
 output$download_imm_data <- downloadHandler(
@@ -349,6 +375,7 @@ imm_simd_data_download <- reactive ({
   
 })
 
+
 output$download_imm_simd_data <- downloadHandler(
   filename ="immunisation_extract_by_deprivation.csv",
   content = function(file) {
@@ -363,14 +390,18 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 2 September 2020"),
+    p("Information on uptake of pre-school immunisations was updated in this tool on 2 September. The updated data show that uptake of pre-school immunisations for children who became eligible during March 2020 was maintained at a similar level to that seen before the Covid-19 pandemic (children becoming eligible in 2019 and early 2020). Early uptake for children becoming eligible for their immunisation more recently (April 2020 through to early July 2020) has increased, and is now noticeably higher than that seen before the pandemic."),
+    p("The data also show that the increase in early uptake of immunisations seen from April 2020 onwards has been seen for children from all deprivation levels. For the 3 doses of the 6-in-1 immunisation, the recent increase in early uptake has been highest in children from the most deprived areas, resulting in a reduction in inequality in early uptake for these immunisations. For the 2 doses of the MMR immunisation, the recent increase in early uptake has been broadly similar across deprivation groups."),
+    p("As discussed in the previous commentary below, there are a number of likely reasons for the recent improvement in early uptake of pre-school immunisations. These include increased awareness among parents of the importance of immunisation reinforced by national communications to encourage attendance, as well as local communications and new processes introduced in response to the pandemic. For example, immunisation teams in some NHS Boards have recently been phoning parents/carers shortly before the day of appointment to ensure families are free of symptoms of Covid-19 before attending, reassure them, and answer questions."),
+    p("Although recent improvements in early immunisation uptake rates are evident, often among children living in the most deprived areas in particular, it is too soon to determine whether this early improvement will translate into improved final uptake and a reduction in the inequalities gap when measured at later ages.  Information on final achieved uptake will continue to be provided through ",
+      tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
+             "official statistics publications",class="externallink"), "."),
     h2("Immunisations - 12th August 2020"),
     p("Information on uptake of pre-school immunisations was updated in this tool on 12 August (and new information was added to the data download function on uptake in Health and Social Care Partnerships and in the Island NHS Boards).  The updated data show that uptake of pre-school immunisations for children who became eligible during March 2020 was maintained at a similar level to that seen before the Covid-19 pandemic (children becoming eligible in 2019 and early 2020).  Early uptake for children becoming eligible for their immunisation more recently (April 2020 through to early June 2020) has increased, and is now noticeably higher than that seen before the pandemic."),
     p("New information on uptake of pre-school immunisations for children living in areas with different levels of deprivation (Scotland level only) was also added to this tool on 12 August.  Early uptake (achieved by 4 weeks after the children became eligible for their immunisation) is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort. The data show that before the Covid-19 pandemic, children living in the most deprived areas of Scotland were less likely to have received their pre-school immunisations within 4 weeks of becoming eligible than children living in the least deprived areas."),
     p("The new data show that the increase in early uptake of immunisations seen from April 2020 onwards has been seen for children from all deprivation levels.  For the 3 doses of the 6-in-1 immunisation, the recent increase in early uptake has been highest in children from the most deprived areas, resulting in a reduction in inequality in early uptake for these immunisations.  For the 2 doses of the MMR immunisation, the recent increase in early uptake has been broadly similar across deprivation groups."),
     p("As discussed in the previous commentary below, there are a number of likely reasons for the recent improvement in early uptake of pre-school immunisations.  These include increased awareness among parents of the importance of immunisation reinforced by national communications to encourage attendance, as well as local communications and new processes introduced in response to the pandemic. For example, immunisation teams in some NHS Boards have recently been phoning parents/carers shortly before the day of appointment to ensure families are free of symptoms of Covid-19 before attending, reassure them, and answer questions."),
-    p("Although recent improvements in early immunisation uptake rates are evident, often among children living in the most deprived areas in particular, it is too soon to determine whether this early improvement will translate into improved final uptake and a reduction in the inequalities gap when measured at later ages.  Information on final achieved uptake will continue to be provided through ",
-      tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
-             "official statistics publications",class="externallink"), "."),
     h2("Immunisations - 8th July 2020"),
     p("On 8 July, information on uptake of the first and second doses of MMR vaccine was added to the tool."),
     p("The first dose of MMR vaccine is offered from 12 months of age at the immunisation appointment scheduled at 12-13 months. Data before the pandemic, for children eligible (turning 12 months) in 2019 show that uptake in Scotland was 65.4% by the time children turned 13 months old. Uptake rates by 13 months were maintained for children eligible in March 2020 and have increased for children eligible in April and early May 2020, with uptake in each of the latest 4 weeks exceeding 75%. This means in April and early May, more children than usual received their immunisation soon after they first became eligible, indicating fewer non-attendances at, or postponements of, scheduled appointments."),
