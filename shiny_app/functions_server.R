@@ -7,7 +7,8 @@
 
 # split - age, sex, condition, or dep (simd deprivation)
 plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation", 
-                             data_name = NULL, tab = "summary", period = "weekly") {
+                             data_name = NULL, tab = "summary", period = "weekly",
+                             aver_week = F) {
   
   period_data <- case_when(period == "weekly" ~ "Week ending: ",
                            period == "monthly" ~ "Month: ")
@@ -74,10 +75,19 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "mentalhealth_drugs", "mh_ooh") ~ "2018-2019",
                              data_name == "deaths" ~ "2015-2019"))
     
-    #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                              "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
+    if (aver_week == T) {
+      #Text for tooltip
+      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                                "Average of week ending ", format(trend_data$week_ending, "%d %b %y"), " and two previous weeks",
+                                "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
+      
+    } else {
+      #Text for tooltip
+      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                                "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
+      
+    }
 
       #Modifying standard layout
     yaxis_plots[["title"]] <- paste0("% change from ", aver_period, " average")
