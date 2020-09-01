@@ -371,6 +371,53 @@ prepare_final_data(dataset = nhs24_cardiac, filename = "nhs24_cardiac", last_wee
 
 
 ###############################################.
+## SAS Cardiac data ----
+###############################################.
+
+sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/Weekly_Diagnosis_SAS.csv")) %>%
+  janitor::clean_names()
+
+sas_data_cardiac <- mutate(sas_data_cardiac, hscp = "")
+
+#WEEKLY DATA UPDATE
+
+sas_data_cardiac <- sas_data_cardiac %>% rename(hb=reporting_health_board_name_current,
+         dep=patient_prompt_dataset_deprivation_scot_quintile,
+         count=number_of_incidents,gender=gender_description) %>%
+  # Formatting dates and sex
+  mutate(week_ending = as.Date(week_ending, format="%d-%b-%Y"),
+         sex=case_when(is.na(gender)~"Missing", gender=="" ~"Missing", gender=="MALE" ~ "Male", gender=="FEMALE" ~"Female", 
+                       gender %in% c(0, 9 ) ~ "Missing", TRUE ~ as.character(gender))) %>% 
+  proper() %>% #convert HB names to correct format
+  create_agegroups () %>%
+  create_depgroups ()
+
+# Aggregate up to get figures for each area type.
+sas_data_cardiac %<>% mutate(scot = "Scotland") %>% 
+  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age_grp, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
+
+#bind old and new SAS data
+#sas <- rbind(sas_new, sas)
+
+# Use aggregation function to aggregate data files for use in shiny app
+sas_cd_all <- sas_data_cardiac %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+sas_cd_sex <- agg_cut(dataset= sas_data_cardiac, grouper="sex") %>% rename(category=sex)
+sas_cd_dep <- agg_cut(dataset= sas_data_cardiac, grouper="dep") %>% rename(category=dep)
+sas_cd_age <- agg_cut(dataset= sas_data_cardiac, grouper="age") %>% rename(category=age)
+
+# Add final aggregation files to one master file
+sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
+
+# Formatting file for shiny app
+prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-08-23")
+
+
+###############################################.
 ## A&E data ----
 ###############################################.
 # Read A&E data both at HSCP and HB level
