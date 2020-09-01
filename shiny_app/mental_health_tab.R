@@ -31,15 +31,6 @@ output$geoname_mh_ui <- renderUI({
   
 })
 
-# Adding 'observeEvent' to allow reactive 'area of interest' 
-# observeEvent(input$measure_mh_select, {
-#     mh_label = "Step 2 - Select geography level for mental health medicine prescriptions"
-#     mh_choices = c("Scotland", "Health board", "HSC partnership")
-#     shinyjs::show("geoname_mh_ui")
-#     enable("area_mh_select")
-#   
-# })
-
 ###############################################.
 ## Modal ----
 ###############################################.
@@ -52,7 +43,8 @@ observeEvent(input$btn_mentalhealth_modal,
                  p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments) 
                    in the recent past, along with historical activity for 
                    comparison purposes. The recent trend data is shown by age group, sex
-                   and broad deprivation category (SIMD). This data only include Emergency Department 
+                   and broad deprivation category (SIMD). These figures include attendances of people aged 5 and over. 
+                    Also, this data only include Emergency Department 
                    attendances and do not include minor injury units and other small hospitals and 
                    health centres in rural areas that carry out emergency department related activity, 
                    for more information on what sites are included please see this ", 
@@ -72,22 +64,24 @@ observeEvent(input$btn_mentalhealth_modal,
                            incomplete for a number of NHS Boards. Thus, the figures reported for mental health related 
                            attendances offer only a very approximate indication of attendances. 
                            Additionally, some NHS Boards have moved to a new recording standard which 
-                           has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
-                           even prior to the introduction of lockdown measures, appear somehwat lower when compared to 
-                           previous years.")),
-                 # p("The table below shows the ICD-10 codes that were considered for the cardiovascular A&E data subset, 
-                 #   where this information was available."),
-                 # actionButton("toggleCodeTable", "Show / Hide Table"),
-                 # shinyjs::onclick("toggleCodeTable",
-                 #                  shinyjs::toggle(id = "CodeTable")),
-                 # shinyjs::hidden(div(id = "CodeTable", br(), DT::dataTableOutput("ae_mh_codes_tbl"))),
+                           has not been fully consolidated in the A&E datamart as yet.")),
+                 p("Mental health related A&E attendances were identified using these parameters:"),
+                 tags$ul(
+                   tags$li("Diagnosis of mental and behavioural disorders (excluding dementia and learning disabilities) - ICD10 codes F."),
+                   tags$li("Diagnosis of intentional self-harm - ICD10 codes X60 - X84."),
+                   tags$li("Diagnosis of symptoms involving emotions, perceptions and behaviour - ICD10 codes R44 - R46."),
+                   tags$li("Other mental health related diagnosis codes - ICD10 codes Y871, Z914, Z915, Z004, Z046."),
+                   tags$li("Psychiatry code recorded against the attendance."),
+                   tags$li("Intent of injury recorded as 'Deliberate self-harm'."),
+                   tags$li("A mental health related term used in the presenting complaint or diagnosis fields.")
+                 ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_mh_select == "mhdrugs") {
              showModal(modalDialog(# MH DRUGS MODAL
                title = "What is the data source?",
                p(strong("Data source: ePrescribed Messages.")),
-               p("This section of the PHS Covid-19 - Wider Impacts dashboard provides weekly information on the 
+               p("This section provides weekly information on the 
                    number of prescriptions for mental health drugs issued. The data ranges from the start of 2020 
                    to the latest available week and is shown alongside historical activity (average from 2018 and 2019) 
                    for comparison purposes. Additional breakdowns by drug grouping are provided also."),
@@ -223,6 +217,15 @@ observeEvent(input$btn_mentalhealth_modal,
                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/", 
                          "Public Health Scotland (PHS).", class="externallink")),
                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                p("Mental health related out of hours cases were identified using codes associated to the cases related to:"),
+                tags$ul(
+                  tags$li("Anxiety/Stress."),
+                  tags$li("Depression."),
+                  tags$li("Self-harm."),
+                  tags$li("Psychotic conditions."),
+                  tags$li("Alcohol and drug dependence."),
+                  tags$li("Personality disorders and other mental health disorders.")
+                ),
                 size = "m",
                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                 })
@@ -236,8 +239,22 @@ ae_mh_filt <- reactive({ae_mh %>% filter(area_type == input$area_mh_select &
                                            area_name == input$geoname_mh)
   })
 
+ae_mh_aver <- reactive({ae_mh_filt() %>% 
+    group_by(type, category) %>% 
+    mutate(count = round(rollmeanr(count, k = 3, fill = NA),1),
+           variation = round(rollmeanr(variation, k = 3, fill = NA),1)) %>% 
+    ungroup
+})
+
 mh_ooh_filt <- reactive({mh_ooh %>% filter(area_type == input$area_mh_select &
                                            area_name == input$geoname_mh)
+})
+
+mh_ooh_aver <- reactive({mh_ooh_filt() %>% 
+    group_by(type, category) %>% 
+    mutate(count = round(rollmeanr(count, k = 3, fill = NA),1),
+           variation = round(rollmeanr(variation, k = 3, fill = NA),1)) %>% 
+    ungroup
 })
 
 ###############################################.
@@ -258,21 +275,27 @@ output$mh_drugs_tot <- renderPlotly({
 ###############################################.
 # MH A&E charts
 output$ae_mh_overall <- renderPlotly({plot_overall_chart(ae_mh_filt(), data_name = "aye", area = "All")})
-output$ae_mh_sex_var <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_sex, c("sex", "all"), data_name = "aye",tab = "mh")})
+output$ae_mh_sex_var <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_sex, c("sex", "all"), 
+                                                       data_name = "aye",tab = "mh", aver_week = T)})
 output$ae_mh_sex_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_sex, c("sex", "all"), "total", "aye", tab = "mh")})
-output$ae_mh_age_var <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_age, c("age", "all"), data_name = "aye",tab = "mh")})
+output$ae_mh_age_var <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_age, c("age", "all"), 
+                                                       data_name = "aye",tab = "mh", aver_week = T)})
 output$ae_mh_age_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_age, c("age", "all"), "total", "aye", tab = "mh")})
-output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_filt(), pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "mh")})
+output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_aver(), pal_chose = pal_depr, split = "dep", 
+                                                       type = "variation", data_name = "aye", tab = "mh", aver_week = T)})
 output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh")})
 
 ###############################################.
 # MH OOH charts
 output$mh_ooh_overall <- renderPlotly({plot_overall_chart(mh_ooh_filt(), data_name = "ooh", area = "All")})
-output$mh_ooh_sex_var <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_sex, c("sex", "all"), data_name = "ooh",tab = "mh")})
+output$mh_ooh_sex_var <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_sex, c("sex", "all"), 
+                                                        data_name = "ooh",tab = "mh", aver_week = T)})
 output$mh_ooh_sex_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_sex, c("sex", "all"), "total", "ooh", tab = "mh")})
-output$mh_ooh_age_var <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_age, c("age", "all"), data_name = "ooh",tab = "mh")})
+output$mh_ooh_age_var <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_age, c("age", "all"), 
+                                                        data_name = "ooh",tab = "mh", aver_week = T)})
 output$mh_ooh_age_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_age, c("age", "all"), "total", "ooh", tab = "mh")})
-output$mh_ooh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_ooh_filt(), pal_chose = pal_depr, split = "dep", type = "variation", data_name = "ooh", tab = "mh")})
+output$mh_ooh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_ooh_aver(), pal_chose = pal_depr, split = "dep", 
+                                                        type = "variation", data_name = "ooh", tab = "mh", aver_week = T)})
 output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_depr, split = "dep", type = "total", data_name = "ooh", tab = "mh")})
 
 ###############################################.
@@ -283,7 +306,7 @@ output$mh_explorer <- renderUI({
   if (input$measure_mh_select == "mhdrugs") { 
     tagList(# Prescribing - items dispensed
       h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh)),
-      actionButton("btn_mentalhealth_modal", "Data source: ePrescribed Messages",
+      actionButton("btn_mentalhealth_modal", "Data source and definitions",
                    icon = icon('question-circle')),
       plot_box("2020 compared with 2018-2019 average", "mh_prescribing_all"),
       plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, 
@@ -297,7 +320,7 @@ output$mh_explorer <- renderUI({
                  Additionally, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet."),
       h3(paste0("Weekly mental health A&E attendances in ", input$geoname_mh)),
-      actionButton("btn_mentalhealth_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
+      actionButton("btn_mentalhealth_modal", "Data source and definitions", icon = icon('question-circle')),
       plot_box("2020 compared with 2018-2019 average", "ae_mh_overall"),
     if (input$geoname_mh == "Scotland") {
       tagList(
@@ -320,7 +343,7 @@ output$mh_explorer <- renderUI({
     } else if (input$measure_mh_select == "ooh") {
       tagList(#OOH attendances
         h3(paste0("Weekly mental health out of hours consultations in ", input$geoname_mh)),
-        actionButton("btn_mentalhealth_modal", "Data source: PHS GP OOH Datamart", icon = icon('question-circle')),
+        actionButton("btn_mentalhealth_modal", "Data source and definitions", icon = icon('question-circle')),
         plot_box("2020 compared with 2018-2019 average", "mh_ooh_overall"),
         if (input$geoname_mh == "Scotland") {
           tagList(
@@ -368,12 +391,7 @@ output$download_mentalhealth_data <- downloadHandler(
 output$mentalhealth_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mentalhealth",label = "Go to data"), #this button can only be used once
-    h2("Mental health - September 2020"),
-    h3("Unscheduled Care"),
-    p("TEXT"),
-    h3("Prescribing"),
-    p("TEXT"),
-    h2("Mental health - August 2020"),
+    h2("Mental health - 16th September 2020"),
     h3("Prescribing"),
     p("Information on the number of patients starting a new treatment course for selected mental health medicines (those commonly used for depression, anxiety or 
       insomnia) through General Practice has been included for the first time on 19 August 2020. This data indicates:"),
@@ -382,5 +400,8 @@ output$mentalhealth_commentary <- renderUI({
               Since then, the total numbers have been gradually increasing and returned to normal levels by the end of June."),
       tags$li("The number of new treatment courses with medicines for depression and insomnia show a similar pattern of decline and recovery whereas medicines for anxiety 
               show a more prolonged decline in the number of new treatment courses and, by mid-July, remain about 15% below normal.")
-  ))
+  ),
+  h2("Unscheduled care"),
+  p("Placeholder")
+  ) #tagList bracket
 })
