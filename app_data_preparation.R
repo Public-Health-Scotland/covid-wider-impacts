@@ -1201,6 +1201,52 @@ mh_aye %<>%
 prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-08-16")
 
 
+###############################################.
+## OOH - mental health ----
+###############################################.
+
+mh_ooh <- read_csv(paste0(data_folder, "GP_OOH_mh/Diagnosis Details-2.csv")) %>%
+  janitor::clean_names() %>%
+  rename(hb=patient_nhs_board_description_current, 
+         dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
+         count=number_of_diagnoses, age_group=age_band, week_ending=gp_ooh_sc_start_date) %>%
+  mutate(week_ending = as.Date(week_ending, format= "%d/%m/%Y"), 
+         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F),
+         age = recode_factor(age_group, "0-12" = "Under 25", "13 to 17" = "Under 25",  
+                             "18 to 24" = "Under 25", "25 to 34" = "25 - 44", "35 to 44" = "25 - 44", "45 to 54" = "45 - 64", 
+                             "55 to 64" = "45 - 64", "65 to 74" = "65 and over", "75 to 84" = "65 and over",
+                             "85plus" = "65 and over"),
+         sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "0" = NA_character_, "9" = NA_character_),
+         dep = recode(dep, 
+                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
+                      "4" = "4", "5" = "5 - least deprived"),
+         #week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
+         scot = "Scotland") %>%
+  proper() #convert HB names to correct format
+
+# Aggregate up to get figures for each area type.
+mh_ooh %<>% gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                             "scot" = "Scotland")) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
+  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-08-16")))
+
+mh_ooh_all <- mh_ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+mh_ooh_sex <- mh_ooh %>% agg_cut(grouper="sex") %>% rename(category = sex)
+mh_ooh_dep <- mh_ooh %>% agg_cut(grouper="dep") %>% rename(category = dep)
+mh_ooh_age <- mh_ooh %>% agg_cut(grouper="age") %>% rename(category = age)
+
+mh_ooh <- rbind(mh_ooh_all, mh_ooh_sex, mh_ooh_dep, mh_ooh_age)
+
+mh_ooh %<>% 
+  filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
+  filter(area_name == "Scotland" | category == "All")
+
+prepare_final_data(mh_ooh, "mh_ooh", last_week = "2020-08-16")
+
+#test1 <- readRDS("shiny_app/data/mh_ooh_data.rds")
 ##END
 
 
