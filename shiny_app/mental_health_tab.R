@@ -278,9 +278,14 @@ output$ae_mh_overall <- renderPlotly({plot_overall_chart(ae_mh_filt(), data_name
 output$ae_mh_sex_var <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_sex, c("sex", "all"), 
                                                        data_name = "aye",tab = "mh", aver_week = T)})
 output$ae_mh_sex_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_sex, c("sex", "all"), "total", "aye", tab = "mh")})
-output$ae_mh_age_var <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_age, c("age", "all"), 
-                                                       data_name = "aye",tab = "mh", aver_week = T)})
-output$ae_mh_age_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_age, c("age", "all"), "total", "aye", tab = "mh")})
+output$ae_mh_age_var <- renderPlotly({
+  plot_trend_chart(ae_mh_aver() %>% filter(type == "age") %>% 
+                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
+                   pal_age, c("age", "all"), data_name = "aye",tab = "mh", aver_week = T)})
+output$ae_mh_age_tot <- renderPlotly({
+  plot_trend_chart(ae_mh_filt() %>% filter(type == "age") %>% 
+                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
+                   pal_age, c("age", "all"), "total", "aye", tab = "mh")})
 output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_aver(), pal_chose = pal_depr, split = "dep", 
                                                        type = "variation", data_name = "aye", tab = "mh", aver_week = T)})
 output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh")})
@@ -291,9 +296,14 @@ output$mh_ooh_overall <- renderPlotly({plot_overall_chart(mh_ooh_filt(), data_na
 output$mh_ooh_sex_var <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_sex, c("sex", "all"), 
                                                         data_name = "ooh",tab = "mh", aver_week = T)})
 output$mh_ooh_sex_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_sex, c("sex", "all"), "total", "ooh", tab = "mh")})
-output$mh_ooh_age_var <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_age, c("age", "all"), 
-                                                        data_name = "ooh",tab = "mh", aver_week = T)})
-output$mh_ooh_age_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_age, c("age", "all"), "total", "ooh", tab = "mh")})
+output$mh_ooh_age_var <- renderPlotly({
+  plot_trend_chart(mh_ooh_aver() %>% filter(type == "age") %>% 
+                     mutate(category = factor(category, levels = c("Under 18", "18 - 44", "45 - 64", "65 and over"))), 
+                   pal_age, c("age", "all"),  data_name = "ooh",tab = "mh", aver_week = T)})
+output$mh_ooh_age_tot <- renderPlotly({
+  plot_trend_chart(mh_ooh_filt() %>% filter(type == "age") %>% 
+                     mutate(category = factor(category, levels = c("Under 18", "18 - 44", "45 - 64", "65 and over"))), 
+                   pal_age, c("age", "all"), "total", "ooh", tab = "mh")})
 output$mh_ooh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_ooh_aver(), pal_chose = pal_depr, split = "dep", 
                                                         type = "variation", data_name = "ooh", tab = "mh", aver_week = T)})
 output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_depr, split = "dep", type = "total", data_name = "ooh", tab = "mh")})
