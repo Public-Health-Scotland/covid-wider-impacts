@@ -1029,5 +1029,14 @@ perinatal %<>%
 
 saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 
-##END
+###############################################.
+## Breastfeeding ----
+###############################################.
 
+## First Visit Data
+breastfeeding_fv <- read_xlsx(paste0(data_folder, "/breastfeeding/FirstVisitdata.xlsx"))
+
+## 6-8 Weeks Data
+breastfeeding_6to8 <- read_xlsx(paste0(data_folder, "/breastfeeding/6-8week_data.xlsx"))
+
+##END

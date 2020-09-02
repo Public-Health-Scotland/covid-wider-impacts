@@ -195,6 +195,32 @@ tabPanel(title = "Child health reviews", icon = icon("user-check"), value = "chi
          )# mainPanel bracket
    ), # tabpanel bracket
 ###############################################.
+## Breastfeeding tab ----
+##############################################.
+tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
+         wellPanel(
+           column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_child", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_child")),
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_select_bf",
+                                           label= "Step 2. Select the data you want to explore.",
+                                           choices = data_list_child[1:2], status = "primary",
+                                           direction = "vertical", justified = T))),
+           column(4,actionButton("bf_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_bf_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_bf","Go to commentary"))
+           #actionButton("browser", "Browser")
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("child_health_explorer")
+         )# mainPanel bracket
+), # tabpanel bracket
+###############################################.
 ## Perinatal Tab ----
 ###############################################.
 tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal",
