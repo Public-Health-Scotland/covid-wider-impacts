@@ -601,7 +601,7 @@ output$nhs24_cardio_depr_tot <- renderPlotly({plot_trend_chart(nhs24_cardiac %>%
 ###############################################.
 # SAS charts
 output$sas_cardio_all <- renderPlotly({plot_overall_chart(sas_cardiac %>% filter(area_name == input$geoname_cardio), 
-                                                            data_name = "ooh_cardiac", area = "All")})
+                                                            data_name = "sas_cardiac", area = "All")})
 output$sas_cardio_sex_var <- renderPlotly({plot_trend_chart(sas_cardiac %>% filter(area_name == input$geoname_cardio), 
                                                               pal_sex, split = "sex", type = "variation", data_name = "sas_cardiac", tab = "cardio")})
 output$sas_cardio_sex_tot <- renderPlotly({plot_trend_chart(sas_cardiac %>% filter(area_name == input$geoname_cardio), 
@@ -762,8 +762,8 @@ output$cardio_commentary <- renderUI({
      tags$li("The pattern of consultations for SIMD followed the same pattern as the historic average with the most 
              deprived having the largest increase in consultations."),
      tags$li("From the end of March NHS24 cardiac consultations returned to levels seen in the historic average.")),
-    h3("Cardiovascular SAS consultations"),
-    p("Information on SAS consultations..."),
+    h3("Cardiovascular SAS incidents"),
+    p("Information on SAS incidents..."),
     tags$ul(
       tags$li("todo."),
       tags$li("todo."),
