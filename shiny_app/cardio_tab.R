@@ -765,11 +765,10 @@ output$cardio_commentary <- renderUI({
     h3("Cardiovascular SAS incidents"),
     p("Information on SAS incidents..."),
     tags$ul(
-      tags$li("todo."),
-      tags$li("todo."),
-      tags$li("todo."),
-      tags$li("todo."),
-      tags$li("todo."))
+      tags$li("There was a large decrease in SAS incidents from the start of April to the middle of July.
+               The largest decrease was in the ending 19 April 2020, 665 compared to a historic average 
+               of 1079 incidents"),
+      tags$li("The decrease in SAS incidents was similar at gender and SIMD level and affected all age groups."))
 )
   
 })
