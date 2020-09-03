@@ -1046,8 +1046,9 @@ breastfeeding <- rbind(breastfeeding_fv, breastfeeding_6to8) %>%
   clean_names() %>% 
   rename(area_name = hb) %>% 
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
-         month_number = month(month_review))
-  
+         month_number = month(month_review),
+         area_name = case_when(area_name != "Scotland" ~ paste0("NHS ", area_name),
+         T ~ area_name))
 
 # Creating 2018-2019 averages
 breastfeeding_hist <- breastfeeding %>% 

@@ -50,12 +50,9 @@ filter_table_data_child <- function(dataset){
 # Reactive breastfeeding dataset
 breastfeeding_filt <- reactive({
   
-  review_chosen <- case_when( input$measure_select_bf == "Health Visitor first visit" ~ "First visit",
-                              input$measure_select_bf == "6-8 Week Review" ~ "6-8 weeks")
-  
-  breastfeeding %>% filter(area_name == input$geoname_bf &
-                         area_type == input$geotype_bf &
-                         review == review_chosen)
+  breastfeeding %>% filter(area_type == input$geotype_bf &
+                           area_name == input$geoname_bf &
+                           review == input$measure_select_bf)
 })
 
 ###############################################.
@@ -156,6 +153,17 @@ output$child_health_explorer <- renderUI({
   
 }) #close child_health_explorer function
 
+# Breastfeeding explorer
+output$breastfeeding_explorer <- renderUI({
+  tagList(
+    fluidRow(
+      column(12,
+             p("Placeholder for intro text, if required"),
+             h4(paste0("Chart title ", input$measure_select_bf)))),
+      fluidRow(withSpinner(plotlyOutput("bf_reviews")))
+    )
+})
+
 # Breastfeeding charts
 output$bf_reviews <- renderPlotly({
   trend_data <- breastfeeding_filt()
@@ -169,8 +177,8 @@ output$bf_reviews <- renderPlotly({
   xaxis_plots[["tickvals"]] <- unique(trend_data$month_review)
   xaxis_plots[["ticktext"]] <- format(unique(trend_data$month_review), "%B %Y")
   
-  tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%B %y"),
-                            "<br>", "Number of health visitor first visits", trend_data$no_reviews,
+  tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
+                            "<br>", "Number of health visitor first visits: ", trend_data$no_reviews,
                             "<br>", "Historic average: ", trend_data$no_reviews_avg))
   
   # Creating time trend plot
@@ -188,17 +196,6 @@ output$bf_reviews <- renderPlotly({
            legend = list(x = 100, y = 0.5)) %>% 
     # Configure modebar buttons
     config(displaylogo = F, displayModeBar = T, modeBarButtonsToRemove = bttn_remove)
-})
-
-# Breastfeeding explorer
-output$breastfeeding_explorer <- renderUI({
-  tagList(
-    fluidRow(
-      column(12,
-             p("Placeholder for intro text, if required"),
-             h4(paste0("Chart title ", input$measure_select_bf)))),
-      fluidRow(withSpinner(plotlyOutput("bf_reviews")))
-    )
 })
 
 ###############################################.
