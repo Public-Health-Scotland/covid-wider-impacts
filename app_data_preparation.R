@@ -1211,7 +1211,8 @@ mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/GP_OOH_MH_WIDER_IMPACT.txt")) 
          count=gp_ooh_number_of_cases, age_group=age_band, week_ending=gp_ooh_sc_start_date) %>%
   mutate(week_ending = as.Date(week_ending, format= "%d/%m/%Y"), 
          week_ending = ceiling_date(week_ending, "week", change_on_boundary = F),
-         age = recode_factor(age_group, "0-12" = "Under 18", "13 to 17" = "Under 18",  
+         # Query excludes under 5s
+         age = recode_factor(age_group, "0-12" = "5 - 17", "13 to 17" = "5 - 17",  
                              "18 to 24" = "18 - 44", "25 to 34" = "18 - 44", "35 to 44" = "18 - 44", "45 to 54" = "45 - 64", 
                              "55 to 64" = "45 - 64", "65 to 74" = "65 and over", "75 to 84" = "65 and over",
                              "85plus" = "65 and over"),

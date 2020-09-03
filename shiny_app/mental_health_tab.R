@@ -9,9 +9,7 @@
 output$geotype_mh_ui <- renderUI({
 if (input$measure_mh_select == "mhdrugs") {
   areas <- c("Scotland", "Health board", "HSC partnership")
-} else if (input$measure_mh_select == "aye") {
-  areas <- c("Scotland", "Health board")
-} else if (input$measure_mh_select == "ooh") {
+} else if (input$measure_mh_select %in% c("aye", "ooh")) {
   areas <- c("Scotland", "Health board")
 } 
   
@@ -197,7 +195,7 @@ observeEvent(input$btn_mentalhealth_modal,
                    when needed at times outside normal general practice hours, such as evenings, 
                    overnight or during the weekend. An appointment to the service is normally arranged 
                    following contact with NHS 24. The recent trend data is shown by age group, sex and 
-                   broad deprivation category (SIMD)."),
+                   broad deprivation category (SIMD). These figures include attendances of people aged 5 and over."),
                 p("The charts provide a weekly summary of cases related to mental health in the recent past and 
                    historical trends for comparison purposes."),
                 p("The figures presented include mental health out of hours consultations in areas relating to anxiety/stress, depression, self harm, 
@@ -298,11 +296,11 @@ output$mh_ooh_sex_var <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_sex, 
 output$mh_ooh_sex_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_sex, c("sex", "all"), "total", "ooh", tab = "mh")})
 output$mh_ooh_age_var <- renderPlotly({
   plot_trend_chart(mh_ooh_aver() %>% filter(type == "age") %>% 
-                     mutate(category = factor(category, levels = c("Under 18", "18 - 44", "45 - 64", "65 and over"))), 
+                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
                    pal_age, c("age", "all"),  data_name = "ooh",tab = "mh", aver_week = T)})
 output$mh_ooh_age_tot <- renderPlotly({
   plot_trend_chart(mh_ooh_filt() %>% filter(type == "age") %>% 
-                     mutate(category = factor(category, levels = c("Under 18", "18 - 44", "45 - 64", "65 and over"))), 
+                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
                    pal_age, c("age", "all"), "total", "ooh", tab = "mh")})
 output$mh_ooh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_ooh_aver(), pal_chose = pal_depr, split = "dep", 
                                                         type = "variation", data_name = "ooh", tab = "mh", aver_week = T)})
