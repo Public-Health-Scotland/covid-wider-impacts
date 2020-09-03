@@ -33,6 +33,14 @@ output$geoname_ui_child <- renderUI({
   selectizeInput("geoname_child", label = NULL, choices = areas_summary_child, selected = "")
 })
 
+# Breastfeeding reactive drop-down control showing list of area names depending on areatype selected
+output$geoname_ui_bf <- renderUI({
+  
+  #Lists areas available in   
+  areas_summary_bf <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_bf])
+  
+  selectizeInput("geoname_bf", label = NULL, choices = areas_summary_bf, selected = "")
+})
 
 # Reactive dataset for flextable filter on geographical area
 filter_table_data_child <- function(dataset){
