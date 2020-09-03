@@ -1029,5 +1029,18 @@ perinatal %<>%
 
 saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 
+###############################################.
+## Maternal health ----
+###############################################.
+
+
+## Antenatal booking
+ante_booking <- read_csv(paste0(data_folder,"maternal_health/antenatal_booking/booking_sep.csv"),
+  col_types =list(week_book_starting=col_date(format="%d-%b-%y"))) %>%
+  janitor::clean_names()
+
+saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
+
+
 ##END
 
