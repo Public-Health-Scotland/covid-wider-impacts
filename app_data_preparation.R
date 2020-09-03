@@ -1083,10 +1083,10 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-0
 ###############################################.
 ## A&E - mental health ----
 ###############################################.
-old_mh_aye <- read_xlsx(paste0(data_folder, "A&E_mh/Mental Health Diagnosis.xlsx")) %>% 
-  clean_names() 
 
-mh_aye <- read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv")) %>% 
+mh_aye <- rbind(read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv")) %>% 
+                  filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) ,
+                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to02092020.csv"))) %>% 
   clean_names() 
 
 # List of terms used to identify mh cases
@@ -1198,7 +1198,7 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-08-16")
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-08-23")
 
 ###############################################.
 ## OOH - mental health ----
