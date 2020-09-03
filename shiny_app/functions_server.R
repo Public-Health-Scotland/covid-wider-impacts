@@ -78,7 +78,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     if (aver_week == T) {
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                                "Average of week ending ", format(trend_data$week_ending, "%d %b %y"), " and two previous weeks",
+                                "Average of week ending ", format(trend_data$week_ending, "%d %b %y"), 
+                                "<br> and two previous weeks",
                                 "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
       
     } else {
