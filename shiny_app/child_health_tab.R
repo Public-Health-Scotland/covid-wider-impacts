@@ -156,16 +156,49 @@ output$child_health_explorer <- renderUI({
   
 }) #close child_health_explorer function
 
+# Breastfeeding charts
+output$bf_reviews <- renderPlotly({
+  trend_data <- breastfeeding_filt()
+  
+  # Modifying standard layout
+  yaxis_plots[["title"]] <- "Number of health visitor first visits"
+  xaxis_plots[["dtick"]] <- 1
+  
+  hist_legend <- "Average 2018-2019"
+  
+  xaxis_plots[["tickvals"]] <- unique(trend_data$month_review)
+  xaxis_plots[["ticktext"]] <- format(unique(trend_data$month_review), "%B %Y")
+  
+  tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%B %y"),
+                            "<br>", "Number of health visitor first visits", trend_data$no_reviews,
+                            "<br>", "Historic average: ", trend_data$no_reviews_avg))
+  
+  # Creating time trend plot
+  plot_ly(data = trend_data, x = ~month_review) %>% 
+    # 2020 trend line
+    add_lines(y = ~no_reviews, line = list(color = pal_overall[1]),
+              text = tooltip_trend, hoverinfo="text",
+              name = "2020") %>% 
+    # 2018-2019 average trend line
+    add_lines(y = ~no_reviews_avg, line = list(color = pal_overall[2], dash = "dash"), 
+              text = tooltip_trend, hoverinfo = "text", name = hist_legend) %>% 
+    # Layout
+    layout(margin = list(b = 80, t=5),
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.5)) %>% 
+    # Configure modebar buttons
+    config(displaylogo = F, displayModeBar = T, modeBarButtonsToRemove = bttn_remove)
+})
+
 # Breastfeeding explorer
 output$breastfeeding_explorer <- renderUI({
   tagList(
     fluidRow(
       column(12,
              p("Placeholder for intro text, if required"),
-             h4(paste0("Chart title ", input$measure_select_bf))),
-      fluidRow(withSpinner(plotlyOutput("")))
+             h4(paste0("Chart title ", input$measure_select_bf)))),
+      fluidRow(withSpinner(plotlyOutput("bf_reviews")))
     )
-  )
 })
 
 ###############################################.

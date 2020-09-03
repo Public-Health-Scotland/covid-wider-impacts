@@ -209,7 +209,7 @@ tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_bf",
                                            label= "Step 2. Select the data you want to explore.",
-                                           choices = data_list_child[1:2], status = "primary",
+                                           choices = data_list_bf, status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_bf_modal", "Data source: ???", icon = icon('question-circle')),
                   fluidRow(br()),
