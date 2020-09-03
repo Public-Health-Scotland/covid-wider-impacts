@@ -102,6 +102,9 @@ six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
+# Breastfeeding data
+breastfeeding <- readRDS("data/breastfeeding_data.rds")
+
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
