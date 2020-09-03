@@ -47,6 +47,17 @@ filter_table_data_child <- function(dataset){
   dataset %>% filter(area_name == input$geoname_child)
 }
 
+# Reactive breastfeeding dataset
+breastfeeding_filt <- reactive({
+  
+  review_chosen <- case_when( input$measure_select_bf == "Health Visitor first visit" ~ "First visit",
+                              input$measure_select_bf == "6-8 Week Review" ~ "6-8 weeks")
+  
+  breastfeeding %>% filter(area_name == input$geoname_bf &
+                         area_type == input$geotype_bf &
+                         review == review_chosen)
+})
+
 ###############################################.
 ## Child Health Tab Reactive layout  ----
 ###############################################.
