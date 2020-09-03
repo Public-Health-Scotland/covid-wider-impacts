@@ -156,6 +156,17 @@ output$child_health_explorer <- renderUI({
   
 }) #close child_health_explorer function
 
+# Breastfeeding explorer
+output$breastfeeding_explorer <- renderUI({
+  tagList(
+    fluidRow(
+      column(12,
+             p("Placeholder for intro text, if required"),
+             h4(paste0("Chart title ", input$measure_select_bf))),
+      fluidRow(withSpinner(plotlyOutput("")))
+    )
+  )
+})
 
 ###############################################.
 ## Child Health Commentary tab content  ----
