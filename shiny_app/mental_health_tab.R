@@ -311,6 +311,10 @@ output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_depr,
 ###############################################.
 # The charts and text shown on the app will depend on what the user wants to see
 output$mh_explorer <- renderUI({
+  
+  note_average <- p("Please note that to ease interpretation of the charts showing ",
+                    "percentage of change, we are presenting 3-week rolling average figures.")
+  
   if (input$measure_mh_select == "mhdrugs") { 
     tagList(# Prescribing - items dispensed
       h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh)),
@@ -334,15 +338,19 @@ output$mh_explorer <- renderUI({
       tagList(
         plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
                      time in 2018-2019 by sex", "ae_mh_sex_var",
-                     "Weekly number of mental health A&E attendances by sex", "ae_mh_sex_tot"),
+                     "Weekly number of mental health A&E attendances by sex", "ae_mh_sex_tot", 
+                     extra_content = note_average),
         plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
                      time in 2018-2019 by age group", "ae_mh_age_var",
-                     "Weekly number of mental health A&E attendances by age group", "ae_mh_age_tot"),
+                     "Weekly number of mental health A&E attendances by age group", "ae_mh_age_tot",
+                     extra_content = note_average),
         plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
                      time in 2018-2019 by SIMD quintile", "ae_mh_dep_var",
                      "Weekly number of mental health A&E attendances by SIMD quintile", "ae_mh_dep_tot",
-                     extra_content = actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?", 
-                                                  icon = icon('question-circle')))
+                     extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
+                                                  icon = icon('question-circle')),
+                                             note_average)
+                     )
       ) #taglist bracket from if statement
       
     }
@@ -357,15 +365,19 @@ output$mh_explorer <- renderUI({
           tagList(
             plot_cut_box("Percentage change in mental health out of hours consultations compared with the corresponding
                      time in 2018-2019 by sex", "mh_ooh_sex_var",
-                         "Weekly number of mental health out of hours consultations by sex", "mh_ooh_sex_tot"),
+                         "Weekly number of mental health out of hours consultations by sex", "mh_ooh_sex_tot",
+                         extra_content = note_average),
             plot_cut_box("Percentage change in mental health out of hours consultations compared with the corresponding
                      time in 2018-2019 by age group", "mh_ooh_age_var",
-                         "Weekly number of mental health out of hours consultations by age group", "mh_ooh_age_tot"),
+                         "Weekly number of mental health out of hours consultations by age group", "mh_ooh_age_tot",
+                         extra_content = note_average),
             plot_cut_box("Percentage change in mental health out of hours consultations compared with the corresponding
                      time in 2018-2019 by SIMD quintile", "mh_ooh_dep_var",
                          "Weekly number of mental health out of hours consultations by SIMD quintile", "mh_ooh_dep_tot",
-                         extra_content = actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
-                                                      icon = icon('question-circle')))
+                         extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
+                                                      icon = icon('question-circle')),
+                                                 note_average)
+                         )
           ) #taglist bracket from if statement
           }
       ) #taglist bracket from ooh section
