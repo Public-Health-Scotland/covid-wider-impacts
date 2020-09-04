@@ -10,6 +10,7 @@ observeEvent(input$btn_childdev_modal,
                title = "What is the data source?",
                p("Data source: xxxx."),
                p("Placeholder"),
+               p("Data for NHS Greater Glasgow and Clyde is only available from May 2019 onwards."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -68,12 +69,19 @@ output$childdev_no_reviews <- renderPlotly({
   
   trend_data <- child_dev_filt()
   
+    #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50)
+  } else {
+  
   #Modifying standard layout
   yaxis_plots[["title"]] <- "Number of reviews"
   
     tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
                               "<br>", "Number of reviews: ", trend_data$no_reviews,
-                              "<br>", "Number of reviews with meaningful data:  ", trend_data$no_meaningful_reviews))
+                              "<br>", "Number of reviews with meaningful data:  ", trend_data$no_meaningful_reviews,
+                              "<br>", "Percentage reviews with meaningful data: ", trend_data$pc_meaningful, "%"))
   
   
     #Creating time trend plot
@@ -88,6 +96,8 @@ output$childdev_no_reviews <- renderPlotly({
              legend = list(x = 100, y = 0.5)) %>% #position of legend
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+    
+  }
 })
 
 ###############################################.
@@ -97,8 +107,7 @@ output$childdev_no_reviews <- renderPlotly({
 output$download_childdev_data <- downloadHandler(
   filename ="stillbirth_infantdeaths_extract.csv",
   content = function(file) {
-    write_csv(child_dev,
-              file) } 
+    write_csv(child_dev_filt(), file) } 
 )
 
 
