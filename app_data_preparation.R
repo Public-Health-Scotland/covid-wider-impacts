@@ -1049,22 +1049,9 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/13-15m data
   clean_names() %>% 
   rename(area_name = hb) %>% 
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
-         month_number = month(month_review))
-
-# Creating average admissions of pre-covid data (2018-2019) by day of the year
-child_dev_historic <- child_dev %>% filter(year(month_review) %in% c("2018", "2019")) %>% 
-  group_by(area_name, review, month_number) %>% 
-  # Not using mean to avoid issues with missing data for some months
-  summarise(no_reviews_aver = round(mean(no_reviews), 1),
-            no_meaningful_reviews_aver = round(mean(no_meaningful_reviews), 1),
-            concerns_1_plus_aver = round(mean(concerns_1_plus), 1),
-            pc_meaningful_aver = round(mean(pc_meaningful), 1),
-            pc_1_plus_aver = round(mean(pc_1_plus), 1)) %>% ungroup() 
-
-child_dev <- left_join(child_dev %>% filter(year(month_review) %in% c("2020")), 
-                       child_dev_historic, 
-                       by = c("month_number", "area_name", "review")) %>% 
-  select(-month_number)
+         area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
+                               TRUE ~ area_name)) %>% 
+  filter((year(month_review) %in% c("2019", "2020")))
 
 saveRDS(child_dev, "shiny_app/data/child_dev_data.rds")
 
