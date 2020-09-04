@@ -57,7 +57,10 @@ output$childdev_explorer <- renderUI({
                     h4(paste0("Number of total ", review_title, 
                               " reviews and reviews with meaningful data recorded")))),
     fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
-    fluidRow(withSpinner(plotlyOutput("childdev_meaningful_pc")))
+    fluidRow(column(12, 
+                    h4(paste0("Percentage of children with 1 or more developmental concerns at the ",  
+                              review_title, " review")))),
+    fluidRow(withSpinner(plotlyOutput("childdev_no_concerns")))
     )#tagLIst bracket
   
   }) #close perinatal_explorer function
@@ -100,7 +103,7 @@ output$childdev_no_reviews <- renderPlotly({
   }
 })
 
-output$childdev_meaningful_pc <- renderPlotly({
+output$childdev_no_concerns <- renderPlotly({
   trend_data <- child_dev_filt()
   
   #If no data available for that period then plot message saying data is missing
@@ -110,18 +113,18 @@ output$childdev_meaningful_pc <- renderPlotly({
   } else {
   
   #Modifying standard layout
-  yaxis_plots[["title"]] <- "Percentage of meaningful reviews"
+  yaxis_plots[["title"]] <- "Percentage (%)"
   
   tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
-                            "<br>", "Percentage reviews with meaningful data: ", trend_data$pc_meaningful, "%"))
+                            "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
   
   
   #Creating time trend plot
   plot_ly(data=trend_data, x=~month_review) %>%
-    add_lines(y = ~pc_meaningful, name = "Percentage of meaningful reviews", 
+    add_lines(y = ~pc_1_plus,  
               line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
-              marker = list(color = "black"), name = "Percentage of meaningful reviews") %>% 
-    add_lines(y = ~pc_meaningful_cntr, name = "Baseline of meaningful reviews",
+              marker = list(color = "black"), name = "% children with developmental concerns") %>% 
+    add_lines(y = ~pc_1_plus_centreline, name = "Average up to February 2020",
               line = list(color = "blue", dash = "longdash"), hoverinfo="none",
               name = "Centreline") %>% 
     #Layout
