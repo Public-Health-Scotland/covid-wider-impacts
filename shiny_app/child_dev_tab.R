@@ -57,7 +57,7 @@ output$childdev_explorer <- renderUI({
                     h4(paste0("Number of total ", review_title, 
                               " reviews and reviews with meaningful data recorded")))),
     fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
-    fluidRow()#withSpinner(plotlyOutput("childdev_no_reviews")))
+    fluidRow(withSpinner(plotlyOutput("childdev_meaningful_pc")))
     )#tagLIst bracket
   
   }) #close perinatal_explorer function
@@ -98,6 +98,38 @@ output$childdev_no_reviews <- renderPlotly({
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
     
   }
+})
+
+output$childdev_meaningful_pc <- renderPlotly({
+  trend_data <- child_dev_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50)
+  } else {
+  
+  #Modifying standard layout
+  yaxis_plots[["title"]] <- "Percentage of meaningful reviews"
+  
+  tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+                            "<br>", "Percentage reviews with meaningful data: ", trend_data$pc_meaningful, "%"))
+  
+  
+  #Creating time trend plot
+  plot_ly(data=trend_data, x=~month_review) %>%
+    add_lines(y = ~pc_meaningful, name = "Percentage of meaningful reviews", 
+              line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
+              marker = list(color = "black"), name = "Percentage of meaningful reviews") %>% 
+    add_lines(y = ~pc_meaningful_cntr, name = "Baseline of meaningful reviews",
+              line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+              name = "Centreline") %>% 
+    #Layout
+    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.5)) %>% #position of legend
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )}
 })
 
 ###############################################.
