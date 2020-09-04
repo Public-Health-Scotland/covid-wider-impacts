@@ -17,6 +17,7 @@ library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
 library(flextable)
 library(shinyBS) #for collapsible panels in commentary
+library(magrittr)
 
 ###############################################.
 ## Functions ----
