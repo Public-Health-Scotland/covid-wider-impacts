@@ -223,7 +223,7 @@ navbarMenu("Child health", icon = icon("child"),
 ## Child development ----
 ###############################################.
 tabPanel(title = "Child development", icon = icon("baby"), value = "child_dev",
-         wellPanel(actionButton("browser", "bksdvkv"),
+         wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_childdev",
                                            label= "Step 1 - Select the data you want to explore.",

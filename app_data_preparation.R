@@ -1053,10 +1053,20 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/13-15m data
                                TRUE ~ area_name)) %>% 
   filter((year(month_review) %in% c("2019", "2020"))) %>% 
   # Glasgow data started in May2019
-  filter(!(area_name == "NHS Greater Glasgow & Clyde" & month_review< as.Date("2019-05-01")))
+  filter(!(area_name == "NHS Greater Glasgow & Clyde" & month_review< as.Date("2019-05-01"))) 
+
+# Calculating centre lines and adding them to child_dev
+child_dev_centreline <- child_dev %>% 
+  filter(month_review< as.Date("2020-03-01")) %>% 
+  select(area_name, review, pc_1_plus) %>% group_by(area_name, review) %>% 
+  mutate(pc_1_plus_centreline = median(pc_1_plus)) %>% ungroup() %>% 
+  select(-pc_1_plus) %>% unique
+
+child_dev <- child_dev %>% left_join(child_dev_centreline)
+
+remove(child_dev_centreline)
 
 saveRDS(child_dev, "shiny_app/data/child_dev_data.rds")
-
 
 ##END
 
