@@ -1051,7 +1051,9 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/13-15m data
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
                                TRUE ~ area_name)) %>% 
-  filter((year(month_review) %in% c("2019", "2020")))
+  filter((year(month_review) %in% c("2019", "2020"))) %>% 
+  # Glasgow data started in May2019
+  filter(!(area_name == "NHS Greater Glasgow & Clyde" & month_review< as.Date("2019-05-01")))
 
 saveRDS(child_dev, "shiny_app/data/child_dev_data.rds")
 
