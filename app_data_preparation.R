@@ -1051,12 +1051,36 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/13-15m data
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
                                TRUE ~ area_name)) %>% 
-  filter((year(month_review) %in% c("2019", "2020"))) %>% 
+  filter((year(month_review) %in% c("2019", "2020")))
+
+# Calculating centre lines and adding them to child_dev
+centrelines_27_30m <- child_dev %>% 
+  group_by(area_name, review) %>% 
+  filter(review == "27-30 months",
+         month_review < as.Date("2020-03-01")) %>% 
+  summarise(pc_meaningful_cntr = mean(pc_meaningful),
+         pc_1_plus_cntr = mean(pc_1_plus)) %>% 
+  ungroup()
+
+centrelines_13_15m <- child_dev %>% 
+  group_by(area_name, review) %>% 
+  filter(review == "13-15 months",
+         month_review < as.Date("2020-03-01"),
+         month_review > as.Date("2019-04-01")) %>% 
+  summarise(pc_meaningful_cntr = mean(pc_meaningful),
+            pc_1_plus_cntr = mean(pc_1_plus)) %>% 
+  ungroup()
+
+centrelines <- rbind(centrelines_13_15m, centrelines_27_30m)
+
   # Glasgow data started in May2019
-  filter(!(area_name == "NHS Greater Glasgow & Clyde" & month_review< as.Date("2019-05-01")))
+child_dev <- child_dev %>% 
+  filter(!(area_name == "NHS Greater Glasgow & Clyde" & month_review< as.Date("2019-05-01"))) %>%
+  left_join(centrelines)
+
+remove(centrelines_13_15m, centrelines_27_30m, centrelines)
 
 saveRDS(child_dev, "shiny_app/data/child_dev_data.rds")
-
 
 ##END
 
