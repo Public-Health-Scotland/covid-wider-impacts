@@ -1033,14 +1033,27 @@ saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 ## Maternal health ----
 ###############################################.
 
-
 ## Antenatal booking
 ante_booking <- read_csv(paste0(data_folder,"maternal_health/antenatal_booking/booking_sep.csv"),
   col_types =list(week_book_starting=col_date(format="%d-%b-%y"))) %>%
-  janitor::clean_names()
+  janitor::clean_names() 
+
+# Match area names from lookup
+ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher")) %>%
+  mutate(number=substr(area,1,1),
+    area_name=case_when(area=="Scotland" ~ "Scotland",
+                             (substr(area,1,4)=="SIMD") ~ "dep",
+                             (grep("[0-9]",number)) ~ "age",
+                             TRUE ~ area_name))
+
+has_numbers = grep("[0-9]", sub_str)
+,
+         area_type=case_when(type=="NHS Board" ~ "Health board"))
 
 saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
 
+
+(substr(hscp_name,3,5) == "All")
 
 ##END
 

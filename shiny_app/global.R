@@ -128,12 +128,16 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
                      "MMR first dose" = "mmr_dose1",
                      "MMR second dose" = "mmr_dose2")
 
-# List of data items available in step 2 of immunisation tab
+# List of data items available in step 2 of child health tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
                      "6-8 Week Review" = "six_eightwks",
                      "13-15 Month Review" = "13_15mnth",
                      "27-30 Month Review" = "27_30mnth",
                      "4-5 Year Review" = "4_5yr")
+
+# List of data items available in step 1 of maternal  health tab
+data_list_mat <- c("Antenatal booking" = "ante_booking",
+                     "Terminations" = "top")
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
