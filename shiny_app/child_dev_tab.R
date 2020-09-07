@@ -54,7 +54,7 @@ output$childdev_explorer <- renderUI({
                             
   tagList(
     fluidRow(column(12, 
-                    h4(paste0("Number of total ", review_title, 
+                    h4(paste0("Number of ", review_title, 
                               " reviews and reviews with meaningful data recorded")))),
     fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
     fluidRow(column(12, 
@@ -75,7 +75,7 @@ output$childdev_no_reviews <- renderPlotly({
     #If no data available for that period then plot message saying data is missing
   if (is.data.frame(trend_data) && nrow(trend_data) == 0)
   {
-    plot_nodata(height = 50)
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
   } else {
   
   #Modifying standard layout
@@ -89,7 +89,7 @@ output$childdev_no_reviews <- renderPlotly({
   
     #Creating time trend plot
     plot_ly(data=trend_data, x=~month_review) %>%
-    add_lines(y = ~no_reviews, name = "Number of total reviews", 
+    add_lines(y = ~no_reviews, name = "Number of reviews", 
               line = list(color = "#bf812d"), text=tooltip_trend, hoverinfo="text") %>% 
     add_lines(y = ~no_meaningful_reviews, name = "Number of reviews with meaningful data",
               line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>% 
@@ -109,11 +109,12 @@ output$childdev_no_concerns <- renderPlotly({
   #If no data available for that period then plot message saying data is missing
   if (is.data.frame(trend_data) && nrow(trend_data) == 0)
   {
-    plot_nodata(height = 50)
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
   } else {
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- "Percentage (%)"
+  xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
   
   tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
                             "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
@@ -129,7 +130,7 @@ output$childdev_no_concerns <- renderPlotly({
               name = "Centreline") %>% 
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           yaxis = yaxis_plots,  xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% #position of legend
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )}
