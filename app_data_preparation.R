@@ -1035,25 +1035,33 @@ saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 
 ## Antenatal booking
 ante_booking <- read_csv(paste0(data_folder,"maternal_health/antenatal_booking/booking_sep.csv"),
-  col_types =list(week_book_starting=col_date(format="%d-%b-%y"))) %>%
+  col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
+                  centreline=col_number())) %>%
   janitor::clean_names() 
 
 # Match area names from lookup
 ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher")) %>%
-  mutate(number=substr(area,1,1),
-    area_name=case_when(area=="Scotland" ~ "Scotland",
-                             (substr(area,1,4)=="SIMD") ~ "dep",
-                             (grep("[0-9]",number)) ~ "age",
-                             TRUE ~ area_name))
-
-has_numbers = grep("[0-9]", sub_str)
-,
-         area_type=case_when(type=="NHS Board" ~ "Health board"))
-
+  mutate(type=case_when(area_type=="Health board" ~ "Health board",
+                        area=="Scotland" ~ "Scotland",
+                        (substr(area,1,4)=="SIMD") ~ "dep", TRUE ~ "age"),
+         area_name=case_when(type=="Scotland" ~ "Scotland",
+                        type=="age" ~ "Scotland",
+                        type=="dep" ~ "Scotalnd",
+                        TRUE ~ area_name),
+         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name),
+         category=case_when(type=="Scotland" ~ "All",
+                            type=="Health board" ~ "All",
+                            type=="age" ~ area,
+                            type=="dep" ~ area, T ~"other"),
+         area=case_when(area=="SIMD 1" ~ "1 - most deprived",
+                        area=="SIMD 2" ~ "2 - most deprived",
+                        area=="SIMD 3" ~ "3 - most deprived",
+                        area=="SIMD 4" ~ "4 - most deprived",
+                        area=="SIMD 5" ~ "5 - least deprived",T ~area)) %>%
+  select(-area)
+  
 saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
 
-
-(substr(hscp_name,3,5) == "All")
 
 ##END
 

@@ -227,7 +227,7 @@ tabPanel(title = "Maternal Health", icon = icon("female"), value = "maternal",
                                            direction = "vertical", justified = T))),
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 2. Select the data breakdown you want to see.")),
-                         selectInput("geotype_mat", label = NULL, choices= c("Scotland", "Health board", "Age group", "Deprivation"),
+                         selectInput("geotype_mat", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
                  uiOutput("geoname_ui_mat")),
            column(4,actionButton("btn_mat_modal", "Data source: SMR2", icon = icon('question-circle')),
@@ -237,8 +237,8 @@ tabPanel(title = "Maternal Health", icon = icon("female"), value = "maternal",
                   #actionButton("jump_commentary_hv","Go to commentary"))
            #actionButton("browser", "Browser")
          ), #well panel
-         mainPanel(width = 12
-#                   uiOutput("cardio_explorer")
+         mainPanel(width = 12,
+                   uiOutput("maternal_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
 ###############################################.
