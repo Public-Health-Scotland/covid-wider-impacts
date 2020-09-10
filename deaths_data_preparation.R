@@ -1,7 +1,7 @@
 ##### Weekly all-cause deaths data preparation for Wider Impacts app
 ##### Liz Richardson 
 ##### elizabeth.richardson1@nhs.net 
-##### 15 July 2020
+##### 10 September 2020
 
 ###############################################.
 ## Packages ----
@@ -20,27 +20,44 @@ library(ggplot2)
 rm(list = ls())
 
 ## set pathways ----------------------
+
+#Source of the data: access granted via Chris Robertson chrisrobertson@nhs.net.  Contact Chris if data access needed. 
+datafile <- "F:/PHI/SHPN-PA/05 RIG/Surveillance/Mortality/03 Data/NRS_coded_deaths/NRS_Data.rds"
+
+#Paths to the secure folder that the PHO team use to access sensitive data. 
+#The syntax stores a copy of the deaths data here for easier access by the team, and stores the processed deaths data here too. 
 datafolder <- "Q:/Team-NRSData/NRS data/Projects/Weekly COVID deaths/data/"
 working <- "Q:/Team-NRSData/NRS data/Projects/Weekly COVID deaths/wider_impacts_dashboard/working_data/"
+lookups <- "Q:/Team-NRSData/NRS data/Projects/Weekly COVID deaths/wider_impacts_dashboard/data/"
+
+#Path to PHSCOVID19_Analysis where the processed deaths data needs to be stored for inclusion in the wider impacts shiny app (access granted via Victoria Elliott victoria.elliott@nhs.net)
+#The processed data can be emailed to Vicky or jaime.villacampa@nhs.net if the user of this script doesn't have access to this folder.
+shiny_files <- "B:/shiny_input_files/deaths/"
 
 ###############################################.
 ## Reading in data and lookups ----
 ###############################################.
 
 ### load deaths data ----------------------
-df_received <- readRDS(paste0(datafolder,"received_data/NRS_Data.rds")) %>% 
+#df_received <- readRDS(paste0(datafolder,"received_data/NRS_Data.rds")) %>% 
+#  as_tibble()
+df_received <- readRDS(datafile) %>% 
   as_tibble()
+#save the raw NRS data into the datafolder for others in PHO team to use
+setwd(paste0(datafolder, "received_data"))
+file.rename("NRS_Data.rds", paste0("NRS_Data (replaced on ", format(Sys.Date(), "%d-%b-%Y"), ").rds"))
+write_rds(df_received, "NRS_Data.rds")
 
 names(df_received) <- tolower(names(df_received)) # decapitalise column names
 
 ### load postcode-simd look up ---------------
-pc_lookup <- readRDS("data/pc_lookup.rds")
+pc_lookup <- readRDS(paste0(lookups, "pc_lookup.rds"))
 
 ### load weekly lookup file ----------------------
-weeks_lookup <- readRDS("data/weeks_lookup.rds")
+weeks_lookup <- readRDS(paste0(lookups, "weeks_lookup.rds"))
 
 ### load geography lookup file ----------------------
-geo_lookup <- readRDS("data/geo_lookup.rds")
+geo_lookup <- readRDS(paste0(lookups, "geo_lookup.rds"))
 
 ###############################################.
 ## Data prep ----
@@ -273,9 +290,11 @@ combined_wide <- combined %>%
   arrange(category, week_ending, area_type, area_name, type)
 
 ## save final data file
+setwd(shiny_files)
+file.rename("deaths_data.rds", paste0("deaths_data (replaced on ", format(Sys.Date(), "%d-%b-%Y"), ").rds"))
+write_rds(combined_wide, "deaths_data.rds")
 write_rds(combined_wide, paste0(working, "deaths_data.rds"))
-write_rds(combined_wide, "shiny_app/data/deaths_data.rds")
-
+write_rds(combined_wide, "Q:/Team-NRSData/NRS data/Projects/Weekly COVID deaths/wider_impacts_dashboard/shiny_app/data/deaths_data.rds")
 ########################################
 # QA checks against NRS published data:
 ########################################
