@@ -1046,7 +1046,7 @@ ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher"))
                         (substr(area,1,4)=="SIMD") ~ "dep", TRUE ~ "age"),
          area_name=case_when(type=="Scotland" ~ "Scotland",
                         type=="age" ~ "Scotland",
-                        type=="dep" ~ "Scotalnd",
+                        type=="dep" ~ "Scotland",
                         TRUE ~ area_name),
          area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name),
          category=case_when(type=="Scotland" ~ "All",
