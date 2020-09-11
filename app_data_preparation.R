@@ -1033,47 +1033,77 @@ saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 ## Breastfeeding ----
 ###############################################.
 
-# First Visit Data
-breastfeeding_fv <- read_xlsx(paste0(data_folder, "/breastfeeding/FirstVisitdata.xlsx")) %>% 
-  mutate(review = "First visit")
+# # First Visit Data
+# breastfeeding_fv <- read_xlsx(paste0(data_folder, "/breastfeeding/FirstVisitdata.xlsx")) %>% 
+#   mutate(review = "First visit")
+# 
+# # 6-8 Weeks Data
+# breastfeeding_6to8 <- read_xlsx(paste0(data_folder, "/breastfeeding/6-8week_data.xlsx")) %>% 
+#   mutate(review = "6-8 weeks")
+# 
+# # Combine datasets and tidy
+# breastfeeding <- rbind(breastfeeding_fv, breastfeeding_6to8) %>% 
+#   clean_names() %>% 
+#   rename(area_name = hb) %>% 
+#   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
+#          month_number = month(month_review),
+#          area_name = case_when(area_name != "Scotland" ~ paste0("NHS ", area_name),
+#          T ~ area_name))
+# 
+# # Creating 2018-2019 averages
+# breastfeeding_hist <- breastfeeding %>% 
+#   filter(year(month_review) %in% c("2018", "2019")) %>% 
+#   dplyr::group_by(area_name, review, month_number) %>% 
+#   summarise(no_reviews_avg = round(mean(no_reviews), 1),
+#             no_valid_reviews_avg = round(mean(no_valid_reviews), 1),
+#             exclusive_bf_avg = round(mean(exclusive_bf), 1),
+#             overall_bf_avg = round(mean(overall_bf), 1),
+#             ever_bf_avg = round(mean(ever_bf), 1),
+#             pc_valid_avg = round(mean(pc_valid), 1),
+#             pc_excl_avg = round(mean(pc_excl), 1),
+#             pc_overall_avg = round(mean(pc_overall), 1),
+#             pc_ever_avg = round(mean(pc_ever), 1)) %>% 
+#   ungroup()
+# 
+# # Join 2020 data with 2018-2019 averages
+# breastfeeding <- breastfeeding %>% 
+#   filter(year(month_review) == "2020") %>% 
+#   left_join(breastfeeding_hist, by = c("month_number", "area_name", "review")) %>% 
+#   select(-month_number)
+# 
+# saveRDS(breastfeeding, "shiny_app/data/breastfeeding_data.rds")
 
-# 6-8 Weeks Data
-breastfeeding_6to8 <- read_xlsx(paste0(data_folder, "/breastfeeding/6-8week_data.xlsx")) %>% 
-  mutate(review = "6-8 weeks")
+# # Remove temporary object from environment to reduce session size
+# rm(breastfeeding_fv, breastfeeding_6to8, breastfeeding_hist)
 
-# Combine datasets and tidy
-breastfeeding <- rbind(breastfeeding_fv, breastfeeding_6to8) %>% 
+# New approach 
+breastfeeding <- rbind(read_xlsx(paste0(data_folder, "/breastfeeding/FirstVisitdata.xlsx")) %>% 
+                         mutate(review = "First visit"),
+                       read_xlsx(paste0(data_folder, "/breastfeeding/6-8week_data.xlsx")) %>% 
+                         mutate(review = "6-8 weeks")) %>% 
   clean_names() %>% 
   rename(area_name = hb) %>% 
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
-         month_number = month(month_review),
-         area_name = case_when(area_name != "Scotland" ~ paste0("NHS ", area_name),
-         T ~ area_name))
+         area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
+                               TRUE ~ area_name)) %>% 
+  filter((year(month_review) %in% c("2019", "2020"))) %>% 
+  # Glasgow data started in May2019
+  filter(!(area_name == "NHS Greater Glasgow & Clyde" & month_review< as.Date("2019-05-01"))) 
 
-# Creating 2018-2019 averages
-breastfeeding_hist <- breastfeeding %>% 
-  filter(year(month_review) %in% c("2018", "2019")) %>% 
-  dplyr::group_by(area_name, review, month_number) %>% 
-  summarise(no_reviews_avg = round(mean(no_reviews), 1),
-            no_valid_reviews_avg = round(mean(no_valid_reviews), 1),
-            exclusive_bf_avg = round(mean(exclusive_bf), 1),
-            overall_bf_avg = round(mean(overall_bf), 1),
-            ever_bf_avg = round(mean(ever_bf), 1),
-            pc_valid_avg = round(mean(pc_valid), 1),
-            pc_excl_avg = round(mean(pc_excl), 1),
-            pc_overall_avg = round(mean(pc_overall), 1),
-            pc_ever_avg = round(mean(pc_ever), 1)) %>% 
-  ungroup()
+# Calculating centre lines and adding them to breastfeeding
+breastfeeding_centreline <- breastfeeding %>% 
+  filter(month_review< as.Date("2020-03-01")) %>% 
+  select(area_name, review, pc_valid, pc_excl, pc_overall, pc_ever) %>% group_by(area_name, review) %>% 
+  mutate(pc_valid_centreline = median(pc_valid),
+         pc_excl_centreline = median(pc_excl),
+         pc_overall_centreline = median(pc_overall),
+         pc_ever_centreline = median(pc_ever)) %>% ungroup() %>% 
+  select(-c(pc_valid, pc_excl, pc_overall, pc_ever)) %>% unique
 
-# Join 2020 data with 2018-2019 averages
-breastfeeding <- breastfeeding %>% 
-  filter(year(month_review) == "2020") %>% 
-  left_join(breastfeeding_hist, by = c("month_number", "area_name", "review")) %>% 
-  select(-month_number)
+breastfeeding <- breastfeeding %>% left_join(breastfeeding_centreline)
+
+remove(breastfeeding_centreline)
 
 saveRDS(breastfeeding, "shiny_app/data/breastfeeding_data.rds")
-
-# Remove temporary object from environment to reduce session size
-rm(breastfeeding_fv, breastfeeding_6to8, breastfeeding_hist)
 
 ##END

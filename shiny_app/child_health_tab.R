@@ -156,46 +156,161 @@ output$child_health_explorer <- renderUI({
 # Breastfeeding explorer
 output$breastfeeding_explorer <- renderUI({
   tagList(
+    # Valid Reviews
     fluidRow(
-      column(12,
-             p("Placeholder for intro text, if required"),
-             h4(paste0("Chart title ", input$measure_select_bf)))),
-      fluidRow(withSpinner(plotlyOutput("bf_reviews")))
-    )
+      column(6,
+             h4(paste0("Number of (valid) reviews at ", input$measure_select_bf)),
+      withSpinner(plotlyOutput("bf_reviews"))),
+      column(6,
+             h4(paste0("Percentage of (valid) reviews at ", input$measure_select_bf)),
+      withSpinner(plotlyOutput("bf_reviews_pc")))),
+    # Exclusively breastfed
+    fluidRow(
+      column(6,
+             h4(paste0("Number of exclusively breastfed at ", input$measure_select_bf)),
+             withSpinner(plotlyOutput("bf_excl"))),
+      column(6,
+             h4(paste0("Percentage of exclusively breastfed at ", input$measure_select_bf)),
+             withSpinner(plotlyOutput("bf_excl_pc"))))
+  )
 })
 
 # Breastfeeding charts
 output$bf_reviews <- renderPlotly({
+  
   trend_data <- breastfeeding_filt()
   
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+  
   # Modifying standard layout
-  yaxis_plots[["title"]] <- "Number of health visitor first visits"
-  xaxis_plots[["dtick"]] <- 1
-  
-  hist_legend <- "Average 2018-2019"
-  
-  xaxis_plots[["tickvals"]] <- unique(trend_data$month_review)
-  xaxis_plots[["ticktext"]] <- format(unique(trend_data$month_review), "%B %Y")
+  yaxis_plots[["title"]] <- "Number of (valid) first visits"
   
   tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
                             "<br>", "Number of health visitor first visits: ", trend_data$no_reviews,
-                            "<br>", "Historic average: ", trend_data$no_reviews_avg))
+                            "<br>", "Number of valid first visits:  ", trend_data$no_valid_reviews,
+                            "<br>", "Percentage of valid first visits: ", trend_data$pc_valid, "%"))
   
   # Creating time trend plot
   plot_ly(data = trend_data, x = ~month_review) %>% 
-    # 2020 trend line
-    add_lines(y = ~no_reviews, line = list(color = pal_overall[1]),
+    add_lines(y = ~no_reviews, line = list(color = "#bf812d"),
               text = tooltip_trend, hoverinfo="text",
-              name = "2020") %>% 
-    # 2018-2019 average trend line
-    add_lines(y = ~no_reviews_avg, line = list(color = pal_overall[2], dash = "dash"), 
-              text = tooltip_trend, hoverinfo = "text", name = hist_legend) %>% 
+              name = "Number of first visits") %>% 
+    add_lines(y = ~no_valid_reviews, line = list(color = "#74add1", dash = "dash"), 
+              text = tooltip_trend, hoverinfo = "text", name = "Number of valid first visits") %>% 
     # Layout
     layout(margin = list(b = 80, t=5),
            yaxis = yaxis_plots, xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% 
     # Configure modebar buttons
     config(displaylogo = F, displayModeBar = T, modeBarButtonsToRemove = bttn_remove)
+  }
+})
+
+output$bf_reviews_pc <- renderPlotly({
+  
+  trend_data <- breastfeeding_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- "Percentage (%)"
+    xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
+    
+    tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% valid first visits: ", trend_data$pc_valid, "%"))
+    
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~month_review) %>%
+      add_lines(y = ~pc_valid,  
+                line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
+                marker = list(color = "black"), name = "% valid first visits") %>% 
+      add_lines(y = ~pc_valid_centreline, name = "Average up to February 2020",
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                name = "Centreline") %>% 
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }
+})
+
+output$bf_excl <- renderPlotly({
+  
+  trend_data <- breastfeeding_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    # Modifying standard layout
+    yaxis_plots[["title"]] <- "Number of (valid) first visits"
+    
+    tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
+                              "<br>", "Number exclusively breastfed: ", trend_data$exclusive_bf,
+                              "<br>", "Percentage exclusively breastfed: ", trend_data$pc_excl, "%"))
+    
+    # Creating time trend plot
+    plot_ly(data = trend_data, x = ~month_review) %>% 
+      add_lines(y = ~exclusive_bf, line = list(color = "#bf812d"),
+                text = tooltip_trend, hoverinfo="text",
+                name = "Number exclusively breastfed") %>% 
+      add_lines(y = ~no_valid_reviews, line = list(color = "#74add1", dash = "dash"), 
+                text = tooltip_trend, hoverinfo = "text", name = "Number of valid first visits") %>% 
+      # Layout
+      layout(margin = list(b = 80, t=5),
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% 
+      # Configure modebar buttons
+      config(displaylogo = F, displayModeBar = T, modeBarButtonsToRemove = bttn_remove)
+  }
+})
+
+output$bf_excl_pc <- renderPlotly({
+  
+  trend_data <- breastfeeding_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- "Percentage (%)"
+    xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
+    
+    tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% valid first visits: ", trend_data$pc_excl, "%"))
+    
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~month_review) %>%
+      add_lines(y = ~pc_excl,  
+                line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
+                marker = list(color = "black"), name = "% exclusively breastfed") %>% 
+      add_lines(y = ~pc_excl_centreline, name = "Average up to February 2020",
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                name = "Centreline") %>% 
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }
 })
 
 ###############################################.
