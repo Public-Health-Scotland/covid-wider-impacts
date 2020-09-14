@@ -116,7 +116,7 @@ spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
 
 data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
                "NHS 24 completed contacts" = "nhs24", 
-               "Out of hours consultations" = "ooh", "Scottish Ambulance Service" = "sas",
+               "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
                "Excess mortality" = "deaths")
 
 #List of data items available in step 2 of immunisation tab
