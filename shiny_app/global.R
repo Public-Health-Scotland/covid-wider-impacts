@@ -104,6 +104,8 @@ mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
 # Breastfeeding data
 breastfeeding <- readRDS("data/breastfeeding_data.rds")
+#Child development data
+child_dev <- readRDS("data/child_dev_data.rds")
 
 ###############################################.
 ## Objects, names, lists ----
@@ -134,6 +136,9 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
                      "13-15 Month Review" = "13_15mnth",
                      "27-30 Month Review" = "27_30mnth",
                      "4-5 Year Review" = "4_5yr")
+
+data_list_childdev <- c("13-15 months review" = "13_15mnth",
+                     "27-30 months review" = "27_30mnth")
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",

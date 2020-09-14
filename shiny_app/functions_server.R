@@ -1,5 +1,8 @@
 # Functions for server side
 
+# Helper function
+`%notin%` <- Negate(`%in%`)
+
 ###############################################.
 # Function that creates line trend charts in Plotly for different splits: age, sex, depr, condition
 # THree parameters: pal_chose - what palette of colours you want
@@ -130,10 +133,16 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 ## Function for overall charts ----
 ###############################################.
 
-plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
+plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
+                               var2020 = "count", var_aver = "count_average",
+                               xvar = "week_ending", filtering = T) {
   
-  # Filtering dataset to include only overall figures
-  trend_data <- filter_data(dataset, area = area)
+  if (filtering == T) {
+    # Filtering dataset to include only overall figures
+    trend_data <- filter_data(dataset, area = area)
+  } else {
+    trend_data <- dataset
+  }
   
   ###############################################.
   # Creating objects that change depending on dataset
@@ -144,13 +153,14 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                            data_name == "sas" ~ "Number of incidents",
                            data_name == "cath" ~ "Number of cases",
                            data_name == "drug_presc" ~ "Number of items prescribed",
-                           data_name == "deaths" ~ "Number of deaths")
+                           data_name == "deaths" ~ "Number of deaths",
+                           data_name ==  "childdev" ~ "% of children with 1+ developmental concerns recorded")
 
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "Average 2018-2019",
+  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "childdev") ~ "Average 2018-2019",
                           data_name == "deaths" ~ "Average 2015-2019")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
@@ -160,21 +170,31 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                             data_name == "sas" ~ "Incidents: ",
                             data_name == "cath" ~ "Cases: ",
                             data_name == "drug_presc" ~ "Items prescribed: ",
-                            data_name == "deaths" ~ "Deaths: ")
+                            data_name == "deaths" ~ "Deaths: ",
+                            data_name == "childdev" ~ "Children with concerns: ")
   
   #Text for tooltip
-  tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                            "<br>", measure_name, trend_data$count,
-                            "<br>", "Historic average: ", trend_data$count_average))
-  
+  if (data_name == "childdev") {
+
+    tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%d %b %y"),
+                              "<br>", measure_name, trend_data$pc_1_plus,
+                              "<br>", "Historic average: ", trend_data$pc_1_plus_aver))
+    
+  } else {
+    tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                              "<br>", measure_name, trend_data$count,
+                              "<br>", "Historic average: ", trend_data$count_average))
+    
+  }
+
   #Creating time trend plot
-  plot_ly(data=trend_data, x=~week_ending) %>%
+  plot_ly(data=trend_data, x=~get(xvar)) %>%
     # 2020 line
-    add_lines(y = ~count, line = list(color = pal_overall[1]),
+    add_lines(y = ~get(var2020), line = list(color = pal_overall[1]),
               text=tooltip_trend, hoverinfo="text",
               name = "2020") %>%
     # Average of previous years line
-    add_lines(y = ~count_average, line = list(color = pal_overall[2], dash = 'dash'),
+    add_lines(y = ~get(var_aver), line = list(color = pal_overall[2], dash = 'dash'),
               text=tooltip_trend, hoverinfo="text",
               name = hist_legend) %>%
     #Layout

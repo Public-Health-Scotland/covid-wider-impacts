@@ -16,19 +16,23 @@ function(input, output, session) {
 
   ###############################################.
   # Cardiovascular tab
-  source(file.path("cardio_tab.R"),  local = TRUE)$value
+  # source(file.path("cardio_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Immunisation tab
   source(file.path("immunisation_tab.R"),  local = TRUE)$value
 
   ###############################################.
-  # Child Health tab
+  # Child health reviews tab
   source(file.path("child_health_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Perinatal tab
   source(file.path("perinatal_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
+  # Child development tab
+  source(file.path("child_dev_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Data tab
@@ -44,6 +48,7 @@ function(input, output, session) {
    observeEvent(input$jump_to_immunisation, {updateTabsetPanel(session, "intabset", selected = "imm")})
    observeEvent(input$jump_to_childreview, {updateTabsetPanel(session, "intabset", selected = "child_review")})  
   observeEvent(input$jump_to_perinatal_mortality, {updateTabsetPanel(session, "intabset", selected = "perinatal")})
+  observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
   
 # To jump to commentary tab - requires multiple lines becuase action buttons must have unique ID
    observeEvent(input$jump_commentary_child, {updateTabsetPanel(session, "intabset", selected = "comment")})
@@ -51,6 +56,7 @@ function(input, output, session) {
    observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")})
    observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")})
+  observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")})
   
 #trying to find way to link multiple action buttons to one observeEvent - sort of works but then creates an loop with undesired effect
 observe({
@@ -78,5 +84,8 @@ observe({
    
   observeEvent(input$perinatal_button, ({
     updateCollapse(session, "collapse_commentary", open = "Stillbirths and infant deaths")}))
+  
+  observeEvent(input$childdev_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Child development")}))
   
 } # server end

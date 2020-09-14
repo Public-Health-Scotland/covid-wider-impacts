@@ -4,8 +4,6 @@
 ## Reactive controls  ----
 ###############################################.
 
-# Helper function
-`%notin%` <- Negate(`%in%`)
 # Show list of area names depending on areatype selected
 output$geoname_cardio_ui <- renderUI({
 
