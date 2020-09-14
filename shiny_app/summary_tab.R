@@ -277,7 +277,7 @@ output$data_explorer <- renderUI({
   dataset <- case_when(input$measure_select == "rapid" ~ "admissions",
                        input$measure_select == "aye" ~ "attendances",
                        input$measure_select == "nhs24" ~ "completed contacts",
-                       input$measure_select == "ooh" ~ "consultations",
+                       input$measure_select == "ooh" ~ "cases",
                        input$measure_select == "sas" ~ "incidents",
                        input$measure_select == "deaths" ~ "deaths")
   

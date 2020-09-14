@@ -139,7 +139,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                            data_name == "aye" ~ "Number of attendances",
-                           data_name == "ooh" ~ "Number of consultations",
+                           data_name == "ooh" ~ "Number of cases",
                            data_name == "nhs24" ~ "Number of completed contacts",
                            data_name == "sas" ~ "Number of incidents",
                            data_name == "cath" ~ "Number of cases",
@@ -155,7 +155,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                             data_name == "aye" ~ "Attendances: ",
-                            data_name == "ooh" ~ "Consultations: ",
+                            data_name == "ooh" ~ "Cases: ",
                             data_name == "nhs24" ~ "Completed contacts: ",
                             data_name == "sas" ~ "Incidents: ",
                             data_name == "cath" ~ "Cases: ",
