@@ -337,8 +337,10 @@ output$cardio_explorer <- renderUI({
       tagList(# A&E attendances (cardiovascular only)
         tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
                  incomplete for a number of NHS Boards. Thus, the figures reported for cardiovascular-related 
-                 attendances offer only a very approximate indication of attendances. 
-                 Additionally, some NHS Boards have moved to a new recording standard which 
+                 attendances offer only a very approximate indication of attendances. In addition, due to a technical
+                 issue in the A&E diagnosis recording for the weeks ending in 2nd and 9th August
+                 figures for NHS Greater Glasgow & Clyde are incomplete for that time period.
+                 Moreover, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
                  even prior to the introduction of lockdown measures, appear somewhat lower when compared to 
                  previous years."),

@@ -33,11 +33,27 @@ output$geoname_ui_child <- renderUI({
   selectizeInput("geoname_child", label = NULL, choices = areas_summary_child, selected = "")
 })
 
+# Breastfeeding reactive drop-down control showing list of area names depending on areatype selected
+output$geoname_ui_bf <- renderUI({
+  
+  #Lists areas available in   
+  areas_summary_bf <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_bf])
+  
+  selectizeInput("geoname_bf", label = NULL, choices = areas_summary_bf, selected = "")
+})
 
 # Reactive dataset for flextable filter on geographical area
 filter_table_data_child <- function(dataset){
   dataset %>% filter(area_name == input$geoname_child)
 }
+
+# Reactive breastfeeding dataset
+breastfeeding_filt <- reactive({
+  
+  breastfeeding %>% filter(area_type == input$geotype_bf &
+                           area_name == input$geoname_bf &
+                           review == input$measure_select_bf)
+})
 
 ###############################################.
 ## Child Health Tab Reactive layout  ----
@@ -137,6 +153,165 @@ output$child_health_explorer <- renderUI({
   
 }) #close child_health_explorer function
 
+# Breastfeeding explorer
+output$breastfeeding_explorer <- renderUI({
+  tagList(
+    # Valid Reviews
+    fluidRow(
+      column(6,
+             h4(paste0("Number of (valid) reviews at ", input$measure_select_bf)),
+      withSpinner(plotlyOutput("bf_reviews"))),
+      column(6,
+             h4(paste0("Percentage of (valid) reviews at ", input$measure_select_bf)),
+      withSpinner(plotlyOutput("bf_reviews_pc")))),
+    # Exclusively breastfed
+    fluidRow(
+      column(6,
+             h4(paste0("Number of exclusively breastfed at ", input$measure_select_bf)),
+             withSpinner(plotlyOutput("bf_excl"))),
+      column(6,
+             h4(paste0("Percentage of exclusively breastfed at ", input$measure_select_bf)),
+             withSpinner(plotlyOutput("bf_excl_pc"))))
+  )
+})
+
+# Breastfeeding charts
+output$bf_reviews <- renderPlotly({
+  
+  trend_data <- breastfeeding_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+  
+  # Modifying standard layout
+  yaxis_plots[["title"]] <- "Number of (valid) first visits"
+  
+  tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
+                            "<br>", "Number of health visitor first visits: ", trend_data$no_reviews,
+                            "<br>", "Number of valid first visits:  ", trend_data$no_valid_reviews,
+                            "<br>", "Percentage of valid first visits: ", trend_data$pc_valid, "%"))
+  
+  # Creating time trend plot
+  plot_ly(data = trend_data, x = ~month_review) %>% 
+    add_lines(y = ~no_reviews, line = list(color = "#bf812d"),
+              text = tooltip_trend, hoverinfo="text",
+              name = "Number of first visits") %>% 
+    add_lines(y = ~no_valid_reviews, line = list(color = "#74add1", dash = "dash"), 
+              text = tooltip_trend, hoverinfo = "text", name = "Number of valid first visits") %>% 
+    # Layout
+    layout(margin = list(b = 80, t=5),
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.5)) %>% 
+    # Configure modebar buttons
+    config(displaylogo = F, displayModeBar = T, modeBarButtonsToRemove = bttn_remove)
+  }
+})
+
+output$bf_reviews_pc <- renderPlotly({
+  
+  trend_data <- breastfeeding_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- "Percentage (%)"
+    xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
+    
+    tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% valid first visits: ", trend_data$pc_valid, "%"))
+    
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~month_review) %>%
+      add_lines(y = ~pc_valid,  
+                line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
+                marker = list(color = "black"), name = "% valid first visits") %>% 
+      add_lines(y = ~pc_valid_centreline, name = "Average up to February 2020",
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                name = "Centreline") %>% 
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }
+})
+
+output$bf_excl <- renderPlotly({
+  
+  trend_data <- breastfeeding_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    # Modifying standard layout
+    yaxis_plots[["title"]] <- "Number of (valid) first visits"
+    
+    tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
+                              "<br>", "Number exclusively breastfed: ", trend_data$exclusive_bf,
+                              "<br>", "Percentage exclusively breastfed: ", trend_data$pc_excl, "%"))
+    
+    # Creating time trend plot
+    plot_ly(data = trend_data, x = ~month_review) %>% 
+      add_lines(y = ~exclusive_bf, line = list(color = "#bf812d"),
+                text = tooltip_trend, hoverinfo="text",
+                name = "Number exclusively breastfed") %>% 
+      add_lines(y = ~no_valid_reviews, line = list(color = "#74add1", dash = "dash"), 
+                text = tooltip_trend, hoverinfo = "text", name = "Number of valid first visits") %>% 
+      # Layout
+      layout(margin = list(b = 80, t=5),
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% 
+      # Configure modebar buttons
+      config(displaylogo = F, displayModeBar = T, modeBarButtonsToRemove = bttn_remove)
+  }
+})
+
+output$bf_excl_pc <- renderPlotly({
+  
+  trend_data <- breastfeeding_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- "Percentage (%)"
+    xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
+    
+    tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% valid first visits: ", trend_data$pc_excl, "%"))
+    
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~month_review) %>%
+      add_lines(y = ~pc_excl,  
+                line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
+                marker = list(color = "black"), name = "% exclusively breastfed") %>% 
+      add_lines(y = ~pc_excl_centreline, name = "Average up to February 2020",
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                name = "Centreline") %>% 
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }
+})
 
 ###############################################.
 ## Child Health Commentary tab content  ----
@@ -144,6 +319,10 @@ output$child_health_explorer <- renderUI({
  output$child_comments <- renderUI({
      tagList(
        bsButton("jump_to_childreview",label = "Go to data"),
+       h2("Child Health reviews - 2nd September 2020"),
+       p("Information on uptake of pre-school child health reviews was updated in this tool on 2 September. Information is provided on children becoming eligible for a review during the Covid-19 pandemic (in March 2020 to early July 2020) as well as before the pandemic (2019, January 2020, and February 2020)."),
+       p("Coverage of the Health Visitor first visit has remained high for children becoming eligible during the pandemic, with more than 95% of babies receiving their review by 6 weeks of age. Coverage of all other reviews had fallen for children eligible since March 2020. Recent data show that rates are beginning to recover in most, but not all, NHS Boards. There is some evidence of ‘catch-up’, with coverage for March and April improving with time, but this has still not reached the levels achieved in 2019. For the later child health reviews, which have a much longer timeframe for reviews to be delivered, particularly the 4-5 year review, it will take some time for final achieved coverage to be known. Information on final achieved coverage will continue to be provided through official statistics publications."),
+       p("Further background information on interpreting the data is provided in the commentary for 8 and 15 July 2020 below."),
        h2("Child Health reviews - 12th August 2020"),
        p("Information on uptake of pre-school child health reviews was updated in this tool on 12 August. Information is now provided on children becoming eligible for a review during the Covid-19 pandemic (in March 2020 to early June 2020) as well as before the pandemic (2019, January 2020, and February 2020)."),
        p("Coverage of the Health Visitor first visit has remained high for children becoming eligible during the pandemic, with more than 95% of babies receiving their review by 6 weeks of age. 
