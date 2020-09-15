@@ -180,14 +180,6 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
     yaxis_plots[["title"]] <- case_when(input$measure_select_perinatal %in% c("pnnd", "nnd", "infantdeaths") ~ "Rate per 1,000 live births", 
                                         input$measure_select_perinatal %in% c("extperi", "stillbirths") ~ "Rate per 1,000 (live + still) births")
     xaxis_plots[["title"]] <- "Month"
-  
-    
-    # xaxis_plots[["dtick"]] <- 180
-    # xaxis_plots[["tickmode"]] <- "array" 
-    # xaxis_plots[["tickvals"]] <- c("2017-01-01", "2017-06-01", "2018-01-01", "2018-06-01",
-    #                                "2019-01-01", "2019-06-01", "2020-01-01", "2020-05-01") %>% as.Date()
-    # xaxis_plots[["ticktext"]] <- c("2017-01-01", "2017-06-01", "2018-01-01", "2018-06-01",
-    #                                "2019-01-01", "2019-06-01", "2020-01-01", "2020-05-01")
       
     # Tooltip
     measure_selected <- case_when(input$measure_select_perinatal == "stillbirths" ~ "Still births",
