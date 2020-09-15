@@ -1,7 +1,7 @@
 ##Server script for maternal health tab
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_mat_modal, 
+observeEvent(input$btn_booking_modal, 
              showModal(modalDialog(#Maternal HEALTH MODAL
                title = "What is the data source?",
                p("The information shown on the numbers of children eligible for routine preschool reviews is taken from the",
@@ -44,12 +44,12 @@ observeEvent(input$btn_modal_simd_mat, { showModal(
 ###############################################.
 
 # maternal reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_mat <- renderUI({
+output$geoname_ui_booking <- renderUI({
   
   #Lists areas available in   
-  areas_summary_mat <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_mat])
+  areas_summary_booking <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_booking])
   
-  selectizeInput("geoname_mat", label = NULL, choices = areas_summary_mat, selected = "")
+  selectizeInput("geoname_booking", label = NULL, choices = areas_summary_booking, selected = "")
 })
 
 
@@ -58,27 +58,27 @@ output$geoname_ui_mat <- renderUI({
 ###############################################.
 
 #filter data for maternal health trend chart 
-mat_data_filter <- reactive({
+booking_data_filter <- reactive({
   
   #mat_chosen <-  case_when(input$measure_select_mat == "ante_booking" ~ booking,
    #                        input$measure_select_mat == "top" ~ top1)
-  mat_chosen <- booking
+  booking_chosen <- booking
   
-  if(input$geotype_mat=="Scotland"){
+  if(input$geotype_booking=="Scotland"){
     #mat_chosen %>% filter(area_type== input$geotype_mat & category=="All")
-    mat_chosen %>% filter(area_type== "Scotland" & category=="All")
-  } else if (input$geotype_mat=="Health board"){
-    mat_chosen %>% filter(area_type== input$geotype_mat & area_name==input$geoname_mat)
+    booking_chosen %>% filter(area_type== "Scotland" & category=="All")
+  } else if (input$geotype_booking=="Health board"){
+    booking_chosen %>% filter(area_type== input$geotype_booking & area_name==input$geoname_booking)
   }
 })
 
 #filter data for maternal health dep chart
 
-mat_data_filter_split <- reactive({
+booking_data_filter_split <- reactive({
  #mat_chosen <-  case_when(input$measure_select_mat == "ante_booking" ~ booking,
  #                        input$measure_select_mat == "top" ~ top1)
  
-   mat_chosen <- booking %>%  filter(area_type== "Scotland")
+   booking_chosen <- booking %>%  filter(area_type== "Scotland")
 
   })
 
@@ -90,25 +90,25 @@ mat_data_filter_split <- reactive({
 
 # Creating plots for each dataset
 
-output$mat_booking_trend <- renderPlotly({plot_mat_trend(dataset=mat_data_filter())})
-output$mat_booking_dep <- renderPlotly({plot_mat_split(dataset=mat_data_filter_split(), split="dep")})
-output$mat_booking_age <- renderPlotly({plot_mat_split(dataset=mat_data_filter_split(), split="age")})
+output$preg_booking_trend <- renderPlotly({plot_preg_trend(dataset=mat_data_filter())})
+output$preg_booking_dep <- renderPlotly({plot_preg_split(dataset=mat_data_filter_split(), split="dep")})
+output$preg_booking_age <- renderPlotly({plot_preg_split(dataset=mat_data_filter_split(), split="age")})
 #output$mat_booking_dep <- renderPlotly({plot_mat_split(dataset=booking,split="age")})
 
 
 
- output$maternal_explorer <- renderUI({
+ output$pregnancy_explorer <- renderUI({
  
    # text for titles of cut charts
-   mat_title <- case_when(input$measure_select_mat == "ante_booking" ~ paste0("Antenatal booking numbers: ", input$geoname_mat),
-                             input$measure_select_mat == "top" ~ paste0("Terminations: ", input$geoname_mat))
+   preg_title <- case_when(input$measure_select_booking == "ante_booking" ~ paste0("Antenatal booking numbers: ", input$geoname_mat),
+                             input$measure_select_booking == "top" ~ paste0("Terminations: ", input$geoname_mat))
    
-   mat_subtitle <-  paste0("Figures based on data extracted from XXXX on XXXX ")
+   preg_subtitle <-  paste0("Figures based on data extracted from XXXX on XXXX ")
    
-   mat_dep_title <- case_when(input$measure_select_mat == "ante_booking" ~ paste0("Antenatal booking numbers by deprivation: ", input$geoname_mat),
+   preg_dep_title <- case_when(input$measure_select_mat == "ante_booking" ~ paste0("Antenatal booking numbers by deprivation: ", input$geoname_mat),
                           input$measure_select_mat == "top" ~ paste0("Terminations by deprivation: ", input$geoname_mat))
    
-   mat_age_title <- case_when(input$measure_select_mat == "ante_booking" ~ paste0("Antenatal booking numbers by age group: ", input$geoname_mat),
+   preg_age_title <- case_when(input$measure_select_mat == "ante_booking" ~ paste0("Antenatal booking numbers by age group: ", input$geoname_mat),
                                input$measure_select_mat == "top" ~ paste0("Terminations by age group: ", input$geoname_mat))
    
    

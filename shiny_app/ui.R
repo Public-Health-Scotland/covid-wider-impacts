@@ -215,32 +215,60 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 )), # tabpanel bracket #navbarMenu bracket
+
 ###############################################.
-## Maternal Health ----
+## Pregnancy navbarmenu ----
 ###############################################.
-tabPanel(title = "Maternal Health", icon = icon("female"), value = "maternal",
+navbarMenu("Pregnancy", icon = icon("female"),
+###############################################.
+           tabPanel(title = "Antenatal booking", icon = icon("female"), value = "booking",
+                    wellPanel(
+                      column(12, h4("title of tab selected")),
+                      column(4, div(title="Select the data you want to explore.", # tooltip
+                                    radioGroupButtons("measure_select_booking",
+                                                      label= "Step 1. Select the data you want to explore.",
+                                                      choices = data_list_preg, status = "primary",
+                                                      direction = "vertical", justified = T))),
+                      column(4, div(title="Select a breakdown",
+                                    p(tags$b("Step 2. Select the data breakdown you want to see.")),
+                                    selectInput("geotype_booking", label = NULL, choices= c("Scotland", "Health board"),
+                                                selected = "Scotland")),
+                             uiOutput("geoname_ui_booking")),
+                      column(4,actionButton("btn_booking_modal", "Data source: SMR2", icon = icon('question-circle')),
+                             fluidRow(br()))
+                      #downloadButton("download_visit_data", "Download data"),
+                      #fluidRow(br()),
+                      #actionButton("jump_commentary_hv","Go to commentary"))
+                      #actionButton("browser", "Browser")
+                    ), #well panel
+                    mainPanel(width = 12,
+                              uiOutput("pregnancy_explorer")
+                    )# mainPanel bracket
+           ), #tab panel
+tabPanel(title = "Terminations", icon = icon("female"), value = "terminations",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_mat",
+                         radioGroupButtons("measure_select_top",
                                            label= "Step 1. Select the data you want to explore.",
                                            choices = data_list_mat, status = "primary",
                                            direction = "vertical", justified = T))),
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 2. Select the data breakdown you want to see.")),
-                         selectInput("geotype_mat", label = NULL, choices= c("Scotland", "Health board"),
+                         selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
-                 uiOutput("geoname_ui_mat")),
-           column(4,actionButton("btn_mat_modal", "Data source: SMR2", icon = icon('question-circle')),
+                  uiOutput("geoname_ui_top")),
+           column(4,actionButton("btn_top_modal", "Data source: SMR2", icon = icon('question-circle')),
                   fluidRow(br()))
-                  #downloadButton("download_visit_data", "Download data"),
-                  #fluidRow(br()),
-                  #actionButton("jump_commentary_hv","Go to commentary"))
+           #downloadButton("download_visit_data", "Download data"),
+           #fluidRow(br()),
+           #actionButton("jump_commentary_hv","Go to commentary"))
            #actionButton("browser", "Browser")
          ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("maternal_explorer")
+         mainPanel(width = 12
+                   #uiOutput("maternal_explorer")
          )# mainPanel bracket
-), # tabpanel bracket
+) #tab panel
+), # navbar menu bracket
 ###############################################.
 ## Data ----
 ###############################################.

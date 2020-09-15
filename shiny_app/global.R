@@ -137,8 +137,13 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
                      "4-5 Year Review" = "4_5yr")
 
 # List of data items available in step 1 of maternal  health tab
-data_list_mat <- c("Antenatal booking" = "ante_booking",
-                     "Terminations" = "top")
+# data_list_mat <- c("Antenatal booking" = "ante_booking",
+#                      "Terminations" = "top")
+
+# List of data items available in step 1 of maternal  health tab
+data_list_preg <- c("Numbers" = "preg_number",
+                    "Average gestation" = "preg_gestation")
+
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
