@@ -233,11 +233,11 @@ tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
                          selectInput("geotype_bf", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
                   uiOutput("geoname_ui_bf")),
-           column(4,actionButton("btn_bf_modal", "Data source and definitions", icon = icon('question-circle')),
+           column(4,actionButton("btn_breastfed_modal", "Data source and definitions", icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton("download_bf_data", "Download data"),
                   fluidRow(br()),
-                  actionButton("jump_commentary_bf","Go to commentary"))
+                  actionButton("jump_commentary_breastfed","Go to commentary"))
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("breastfeeding_explorer")
