@@ -1115,7 +1115,8 @@ breastfeeding <- rbind(read_xlsx(paste0(data_folder, "/breastfeeding/FirstVisitd
   rename(area_name = hb) %>% 
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
-                               TRUE ~ area_name)) %>% 
+                               TRUE ~ area_name),
+         month_review = as.Date(month_review)) %>% 
   filter((year(month_review) %in% c("2019", "2020")))
 
 # Calculating centre lines and adding them to breastfeeding
