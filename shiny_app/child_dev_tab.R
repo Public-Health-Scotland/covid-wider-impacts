@@ -214,7 +214,7 @@ output$download_childdev_data <- downloadHandler(
 output$childdev_commentary <- renderUI({
   tagList(
     bsButton("jump_to_childdev",label = "Go to data"), #this button can only be used once
-    h2("Child development reviews -  2020"),
+    h2("Child development reviews - 30th September 2020"),
     p("Placeholder")
   ) #tagLIst bracket
 })
