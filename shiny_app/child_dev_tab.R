@@ -11,6 +11,7 @@ observeEvent(input$btn_childdev_modal,
                p("Data source: xxxx."),
                p("Placeholder"),
                p("Data for NHS Greater Glasgow and Clyde is only available from May 2019 onwards."),
+               p("The average is calculated as the median value of the period specified."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -70,7 +71,7 @@ output$childdev_explorer <- renderUI({
 ###############################################.
 output$childdev_no_reviews <- renderPlotly({
   
-  trend_data <- child_dev_filt()
+  trend_data <- child_dev_filt() %>% mutate(dummy = 0)
   
     #If no data available for that period then plot message saying data is missing
   if (is.data.frame(trend_data) && nrow(trend_data) == 0)
@@ -86,7 +87,6 @@ output$childdev_no_reviews <- renderPlotly({
                               "<br>", "Number of reviews with meaningful data:  ", trend_data$no_meaningful_reviews,
                               "<br>", "Number of children with recorded concerns: ", trend_data$concerns_1_plus, "%"))
   
-  
     #Creating time trend plot
     plot_ly(data=trend_data, x=~month_review) %>%
       add_lines(y = ~no_reviews, name = "Number of reviews", 
@@ -95,6 +95,8 @@ output$childdev_no_reviews <- renderPlotly({
               line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>% 
       add_lines(y = ~concerns_1_plus, name = "Number of children with 1 or more developmental concern recorded",
                 line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>% 
+      # Dummy line so Glasgow axis shows from January onwards
+      add_lines(y = ~dummy, line = list(color = "white"), showlegend = F) %>% 
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -121,20 +123,38 @@ output$childdev_no_concerns <- renderPlotly({
   tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
                             "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
   
+  average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") ~ "Average from May 19 to February 20",
+                             T ~ "Average from January 19 to February 20")
   
   #Creating time trend plot
-  plot_ly() %>%
-    add_lines(data=trend_data, x=~month_review, y = ~pc_1_plus,  
+  run_plot <- plot_ly(data=trend_data, x=~month_review) %>%
+    add_lines( y = ~pc_1_plus,  
               line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
-              marker = list(color = "black"), name = "% children with developmental concerns") %>% 
-    add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01")), 
-              x=~month_review,
-              y = ~pc_1_plus_centreline, name = "Average up from May 19 to February 20",
-              line = list(color = "blue", dash = "solid"), hoverinfo="none") %>% 
-    add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01")), 
-              y = ~pc_1_plus_centreline, showlegend = FALSE, x=~month_review,
-              line = list(color = "blue", dash = "longdash"), hoverinfo="none") %>% 
-    #Layout
+              marker = list(color = "black"), name = "% children with developmental concerns")
+  
+  # Dotted line for projected tails of centreline. It changes depending on area.
+  if (input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde")) {
+    run_plot %<>%     
+      add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01") &
+                                             as.Date(month_review) >= as.Date("2019-05-01")), 
+                                y = ~pc_1_plus_centreline, name = average_title,
+                                line = list(color = "blue", dash = "solid"), hoverinfo="none") %>% 
+      add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01") |
+                                             as.Date(month_review) < as.Date("2019-05-01")), 
+                y = ~pc_1_plus_centreline, showlegend = FALSE, 
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none")
+  } else {
+    run_plot %<>%     
+      add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01")), 
+                y = ~pc_1_plus_centreline, name = average_title,
+                line = list(color = "blue", dash = "solid"), hoverinfo="none") %>% 
+      add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01")), 
+                y = ~pc_1_plus_centreline, showlegend = FALSE, 
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none")
+  }
+  
+  
+ run_plot %>% #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
            yaxis = yaxis_plots,  xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% #position of legend
