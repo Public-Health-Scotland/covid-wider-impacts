@@ -1077,6 +1077,7 @@ child_dev_centreline <- rbind(child_dev_centreline_hb, child_dev_centreline_scot
 child_dev %<>% left_join(child_dev_centreline) 
 
 child_dev %<>% 
+  group_by(area_name, area_type, review) %>% 
   mutate(# Shift: run of 6 or more consecutive data points above or below the pc_1_plus_centreline
          # First id when this run is happening and then iding all points part of it
          shift_i = case_when((pc_1_plus > pc_1_plus_centreline & lag(pc_1_plus, 1) > pc_1_plus_centreline 
@@ -1097,7 +1098,7 @@ child_dev %<>%
          trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
                            | lead(trend_i, 3) == T | lead(trend_i, 4) == T
                              ~ T, T ~ F)) %>% 
-  select(-shift_i, -trend_i)
+  select(-shift_i, -trend_i) %>% ungroup()
 
 remove(child_dev_centreline, child_dev_centreline_scot, child_dev_centreline_hb)
 
@@ -1120,7 +1121,6 @@ breastfeeding <- rbind(read_xlsx(paste0(data_folder, "/breastfeeding/FirstVisitd
 # Calculating centre lines and adding them to breastfeeding
 breastfeeding_centreline <- breastfeeding %>% 
   filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-01-01")) %>% 
-  filter(!area_name %in% c("Scotland", "NHS Greater Glasgow & Clyde")) %>% 
   select(area_name, review, pc_valid, pc_excl, pc_overall, pc_ever) %>% group_by(area_name, review) %>% 
   mutate(pc_valid_centreline = median(pc_valid),
          pc_excl_centreline = median(pc_excl),
@@ -1131,6 +1131,7 @@ breastfeeding_centreline <- breastfeeding %>%
 breastfeeding <- breastfeeding %>% left_join(breastfeeding_centreline)
 
 breastfeeding %<>% 
+  group_by(area_name, area_type, review) %>% 
   mutate(# Shift: run of 6 or more consecutive data points above or below the pc_1_plus_centreline
     # First id when this run is happening and then iding all points part of it
     shift_i_excl = case_when((pc_excl > pc_excl_centreline & lag(pc_excl, 1) > pc_excl_centreline 
@@ -1191,7 +1192,8 @@ breastfeeding %<>%
     trend_ever = case_when(trend_i_ever == T | lead(trend_i_ever, 1) == T | lead(trend_i_ever, 2) == T
                            | lead(trend_i_ever, 3) == T | lead(trend_i_ever, 4) == T
                            ~ T, T ~ F)) %>% 
-  select(-shift_i_ever, -trend_i_ever, -shift_i_excl, -trend_i_excl, -shift_i_over, -trend_i_over)
+  select(-shift_i_ever, -trend_i_ever, -shift_i_excl, -trend_i_excl, -shift_i_over, -trend_i_over) %>% 
+  ungroup
 
 remove(breastfeeding_centreline)
 
