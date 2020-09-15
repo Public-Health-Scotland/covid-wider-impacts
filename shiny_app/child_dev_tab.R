@@ -84,15 +84,17 @@ output$childdev_no_reviews <- renderPlotly({
     tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
                               "<br>", "Number of reviews: ", trend_data$no_reviews,
                               "<br>", "Number of reviews with meaningful data:  ", trend_data$no_meaningful_reviews,
-                              "<br>", "Percentage reviews with meaningful data: ", trend_data$pc_meaningful, "%"))
+                              "<br>", "Number of children with recorded concerns: ", trend_data$concerns_1_plus, "%"))
   
   
     #Creating time trend plot
     plot_ly(data=trend_data, x=~month_review) %>%
-    add_lines(y = ~no_reviews, name = "Number of reviews", 
+      add_lines(y = ~no_reviews, name = "Number of reviews", 
               line = list(color = "#bf812d"), text=tooltip_trend, hoverinfo="text") %>% 
-    add_lines(y = ~no_meaningful_reviews, name = "Number of reviews with meaningful data",
+      add_lines(y = ~no_meaningful_reviews, name = "Number of reviews with meaningful data",
               line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>% 
+      add_lines(y = ~concerns_1_plus, name = "Number of children with 1 or more developmental concern recorded",
+                line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>% 
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -121,13 +123,17 @@ output$childdev_no_concerns <- renderPlotly({
   
   
   #Creating time trend plot
-  plot_ly(data=trend_data, x=~month_review) %>%
-    add_lines(y = ~pc_1_plus,  
+  plot_ly() %>%
+    add_lines(data=trend_data, x=~month_review, y = ~pc_1_plus,  
               line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
               marker = list(color = "black"), name = "% children with developmental concerns") %>% 
-    add_lines(y = ~pc_1_plus_centreline, name = "Average up to February 2020",
-              line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-              name = "Centreline") %>% 
+    add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01")), 
+              x=~month_review,
+              y = ~pc_1_plus_centreline, name = "Average up from May 19 to February 20",
+              line = list(color = "blue", dash = "solid"), hoverinfo="none") %>% 
+    add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01")), 
+              y = ~pc_1_plus_centreline, showlegend = FALSE, x=~month_review,
+              line = list(color = "blue", dash = "longdash"), hoverinfo="none") %>% 
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
            yaxis = yaxis_plots,  xaxis = xaxis_plots,
