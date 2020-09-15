@@ -223,17 +223,17 @@ navbarMenu("Child health", icon = icon("child"),
 ##############################################.
 tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
          wellPanel(
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_select_bf",
+                                           label= "Step 1. Select the data you want to explore.",
+                                           choices = data_list_bf, status = "primary",
+                                           direction = "vertical", justified = T))),
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         p(tags$b("Step 2. Select a geography level and then an area of interest.")),
                          selectInput("geotype_bf", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
                   uiOutput("geoname_ui_bf")),
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_bf",
-                                           label= "Step 2. Select the data you want to explore.",
-                                           choices = data_list_bf, status = "primary",
-                                           direction = "vertical", justified = T))),
-           column(4,actionButton("btn_bf_modal", "Data source: ???", icon = icon('question-circle')),
+           column(4,actionButton("btn_bf_modal", "Data source and definitions", icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton("download_bf_data", "Download data"),
                   fluidRow(br()),
@@ -246,7 +246,7 @@ tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
 ###############################################.
 ## Child development ----
 ###############################################.
-tabPanel(title = "Child development", icon = icon("baby"), value = "child_dev",
+tabPanel(title = "Child development", icon = icon("seedling"), value = "child_dev",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_childdev",
