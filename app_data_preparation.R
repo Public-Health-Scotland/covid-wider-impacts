@@ -1096,7 +1096,7 @@ child_dev %<>%
          trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
                            | lead(trend_i, 3) == T | lead(trend_i, 4) == T
                              ~ T, T ~ F)) %>% 
-  select(shift_i, trend_i)
+  select(-shift_i, -trend_i)
 
 remove(child_dev_centreline, child_dev_centreline_scot, child_dev_centreline_hb)
 
