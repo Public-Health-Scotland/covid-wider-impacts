@@ -19,12 +19,10 @@ observeEvent(input$btn_childdev_modal,
 observeEvent(input$btn_childdev_rules,
              showModal(modalDialog(
                title = "How do we identify patterns in the data?",
-               p("COntrols charts follow a series of rules that help identify important changes in the data. 
+               p("Controls charts follow a series of rules that help identify important changes in the data. 
                  These are the ones we used in this chart:"),
                tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing."),
-                       tags$li("Outer One – Third: Two out of three consecutive data points which sit between the control and warning limits."),
-                       tags$li("Inner One -Third: 15 or more consecutive data points that lie close to the centreline.")),
+                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing.")),
                p("Different control charts are used depending on the type of data involved.
                  For the child development ones we have used run charts."),
                p("Further information on these methods of presenting data can be found at the ",                      
@@ -70,6 +68,14 @@ output$childdev_explorer <- renderUI({
                              "13-15 months" ,
                             input$measure_select_childdev == "27_30mnth" ~
                               "27-30 months")
+  
+  control_chart_commentary <- p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
+                                                      "‘control charts’",class="externallink"), "to present the percentages above.", br(),
+                                "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
+                      Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
+                                "The dots joined by a solid line in the chart above show the monthly percentage of children with developmental concerns recorded during the review selected from January 2019 onwards.", br(),  
+                                "The other line, the centreline, is there to help show how unexpected any observed changes are. 
+                      The centreline is an average (median) over the time period specified in the legend of the chart. ")
                             
   tagList(
     fluidRow(column(12, 
@@ -81,7 +87,8 @@ output$childdev_explorer <- renderUI({
                               review_title, " review")))),
     actionButton("btn_childdev_rules", "How do we identify patterns in the data?", 
                  icon = icon('question-circle')),
-    fluidRow(withSpinner(plotlyOutput("childdev_no_concerns")))
+    fluidRow(withSpinner(plotlyOutput("childdev_no_concerns"))),
+    control_chart_commentary
     )#tagLIst bracket
   
   }) #close perinatal_explorer function
@@ -105,7 +112,7 @@ output$childdev_no_reviews <- renderPlotly({
     tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
                               "<br>", "Number of reviews: ", trend_data$no_reviews,
                               "<br>", "Number of reviews with meaningful data:  ", trend_data$no_meaningful_reviews,
-                              "<br>", "Number of children with recorded concerns: ", trend_data$concerns_1_plus, "%"))
+                              "<br>", "Number of children with recorded concerns: ", trend_data$concerns_1_plus))
   
     #Creating time trend plot
     plot_ly(data=trend_data, x=~month_review) %>%
@@ -113,7 +120,7 @@ output$childdev_no_reviews <- renderPlotly({
               line = list(color = "#bf812d"), text=tooltip_trend, hoverinfo="text") %>% 
       add_lines(y = ~no_meaningful_reviews, name = "Number of reviews with meaningful data",
               line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>% 
-      add_lines(y = ~concerns_1_plus, name = "Number of children with 1 or more developmental concern recorded",
+      add_lines(y = ~concerns_1_plus, name = "Number of children with developmental concerns",
                 line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>% 
       # Dummy line so Glasgow axis shows from January onwards
       add_lines(y = ~dummy, line = list(color = "white"), showlegend = F) %>% 
@@ -138,7 +145,7 @@ output$childdev_no_concerns <- renderPlotly({
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- "Percentage (%)"
-  yaxis_plots[["range"]] <- c(0, 50)  # forcing range from 0 to 100%
+  yaxis_plots[["range"]] <- c(0, 38)  # forcing range from 0 to 100%
   xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
   
   tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
@@ -151,13 +158,7 @@ output$childdev_no_concerns <- renderPlotly({
   run_plot <- plot_ly(data=trend_data, x=~month_review) %>%
     add_lines( y = ~pc_1_plus,  
               line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
-              marker = list(color = "black"), name = "% children with developmental concerns") %>% 
-    # adding trends
-    add_markers(data = trend_data %>% filter(trend == T), y = ~ rate,
-                marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%  
-    # adding shifts
-    add_markers(data = trend_data %>% filter(shift == T), y = ~ rate,
-                marker = list(color = "blue", size = 10, symbol = "circle"), name = "Shifts") %>% 
+              marker = list(color = "black"), name = "% children with developmental concerns")
   
   # Dotted line for projected tails of centreline. It changes depending on area.
   if (input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde")) {
@@ -181,7 +182,14 @@ output$childdev_no_concerns <- renderPlotly({
   }
   
   
- run_plot %>% #Layout
+ run_plot %>% 
+   # adding shifts
+   add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus,
+               marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>% 
+   # adding trends
+   add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus,
+               marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%  
+   #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
            yaxis = yaxis_plots,  xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% #position of legend
@@ -194,9 +202,9 @@ output$childdev_no_concerns <- renderPlotly({
 ###############################################.
 
 output$download_childdev_data <- downloadHandler(
-  filename ="stillbirth_infantdeaths_extract.csv",
+  filename ="child_development_extract.csv",
   content = function(file) {
-    write_csv(child_dev_filt(), file) } 
+    write_csv(child_dev_filt() %>% select(-shift, -trend), file) } 
 )
 
 
