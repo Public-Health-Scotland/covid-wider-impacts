@@ -1042,20 +1042,63 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/13-15m data
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
                                TRUE ~ area_name)) %>% 
-  filter((year(month_review) %in% c("2019", "2020"))) %>% 
-  # Glasgow data started in May2019
-  filter(!(area_name == "NHS Greater Glasgow & Clyde" & month_review< as.Date("2019-05-01"))) 
+  filter((year(month_review) %in% c("2019", "2020"))) 
+
+child_dev %<>% #Glasgow is incomplete before May19, converting to NA
+  mutate(no_reviews = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                  month_review< as.Date("2019-05-01") ~ NA_real_, T ~ no_reviews),
+         no_meaningful_reviews = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                  month_review< as.Date("2019-05-01") ~ NA_real_, T ~ no_meaningful_reviews),
+         concerns_1_plus = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                  month_review< as.Date("2019-05-01") ~ NA_real_, T ~ concerns_1_plus),
+         pc_1_plus = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                  month_review< as.Date("2019-05-01") ~ NA_real_, T ~ pc_1_plus),
+         pc_meaningful = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                  month_review< as.Date("2019-05-01") ~ NA_real_, T ~ pc_meaningful))
 
 # Calculating centre lines and adding them to child_dev
-child_dev_centreline <- child_dev %>% 
-  filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-05-01")) %>% 
+child_dev_centreline_hb <- child_dev %>% 
+  filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-01-01")) %>% 
+  filter(!area_name %in% c("Scotland", "NHS Greater Glasgow & Clyde")) %>% 
   select(area_name, review, pc_1_plus) %>% group_by(area_name, review) %>% 
   mutate(pc_1_plus_centreline = median(pc_1_plus)) %>% ungroup() %>% 
   select(-pc_1_plus) %>% unique
 
-child_dev <- child_dev %>% left_join(child_dev_centreline)
+child_dev_centreline_scot <- child_dev %>% 
+  filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-05-01")) %>% 
+  filter(area_name %in% c("Scotland", "NHS Greater Glasgow & Clyde")) %>% 
+  select(area_name, review, pc_1_plus) %>% group_by(area_name, review) %>% 
+  mutate(pc_1_plus_centreline = median(pc_1_plus)) %>% ungroup() %>% 
+  select(-pc_1_plus) %>% unique
 
-remove(child_dev_centreline)
+child_dev_centreline <- rbind(child_dev_centreline_hb, child_dev_centreline_scot)
+
+child_dev %<>% left_join(child_dev_centreline) 
+
+child_dev %<>% 
+  mutate(# Shift: run of 6 or more consecutive data points above or below the pc_1_plus_centreline
+         # First id when this run is happening and then iding all points part of it
+         shift_i = case_when((pc_1_plus > pc_1_plus_centreline & lag(pc_1_plus, 1) > pc_1_plus_centreline 
+                              & lag(pc_1_plus, 2) > pc_1_plus_centreline & lag(pc_1_plus, 3) > pc_1_plus_centreline 
+                              & lag(pc_1_plus, 4) > pc_1_plus_centreline & lag(pc_1_plus, 5) > pc_1_plus_centreline) |
+                               (pc_1_plus < pc_1_plus_centreline & lag(pc_1_plus, 1) < pc_1_plus_centreline 
+                                & lag(pc_1_plus, 2) < pc_1_plus_centreline & lag(pc_1_plus, 3) < pc_1_plus_centreline 
+                                & lag(pc_1_plus, 4) < pc_1_plus_centreline & lag(pc_1_plus, 5) < pc_1_plus_centreline) ~ T , T ~ F),
+         shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
+                           | lead(shift_i, 3) == T | lead(shift_i, 4) == T
+                           | lead(shift_i, 5) == T  ~ T, T ~ F),
+         # Trend: A run of 5 or more consecutive data points
+         trend_i = case_when((pc_1_plus > lag(pc_1_plus ,1) & lag(pc_1_plus, 1) > lag(pc_1_plus, 2) 
+                              & lag(pc_1_plus, 2) > lag(pc_1_plus, 3)  & lag(pc_1_plus, 3) > lag(pc_1_plus, 4)) |
+                               (pc_1_plus < lag(pc_1_plus ,1) & lag(pc_1_plus, 1) < lag(pc_1_plus, 2) 
+                                & lag(pc_1_plus, 2) < lag(pc_1_plus, 3)  & lag(pc_1_plus, 3) < lag(pc_1_plus, 4) )  
+                             ~ T , T ~ F),
+         trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
+                           | lead(trend_i, 3) == T | lead(trend_i, 4) == T
+                             ~ T, T ~ F)) %>% 
+  select(shift_i, trend_i)
+
+remove(child_dev_centreline, child_dev_centreline_scot, child_dev_centreline_hb)
 
 saveRDS(child_dev, "shiny_app/data/child_dev_data.rds")
 
@@ -1076,8 +1119,9 @@ breastfeeding <- rbind(read_xlsx(paste0(data_folder, "/breastfeeding/FirstVisitd
   filter(!(area_name == "NHS Greater Glasgow & Clyde" & month_review< as.Date("2019-05-01"))) 
 
 # Calculating centre lines and adding them to breastfeeding
-breastfeeding_centreline <- breastfeeding %>% 
-  filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-05-01")) %>% 
+breastfeeding_centreline_hb <- breastfeeding %>% 
+  filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-01-01")) %>% 
+  filter(!area_name %in% c("Scotland", "NHS Greater Glasgow & Clyde")) %>% 
   select(area_name, review, pc_valid, pc_excl, pc_overall, pc_ever) %>% group_by(area_name, review) %>% 
   mutate(pc_valid_centreline = median(pc_valid),
          pc_excl_centreline = median(pc_excl),
@@ -1085,9 +1129,44 @@ breastfeeding_centreline <- breastfeeding %>%
          pc_ever_centreline = median(pc_ever)) %>% ungroup() %>% 
   select(-c(pc_valid, pc_excl, pc_overall, pc_ever)) %>% unique
 
+breastfeeding_centreline_scot <- breastfeeding %>% 
+  filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-05-01")) %>% 
+  filter(area_name %in% c("Scotland", "NHS Greater Glasgow & Clyde")) %>% 
+  select(area_name, review, pc_valid, pc_excl, pc_overall, pc_ever) %>% group_by(area_name, review) %>% 
+  mutate(pc_valid_centreline = median(pc_valid),
+         pc_excl_centreline = median(pc_excl),
+         pc_overall_centreline = median(pc_overall),
+         pc_ever_centreline = median(pc_ever)) %>% ungroup() %>% 
+  select(-c(pc_valid, pc_excl, pc_overall, pc_ever)) %>% unique
+
+breastfeeding_centreline <- rbind(breastfeeding_centreline_hb, breastfeeding_centreline_scot)
+
 breastfeeding <- breastfeeding %>% left_join(breastfeeding_centreline)
 
-remove(breastfeeding_centreline)
+breastfeeding %<>% 
+  mutate(# Shift: run of 6 or more consecutive data points above or below the pc_1_plus_centreline
+    # First id when this run is happening and then iding all points part of it
+    shift_i = case_when((pc_1_plus > pc_1_plus_centreline & lag(pc_1_plus, 1) > pc_1_plus_centreline 
+                         & lag(pc_1_plus, 2) > pc_1_plus_centreline & lag(pc_1_plus, 3) > pc_1_plus_centreline 
+                         & lag(pc_1_plus, 4) > pc_1_plus_centreline & lag(pc_1_plus, 5) > pc_1_plus_centreline) |
+                          (pc_1_plus < pc_1_plus_centreline & lag(pc_1_plus, 1) < pc_1_plus_centreline 
+                           & lag(pc_1_plus, 2) < pc_1_plus_centreline & lag(pc_1_plus, 3) < pc_1_plus_centreline 
+                           & lag(pc_1_plus, 4) < pc_1_plus_centreline & lag(pc_1_plus, 5) < pc_1_plus_centreline) ~ T , T ~ F),
+    shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
+                      | lead(shift_i, 3) == T | lead(shift_i, 4) == T
+                      | lead(shift_i, 5) == T  ~ T, T ~ F),
+    # Trend: A run of 5 or more consecutive data points
+    trend_i = case_when((pc_1_plus > lag(pc_1_plus ,1) & lag(pc_1_plus, 1) > lag(pc_1_plus, 2) 
+                         & lag(pc_1_plus, 2) > lag(pc_1_plus, 3)  & lag(pc_1_plus, 3) > lag(pc_1_plus, 4)) |
+                          (pc_1_plus < lag(pc_1_plus ,1) & lag(pc_1_plus, 1) < lag(pc_1_plus, 2) 
+                           & lag(pc_1_plus, 2) < lag(pc_1_plus, 3)  & lag(pc_1_plus, 3) < lag(pc_1_plus, 4) )  
+                        ~ T , T ~ F),
+    trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
+                      | lead(trend_i, 3) == T | lead(trend_i, 4) == T
+                      ~ T, T ~ F)) %>% 
+  select(shift_i, trend_i)
+
+remove(breastfeeding_centreline, breastfeeding_centreline_scot, breastfeeding_centreline_hb)
 
 saveRDS(breastfeeding, "shiny_app/data/breastfeeding_data.rds")
 
