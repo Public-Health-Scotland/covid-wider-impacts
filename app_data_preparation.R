@@ -1046,7 +1046,7 @@ mentalhealth_drugs_hist_all <- mentalhealth_drugs_historic %>%
 mentalhealth_drugs_historic <- rbind(mentalhealth_drugs_historic, mentalhealth_drugs_hist_all)
 
 ### Newer MH drugs data ##
-mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_54_5500127178322117257.xlsx")) %>% 
+mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_55_4380463387317278314.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -1065,7 +1065,7 @@ mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new i
   rename(category = condition,
          count = incident_cases_week_01) %>% 
   select(week_ending, area_name, area_type, type, category, count) %>%
-  filter(between(week_ending, as.Date("2020-07-05"), as.Date("2020-08-23")))
+  filter(between(week_ending, as.Date("2020-07-05"), as.Date("2020-09-06")))
 
 mentalhealth_drugs_all <- mentalhealth_drugs %>% 
   group_by(week_ending, area_name, area_type, type) %>% 
@@ -1078,7 +1078,7 @@ mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all)
 
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_historic)
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-08-23")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-09-06")
 
 ###############################################.
 ## A&E - mental health ----
@@ -1204,7 +1204,7 @@ prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-08-23")
 ## OOH - mental health ----
 ###############################################.
 
-mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/GP_OOH_MH_WIDER_IMPACT.txt")) %>%
+mh_ooh <- read_csv(paste0(data_folder, "GP_OOH_mh/GP_OOH_MH_WIDER_IMPACT.txt")) %>%
   janitor::clean_names() %>%
   rename(hb=patient_nhs_board_description_current, 
          dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
@@ -1231,7 +1231,7 @@ mh_ooh %<>% gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>%
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
-  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-08-23")))
+  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-09-06")))
 
 mh_ooh_all <- mh_ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
 mh_ooh_sex <- mh_ooh %>% agg_cut(grouper="sex") %>% rename(category = sex)
@@ -1244,7 +1244,7 @@ mh_ooh %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_ooh, "mh_ooh", last_week = "2020-08-23")
+prepare_final_data(mh_ooh, "mh_ooh", last_week = "2020-09-06")
 
 ##END
 
