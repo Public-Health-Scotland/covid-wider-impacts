@@ -1033,9 +1033,9 @@ saveRDS(perinatal, "shiny_app/data/perinatal_data.rds")
 ## Child development ----
 ###############################################.
 # Do we need any sort of supression - look at island values.
-child_dev <- rbind(read_excel(paste0(data_folder, "child_development/13-15m data.xlsx")) %>% 
+child_dev <- rbind(read_excel(paste0(data_folder, "child_development/20200914_13_15m_dashboard.xlsx")) %>% 
                      mutate(review = "13-15 months"),
-                   read_excel(paste0(data_folder, "child_development/27-30m data.xlsx")) %>% 
+                   read_excel(paste0(data_folder, "child_development/20200914_27_30m dashboard.xlsx")) %>% 
                      mutate(review = "27-30 months")) %>% 
   clean_names() %>% 
   rename(area_name = hb) %>% 
@@ -1107,9 +1107,9 @@ saveRDS(child_dev, "shiny_app/data/child_dev_data.rds")
 ###############################################.
 ## Breastfeeding ----
 ###############################################.
-breastfeeding <- rbind(read_xlsx(paste0(data_folder, "/breastfeeding/FirstVisitdata.xlsx")) %>% 
+breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/20200914_breastfeeding_FV.xlsx")) %>% 
                          mutate(review = "First visit"),
-                       read_xlsx(paste0(data_folder, "/breastfeeding/6-8week_data.xlsx")) %>% 
+                       read_xlsx(paste0(data_folder, "/breastfeeding/20200914_breastfeeding_6_8.xlsx")) %>% 
                          mutate(review = "6-8 weeks")) %>% 
   clean_names() %>% 
   rename(area_name = hb) %>% 
