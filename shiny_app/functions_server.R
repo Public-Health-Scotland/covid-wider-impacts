@@ -68,7 +68,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   } else {
     trend_data <- trend_data 
   }
-  
+    
   # If variation selected different values
   if (type == "variation") {
     
@@ -78,8 +78,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     if (aver_week == T) {
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                                "Average of week ending ", format(trend_data$week_ending, "%d %b %y"), ", the", 
-                                "<br>previous week and the following week",
+                                "Average of weeks ending on ", format(trend_data$week_ending - 7, "%d %b %y"), ", ",
+                                format(trend_data$week_ending, "%d %b %y"), " and ", format(trend_data$week_ending + 7, "%d %b %y"),
                                 "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
       
     } else {
@@ -126,10 +126,21 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                               data_name == "mh_ooh" ~ "Consultations: ")
     
     #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$category, "<br>",
-                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                              "<br>", measure_name, trend_data$count,
-                              "<br>", "Historic average: ", trend_data$count_average))
+    if (aver_week == T) {
+      #Text for tooltip
+      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                                "Average of weeks ending on ", format(trend_data$week_ending - 7, "%d %b %y"), ", ",
+                                format(trend_data$week_ending, "%d %b %y"), " and ", format(trend_data$week_ending + 7, "%d %b %y"),
+                                "<br>", measure_name, trend_data$count,
+                                "<br>", "Historic average: ", trend_data$count_average))
+      
+    } else {
+      tooltip_trend <- c(paste0(trend_data$category, "<br>",
+                                "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                "<br>", measure_name, trend_data$count,
+                                "<br>", "Historic average: ", trend_data$count_average))
+
+    }
     
     #Creating time trend plot
     trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count) 

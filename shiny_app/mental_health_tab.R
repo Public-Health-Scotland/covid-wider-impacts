@@ -239,8 +239,9 @@ ae_mh_filt <- reactive({ae_mh %>% filter(area_type == input$area_mh_select &
 
 ae_mh_aver <- reactive({ae_mh_filt() %>% 
     group_by(type, category) %>% 
-    mutate(count = round(rollmeanr(count, k = 3, fill = NA),1),
-           variation = round(rollmeanr(variation, k = 3, fill = NA),1)) %>% 
+    mutate(count = round(rollmean(count, k = 3, fill = NA),1),
+           count_average = round(rollmean(count_average, k = 3, fill = NA),1),
+           variation = round(-1 * ((count_average - count)/count_average * 100), 1)) %>% 
     ungroup
 })
 
@@ -250,8 +251,9 @@ mh_ooh_filt <- reactive({mh_ooh %>% filter(area_type == input$area_mh_select &
 
 mh_ooh_aver <- reactive({mh_ooh_filt() %>% 
     group_by(type, category) %>% 
-    mutate(count = round(rollmeanr(count, k = 3, fill = NA),1),
-           variation = round(rollmeanr(variation, k = 3, fill = NA),1)) %>% 
+    mutate(count = round(rollmean(count, k = 3, fill = NA),1),
+           count_average = round(rollmean(count_average, k = 3, fill = NA),1),
+           variation = round(-1 * ((count_average - count)/count_average * 100), 1)) %>% 
     ungroup
 })
 
@@ -275,36 +277,36 @@ output$mh_drugs_tot <- renderPlotly({
 output$ae_mh_overall <- renderPlotly({plot_overall_chart(ae_mh_filt(), data_name = "aye", area = "All")})
 output$ae_mh_sex_var <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_sex, c("sex", "all"), 
                                                        data_name = "aye",tab = "mh", aver_week = T)})
-output$ae_mh_sex_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_sex, c("sex", "all"), "total", "aye", tab = "mh")})
+output$ae_mh_sex_tot <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_sex, c("sex", "all"), "total", "aye", tab = "mh",  aver_week = T)})
 output$ae_mh_age_var <- renderPlotly({
   plot_trend_chart(ae_mh_aver() %>% filter(type == "age") %>% 
                      mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
                    pal_age, c("age", "all"), data_name = "aye",tab = "mh", aver_week = T)})
 output$ae_mh_age_tot <- renderPlotly({
-  plot_trend_chart(ae_mh_filt() %>% filter(type == "age") %>% 
+  plot_trend_chart(ae_mh_aver() %>% filter(type == "age") %>% 
                      mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
-                   pal_age, c("age", "all"), "total", "aye", tab = "mh")})
+                   pal_age, c("age", "all"), "total", "aye", tab = "mh",  aver_week = T)})
 output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_aver(), pal_chose = pal_depr, split = "dep", 
                                                        type = "variation", data_name = "aye", tab = "mh", aver_week = T)})
-output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_filt(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh")})
+output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh",  aver_week = T)})
 
 ###############################################.
 # MH OOH charts
 output$mh_ooh_overall <- renderPlotly({plot_overall_chart(mh_ooh_filt(), data_name = "ooh", area = "All")})
 output$mh_ooh_sex_var <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_sex, c("sex", "all"), 
                                                         data_name = "ooh",tab = "mh", aver_week = T)})
-output$mh_ooh_sex_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_sex, c("sex", "all"), "total", "ooh", tab = "mh")})
+output$mh_ooh_sex_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_sex, c("sex", "all"), "total", "ooh", tab = "mh",  aver_week = T)})
 output$mh_ooh_age_var <- renderPlotly({
   plot_trend_chart(mh_ooh_aver() %>% filter(type == "age") %>% 
                      mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
                    pal_age, c("age", "all"),  data_name = "ooh",tab = "mh", aver_week = T)})
 output$mh_ooh_age_tot <- renderPlotly({
-  plot_trend_chart(mh_ooh_filt() %>% filter(type == "age") %>% 
+  plot_trend_chart(mh_ooh_aver() %>% filter(type == "age") %>% 
                      mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
-                   pal_age, c("age", "all"), "total", "ooh", tab = "mh")})
+                   pal_age, c("age", "all"), "total", "ooh", tab = "mh",  aver_week = T)})
 output$mh_ooh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_ooh_aver(), pal_chose = pal_depr, split = "dep", 
                                                         type = "variation", data_name = "ooh", tab = "mh", aver_week = T)})
-output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_depr, split = "dep", type = "total", data_name = "ooh", tab = "mh")})
+output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_depr, split = "dep", type = "total", data_name = "ooh", tab = "mh",  aver_week = T)})
 
 ###############################################.
 ##  Reactive layout  ----
@@ -312,8 +314,8 @@ output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_filt(), pal_depr,
 # The charts and text shown on the app will depend on what the user wants to see
 output$mh_explorer <- renderUI({
   
-  note_average <- p("Please note that to ease interpretation of the charts showing ",
-                    "percentage of change, we are presenting 3-week rolling average figures.")
+  note_average <- p("Please note that to ease interpretation of these charts ",
+                    "we are presenting 3-week rolling average figures.")
   
   if (input$measure_mh_select == "mhdrugs") { 
     tagList(# Prescribing - items dispensed
@@ -411,25 +413,26 @@ output$download_mentalhealth_data <- downloadHandler(
 output$mentalhealth_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mentalhealth",label = "Go to data"), #this button can only be used once
-    h2("Mental health - 23 September 2020"),
+    h2("Mental health - 30 September 2020"),
     h3("Unscheduled care"),
     p("Information on the number of contacts for mental health problems with accident and emergency (A&E) and with primary care out of hours (OOH) 
-       services was included for the first time on 23 September 2020."),
+       services was included for the first time on 30 September 2020."),
     tags$ul(
-      tags$li("Compared to the pattern seen in previous years, there was a sharp fall of 30-40% in out of hours contacts for mental health problems, starting in early March 2020."),
-      tags$li("Numbers of OOH contacts for mental health problems remained below the previous average until early April, corresponding to the period of ‘lockdown’ in Scotland. 
+      tags$li("Compared to the pattern seen in previous years, there was a sharp fall of 30-40% in out of hours (OOH) contacts for mental health problems, starting in early March 2020."),
+      tags$li("Numbers of OOH contacts for mental health problems remained below the previous average until late April, corresponding to the period of ‘lockdown’ in Scotland. 
                Between April and the end of July numbers of contacts rose to around 10% above the previous average."),
       tags$li("The trend in OOH contacts was similar for males and females, and also broadly similar by age and by level of deprivation, with wide fluctuations in numbers of contacts from week to week."),
-      tags$li("A&E attendances for mental health problems fell by 40-50% from early March 2020 and by the begining of September had not recovered, remaining at around 10% below previous levels."),
+      tags$li("A&E attendances for mental health problems fell by 40-50% from early March 2020 and by the begining of September had still not fully recovered, remaining at around 10% below previous levels."),
       tags$li("The trend in A&E attendances was similar for males and females and also broadly similar by age group and by level of deprivation, with wide fluctuations in numbers of contacts from week to week."),
       tags$li("Overall these falls in the use of unscheduled care for mental health problems are likely to reflect reluctance to use services or other difficulties in access to services associated with the Covid-19 pandemic.")),
     h3("Prescribing"),
     p("Information on the number of patients starting a new treatment course for selected mental health medicines (those commonly used for depression, anxiety or 
-      insomnia) through General Practice has been included for the first time on 23 September 2020. This data indicates:"),
+      insomnia) through General Practice has been included for the first time on 30 September 2020. This data indicates:"),
     tags$ul(
       tags$li("The number of patients starting new treatment with the selected medicines fell by almost 40% between the week prior to the introduction of lockdown and early April. 
-              Since then, the total numbers have been gradually increasing and returned to normal levels by the end of June."),
-      tags$li("The number of new treatment courses with medicines for depression and insomnia show a similar pattern of decline and recovery whereas medicines for anxiety 
-              show a more prolonged decline in the number of new treatment courses and, by mid-July, remain about 15% below normal."))
+              Since then, the total numbers have been gradually increasing but have generally remained below normal levels ."),
+      tags$li("The number of new treatment courses with medicines for depression and insomnia show a similar pattern of decline and recovery by mid-July. 
+              However new treatments for anxiety have since declined and, by September, are about 25% below normal. Medicines for anxiety 
+              show a more prolonged decline in the number of new treatment courses and remain about 25% below normal."))
   )
 })
