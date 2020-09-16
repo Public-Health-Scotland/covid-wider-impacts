@@ -167,7 +167,7 @@ data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Infant deaths"="infantdeaths")
 
 data_list_bf <- c("Health Visitor first visit" = "First visit",
-                  "6-8 Week Review" = "6-8 weeks")
+                  "6-8 week review" = "6-8 week")
 
 ###############################################.
 ## Palettes and plot parameters ----

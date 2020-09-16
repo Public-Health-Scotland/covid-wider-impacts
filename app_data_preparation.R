@@ -1034,9 +1034,9 @@ saveRDS(perinatal, "shiny_app/data/perinatal_data.rds")
 ###############################################.
 # Do we need any sort of supression - look at island values.
 child_dev <- rbind(read_excel(paste0(data_folder, "child_development/20200914_13_15m_dashboard.xlsx")) %>% 
-                     mutate(review = "13-15 months"),
+                     mutate(review = "13-15 month"),
                    read_excel(paste0(data_folder, "child_development/20200914_27_30m dashboard.xlsx")) %>% 
-                     mutate(review = "27-30 months")) %>% 
+                     mutate(review = "27-30 month")) %>% 
   clean_names() %>% 
   rename(area_name = hb) %>% 
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
@@ -1110,7 +1110,7 @@ saveRDS(child_dev, "shiny_app/data/child_dev_data.rds")
 breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/20200914_breastfeeding_FV.xlsx")) %>% 
                          mutate(review = "First visit"),
                        read_xlsx(paste0(data_folder, "/breastfeeding/20200914_breastfeeding_6_8.xlsx")) %>% 
-                         mutate(review = "6-8 weeks")) %>% 
+                         mutate(review = "6-8 week")) %>% 
   clean_names() %>% 
   rename(area_name = hb) %>% 
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),

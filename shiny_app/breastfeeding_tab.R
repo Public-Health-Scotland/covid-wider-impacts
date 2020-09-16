@@ -61,6 +61,39 @@ breastfeeding_filt <- reactive({
 # Breastfeeding explorer
 output$breastfeeding_explorer <- renderUI({
   
+  if (input$measure_select_bf == "First visit") {
+    run_charts_bf <- tagList(
+      fluidRow(
+        column(4,
+               h4(paste0("Exclusively breastfed at ", tolower(input$measure_select_bf))),
+               actionButton("btn_breastfed_rules", "How do we identify patterns in the data?", 
+                            icon = icon('question-circle')),
+               withSpinner(plotlyOutput("bf_excl_pc"))),
+        column(4,
+               h4(paste0("Overall breastfed at ", tolower(input$measure_select_bf))),
+               br(),
+               withSpinner(plotlyOutput("bf_over_pc"))),
+        column(4,
+               h4(paste0("Ever breastfed")),
+               br(),
+               withSpinner(plotlyOutput("bf_ever_pc"))))
+    )
+    
+  } else if (input$measure_select_bf == "6-8 week") {
+    run_charts_bf <- tagList(
+      fluidRow(
+        column(6,
+               h4(paste0("Exclusively breastfed at ", tolower(input$measure_select_bf))),
+               actionButton("btn_breastfed_rules", "How do we identify patterns in the data?", 
+                            icon = icon('question-circle')),
+               withSpinner(plotlyOutput("bf_excl_pc"))),
+        column(6,
+               h4(paste0("Overall breastfed at ", tolower(input$measure_select_bf))),
+               br(),
+               withSpinner(plotlyOutput("bf_over_pc"))))
+    )
+  }
+  
   control_chart_commentary <- p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
                                                        "‘control charts’",class="externallink"), "to present the percentages above.", br(),
                                 "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
@@ -70,27 +103,13 @@ output$breastfeeding_explorer <- renderUI({
                       The centreline is an average (median) over the time period specified in the legend of the chart. ")
   
   tagList(
+    run_charts_bf,
+    fluidRow(control_chart_commentary),
     fluidRow(
       h4(paste0("Number of children by breastfeeding regularity at ", tolower(input$measure_select_bf))),
       withSpinner(plotlyOutput("bf_types"))),
-    # Exclusively breastfed
-    fluidRow(
-      column(4,
-             h4(paste0("Exclusively breastfed at ", tolower(input$measure_select_bf))),
-             actionButton("btn_breastfed_rules", "How do we identify patterns in the data?", 
-                          icon = icon('question-circle')),
-             withSpinner(plotlyOutput("bf_excl_pc"))),
-      column(4,
-             h4(paste0("Overall breastfed at ", tolower(input$measure_select_bf))),
-             br(),
-             withSpinner(plotlyOutput("bf_over_pc"))),
-      column(4,
-             h4(paste0("Ever breastfed at ", tolower(input$measure_select_bf))),
-             br(),
-             withSpinner(plotlyOutput("bf_ever_pc")))),
-      fluidRow(control_chart_commentary),
     fluidRow( # Valid Reviews,
-      h4(paste0("Number of reviews at ", tolower(input$measure_select_bf))),
+      h4(paste0("Number of ", tolower(input$measure_select_bf), " reviews")),
       withSpinner(plotlyOutput("bf_reviews")))
   )
 })
@@ -148,24 +167,24 @@ output$bf_types <- renderPlotly({
     yaxis_plots[["title"]] <- "Number of children"
     
     tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
-                              "<br>", "Number exclusively breastfed: ", trend_data$exclusive_bf, 
+                              "<br>", "Exclusively breastfed: ", trend_data$exclusive_bf, 
                               " (", trend_data$pc_excl, "%)",
-                              "<br>", "Number overall breastfed: ", trend_data$overall_bf, 
+                              "<br>", "Overall breastfed: ", trend_data$overall_bf, 
                               " (", trend_data$pc_overall, "%)",
-                              "<br>", "Number ever breastfed: ", trend_data$ever_bf, 
+                              "<br>", "Ever breastfed: ", trend_data$ever_bf, 
                               " (", trend_data$pc_ever, "%)"))
     
     # Creating time trend plot
     plot_ly(data = trend_data, x = ~month_review) %>% 
       add_lines(y = ~exclusive_bf, line = list(color = "#bf812d"),
                 text = tooltip_trend, hoverinfo="text",
-                name = "Number exclusively breastfed") %>% 
+                name = "Exclusively breastfed") %>% 
       add_lines(y = ~overall_bf, line = list(color = "black"),
                 text = tooltip_trend, hoverinfo="text",
-                name = "Number overall breastfed") %>% 
+                name = "Overall breastfed") %>% 
       add_lines(y = ~ever_bf, line = list(color = "#74add1"),
                 text = tooltip_trend, hoverinfo="text",
-                name = "Number ever breastfed") %>% 
+                name = "Ever breastfed") %>% 
       # Layout
       layout(margin = list(b = 80, t=5),
              yaxis = yaxis_plots, xaxis = xaxis_plots,
