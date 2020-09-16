@@ -7,15 +7,32 @@
 observeEvent(input$btn_cancer_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("The information shown on the numbers of ",
-                 tags$a(href="https://www.",class="externallink")),
-               p(""),
-               p(""),
-               p(tags$a(href="https://publichealthscotland.scot/","Public Health Scotland (PHS)",class="externallink"),
-                 " routinely receives quarterly data extracts ",
-                 (tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/", 
-                         "publishing",class="externallink")),
-                 " "),
+               p("Cancer is not a statutorily notifiable disease, so cases are not reported prospectively. 
+                  Instead reliant on a complex process involving record linkage and data processing of multiple 
+                  records from multiple sources of potentially new cases of cancer, with the aim of maximising 
+                  case ascertainment and data accuracy:  ",
+                 tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/Scottish-Cancer-Registry/How-data-are-collected/",class="externallink")),
+               p("In an effort to more rapidly assess the impact of COVID-19 on new diagnoses of cancer, opted 
+                  to analyse pathology records, comparing trends in weekly numbers of cancer diagnoses 
+                  (based on dates of pathology specimen receipt) for 2020 compared to 2019."),
+               em("Advantages of using pathology records:"),
+                p("- Pathology records are one of the main sources of new incident cases for the cancer registry."),
+                 p("- For many anatomical sites of cancer, a pathology report is generated for the overwhelming majority of new cases "),
+                  p("- •	In most cases, a pathology record is received by the cancer registry within weeks of the definitive diagnosis being made."),
+              em("Limitations of using pathology records:"),
+                p("- The SNOMED topography code assigned to a pathology record does not necessarily relate to the primary site of origin of a tumour,
+                  especially if there has been localised spread to adjacent organs, or further afield (regional lymph nodes or distant metastases), or in 
+                  the case of multi-organ cancers, eg, some lympho-haematopoietic neoplasms."),
+                 p("- While the majority of pathology records relate to new incident cancers, some records relate to disease recurrences and/or metastatic disease. "),
+                  p("- As with any system of data collection, there can be errors in the SNOMED code allocated, but these are relatively rare."),
+                  p("- In some cases, multiple pathology records are generated for the same incident tumour, eg, breast needle biopsy, wide local excision specimen, 
+                    axillary lymph node biopsy, etc. This can be mitigated to some extent by restricting to a single record per person (although some individuals will 
+                    genuinely have multiple synchronous independent primary tumours), or to a single record per major tumour site (although some individuals will genuinely 
+                    have multiple synchronous independent primary tumours at the same anatomical site and, as noted above, some records may relate to metastatic rather 
+                    than primary disease, eg, secondary tumours of the liver)."),
+                  p("- Full reporting of some pathology records may be delayed for several weeks, eg, if a second opinion and/or information on tumour biomarkers is 
+                    being sought."),
+
                p("Data are reported by NHS Board of treatment "),
                p(paste0("Figures presented based on data extracted on ",cancer_extract_date)),
                size = "m",
@@ -47,22 +64,29 @@ output$geoname_ui_cancer <- renderUI({
 output$cancer_explorer <- renderUI({
   
   # text for titles of cut charts
-  dataset <- case_when(input$cancer_type_select == "rapid" ~ "admissions",
-                       input$cancer_type_select == "aye" ~ "attendances",
-                       input$cancer_type_select == "nhs24" ~ "completed contacts",
-                       input$cancer_type_select == "ooh" ~ "consultations",
-                       input$cancer_type_select == "sas" ~ "incidents",
-                       input$cancer_type_select == "deaths" ~ "deaths")
+  dataset <- case_when(input$cancer_type_select == "breast" ~ "breast",
+                       input$cancer_type_select == "cervical" ~ "cervical",
+                       input$cancer_type_select == "colorectal" ~ "colorectal",
+                       input$cancer_type_select == "headandneck" ~ "headandneck",
+                       input$cancer_type_select == "lung" ~ "lung",
+                       input$cancer_type_select == "lymphoma" ~ "lymphoma",
+                       input$cancer_type_select == "melanoma" ~ "melanoma",
+                       input$cancer_type_select == "ovarian" ~ "ovarian",
+                       input$cancer_type_select == "uppergi" ~ "uppergi",
+                       input$cancer_type_select == "urological" ~ "urological")
   
-  if (input$cancer_type_select == "deaths"){
-    variation_title <- paste0("Percentage change in ", dataset, 
-                            " compared with the corresponding time in 2015-2019 by ")   #different averaging period for deaths
-  } else {
-    variation_title <- paste0("Percentage change in ", dataset, 
-                              " compared with the corresponding time in 2018-2019 by ")
-  }
+ 
+  variation_title <- paste0("Percentage change in number of pathology referrals for ", dataset, 
+                              " cancer compared with the corresponding time in 2018-2019")
 
-  total_title <- paste0("Weekly number of ", dataset, " by ")
+
+  total_title <- paste0("Weekly change in pathology incidence for ", dataset, " cancer ")
+  
+  
+  
+  
+  
+  
   
   # To make sure that both titles take the same space and are lined up doing
   # a bit of a hacky shortcut:
@@ -99,39 +123,59 @@ output$cancer_explorer <- renderUI({
   }
   
   # Charts and rest of UI
-  if (input$measure_select == "rapid") {
-    tagList(#Hospital admissions
-      cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
-                 data_name = "adm"),
-      fluidRow(column(6, h4(paste0(variation_title, "specialty group - (admission type: ", tolower(input$adm_type), ")"))), # Adding adm_type here to make clear what is selected
-               column(6, h4(paste0(total_title, "specialty group - (admission type: ", tolower(input$adm_type), ")")))), # Adding adm_type here to make clear what is selected
-      fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
-                                     choices = if (input$geotype == "Scotland") {spec_list} else {spec_list[c(1:8,11)]}, multiple = TRUE,
-                                     selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics (medical & surgical)"))),
-               column(6, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
-      fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
-               column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
+  if (input$cancer_type_select == "all_types") {
+    tagList(
+      cut_charts(title= "Weekly pathology referrals", source = "",
+                 data_name = "all_types"),
     )
-  } else if (input$measure_select == "aye") { #A&E Attendances
-    cut_charts(title= "Weekly attendances to A&E departments", 
-               source = "PHS AE2 Datamart", data_name = "aye")
+  } else if (input$cancer_type_select == "breast") { 
+    cut_charts(title= "Weekly pathology referrals", source = "", 
+               data_name = "breast")
     
-  } else if (input$measure_select == "nhs24") {# NHS 24 calls
-    cut_charts(title= "Weekly completed contacts with NHS 24", 
-               source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
+  } else if (input$cancer_type_select == "cervical") { 
+    cut_charts(title= "Weekly pathology referrals", source = "", 
+               data_name = "cervical")
     
-  } else if (input$measure_select == "ooh") { #Out of hours cases
-    cut_charts(title= "Weekly cases in out of hours services", 
-               source = "PHS GP OOH Datamart", data_name ="ooh")
+  } else if (input$cancer_type_select == "colorectal") {
+    cut_charts(title= "Weekly pathology referrals", 
+               source = "", 
+               data_name ="colorectal")
     
-  } else if (input$measure_select == "sas") { # SAS data
-    cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service", 
-               source = "PHS Unscheduled Care Datamart", data_name ="sas")
+  } else if (input$cancer_type_select == "headandneck") { 
+    cut_charts(title= "Weekly pathology referrals", 
+               source = "", 
+               data_name ="ooh")
     
-  } else if (input$measure_select == "deaths") { # Deaths data
-    cut_charts(title= "Weekly number of deaths", 
-               source = "NRS Death Registrations", data_name ="deaths")
-  }
+  } else if (input$cancer_type_select == "lung") { 
+    cut_charts(title= "Weekly pathology referrals", 
+               source = "", 
+               data_name ="lung")
+    
+  } else if (input$cancer_type == "lymphoma") { 
+    cut_charts(title= "Weekly pathology referrals", 
+               source = "", 
+               data_name ="lymphoma")
+    
+  } else if (input$cancer_type == "melanoma") { 
+    cut_charts(title= "Weekly pathology referrals", 
+               source = "", 
+               data_name ="melanoma")
+    
+  } else if (input$cancer_type == "ovarian") { 
+    cut_charts(title= "Weekly pathology referrals", 
+               source = "", 
+               data_name ="ovarian")
+    
+  } else if (input$cancer_type == "uppergi") { # Deaths data
+    cut_charts(title= "Weekly pathology referrals", 
+               source = "", 
+               data_name ="uppergi")
+    
+  } else if (input$cancer_type == "urological") { # Deaths data
+    cut_charts(title= "Weekly pathology referrals", 
+               source = "NRS Death Registrations", 
+               data_name ="urological")
+  } 
 }) 
 
 ###############################################.
@@ -139,7 +183,7 @@ output$cancer_explorer <- renderUI({
 ###############################################.
 # Creating plots for each cut and dataset
 # A&E charts
-output$cancer_overall <- renderPlotly({plot_overall_chart(aye, data_name = "aye")})
+output$cancer_overall <- renderPlotly({plot_overall_chart(aye, data_name = "all_types")})
 output$cancer_type_select_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", data_name = "aye")})
 output$cancer_type_select_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age", data_name = "aye")})
 output$cancer_type_select_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", data_name = "aye")})
