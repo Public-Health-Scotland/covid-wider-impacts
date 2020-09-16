@@ -315,7 +315,8 @@ output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_depr,
 output$mh_explorer <- renderUI({
   
   note_average <- p("Please note that to ease interpretation of these charts ",
-                    "we are presenting 3-week rolling average figures.")
+                    "we are presenting 3-week rolling average figures.",
+                    "Single-week figures can be obtained from the download button at the top of the page.")
   
   if (input$measure_mh_select == "mhdrugs") { 
     tagList(# Prescribing - items dispensed
@@ -393,7 +394,11 @@ mh_down_data <- reactive({
   switch(
     input$measure_mh_select,
     "mhdrugs" = mentalhealth_drugs %>% filter(area_name == input$geoname_mh &
-                                                area_type == input$area_mh_select)
+                                                area_type == input$area_mh_select),
+    "aye" = ae_mh %>% filter(area_name == input$geoname_mh &
+                               area_type == input$area_mh_select),
+    "ooh" = mh_ooh %>% filter(area_name == input$geoname_mh &
+                                area_type == input$area_mh_select)
   ) %>% 
     rename(average_2018_2019 = count_average) %>% select(-type)
 
