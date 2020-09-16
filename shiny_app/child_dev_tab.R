@@ -50,8 +50,8 @@ output$geoname_childdev_ui <- renderUI({
 ###############################################.
 child_dev_filt <- reactive({
   
-  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 months",
-                              input$measure_select_childdev == "27_30mnth" ~ "27-30 months")
+  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
+                              input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
   
   child_dev %>% filter(area_name == input$geoname_childdev &
                          area_type == input$geotype_childdev &
@@ -65,9 +65,9 @@ child_dev_filt <- reactive({
 output$childdev_explorer <- renderUI({
   
   review_title <- case_when(input$measure_select_childdev == "13_15mnth" ~
-                             "13-15 months" ,
+                             "13-15 month" ,
                             input$measure_select_childdev == "27_30mnth" ~
-                              "27-30 months")
+                              "27-30 month")
   
   control_chart_commentary <- p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
                                                       "‘control charts’",class="externallink"), "to present the percentages above.", br(),
