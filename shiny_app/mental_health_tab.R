@@ -420,7 +420,7 @@ output$mentalhealth_commentary <- renderUI({
       tags$li("Numbers of OOH contacts for mental health problems remained below the previous average until early April, corresponding to the period of ‘lockdown’ in Scotland. 
                Between April and the end of July numbers of contacts rose to around 10% above the previous average."),
       tags$li("The trend in OOH contacts was similar for males and females, and also broadly similar by age and by level of deprivation, with wide fluctuations in numbers of contacts from week to week."),
-      tags$li("A&E attendances for mental health problems fell by 40-50% from early March 2020 and by the beggining of September had not recovered, remaining at around 10% below previous levels."),
+      tags$li("A&E attendances for mental health problems fell by 40-50% from early March 2020 and by the begining of September had not recovered, remaining at around 10% below previous levels."),
       tags$li("The trend in A&E attendances was similar for males and females and also broadly similar by age group and by level of deprivation, with wide fluctuations in numbers of contacts from week to week."),
       tags$li("Overall these falls in the use of unscheduled care for mental health problems are likely to reflect reluctance to use services or other difficulties in access to services associated with the Covid-19 pandemic.")),
     h3("Prescribing"),
