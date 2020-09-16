@@ -411,21 +411,21 @@ output$download_mentalhealth_data <- downloadHandler(
 output$mentalhealth_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mentalhealth",label = "Go to data"), #this button can only be used once
-    h2("Mental health - September 2020"),
-    h3("Unscheduled Care"),
+    h2("Mental health - 23 September 2020"),
+    h3("Unscheduled care"),
     p("Information on the number of contacts for mental health problems with accident and emergency (A&E) and with primary care out of hours (OOH) 
-       services was included for the first time on 30 September 2020."),
+       services was included for the first time on 23 September 2020."),
     tags$ul(
       tags$li("Compared to the pattern seen in previous years, there was a sharp fall of 30-40% in out of hours contacts for mental health problems, starting in early March 2020."),
       tags$li("Numbers of OOH contacts for mental health problems remained below the previous average until early April, corresponding to the period of ‘lockdown’ in Scotland. 
                Between April and the end of July numbers of contacts rose to around 10% above the previous average."),
       tags$li("The trend in OOH contacts was similar for males and females, and also broadly similar by age and by level of deprivation, with wide fluctuations in numbers of contacts from week to week."),
-      tags$li("A&E attendances for mental health problems fell by 40-50% from early March 2020 and by the end of July had not recovered, remaining at around 10% below previous levels."),
+      tags$li("A&E attendances for mental health problems fell by 40-50% from early March 2020 and by the beggining of September had not recovered, remaining at around 10% below previous levels."),
       tags$li("The trend in A&E attendances was similar for males and females and also broadly similar by age group and by level of deprivation, with wide fluctuations in numbers of contacts from week to week."),
       tags$li("Overall these falls in the use of unscheduled care for mental health problems are likely to reflect reluctance to use services or other difficulties in access to services associated with the Covid-19 pandemic.")),
     h3("Prescribing"),
     p("Information on the number of patients starting a new treatment course for selected mental health medicines (those commonly used for depression, anxiety or 
-      insomnia) through General Practice has been included for the first time on 30 September 2020. This data indicates:"),
+      insomnia) through General Practice has been included for the first time on 23 September 2020. This data indicates:"),
     tags$ul(
       tags$li("The number of patients starting new treatment with the selected medicines fell by almost 40% between the week prior to the introduction of lockdown and early April. 
               Since then, the total numbers have been gradually increasing and returned to normal levels by the end of June."),
