@@ -38,13 +38,7 @@ observeEvent(input$btn_cancer_modal,
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
-# Pop-up modal explaining source of data
-observeEvent(input$cancer_elig_defs, 
-             showModal(modalDialog(
-               title = "Immunisation eligibility definitions",
-               
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
 
 ###############################################.
 ## Reactive layout ----
@@ -99,7 +93,6 @@ output$cancer_explorer <- renderUI({
       h3(title),
       actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
       
-      if (input$measure_select == "deaths"){
         tagList(
           plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
           plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
@@ -160,12 +153,12 @@ output$cancer_explorer <- renderUI({
                source = "", 
                data_name ="ovarian")
     
-  } else if (input$cancer_type == "uppergi") { # Deaths data
+  } else if (input$cancer_type == "uppergi") { 
     cut_charts(title= "Weekly pathology referrals", 
                source = "", 
                data_name ="uppergi")
     
-  } else if (input$cancer_type == "urological") { # Deaths data
+  } else if (input$cancer_type == "urological") { 
     cut_charts(title= "Weekly pathology referrals", 
                source = "NRS Death Registrations", 
                data_name ="urological")
@@ -195,7 +188,7 @@ output$cancer_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "
 ###############################################.
 output$cancer_commentary <- renderUI({
   tagList(
-    bsButton("jump_to_cardio",label = "Go to data"), #this button can only be used once
+    bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
     h2("Cancer - xxth xxx 2020"), 
     
           h3("Prescribing"),
@@ -204,11 +197,8 @@ output$cancer_commentary <- renderUI({
             tags$li(""),
             tags$li("",
                     tags$ul(
-                      tags$li("The number of prescriptions rose sharply in March and peaked
-                              in the third week."),
-                      tags$li("The number of prescriptions in April was below that expected
-                              from the 2018/2019 average and is likely a consequence of early
-                              ordering of repeat supplies in March."),
+                      tags$li(""),
+                      tags$li(""),
                       tags$li("By the end of May, the numbers of prescriptions were returning
                               to normal levels.")
                     )
@@ -217,10 +207,7 @@ output$cancer_commentary <- renderUI({
           h3("Cardiovascular A&E attendances"),
           p(""),
           tags$ul(
-            tags$li("Overall there was a sharp drop in cardiovascular attendances at Accident and
-                    Emergency Departments starting in early March 2020. Attendances were around 60%
-                    lower compared to the 2018-2019 average. Levels rose again by the end of May, but
-                    remain around 30% below the 2018-19 average."),
+            tags$li(""),
             tags$li("This drop in cardiovascular attendances was consistent across both males and
                     females, in younger and older patients and across deprivation quintiles.")),
           h3("Cardiac procedures"),
