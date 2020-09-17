@@ -221,8 +221,29 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 ## Cancer ----
 ###############################################.
 tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
-  p("Placeholder")
-  ) # tabpanel bracket
+  wellPanel(
+           column(4, div(title="Select a geography level first, then select the are you want from the list.",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_cancer", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_cancer")),
+           column(4, div(title="Select Cancer Type",
+                         selectInput("cancer_type", label = NULL, choices = cancer_type_list,
+                                     selected = "All Cancer Types")),
+                  
+           
+           column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton('download_cancer_data', 'Download data'),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_cancer','Go to commentary')
+           )
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("cancer_explorer")
+         )# mainPanel bracket
+), # tabpanel bracket
+
 ###############################################.
 ## Data ----
 ###############################################.
