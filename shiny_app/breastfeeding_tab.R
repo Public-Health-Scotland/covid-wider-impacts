@@ -71,11 +71,11 @@ output$breastfeeding_explorer <- renderUI({
                withSpinner(plotlyOutput("bf_excl_pc"))),
         column(4,
                h4(paste0("Overall breastfed at ", tolower(input$measure_select_bf))),
-               br(),
+               fluidRow(br(), br()),
                withSpinner(plotlyOutput("bf_over_pc"))),
         column(4,
                h4(paste0("Ever breastfed")),
-               br(),
+               fluidRow(br(), br()),
                withSpinner(plotlyOutput("bf_ever_pc"))))
     )
     
@@ -83,12 +83,12 @@ output$breastfeeding_explorer <- renderUI({
     run_charts_bf <- tagList(
       fluidRow(
         column(6,
-               h4(paste0("Exclusively breastfed at ", tolower(input$measure_select_bf))),
+               h4(paste0("Exclusively breastfed at ", tolower(input$measure_select_bf), " review")),
                actionButton("btn_breastfed_rules", "How do we identify patterns in the data?", 
                             icon = icon('question-circle')),
                withSpinner(plotlyOutput("bf_excl_pc"))),
         column(6,
-               h4(paste0("Overall breastfed at ", tolower(input$measure_select_bf))),
+               h4(paste0("Overall breastfed at ", tolower(input$measure_select_bf), " review")),
                br(),
                withSpinner(plotlyOutput("bf_over_pc"))))
     )
@@ -106,7 +106,7 @@ output$breastfeeding_explorer <- renderUI({
     run_charts_bf,
     fluidRow(control_chart_commentary),
     fluidRow(
-      h4(paste0("Number of children by breastfeeding regularity at ", tolower(input$measure_select_bf))),
+      h4(paste0("Number of children by breastfeeding regularity at ", tolower(input$measure_select_bf), " review")),
       withSpinner(plotlyOutput("bf_types"))),
     fluidRow( # Valid Reviews,
       h4(paste0("Number of ", tolower(input$measure_select_bf), " reviews")),
@@ -166,6 +166,7 @@ output$bf_types <- renderPlotly({
     # Modifying standard layout
     yaxis_plots[["title"]] <- "Number of children"
     
+    if (input$measure_select_bf == "First visit") {
     tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
                               "<br>", "Exclusively breastfed: ", trend_data$exclusive_bf, 
                               " (", trend_data$pc_excl, "%)",
@@ -173,6 +174,13 @@ output$bf_types <- renderPlotly({
                               " (", trend_data$pc_overall, "%)",
                               "<br>", "Ever breastfed: ", trend_data$ever_bf, 
                               " (", trend_data$pc_ever, "%)"))
+    } else if (input$measure_select_bf == "6-8 week") {
+      tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
+                                "<br>", "Exclusively breastfed: ", trend_data$exclusive_bf, 
+                                " (", trend_data$pc_excl, "%)",
+                                "<br>", "Overall breastfed: ", trend_data$overall_bf, 
+                                " (", trend_data$pc_overall, "%)"))
+    }
     
     # Creating time trend plot
     plot_ly(data = trend_data, x = ~month_review) %>% 

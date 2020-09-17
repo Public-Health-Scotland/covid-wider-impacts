@@ -79,15 +79,15 @@ output$childdev_explorer <- renderUI({
                             
   tagList(
     fluidRow(column(12, 
-                    h4(paste0("Number of ", review_title, 
-                              " reviews and reviews with meaningful data recorded")))),
-    fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
-    fluidRow(column(12, 
                     h4(paste0("Percentage of children with 1 or more developmental concerns at the ",  
                               review_title, " review")))),
     actionButton("btn_childdev_rules", "How do we identify patterns in the data?", 
                  icon = icon('question-circle')),
     fluidRow(withSpinner(plotlyOutput("childdev_no_concerns"))),
+    fluidRow(column(12, 
+                    h4(paste0("Number of ", review_title, 
+                              " reviews and reviews with meaningful data recorded")))),
+    fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
     control_chart_commentary
     )#tagLIst bracket
   
@@ -151,7 +151,8 @@ output$childdev_no_concerns <- renderPlotly({
   tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
                             "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
   
-  average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") ~ "Average from May 19 to February 20",
+  average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") & 
+                               input$measure_select_childdev == "13_15mnth" ~ "Average from May 19 to February 20",
                              T ~ "Average from January 19 to February 20")
   
   #Creating time trend plot
@@ -161,7 +162,7 @@ output$childdev_no_concerns <- renderPlotly({
               marker = list(color = "black"), name = "% children with developmental concerns")
   
   # Dotted line for projected tails of centreline. It changes depending on area.
-  if (input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde")) {
+  if (input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") & input$measure_select_childdev == "13_15mnth") {
     run_plot %<>%     
       add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01") &
                                              as.Date(month_review) >= as.Date("2019-05-01")), 
