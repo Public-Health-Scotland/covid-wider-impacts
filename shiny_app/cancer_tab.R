@@ -98,25 +98,19 @@ output$cancer_explorer <- renderUI({
     tagList(
       h3(title),
       actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
-      if (input$measure_select == "nhs24"){
-        p("The data used in this chart are ")
-      },
+      
       if (input$measure_select == "deaths"){
         tagList(
-        p("The analyses below are "),
-        plot_box(paste0("2020 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
-        } else {
-          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
-        },
-      plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
+          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
+          plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
-      plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
+          plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
                    paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
-      fluidRow(column(6, h4(paste0(variation_title, "SIMD quintile"))),
+          fluidRow(column(6, h4(paste0(variation_title, "SIMD quintile"))),
                column(6, h4(paste0(total_title, "SIMD quintile")))),
-      fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
+          fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
                             icon = icon('question-circle'))),
-      fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))),
+          fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))),
                column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))
     )
     
@@ -184,12 +178,12 @@ output$cancer_explorer <- renderUI({
 # Creating plots for each cut and dataset
 # A&E charts
 output$cancer_overall <- renderPlotly({plot_overall_chart(aye, data_name = "all_types")})
-output$cancer_type_select_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", data_name = "aye")})
-output$cancer_type_select_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age", data_name = "aye")})
-output$cancer_type_select_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", data_name = "aye")})
-output$cancer_type_select_sex_tot <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", "total", "aye")})
-output$cancer_type_select_age_tot <- renderPlotly({plot_trend_chart(aye, pal_age, "age", "total", "aye")})
-output$cancer_type_select_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "total", "aye")})
+output$cancer_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", data_name = "aye")})
+output$cancert_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age", data_name = "aye")})
+output$cancer_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", data_name = "aye")})
+output$cancer_sex_tot <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", "total", "aye")})
+output$cancer_age_tot <- renderPlotly({plot_trend_chart(aye, pal_age, "age", "total", "aye")})
+output$cancer_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "total", "aye")})
 
 
 ###############################################.
