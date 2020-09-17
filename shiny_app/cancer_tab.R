@@ -38,6 +38,25 @@ observeEvent(input$btn_cancer_modal,
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
+###############################################.
+## Reactive datasets ----
+###############################################.
+cath_lab_chosen <- reactive({
+  cath_lab %>% filter(lab == input$area_cardio_select) %>% droplevels()
+})
+
+cath_lab_over <- reactive({
+  cath_lab_chosen() %>% filter(groups == "Angiography") %>% droplevels()
+})
+
+cath_lab_adm <- reactive({
+  cath_lab_chosen() %>% filter(type == "adm" & groups == "Percutaneous coronary intervention") %>% droplevels()
+})
+
+cath_lab_type <- reactive({
+  cath_lab_chosen() %>% filter(category == "All") %>% 
+    select(-category) %>% rename(category = groups) %>% droplevels()
+})
 
 
 ###############################################.
