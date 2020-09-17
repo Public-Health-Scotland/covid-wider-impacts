@@ -67,6 +67,9 @@ cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
 
 cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
 
+#Cancer data
+cancer_data <- readRDS("data/cancer_data.rds") # Cancer data
+
 ## Child Health Data
 child_extract_date <- "22nd June 2020"
 first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
@@ -135,6 +138,18 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "4-5 year child health review" = "fourtofive_visit",
                         "Stillbirths and infant deaths" = "perinatal"
                         )
+
+cancer_type_list <- c("All Cancer Types" = "all_cancer_types", 
+                 "Breast" = "breast", 
+                 "Cervical" = "cervical", 
+                 "Colorectal" = "colorectal",
+                 "Head & Neck" = "head_and_neck",
+                 "Lung" = "lung",
+                 "Lymphoma" = "lymphoma",
+                 "Melanoma" = "melanoma",
+                 "Ovarian" = "ovarian",
+                 "Upper GI" = "upper_gi",
+                 "Urological" = "urological")
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
                  "Cardiac procedures" = "cath")
