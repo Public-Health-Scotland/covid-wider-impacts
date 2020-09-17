@@ -105,7 +105,7 @@ output$cancer_explorer <- renderUI({
           fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
                             icon = icon('question-circle'))),
           
-          fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))))
+          plot_cut_box(paste0(variation_title, "deprivation"), paste0(data_name, "_depr_var")))))
                
     )
     
