@@ -95,16 +95,18 @@ output$cancer_explorer <- renderUI({
       
         tagList(
           plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall")),
-          plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
-                   paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
-          plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
-                   paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
+          
+          plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var")),
+                   
+          plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var")),
+                  
           fluidRow(column(6, h4(paste0(variation_title, "SIMD quintile"))),
                column(6, h4(paste0(total_title, "SIMD quintile")))),
           fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
                             icon = icon('question-circle'))),
-          fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))),
-               column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))
+          
+          fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))))
+               
     )
     
   }
@@ -169,14 +171,11 @@ output$cancer_explorer <- renderUI({
 ## Charts ----
 ###############################################.
 # Creating plots for each cut and dataset
-# A&E charts
+
 output$cancer_overall <- renderPlotly({plot_overall_chart(aye, data_name = "all_types")})
 output$cancer_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", data_name = "aye")})
 output$cancert_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age", data_name = "aye")})
 output$cancer_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", data_name = "aye")})
-output$cancer_sex_tot <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", "total", "aye")})
-output$cancer_age_tot <- renderPlotly({plot_trend_chart(aye, pal_age, "age", "total", "aye")})
-output$cancer_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "total", "aye")})
 
 
 ###############################################.
