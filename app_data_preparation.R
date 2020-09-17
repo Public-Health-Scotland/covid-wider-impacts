@@ -1047,27 +1047,31 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/20200914_13
 
 child_dev %<>% #Glasgow is incomplete before May19, converting to NA
   mutate(no_reviews = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                  review == "13-15 month" &
                                   month_review< as.Date("2019-05-01") ~ NA_real_, T ~ no_reviews),
          no_meaningful_reviews = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                             review == "13-15 month" &
                                   month_review< as.Date("2019-05-01") ~ NA_real_, T ~ no_meaningful_reviews),
          concerns_1_plus = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                       review == "13-15 month" &
                                   month_review< as.Date("2019-05-01") ~ NA_real_, T ~ concerns_1_plus),
          pc_1_plus = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                 review == "13-15 month" &
                                   month_review< as.Date("2019-05-01") ~ NA_real_, T ~ pc_1_plus),
-         pc_meaningful = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+         pc_meaningful = case_when(area_name == "NHS Greater Glasgow & Clyde" & review == "13-15 month" &
                                   month_review< as.Date("2019-05-01") ~ NA_real_, T ~ pc_meaningful))
 
 # Calculating centre lines and adding them to child_dev
 child_dev_centreline_hb <- child_dev %>% 
   filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-01-01")) %>% 
-  filter(!area_name %in% c("Scotland", "NHS Greater Glasgow & Clyde")) %>% 
+  filter(!(area_name %in% c("Scotland", "NHS Greater Glasgow & Clyde") & review == "13-15 month")) %>% 
   select(area_name, review, pc_1_plus) %>% group_by(area_name, review) %>% 
   mutate(pc_1_plus_centreline = median(pc_1_plus)) %>% ungroup() %>% 
   select(-pc_1_plus) %>% unique
 
 child_dev_centreline_scot <- child_dev %>% 
   filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-05-01")) %>% 
-  filter(area_name %in% c("Scotland", "NHS Greater Glasgow & Clyde")) %>% 
+  filter(area_name %in% c("Scotland", "NHS Greater Glasgow & Clyde") & review == "13-15 month") %>% 
   select(area_name, review, pc_1_plus) %>% group_by(area_name, review) %>% 
   mutate(pc_1_plus_centreline = median(pc_1_plus)) %>% ungroup() %>% 
   select(-pc_1_plus) %>% unique
