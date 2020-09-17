@@ -31,8 +31,8 @@ function(input, output, session) {
   # source(file.path("perinatal_tab.R"),  local = TRUE)$value
   # 
   ###############################################.
-  # Cabcertab
-  source(file.path("cancer_tab.R"),  local = TRUE)$value
+  # Cancertab
+  # source(file.path("cancer_tab.R"),  local = TRUE)$value
   # ###############################################.
   # # Data tab
   # source(file.path("data_tab.R"),  local = TRUE)$value
