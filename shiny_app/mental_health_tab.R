@@ -436,8 +436,8 @@ output$mentalhealth_commentary <- renderUI({
     tags$ul(
       tags$li("The number of patients starting new treatment with the selected medicines fell by almost 40% between the week prior to the introduction of lockdown and early April. 
               Since then, the total numbers have been gradually increasing but have generally remained below normal levels ."),
-      tags$li("The number of new treatment courses with medicines for depression and insomnia show a similar pattern of decline and recovery by mid-July. 
-              However new treatments for anxiety have since declined and, by September, are about 25% below normal. Medicines for anxiety 
-              show a more prolonged decline in the number of new treatment courses and remain about 25% below normal."))
+      tags$li("The number of new treatment courses with medicines for anxiety, depression and insomnia all fell sharply following the introduction of lockdown.
+              The number of new treatments courses for depression has returned to expected levels since mid July. 
+              In early September, new treatment courses for insomnia and anxiety are 25% below activity in 2018 and 2019.  "))
   )
 })
