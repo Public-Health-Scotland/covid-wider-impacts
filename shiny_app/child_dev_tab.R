@@ -11,8 +11,9 @@ observeEvent(input$btn_childdev_modal,
                p("Data source: CHSP Pre-School"),
                tags$b("Meaningful data"),
                p("This refers to records where a value of N (no concerns), C (concern newly suspected), or P 
-(concern previously identified) has been recorded for all eight developmental domains. See the Early Child 
-Development publication for further details."),
+(concern previously identified) has been recorded for all eight developmental domains. See the ",
+               tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/early-child-development/15-september-2020/dashboard/",
+                      "Early Child Development", target="_blank"), " publication for further details."),
                tags$b("Denominators used in calculations"),
                p("The denominator used in the child development indicators is the total number of reviews, 
                  rather than the number of reviews with meaningful data recorded. It should be noted that it is possible 
@@ -35,7 +36,7 @@ observeEvent(input$btn_childdev_rules,
                  For the child development ones we have used run charts."),
                p("Further information on these methods of presenting data can be found at the ",                      
                  tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts.')),
+                        'PHS guide to statistical process control charts.', target="_blank")),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -78,7 +79,7 @@ output$childdev_explorer <- renderUI({
                               "27-30 month")
   
   control_chart_commentary <- p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
-                                                      "‘control charts’",class="externallink"), "to present the percentages above.", br(),
+                                                      "‘control charts’", target="_blank"), "to present the percentages above.", br(),
                                 "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
                       Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
                                 "The dots joined by a solid line in the chart above show the monthly percentage of children with developmental concerns recorded during the review selected from January 2019 onwards.", br(),  
