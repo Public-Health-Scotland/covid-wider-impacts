@@ -36,28 +36,28 @@ tagList( #needed for shinyjs
 #                     Information will also be shown for different locations across Scotland, such as NHS Board areas."),
 #                 p("This tool will be updated weekly. New releases will be published at the same time as the Public Health Scotland ",
 #                   tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/",
-#                          "COVID-19 weekly report for Scotland.", class="externallink")),
+#                          "COVID-19 weekly report for Scotland.",  target="_blank")),
 #                 p("Note that some numbers may not sum to the total as disclosure control methods have been applied
 #                     to the data in order to protect patient confidentiality."),
 #                 p("If you have any questions relating to the data presented please contact us at: ",
-#                   tags$b(tags$a(href="mailto:phs.statsgov@nhs.net", "phs.statsgov@nhs.net", class="externallink")), "."),
+#                   tags$b(tags$a(href="mailto:phs.statsgov@nhs.net", "phs.statsgov@nhs.net",  target="_blank")), "."),
 #                 p("You can access the code used to produce this tool in this ",
-#                   tags$a(href="https://github.com/Health-SocialCare-Scotland/covid-wider-impact", "GitHub repository", class="externallink"), "."),
+#                   tags$a(href="https://github.com/Health-SocialCare-Scotland/covid-wider-impact", "GitHub repository",  target="_blank"), "."),
 #          h3("Other sources of information: "),
 #          tags$ul(
 #            tags$li("Public Health Scotland publishes ",
-#                    tags$a(href="(https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information", class="externallink"),
+#                    tags$a(href="(https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information",  target="_blank"),
 #                     "on the direct health
 #                    impacts of COVID-19 as well as guidance for professionals and public."),
 #            tags$li("The Scottish Government publishes a ",
-#                    tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard", class="externallink"),
+#                    tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard",  target="_blank"),
 #                    " which brings together data and
 #           evidence on the impacts of COVID-19 on health, society and the economy."),
 #            tags$li("The Improvement Service publishes a ",
-#                    tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard", class="externallink"),
+#                    tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard",  target="_blank"),
 #                    " on the economic impacts of the pandemic in Scotland."),
 #            tags$li("Transport Scotland publishes ",
-#                    tags$a(href="https://www.transport.gov.scot/publications/", "information", class="externallink"),
+#                    tags$a(href="https://www.transport.gov.scot/publications/", "information",  target="_blank"),
 #             " on transport trends and public attitudes towards
 #                    transport for the pandemic period.")
 #          )
@@ -277,7 +277,7 @@ tabPanel(title = "Child development", icon = icon("seedling"), value = "child_de
     #     You can also download the data as a csv using the download button.
     #     The data is also hosted in the",
     #     tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
-    #            "Scottish Health and Social Care Open Data portal", class="externallink"), "."),
+    #            "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
     #   column(6, selectInput("data_select", "Select the data you want to explore.",
     #                        choices = data_list_data_tab)),
     #   column(6, downloadButton('download_table_csv', 'Download data')),
