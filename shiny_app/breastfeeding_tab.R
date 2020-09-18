@@ -7,9 +7,14 @@
 observeEvent(input$btn_breastfed_modal,
              showModal(modalDialog(
                title = "What is the data source?",
-               p("Data source: xxxx."),
-               p("Placeholder"),
-               p("Data for NHS Greater Glasgow and Clyde is only available from May 2019 onwards."),
+               p("Data source: CHSP Pre-School"),
+               tags$b("Meaningful data"),
+               p("This refers to records where a value of N (no concerns), C (concern newly suspected), or P 
+(concern previously identified) has been recorded for all eight developmental domains. See the Early Child 
+Development publication for further details."),
+               tags$b("Denominators used in calculations"),
+               p("The denominator for the breastfeeding indicators is the number of reviews with valid infant 
+                 feeding data recorded (i.e. not ‘missing’ or ‘unknown’)."), 
                p("The average is calculated as the median value of the period specified."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))

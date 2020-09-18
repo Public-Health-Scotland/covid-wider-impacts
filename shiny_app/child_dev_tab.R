@@ -8,9 +8,17 @@
 observeEvent(input$btn_childdev_modal,
              showModal(modalDialog(
                title = "What is the data source?",
-               p("Data source: xxxx."),
-               p("Placeholder"),
-               p("Data for NHS Greater Glasgow and Clyde is only available from May 2019 onwards."),
+               p("Data source: CHSP Pre-School"),
+               tags$b("Meaningful data"),
+               p("This refers to records where a value of N (no concerns), C (concern newly suspected), or P 
+(concern previously identified) has been recorded for all eight developmental domains. See the Early Child 
+Development publication for further details."),
+               tags$b("Denominators used in calculations"),
+               p("The denominator used in the child development indicators is the total number of reviews, 
+                 rather than the number of reviews with meaningful data recorded. It should be noted that it is possible 
+                 for children to have a developmental concern identified without having meaningful data recorded for all 
+                 developmental domains."), 
+               p("Data for NHS Greater Glasgow and Clyde for the 13-15 month review is only available from May 2019 onwards."),
                p("The average is calculated as the median value of the period specified."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
