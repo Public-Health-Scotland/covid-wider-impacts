@@ -80,28 +80,29 @@ output$childdev_explorer <- renderUI({
   
   control_chart_commentary <- p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
                                                       "‘control charts’", target="_blank"), "to present the percentages above.", br(),
-                                "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
-                      Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
-                                "The dots joined by a solid line in the chart above show the monthly percentage of children with developmental concerns recorded during the review selected from January 2019 onwards.", br(),  
-                                "The other line, the centreline, is there to help show how unexpected any observed changes are. 
-                      The centreline is an average (median) over the time period specified in the legend of the chart. ")
-                            
+                                "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. 
+                          Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’ ", br(),
+                                "The dots joined by a solid black line in the chart above show the percentage of children receiving a child health review who had 1 or more developmental concern recorded on their review record.  
+                                Data is shown for each month from January 2019 onwards. ", br(),  
+                                "The blue line on the chart, the centreline, is there to help show how unexpected any observed changes are. 
+                                  The centreline is an average (median) over the time period specified in the legend of the chart.")
+  
   tagList(
     fluidRow(column(12, 
-                    h4(paste0("Percentage of children with 1 or more developmental concerns at the ",  
-                              review_title, " review")))),
+                    h4(paste0("Percentage of children with 1 or more developmental concern recorded at the ",  
+                              review_title, " review")))), 
     actionButton("btn_childdev_rules", "How do we identify patterns in the data?", 
                  icon = icon('question-circle')),
     fluidRow(withSpinner(plotlyOutput("childdev_no_concerns"))),
+    control_chart_commentary,
     fluidRow(column(12, 
-                    h4(paste0("Number of ", review_title, 
-                              " reviews and reviews with meaningful data recorded")))),
-    fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
-    control_chart_commentary
+                    h4(paste0("Number of ", review_title,  
+                              " reviews; reviews with meaningful data on child development recorded; ",
+                              "and children with with 1 or more developmental concern recorded")))),
+    fluidRow(withSpinner(plotlyOutput("childdev_no_reviews")))
     )#tagLIst bracket
   
   }) #close perinatal_explorer function
-
 ###############################################.
 ## Charts ----
 ###############################################.
@@ -154,7 +155,7 @@ output$childdev_no_concerns <- renderPlotly({
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- "Percentage (%)"
-  yaxis_plots[["range"]] <- c(0, 38)  # forcing range from 0 to 100%
+  yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
   xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
   
   tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
