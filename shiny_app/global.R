@@ -102,9 +102,10 @@ six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
-#Maternal health data
-booking <- readRDS("data/ante_booking_data.rds")
-top1 <- readRDS("data/ante_booking_data.rds")
+#Pregancy data
+booking_no <- readRDS("data/ante_booking_no_data.rds")
+booking_gest <- readRDS("data/ante_booking_gest_data.rds")
+#top_no <- readRDS("data/ante_booking_data.rds")
 
 ###############################################.
 ## Objects, names, lists ----
@@ -140,10 +141,9 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
 # data_list_mat <- c("Antenatal booking" = "ante_booking",
 #                      "Terminations" = "top")
 
-# List of data items available in step 1 of maternal  health tab
-data_list_preg <- c("Numbers" = "preg_number",
+# List of data items available in step 1 of preg tab
+data_list_preg <- c("Number" = "preg_number",
                     "Average gestation" = "preg_gestation")
-
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",

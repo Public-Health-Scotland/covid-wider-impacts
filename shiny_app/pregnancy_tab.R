@@ -21,7 +21,7 @@ observeEvent(input$btn_booking_modal,
 
 # Modal to explain SIMD and deprivation
 # Link action button click to modal launch 
-observeEvent(input$btn_modal_simd_mat, { showModal(
+observeEvent(input$btn_modal_simd_preg, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
     p("Children have been allocated to different levels of deprivation based on the small area (data zone) 
@@ -40,15 +40,13 @@ observeEvent(input$btn_modal_simd_mat, { showModal(
 
 
 ###############################################.
-## Maternal Health Reactive controls  ----
+## Pregnancy Reactive controls  ----
 ###############################################.
 
-# maternal reactive drop-down control showing list of area names depending on areatype selected
+# Pregnancy reactive drop-down control showing list of area names depending on areatype selected
 output$geoname_ui_booking <- renderUI({
-  
-  #Lists areas available in   
+    #Lists areas available in   
   areas_summary_booking <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_booking])
-  
   selectizeInput("geoname_booking", label = NULL, choices = areas_summary_booking, selected = "")
 })
 
@@ -57,13 +55,29 @@ output$geoname_ui_booking <- renderUI({
 ##  Reactive datasets  ----
 ###############################################.
 
-#filter data for maternal health trend chart 
-booking_data_filter <- reactive({
-  
-  #mat_chosen <-  case_when(input$measure_select_mat == "ante_booking" ~ booking,
-   #                        input$measure_select_mat == "top" ~ top1)
-  booking_chosen <- booking
-  
+# Reactive dataset for flextable filter on geographical area and dose
+# booking_data_filter_trend <- function(dataset){
+#   
+#   #filter dataset according to whether NHS board or Scotland data selected
+#   if(input$geotype_booking=="Scotland"){
+#     #mat_chosen %>% filter(area_type== input$geotype_mat & category=="All")
+#     booking_chosen <- dataset %>% 
+#       filter(area_type== "Scotland" & category=="All")
+#   } else if (input$geotype_booking=="Health board"){
+#     booking_chosen <- dataset %>%
+#       filter(area_type== input$geotype_booking & area_name==input$geoname_booking)
+#   }}
+
+
+#filter data for maternal health trend chart
+booking_data_filter_trend <- reactive({
+
+  #change dataset that will be filtered and used in chart construction
+  booking_chosen <-  case_when(input$measure_select_booking == "preg_number" ~ booking_no,
+                           input$measure_select_booking == "preg_gestation" ~ booking_gest)
+  #booking_chosen <- booking_no
+
+  #filter dataset according to whether NHS board or Scotland data selected
   if(input$geotype_booking=="Scotland"){
     #mat_chosen %>% filter(area_type== input$geotype_mat & category=="All")
     booking_chosen %>% filter(area_type== "Scotland" & category=="All")
@@ -72,87 +86,92 @@ booking_data_filter <- reactive({
   }
 })
 
-#filter data for maternal health dep chart
-
+#filter data for antenatal booking deprivation chart
 booking_data_filter_split <- reactive({
  #mat_chosen <-  case_when(input$measure_select_mat == "ante_booking" ~ booking,
  #                        input$measure_select_mat == "top" ~ top1)
- 
-   booking_chosen <- booking %>%  filter(area_type== "Scotland")
+   booking_chosen <-  case_when(input$measure_select_booking == "preg_number" ~ booking_no,
+                               input$measure_select_booking == "preg_gestation" ~ booking_gest)
+  
+   booking_chosen %>%
+     filter(area_type== "Scotland")
 
   })
 
 
-
 ###############################################.
-## Maternal health Charts ----
+## Preganancy Charts ----
 ###############################################.
 
 # Creating plots for each dataset
 
-output$preg_booking_trend <- renderPlotly({plot_preg_trend(dataset=mat_data_filter())})
-output$preg_booking_dep <- renderPlotly({plot_preg_split(dataset=mat_data_filter_split(), split="dep")})
-output$preg_booking_age <- renderPlotly({plot_preg_split(dataset=mat_data_filter_split(), split="age")})
+output$preg_booking_trend <- renderPlotly({plot_preg_trend(dataset=booking_data_filter_trend())})
+output$preg_booking_dep <- renderPlotly({plot_preg_split(dataset=booking_data_filter_split(), split="dep")})
+output$preg_booking_age <- renderPlotly({plot_preg_split(dataset=booking_data_filter_split(), split="age")})
 #output$mat_booking_dep <- renderPlotly({plot_mat_split(dataset=booking,split="age")})
 
-
-
- output$pregnancy_explorer <- renderUI({
+output$pregnancy_explorer <- renderUI({
  
    # text for titles of cut charts
-   preg_title <- case_when(input$measure_select_booking == "ante_booking" ~ paste0("Antenatal booking numbers: ", input$geoname_mat),
-                             input$measure_select_booking == "top" ~ paste0("Terminations: ", input$geoname_mat))
+   preg_title <- case_when(input$measure_select_booking == "preg_number" ~ paste0("Antenatal booking numbers: ", input$geoname_booking),
+                             input$measure_select_booking == "preg_gestation" ~ paste0("Average gestation at antenatal booking: ", input$geoname_booking))
    
    preg_subtitle <-  paste0("Figures based on data extracted from XXXX on XXXX ")
    
-   preg_dep_title <- case_when(input$measure_select_mat == "ante_booking" ~ paste0("Antenatal booking numbers by deprivation: ", input$geoname_mat),
-                          input$measure_select_mat == "top" ~ paste0("Terminations by deprivation: ", input$geoname_mat))
+   preg_dep_title <- case_when(input$measure_select_booking == "preg_number" ~ paste0("Antenatal booking numbers by deprivation: ", input$geoname_booking),
+                          input$measure_select_booking == "preg_gestation" ~ paste0("Average gestation at antenatal booking by deprivation: ", input$geoname_booking))
    
-   preg_age_title <- case_when(input$measure_select_mat == "ante_booking" ~ paste0("Antenatal booking numbers by age group: ", input$geoname_mat),
-                               input$measure_select_mat == "top" ~ paste0("Terminations by age group: ", input$geoname_mat))
+   preg_age_title <- case_when(input$measure_select_booking == "preg_number" ~ paste0("Antenatal booking numbers by age group: ", input$geoname_booking),
+                               input$measure_select_booking == "preg_gestation" ~ paste0("Average gestation at antenatal booking by age group: ", input$geoname_booking))
    
    
    #Additional commentart/meta data to appear on immunisation tab
    commentary_booking <-  tagList(p("Space for any meta-data/commentary about booking"))
    
    # Function to create common layout to all immunisation charts
-   mat_layout <- function(plot_trend, plot_dep, plot_age) {
+   preg_layout <- function(plot_trend, plot_dep, plot_age) {
        tagList(fluidRow(column(12,
-                             h4(paste0(mat_title)),
-                             p(mat_subtitle),
+                             h4(paste0(preg_title)),
+                             p(preg_subtitle),
                              withSpinner(plotlyOutput(plot_trend)))),
-             if (input$geotype_mat == "Scotland"){
+             if (input$geotype_booking == "Scotland"){
              fluidRow(column(6,br(), br(),
-                             h4(paste0(mat_age_title)),
+                             h4(paste0(preg_age_title)),
                              br(), br(),
-                      withSpinner(plotlyOutput(plot_age))),
+                      #withSpinner(plotlyOutput(plot_age)),
+                      p("test1")),
                       column(6, br(), br(),
-                             h4(paste0(mat_dep_title)),
-                             actionButton("btn_modal_simd_mat", "What is SIMD and deprivation?",
+                             h4(paste0(preg_dep_title)),
+                             actionButton("btn_modal_simd_preg", "What is SIMD and deprivation?",
                                           icon = icon('question-circle')),
-                             withSpinner(plotlyOutput(plot_dep))))},
+                            # withSpinner(plotlyOutput(plot_dep)),
+                             p("test2")
+                             ))},
              fluidRow(column(12, renderUI(commentary_booking)))
              )}
-             
-  #link plot functions to layouts   
-   if (input$measure_select_mat == "ante_booking") {
-     mat_layout(plot_trend="mat_booking_trend", plot_dep="mat_booking_dep", plot_age="mat_booking_age")
-   }  else if (input$measure_select_mat == "top"){
-     mat_layout()
+
+  #link plot functions to layouts
+   if (input$measure_select_booking == "preg_number") {
+     preg_layout(plot_trend="preg_booking_trend", plot_dep="preg_booking_dep", plot_age="preg_booking_age")
+   }  else if (input$measure_select_booking == "preg_gestation"){
+     preg_layout(plot_trend="preg_booking_trend", plot_dep="preg_booking_dep", plot_age="preg_booking_age")
    }
-   
+
     }) # close maternal explorer function
 
  #############################################
  ## Maternal health chart functions----
  ############################################
  
-plot_mat_trend <- function(dataset) {
+plot_preg_trend <- function(dataset) {
   
   dataset_name <- deparse(substitute(dataset)) # character name of the data
 
+  
   # chart axis for maternal health
-  if(dataset_name == "ante_booking"){ #
+  if(dataset_name == "booking_no"){ #
+    
+    dataset
     yaxis_plots[["title"]] <- "Number of bookings"}
     #xaxis_plots[["title"]] <- "Age of children in weeks"
     #xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
@@ -160,8 +179,8 @@ plot_mat_trend <- function(dataset) {
     #xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) # To adjust x-axis min and max depending on which dose selected
     #age_unit <- paste0(age_week, " weeks:") #string for legend label
   ##chart axis for MMR dose 1 scurve
-  else if(dataset_name == "top"){ #s
-    yaxis_plots[["title"]] <- "Number of terminations"}
+  else if(dataset_name == "booking_gest"){ #s
+    yaxis_plots[["title"]] <- "Average gestation at booking"}
 
   tooltip_booking <- c(paste0("Month:"))
   
@@ -185,7 +204,7 @@ plot_mat_trend <- function(dataset) {
   
   }
 
-plot_mat_split <- function(dataset, split) {
+plot_preg_split <- function(dataset, split) {
   
   dataset_name <- deparse(substitute(dataset)) # character name of the data
   split_name <- deparse(substitute(split)) # character name of the data
@@ -193,15 +212,18 @@ plot_mat_split <- function(dataset, split) {
   yaxis_plots[["title"]] <- "Number of bookings"
   
   # chart axis for maternal health
-   if(dataset_name == "ante_booking"){ #
+   if(dataset_name == "booking_no"){ #
      yaxis_plots[["title"]] <- "Number of bookings"
      dataset <- dataset %>%
        filter(area_type== "Scotland" & type==split_name) %>%
        droplevels()
    }
    ##chart axis for top scurve
-   else if(dataset_name == "top"){ #s
-     yaxis_plots[["title"]] <- "Number of terminations"
+   else if(dataset_name == "booking_gest"){ #s
+     yaxis_plots[["title"]] <- "Average gestation at booking"
+     dataset <- dataset %>%
+       filter(area_type== "Scotland" & type==split_name) %>%
+       droplevels()
    }
   
   if(split == "age"){
@@ -210,8 +232,7 @@ plot_mat_split <- function(dataset, split) {
                                                    "30-34", "35-39", "40 plus")))}
   if(split == "dep"){
     dataset <- dataset %>% 
-      mutate(category = factor(category, levels = c("SIMD 1", "SIMD 2", "SIMD 3",  
-                                                    "SIMD 4", "SIMD 5")))} 
+      mutate(category = factor(category, levels = c("1 - most deprived", "2", "3","4", "5 - least deprived")))} 
    
    dataset <- dataset %>%
      filter(area_type== "Scotland" & type== split) %>%

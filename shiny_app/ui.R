@@ -217,7 +217,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
 )), # tabpanel bracket #navbarMenu bracket
 
 ###############################################.
-## Pregnancy navbarmenu ----
+## Pregnancy ----
 ###############################################.
 navbarMenu("Pregnancy", icon = icon("female"),
 ###############################################.
@@ -245,28 +245,29 @@ navbarMenu("Pregnancy", icon = icon("female"),
                               uiOutput("pregnancy_explorer")
                     )# mainPanel bracket
            ), #tab panel
-tabPanel(title = "Terminations", icon = icon("female"), value = "terminations",
-         wellPanel(
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_top",
-                                           label= "Step 1. Select the data you want to explore.",
-                                           choices = data_list_mat, status = "primary",
-                                           direction = "vertical", justified = T))),
-           column(4, div(title="Select a breakdown",
-                         p(tags$b("Step 2. Select the data breakdown you want to see.")),
-                         selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_top")),
-           column(4,actionButton("btn_top_modal", "Data source: SMR2", icon = icon('question-circle')),
-                  fluidRow(br()))
+tabPanel(title = "Terminations", icon = icon("female"), value = "terminations"
+         #,
+         # wellPanel(
+         #   column(4, div(title="Select the data you want to explore.", # tooltip
+         #                 radioGroupButtons("measure_select_top",
+         #                                   label= "Step 1. Select the data you want to explore.",
+         #                                   choices = data_list_preg, status = "primary",
+         #                                   direction = "vertical", justified = T))),
+         #   column(4, div(title="Select a breakdown",
+         #                 p(tags$b("Step 2. Select the data breakdown you want to see.")),
+         #                 selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
+         #                             selected = "Scotland")),
+         #          uiOutput("geoname_ui_top")),
+         #   column(4,actionButton("btn_top_modal", "Data source: SMR2", icon = icon('question-circle')),
+         #          fluidRow(br()))
            #downloadButton("download_visit_data", "Download data"),
            #fluidRow(br()),
            #actionButton("jump_commentary_hv","Go to commentary"))
            #actionButton("browser", "Browser")
-         ), #well panel
-         mainPanel(width = 12
+         #), #well panel
+         #mainPanel(width = 12
                    #uiOutput("maternal_explorer")
-         )# mainPanel bracket
+         #)# mainPanel bracket
 ) #tab panel
 ), # navbar menu bracket
 ###############################################.
