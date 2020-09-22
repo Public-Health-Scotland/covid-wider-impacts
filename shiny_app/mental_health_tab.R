@@ -434,7 +434,7 @@ output$mentalhealth_commentary <- renderUI({
     p("Information on the number of patients starting a new treatment course for selected mental health medicines (those commonly used for depression, anxiety or 
       insomnia) through General Practice has been included for the first time on 30 September 2020. This data indicates:"),
     tags$ul(
-      tags$li("The number of patients starting new treatment with the selected medicines fell by almost 40% between the week prior to the introduction of lockdown and early April compared with the previous years average for the same period. 
+      tags$li("The number of patients starting new treatment with the selected medicines fell by almost 40% between the week prior to the introduction of lockdown and early April compared with the previous years' average for the same period. 
               Since then, the total numbers have been gradually increasing but have generally remained below normal levels ."),
       tags$li("The number of new treatment courses with medicines for anxiety, depression and insomnia all fell sharply following the introduction of lockdown.
               The number of new treatments courses for depression has returned to expected levels since mid July. 
