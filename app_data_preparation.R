@@ -1030,7 +1030,7 @@ perinatal %<>%
 saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 
 ###############################################.
-## Pregancy health ----
+## Pregnancy health ----
 ###############################################.
 
 ## Antenatal booking numbers
@@ -1062,6 +1062,13 @@ ante_booking_no <- left_join(ante_booking_no, hb_lookup, by = c("area" = "hb_cyp
 
 saveRDS(ante_booking_no, paste0("shiny_app/data/","ante_booking_no_data.rds"))
 
+ante_booking <- ante_booking_no %>%
+  select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
+  rename(centre_line)
+
+
+saveRDS(ante_booking_gest, paste0("shiny_app/data/","ante_booking_gest_data.rds"))
+
 
 ## Antenatal booking average gestation
 ante_booking_gest <- read_csv(paste0(data_folder,"pregnancy/antenatal_booking/gestation_sep2.csv"),
@@ -1091,6 +1098,8 @@ ante_booking_gest <- left_join(ante_booking_gest, hb_lookup, by = c("area" = "hb
   select(-area)
 
 saveRDS(ante_booking_gest, paste0("shiny_app/data/","ante_booking_gest_data.rds"))
+
+
 
 ##
 
