@@ -33,7 +33,7 @@ spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) 
     spec_name == "Paediatrics" ~ "Paediatrics (medical)",
     spec_name == "Paediatric Surgery" ~ "Paediatrics (surgical)",
     TRUE ~ dash_groups
-   )) %>% 
+  )) %>% 
   select("Specialty name" = spec_name, "Specialty group" = dash_groups)
 
 saveRDS(spec_lookup, "shiny_app/data/spec_lookup.rds")
@@ -43,9 +43,9 @@ rap_adm %<>%
   rename(dep = simd_quintile, age = age_group) %>%
   mutate(sex = recode(sex, "male" = "Male", "female" = "Female")) %>% 
   mutate(age = recode_factor(age, "Under_5" = "Under 5", "5_thru_14" = "5 - 14", 
-                                  "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
-                                  "65_thru_74" = "65 - 74", "75_thru_84" = "75 - 84",
-                                  "85+" = "85 and over")) %>% 
+                             "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
+                             "65_thru_74" = "65 - 74", "75_thru_84" = "75 - 84",
+                             "85+" = "85 and over")) %>% 
   create_depgroups()  %>% 
   mutate(admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency")) %>% 
   mutate(spec = case_when(
@@ -74,7 +74,7 @@ rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% rename(category = sex) # T
 rap_adm_age <- agg_rapid(c("age"), split = "age") %>% rename(category = age) # Totals for overalls for all age groups
 # Totals for overalls for deprivation quintiles
 rap_adm_depr <- agg_rapid(c("dep"), split = "dep") %>% rename(category = dep) 
-  
+
 rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) 
 
 # Producing data for combined medical specialty
@@ -82,7 +82,7 @@ spec_med <- rap_adm %>%
   filter(spec %in% c("Cancer", "Medical (excl. Cardiology & Cancer)", "Cardiology")) %>% 
   mutate(spec = "Medical (incl. Cardiology & Cancer)") %>% 
   group_by(week_ending, area_name, area_type, type, 
-    admission_type, spec, category) %>% 
+           admission_type, spec, category) %>% 
   summarise(count = sum(count, na.rm = T)) %>% ungroup
 
 # Producing data for combined Paediatrics specialty
@@ -118,9 +118,9 @@ ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
          count=number_of_consultations) %>%
   mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
-                                   "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
-                                   "65-74" = "65 - 74", "75-84" = "75 - 84",
-                                   "85 plus" = "85 and over"),
+                             "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
+                             "65-74" = "65 - 74", "75-84" = "75 - 84",
+                             "85 plus" = "85 and over"),
          sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          dep = recode(dep, 
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
@@ -268,9 +268,9 @@ prepare_final_data(ae_data, "ae", last_week = "2020-08-23")
 
 # #Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
 # #Each week this section of code can be uncommented run for the latest weeks data then recommented after txt file deleted
-    # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt")))
-    # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.rds"))
-    # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt"))
+# nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt")))
+# saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.rds"))
+# file.remove(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
                 read_tsv(paste0(data_folder, "NHS24/NHS24_report_08062020to3082020.txt"))) %>%
@@ -405,7 +405,7 @@ saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 ###############################################.
 # Data for cardiovascular app
 gj_cath_age <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabData_ForPHS_III.xlsx"),
-                      sheet = "Age") %>% clean_names() %>% 
+                          sheet = "Age") %>% clean_names() %>% 
   mutate(type = "age",
          age_band = recode(age_band, "Gt60" = "60 and over",
                            "Lt60" = "Under 60")) %>% 
@@ -442,7 +442,7 @@ loth_sex <- read_csv(paste0(data_folder, "cath_labs/Lothian_sex.csv")) %>%
   clean_names() %>% 
   mutate(type = "sex",
          gender = recode(gender, "M" = "Male",
-                           "F" = "Female")) %>% 
+                         "F" = "Female")) %>% 
   rename(category = gender)
 
 # Merging together and formating
@@ -455,8 +455,8 @@ loth_cath <- rbind(loth_age, loth_all, loth_sex) %>%
 # All labs 
 cath_labs <- rbind(loth_cath, gj_cath) %>% 
   mutate(groups = recode(groups, "angio" = "Angiography", "Angio" = "Angiography", 
-                                  "devices" = "Devices", "Device" = "Devices", 
-                                  "pci" = "Percutaneous coronary intervention",
+                         "devices" = "Devices", "Device" = "Devices", 
+                         "pci" = "Percutaneous coronary intervention",
                          "PCI" = "Percutaneous coronary intervention"))
 
 # Creating value for total
@@ -478,7 +478,7 @@ cath_labs_hist <- cath_labs %>% filter(year(week_ending) %in% c("2018", "2019"))
 
 cath_labs_2020 <- left_join(cath_labs %>% filter(year(week_ending) %in% c("2020")),
                             cath_labs_hist,
-                       by = c("category", "type", "groups", "proc_week", "lab")) %>%
+                            by = c("category", "type", "groups", "proc_week", "lab")) %>%
   # Creating %variation from precovid to covid period
   mutate(count_average = ifelse(is.na(count_average), 0, count_average),
          variation = round(-1 * ((count_average - count)/count_average * 100), 1),
@@ -589,9 +589,9 @@ prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-08-23")
 ## 6-in-1 s-curve data ----
 ###############################################.
 six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashboard_20200824.csv"), 
-                col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
-                                time_period_eligible=col_factor())) %>%
-janitor::clean_names()
+                        col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
+                                        time_period_eligible=col_factor())) %>%
+  janitor::clean_names()
 
 six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -609,7 +609,7 @@ saveRDS(six_alldose, "shiny_app/data/six_alldose_data.rds")
 ## immunisation team supply a single csv file that is split into two rds files (one for each immunisation)
 
 imms_datatable <- format_immchild_table("immunisations/dashboardtable_20200824")
-                           
+
 six_datatable <- imms_datatable %>%
   filter(str_detect(immunisation,"six-in-one")) %>%
   select(-uptake_13m_num:-uptake_3y8m_percent) #remove uptake columns that related to mmr 
@@ -690,8 +690,8 @@ saveRDS(month_defs_imm, "shiny_app/data/month_eligibility_immun.rds")
 ###############################################.
 # mmr dose 1 & 2 - scurve data
 mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard_20200824.csv"),
-                      col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
-                                      time_period_eligible=col_factor())) %>%
+                        col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
+                                        time_period_eligible=col_factor())) %>%
   janitor::clean_names()
 
 mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
@@ -749,8 +749,8 @@ saveRDS(mmr_dose2_simdtable, paste0("shiny_app/data/","mmr_dose2_simdtable.rds")
 ###############################################.
 ## First visit - scurve data
 first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20200824.csv"), 
-                col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
-                                time_period_eligible=col_character())) %>%
+                  col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
+                                  time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
@@ -785,14 +785,14 @@ saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 
 ## 6 to 8 weeks visit - scurve data
 sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200824.csv"), 
-                  col_types =list(week_6_start=col_date(format="%m/%d/%Y"),
-                                  time_period_eligible=col_character())) %>%
+                       col_types =list(week_6_start=col_date(format="%m/%d/%Y"),
+                                       time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
 sixtoeight$time_period_eligible <- factor(sixtoeight$time_period_eligible, 
-                                     levels=unique(sixtoeight$time_period_eligible[order(sixtoeight$week_6_start, decreasing = T)]), 
-                                     ordered=TRUE)
+                                          levels=unique(sixtoeight$time_period_eligible[order(sixtoeight$week_6_start, decreasing = T)]), 
+                                          ordered=TRUE)
 
 sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -823,14 +823,14 @@ saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.r
 
 ## 13 to 15 month visit - scurve data
 thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20200824.csv"), 
-                       col_types =list(week_57_start=col_date(format="%m/%d/%Y"),
-                                       time_period_eligible=col_character())) %>%
+                     col_types =list(week_57_start=col_date(format="%m/%d/%Y"),
+                                     time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
 thirteen$time_period_eligible <- factor(thirteen$time_period_eligible, 
-                                          levels=unique(thirteen$time_period_eligible[order(thirteen$week_57_start, decreasing = T)]), 
-                                          ordered=TRUE)
+                                        levels=unique(thirteen$time_period_eligible[order(thirteen$week_57_start, decreasing = T)]), 
+                                        ordered=TRUE)
 
 thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -860,14 +860,14 @@ saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
 
 ## 27 to 30 month visit - scurve data
 twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20200824.csv"), 
-                     col_types =list(week_117_start=col_date(format="%m/%d/%Y"),
-                                     time_period_eligible=col_character())) %>%
+                        col_types =list(week_117_start=col_date(format="%m/%d/%Y"),
+                                        time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
 twentyseven$time_period_eligible <- factor(twentyseven$time_period_eligible, 
-                                        levels=unique(twentyseven$time_period_eligible[order(twentyseven$week_117_start, decreasing = T)]), 
-                                        ordered=TRUE)
+                                           levels=unique(twentyseven$time_period_eligible[order(twentyseven$week_117_start, decreasing = T)]), 
+                                           ordered=TRUE)
 
 twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -899,14 +899,14 @@ saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.r
 
 ## 4 to 5 year visit - scurve data
 fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard20200824.csv"), 
-                        col_types =list(week_209_start=col_date(format="%m/%d/%Y"),
-                                        time_period_eligible=col_character())) %>%
+                       col_types =list(week_209_start=col_date(format="%m/%d/%Y"),
+                                       time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
 fourtofive$time_period_eligible <- factor(fourtofive$time_period_eligible, 
-                                           levels=unique(fourtofive$time_period_eligible[order(fourtofive$week_209_start, decreasing = T)]), 
-                                           ordered=TRUE)
+                                          levels=unique(fourtofive$time_period_eligible[order(fourtofive$week_209_start, decreasing = T)]), 
+                                          ordered=TRUE)
 
 fourtofive %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -939,19 +939,19 @@ saveRDS(fourtofive_datatable, paste0("shiny_app/data/","fourtofive_datatable.rds
 ###############################################.
 # P CHART PERINATAL DATA
 p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
-                          sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
-                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
-                                sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
-                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
-                                sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi"),
-                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
-                                sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
+                                    sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                                    sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                                    sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                                    sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
   janitor::clean_names() %>%
   select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type)
 
 u_perinatal <- read_excel(paste0(data_folder,"perinatal/Uchart - INFANT DEATHS_augupdate.xlsx"),
-           sheet = "Uchart", skip = 2) %>% mutate(type = "infantdeaths") %>% 
+                          sheet = "Uchart", skip = 2) %>% mutate(type = "infantdeaths") %>% 
   janitor::clean_names() %>%
   select(month_of_year=sample,  number_of_deaths_in_month=observation, sample_size=ao_o_size, rate, centreline, stdev = poisson_st_dev_16, 
          upper_cl_3_std_dev:type)
@@ -998,8 +998,8 @@ perinatal %<>%
                            | lead(trend_i, 5) == T  ~ T, T ~ F),
          #Outer One –Third: Two out of three consecutive data points which sit close to one of the control limits(within 2 and 3 sigma)
          outer_i = case_when((rate > upper_wl_2_std_dev & rate < upper_cl_3_std_dev) & 
-                              ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) | 
-                                 (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
+                               ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) | 
+                                  (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
          outer = case_when(outer_i == T | lead(outer_i, 1) == T | lead(outer_i, 2) == T ~ T, T ~ F),
          # Inner One -Third: 15 or more consecutive data points that lie close to the centreline(within 1 sigma).
          inner_i = case_when(rate < upper_sigma1 & rate > lower_sigma1 &
@@ -1030,38 +1030,69 @@ perinatal %<>%
 saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 
 ###############################################.
-## Maternal health ----
+## Pregancy health ----
 ###############################################.
 
-## Antenatal booking
-ante_booking <- read_csv(paste0(data_folder,"maternal_health/antenatal_booking/booking_sep.csv"),
-  col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
-                  centreline=col_number())) %>%
+## Antenatal booking numbers
+ante_booking_no <- read_csv(paste0(data_folder,"pregnancy/antenatal_booking/booking_sep2.csv"),
+                         col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
+                                         centreline=col_number())) %>%
   janitor::clean_names() 
 
 # Match area names from lookup
-ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher")) %>%
+ante_booking_no <- left_join(ante_booking_no, hb_lookup, by = c("area" = "hb_cypher")) %>%
   mutate(type=case_when(area_type=="Health board" ~ "Health board",
                         area=="Scotland" ~ "Scotland",
                         (substr(area,1,4)=="SIMD") ~ "dep", TRUE ~ "age"),
          area_name=case_when(type=="Scotland" ~ "Scotland",
-                        type=="age" ~ "Scotland",
-                        type=="dep" ~ "Scotland",
-                        TRUE ~ area_name),
+                             type=="age" ~ "Scotland",
+                             type=="dep" ~ "Scotland",
+                             TRUE ~ area_name),
          area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name),
          category=case_when(type=="Scotland" ~ "All",
                             type=="Health board" ~ "All",
                             type=="age" ~ area,
                             type=="dep" ~ area, T ~"other"),
-         area=case_when(area=="SIMD 1" ~ "1 - most deprived",
-                        area=="SIMD 2" ~ "2 - most deprived",
-                        area=="SIMD 3" ~ "3 - most deprived",
-                        area=="SIMD 4" ~ "4 - most deprived",
-                        area=="SIMD 5" ~ "5 - least deprived",T ~area)) %>%
+         category=case_when(area=="SIMD 1" ~ "1 - most deprived",
+                        area=="SIMD 2" ~ "2",
+                        area=="SIMD 3" ~ "3",
+                        area=="SIMD 4" ~ "4",
+                        area=="SIMD 5" ~ "5 - least deprived",T ~area_name)) %>%
+    select(-area)
+
+saveRDS(ante_booking_no, paste0("shiny_app/data/","ante_booking_no_data.rds"))
+
+
+## Antenatal booking average gestation
+ante_booking_gest <- read_csv(paste0(data_folder,"pregnancy/antenatal_booking/gestation_sep2.csv"),
+                            col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
+                                            centreline=col_number())) %>%
+  janitor::clean_names() 
+
+# Match area names from lookup
+ante_booking_gest <- left_join(ante_booking_gest, hb_lookup, by = c("area" = "hb_cypher")) %>%
+  mutate(type=case_when(area_type=="Health board" ~ "Health board",
+                        area=="Scotland" ~ "Scotland",
+                        (substr(area,1,4)=="SIMD") ~ "dep", TRUE ~ "age"),
+         area_name=case_when(type=="Scotland" ~ "Scotland",
+                             type=="age" ~ "Scotland",
+                             type=="dep" ~ "Scotland",
+                             TRUE ~ area_name),
+         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name),
+         category=case_when(type=="Scotland" ~ "All",
+                            type=="Health board" ~ "All",
+                            type=="age" ~ area,
+                            type=="dep" ~ area, T ~"other"),
+         category=case_when(area=="SIMD 1" ~ "1 - most deprived",
+                            area=="SIMD 2" ~ "2",
+                            area=="SIMD 3" ~ "3",
+                            area=="SIMD 4" ~ "4",
+                            area=="SIMD 5" ~ "5 - least deprived",T ~area_name)) %>%
   select(-area)
-  
-saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
+
+saveRDS(ante_booking_gest, paste0("shiny_app/data/","ante_booking_gest_data.rds"))
+
+##
 
 
 ##END
-
