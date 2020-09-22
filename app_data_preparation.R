@@ -113,7 +113,7 @@ prepare_final_data(rap_adm, "rapid", last_week = "2020-09-13",
 
 # Read in historic OOH file
 # ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
-ooh <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data 2.xlsx")) %>% 
+ooh <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data Update_2018to26042020.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
