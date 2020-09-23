@@ -27,8 +27,9 @@ function(input, output, session) {
   source(file.path("child_health_tab.R"),  local = TRUE)$value
 
   ###############################################.
-  # Maternal Health tab
-  source(file.path("pregnancy_tab.R"),  local = TRUE)$value
+  # Pregnancy tabs
+  source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
+  source(file.path("terminations_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Perinatal tab

@@ -45,7 +45,7 @@ observeEvent(input$btn_modal_simd_preg, { showModal(
 
 # Pregnancy reactive drop-down control showing list of area names depending on areatype selected
 output$geoname_ui_booking <- renderUI({
-    #Lists areas available in   
+  #Lists areas available in   
   areas_summary_booking <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_booking])
   selectizeInput("geoname_booking", label = NULL, choices = areas_summary_booking, selected = "")
 })
@@ -73,9 +73,9 @@ output$geoname_ui_booking <- renderUI({
 booking_data_filter_trend <- reactive({
 
   #change dataset that will be filtered and used in chart construction
-  booking_chosen <-  case_when(input$measure_select_booking == "preg_number" ~ booking_no,
-                           input$measure_select_booking == "preg_gestation" ~ booking_gest)
-  #booking_chosen <- booking_no
+  # booking_chosen <-  case_when(input$measure_select_booking == "preg_number" ~ booking_no,
+  #                          input$measure_select_booking == "preg_gestation" ~ booking_gest)
+  booking_chosen <- booking
 
   #filter dataset according to whether NHS board or Scotland data selected
   if(input$geotype_booking=="Scotland"){
@@ -90,9 +90,10 @@ booking_data_filter_trend <- reactive({
 booking_data_filter_split <- reactive({
  #mat_chosen <-  case_when(input$measure_select_mat == "ante_booking" ~ booking,
  #                        input$measure_select_mat == "top" ~ top1)
-   booking_chosen <-  case_when(input$measure_select_booking == "preg_number" ~ booking_no,
-                               input$measure_select_booking == "preg_gestation" ~ booking_gest)
-  
+   # booking_chosen <-  case_when(input$measure_select_booking == "preg_number" ~ booking_no,
+   #                             input$measure_select_booking == "preg_gestation" ~ booking_gest)
+   booking_chosen <- booking
+   
    booking_chosen %>%
      filter(area_type== "Scotland")
 
@@ -165,42 +166,54 @@ output$pregnancy_explorer <- renderUI({
  
 plot_preg_trend <- function(dataset) {
   
-  dataset_name <- deparse(substitute(dataset)) # character name of the data
+  #dataset_name <- deparse(substitute(dataset)) # character name of the data
 
-  
   # chart axis for maternal health
-  if(dataset_name == "booking_no"){ #
+  if(input$measure_select_booking == "preg_number"){ #
     
-    dataset
     yaxis_plots[["title"]] <- "Number of bookings"}
-    #xaxis_plots[["title"]] <- "Age of children in weeks"
-    #xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
-    #xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
-    #xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) # To adjust x-axis min and max depending on which dose selected
-    #age_unit <- paste0(age_week, " weeks:") #string for legend label
-  ##chart axis for MMR dose 1 scurve
-  else if(dataset_name == "booking_gest"){ #s
-    yaxis_plots[["title"]] <- "Average gestation at booking"}
-
-  tooltip_booking <- c(paste0("Month:"))
+    tooltip_booking <- c(paste0("Month:"))  
   
-  #Creating time trend plot
-  plot_ly(data=dataset, x=~week_book_starting) %>%
-    add_lines(y = ~booked,  
-              line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-              marker = list(color = "black"), name = "# booking") %>% 
-    add_lines(y = ~dottedline, name = "Scotland projected",
-              line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-              name = "Centreline") %>%
-    add_lines(y = ~centreline, name = "Scotland centre line up to 23rd March 2020",
-              line = list(color = "blue"), hoverinfo="none",
-              name = "Centreline") %>% 
-    #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots,  xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.5)) %>% #position of legend
-    # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+    #Creating time trend plot
+    plot_ly(data=dataset, x=~week_book_starting) %>%
+      add_lines(y = ~booked_no,  
+                line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                marker = list(color = "black"), name = "# booking") %>% 
+      add_lines(y = ~dottedline_no, name = "Scotland projected",
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                name = "Centreline") %>%
+      add_lines(y = ~centreline_no, name = "Scotland centre line up to 23rd March 2020",
+                line = list(color = "blue"), hoverinfo="none",
+                name = "Centreline") %>% 
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+
+  # else if(input$measure_select_booking  == "preg_gestation"){ #s
+  #   
+  #   yaxis_plots[["title"]] <- "Average gestation at booking"}
+  #   tooltip_booking <- c(paste0("Month:"))
+  # 
+  # #Creating time trend plot
+  # plot_ly(data=dataset, x=~week_book_starting) %>%
+  #   add_lines(y = ~booked_no,  
+  #             line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+  #             marker = list(color = "black"), name = "# booking") %>% 
+  #   add_lines(y = ~dottedline_no, name = "Scotland projected",
+  #             line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+  #             name = "Centreline") %>%
+  #   add_lines(y = ~centreline_no, name = "Scotland centre line up to 23rd March 2020",
+  #             line = list(color = "blue"), hoverinfo="none",
+  #             name = "Centreline") %>% 
+  #   #Layout
+  #   layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+  #          yaxis = yaxis_plots,  xaxis = xaxis_plots,
+  #          legend = list(x = 100, y = 0.5)) %>% #position of legend
+  #   # leaving only save plot button
+  #   config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
   
   }
 

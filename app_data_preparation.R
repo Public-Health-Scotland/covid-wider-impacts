@@ -1034,10 +1034,17 @@ saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 ###############################################.
 
 ## Antenatal booking numbers
+###############################################.
+
 ante_booking_no <- read_csv(paste0(data_folder,"pregnancy/antenatal_booking/booking_sep2.csv"),
                          col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
                                          centreline=col_number())) %>%
   janitor::clean_names() 
+
+
+ante_booking_n <- ante_booking_no %>%
+  select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
+  rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked)
 
 # Match area names from lookup
 ante_booking_no <- left_join(ante_booking_no, hb_lookup, by = c("area" = "hb_cypher")) %>%
@@ -1062,12 +1069,9 @@ ante_booking_no <- left_join(ante_booking_no, hb_lookup, by = c("area" = "hb_cyp
 
 saveRDS(ante_booking_no, paste0("shiny_app/data/","ante_booking_no_data.rds"))
 
-ante_booking <- ante_booking_no %>%
-  select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
-  rename(centre_line)
-
-
-saveRDS(ante_booking_gest, paste0("shiny_app/data/","ante_booking_gest_data.rds"))
+# ante_booking_n <- ante_booking_no %>%
+#   select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
+#   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked)
 
 
 ## Antenatal booking average gestation
@@ -1075,6 +1079,9 @@ ante_booking_gest <- read_csv(paste0(data_folder,"pregnancy/antenatal_booking/ge
                             col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
                                             centreline=col_number())) %>%
   janitor::clean_names() 
+
+ante_booking_g <- ante_booking_gest %>%
+  rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked)
 
 # Match area names from lookup
 ante_booking_gest <- left_join(ante_booking_gest, hb_lookup, by = c("area" = "hb_cypher")) %>%
@@ -1099,7 +1106,45 @@ ante_booking_gest <- left_join(ante_booking_gest, hb_lookup, by = c("area" = "hb
 
 saveRDS(ante_booking_gest, paste0("shiny_app/data/","ante_booking_gest_data.rds"))
 
+# ante_booking_g <- ante_booking_gest %>%
+#   rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked)
 
+
+# join two booking sheets to form single 
+ante_booking <- left_join(ante_booking_n, ante_booking_g, by = c("week_book_starting","area"))
+
+# Match area names from lookup
+ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher")) %>%
+  mutate(type=case_when(area_type=="Health board" ~ "Health board",
+                        area=="Scotland" ~ "Scotland",
+                        (substr(area,1,4)=="SIMD") ~ "dep", TRUE ~ "age"),
+         area_name=case_when(type=="Scotland" ~ "Scotland",
+                             type=="age" ~ "Scotland",
+                             type=="dep" ~ "Scotland",
+                             TRUE ~ area_name),
+         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name),
+         category=case_when(type=="Scotland" ~ "All",
+                            type=="Health board" ~ "All",
+                            type=="age" ~ area,
+                            type=="dep" ~ area, T ~"other"),
+         category=case_when(area=="SIMD 1" ~ "1 - most deprived",
+                            area=="SIMD 2" ~ "2",
+                            area=="SIMD 3" ~ "3",
+                            area=="SIMD 4" ~ "4",
+                            area=="SIMD 5" ~ "5 - least deprived",T ~area_name)) %>%
+  select(-area)
+
+saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
+
+## Terminations of pregnancy
+###############################################.
+
+## Antenatal booking average gestation
+top <- rap_adm <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date)
+
+saveRDS(top, paste0("shiny_app/data/","top_data.rds"))
 
 ##
 
