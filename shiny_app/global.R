@@ -147,7 +147,6 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
 # List of data items available in step 1 of antenatal booking
 data_list_booking <- c("Number" = "booking_number",
                     "Average gestation" = "booking_gestation")
-
 # List of data items available in step 1 of terminations
 data_list_top <- c("Number" = "top_number",
                        "Average gestation" = "top_gestation")
