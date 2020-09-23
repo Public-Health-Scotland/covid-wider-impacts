@@ -1045,7 +1045,9 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/20200914_13
          month_review = as.Date(month_review)) %>% 
   filter((year(month_review) %in% c("2019", "2020"))) 
 
-child_dev %<>% #Glasgow is incomplete before May19, converting to NA
+child_dev %<>% # Dealing with NAs, which are 0s
+  mutate_at(c("pc_1_plus", "concerns_1_plus"), ~replace_na(., 0)) %>% 
+  #Glasgow is incomplete before May19, converting to NA
   mutate(no_reviews = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
                                   review == "13-15 month" &
                                   month_review< as.Date("2019-05-01") ~ NA_real_, T ~ no_reviews),
@@ -1061,9 +1063,7 @@ child_dev %<>% #Glasgow is incomplete before May19, converting to NA
          pc_meaningful = case_when(area_name == "NHS Greater Glasgow & Clyde" & review == "13-15 month" &
                                   month_review< as.Date("2019-05-01") ~ NA_real_, T ~ pc_meaningful))
 
-# Dealing with NAs, which are 0s
-child_dev %<>% 
-  mutate_at(c("pc_1_plus", "concerns_1_plus"), ~replace_na(., 0))
+
 
 # Calculating centre lines and adding them to child_dev
 child_dev_centreline_hb <- child_dev %>% 
