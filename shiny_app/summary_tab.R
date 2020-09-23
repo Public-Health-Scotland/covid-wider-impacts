@@ -358,8 +358,11 @@ output$data_explorer <- renderUI({
                source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
     
   } else if (input$measure_select == "ooh") { #Out of hours cases
+    tagList(tags$b(span("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) 
+           data was identified and was corrected on 23/09/2020– for more details please see ", 
+                actionLink("jump_commentary_oohissue_sum", "commentary"), ".", style="color:red")),
     cut_charts(title= "Weekly cases in out of hours services", 
-               source = "PHS GP OOH Datamart", data_name ="ooh")
+               source = "PHS GP OOH Datamart", data_name ="ooh"))
     
   } else if (input$measure_select == "sas") { # SAS data
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service", 
@@ -502,6 +505,16 @@ output$download_chart_data <- downloadHandler(
 output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
+    h2("Summary - Revision of baseline GP OOH - 23rd September 2020"),
+    p("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) data was 
+identified and has now been corrected. OOH figures from January 2018 to 22nd March 2020 had previously 
+referred to numbers of consultations whereas those presented after 23rd March referred to numbers of cases. 
+A correction has been applied to ensure that the full time series is now based on numbers of OOH cases. 
+The impact of this revision is modest and does not materially affect interpretation of the changes observed in 
+post-pandemic activity. 
+At a national level adjusting the baseline data has resulted in a reduction in the baseline OOH figure of a
+pproximately 10% (1,600).  The post-pandemic reductions in OOH activity previously reported were also over-estimated 
+by around 6% each week, and this has now been corrected. The impact of the data revisions at a sub-national level may vary."),
     h2("Summary - 3rd June 2020"), 
           p("From the second week of March 2020 there was an abrupt and steep fall in hospital admissions, 
 attendances at Accident and Emergency (A&E) departments and cases in out of hours services. 
