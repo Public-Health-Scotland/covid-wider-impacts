@@ -112,15 +112,19 @@ prepare_final_data(rap_adm, "rapid", last_week = "2020-09-13",
 # file.remove(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip"))
 
 # Read in historic OOH file
-ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
+# ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
+ooh <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data Update_2018to26042020.xlsx")) %>% 
   janitor::clean_names() %>%
-  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name,
+  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
-         count=number_of_consultations) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
-                                   "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
-                                   "65-74" = "65 - 74", "75-84" = "75 - 84",
-                                   "85 plus" = "85 and over"),
+         count=number_of_cases) %>%
+  mutate(age = recode_factor(age_band, "0-4" = "Under 5", 
+                             "70-74"  = "65 - 74", "90+" = "85 and over", "10-14" = "5 - 14", 
+                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
+                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
+                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", "5-9" = "5 - 14", 
+                             "60-64" = "45 - 64", "65-69"  = "65 - 74", "75-79"= "75 - 84", "80-84"= "75 - 84", 
+                             "85-89" = "85 and over"),
          sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          dep = recode(dep, 
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
@@ -136,38 +140,7 @@ ooh %<>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
-  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-03-22")))
-
-## Additional new OOH data
-ooh_new <- readRDS(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.rds")) %>%
-  janitor::clean_names() %>%
-  rename(date=sc_start_date, hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
-         dep=prompt_dataset_deprivation_scot_quintile,sex=gender, age_group=age_band,
-         count=number_of_cases) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
-                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
-                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
-                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
-                             "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
-                             "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
-                             "90+" = "85 and over"),
-         sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
-         dep = recode(dep, 
-                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
-                      "4" = "4", "5" = "5 - least deprived"),
-         date = as.Date(date, "%d/%m/%y")) %>% #formatting date
-  mutate(week_ending = ceiling_date(date, "week", change_on_boundary = F)) %>% #end of week
-  proper() #convert HB names to correct format
-
-# Aggregate up to get figures for each area type.
-ooh_new %<>% mutate(scot = "Scotland") %>% 
-  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
-  mutate(area_type = recode(area_type, "area_name" = "Health board", 
-                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
-  # Aggregating by week to make it faster to work with
-  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
-  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-04-26")))
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
 ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_60_8628542845006550862.xlsx")) %>% 
@@ -199,7 +172,7 @@ ooh_may_onwards %<>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup()
 
 #bind old and new ooh data
-ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
+ooh <- rbind(ooh_may_onwards, ooh)
 
 # Creating totals for groups
 ooh_all <- ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
