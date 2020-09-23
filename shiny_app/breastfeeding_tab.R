@@ -8,11 +8,12 @@ observeEvent(input$btn_breastfed_modal,
              showModal(modalDialog(
                title = "What is the data source?",
                p("Data source: CHSP Pre-School"),
-               tags$b("Meaningful data"),
-               p("This refers to records where a value of N (no concerns), C (concern newly suspected), or P 
-(concern previously identified) has been recorded for all eight developmental domains. See the ",
-                 tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/early-child-development/15-september-2020/dashboard/",
-                        "Early Child Development", class="externallink", target="_blank"), " publication for further details."),
+               tags$b("Definitions"),
+               tags$ul(
+                 tags$li("Exclusively breastfed: children recorded as only being fed breastmilk in the previous 24 hour period"),
+                 tags$li("Overall breastfed: children recorded as being fed breast and formula milk in the previous 24 hour period"),
+                 tags$li("Ever breastfed: Has the child ever been breastfed? This is recorded at the Health Visitor First Visit.")
+               ),
                tags$b("Denominators used in calculations"),
                p("The denominator for the breastfeeding indicators is the number of reviews with valid infant 
                  feeding data recorded (i.e. not ‘missing’ or ‘unknown’)."), 
