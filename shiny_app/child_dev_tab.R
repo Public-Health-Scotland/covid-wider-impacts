@@ -89,7 +89,7 @@ output$childdev_explorer <- renderUI({
   
   tagList(
     fluidRow(column(12, 
-                    h4(paste0("Percentage of children with 1 or more developmental concern recorded at the ",  
+                    h4(paste0("Percentage of children with 1 or more developmental concerns recorded at the ",  
                               review_title, " review")))), 
     actionButton("btn_childdev_rules", "How do we identify patterns in the data?", 
                  icon = icon('question-circle')),
@@ -97,8 +97,7 @@ output$childdev_explorer <- renderUI({
     control_chart_commentary,
     fluidRow(column(12, 
                     h4(paste0("Number of ", review_title,  
-                              " reviews; reviews with meaningful data on child development recorded; ",
-                              "and children with with 1 or more developmental concern recorded")))),
+                              " reviews; reviews with full meaningful data on child development recorded; and children with 1 or more developmental concerns recorded")))),
     fluidRow(withSpinner(plotlyOutput("childdev_no_reviews")))
     )#tagLIst bracket
   
@@ -119,7 +118,7 @@ output$childdev_no_reviews <- renderPlotly({
   #Modifying standard layout
   yaxis_plots[["title"]] <- "Number of reviews"
   
-    tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+    tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
                               "<br>", "Number of reviews: ", trend_data$no_reviews,
                               "<br>", "Number of reviews with meaningful data:  ", trend_data$no_meaningful_reviews,
                               "<br>", "Number of children with recorded concerns: ", trend_data$concerns_1_plus))
@@ -133,7 +132,7 @@ output$childdev_no_reviews <- renderPlotly({
       add_lines(y = ~concerns_1_plus, name = "Number of children with developmental concerns",
                 line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>% 
       # Dummy line so Glasgow axis shows from January onwards
-      add_lines(y = ~dummy, line = list(color = "white"), showlegend = F) %>% 
+      add_lines(y = ~dummy, line = list(color = "white"), showlegend = F, hoverinfo = "skip") %>% 
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -154,7 +153,7 @@ output$childdev_no_concerns <- renderPlotly({
   } else {
   
   #Modifying standard layout
-  yaxis_plots[["title"]] <- "Percentage (%)"
+  yaxis_plots[["title"]] <- "Percentage of all reviews"
   yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
   xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
   

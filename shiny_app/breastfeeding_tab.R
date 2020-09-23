@@ -107,7 +107,7 @@ output$breastfeeding_explorer <- renderUI({
                                                        "‘control charts’",class="externallink"), "to present the percentages above.", br(),
                                 "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
                       Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
-                                "TThe dots joined by a solid black line in the chart above show the percentage of children receiving a child health review who 
+                                "The dots joined by a solid black line in the chart above show the percentage of children receiving a child health review who 
                                 were recorded as being breastfed on their review record. Data is shown for each month from January 2019 onwards. ", br(),  
                                 "The blue line on the chart, the centreline, is there to help show how unexpected any observed changes are. 
                                 The centreline is an average (median) over the time period specified in the legend of the chart.")
@@ -164,12 +164,12 @@ output$bf_types <- renderPlotly({
                 text = tooltip_trend, hoverinfo="text", name = "Number of reviews") %>% 
       add_lines(y = ~no_valid_reviews, line = list(color = "#74add1", dash = "dash"), 
                 text = tooltip_trend, hoverinfo = "text", name = "Number of reviews with infant feeding data recorded") %>% 
-      add_lines(y = ~exclusive_bf, line = list(color = "#bf812d"), # Exclusively breastfed
-                text = tooltip_trend, hoverinfo="text", name = "Number of children exclusively breastfed") %>% 
-      add_lines(y = ~overall_bf, line = list(color = "2c7fb8"), #overall breastfed
-                text = tooltip_trend, hoverinfo="text", name = "Number of children overall breastfed") %>% 
       add_lines(y = ~ever_bf, line = list(color = "#313695"), #ever breastfed
                 text = tooltip_trend, hoverinfo="text",  name = "Number of children ever breastfed") %>% 
+      add_lines(y = ~overall_bf, line = list(color = "2c7fb8"), #overall breastfed
+                text = tooltip_trend, hoverinfo="text", name = "Number of children overall breastfed") %>% 
+      add_lines(y = ~exclusive_bf, line = list(color = "#bf812d"), # Exclusively breastfed
+                text = tooltip_trend, hoverinfo="text", name = "Number of children exclusively breastfed") %>% 
       # Layout
       layout(margin = list(b = 80, t=5),
              yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -189,7 +189,7 @@ plot_runchart_bf <- function(var_chosen, centreline, shift, trend) {
   } else {
     
     #Modifying standard layout
-    yaxis_plots[["title"]] <- "Percentage (%)"
+    yaxis_plots[["title"]] <- "Percentage of reviews with feeding data"
     yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
     xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
     
