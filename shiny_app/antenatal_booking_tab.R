@@ -79,8 +79,8 @@ ante_booking_filter_split <- function(split){
 
 # Creating plots for each dataset
 output$booking_trend <- renderPlotly({plot_booking_trend()})
-output$booking_age <- renderPlotly({plot_booking_split(dataset=plot_booking_trend(split="age"))})
-output$booking_dep <- renderPlotly({plot_booking_split(dataset=plot_booking_trend(split="dep"))})
+output$booking_age <- renderPlotly({plot_booking_split(dataset=ante_booking_filter(), split="age")})
+output$booking_dep <- renderPlotly({plot_booking_split(dataset=ante_booking_filter(), split="dep")})
 
 ###############################################.
 ##  Reactive layout  ----
@@ -102,19 +102,19 @@ output$booking_explorer <- renderUI({
     tagList(fluidRow(column(12,
                             h4(paste0(booking_title))),
                      p(booking_subtitle),
-                     withSpinner(plotlyOutput("plot_booking_trend"))),
+                     withSpinner(plotlyOutput("booking_trend"))),
             #only if scotland selected display age and deprivation breakdowns
             if (input$geotype_booking == "Scotland"){
               fluidRow(column(6,br(), br(),
                               #h4(paste0(preg_age_title)),
                               br(), br(),
-                              withSpinner(plotlyOutput(plot_age)),
+                              withSpinner(plotlyOutput("booking_age")),
                               p("test1")),
                        column(6, br(), br(),
                               #h4(paste0(preg_dep_title)),
                               actionButton("btn_modal_simd_preg", "What is SIMD and deprivation?",
                                            icon = icon('question-circle')),
-                              withSpinner(plotlyOutput(plot_dep)),
+                              withSpinner(plotlyOutput("booking_dep")),
                               p("test2")
                        ))},
             fluidRow(column(12, renderUI(commentary_booking))))
@@ -153,13 +153,13 @@ plot_booking_trend <- function(){
   
   #Creating time trend plot
   plot_ly(data=plot_data, x=~week_book_starting) %>%
-    add_lines(y = ~booked_no,  
+    add_lines(y = ~booked,  
               line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
               marker = list(color = "black"), name = "# booking") %>% 
-    add_lines(y = ~dottedline_no, name = "Scotland projected",
+    add_lines(y = ~dottedline, name = "Scotland projected",
               line = list(color = "blue", dash = "longdash"), hoverinfo="none",
               name = "Centreline") %>%
-    add_lines(y = ~centreline_no, name = "Scotland centre line up to 23rd March 2020",
+    add_lines(y = ~centreline, name = "Scotland centre line up to 23rd March 2020",
               line = list(color = "blue"), hoverinfo="none",
               name = "Centreline") %>% 
     #Layout
@@ -208,7 +208,7 @@ plot_booking_split <- function(dataset, split){
   tooltip_booking <- c(paste0("Month:"))
   
   #Creating time trend plot
-  plot_ly(data=plot_data, x=~week_book_starting, y = ~booked_no) %>%
+  plot_ly(data=plot_data, x=~week_book_starting, y = ~booked) %>%
     add_trace(type = 'scatter', mode = 'lines',
               color = ~category, 
               #colors = pallette
