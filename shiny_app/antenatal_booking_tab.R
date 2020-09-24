@@ -78,9 +78,59 @@ ante_booking_filter_split <- function(split){
 ###############################################.
 
 # Creating plots for each dataset
-output$booking_trend <- renderPlotly({plot_booking_trend()})
-output$booking_age <- renderPlotly({plot_booking_split(dataset=ante_booking_filter(), split="age")})
-output$booking_dep <- renderPlotly({plot_booking_split(dataset=ante_booking_filter(), split="dep")})
+output$booking_trend <- renderPlotly({
+  plot_data <- ante_booking_filter()
+  
+  # chart when numbers selected
+  if(input$measure_select_booking == "booking_number"){ 
+    
+    yaxis_plots[["title"]] <- "Number of bookings"
+    tooltip_booking <- c(paste0("Month:"))  
+    
+    #Creating time trend plot
+    plot_ly(data=plot_data, x=~week_book_starting) %>%
+      add_lines(y = ~booked,  
+                line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                marker = list(color = "black"), name = "# booking") %>% 
+      add_lines(y = ~dottedline, name = "Scotland projected",
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                name = "Centreline") %>%
+      add_lines(y = ~centreline, name = "Scotland centre line up to 23rd March 2020",
+                line = list(color = "blue"), hoverinfo="none",
+                name = "Centreline") %>% 
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      #leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+  } else if (input$measure_select_booking  == "booking_gestation") {
+    
+    yaxis_plots[["title"]] <- "Average gestation at booking (weeks)"
+    tooltip_booking <- c(paste0("Month:"))
+    
+    #Creating time trend plot
+    plot_ly(data=plot_data, x=~week_book_starting) %>%
+      add_lines(y = ~booked_g,  
+                line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                marker = list(color = "black"), name = "# booking") %>% 
+      add_lines(y = ~dottedline_g, name = "Scotland projected",
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                name = "Centreline") %>%
+      add_lines(y = ~centreline_g, name = "Scotland centre line up to 23rd March 2020",
+                line = list(color = "blue"), hoverinfo="none",
+                name = "Centreline") %>% 
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      #leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+  }
+})
+
+output$booking_age <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("age"), split="age")})
+output$booking_dep <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep")})
 
 ###############################################.
 ##  Reactive layout  ----
@@ -132,65 +182,11 @@ output$booking_explorer <- renderUI({
 
 
 
-#############################################
-## Antenatal booking chart functions----
-############################################
+#############################################.
+## Antenatal booking chart functions ----
+############################################.
 
 #function to draw trend chart
-plot_booking_trend <- function(){
-
-  #plot_data <- booking %>% filter(area_name == input_geoname_booking &
-  #                                   area_type == input_geotype_booking & 
-   #                                  type %in% c("Scotland","Health board"))
-  
-  plot_data <- ante_booking_filter()
-  
-  # chart when numbers selected
-  if(input$measure_select_booking == "booking_number"){ 
-    
-  yaxis_plots[["title"]] <- "Number of bookings"
-  tooltip_booking <- c(paste0("Month:"))  
-  
-  #Creating time trend plot
-  plot_ly(data=plot_data, x=~week_book_starting) %>%
-    add_lines(y = ~booked,  
-              line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-              marker = list(color = "black"), name = "# booking") %>% 
-    add_lines(y = ~dottedline, name = "Scotland projected",
-              line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-              name = "Centreline") %>%
-    add_lines(y = ~centreline, name = "Scotland centre line up to 23rd March 2020",
-              line = list(color = "blue"), hoverinfo="none",
-              name = "Centreline") %>% 
-    #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-        yaxis = yaxis_plots,  xaxis = xaxis_plots,
-        legend = list(x = 100, y = 0.5)) %>% #position of legend
-    #leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-  }else if(input$measure_select_booking  == "booking_gestation"){ 
-    yaxis_plots[["title"]] <- "Average gestation at booking (weeks)"
-    tooltip_booking <- c(paste0("Month:"))
-    #Creating time trend plot
-    plot_ly(data=plot_data, x=~week_book_starting) %>%
-      add_lines(y = ~booked_g,  
-                line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-                marker = list(color = "black"), name = "# booking") %>% 
-      add_lines(y = ~dottedline_g, name = "Scotland projected",
-                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-                name = "Centreline") %>%
-      add_lines(y = ~centreline_g, name = "Scotland centre line up to 23rd March 2020",
-                line = list(color = "blue"), hoverinfo="none",
-                name = "Centreline") %>% 
-      #Layout
-      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
-      #leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-    }
-}
-
 
 plot_booking_split <- function(dataset, split){
   
