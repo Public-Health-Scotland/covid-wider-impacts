@@ -126,6 +126,11 @@ observeEvent(input$btn_cardio_modal,
                    is then dispensed in a series of regular supplies over a period of 24, 48 or 52 weeks.  These subsequent 
                    supplies are captured in a separate dataset.  The extent to which serial prescriptions are used may vary 
                    by both geographic and therapeutic areas."),
+                 p("Data for 1 January to 31 December each year is presented as weekly data ending on Sundays. 
+                   The week from 1st January may therefore not be a full seven days and will that week, 
+                   or the following week, encompass public holidays.  Consequently, the number of prescribing 
+                   days and measures of activity at the start of each year can be markedly reduced compared 
+                   to subsequent weeks.  A similar effect also occurs in the last two weeks of the year."),
                  p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
                  tags$hr(),
                  actionButton("toggleBNFCodes", "Show / Hide BNF Codes"),
@@ -328,8 +333,10 @@ output$cardio_explorer <- renderUI({
       tagList(# A&E attendances (cardiovascular only)
         tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
                  incomplete for a number of NHS Boards. Thus, the figures reported for cardiovascular-related 
-                 attendances offer only a very approximate indication of attendances. 
-                 Additionally, some NHS Boards have moved to a new recording standard which 
+                 attendances offer only a very approximate indication of attendances. In addition, due to a technical
+                 issue in the A&E diagnosis recording for the weeks ending in 2nd and 9th August
+                 figures for NHS Greater Glasgow & Clyde are incomplete for that time period.
+                 Moreover, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
                  even prior to the introduction of lockdown measures, appear somewhat lower when compared to 
                  previous years."),

@@ -9,7 +9,7 @@ source("functions_packages_data_prep.R")
 ## RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_27-Jul.rds")) %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_21-Sep.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -97,7 +97,7 @@ rap_adm <- rbind(rap_adm, spec_med, paed_com) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-07-19", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-09-13", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -112,15 +112,19 @@ prepare_final_data(rap_adm, "rapid", last_week = "2020-07-19",
 # file.remove(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip"))
 
 # Read in historic OOH file
-ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
+# ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
+ooh <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data Update_2018to26042020.xlsx")) %>% 
   janitor::clean_names() %>%
-  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name,
+  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
-         count=number_of_consultations) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
-                             "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
-                             "65-74" = "65 - 74", "75-84" = "75 - 84",
-                             "85 plus" = "85 and over"),
+         count=number_of_cases) %>%
+  mutate(age = recode_factor(age_band, "0-4" = "Under 5", 
+                             "70-74"  = "65 - 74", "90+" = "85 and over", "10-14" = "5 - 14", 
+                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
+                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
+                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", "5-9" = "5 - 14", 
+                             "60-64" = "45 - 64", "65-69"  = "65 - 74", "75-79"= "75 - 84", "80-84"= "75 - 84", 
+                             "85-89" = "85 and over"),
          sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          dep = recode(dep, 
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
@@ -136,41 +140,10 @@ ooh %<>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
-  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-03-22")))
-
-## Additional new OOH data
-ooh_new <- readRDS(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.rds")) %>%
-  janitor::clean_names() %>%
-  rename(date=sc_start_date, hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
-         dep=prompt_dataset_deprivation_scot_quintile,sex=gender, age_group=age_band,
-         count=number_of_cases) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
-                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
-                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
-                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
-                             "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
-                             "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
-                             "90+" = "85 and over"),
-         sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
-         dep = recode(dep, 
-                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
-                      "4" = "4", "5" = "5 - least deprived"),
-         date = as.Date(date, "%d/%m/%y")) %>% #formatting date
-  mutate(week_ending = ceiling_date(date, "week", change_on_boundary = F)) %>% #end of week
-  proper() #convert HB names to correct format
-
-# Aggregate up to get figures for each area type.
-ooh_new %<>% mutate(scot = "Scotland") %>% 
-  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
-  mutate(area_type = recode(area_type, "area_name" = "Health board", 
-                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
-  # Aggregating by week to make it faster to work with
-  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
-  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-04-26")))
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_54_8981685717109972450.xlsx")) %>% 
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_60_8628542845006550862.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -190,7 +163,7 @@ ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Da
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-ooh_may_onwards <- ooh_may_onwards %>% 
+ooh_may_onwards %<>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
@@ -199,7 +172,7 @@ ooh_may_onwards <- ooh_may_onwards %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup()
 
 #bind old and new ooh data
-ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
+ooh <- rbind(ooh_may_onwards, ooh)
 
 # Creating totals for groups
 ooh_all <- ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
@@ -210,7 +183,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-07-26")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-09-06")
 
 ###############################################.
 ## A&E data ----
@@ -260,7 +233,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2020-07-19")
+prepare_final_data(ae_data, "ae", last_week = "2020-09-13")
 
 ###############################################.
 ## NHS24 data ----
@@ -268,18 +241,12 @@ prepare_final_data(ae_data, "ae", last_week = "2020-07-19")
 
 # #Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
 # #Each week this section of code can be uncommented run for the latest weeks data then recommented after txt file deleted
-# nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 20072020 to 26072020.txt")))
-# saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 20072020 to 26072020.rds"))
-# file.remove(paste0(data_folder,"NHS24/NHS24 Extract 20072020 to 26072020.txt"))
+    # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt")))
+    # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.rds"))
+    # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 08062020 to 14062020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 15062020 to 21062020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 22062020 to 28062020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 29062020 to 05072020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 06072020 to 12072020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 13072020 to 19072020.rds")),
-                readRDS(paste0(data_folder, "NHS24/NHS24 Extract 20072020 to 26072020.rds"))) %>%
+                read_tsv(paste0(data_folder, "NHS24/NHS24_report_08062020to20092020.txt"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -323,7 +290,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-07-26")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-09-20")
 
 ###############################################.
 ## SAS data ----
@@ -358,7 +325,7 @@ sas %<>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
 #NEW WEEKLY DATA UPDATE
-sas_new <-read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to19072020.txt")) %>% 
+sas_new <- read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to13092020.txt")) %>% 
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -370,7 +337,10 @@ sas_new <-read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to1907
                        gender %in% c(0, 9 ) ~ "Missing", TRUE ~ as.character(gender))) %>% 
   proper() %>% #convert HB names to correct format
   create_agegroups () %>%
-  create_depgroups ()
+  create_depgroups () %>% 
+  # filter needed as because start/end dates assignations some cases could
+  # be double counted for that end week
+  filter(week_ending > as.Date("2020-05-10"))  
 
 # Aggregate up to get figures for each area type.
 sas_new %<>% mutate(scot = "Scotland") %>% 
@@ -391,17 +361,17 @@ sas_dep <- agg_cut(dataset= sas, grouper="dep") %>% rename(category=dep)
 sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 
 # Add final aggregation files to one master file
-sas<- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
+sas <- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-07-19")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-09-13")
 
 ###############################################.
 ## Deaths ----
 ###############################################.
 deaths <- readRDS(paste0(data_folder, "deaths/deaths_data.rds"))
 saveRDS(deaths, "shiny_app/data/deaths_data.rds")
-saveRDS(deaths, "/conf/PHSCOVID19_Analysis/Publication outputs/open_data/deaths_data.rds")
+saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 
 ###############################################.
 ## Cath labs - cardiac procedures ----
@@ -548,12 +518,12 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-07-19")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-09-13")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing data/covid emessage AMS only 20200723.xlsx")) %>% 
+cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/covid emessage AMS only 20200917.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -586,15 +556,15 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-07-19")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-09-13")
 
 ###############################################.
-## 6-in-1 data ----
+## 6-in-1 s-curve data ----
 ###############################################.
-six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashboard20200622.csv"), 
-                        col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
-                                        time_period_eligible=col_factor())) %>%
-  janitor::clean_names()
+six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashboard_20200824.csv"), 
+                col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
+                                time_period_eligible=col_factor())) %>%
+janitor::clean_names()
 
 six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -605,27 +575,42 @@ six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher
   arrange(cohort) %>%
   select (extract_date, exclude, immunisation, eligible_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
-final_data <<- six_alldose
-
 saveRDS(six_alldose, "shiny_app/data/six_alldose_data.rds")
 
 ###############################################.
-## Prepare 6-in-1 summary table data 
+## immunisations data table dataset prep ----
+## immunisation team supply a single csv file that is split into two rds files (one for each immunisation)
 
-# 6-in-1 at 8 weeks - summary table data
-six_datatable <- format_immchild_table("immunisations/6in1/six in one_1_dashboardtab_20200622") 
+imms_datatable <- format_immchild_table("immunisations/dashboardtable_20200824")
+                           
+six_datatable <- imms_datatable %>%
+  filter(str_detect(immunisation,"six-in-one")) %>%
+  select(-uptake_13m_num:-uptake_3y8m_percent) #remove uptake columns that related to mmr 
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
 
-# 6-in-1 at dose 2 (usually 12 weeks) - summary table data
-six_dose2_datatable <- format_immchild_table("immunisations/6in1/six in one_2_dashboardtab_20200622") 
-saveRDS(six_dose2_datatable, paste0("shiny_app/data/","sixinone_dose2_datatable.rds"))
+mmr_datatable <- imms_datatable %>%
+  filter(str_detect(immunisation,"mmr")) %>%
+  select(-uptake_12weeks_num:-uptake_32weeks_percent) #remove uptake columns that related to mmr 
+saveRDS(mmr_datatable, paste0("shiny_app/data/","mmr_datatable.rds"))
 
-# 6-in-1 at dose 3 (usually 16 weeks) - summary table data
-six_dose3_datatable <- format_immchild_table("immunisations/6in1/six in one_3_dashboardtab_20200622") 
-saveRDS(six_dose3_datatable, paste0("shiny_app/data/","sixinone_dose3_datatable.rds"))
+# Grampian data
+mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/dashboardtable_grampian_20200824") 
+saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
 
 ###############################################.
-# Definitions, apply both for MRR and 6 in one
+## 6-in-1 simd data ---- 
+six_dose1_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 1_simd_20200824")
+saveRDS(six_dose1_simdtable, paste0("shiny_app/data/","six_dose1_simdtable.rds"))
+
+six_dose2_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 2_simd_20200824")
+saveRDS(six_dose2_simdtable, paste0("shiny_app/data/","six_dose2_simdtable.rds"))
+
+six_dose3_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 3_simd_20200824")
+saveRDS(six_dose3_simdtable, paste0("shiny_app/data/","six_dose3_simdtable.rds"))
+
+###############################################.
+# Immunisation definitions ----
+# apply both for MRR and 6 in one
 age_defs_imm_mmr <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
                                sheet = "mmr_dash") %>% 
   mutate(defined = case_when(is.na(defined) ~ "", T ~ paste0(defined)))
@@ -674,12 +659,12 @@ month_defs_imm #checking everything looks ok
 saveRDS(month_defs_imm, "shiny_app/data/month_eligibility_immun.rds")
 
 ###############################################.
-## MMR data ----
+## MMR s-curve data ----
 ###############################################.
 # mmr dose 1 & 2 - scurve data
-mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard20200622.csv"),
-                        col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
-                                        time_period_eligible=col_factor())) %>%
+mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard_20200824.csv"),
+                      col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
+                                      time_period_eligible=col_factor())) %>%
   janitor::clean_names()
 
 mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
@@ -694,25 +679,51 @@ mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher
 
 saveRDS(mmr_alldose, paste0("shiny_app/data/","mmr_alldose_data.rds"))
 
-# MMR at dose 1  - summary table data
-mmr_dose1_datatable <- format_immchild_table("immunisations/mmr/mmr_dose1_dashboardtab_20200622") 
-saveRDS(mmr_dose1_datatable, paste0("shiny_app/data/","mmr_dose1_datatable.rds"))
+###############################################.
+## MMR data table ----
+###############################################.
+# 
+# # MMR at dose 1  - summary table data
+# mmr_dose1_datatable <- rbind(format_immchild_table("immunisations/mmr/mmr_dose1_dashboardtab_20200727"),
+#                              format_immchild_table("immunisations/mmr/mmr_dose1_islandboarddownload_20200727"))
+# saveRDS(mmr_dose1_datatable, paste0("shiny_app/data/","mmr_dose1_datatable.rds"))
+# 
+# # MMR at dose 2  - summary table data
+# mmr_dose2_datatable <- rbind(format_immchild_table("immunisations/mmr/mmr_dose2_dashboardtab_20200727"),
+#                              format_immchild_table("immunisations/mmr/mmr_dose2_islandboarddownload_20200727"))
+# saveRDS(mmr_dose2_datatable, paste0("shiny_app/data/","mmr_dose2_datatable.rds"))
+# 
+# # Grampian data
+# mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/mmr_dose2_dashboardtab_grampian_20200727") 
+# saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
 
-# MMR at dose 2  - summary table data
-mmr_dose2_datatable <- format_immchild_table("immunisations/mmr/mmr_dose2_dashboardtab_20200622") 
-saveRDS(mmr_dose2_datatable, paste0("shiny_app/data/","mmr_dose2_datatable.rds"))
+###############################################.
+# ## MMR hscp data ----
+# mmr_1_hscp <- format_immhscp_table("immunisations/mmr/mmr_dose1_dashboardtab-hscp_20200727")
+# saveRDS(mmr_1_hscp, paste0("shiny_app/data/","mmr_dose1_hscp.rds"))
+# 
+# mmr_2_hscp <- format_immhscp_table("immunisations/mmr/mmr_dose2_dashboardtab-hscp_20200727")
+# saveRDS(mmr_2_hscp, paste0("shiny_app/data/","mmr_dose2_hscp.rds"))
+# 
+# mmr_2_hscp_grampian <- format_immhscp_table("immunisations/mmr/mmr_dose2_dashboardtab_grampian_hscp_20200727")
+# saveRDS(mmr_2_hscp_grampian, paste0("shiny_app/data/","mmr_dose2_hscp_grampian.rds"))
 
-# Grampian data
-mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/mmr_dose2_dashboardtab_grampian_20200622") 
-saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
+###############################################.
+## MMR simd data ----
+###############################################.
+mmr_dose1_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 1_simd_20200824")
+saveRDS(mmr_dose1_simdtable, paste0("shiny_app/data/","mmr_dose1_simdtable.rds"))
+
+mmr_dose2_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 2_simd_20200824")
+saveRDS(mmr_dose2_simdtable, paste0("shiny_app/data/","mmr_dose2_simdtable.rds"))
 
 ###############################################.
 ## Child health review: first visit ----
 ###############################################.
 ## First visit - scurve data
-first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20200622.csv"), 
-                  col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
-                                  time_period_eligible=col_character())) %>%
+first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20200824.csv"), 
+                col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
+                                time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
@@ -727,14 +738,12 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          week_no= isoweek(week_2_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
 # First visit - summary table data
-first_datatable_download <- format_immchild_table("child_health/firstvisit_dashboardtab_20200622") 
+first_datatable_download <- format_immchild_table("child_health/firstvisit_dashboardtab_20200824") 
 
 saveRDS(first_datatable_download, paste0("shiny_app/data/","first_visit_datatable_download.rds"))
 
@@ -748,9 +757,9 @@ saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 ###############################################.
 
 ## 6 to 8 weeks visit - scurve data
-sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200622.csv"), 
-                       col_types =list(week_6_start=col_date(format="%m/%d/%Y"),
-                                       time_period_eligible=col_character())) %>%
+sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200824.csv"), 
+                  col_types =list(week_6_start=col_date(format="%m/%d/%Y"),
+                                  time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
@@ -766,16 +775,12 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_6_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv<168) %>%
-  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  filter(interv<168)
 
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight_data.rds"))
 
 # 6-8 weeks visit - summary table data
-sixtoeight_datatable_download <- format_immchild_table("child_health/sixtoeight_dashboardtab_20200622") 
+sixtoeight_datatable_download <- format_immchild_table("child_health/sixtoeight_dashboardtab_20200824") 
 
 saveRDS(sixtoeight_datatable_download, paste0("shiny_app/data/","six_to_eight_datatable_download.rds"))
 
@@ -790,9 +795,9 @@ saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.r
 ###############################################.
 
 ## 13 to 15 month visit - scurve data
-thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20200622.csv"), 
-                     col_types =list(week_57_start=col_date(format="%m/%d/%Y"),
-                                     time_period_eligible=col_character())) %>%
+thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20200824.csv"), 
+                       col_types =list(week_57_start=col_date(format="%m/%d/%Y"),
+                                       time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
@@ -808,16 +813,12 @@ thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=371 & interv<=518) %>% 
-  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  filter(interv>=371 & interv<=518) 
 
 saveRDS(thirteen, paste0("shiny_app/data/","thirteen_data.rds"))
 
 # 13 to 15 month visit - summary table data
-thirteen_datatable_download <- format_immchild_table("child_health/thirteen_dashboardtab_20200622") 
+thirteen_datatable_download <- format_immchild_table("child_health/thirteen_dashboardtab_20200824") 
 
 saveRDS(thirteen_datatable_download, paste0("shiny_app/data/","thirteen_datatable_download.rds"))
 
@@ -831,9 +832,9 @@ saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
 ###############################################.
 
 ## 27 to 30 month visit - scurve data
-twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20200622.csv"), 
-                        col_types =list(week_117_start=col_date(format="%m/%d/%Y"),
-                                        time_period_eligible=col_character())) %>%
+twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20200824.csv"), 
+                     col_types =list(week_117_start=col_date(format="%m/%d/%Y"),
+                                     time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
@@ -849,17 +850,13 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_117_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=791 & interv<=945) %>% 
-  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  filter(interv>=791 & interv<=945) 
 
 saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
 
 # 27 to 30 month visit - summary table data
 # Data for data download should include complete months and all weeks
-twentyseven_datatable_download <- format_immchild_table("child_health/twentyseven_dashboardtab_20200622") 
+twentyseven_datatable_download <- format_immchild_table("child_health/twentyseven_dashboardtab_20200824") 
 
 saveRDS(twentyseven_datatable_download, paste0("shiny_app/data/","twentyseven_datatable_download.rds"))
 
@@ -874,9 +871,9 @@ saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.r
 ###############################################.
 
 ## 4 to 5 year visit - scurve data
-fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard20200622.csv"), 
-                       col_types =list(week_209_start=col_date(format="%m/%d/%Y"),
-                                       time_period_eligible=col_character())) %>%
+fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard20200824.csv"), 
+                        col_types =list(week_209_start=col_date(format="%m/%d/%Y"),
+                                        time_period_eligible=col_character())) %>%
   janitor::clean_names() 
 
 # Creating levels for factor in chronological order
@@ -892,18 +889,13 @@ fourtofive %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_209_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=1428 & interv<=1582) %>% 
-  # the filters below shouldn't be needed as of the next update (end of July/beginning of Aug)  
-  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  filter(interv>=1428 & interv<=1582)
 
 saveRDS(fourtofive, paste0("shiny_app/data/","fourtofive_data.rds"))
 
 # 4 to 5 year review - summary table data
 # Data for data download should include complete months and all weeks
-fourtofive_datatable_download <- format_immchild_table("child_health/fourtofive_dashboardtab_20200622") %>% 
+fourtofive_datatable_download <- format_immchild_table("child_health/fourtofive_dashboardtab_20200824") %>% 
   filter(area_name != "NHS Dumfries & Galloway") %>%  
   filter(area_name != "NHS Highland")
 
@@ -919,21 +911,20 @@ saveRDS(fourtofive_datatable, paste0("shiny_app/data/","fourtofive_datatable.rds
 ## Perinatal mortality ----
 ###############################################.
 # P CHART PERINATAL DATA
-p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
-                                    
-                                    sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
-                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
-                                    sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
-                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
-                                    sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi"),
-                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI.xlsx"),
-                                    sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
+p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                          sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
+                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                                sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
+                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                                sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi"),
+                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                                sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
   janitor::clean_names() %>%
   select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type)
 
-u_perinatal <- read_excel(paste0(data_folder,"perinatal/Uchart - INFANT DEATHS.xlsx"),
-                          sheet = "Uchart", skip = 2) %>% mutate(type = "infantdeaths") %>% 
+u_perinatal <- read_excel(paste0(data_folder,"perinatal/Uchart - INFANT DEATHS_augupdate.xlsx"),
+           sheet = "Uchart", skip = 2) %>% mutate(type = "infantdeaths") %>% 
   janitor::clean_names() %>%
   select(month_of_year=sample,  number_of_deaths_in_month=observation, sample_size=ao_o_size, rate, centreline, stdev = poisson_st_dev_16, 
          upper_cl_3_std_dev:type)

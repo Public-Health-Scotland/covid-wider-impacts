@@ -13,6 +13,9 @@ tagList( #needed for shinyjs
 ## Introduction ----
 ###############################################.
 tabPanel("Home", icon = icon("info-circle"), value = "intro",
+         tags$b(span("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) 
+           data was identified and was corrected on 23/09/2020– for more details please see ", 
+                     actionLink("jump_commentary_oohissue", "commentary"), ".", style="color:red")),
                   h3("COVID-19 wider impacts on the health care system"),
                 p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
                     than those that occur as the direct result of infection"),
@@ -46,9 +49,9 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
          h3("Other sources of information: "),
          tags$ul(
            tags$li("Public Health Scotland publishes ",
-                   tags$a(href="(https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information", class="externallink"),
+                   tags$a(href="https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information", class="externallink"),
                     "on the direct health
-                   impacts of COVID-19 as well as guidance for professionals and public"),
+                   impacts of COVID-19 as well as guidance for professionals and public."),
            tags$li("The Scottish Government publishes a ",
                    tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard", class="externallink"),
                    " which brings together data and
@@ -75,7 +78,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
                           actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
-                          actionLink("mentalhealth_button", "Mental health", width="150px")),
+                          actionLink("mentalhealth_button", "Mental health", width="150px")
+                         ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
                                      bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
@@ -87,10 +91,10 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 
                           )))
 ), #tab panel
-             
+
 ###############################################.
 ## Summary trends ----
-###############################################.
+##############################################.
     tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
       wellPanel(
         column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -215,8 +219,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
          mainPanel(width = 12,
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
-) # tabpanel bracket
-
+  ) # tabpanel bracket
 ), #navbarMenu bracket
 ###############################################.
 ## Mental Health ----
@@ -255,6 +258,6 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
       ) # tabpanel bracket
-   ) # page bracket
+    )# page bracket
  )# taglist bracket
-##END
+#END
