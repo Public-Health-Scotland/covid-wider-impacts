@@ -89,13 +89,13 @@ output$booking_trend <- renderPlotly({
     
     #Creating time trend plot
     plot_ly(data=plot_data, x=~week_book_starting) %>%
-      add_lines(y = ~booked,  
+      add_lines(y = ~booked_no,  
                 line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
                 marker = list(color = "black"), name = "# booking") %>% 
-      add_lines(y = ~dottedline, name = "Scotland projected",
+      add_lines(y = ~dottedline_no, name = "Scotland projected",
                 line = list(color = "blue", dash = "longdash"), hoverinfo="none",
                 name = "Centreline") %>%
-      add_lines(y = ~centreline, name = "Scotland centre line up to 23rd March 2020",
+      add_lines(y = ~centreline_no, name = "Scotland centre line up to 23rd March 2020",
                 line = list(color = "blue"), hoverinfo="none",
                 name = "Centreline") %>% 
       #Layout
@@ -204,7 +204,7 @@ plot_booking_split <- function(dataset, split){
   tooltip_booking <- c(paste0("Month:"))
   
   #Creating time trend plot
-  plot_ly(data=plot_data, x=~week_book_starting, y = ~booked) %>%
+  plot_ly(data=plot_data, x=~week_book_starting, y = ~booked_no) %>%
     add_trace(type = 'scatter', mode = 'lines',
               color = ~category, 
               #colors = pallette
