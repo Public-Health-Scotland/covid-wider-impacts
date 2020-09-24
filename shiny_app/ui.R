@@ -265,8 +265,8 @@ tabPanel(title = "Terminations", icon = icon("female"), value = "terminations",
            #actionButton("jump_commentary_hv","Go to commentary"))
            #actionButton("browser", "Browser")
          ), #well panel
-         mainPanel(width = 12
-                   #uiOutput("maternal_explorer")
+         mainPanel(width = 12,
+                   uiOutput("top_explorer")
          )# mainPanel bracket
 ) #tab panel
 ), # navbar menu bracket

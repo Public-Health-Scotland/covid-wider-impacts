@@ -1030,90 +1030,29 @@ perinatal %<>%
 saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 
 ###############################################.
-## Pregnancy health ----
-###############################################.
-
-## Antenatal booking numbers
+## Pregnancy (antenatal booking) ----
 ###############################################.
 
 ante_booking_no <- read_csv(paste0(data_folder,"pregnancy/antenatal_booking/booking_sep2.csv"),
                          col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
                                          centreline=col_number())) %>%
-  janitor::clean_names() 
-
-
-ante_booking_n <- ante_booking_no %>%
+  janitor::clean_names() %>%
   select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked)
-
-# Match area names from lookup
-ante_booking_no <- left_join(ante_booking_no, hb_lookup, by = c("area" = "hb_cypher")) %>%
-  mutate(type=case_when(area_type=="Health board" ~ "Health board",
-                        area=="Scotland" ~ "Scotland",
-                        (substr(area,1,4)=="SIMD") ~ "dep", TRUE ~ "age"),
-         area_name=case_when(type=="Scotland" ~ "Scotland",
-                             type=="age" ~ "Scotland",
-                             type=="dep" ~ "Scotland",
-                             TRUE ~ area_name),
-         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name),
-         category=case_when(type=="Scotland" ~ "All",
-                            type=="Health board" ~ "All",
-                            type=="age" ~ area,
-                            type=="dep" ~ area, T ~"other"),
-         category=case_when(area=="SIMD 1" ~ "1 - most deprived",
-                        area=="SIMD 2" ~ "2",
-                        area=="SIMD 3" ~ "3",
-                        area=="SIMD 4" ~ "4",
-                        area=="SIMD 5" ~ "5 - least deprived",T ~area_name)) %>%
-    select(-area)
-
-# saveRDS(ante_booking_no, paste0("shiny_app/data/","ante_booking_no_data.rds"))
-
-# ante_booking_n <- ante_booking_no %>%
-#   select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
-#   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked)
 
 
 ## Antenatal booking average gestation
 ante_booking_gest <- read_csv(paste0(data_folder,"pregnancy/antenatal_booking/gestation_sep2.csv"),
                             col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
                                             centreline=col_number())) %>%
-  janitor::clean_names() 
-
-ante_booking_g <- ante_booking_gest %>%
+  janitor::clean_names() %>%
   rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked)
 
-# Match area names from lookup
-ante_booking_gest <- left_join(ante_booking_gest, hb_lookup, by = c("area" = "hb_cypher")) %>%
-  mutate(type=case_when(area_type=="Health board" ~ "Health board",
-                        area=="Scotland" ~ "Scotland",
-                        (substr(area,1,4)=="SIMD") ~ "dep", TRUE ~ "age"),
-         area_name=case_when(type=="Scotland" ~ "Scotland",
-                             type=="age" ~ "Scotland",
-                             type=="dep" ~ "Scotland",
-                             TRUE ~ area_name),
-         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name),
-         category=case_when(type=="Scotland" ~ "All",
-                            type=="Health board" ~ "All",
-                            type=="age" ~ area,
-                            type=="dep" ~ area, T ~"other"),
-         category=case_when(area=="SIMD 1" ~ "1 - most deprived",
-                            area=="SIMD 2" ~ "2",
-                            area=="SIMD 3" ~ "3",
-                            area=="SIMD 4" ~ "4",
-                            area=="SIMD 5" ~ "5 - least deprived",T ~area_name)) %>%
-  select(-area)
+# join two (numbers and average gestation) booking sheets to form single rds file
+#is left join the best join?? what if mismatch in numbers of rows?
+ante_booking <- left_join(ante_booking_no, ante_booking_gest, by = c("week_book_starting","area"))
 
-# saveRDS(ante_booking_gest, paste0("shiny_app/data/","ante_booking_gest_data.rds"))
-
-# ante_booking_g <- ante_booking_gest %>%
-#   rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked)
-
-
-# join two booking sheets to form single 
-ante_booking <- left_join(ante_booking_n, ante_booking_g, by = c("week_book_starting","area"))
-
-# Match area names from lookup
+# Match area names from lookup & format for shinyapp
 ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher")) %>%
   mutate(type=case_when(area_type=="Health board" ~ "Health board",
                         area=="Scotland" ~ "Scotland",
@@ -1122,7 +1061,7 @@ ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher"))
                              type=="age" ~ "Scotland",
                              type=="dep" ~ "Scotland",
                              TRUE ~ area_name),
-         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name),
+         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name), 
          category=case_when(type=="Scotland" ~ "All",
                             type=="Health board" ~ "All",
                             type=="age" ~ area,
@@ -1131,20 +1070,44 @@ ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher"))
                             area=="SIMD 2" ~ "2",
                             area=="SIMD 3" ~ "3",
                             area=="SIMD 4" ~ "4",
-                            area=="SIMD 5" ~ "5 - least deprived",T ~area_name)) %>%
+                            area=="SIMD 5" ~ "5 - least deprived",
+                            type=="age" ~ category, T ~area_name)) %>%
   select(-area)
 
 saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
 
-## Terminations of pregnancy
+###############################################.
+## Pregnancy (terminations) ----
 ###############################################.
 
 ## Antenatal booking average gestation
-top <- rap_adm <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rds")) %>%  
+top_runchart <- rap_adm <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rds")) %>%  
   janitor::clean_names() %>%
-  rename(area_name=hbres, month=date)
+  rename(area_name=hbres, month=date,
+         centreline_no = av_pre_pan_terminations,
+         dottedline_no = ext_av_count,
+         centreline_g = pre_pan_av_gest,
+         dottedline_g = ext_av_gest) %>%
+  mutate(terminations=as.numeric(terminations),
+    type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name), 
+         category=case_when(type=="Scotland" ~ "All",
+                            type=="Health board" ~ "All")) 
+
+top_scot <- rap_adm <- readRDS(paste0(data_folder, "pregnancy/terminations/SCOTLAND_CHARTS.rds")) %>%  
+  janitor::clean_names() %>%
+  ungroup() %>% # for some reason dataset appears to be grouped which prevents formatting 
+  rename(area_name=hbres, month=date, category=variable) %>%
+  mutate(type=case_when(chart=="AGEGRP" ~ "age",chart=="SIMD" ~ "dep",TRUE ~ "other"),
+         area_type="Scotland")
+
+#add area based and age/dep terminations data
+top <- bind_rows(top_runchart, top_scot) %>%
+  select(-chart)
 
 saveRDS(top, paste0("shiny_app/data/","top_data.rds"))
+
 
 ##
 
