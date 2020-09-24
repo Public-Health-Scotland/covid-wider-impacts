@@ -15,7 +15,8 @@ observeEvent(input$btn_breastfed_modal,
                  tags$li("Ever breastfed: Has the child ever been breastfed? This is recorded at the Health Visitor First Visit.")
                ),
                tags$b("Denominators used in calculations"),
-               p("The denominator for the breastfeeding indicators is the number of reviews with valid data recorded (i.e. not ‘missing’ or ‘unknown’) for infant feeding status in the previous 24 hour period."), 
+               p("The denominator for the breastfeeding indicators is the number of reviews 
+                 with valid data recorded (i.e. not ‘missing’ or ‘unknown’) for infant feeding status in the previous 24 hour period. Analysis is based on NHS Board of Residence."), 
                p("The average is calculated as the median value of the period specified."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))

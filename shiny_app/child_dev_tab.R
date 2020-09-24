@@ -18,7 +18,7 @@ observeEvent(input$btn_childdev_modal,
                p("The denominator used in the child development indicators is the total number of reviews, 
                  rather than the number of reviews with meaningful data recorded. This is because it is possible for 
                  children to have a developmental concern identified against one or more developmental domain 
-                 without having meaningful data recorded for all domains."), 
+                 without having meaningful data recorded for all domains. Analysis is based on NHS Board of Residence."), 
                p("The 13-15 month review has only been delivered in NHS Greater Glasgow & Clyde (NHS GG&C) from May 2019 onwards, hence no data are shown for this review for NHS GG&C for the period January to April 2019.  "),
                p("For this reason, the pre-pandemic average for Scotland and NHS GG&C (shown as the centreline in the charts) is based on reviews provided in May 2019 to February 2020.  The pre-pandemic average for all other Boards is based on reviews provided in January 2019 to February 2020. The average is calculated as the median value of the period specified."),
                size = "m",
