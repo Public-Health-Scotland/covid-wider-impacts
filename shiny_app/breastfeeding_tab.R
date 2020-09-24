@@ -33,7 +33,7 @@ observeEvent(input$btn_breastfed_rules,
                  For the breastfeeding ones we have used run charts."),
                p("Further information on these methods of presenting data can be found at the ",                      
                  tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts.', class="externallink", target="_blank")),
+                        'PHS guide to statistical process control charts.', target="_blank")),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -252,13 +252,7 @@ output$bf_ever_pc <- renderPlotly({
 ###############################################.
 ## Commentary ----
 ###############################################.
-output$breastfeeding_commentary <- renderUI({
-  tagList(
-    bsButton("jump_to_breastfed",label = "Go to data"), #this button can only be used once
-    h2("Breastfeeding - 30th September 2020"),
-    p("Placeholder")
-  ) #tagLIst bracket
-})
+# On child health script
 
 ###############################################.
 ## Data downloads ----
