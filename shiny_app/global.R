@@ -139,7 +139,9 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "27-30 month child health review" = "twentyseven_visit",
                         "4-5 year child health review" = "fourtofive_visit",
                         "Stillbirths and infant deaths" = "perinatal",
-                        "Mental health prescribing" = "mhdrugs"
+                        "Mental health prescribing" = "mhdrugs",
+                        "A&E mental health attendances" = "ae_mh",
+                        "Out of hours mental health cases" = "ooh_mh"
                         )
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
