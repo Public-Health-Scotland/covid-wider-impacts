@@ -10,17 +10,17 @@ observeEvent(input$btn_childdev_modal,
                title = "What is the data source?",
                p("Data source: CHSP Pre-School"),
                tags$b("Meaningful data"),
-               p("This refers to records where a value of N (no concerns), C (concern newly suspected), or P 
-(concern previously identified) has been recorded for all eight developmental domains. See the ",
+               p("TThis refers to records where a value of N (no concerns), C (concern newly suspected), or P (concern previously identified) 
+                 has been recorded for all eight developmental domains assessed as part of the 13-15 month and 27-30 month child health reviews. See the ",
                tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/early-child-development/15-september-2020/dashboard/",
                       "Early Child Development", target="_blank"), " publication for further details."),
                tags$b("Denominators used in calculations"),
                p("The denominator used in the child development indicators is the total number of reviews, 
-                 rather than the number of reviews with meaningful data recorded. It should be noted that it is possible 
-                 for children to have a developmental concern identified without having meaningful data recorded for all 
-                 developmental domains."), 
-               p("Data for NHS Greater Glasgow and Clyde for the 13-15 month review is only available from May 2019 onwards."),
-               p("The average is calculated as the median value of the period specified."),
+                 rather than the number of reviews with meaningful data recorded. This is because it is possible for 
+                 children to have a developmental concern identified against one or more developmental domain 
+                 without having meaningful data recorded for all domains."), 
+               p("The 13-15 month review has only been delivered in NHS Greater Glasgow & Clyde (NHS GG&C) from May 2019 onwards, hence no data are shown for this review for NHS GG&C for the period January to April 2019.  "),
+               p("For this reason, the pre-pandemic average for Scotland and NHS GG&C (shown as the centreline in the charts) is based on reviews provided in May 2019 to February 2020.  The pre-pandemic average for all other Boards is based on reviews provided in January 2019 to February 2020. The average is calculated as the median value of the period specified."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -210,13 +210,18 @@ output$childdev_no_concerns <- renderPlotly({
 ###############################################.
 ## Data downloads ----
 ###############################################.
+childdev_down <- reactive({
+  child_dev_filt() %>% select(-shift, -trend) %>% 
+    mutate(month_review = format(month_review, "%b %y")) %>% 
+    rename(no_reviews_meaningful_data = no_meaningful_reviews, pc_meaningful_data = pc_meaningful)
+})
+
 
 output$download_childdev_data <- downloadHandler(
   filename ="child_development_extract.csv",
   content = function(file) {
-    write_csv(child_dev_filt() %>% select(-shift, -trend), file) } 
+    write_csv(childdev_down(), file) } 
 )
-
 
 ###############################################.
 ## Commentary ----

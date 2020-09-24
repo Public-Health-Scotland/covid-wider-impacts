@@ -15,8 +15,7 @@ observeEvent(input$btn_breastfed_modal,
                  tags$li("Ever breastfed: Has the child ever been breastfed? This is recorded at the Health Visitor First Visit.")
                ),
                tags$b("Denominators used in calculations"),
-               p("The denominator for the breastfeeding indicators is the number of reviews with valid infant 
-                 feeding data recorded (i.e. not ‘missing’ or ‘unknown’)."), 
+               p("The denominator for the breastfeeding indicators is the number of reviews with valid data recorded (i.e. not ‘missing’ or ‘unknown’) for infant feeding status in the previous 24 hour period."), 
                p("The average is calculated as the median value of the period specified."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
@@ -257,13 +256,20 @@ output$bf_ever_pc <- renderPlotly({
 ###############################################.
 ## Data downloads ----
 ###############################################.
+breast_down <- reactive({
+  breastfeeding_filt() %>% select(-shift_excl, -trend_excl,
+                                  -shift_ever, -trend_ever,
+                                  -shift_over, -trend_over) %>% 
+    mutate(month_review = format(month_review, "%b %y")) %>% 
+    rename(no_reviews_with_data = no_valid_reviews, pc_with_data = pc_valid, 
+           pc_with_data_centreline = pc_valid_centreline)
+})
+
 
 output$download_bf_data <- downloadHandler(
   filename ="breastfeeding_extract.csv",
   content = function(file) {
-    write_csv(breastfeeding_filt() %>% select(-shift_excl, -trend_excl,
-                                              -shift_ever, -trend_ever,
-                                              -shift_over, -trend_over), file) } 
+    write_csv(breast_down(), file) } 
 )
 
 
