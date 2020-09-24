@@ -429,7 +429,7 @@ output$mentalhealth_commentary <- renderUI({
       tags$li("The trend in OOH contacts was similar for males and females, and also broadly similar by age and by level of deprivation, with wide fluctuations in numbers of contacts from week to week."),
       tags$li("A&E attendances for mental health problems fell by 40-50% from early March 2020 and by the beginning of September had still not fully recovered, remaining at around 10% below previous levels."),
       tags$li("The trend in A&E attendances was similar for males and females and also broadly similar by age group and by level of deprivation, with wide fluctuations in numbers of contacts from week to week."),
-      tags$li("Overall these falls in the use of unscheduled care for mental health problems are likely to reflect reluctance to use services or other difficulties in access to services associated with the Covid-19 pandemic.")),
+      tags$li("Overall, these falls in the use of unscheduled care for mental health problems are likely to reflect the impact of the Covid-19 pandemic. More detailed discussion of these points is provided on the home page of the dashboard.")),
     h3("Prescribing"),
     p("Information on the number of patients starting a new treatment course for selected mental health medicines (those commonly used for depression, anxiety or 
       insomnia) through General Practice has been included for the first time on 30 September 2020. This data indicates:"),
