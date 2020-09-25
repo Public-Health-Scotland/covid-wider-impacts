@@ -17,6 +17,7 @@ library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
 library(flextable)
 library(shinyBS) #for collapsible panels in commentary
+library(zoo)
 library(magrittr)
 
 ###############################################.
@@ -65,6 +66,11 @@ deaths <- readRDS("data/deaths_data.rds") # deaths data
 ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
 cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
+
+## mental health data
+mentalhealth_drugs <- readRDS("data/mentalhealth_drugs_data.rds")
+ae_mh <- readRDS("data/mh_A&E_data.rds")
+mh_ooh <- readRDS("data/mh_ooh_data.rds")
 
 ## Child Health Data
 child_extract_date <- "24th August 2020"
@@ -146,8 +152,11 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "13-15 month child health review" = "thirteen_visit",
                         "27-30 month child health review" = "twentyseven_visit",
                         "4-5 year child health review" = "fourtofive_visit",
-                        "Stillbirths and infant deaths" = "perinatal"
-)
+                        "Stillbirths and infant deaths" = "perinatal",
+                        "Mental health prescribing" = "mhdrugs",
+                        "A&E mental health attendances" = "ae_mh",
+                        "Out of hours mental health cases" = "ooh_mh"
+                        )
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
                  "Cardiac procedures" = "cath")
@@ -158,6 +167,8 @@ data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Extended perinatal deaths"="extperi",
                          "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
+
+mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye", "Out of hours cases" = "ooh")
 
 ###############################################.
 ## Palettes and plot parameters ----
@@ -172,7 +183,7 @@ pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
 
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
-pal_med <- c('#543005', '#bf812d', '#74add1', '#313695') # Palettes for medicine groupings
+pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine groupings
 
 pal_immun <- c("2019" = '#000000',
                "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", "MAR 2020" = "#7477d1",

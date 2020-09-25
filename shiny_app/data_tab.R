@@ -26,7 +26,10 @@ data_table <- reactive({
          "thirteen_visit" = thirteentable,
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
-         "perinatal" = perinatal
+         "perinatal" = perinatal,
+         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
         ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
