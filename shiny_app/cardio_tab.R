@@ -4,8 +4,6 @@
 ## Reactive controls  ----
 ###############################################.
 
-# Helper function
-`%notin%` <- Negate(`%in%`)
 # Show list of area names depending on areatype selected
 output$geoname_cardio_ui <- renderUI({
 
@@ -69,17 +67,17 @@ observeEvent(input$btn_cardio_modal,
                    health centres in rural areas that carry out emergency department related activity, 
                    for more information on what sites are included please see this ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/Hospital-Site-List/",
-                          "hospital list.", class="externallink")),
+                          "hospital list.",  target="_blank")),
                  p("Additional information relating to the overall A&E activity is available from the ", 
                    tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/", 
                           "NHS Performs - weekly update of emergency department activity and waiting time statistics.", 
-                          class="externallink")),
+                           target="_blank")),
                  p("Attendances to A&E departments data sourced from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
-                          "Accident and Emergency Datamart (A&E2).",class="externallink"), 
+                          "Accident and Emergency Datamart (A&E2).", target="_blank"), 
                    "The A&E2 dataset is managed by ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
-                          "Public Health Scotland (PHS).", class="externallink")),
+                          "Public Health Scotland (PHS).",  target="_blank")),
                  p(tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
                             incomplete for a number of NHS Boards. Thus, the figures reported for cardiovascular-related 
                             attendances offer only a very approximate indication of attendances. 

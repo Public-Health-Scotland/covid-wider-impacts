@@ -109,6 +109,11 @@ six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
+# Breastfeeding data
+breastfeeding <- readRDS("data/breastfeeding_data.rds")
+#Child development data
+child_dev <- readRDS("data/child_dev_data.rds")
+
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
@@ -139,6 +144,9 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
                      "27-30 Month Review" = "27_30mnth",
                      "4-5 Year Review" = "4_5yr")
 
+data_list_childdev <- c("13-15 month review" = "13_15mnth",
+                     "27-30 month review" = "27_30mnth")
+
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
                         "Cardiac procedures" = "cath_lab",
@@ -167,6 +175,9 @@ data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Extended perinatal deaths"="extperi",
                          "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
+
+data_list_bf <- c("Health Visitor first visit" = "First visit",
+                  "6-8 week review" = "6-8 week")
 
 mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye", "Out of hours cases" = "ooh")
 

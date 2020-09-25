@@ -1,0 +1,289 @@
+##Server script for breastfeeding tab
+
+###############################################.
+## Modal ----
+###############################################.
+# Pop-up modal explaining source of data
+observeEvent(input$btn_breastfed_modal,
+             showModal(modalDialog(
+               title = "What is the data source?",
+               p("Data source: CHSP Pre-School"),
+               tags$b("Definitions"),
+               tags$ul(
+                 tags$li("Exclusively breastfed: children recorded as only being fed breastmilk in the previous 24 hour period"),
+                 tags$li("Overall breastfed: children recorded as being fed breast and formula milk in the previous 24 hour period"),
+                 tags$li("Ever breastfed: Has the child ever been breastfed? This is recorded at the Health Visitor First Visit.")
+               ),
+               tags$b("Denominators used in calculations"),
+               p("The denominator for the breastfeeding indicators is the number of reviews 
+                 with valid data recorded (i.e. not ‘missing’ or ‘unknown’) for infant feeding status in the previous 24 hour period. Analysis is based on NHS Board of Residence."), 
+               p("The average is calculated as the median value of the period specified."),
+               size = "m",
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
+# Modal to explain SPC charts rules
+observeEvent(input$btn_breastfed_rules,
+             showModal(modalDialog(
+               title = "How do we identify patterns in the data?",
+               p("Controls charts follow a series of rules that help identify important changes in the data. 
+                 These are the ones we used in this chart:"),
+               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline."),
+                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing.")),
+               p("Different control charts are used depending on the type of data involved.
+                 For the breastfeeding ones we have used run charts."),
+               p("Further information on these methods of presenting data can be found at the ",                      
+                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
+                        'PHS guide to statistical process control charts.', target="_blank")),
+               size = "m",
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
+
+###############################################.
+## Reactive controls  ----
+###############################################.
+# Breastfeeding reactive drop-down control showing list of area names depending on areatype selected
+output$geoname_ui_bf <- renderUI({
+  
+  #Lists areas available in   
+  areas_summary_bf <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_bf])
+  
+  selectizeInput("geoname_bf", label = NULL, choices = areas_summary_bf, selected = "")
+})
+
+###############################################.
+## Reactive data ----
+###############################################.
+# Reactive breastfeeding dataset
+breastfeeding_filt <- reactive({
+  
+  breastfeeding %>% filter(area_type == input$geotype_bf &
+                             area_name == input$geoname_bf &
+                             review == input$measure_select_bf)
+})
+
+###############################################.
+## Reactive layout  ----
+###############################################.
+
+# Breastfeeding explorer
+output$breastfeeding_explorer <- renderUI({
+  
+  review_title <- case_when(input$measure_select_bf == "6-8 week" ~ "6-8 week reviews; reviews",
+                            T ~ "health visitor first visits; visits")
+  
+  if (input$measure_select_bf == "First visit") {
+    run_charts_bf <- tagList(
+      fluidRow(
+        column(4,
+               h4(paste0("Percentage of children recorded as exclusively breastfed at health visitor first visit")),
+               actionButton("btn_breastfed_rules", "How do we identify patterns in the data?", 
+                            icon = icon('question-circle')),
+               withSpinner(plotlyOutput("bf_excl_pc"))),
+        column(4,
+               h4(paste0("Percentage of children recorded as overall breastfed at health visitor first visit")),
+               fluidRow(br(), br()),
+               withSpinner(plotlyOutput("bf_over_pc"))),
+        column(4,
+               h4(paste0("Percentage of children recorded as ever breastfed at health visitor first visit")),
+               fluidRow(br(), br()),
+               withSpinner(plotlyOutput("bf_ever_pc"))))
+    )
+    
+  } else if (input$measure_select_bf == "6-8 week") {
+    run_charts_bf <- tagList(
+      fluidRow(
+        column(6,
+               h4(paste0("Percentage of children recorded as exclusively breastfed at the ", tolower(input$measure_select_bf), " review")),
+               actionButton("btn_breastfed_rules", "How do we identify patterns in the data?", 
+                            icon = icon('question-circle')),
+               withSpinner(plotlyOutput("bf_excl_pc"))),
+        column(6,
+               h4(paste0("Percentage of children recorded as overall breastfed at the ", tolower(input$measure_select_bf), " review")),
+               br(),
+               withSpinner(plotlyOutput("bf_over_pc"))))
+    )
+  }
+  
+  control_chart_commentary <- p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
+                                                       "‘control charts’",class="externallink"), "to present the percentages above.", br(),
+                                "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
+                      Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
+                                "The dots joined by a solid black line in the chart above show the percentage of children receiving a child health review who 
+                                were recorded as being breastfed on their review record. Data is shown for each month from January 2019 onwards. ", br(),  
+                                "The blue line on the chart, the centreline, is there to help show how unexpected any observed changes are. 
+                                The centreline is an average (median) over the time period specified in the legend of the chart.")
+  
+  tagList(
+    run_charts_bf,
+    fluidRow(control_chart_commentary),
+    fluidRow(
+      h4(paste0("Number of ", review_title, " with data on infant feeding recorded; and children recorded as being breastfed")),
+      withSpinner(plotlyOutput("bf_types")))
+  )
+})
+
+###############################################.
+## Charts ----
+###############################################.
+
+output$bf_types <- renderPlotly({
+  
+  trend_data <- breastfeeding_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    # Modifying standard layout
+    yaxis_plots[["title"]] <- "Number of reviews"
+    
+    if (input$measure_select_bf == "First visit") {
+    tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
+                              "<br>", "Number of reviews: ", trend_data$no_reviews,
+                              "<br>", "Number of reviews with infant feeding data recorded: ", trend_data$no_valid_reviews, " (", trend_data$pc_valid, "%)",
+                              "<br>", "Number of children exclusively breastfed: ", trend_data$exclusive_bf, 
+                              " (", trend_data$pc_excl, "%)",
+                              "<br>", "Number of children overall breastfed: ", trend_data$overall_bf, 
+                              " (", trend_data$pc_overall, "%)",
+                              "<br>", "Number of children ever breastfed: ", trend_data$ever_bf, 
+                              " (", trend_data$pc_ever, "%)"))
+    } else if (input$measure_select_bf == "6-8 week") {
+      tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
+                                "<br>", "Number of reviews: ", trend_data$no_reviews,
+                                "<br>", "Number of reviews with infant feeding data recorded:  ", trend_data$no_valid_reviews, " (", trend_data$pc_valid, "%)",
+                                "<br>", "Number of children exclusively breastfed: ", trend_data$exclusive_bf, 
+                                " (", trend_data$pc_excl, "%)",
+                                "<br>", "Number of children overall breastfed: ", trend_data$overall_bf, 
+                                " (", trend_data$pc_overall, "%)"))
+    }
+    
+    # Creating time trend plot
+    plot_ly(data = trend_data, x = ~month_review) %>% 
+      add_lines(y = ~no_reviews, line = list(color = "black"), # Number of reviews
+                text = tooltip_trend, hoverinfo="text", name = "Number of reviews") %>% 
+      add_lines(y = ~no_valid_reviews, line = list(color = "#74add1", dash = "dash"), 
+                text = tooltip_trend, hoverinfo = "text", name = "Number of reviews with infant feeding data recorded") %>% 
+      add_lines(y = ~ever_bf, line = list(color = "#313695"), #ever breastfed
+                text = tooltip_trend, hoverinfo="text",  name = "Number of children ever breastfed") %>% 
+      add_lines(y = ~overall_bf, line = list(color = "2c7fb8"), #overall breastfed
+                text = tooltip_trend, hoverinfo="text", name = "Number of children overall breastfed") %>% 
+      add_lines(y = ~exclusive_bf, line = list(color = "#bf812d"), # Exclusively breastfed
+                text = tooltip_trend, hoverinfo="text", name = "Number of children exclusively breastfed") %>% 
+      # Layout
+      layout(margin = list(b = 80, t=5),
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% 
+      # Configure modebar buttons
+      config(displaylogo = F, displayModeBar = T, modeBarButtonsToRemove = bttn_remove)
+  }
+})
+
+plot_runchart_bf <- function(var_chosen, centreline, shift, trend) {
+  trend_data <- breastfeeding_filt()
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- "Percentage of reviews with feeding data"
+    yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
+    xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
+    
+    measure_bf <- case_when(var_chosen == "pc_excl" ~ "% exclusively breastfed",
+                            var_chosen == "pc_overall" ~ "% overall breastfed",
+                            var_chosen == "pc_ever" ~ "% ever breastfed")
+    
+    if (var_chosen == "pc_excl") {
+      tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+                                "<br>", measure_bf, ": ", trend_data$pc_excl, "%"))
+    } else  if (var_chosen == "pc_overall") {
+      tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+                                "<br>", measure_bf, ": ", trend_data$pc_overall, "%"))
+    } else if (var_chosen == "pc_ever") {
+      tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+                                "<br>", measure_bf, ": ", trend_data$pc_ever, "%"))
+    }
+
+    
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~month_review) %>%
+      add_lines(y = ~get(var_chosen),
+                line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
+                marker = list(color = "black"), name = measure_bf) %>%
+      add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01")), 
+                y = ~get(centreline), name = "Average up to February 2020",
+                line = list(color = "blue", dash = "solid"), hoverinfo="none") %>% 
+      add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01")),
+                y = ~get(centreline), showlegend = FALSE,
+                line = list(color = "blue", dash = "dash"), hoverinfo="none") %>%
+      # adding shifts
+      add_markers(data = trend_data %>% filter_at(shift, all_vars(. == T)), y = ~ get(var_chosen),
+                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>% 
+      # adding trends
+      add_markers(data = trend_data %>% filter_at(trend, all_vars(. == T)), y = ~ get(var_chosen),
+                  marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%  
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(orientation = 'h')) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }
+}
+
+output$bf_excl_pc <- renderPlotly({
+  plot_runchart_bf("pc_excl", "pc_excl_centreline", shift = "shift_excl", trend = "trend_excl")
+})
+
+output$bf_over_pc <- renderPlotly({
+  plot_runchart_bf("pc_overall", "pc_overall_centreline", shift = "shift_over", trend = "trend_over")
+})
+
+output$bf_ever_pc <- renderPlotly({
+  plot_runchart_bf("pc_ever", "pc_ever_centreline", shift = "shift_ever", trend = "trend_ever")
+})
+
+###############################################.
+## Commentary ----
+###############################################.
+output$breastfeeding_commentary <- renderUI({
+  tagList(
+    bsButton("jump_to_breastfed",label = "Go to data"), #this button can only be used once
+    h2("Breastfeeding - 30th September 2020"),
+    p("Information on breastfeeding has been included in this tool for the first time on 30th September 2020. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old."),
+    p("Data is shown on breastfeeding initiation (has the child ever been breastfed), and the child’s breastfeeding status over the 24 hours prior to their child health review (exclusive breastfeeding and overall breastfeeding [includes mixed breast and formula feeding])."),
+    p("Data is shown by month of review from January 2019 to July 2020, so comparisons can be made for babies receiving their reviews before and during the COVID-19 pandemic."),
+    p("At Scotland level, there was a small increase in the proportion of babies recorded at their HV First Visit as ever having been breastfed, and as still receiving some breastfeeding, in April and May 2020 (babies born March/April/May). For example, 56% of babies having their HV First Visit in April 2020 were recorded as overall breastfed, compared to the pre-pandemic average of 52%.  Similarly, there was a small increase in the proportion of babies recorded at their 6-8 week review as still receiving breastfeeding in May 2020 (babies born March/April).  Breastfeeding rates have returned to previous average levels for babies receiving their HV First Visit and 6-8 week review from June 2020 onwards."),
+    p("The proportion of babies receiving a HV First Visit (and having their review record entered into the CHSP-PS electronic system) is usually very high (>95%) and this has been well maintained during the COVID-19 pandemic. The proportion of babies receiving a 6-8 week review is also usually high (>90% if sufficient follow up time allowed) and this has been reasonably well maintained during the COVID-19 pandemic in most, but not all, NHS Board areas.  This can be seen by examining the number of HV First Visits and 6-8 week reviews provided month by month on the Breastfeeding page of this tool, and through the more detailed data provided on review coverage on the Child Health Reviews page."),
+    p("This means that the trends seen in the proportion of babies recorded as being breastfed are likely to be real, rather than the result of changes in data recording.  A temporary increase in breastfeeding rates for babies born during the first wave of the COVID-19 pandemic in Scotland may reflect women having more time to initiate and maintain breastfeeding during lockdown due to fewer competing demands on their time, for example through reduced visits from friends and family.")
+  ) #tagLIst bracket
+})
+
+###############################################.
+## Data downloads ----
+###############################################.
+breast_down <- reactive({
+  breastfeeding_filt() %>% select(-shift_excl, -trend_excl,
+                                  -shift_ever, -trend_ever,
+                                  -shift_over, -trend_over) %>% 
+    mutate(month_review = format(month_review, "%b %y")) %>% 
+    rename(no_reviews_with_data = no_valid_reviews, pc_with_data = pc_valid, 
+           pc_with_data_centreline = pc_valid_centreline)
+})
+
+
+output$download_bf_data <- downloadHandler(
+  filename ="breastfeeding_extract.csv",
+  content = function(file) {
+    write_csv(breast_down(), file) } 
+)
+
+
+#END
+

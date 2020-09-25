@@ -1,5 +1,8 @@
 # Functions for server side
 
+# Helper function
+`%notin%` <- Negate(`%in%`)
+
 ###############################################.
 # Function that creates line trend charts in Plotly for different splits: age, sex, depr, condition
 # THree parameters: pal_chose - what palette of colours you want
@@ -166,10 +169,16 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 ## Function for overall charts ----
 ###############################################.
 
-plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
+plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
+                               var2020 = "count", var_aver = "count_average",
+                               xvar = "week_ending", filtering = T) {
   
-  # Filtering dataset to include only overall figures
-  trend_data <- filter_data(dataset, area = area)
+  if (filtering == T) {
+    # Filtering dataset to include only overall figures
+    trend_data <- filter_data(dataset, area = area)
+  } else {
+    trend_data <- dataset
+  }
   
   #If no data available for that period then plot message saying data is missing
   if (is.data.frame(trend_data) && nrow(trend_data) == 0)
@@ -209,18 +218,18 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                             data_name == "mh_ooh" ~ "Consultations: ")
   
   #Text for tooltip
-  tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                            "<br>", measure_name, trend_data$count,
-                            "<br>", "Historic average: ", trend_data$count_average))
-  
+    tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                              "<br>", measure_name, trend_data$count,
+                              "<br>", "Historic average: ", trend_data$count_average))
+
   #Creating time trend plot
-  plot_ly(data=trend_data, x=~week_ending) %>%
+  plot_ly(data=trend_data, x=~get(xvar)) %>%
     # 2020 line
-    add_lines(y = ~count, line = list(color = pal_overall[1]),
+    add_lines(y = ~get(var2020), line = list(color = pal_overall[1]),
               text=tooltip_trend, hoverinfo="text",
               name = "2020") %>%
     # Average of previous years line
-    add_lines(y = ~count_average, line = list(color = pal_overall[2], dash = 'dash'),
+    add_lines(y = ~get(var_aver), line = list(color = pal_overall[2], dash = 'dash'),
               text=tooltip_trend, hoverinfo="text",
               name = hist_legend) %>%
     #Layout
