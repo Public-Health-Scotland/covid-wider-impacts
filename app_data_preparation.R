@@ -9,7 +9,7 @@ source("functions_packages_data_prep.R")
 ## RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_31-Aug.rds")) %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_21-Sep.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -33,7 +33,7 @@ spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) 
     spec_name == "Paediatrics" ~ "Paediatrics (medical)",
     spec_name == "Paediatric Surgery" ~ "Paediatrics (surgical)",
     TRUE ~ dash_groups
-   )) %>% 
+  )) %>% 
   select("Specialty name" = spec_name, "Specialty group" = dash_groups)
 
 saveRDS(spec_lookup, "shiny_app/data/spec_lookup.rds")
@@ -43,9 +43,9 @@ rap_adm %<>%
   rename(dep = simd_quintile, age = age_group) %>%
   mutate(sex = recode(sex, "male" = "Male", "female" = "Female")) %>% 
   mutate(age = recode_factor(age, "Under_5" = "Under 5", "5_thru_14" = "5 - 14", 
-                                  "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
-                                  "65_thru_74" = "65 - 74", "75_thru_84" = "75 - 84",
-                                  "85+" = "85 and over")) %>% 
+                             "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
+                             "65_thru_74" = "65 - 74", "75_thru_84" = "75 - 84",
+                             "85+" = "85 and over")) %>% 
   create_depgroups()  %>% 
   mutate(admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency")) %>% 
   mutate(spec = case_when(
@@ -74,7 +74,7 @@ rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% rename(category = sex) # T
 rap_adm_age <- agg_rapid(c("age"), split = "age") %>% rename(category = age) # Totals for overalls for all age groups
 # Totals for overalls for deprivation quintiles
 rap_adm_depr <- agg_rapid(c("dep"), split = "dep") %>% rename(category = dep) 
-  
+
 rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) 
 
 # Producing data for combined medical specialty
@@ -82,7 +82,7 @@ spec_med <- rap_adm %>%
   filter(spec %in% c("Cancer", "Medical (excl. Cardiology & Cancer)", "Cardiology")) %>% 
   mutate(spec = "Medical (incl. Cardiology & Cancer)") %>% 
   group_by(week_ending, area_name, area_type, type, 
-    admission_type, spec, category) %>% 
+           admission_type, spec, category) %>% 
   summarise(count = sum(count, na.rm = T)) %>% ungroup
 
 # Producing data for combined Paediatrics specialty
@@ -97,7 +97,7 @@ rap_adm <- rbind(rap_adm, spec_med, paed_com) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-08-23", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-09-13", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -112,15 +112,19 @@ prepare_final_data(rap_adm, "rapid", last_week = "2020-08-23",
 # file.remove(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip"))
 
 # Read in historic OOH file
-ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
+# ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
+ooh <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data Update_2018to26042020.xlsx")) %>% 
   janitor::clean_names() %>%
-  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name,
+  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
-         count=number_of_consultations) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-14" = "5 - 14",  
-                                   "15-24" = "15 - 44", "25-44" = "15 - 44", "45-64" = "45 - 64",
-                                   "65-74" = "65 - 74", "75-84" = "75 - 84",
-                                   "85 plus" = "85 and over"),
+         count=number_of_cases) %>%
+  mutate(age = recode_factor(age_band, "0-4" = "Under 5", 
+                             "70-74"  = "65 - 74", "90+" = "85 and over", "10-14" = "5 - 14", 
+                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
+                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
+                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", "5-9" = "5 - 14", 
+                             "60-64" = "45 - 64", "65-69"  = "65 - 74", "75-79"= "75 - 84", "80-84"= "75 - 84", 
+                             "85-89" = "85 and over"),
          sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          dep = recode(dep, 
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
@@ -136,41 +140,10 @@ ooh %<>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
-  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-03-22")))
-
-## Additional new OOH data
-ooh_new <- readRDS(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.rds")) %>%
-  janitor::clean_names() %>%
-  rename(date=sc_start_date, hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
-         dep=prompt_dataset_deprivation_scot_quintile,sex=gender, age_group=age_band,
-         count=number_of_cases) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
-                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
-                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
-                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
-                             "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
-                             "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
-                             "90+" = "85 and over"),
-         sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
-         dep = recode(dep, 
-                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
-                      "4" = "4", "5" = "5 - least deprived"),
-         date = as.Date(date, "%d/%m/%y")) %>% #formatting date
-  mutate(week_ending = ceiling_date(date, "week", change_on_boundary = F)) %>% #end of week
-  proper() #convert HB names to correct format
-
-# Aggregate up to get figures for each area type.
-ooh_new %<>% mutate(scot = "Scotland") %>% 
-  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
-  mutate(area_type = recode(area_type, "area_name" = "Health board", 
-                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
-  # Aggregating by week to make it faster to work with
-  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
-  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
-  filter(between(week_ending, as.Date("2020-03-23"), as.Date("2020-04-26")))  #filter complete weeks (Mon-Sun)
+  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-04-26")))
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_56_7743157013568411197.xlsx")) %>% 
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_60_8628542845006550862.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -199,7 +172,7 @@ ooh_may_onwards %<>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup()
 
 #bind old and new ooh data
-ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
+ooh <- rbind(ooh_may_onwards, ooh)
 
 # Creating totals for groups
 ooh_all <- ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
@@ -210,7 +183,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-08-23")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-09-06")
 
 ###############################################.
 ## A&E data ----
@@ -260,7 +233,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2020-08-23")
+prepare_final_data(ae_data, "ae", last_week = "2020-09-13")
 
 ###############################################.
 ## NHS24 data ----
@@ -273,7 +246,7 @@ prepare_final_data(ae_data, "ae", last_week = "2020-08-23")
     # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
-                read_tsv(paste0(data_folder, "NHS24/NHS24_report_08062020to3082020.txt"))) %>%
+                read_tsv(paste0(data_folder, "NHS24/NHS24_report_08062020to20092020.txt"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -317,7 +290,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-08-30")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-09-20")
 
 ###############################################.
 ## SAS data ----
@@ -352,7 +325,7 @@ sas %<>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
 #NEW WEEKLY DATA UPDATE
-sas_new <- read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to30082020.txt")) %>% 
+sas_new <- read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to13092020.txt")) %>% 
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -391,7 +364,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas <- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-08-23")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-09-13")
 
 ###############################################.
 ## Deaths ----
@@ -405,7 +378,7 @@ saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 ###############################################.
 # Data for cardiovascular app
 gj_cath_age <- read_excel(paste0(data_folder, "cath_labs/GJNH_CathLabData_ForPHS_III.xlsx"),
-                      sheet = "Age") %>% clean_names() %>% 
+                          sheet = "Age") %>% clean_names() %>% 
   mutate(type = "age",
          age_band = recode(age_band, "Gt60" = "60 and over",
                            "Lt60" = "Under 60")) %>% 
@@ -442,7 +415,7 @@ loth_sex <- read_csv(paste0(data_folder, "cath_labs/Lothian_sex.csv")) %>%
   clean_names() %>% 
   mutate(type = "sex",
          gender = recode(gender, "M" = "Male",
-                           "F" = "Female")) %>% 
+                         "F" = "Female")) %>% 
   rename(category = gender)
 
 # Merging together and formating
@@ -455,8 +428,8 @@ loth_cath <- rbind(loth_age, loth_all, loth_sex) %>%
 # All labs 
 cath_labs <- rbind(loth_cath, gj_cath) %>% 
   mutate(groups = recode(groups, "angio" = "Angiography", "Angio" = "Angiography", 
-                                  "devices" = "Devices", "Device" = "Devices", 
-                                  "pci" = "Percutaneous coronary intervention",
+                         "devices" = "Devices", "Device" = "Devices", 
+                         "pci" = "Percutaneous coronary intervention",
                          "PCI" = "Percutaneous coronary intervention"))
 
 # Creating value for total
@@ -478,7 +451,7 @@ cath_labs_hist <- cath_labs %>% filter(year(week_ending) %in% c("2018", "2019"))
 
 cath_labs_2020 <- left_join(cath_labs %>% filter(year(week_ending) %in% c("2020")),
                             cath_labs_hist,
-                       by = c("category", "type", "groups", "proc_week", "lab")) %>%
+                            by = c("category", "type", "groups", "proc_week", "lab")) %>%
   # Creating %variation from precovid to covid period
   mutate(count_average = ifelse(is.na(count_average), 0, count_average),
          variation = round(-1 * ((count_average - count)/count_average * 100), 1),
@@ -545,12 +518,12 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-08-23")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-09-13")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/covid emessage AMS only 20200827.xlsx")) %>% 
+cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/covid emessage AMS only 20200917.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -583,7 +556,7 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-08-23")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-09-13")
 
 ###############################################.
 ## 6-in-1 s-curve data ----
@@ -791,8 +764,8 @@ sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard2020
 
 # Creating levels for factor in chronological order
 sixtoeight$time_period_eligible <- factor(sixtoeight$time_period_eligible, 
-                                     levels=unique(sixtoeight$time_period_eligible[order(sixtoeight$week_6_start, decreasing = T)]), 
-                                     ordered=TRUE)
+                                          levels=unique(sixtoeight$time_period_eligible[order(sixtoeight$week_6_start, decreasing = T)]), 
+                                          ordered=TRUE)
 
 sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -829,8 +802,8 @@ thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20200824
 
 # Creating levels for factor in chronological order
 thirteen$time_period_eligible <- factor(thirteen$time_period_eligible, 
-                                          levels=unique(thirteen$time_period_eligible[order(thirteen$week_57_start, decreasing = T)]), 
-                                          ordered=TRUE)
+                                        levels=unique(thirteen$time_period_eligible[order(thirteen$week_57_start, decreasing = T)]), 
+                                        ordered=TRUE)
 
 thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -866,8 +839,8 @@ twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20
 
 # Creating levels for factor in chronological order
 twentyseven$time_period_eligible <- factor(twentyseven$time_period_eligible, 
-                                        levels=unique(twentyseven$time_period_eligible[order(twentyseven$week_117_start, decreasing = T)]), 
-                                        ordered=TRUE)
+                                           levels=unique(twentyseven$time_period_eligible[order(twentyseven$week_117_start, decreasing = T)]), 
+                                           ordered=TRUE)
 
 twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -905,8 +878,8 @@ fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard2020
 
 # Creating levels for factor in chronological order
 fourtofive$time_period_eligible <- factor(fourtofive$time_period_eligible, 
-                                           levels=unique(fourtofive$time_period_eligible[order(fourtofive$week_209_start, decreasing = T)]), 
-                                           ordered=TRUE)
+                                          levels=unique(fourtofive$time_period_eligible[order(fourtofive$week_209_start, decreasing = T)]), 
+                                          ordered=TRUE)
 
 fourtofive %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -998,8 +971,8 @@ perinatal %<>%
                            | lead(trend_i, 5) == T  ~ T, T ~ F),
          #Outer One –Third: Two out of three consecutive data points which sit close to one of the control limits(within 2 and 3 sigma)
          outer_i = case_when((rate > upper_wl_2_std_dev & rate < upper_cl_3_std_dev) & 
-                              ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) | 
-                                 (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
+                               ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) | 
+                                  (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
          outer = case_when(outer_i == T | lead(outer_i, 1) == T | lead(outer_i, 2) == T ~ T, T ~ F),
          # Inner One -Third: 15 or more consecutive data points that lie close to the centreline(within 1 sigma).
          inner_i = case_when(rate < upper_sigma1 & rate > lower_sigma1 &
@@ -1207,5 +1180,240 @@ breastfeeding %<>%
 remove(breastfeeding_centreline)
 
 saveRDS(breastfeeding, "shiny_app/data/breastfeeding_data.rds")
+
+###############################################.
+## Prescribing - Mental health ----
+###############################################.
+
+### historic file for MH drugs ##
+mentalhealth_drugs_historic <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition Jan 18-Jun 20.xlsx")) %>% 
+  select(1:5) %>% 
+  clean_names() %>% 
+  filter(condition %in% c("Anxiolytic",
+                          "Hypnotic",
+                          "SSRI SNRI")) %>% 
+  mutate(week_ending = as.Date(week_ending),
+         area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
+                               substr(area_code,1,3) == "S08" ~ "Health board",
+                               substr(area_code,1,3) == "S00" ~ "Scotland"),
+         area_name = case_when(area_type == "Health board" ~ stringr::str_to_title(area_name),
+                               area_type == "Scotland" ~ stringr::str_to_title(area_name),
+                               TRUE ~ area_name),
+         area_name = case_when(area_type == "Health board" ~ gsub("Nhs", "NHS", area_name),
+                               TRUE ~ area_name),
+         type = "condition") %>% 
+  rename(category = condition,
+         count = incident_cases_week_01) %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+mentalhealth_drugs_hist_all <- mentalhealth_drugs_historic %>% 
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count),
+            category = "All") %>% 
+  ungroup() %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+mentalhealth_drugs_historic <- rbind(mentalhealth_drugs_historic, mentalhealth_drugs_hist_all)
+
+### Newer MH drugs data ##
+mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_53_8542709635006548925.xlsx")) %>% 
+  select(1:5) %>% 
+  clean_names() %>% 
+  filter(condition %in% c("Anxiolytic",
+                          "Hypnotic",
+                          "SSRI SNRI")) %>% 
+  mutate(week_ending = as.Date(week_ending),
+         area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
+                               substr(area_code,1,3) == "S08" ~ "Health board",
+                               substr(area_code,1,3) == "S00" ~ "Scotland"),
+         area_name = case_when(area_type == "Health board" ~ stringr::str_to_title(area_name),
+                               area_type == "Scotland" ~ stringr::str_to_title(area_name),
+                               TRUE ~ area_name),
+         area_name = case_when(area_type == "Health board" ~ gsub("Nhs", "NHS", area_name),
+                               TRUE ~ area_name),
+         type = "condition") %>% 
+  rename(category = condition,
+         count = incident_cases_week_01) %>% 
+  select(week_ending, area_name, area_type, type, category, count) %>%
+  filter(between(week_ending, as.Date("2020-07-05"), as.Date("2020-09-13")))
+
+mentalhealth_drugs_all <- mentalhealth_drugs %>% 
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count),
+            category = "All") %>% 
+  ungroup() %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all)
+
+mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_historic)
+
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-09-13")
+
+###############################################.
+## A&E - mental health ----
+###############################################.
+
+mh_aye <- rbind(read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv")) %>% 
+                  filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) ,
+                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to06092020.csv"))) %>% 
+  clean_names() 
+
+# List of terms used to identify mh cases
+mh_aye_freetext <- toupper(paste0("overdose|'OD|O/D|drug od|drugs od|drug overdose|", 
+                                  "self harm|self-harm|selfharm|depress|psych|", 
+                                  "mental health|mentalhealth|mental-health|",
+                                  "mental illness|mentalillness|mental-illness|",
+                                  "suicid|suicdal|eating disorder|eatingdisorder|eating-disorder|",
+                                  " MHAT| CAHMS|behavioural disorder|mental disorder|",
+                                  "personality disorder|personalitydisorder|personality-disorder|", 
+                                  "anxiety|bipolar|schizophren|schizoaffective|",
+                                  "anorexi|bulimi|adhd|dissociative| dsh|",
+                                  "adjustment disorder|emotional disorder|bereavement|",
+                                  "self-poison|selfpoison|self poison|",
+                                  "delusional|hallucination|alcohol withdrawal|withdrawal from alcohol|",
+                                  "drug withdrawal|drugs withdrawal|withdrawal drug|",
+                                  "manic episode|panic|recreational drug use|intoxication"))
+
+# List of terms used to identify false positives
+mh_text_notincluded <- paste0("ACCIDENTAL OVERDOSE|ACCIDENTAL POISONING|",
+                              "ACCIDENTAL CHILD POISONING|TYMPANIC")
+
+mh_aye %<>%
+  mutate(diagnosis_1_text = toupper(diagnosis_1_text),
+         diagnosis_2_text = toupper(diagnosis_2_text),
+         diagnosis_3_text = toupper(diagnosis_3_text),
+         presenting_complaint_text = toupper(presenting_complaint_text)) %>% 
+  # Creating variable for those case identified through codes and no free text
+  mutate(def_yes = case_when((substr(intent_of_injury_code,1,2) == "02" | #intentional self-harm
+                                diagnosis_1_code %in% c("16") | #16 is psychiatry
+                                diagnosis_2_code %in% c("16") |
+                                diagnosis_3_code %in% c("16") |
+                                # Including all Fs apart from dementia, delirium and learning disabilities
+                                # Including R44-R46: hallucinations, emotional states
+                                # Includinx X60-x84: intentional self-harm
+                                substr(disease_1_code, 1, 2) %in% c("F1", "F2", "F3", "F4", "F5", "F6", "F8", "F9", "X6", "X7") |
+                                substr(disease_2_code, 1, 2) %in% c("F1", "F2", "F3", "F4", "F5", "F6", "F8", "F9", "X6", "X7") |
+                                substr(disease_3_code, 1, 2) %in% c("F1", "F2", "F3", "F4", "F5", "F6", "F8", "F9", "X6", "X7") |
+                                substr(disease_1_code, 1, 3) %in% c("R44", "R45", "R46", "X80", "X81", "X82", "X83", "X84",
+                                                                    "F06", "F07", "F08", "F09") |
+                                substr(disease_2_code, 1, 3) %in% c("R44", "R45", "R46", "X80", "X81", "X82", "X83", "X84",
+                                                                    "F06", "F07", "F08", "F09") |
+                                substr(disease_3_code, 1, 3) %in% c("R44", "R45", "R46", "X80", "X81", "X82", "X83", "X84",
+                                                                    "F06", "F07", "F08", "F09") |
+                                # sequalae and personal historyof self-harm and psych traum
+                                substr(disease_1_code, 1, 4) %in% c("Y871", "Z914", "Z915", "Z004", "Z046") | 
+                                substr(disease_2_code, 1, 4) %in% c("Y871", "Z914", "Z915", "Z004", "Z046") |
+                                substr(disease_3_code, 1, 4) %in% c("Y871", "Z914", "Z915", "Z004", "Z046") ) ~ 1, T ~0)) 
+
+# Filtering based on conditions above and free text search terms
+mh_aye %<>% 
+  filter(def_yes == 1 |
+           grepl(mh_aye_freetext, diagnosis_1_text) |
+           grepl(mh_aye_freetext, diagnosis_2_text) |
+           grepl(mh_aye_freetext, diagnosis_3_text) |
+           grepl(mh_aye_freetext, presenting_complaint_text) )
+
+# Excluding false positives
+mh_aye %<>% 
+  filter(!(def_yes == 0 & (
+    grepl(mh_text_notincluded, presenting_complaint_text)|
+      grepl(mh_text_notincluded, diagnosis_1_text)|
+      grepl(mh_text_notincluded, diagnosis_2_text)|
+      grepl(mh_text_notincluded, diagnosis_3_text))))
+
+mh_aye %<>% #excluding very young kids as mostly false positives
+  filter(pat_age>4) 
+
+#Now another round excluding accidental poisonings, etc
+mh_aye %<>% 
+  # Formatting dataset
+  rename(dep=prompt_dataset_deprivation_scot_quintile, age=pat_age,
+         sex=pat_gender_description, count=number_of_attendances,
+         hb=treatment_nhs_board_description_as_at_date_of_episode) %>%
+  proper() %>% #fixing formatting of names
+  mutate(area_type = "Health board",
+         week_ending = ceiling_date(as.Date(arrival_date), "week", change_on_boundary = F),
+         age_grp = as.character(case_when(between(age, 0, 17) ~ "5 - 17",
+                                          between(age, 18, 44) ~ "18 - 44", 
+                                          between(age, 45, 64) ~ "45 - 64", 
+                                          between(age, 65, 200) ~ "65 and over", 
+                                          T ~ "Missing"))) %>%
+  create_depgroups() %>%
+  group_by(week_ending, area_name, area_type,  age_grp, sex, dep) %>%
+  summarise(count=sum(count, na.rm = T)) %>% #aggregating
+  ungroup() 
+
+# Generate scotland level dataset
+mh_aye_scot <- mh_aye %>%
+  group_by(week_ending, age_grp, sex, dep) %>%
+  summarise(count=sum(count, na.rm = T)) %>%
+  mutate(area_name="Scotland", area_type="Scotland") %>% ungroup()
+
+# Joining together
+mh_aye <- rbind(mh_aye, mh_aye_scot) %>% 
+  rename(age=age_grp) %>%  mutate(week_ending=as.Date(week_ending,format="%d/%m/%Y")) 
+
+#Use aggregation function to aggregate data files into format
+mh_aye_all <- mh_aye %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+mh_aye_sex <- agg_cut(dataset=mh_aye, grouper="sex") %>% rename(category=sex)
+mh_aye_dep <- agg_cut(dataset=mh_aye, grouper="dep") %>% rename(category=dep)
+mh_aye_age <- agg_cut(dataset=mh_aye, grouper="age") %>% rename(category=age)
+
+# Add final aggregation files to one master file
+mh_aye <- rbind(mh_aye_all, mh_aye_sex, mh_aye_dep, mh_aye_age) 
+
+# Filtering out cuts with very small counts for HBS
+mh_aye %<>% 
+  filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
+  filter(area_name == "Scotland" | category == "All")
+
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-09-06")
+
+###############################################.
+## OOH - mental health ----
+###############################################.
+
+mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/GP_OOH_MH_WIDER_IMPACT.txt")) %>%
+  janitor::clean_names() %>%
+  rename(hb=patient_nhs_board_description_current, 
+         dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
+         count=gp_ooh_number_of_cases, age_group=age_band, week_ending=gp_ooh_sc_start_date) %>%
+  mutate(week_ending = as.Date(week_ending, format= "%d/%m/%Y"), 
+         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F),
+         # Query excludes under 5s
+         age = recode_factor(age_group, "0-12" = "5 - 17", "13 to 17" = "5 - 17",  
+                             "18 to 24" = "18 - 44", "25 to 34" = "18 - 44", "35 to 44" = "18 - 44", "45 to 54" = "45 - 64", 
+                             "55 to 64" = "45 - 64", "65 to 74" = "65 and over", "75 to 84" = "65 and over",
+                             "85plus" = "65 and over"),
+         sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "0" = NA_character_, "9" = NA_character_),
+         dep = recode(dep, 
+                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
+                      "4" = "4", "5" = "5 - least deprived"),
+         #week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
+         scot = "Scotland") %>%
+  proper() #convert HB names to correct format
+
+# Aggregate up to get figures for each area type.
+mh_ooh %<>% gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                             "scot" = "Scotland")) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
+  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-09-13")))
+
+mh_ooh_all <- mh_ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+mh_ooh_sex <- mh_ooh %>% agg_cut(grouper="sex") %>% rename(category = sex)
+mh_ooh_dep <- mh_ooh %>% agg_cut(grouper="dep") %>% rename(category = dep)
+mh_ooh_age <- mh_ooh %>% agg_cut(grouper="age") %>% rename(category = age)
+
+mh_ooh <- rbind(mh_ooh_all, mh_ooh_sex, mh_ooh_dep, mh_ooh_age)
+
+mh_ooh %<>% 
+  filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
+  filter(area_name == "Scotland" | category == "All")
+
+prepare_final_data(mh_ooh, "mh_ooh", last_week = "2020-09-13")
 
 ##END

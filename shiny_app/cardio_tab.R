@@ -56,13 +56,7 @@ observeEvent(input$measure_cardio_select, {
 # Link action button click to modal launch 
 observeEvent(input$btn_cardio_modal, 
              
-             if (input$measure_cardio_select == "rapid") {
-               showModal(modalDialog(#RAPID ADMISSIONS MODAL
-                 title = "What is the data source?",
-                 p(""),
-                 size = "m",
-                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-             }  else if (input$measure_cardio_select == "aye") {
+             if (input$measure_cardio_select == "aye") {
                showModal(modalDialog(# Cardio A&E MODAL
                  title = "What is the data source?",
                  p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments) 

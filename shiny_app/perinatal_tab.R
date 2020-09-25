@@ -241,12 +241,14 @@ perinatal_down_data <- reactive({
   if (input$measure_select_perinatal %in% c("pnnd", "nnd", "infantdeaths")) { 
     perinatal <- perinatal %>% filter(type == input$measure_select_perinatal) %>%
       rename(live_births=sample_size) %>% 
-      select(month_of_year:centreline, upper_cl_3_std_dev:area_name) } 
+      select(month_of_year:centreline, upper_cl_3_std_dev:area_name) %>%
+      mutate(month_of_year = format(month_of_year, "%b %y")) } 
  
    else if (input$measure_select_perinatal %in% c("extperi", "stillbirths")) {
     perinatal <- perinatal %>% filter(type == input$measure_select_perinatal) %>%
       rename(total_births=sample_size) %>% 
-      select(month_of_year:centreline, upper_cl_3_std_dev:area_name) }
+      select(month_of_year:centreline, upper_cl_3_std_dev:area_name) %>%
+      mutate(month_of_year = format(month_of_year, "%b %y")) }
 })
 
 output$download_perinatal_data <- downloadHandler(

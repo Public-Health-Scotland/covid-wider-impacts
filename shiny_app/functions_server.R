@@ -10,7 +10,8 @@
 
 # split - age, sex, condition, or dep (simd deprivation)
 plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation", 
-                             data_name = NULL, tab = "summary", period = "weekly") {
+                             data_name = NULL, tab = "summary", period = "weekly",
+                             aver_week = F) {
   
   period_data <- case_when(period == "weekly" ~ "Week ending: ",
                            period == "monthly" ~ "Month: ")
@@ -19,7 +20,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     if (tab == "summary") {
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type == split & area_name == input$geoname)
-    } else if (tab == "cardio") {
+    } else if (tab %in% c("cardio", "mh")) {
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type %in% split)
     }
@@ -48,7 +49,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     }
   } else if (split == "condition") {
       if (tab == "cardio") {
-        trend_data <- dataset %>% 
+        trend_data <- trend_data %>% 
           filter(type %in% split & area_name == input$geoname_cardio,
                  category != "All") %>% 
           # Wrapping long legend names
@@ -56,21 +57,41 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
             category == "Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs" ~ "Antihypertensive, \nanti-anginal, anti-arrhythmic \nand heart failure drugs",
             TRUE ~ category
           ))
+      } else if (tab == "mh") {
+        trend_data <- trend_data %>% 
+          filter(type %in% split & area_name == input$geoname_mh,
+                 category != "All") %>%
+          mutate(category = case_when(
+            category == "SSRI SNRI" ~ "Depression medicine",
+            category == "Anxiolytic" ~ "Anxiety medicine",
+            category == "Hypnotic" ~ "Insomnia medicine",
+            TRUE ~ category
+          ))
       }
   } else {
     trend_data <- trend_data 
   }
-  
+    
   # If variation selected different values
   if (type == "variation") {
     
-    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "2018-2019",
+    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "mentalhealth_drugs", "mh_ooh") ~ "2018-2019",
                              data_name == "deaths" ~ "2015-2019"))
     
-    #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                              "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
+    if (aver_week == T) {
+      #Text for tooltip
+      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                                "Average of weeks ending on ", format(trend_data$week_ending - 7, "%d %b %y"), ", ",
+                                format(trend_data$week_ending, "%d %b %y"), " and ", format(trend_data$week_ending + 7, "%d %b %y"),
+                                "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
+      
+    } else {
+      #Text for tooltip
+      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                                "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
+      
+    }
 
       #Modifying standard layout
     yaxis_plots[["title"]] <- paste0("% change from ", aver_period, " average")
@@ -84,30 +105,45 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     # Creating objects that change depending on dataset
     yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
-                             data_name == "ooh" ~ "Number of consultations",
+                             data_name == "ooh" ~ "Number of cases",
                              data_name == "nhs24" ~ "Number of completed contacts",
                              data_name == "sas" ~ "Number of incidents",
                              data_name == "cath" ~ "Number of cases",
                              data_name == "drug_presc" ~ "Number of items prescribed",
-                             data_name == "deaths" ~ "Number of deaths")
+                             data_name == "deaths" ~ "Number of deaths",
+                             data_name == "mentalhealth_drugs" ~ "Number of patients",
+                             data_name == "mh_ooh" ~ "Number of consultations")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
     
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                               data_name == "aye" ~ "Attendances: ",
-                              data_name == "ooh" ~ "Consultations: ",
+                              data_name == "ooh" ~ "Cases: ",
                               data_name == "nhs24" ~ "Completed contacts: ",
                               data_name == "sas" ~ "Incidents: ",
                               data_name == "cath" ~ "Cases: ",
                               data_name == "drug_presc" ~ "Items prescribed: ",
-                              data_name == "deaths" ~ "Deaths: ")
+                              data_name == "deaths" ~ "Deaths: ",
+                              data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
+                              data_name == "mh_ooh" ~ "Consultations: ")
     
     #Text for tooltip
-    tooltip_trend <- c(paste0(trend_data$category, "<br>",
-                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                              "<br>", measure_name, trend_data$count,
-                              "<br>", "Historic average: ", trend_data$count_average))
+    if (aver_week == T) {
+      #Text for tooltip
+      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                                "Average of weeks ending on ", format(trend_data$week_ending - 7, "%d %b %y"), ", ",
+                                format(trend_data$week_ending, "%d %b %y"), " and ", format(trend_data$week_ending + 7, "%d %b %y"),
+                                "<br>", measure_name, trend_data$count,
+                                "<br>", "Historic average: ", trend_data$count_average))
+      
+    } else {
+      tooltip_trend <- c(paste0(trend_data$category, "<br>",
+                                "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                "<br>", measure_name, trend_data$count,
+                                "<br>", "Historic average: ", trend_data$count_average))
+
+    }
     
     #Creating time trend plot
     trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count) 
@@ -144,48 +180,47 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     trend_data <- dataset
   }
   
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50)
+  } else {
+  
   ###############################################.
   # Creating objects that change depending on dataset
   yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                            data_name == "aye" ~ "Number of attendances",
-                           data_name == "ooh" ~ "Number of consultations",
+                           data_name == "ooh" ~ "Number of cases",
                            data_name == "nhs24" ~ "Number of completed contacts",
                            data_name == "sas" ~ "Number of incidents",
                            data_name == "cath" ~ "Number of cases",
                            data_name == "drug_presc" ~ "Number of items prescribed",
                            data_name == "deaths" ~ "Number of deaths",
-                           data_name ==  "childdev" ~ "% of children with 1+ developmental concerns recorded")
+                           data_name == "mentalhealth_drugs" ~ "Number of patients",
+                           data_name == "mh_ooh" ~ "Number of consultations")
 
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "childdev") ~ "Average 2018-2019",
+  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "mentalhealth_drugs", "mh_ooh") ~ "Average 2018-2019",
                           data_name == "deaths" ~ "Average 2015-2019")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                             data_name == "aye" ~ "Attendances: ",
-                            data_name == "ooh" ~ "Consultations: ",
+                            data_name == "ooh" ~ "Cases: ",
                             data_name == "nhs24" ~ "Completed contacts: ",
                             data_name == "sas" ~ "Incidents: ",
                             data_name == "cath" ~ "Cases: ",
                             data_name == "drug_presc" ~ "Items prescribed: ",
                             data_name == "deaths" ~ "Deaths: ",
-                            data_name == "childdev" ~ "Children with concerns: ")
+                            data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
+                            data_name == "mh_ooh" ~ "Consultations: ")
   
   #Text for tooltip
-  if (data_name == "childdev") {
-
-    tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%d %b %y"),
-                              "<br>", measure_name, trend_data$pc_1_plus,
-                              "<br>", "Historic average: ", trend_data$pc_1_plus_aver))
-    
-  } else {
     tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
-    
-  }
 
   #Creating time trend plot
   plot_ly(data=trend_data, x=~get(xvar)) %>%
@@ -202,7 +237,9 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
            yaxis = yaxis_plots, xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% #position of legend
     # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  
+  }
   
 }
 ###############################################.
