@@ -91,4 +91,10 @@ observe({
   observeEvent(input$perinatal_button, ({
     updateCollapse(session, "collapse_commentary", open = "Stillbirths and infant deaths")}))
   
+  observeEvent(input$childdev_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Child development")}))
+  
+  observeEvent(input$breastfeeding_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Breastfeeding")}))
+  
 } # server end

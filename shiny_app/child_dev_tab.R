@@ -226,6 +226,25 @@ output$download_childdev_data <- downloadHandler(
 ###############################################.
 ## Commentary ----
 ###############################################.
-# On child health tab script
+output$childdev_commentary <- renderUI({
+  tagList(
+    bsButton("jump_to_childdev",label = "Go to data"), #this button can only be used once
+    h2("Child development - 30th September 2020"),
+    p("Information on child development has been included in this tool for the first time on 30th September 2020. This is based on data recorded at child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old."),
+    p("Data is shown on the proportion of children with 1 or more developmental concern recorded on their child health review record.  Data is also shown on the overall number of reviews provided, and on the number of reviews with full meaningful data recorded for every development domain."),
+    p("Data is shown by month of review from January 2019 to July 2020, so comparisons can be made for children receiving their reviews before and during the COVID-19 pandemic.  For the 13-15 month review specifically, no data is available for the period January to April 2019 for NHS Greater Glasgow & Clyde, as this review has only been delivered in NHS GG&C from May 2019 onwards.  This means that information for ‘Scotland’ excludes NHS GG&C for January to April 2019, and includes NHS GG&C for May 2019 onwards.  ‘Scotland’ also excludes NHS Grampian for the whole time period shown, due to problems with entry of data into the CHSP-PS system in Grampian during the COVID-19 pandemic."),
+    p("At Scotland level, the proportion of children recorded at their 13-15 month review as having at least one developmental concern fell in March and April 2020 before returning to pre-pandemic levels by May 2020. A similar, but more pronounced, pattern was seen for the 27-30 month review, with the proportion of children reviewed having at least one developmental concern recorded falling in March and April 2020 before returning to pre-pandemic levels by June 2020. In April 2020, 9% of children undergoing a 27-30 month review had a developmental concern identified compared to the pre-pandemic average of 16%."),
+    p("The proportion of children receiving their 13-15 month or 27-30 month review (and having their review record entered into the CHSP-PS electronic system) is usually high (around 90% if sufficient follow up time allowed).  Delivery of these reviews was inevitably disrupted at the start of the COVID-19 pandemic, as shown by the dip in the number of reviews delivered in March to May 2020.  The number of reviews delivered per month recovered to pre-pandemic levels in June 2020.  Further information on review coverage is provided on the Child Health Reviews page of this tool."),
+    p("When the number of 13-15 month and 27-30 month reviews delivered fell at the start of the COVID-19 pandemic, 
+      so did the proportion that had full meaningful data recorded against each of the eight developmental domains 
+      assessed during reviews. In April 2020, 77% of 13-15 month review records and 73% of 27-30 month review records 
+      had full meaningful data on child development recorded, compared to previous averages of around 90%. ",
+      tags$a(href ="https://www.gov.scot/publications/coronavirus-covid-19-nursing-and-community-health-staff-guidance/", "National guidance", target="_blank"), 
+      " issued at the start of the pandemic recommended that the 13-15 month and 27-30 month reviews should be conducted remotely (by phone or video consultation) where feasible.  The fall in data completeness relating to child development on review records may therefore reflect difficulties in completing a full developmental assessment without face to face contact."),
+    p("Given this, it is likely that the dip in March to May 2020 in the proportion of children undergoing 13-15 month and 27-30 month reviews who were identified as having a developmental concern reflects a fall in the ascertainment of developmental problems, rather than a genuine fall in the proportion of children with developmental delay."),
+    p("The combined impact of fewer children having reviews, and a lower proportion of those reviewed having developmental concerns identified, means that across Scotland during the period March to July 2020 around 300 children fewer than would have been expected based on pre-pandemic levels were identified as having a developmental concern at 13-15 months, and 800 children fewer were identified as having a developmental concern at 27-30 months.  It is not currently clear to what extent these ‘missing’ children may be identified in coming months, either through ‘catch up’ reviews provided later than usual, or through their parents proactively raising concerns about their development with relevant services such as their Health Visitor, GP, or early learning and childcare staff.")
+  ) #tagLIst bracket
+})
+
 
 ##END

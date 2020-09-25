@@ -252,7 +252,18 @@ output$bf_ever_pc <- renderPlotly({
 ###############################################.
 ## Commentary ----
 ###############################################.
-# On child health script
+output$breastfeeding_commentary <- renderUI({
+  tagList(
+    bsButton("jump_to_breastfed",label = "Go to data"), #this button can only be used once
+    h2("Breastfeeding - 30th September 2020"),
+    p("Information on breastfeeding has been included in this tool for the first time on 30th September 2020. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old."),
+    p("Data is shown on breastfeeding initiation (has the child ever been breastfed), and the child’s breastfeeding status over the 24 hours prior to their child health review (exclusive breastfeeding and overall breastfeeding [includes mixed breast and formula feeding])."),
+    p("Data is shown by month of review from January 2019 to July 2020, so comparisons can be made for babies receiving their reviews before and during the COVID-19 pandemic."),
+    p("At Scotland level, there was a small increase in the proportion of babies recorded at their HV First Visit as ever having been breastfed, and as still receiving some breastfeeding, in April and May 2020 (babies born March/April/May). For example, 56% of babies having their HV First Visit in April 2020 were recorded as overall breastfed, compared to the pre-pandemic average of 52%.  Similarly, there was a small increase in the proportion of babies recorded at their 6-8 week review as still receiving breastfeeding in May 2020 (babies born March/April).  Breastfeeding rates have returned to previous average levels for babies receiving their HV First Visit and 6-8 week review from June 2020 onwards."),
+    p("The proportion of babies receiving a HV First Visit (and having their review record entered into the CHSP-PS electronic system) is usually very high (>95%) and this has been well maintained during the COVID-19 pandemic. The proportion of babies receiving a 6-8 week review is also usually high (>90% if sufficient follow up time allowed) and this has been reasonably well maintained during the COVID-19 pandemic in most, but not all, NHS Board areas.  This can be seen by examining the number of HV First Visits and 6-8 week reviews provided month by month on the Breastfeeding page of this tool, and through the more detailed data provided on review coverage on the Child Health Reviews page."),
+    p("This means that the trends seen in the proportion of babies recorded as being breastfed are likely to be real, rather than the result of changes in data recording.  A temporary increase in breastfeeding rates for babies born during the first wave of the COVID-19 pandemic in Scotland may reflect women having more time to initiate and maintain breastfeeding during lockdown due to fewer competing demands on their time, for example through reduced visits from friends and family.")
+  ) #tagLIst bracket
+})
 
 ###############################################.
 ## Data downloads ----
