@@ -2,19 +2,8 @@
 # Pop-up modal explaining source of data
 observeEvent(input$btn_top_modal, 
              showModal(modalDialog(#Maternal HEALTH MODAL
-               title = "What is the data source?",
-               p("The information shown on the numbers of children eligible for routine preschool reviews is taken from the",
-                 tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=4&SubID=12", 
-                        "Scottish Immunisation and Recall System (SIRS)", class="externallink"),
-                 ". The information recorded at each review is taken from the",
-                 tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=4&SubID=10",
-                        "Child Health Systems Programme-PreSchool (CHSP-PS)", class="externallink"),
-                 "."),
-               p("SIRS is an electronic system used by all NHS Boards in Scotland. The system facilitates the invitation of children when a scheduled vaccination is due."),
-               p("CHSP-PS is an electronic system used by all NHS Boards in Scotland. The CHSP Pre-School system supports the delivery of the child health programme by facilitating the automated call and recall of children for the agreed schedule of child health reviews for pre-school children. Child health reviews incorporate assessment of children's health, development, and wider wellbeing alongside provision of health promotion advice and parenting support."),
-               p(tags$a(href="https://publichealthscotland.scot/","Public Health Scotland (PHS)",class="externallink")," routinely receives quarterly data extracts from SIRS and CHSP-PS for the purpose of producing and ",
-                 (tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/child-health-pre-school-review-coverage/","publishing",class="externallink"))," coverage rates for child health reviews. To allow more rapid monitoring of the impact of Covid-19 on child health review coverage rates, PHS is also currently extracting a sub-set of data from SIRS & CHSP-PS each month."),
-               size = "m",
+              title = "What is the data source?",
+              size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain SIMD and deprivation
@@ -242,3 +231,32 @@ plot_top_split <- function(dataset, split){
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 }
+
+
+###############################################.
+## Data downloads ----
+###############################################.
+
+termination_down_data <- reactive({
+     top_download
+})
+
+output$download_termination_data <- downloadHandler(
+  filename ="terminations_extract.csv",
+  content = function(file) {
+    write_csv(termination_down_data(),
+              file) } 
+)
+
+###############################################.
+## Commentary tab content  ----
+###############################################.
+output$top_commentary <- renderUI({
+  tagList(
+    bsButton("jump_to_top",label = "Go to data"), #this button can only be used once
+    h2("Termination of pregnancy - 28th October 2020"))
+})
+
+
+
+

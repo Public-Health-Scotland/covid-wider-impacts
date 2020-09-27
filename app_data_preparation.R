@@ -1076,12 +1076,43 @@ ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher"))
 
 saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
 
+## Antenatal booking data download
+ante_booking_download <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_09092020.xlsx"),
+                                sheet = "Monthly Data for Download") %>%
+  janitor::clean_names()
+
+# Match area names from lookup & format for shinyapp
+ante_booking_download <- left_join(ante_booking_download, hb_lookup, by = c("area" = "hb_cypher")) %>%
+  mutate(area_name=case_when(area=="Scotland" ~ "Scotland", T~ area_name),
+         area_type=case_when(area=="Scotland" ~ "Scotland", T~ area_type)) %>%
+  select(-area) %>%
+  rename(booking_month=month_booking, number_of_bookings=booked) %>%
+  arrange(area_type, booking_month)
+
+saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_number_download.rds"))
+
+## Average gestation at booking data download
+gest_booking_download <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_09092020.xlsx"),
+                                    sheet = "Monthly Data for Download") %>%
+  janitor::clean_names()
+
+# Match area names from lookup & format for shinyapp
+gest_booking_download <- left_join(gest_booking_download, hb_lookup, by = c("area" = "hb_cypher")) %>%
+  mutate(area_name=case_when(area=="Scotland" ~ "Scotland", T~ area_name),
+         area_type=case_when(area=="Scotland" ~ "Scotland", T~ area_type)) %>%
+  select(-area) %>%
+  rename(booking_month=month_booking, number_of_bookings=booked, average_gestation=ave_gest) %>%
+  arrange(area_type, booking_month)
+
+saveRDS(gest_booking_download, paste0("shiny_app/data/","ante_booking_gest_download.rds"))
+
+
 ###############################################.
 ## Pregnancy (terminations) ----
 ###############################################.
 
 ## Antenatal booking average gestation
-top_runchart <- rap_adm <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rds")) %>%  
+top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rds")) %>%  
   janitor::clean_names() %>%
   rename(area_name=hbres, month=date,
          centreline_no = av_pre_pan_terminations,
@@ -1089,6 +1120,7 @@ top_runchart <- rap_adm <- readRDS(paste0(data_folder, "pregnancy/terminations/R
          centreline_g = pre_pan_av_gest,
          dottedline_g = ext_av_gest) %>%
   mutate(terminations=as.numeric(terminations),
+         month=as.Date(month),
     type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name), 
@@ -1099,7 +1131,8 @@ top_scot <- rap_adm <- readRDS(paste0(data_folder, "pregnancy/terminations/SCOTL
   janitor::clean_names() %>%
   ungroup() %>% # for some reason dataset appears to be grouped which prevents formatting 
   rename(area_name=hbres, month=date, category=variable) %>%
-  mutate(type=case_when(chart=="AGEGRP" ~ "age",chart=="SIMD" ~ "dep",TRUE ~ "other"),
+  mutate(month=as.Date(month),
+    type=case_when(chart=="AGEGRP" ~ "age",chart=="SIMD" ~ "dep",TRUE ~ "other"),
          area_type="Scotland")
 
 #add area based and age/dep terminations data
@@ -1108,8 +1141,14 @@ top <- bind_rows(top_runchart, top_scot) %>%
 
 saveRDS(top, paste0("shiny_app/data/","top_data.rds"))
 
+## Terminations data download
+top_download <- readRDS(paste0(data_folder, "pregnancy/terminations/DOWNLOAD.rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date)
 
-##
+saveRDS(top_download, paste0("shiny_app/data/","top_download.rds"))
+
+
 
 
 ##END

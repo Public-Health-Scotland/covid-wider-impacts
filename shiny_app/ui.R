@@ -74,7 +74,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("cardio_button", "Cardiovascular", width="150px"),br() ,
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
                           actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
-                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px")
+                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"),br(),
+                          actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
+                          actionLink("top_button", "Termination of pregnancy", width="150px")
                   ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
@@ -82,8 +84,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
                                      bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
                                      bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
-                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary"))
-
+                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
+                                     bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
+                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary"))
                           )))
 ), #tab panel
 
@@ -219,9 +222,9 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
 ###############################################.
 ## Pregnancy ----
 ###############################################.
-navbarMenu("Pregnancy", icon = icon("female"),
+navbarMenu("Pregnancy", icon = icon("venus"),
 ###############################################.
-           tabPanel(title = "Antenatal booking", icon = icon("female"), value = "booking",
+           tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking",
                     wellPanel(
                       column(12, h4("title of tab selected")),
                       column(4, div(title="Select the data you want to explore.", # tooltip
@@ -236,17 +239,41 @@ navbarMenu("Pregnancy", icon = icon("female"),
                              uiOutput("geoname_ui_booking")),
                       column(4,
                              actionButton("btn_booking_modal", "Data source: XXX", icon = icon('question-circle')),
-                             fluidRow(br()))
-                      #downloadButton("download_visit_data", "Download data"),
-                      #fluidRow(br()),
-                      #actionButton("jump_commentary_hv","Go to commentary"))
+                             fluidRow(br()),
+                      downloadButton("download_ante_booking_data", "Download data"),
+                      fluidRow(br()),
+                      actionButton("jump_commentary_booking","Go to commentary"))
                       #actionButton("browser", "Browser")
                     ), #well panel
                     mainPanel(width = 12,
                               uiOutput("booking_explorer")
                     )# mainPanel bracket
            ), #tab panel
-tabPanel(title = "Terminations", icon = icon("female"), value = "terminations",
+tabPanel(title = "Antenatal alternative", icon = icon("book-open"), value = "booking2",
+         wellPanel(
+           # column(4, div(title="Select the data you want to explore.", # tooltip
+           #               radioGroupButtons("measure_select_booking",
+           #                                 label= "Step 1. Select the data you want to explore.",
+           #                                 choices = data_list_booking, status = "primary",
+           #                                 direction = "vertical", justified = T))),
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select the data breakdown you want to see.")),
+                         selectInput("geotype_booking2", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_booking2")),
+           column(4,
+                  actionButton("btn_booking_modal2", "Data source: XXX", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_ante_booking_data2", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_booking2","Go to commentary"))
+           #actionButton("browser", "Browser")
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("booking_explorer2")
+         )# mainPanel bracket
+), #tab panel
+tabPanel(title = "Terminations", icon = icon("bars"), value = "terminations",
           wellPanel(
             column(4, div(title="Select the data you want to explore.", # tooltip
                           radioGroupButtons("measure_select_top",
@@ -259,10 +286,10 @@ tabPanel(title = "Terminations", icon = icon("female"), value = "terminations",
                                       selected = "Scotland")),
                    uiOutput("geoname_ui_top")),
             column(4,actionButton("btn_top_modal", "Data source: XXXX", icon = icon('question-circle')),
-                   fluidRow(br()))
-           #downloadButton("download_visit_data", "Download data"),
-           #fluidRow(br()),
-           #actionButton("jump_commentary_hv","Go to commentary"))
+                   fluidRow(br()),
+           downloadButton("download_termination_data", "Download data"),
+           fluidRow(br()),
+           actionButton("jump_commentary_top","Go to commentary"))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
