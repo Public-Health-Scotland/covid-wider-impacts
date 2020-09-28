@@ -4,6 +4,7 @@
 observeEvent(input$btn_booking_modal2, 
              showModal(modalDialog(
                title = "What is the data source?",
+               p("The Antenatal Booking Data presented is based on a new data collection established as a rapid response to COVID-19. Data is collected each week, from the clinical information system (BadgerNet Maternity (most NHS boards), TrakCare Maternity (Lothian) or Eclipse (A&A) used by the midwives who ‘book’ the pregnant woman for maternity care. Historic data from March 2019 was also collected as a ‘catch-up’ extract from the same source (and in Tayside and Highland from the systems in use before the introduction of BadgerNet Maternity) in order to identify all women who were currently pregnant during the COVID-19 period."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -203,17 +204,22 @@ plot_booking_split <- function(dataset, split, measure){
   
   plot_data <- dataset
   
+  #label to appear in tool tip
+  tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"),split=="dep" ~ paste0("Deprivation group:"))
+  
   #switch y-axis according to which measure is selected
   if(measure == "booking_number"){
     yaxis_measure <- dataset$booked_no
     yaxis_plots[["title"]] <- "Number of bookings"
-    tooltip_booking <- c(paste0("Week commencing: ",format(dataset$week_book_starting,"%d %b %y"),"<br>",
-                                "Number of antenatal bookings: ",dataset$booked_no))
+    tooltip_booking <- c(paste0(tool_tip_split,dataset$category,"<br>",
+                                "Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
+                                "Number of antenatal bookings: ",plot_data$booked_no))
     
   } else if (measure  == "booking_gestation") {
     yaxis_measure <- dataset$ave_gest
     yaxis_plots[["title"]] <- "Average gestation at booking (weeks)"
-    tooltip_booking <- c(paste0("Week commencing: ",format(dataset$week_book_starting,"%d %b %y"),"<br>",
+    tooltip_booking <- c(paste0(tool_tip_split,dataset$category,"<br>",
+                                "Week commencing: ",format(dataset$week_book_starting,"%d %b %y"),"<br>",
                                 "Average gestation: ",dataset$ave_gest," weeks"))
   }
   

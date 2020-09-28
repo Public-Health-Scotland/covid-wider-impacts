@@ -88,10 +88,10 @@ output$top_explorer <- renderUI({
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
   
   top_age_title_n <- paste0("Number of terminations by age group: ", input$top)
-  top_dep_title_n <- paste0("Numbers of terminations by deprivation: ", input$top)
-  
   top_age_title_g <- paste0("Average gestation at termination by age group: ", input$top)
-  top_dep_title_g <- paste0("Average gestation at termination by deprivation: ", input$top)
+  
+  top_dep_title_n <- paste0("Numbers of terminations by deprivation: ", input$top)
+    top_dep_title_g <- paste0("Average gestation at termination by deprivation: ", input$top)
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_top <-  tagList(p("Space for any meta-data/commentary about terminations"))
@@ -107,21 +107,26 @@ output$top_explorer <- renderUI({
             #only if scotland selected display age and deprivation breakdowns
             if (input$geotype_top == "Scotland"){
               tagList(
-                fluidRow(column(12,p("At Scotland level only data this data is also presented broken down by age and deprivation group"))),
-                       fluidRow(column(6,br(), br(),
-                                       h4(paste0(top_age_title_n)),
-                                       br(), br(),
-                                       withSpinner(plotlyOutput("top_age_n")),
-                                       h4(paste0(top_dep_title_n)),
-                                       br(), br(),
-                                       withSpinner(plotlyOutput("top_dep_n"))),
-                                column(6, br(), br(),
-                                       h4(paste0(top_age_title_g)),
-                                       br(), br(),
-                                       withSpinner(plotlyOutput("top_age_g")),
-                                       h4(paste0(top_dep_title_g)),
-                                       br(), br(),
-                                       withSpinner(plotlyOutput("top_dep_g"))))
+               # fluidRow(column(12,p("At Scotland level only data this data is also presented broken down by age and deprivation group"))),
+                fluidRow(column(12,h4("Terminations by age group:"))),
+                fluidRow(column(6,br(),
+                                #h4(paste0(top_age_title_n)),
+                                h4("Number of terminations"),br(),
+                                withSpinner(plotlyOutput("top_age_n"))),
+                         column(6,br(),
+                                #h4(paste0(top_dep_title_n)),
+                                h4("Average gestation at termination (weeks)"),
+                                br(),
+                                withSpinner(plotlyOutput("top_age_g")))),
+                fluidRow(column(12,h4("Terminations by deprivation:"),
+                                actionButton("btn_modal_simd_top", "What is SIMD and deprivation?",
+                                             icon = icon('question-circle')))),
+                fluidRow(column(6, br(),
+                                h4("Number of terminations"),br(), 
+                                withSpinner(plotlyOutput("top_dep_n"))),
+                         column(6,br(),
+                                h4("Average gestation at termination (weeks)"),br(),
+                                withSpinner(plotlyOutput("top_dep_g"))))
               )#tagList from if statement
                 },
                      fluidRow(column(12, renderUI(commentary_top))))
@@ -150,27 +155,32 @@ plot_top_split <- function(dataset, split, measure){
   
   plot_data <- dataset
   
+  #label to appear in tool tip
+  tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"),split=="dep" ~ paste0("Deprivation group:"))
+  
   #switch y-axis according to which measure is selected
   if(measure == "top_number"){
     yaxis_measure <- dataset$terminations
     yaxis_plots[["title"]] <- "Number of terminations"
-    tooltip_top <- c(paste0("Week commencing: ",dataset$month,"<br>",
-                                "Number of terminations: ",dataset$terminations))
-  
-
+    tooltip_top <- c(paste0(tool_tip_split,dataset$category,"<br>",
+                            "Week commencing: ",dataset$month,"<br>",
+                            "Number of terminations: ",dataset$terminations))
+    
   } else if (measure  == "top_gestation") {
     yaxis_measure <- dataset$av_gest
     yaxis_plots[["title"]] <- "Average gestation at top (weeks)"
-    tooltip_top <- c(paste0("Week commencing: ",dataset$month,"<br>",
-                                "Average gestation at termination: ",dataset$av_gest," weeks"))
+    tooltip_top <- c(paste0(tool_tip_split,dataset$category,"<br>",
+                            "Week commencing: ",dataset$month,"<br>",
+                            "Average gestation at termination: ",dataset$av_gest," weeks"))
   }
   
   #adjust datasets accordig to which data split to be displayed
   if(split == "age"){
     dataset <- dataset %>%
-      mutate(category = factor(category, levels = c("Under 20", "20-24", "25-29","30-34", "35-39", "40+")))
+      mutate(category = factor(category, levels = c("under 20", "20-24", "25-29","30-34","35-39", "40+")))
     pallette <- pal_age}
   
+
   if(split == "dep"){
     dataset <- dataset %>% 
       mutate(category = factor(category, levels = c("1 - most deprived", "2", "3","4", "5 - least deprived")))
@@ -218,7 +228,7 @@ plot_top_trend <- function(measure){
         add_lines(y = ~dottedline_no, name = "Scotland projected",
                   line = list(color = "blue", dash = "longdash"), hoverinfo="none",
                   name = "Centreline") %>%
-        add_lines(y = ~centreline_no, name = "Scotland centre line up to XXX need date?",
+        add_lines(y = ~centreline_no, name = "Scotland centre line up to XXX",
                   line = list(color = "blue"), hoverinfo="none",
                   name = "Centreline") %>% 
         #Layout
@@ -242,7 +252,7 @@ plot_top_trend <- function(measure){
         add_lines(y = ~dottedline_g, name = "Scotland projected",
                   line = list(color = "blue", dash = "longdash"), hoverinfo="none",
                   name = "Centreline") %>%
-        add_lines(y = ~centreline_g, name = "Scotland centre line up to XXX need date",
+        add_lines(y = ~centreline_g, name = "Scotland centre line up to XXX",
                   line = list(color = "blue"), hoverinfo="none",
                   name = "Centreline") %>% 
         #Layout
@@ -252,11 +262,6 @@ plot_top_trend <- function(measure){
         #leaving only save plot button
         config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
   }}
-
-
-
-
-
 
 
 ###############################################.

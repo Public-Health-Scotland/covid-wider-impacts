@@ -257,7 +257,7 @@ tabPanel(title = "Antenatal alternative", icon = icon("book-open"), value = "boo
                                      selected = "Scotland")),
                   uiOutput("geoname_ui_booking2")),
            column(4,
-                  actionButton("btn_booking_modal2", "Data source: XXX", icon = icon('question-circle')),
+                  actionButton("btn_booking_modal2", "Data source: NHS Boards", icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton("download_ante_booking_data2", "Download data"),
                   fluidRow(br()),

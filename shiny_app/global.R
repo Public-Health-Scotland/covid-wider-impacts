@@ -150,7 +150,6 @@ data_list_booking <- c("Number" = "booking_number",
 data_list_top <- c("Number" = "top_number",
                        "Average gestation" = "top_gestation")
 
-
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
                         "Cardiac procedures" = "cath_lab",
