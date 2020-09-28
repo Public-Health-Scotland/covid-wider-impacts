@@ -142,11 +142,6 @@ data_list_child <- c("Health Visitor first visit" = "first_visit",
                      "27-30 Month Review" = "27_30mnth",
                      "4-5 Year Review" = "4_5yr")
 
-# List of data items available in step 1 of maternal  health tab
-# data_list_mat <- c("Antenatal booking" = "ante_booking",
-#                      "Terminations" = "top")
-
-
 ## Data lists for pregnancy tab
 # List of data items available in step 1 of antenatal booking
 data_list_booking <- c("Number" = "booking_number",

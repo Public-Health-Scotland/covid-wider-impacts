@@ -59,73 +59,21 @@ top_filter_split <- function(split){
                        area_type == "Scotland" &
                        type==split) %>%
     droplevels()
-  
 }
-
 
 ###############################################.
 ## Termination Charts ----
 ###############################################.
 
-# Creating plots for each dataset
-output$top_trend <- renderPlotly({
-  plot_data <- top_filter()
-  
-  # chart when numbers selected
-  if(input$measure_select_top == "top_number"){ 
-    
-    yaxis_plots[["title"]] <- "Number of terminations"
-    
-    tooltip_top <- c(paste0("Month: ",plot_data$month,"<br>",
-                                "Number of terminations: ",plot_data$terminations))
-    
-    #Creating time trend plot
-    plot_ly(data=plot_data, x=~month) %>%
-      add_lines(y = ~terminations,  
-                line = list(color = "black"), text=tooltip_top, hoverinfo="text",
-                marker = list(color = "black"), name = "Number of terminations") %>% 
-      add_lines(y = ~dottedline_no, name = "Scotland projected",
-                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-                name = "Centreline") %>%
-      add_lines(y = ~centreline_no, name = "Scotland centre line up to XXX need date?",
-                line = list(color = "blue"), hoverinfo="none",
-                name = "Centreline") %>% 
-      #Layout
-      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
-      #leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-    
-  } else if (input$measure_select_top  == "top_gestation") {
-    yaxis_plots[["title"]] <- "Average gestation at termination (weeks)"
+# chart outputs for trend
+output$top_trend_n <- renderPlotly({plot_top_trend(measure="top_number")})
+output$top_trend_g <- renderPlotly({plot_top_trend(measure="top_gestation")})
 
-    tooltip_top <- c(paste0("Month: ",plot_data$month,"<br>",
-                                "Average gestation at termination: ",plot_data$av_gest," weeks"))                           
-    
-    #Creating time trend plot
-    plot_ly(data=plot_data, x=~month) %>%
-      add_lines(y = ~av_gest,  
-                line = list(color = "black"), text=tooltip_top, hoverinfo="text",
-                marker = list(color = "black"), name = "Average gestation") %>% 
-      add_lines(y = ~dottedline_g, name = "Scotland projected",
-                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-                name = "Centreline") %>%
-      add_lines(y = ~centreline_g, name = "Scotland centre line up to XXX need date",
-                line = list(color = "blue"), hoverinfo="none",
-                name = "Centreline") %>% 
-      #Layout
-      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
-      #leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-  }
-})
+output$top_age_n <- renderPlotly({plot_top_split(dataset=top_filter_split("age"), split="age", measure="top_number")})
+output$top_age_g <- renderPlotly({plot_top_split(dataset=top_filter_split("age"), split="age", measure="top_gestation")})
 
-
-output$top_age <- renderPlotly({plot_top_split(dataset=top_filter_split("age"), split="age")})
-output$top_dep <- renderPlotly({plot_top_split(dataset=top_filter_split("dep"), split="dep")})
+output$top_dep_n <- renderPlotly({plot_top_split(dataset=top_filter_split("dep"), split="dep", measure="top_number")})
+output$top_dep_g <- renderPlotly({plot_top_split(dataset=top_filter_split("dep"), split="dep", measure="top_gestation")})
 
 
 ###############################################.
@@ -135,53 +83,62 @@ output$top_dep <- renderPlotly({plot_top_split(dataset=top_filter_split("dep"), 
 output$top_explorer <- renderUI({
   
   # text for titles of cut charts
-  top_title <- case_when(input$measure_select_top == "top_number" ~ paste0("Number of terminations: ", input$geoname_top),
-                             input$measure_select_top == "top_gestation" ~ paste0("Average gestation at termination: ", input$geoname_top))
+  top_title_n <-  paste0("Number of terminations: ", input$geoname_top)
+  top_title_g <-   paste0("Average gestation at termination: ", input$top)
+  top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
   
-  top_subtitle <-  paste0("Figures based on data extracted from XXXX on XXXX ")
+  top_age_title_n <- paste0("Number of terminations by age group: ", input$top)
+  top_dep_title_n <- paste0("Numbers of terminations by deprivation: ", input$top)
   
-  
-  top_age_title <- case_when(input$measure_select_top == "top_number" ~ paste0("Number of terminations by age group: ", input$geoname_top),
-                                 input$measure_select_top == "top_gestation" ~ paste0("Average gestation at termination by age group: ", input$geoname_top))
-  
-  top_dep_title <- case_when(input$measure_select_top == "top_number" ~ paste0("Numbers of terminations by deprivation: ", input$geoname_top),
-                                 input$measure_select_top == "top_gestation" ~ paste0("Average gestation at termination by deprivation: ", input$geoname_top))
-  
+  top_age_title_g <- paste0("Average gestation at termination by age group: ", input$top)
+  top_dep_title_g <- paste0("Average gestation at termination by deprivation: ", input$top)
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_top <-  tagList(p("Space for any meta-data/commentary about terminations"))
   
   # Function to create common layout to all immunisation charts
-  top_layout <- function(plot_trend, plot_age, plot_dep){
+  top_layout <- function(plot_trend_n,plot_trend_g, plot_age_n,plot_age_g,plot_dep_n,plot_dep_g){
     tagList(fluidRow(column(12,
-                            h4(paste0(top_title))),
-                     p(top_subtitle),
-                     withSpinner(plotlyOutput("top_trend"))),
+                            p(top_subtitle),
+                            h4(paste0(top_title_n)),
+                            withSpinner(plotlyOutput("top_trend_n")),
+                            h4(paste0(top_title_g)),
+                            withSpinner(plotlyOutput("top_trend_g")))),
             #only if scotland selected display age and deprivation breakdowns
             if (input$geotype_top == "Scotland"){
-              fluidRow(column(6,br(), br(),
-                              h4(paste0(top_age_title)),
-                              br(), br(),
-                              withSpinner(plotlyOutput("top_age"))),
-                       column(6, br(), br(),
-                              h4(paste0(top_dep_title)),
-                              actionButton("btn_modal_simd_preg", "What is SIMD and deprivation?",
-                                           icon = icon('question-circle')),
-                              withSpinner(plotlyOutput("top_dep"))))},
-            fluidRow(column(12, renderUI(commentary_top))))
+              tagList(
+                fluidRow(column(12,p("At Scotland level only data this data is also presented broken down by age and deprivation group"))),
+                       fluidRow(column(6,br(), br(),
+                                       h4(paste0(top_age_title_n)),
+                                       br(), br(),
+                                       withSpinner(plotlyOutput("top_age_n")),
+                                       h4(paste0(top_dep_title_n)),
+                                       br(), br(),
+                                       withSpinner(plotlyOutput("top_dep_n"))),
+                                column(6, br(), br(),
+                                       h4(paste0(top_age_title_g)),
+                                       br(), br(),
+                                       withSpinner(plotlyOutput("top_age_g")),
+                                       h4(paste0(top_dep_title_g)),
+                                       br(), br(),
+                                       withSpinner(plotlyOutput("top_dep_g"))))
+              )#tagList from if statement
+                },
+                     fluidRow(column(12, renderUI(commentary_top))))
   }
+  
+  
+                                         # actionButton("btn_modal_simd_preg", "What is SIMD and deprivation?",
+                                       #              icon = icon('question-circle')),
+
   
   #link plot functions to layouts
-  if (input$measure_select_top == "top_number") {
-    top_layout(plot_trend="top_trend", plot_age="plot_top_age", plot_dep="plot_top_dep")
-  }  else if (input$measure_select_top == "top_gestation"){
-    top_layout(plot_trend="top_trend")
-  }
+  top_layout(plot_trend_n="top_trend_n", plot_trend_g="top_trend_g",
+                  plot_age_n="top_age_n", plot_age_g="top_age_g",
+                  plot_dep_n="top_dep_n", plot_dep_g="top_dep_g")
+  
   
 })
-
-
-
 
 #############################################.
 ## Termination chart functions ----
@@ -189,25 +146,24 @@ output$top_explorer <- renderUI({
 
 #function to draw trend chart
 
-plot_top_split <- function(dataset, split){
+plot_top_split <- function(dataset, split, measure){
   
   plot_data <- dataset
   
   #switch y-axis according to which measure is selected
-  if(input$measure_select_top == "top_number"){
+  if(measure == "top_number"){
     yaxis_measure <- dataset$terminations
     yaxis_plots[["title"]] <- "Number of terminations"
     tooltip_top <- c(paste0("Week commencing: ",dataset$month,"<br>",
                                 "Number of terminations: ",dataset$terminations))
-    
+  
 
-  } else if (input$measure_select_top  == "top_gestation") {
+  } else if (measure  == "top_gestation") {
     yaxis_measure <- dataset$av_gest
     yaxis_plots[["title"]] <- "Average gestation at top (weeks)"
     tooltip_top <- c(paste0("Week commencing: ",dataset$month,"<br>",
                                 "Average gestation at termination: ",dataset$av_gest," weeks"))
   }
-  
   
   #adjust datasets accordig to which data split to be displayed
   if(split == "age"){
@@ -234,6 +190,73 @@ plot_top_split <- function(dataset, split){
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 }
+
+
+## Trend plot for monthly TOP numbers and average gestation at booking
+
+plot_top_trend <- function(measure){  
+  
+  plot_data <- top_filter()
+  
+  if (is.data.frame(plot_data) && nrow(plot_data) == 0)
+  { plot_nodata(height = 50, text_nodata = "No data shown for small island boards")
+  } else {
+    
+    # chart when numbers selected
+    if(measure== "top_number"){ 
+      
+      yaxis_plots[["title"]] <- "Number of terminations"
+      
+      tooltip_top <- c(paste0("Month: ",plot_data$month,"<br>",
+                              "Number of terminations: ",plot_data$terminations))
+      
+      #Creating time trend plot
+      plot_ly(data=plot_data, x=~month) %>%
+        add_lines(y = ~terminations,  
+                  line = list(color = "black"), text=tooltip_top, hoverinfo="text",
+                  marker = list(color = "black"), name = "Number of terminations") %>% 
+        add_lines(y = ~dottedline_no, name = "Scotland projected",
+                  line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                  name = "Centreline") %>%
+        add_lines(y = ~centreline_no, name = "Scotland centre line up to XXX need date?",
+                  line = list(color = "blue"), hoverinfo="none",
+                  name = "Centreline") %>% 
+        #Layout
+        layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+               yaxis = yaxis_plots,  xaxis = xaxis_plots,
+               legend = list(x = 100, y = 0.5)) %>% #position of legend
+        #leaving only save plot button
+        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+      
+    } else if (measure  == "top_gestation") {
+      yaxis_plots[["title"]] <- "Average gestation at termination (weeks)"
+      
+      tooltip_top <- c(paste0("Month: ",plot_data$month,"<br>",
+                              "Average gestation at termination: ",plot_data$av_gest," weeks"))                           
+      
+      #Creating time trend plot
+      plot_ly(data=plot_data, x=~month) %>%
+        add_lines(y = ~av_gest,  
+                  line = list(color = "black"), text=tooltip_top, hoverinfo="text",
+                  marker = list(color = "black"), name = "Average gestation") %>% 
+        add_lines(y = ~dottedline_g, name = "Scotland projected",
+                  line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                  name = "Centreline") %>%
+        add_lines(y = ~centreline_g, name = "Scotland centre line up to XXX need date",
+                  line = list(color = "blue"), hoverinfo="none",
+                  name = "Centreline") %>% 
+        #Layout
+        layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+               yaxis = yaxis_plots,  xaxis = xaxis_plots,
+               legend = list(x = 100, y = 0.5)) %>% #position of legend
+        #leaving only save plot button
+        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
+  }}
+
+
+
+
+
 
 
 ###############################################.
