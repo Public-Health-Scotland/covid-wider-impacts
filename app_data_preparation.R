@@ -9,7 +9,7 @@ source("functions_packages_data_prep.R")
 ## RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_21-Sep.rds")) %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_28-Sep.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -97,7 +97,7 @@ rap_adm <- rbind(rap_adm, spec_med, paed_com) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-09-13", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-09-20", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -1374,7 +1374,7 @@ prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-09-20")
 ## OOH - mental health ----
 ###############################################.
 
-mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/GP_OOH_MH_WIDER_IMPACT.txt")) %>%
+mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/GP_OOH_MH_WIDER_IMPACT_280920.txt")) %>%
   janitor::clean_names() %>%
   rename(hb=patient_nhs_board_description_current, 
          dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
@@ -1401,7 +1401,7 @@ mh_ooh %<>% gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>%
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
-  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-09-13")))
+  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-09-20")))
 
 mh_ooh_all <- mh_ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
 mh_ooh_sex <- mh_ooh %>% agg_cut(grouper="sex") %>% rename(category = sex)
@@ -1414,6 +1414,6 @@ mh_ooh %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_ooh, "mh_ooh", last_week = "2020-09-13")
+prepare_final_data(mh_ooh, "mh_ooh", last_week = "2020-09-20")
 
 ##END
