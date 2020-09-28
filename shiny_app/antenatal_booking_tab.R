@@ -135,8 +135,8 @@ output$booking_explorer <- renderUI({
   booking_title <- case_when(input$measure_select_booking == "booking_number" ~ paste0("Antenatal booking numbers: ", input$geoname_booking),
                              input$measure_select_booking == "booking_gestation" ~ paste0("Average gestation at antenatal booking: ", input$geoname_booking))
   
-  booking_subtitle <-  paste0("Figures based on data extracted from XXXX on XXXX ")
-  
+  booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
+
   
   booking_age_title <- case_when(input$measure_select_booking == "booking_number" ~ paste0("Antenatal booking numbers by age group: ", input$geoname_booking),
                               input$measure_select_booking == "booking_gestation" ~ paste0("Average gestation at antenatal booking by age group: ", input$geoname_booking))
