@@ -1,8 +1,11 @@
+##Server script for terminations tab
+
 
 # Pop-up modal explaining source of data
 observeEvent(input$btn_top_modal, 
              showModal(modalDialog(#Maternal HEALTH MODAL
               title = "What is the data source?",
+              p("These data are derived from the Notifications of Abortion to the Chief Medical Officer for Scotland (CMO) under the Abortion (Scotland) Regulations 1991."),
               size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -133,7 +136,7 @@ output$top_explorer <- renderUI({
   
   # text for titles of cut charts
   top_title <- case_when(input$measure_select_top == "top_number" ~ paste0("Number of terminations: ", input$geoname_top),
-                             input$measure_select_top == "top_gestation" ~ paste0("Average gestation at at termination: ", input$geoname_top))
+                             input$measure_select_top == "top_gestation" ~ paste0("Average gestation at termination: ", input$geoname_top))
   
   top_subtitle <-  paste0("Figures based on data extracted from XXXX on XXXX ")
   

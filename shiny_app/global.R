@@ -103,9 +103,11 @@ mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
 #Pregancy data
+booking_extract_date <- "9th September 2020"
 booking <- readRDS("data/ante_booking_data.rds")
 booking_number_download <- readRDS("data/ante_booking_number_download.rds")
 booking_gest_download <- readRDS("data/ante_booking_gest_download.rds")
+top_extract_date <- "9th September 2020"
 top <- readRDS("data/top_data.rds")
 top_download <- readRDS("data/top_download.rds")
 

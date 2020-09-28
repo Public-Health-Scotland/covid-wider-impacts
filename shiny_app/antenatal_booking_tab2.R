@@ -137,26 +137,15 @@ output$booking_dep_g <- renderPlotly({plot_booking_split_g(dataset=ante_booking_
 output$booking_explorer2 <- renderUI({
   
   # text for titles of cut charts
-  # booking_title <- case_when(input$measure_select_booking == "booking_number" ~ paste0("Antenatal booking numbers: ", input$geoname_booking),
-  #                            input$measure_select_booking == "booking_gestation" ~ paste0("Average gestation at antenatal booking: ", input$geoname_booking))
-  # 
    booking_title_n <-  paste0("Antenatal booking numbers: ", input$geoname_booking2)
    booking_title_g <-   paste0("Average gestation at antenatal booking: ", input$geoname_booking2)
-   booking_subtitle <-  paste0("Figures based on data extracted from XXXX on XXXX ")
-  # 
-  # 
-  # booking_age_title <- case_when(input$measure_select_booking == "booking_number" ~ paste0("Antenatal booking numbers by age group: ", input$geoname_booking),
-  #                                input$measure_select_booking == "booking_gestation" ~ paste0("Average gestation at antenatal booking by age group: ", input$geoname_booking))
+   booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
   
    booking_age_title_n <- paste0("Antenatal booking numbers by age group: ", input$geoname_booking2)
    booking_dep_title_n <- paste0("Antenatal booking numbers by deprivation: ", input$geoname_booking2)
    
    booking_age_title_g <- paste0("Average gestation at antenatal booking by age group: ", input$geoname_booking2)
    booking_dep_title_g <- paste0("Average gestation at antenatal booking by deprivation: ", input$geoname_booking2)
-  # 
-  # booking_dep_title <- case_when(input$measure_select_booking == "booking_number" ~ paste0("Antenatal booking numbers by deprivation: ", input$geoname_booking),
-  #                                input$measure_select_booking == "booking_gestation" ~ paste0("Average gestation at antenatal booking by deprivation: ", input$geoname_booking))
-  # 
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_booking <-  tagList(p("Space for any meta-data/commentary about booking"))
@@ -184,27 +173,15 @@ output$booking_explorer2 <- renderUI({
                               withSpinner(plotlyOutput("booking_age_g")),
                               h4(paste0(booking_dep_title_g)),
                               br(), br(),
-                              withSpinner(plotlyOutput("booking_dep_g")))
-            )},
-                       # column(6, br(), br(),
-                       #        h4(paste0(booking_dep_title)),
-                       #        actionButton("btn_modal_simd_preg2", "What is SIMD and deprivation?",
-                       #                     icon = icon('question-circle')),
-                       #        withSpinner(plotlyOutput("booking_dep_n"))))},
+                              withSpinner(plotlyOutput("booking_dep_g"))))},
             fluidRow(column(12, renderUI(commentary_booking))))
   }
   
   #link plot functions to layouts
-   #if (input$measure_select_booking == "booking_number") {
-     booking_layout2(plot_trend_n="booking_trend_n",plot_trend_g="booking_trend_g",
-                     plot_age_n="booking_age_n",plot_age_g="booking_age_g", plot_dep_n="booking_dep_n",plot_dep_g="booking_dep_g")
-   #}  else if (input$measure_select_booking == "booking_gestation"){
-  #   booking_layout2(plot_trend="booking_trend")
-  #}
-  
-})
-
-
+     booking_layout2(plot_trend_n="booking_trend_n", plot_trend_g="booking_trend_g",
+                     plot_age_n="booking_age_n", plot_age_g="booking_age_g",
+                     plot_dep_n="booking_dep_n", plot_dep_g="booking_dep_g")
+}) #close booking explorer
 
 
 #############################################.
