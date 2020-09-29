@@ -77,8 +77,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("cardio_button", "Cardiovascular", width="150px"),br() ,
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
                           actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
-                          actionLink("childdev_button", "Child development", width="150px"), br(),
                           actionLink("breastfeeding_button", "Breastfeeding", width="150px"),
+                          actionLink("childdev_button", "Child development", width="150px"), br(),
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
                           actionLink("mentalhealth_button", "Mental health", width="150px")
                          ),
@@ -88,8 +88,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
                                      bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
                                      bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
-                                     bsCollapsePanel("Child development", uiOutput("childdev_commentary")),
                                      bsCollapsePanel("Breastfeeding", uiOutput("breastfeeding_commentary")),
+                                     bsCollapsePanel("Child development", uiOutput("childdev_commentary")),
                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
                                      bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary"))
                           )))
