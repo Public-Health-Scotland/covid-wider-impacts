@@ -911,13 +911,13 @@ saveRDS(fourtofive_datatable, paste0("shiny_app/data/","fourtofive_datatable.rds
 ## Perinatal mortality ----
 ###############################################.
 # P CHART PERINATAL DATA
-p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_septupdate.xlsx"),
                           sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
-                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_septupdate.xlsx"),
                                 sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
-                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_septupdate.xlsx"),
                                 sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi"),
-                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_augupdate.xlsx"),
+                     read_excel(paste0(data_folder,"perinatal/Pchart - SB NND PNND EXTPERI_septupdate.xlsx"),
                                 sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>% 
   janitor::clean_names() %>%
   select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
