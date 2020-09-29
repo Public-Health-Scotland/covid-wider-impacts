@@ -224,57 +224,52 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
 ###############################################.
 navbarMenu("Pregnancy", icon = icon("venus"),
 ###############################################.
-           tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking",
-                    wellPanel(
-                      column(12, h4("title of tab selected")),
-                      column(4, div(title="Select the data you want to explore.", # tooltip
-                                    radioGroupButtons("measure_select_booking",
-                                                      label= "Step 1. Select the data you want to explore.",
-                                                      choices = data_list_booking, status = "primary",
-                                                      direction = "vertical", justified = T))),
-                      column(4, div(title="Select a breakdown",
-                                    p(tags$b("Step 2. Select the data breakdown you want to see.")),
-                                    selectInput("geotype_booking", label = NULL, choices= c("Scotland", "Health board"),
-                                                selected = "Scotland")),
-                             uiOutput("geoname_ui_booking")),
-                      column(4,
-                             actionButton("btn_booking_modal", "Data source: XXX", icon = icon('question-circle')),
-                             fluidRow(br()),
-                      downloadButton("download_ante_booking_data", "Download data"),
-                      fluidRow(br()),
-                      actionButton("jump_commentary_booking","Go to commentary"))
-                      #actionButton("browser", "Browser")
-                    ), #well panel
-                    mainPanel(width = 12,
-                              uiOutput("booking_explorer")
-                    )# mainPanel bracket
-           ), #tab panel
-tabPanel(title = "Antenatal alternative", icon = icon("book-open"), value = "booking2",
+           # tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking",
+           #          wellPanel(
+           #            column(12, h4("title of tab selected")),
+           #            column(4, div(title="Select the data you want to explore.", # tooltip
+           #                          radioGroupButtons("measure_select_booking",
+           #                                            label= "Step 1. Select the data you want to explore.",
+           #                                            choices = data_list_booking, status = "primary",
+           #                                            direction = "vertical", justified = T))),
+           #            column(4, div(title="Select a breakdown",
+           #                          p(tags$b("Step 2. Select the data breakdown you want to see.")),
+           #                          selectInput("geotype_booking", label = NULL, choices= c("Scotland", "Health board"),
+           #                                      selected = "Scotland")),
+           #                   uiOutput("geoname_ui_booking")),
+           #            column(4,
+           #                   actionButton("btn_booking_modal", "Data source: XXX", icon = icon('question-circle')),
+           #                   fluidRow(br()),
+           #            downloadButton("download_ante_booking_data", "Download data"),
+           #            fluidRow(br()),
+           #            actionButton("jump_commentary_booking","Go to commentary"))
+           #            #actionButton("browser", "Browser")
+           #          ), #well panel
+           #          mainPanel(width = 12,
+           #                    uiOutput("booking_explorer")
+           #          )# mainPanel bracket
+           # ), #tab panel
+tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select the data breakdown you want to see.")),
-                         selectInput("geotype_booking2", label = NULL, choices= c("Scotland", "Health board"),
+                         selectInput("geotype_booking", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
-                  uiOutput("geoname_ui_booking2")),
-           column(4,
-                  actionButton("btn_booking_modal2", "Data source: NHS Boards", icon = icon('question-circle')),
+                  uiOutput("geoname_ui_booking")),
+           column(4,offset=4,
+                  actionButton("btn_booking_modal", "Data source: NHS Boards", icon = icon('question-circle')),
                   fluidRow(br()),
-                  downloadButton("download_ante_booking_data2", "Download data"),
+                  downloadButton("download_ante_booking_data", "Download data"),
                   fluidRow(br()),
-                  actionButton("jump_commentary_booking2","Go to commentary"))
+                  actionButton("jump_commentary_booking","Go to commentary"))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
-                   uiOutput("booking_explorer2")
+                   uiOutput("booking_explorer")
          )# mainPanel bracket
 ), #tab panel
 tabPanel(title = "Terminations", icon = icon("bars"), value = "terminations",
           wellPanel(
-            # column(4, div(title="Select the data you want to explore.", # tooltip
-            #               radioGroupButtons("measure_select_top",
-            #                                 label= "Step 1. Select the data you want to explore.",
-            #                                 choices = data_list_top, status = "primary",
-            #                                 direction = "vertical", justified = T))),
             column(4, div(title="Select a breakdown",
                           p(tags$b("Step 1. Select the data breakdown you want to see.")),
                           selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),

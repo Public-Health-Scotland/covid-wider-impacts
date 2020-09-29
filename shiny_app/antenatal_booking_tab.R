@@ -25,9 +25,7 @@ observeEvent(input$btn_modal_simd_preg, { showModal(
       that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
     size = "l", 
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  )
-) }) 
-
+  ))}) 
 
 
 ###############################################.
@@ -40,7 +38,6 @@ output$geoname_ui_booking <- renderUI({
   areas_summary_booking <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_booking])
   selectizeInput("geoname_booking", label = NULL, choices = areas_summary_booking, selected = "")
 })
-
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -60,14 +57,13 @@ ante_booking_filter_split <- function(split){
                        area_type == "Scotland" &
                        type==split) %>%
     droplevels()
-  
 }
 
 ###############################################.
 ## Antenatal Booking Charts ----
 ###############################################.
 
-# chart outputs for trend
+# chart outputs for Scotland/NHS board trends
 output$booking_trend_n <- renderPlotly({plot_booking_trend(measure="booking_number")})
 output$booking_trend_g <- renderPlotly({plot_booking_trend(measure="booking_gestation")})
 
@@ -79,52 +75,55 @@ output$booking_age_g <- renderPlotly({plot_booking_split(dataset=ante_booking_fi
 output$booking_dep_n <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep", measure="booking_number")})
 output$booking_dep_g <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep", measure="booking_gestation")})
 
-
 ###############################################.
 ##  Reactive layout  ----
 ###############################################.
 # The charts and text shown on the app will depend on what the user wants to see
 output$booking_explorer <- renderUI({
   
-  # text for titles of cut charts
-   booking_title_n <-  paste0("Antenatal booking numbers: ", input$geoname_booking)
-   booking_title_g <-   paste0("Average gestation at antenatal booking: ", input$geoname_booking)
-   booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
+  # text for titles of trend charts
+  booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
+  booking_trend_title <- paste0("Antenatal bookings: ",input$geoname_booking)
+  booking_title_n <-  paste0("Number of bookings")
+  booking_title_g <-  paste0("Average gestation at booking")
   
-   booking_age_title_n <- paste0("Antenatal booking numbers by age group: ", input$geoname_booking)
-   booking_dep_title_n <- paste0("Antenatal booking numbers by deprivation: ", input$geoname_booking)
-   
-   booking_age_title_g <- paste0("Average gestation at antenatal booking by age group: ", input$geoname_booking)
-   booking_dep_title_g <- paste0("Average gestation at antenatal booking by deprivation: ", input$geoname_booking)
+  chart_explanation <- paste0("The black line on the ‘antenatal booking numbers’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of bookings over the period 1st Mar 2019 to 28 Feb 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at antenatal booking’ charts follow a similar format")
   
-  #Additional commentart/meta data to appear on immunisation tab
+  #Additional commentart/meta data to appear on booking tab
   commentary_booking <-  tagList(p("Space for any meta-data/commentary about booking"))
   
   # Function to create common layout to all immunisation charts
   booking_layout <- function(plot_trend_n,plot_trend_g, plot_age_n, plot_age_g, plot_dep_n, plot_dep_g){
     tagList(fluidRow(column(12,
+                            h4(booking_trend_title),
                             p(booking_subtitle),
+                            p(chart_explanation)),
+                     column(6,
                             h4(paste0(booking_title_n)),
-                            withSpinner(plotlyOutput("booking_trend_n")),
+                            withSpinner(plotlyOutput("booking_trend_n"))),
+                     column(6,
                             h4(paste0(booking_title_g)),
                             withSpinner(plotlyOutput("booking_trend_g")))),
+                     # column(12,
+                     #        p(chart_explanation))),
             #only if scotland selected display age and deprivation breakdowns
-            if (input$geotype_booking2 == "Scotland"){
+            if (input$geotype_booking == "Scotland"){
               tagList(
-                fluidRow(column(12,p("At Scotland level only data this data is also presented broken down by age and deprivation group"))),
-                fluidRow(column(6,br(), br(),
-                                h4(paste0(booking_age_title_n)),
-                                br(), br(),
-                                withSpinner(plotlyOutput("booking_age_n")),
-                                h4(paste0(booking_dep_title_n)),
-                                br(), br(),
+                fluidRow(column(12,h4("Antenatal bookings by age group: Scotland"))),
+                fluidRow(column(6,
+                                h4("Number of antenatal bookings"),br(),
+                                withSpinner(plotlyOutput("booking_age_n"))),
+                         column(6,
+                                h4("Average gestation at booking (weeks)"),br(),
+                                withSpinner(plotlyOutput("booking_age_g"))),
+                         fluidRow(column(12,h4("Antenatal booking by deprivation: Scotland"),
+                                         actionButton("btn_modal_simd_booking", "What is SIMD and deprivation?",
+                                                      icon = icon('question-circle')))),
+                         column(6,
+                                h4("Number of bookings"),br(),
                                 withSpinner(plotlyOutput("booking_dep_n"))),
-                         column(6, br(), br(),
-                                h4(paste0(booking_age_title_g)),
-                                br(), br(),
-                                withSpinner(plotlyOutput("booking_age_g")),
-                                h4(paste0(booking_dep_title_g)),
-                                br(), br(),
+                         column(6,
+                                h4("Average gestation at termination (weeks)"),br(),
                                 withSpinner(plotlyOutput("booking_dep_g"))))
               )#tagList from if statement
             },
@@ -132,16 +131,15 @@ output$booking_explorer <- renderUI({
   }
   
   #link plot functions to layouts
-     booking_layout(plot_trend_n="booking_trend_n", plot_trend_g="booking_trend_g",
-                     plot_age_n="booking_age_n", plot_age_g="booking_age_g",
-                     plot_dep_n="booking_dep_n", plot_dep_g="booking_dep_g")
+  booking_layout(plot_trend_n="booking_trend_n", plot_trend_g="booking_trend_g",
+                 plot_age_n="booking_age_n", plot_age_g="booking_age_g",
+                 plot_dep_n="booking_dep_n", plot_dep_g="booking_dep_g")
 }) #close booking explorer
 
 
 #############################################.
 ## Antenatal booking chart functions ----
 ############################################.
-
 
 ## Trend plot for weekly bookings numbers and average gestation at booking
 plot_booking_trend <- function(measure){
@@ -190,7 +188,7 @@ plot_booking_trend <- function(measure){
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots,  xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
+             legend = list(x = 0.1, y = 0.1)) %>% #position of legend
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }
@@ -199,7 +197,6 @@ plot_booking_trend <- function(measure){
 
 
 ## Trend plot for weekly bookings numbers and average gestation at booking split by age group and simd quintile 
-
 plot_booking_split <- function(dataset, split, measure){
   
   plot_data <- dataset
