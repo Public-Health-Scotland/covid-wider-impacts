@@ -4,6 +4,7 @@
 observeEvent(input$btn_booking_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
+               p("The Antenatal Booking Data presented is based on a new data collection established as a rapid response to COVID-19. Data is collected each week, from the clinical information system (BadgerNet Maternity (most NHS boards), TrakCare Maternity (Lothian) or Eclipse (A&A) used by the midwives who ‘book’ the pregnant woman for maternity care. Historic data from March 2019 was also collected as a ‘catch-up’ extract from the same source (and in Tayside and Highland from the systems in use before the introduction of BadgerNet Maternity) in order to identify all women who were currently pregnant during the COVID-19 period."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -27,6 +28,8 @@ observeEvent(input$btn_modal_simd_preg, { showModal(
   )
 ) }) 
 
+
+
 ###############################################.
 ## Pregnancy Reactive controls  ----
 ###############################################.
@@ -42,13 +45,12 @@ output$geoname_ui_booking <- renderUI({
 ###############################################.
 ##  Reactive datasets  ----
 ###############################################.
-
 #Dataset behind trend plot (available at scotland and NHS board level)
 ante_booking_filter <- function(){
-
-    booking %>% filter(area_name == input$geoname_booking &
-                         area_type == input$geotype_booking &
-                         type %in% c("Scotland","Health board"))
+  
+  booking %>% filter(area_name == input$geoname_booking &
+                       area_type == input$geotype_booking &
+                       type %in% c("Scotland","Health board"))
 }
 
 #Dataset behind deprivation/age plots (only available at scotland level)
@@ -57,7 +59,7 @@ ante_booking_filter_split <- function(split){
   booking %>% filter(area_name == "Scotland" &
                        area_type == "Scotland" &
                        type==split) %>%
-  droplevels()
+    droplevels()
   
 }
 
@@ -65,65 +67,18 @@ ante_booking_filter_split <- function(split){
 ## Antenatal Booking Charts ----
 ###############################################.
 
-# Creating plots for each dataset
-output$booking_trend <- renderPlotly({
-  plot_data <- ante_booking_filter()
-  
-  # chart when numbers selected
-  if(input$measure_select_booking == "booking_number"){ 
-    
-    yaxis_plots[["title"]] <- "Number of bookings"
-    
-    tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
-                                "Number of antenatal bookings: ",plot_data$booked_no))
-    
-    #Creating time trend plot
-    plot_ly(data=plot_data, x=~week_book_starting) %>%
-      add_lines(y = ~booked_no,  
-                line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-                marker = list(color = "black"), name = "# booking") %>% 
-      add_lines(y = ~dottedline_no, name = "Scotland projected",
-                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-                name = "Centreline") %>%
-      add_lines(y = ~centreline_no, name = "Scotland centre line up to 23rd March 2020",
-                line = list(color = "blue"), hoverinfo="none",
-                name = "Centreline") %>% 
-      #Layout
-      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
-      #leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-    
-  } else if (input$measure_select_booking  == "booking_gestation") {
-    yaxis_plots[["title"]] <- "Average gestation at booking (weeks)"
-   # tooltip_booking <- c(paste0("Week commencing:",dataset$week_book_starting,"<br>",
-    
-    tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
-                                "Average gestation: ",format(plot_data$week_book_starting,"%d %b %y")," weeks"))                           
-                                
-    #Creating time trend plot
-    plot_ly(data=plot_data, x=~week_book_starting) %>%
-      add_lines(y = ~ave_gest,  
-                line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-                marker = list(color = "black"), name = "Average gestation") %>% 
-      add_lines(y = ~dottedline_g, name = "Scotland projected",
-                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-                name = "Centreline") %>%
-      add_lines(y = ~centreline_g, name = "Scotland centre line up to 23rd March 2020",
-                line = list(color = "blue"), hoverinfo="none",
-                name = "Centreline") %>% 
-      #Layout
-      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
-      #leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-  }
-})
+# chart outputs for trend
+output$booking_trend_n <- renderPlotly({plot_booking_trend(measure="booking_number")})
+output$booking_trend_g <- renderPlotly({plot_booking_trend(measure="booking_gestation")})
 
-output$booking_age <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("age"), split="age")})
-output$booking_dep <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep")})
+# chart outputs for age split numbers and average gestation
+output$booking_age_n <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("age"), split="age", measure="booking_number")})
+output$booking_age_g <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("age"), split="age", measure="booking_gestation")})
+
+# chart outputs for age split numbers and average gestation
+output$booking_dep_n <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep", measure="booking_number")})
+output$booking_dep_g <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep", measure="booking_gestation")})
+
 
 ###############################################.
 ##  Reactive layout  ----
@@ -132,92 +87,153 @@ output$booking_dep <- renderPlotly({plot_booking_split(dataset=ante_booking_filt
 output$booking_explorer <- renderUI({
   
   # text for titles of cut charts
-  booking_title <- case_when(input$measure_select_booking == "booking_number" ~ paste0("Antenatal booking numbers: ", input$geoname_booking),
-                             input$measure_select_booking == "booking_gestation" ~ paste0("Average gestation at antenatal booking: ", input$geoname_booking))
+   booking_title_n <-  paste0("Antenatal booking numbers: ", input$geoname_booking)
+   booking_title_g <-   paste0("Average gestation at antenatal booking: ", input$geoname_booking)
+   booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
   
-  booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
-
-  
-  booking_age_title <- case_when(input$measure_select_booking == "booking_number" ~ paste0("Antenatal booking numbers by age group: ", input$geoname_booking),
-                              input$measure_select_booking == "booking_gestation" ~ paste0("Average gestation at antenatal booking by age group: ", input$geoname_booking))
-  
-  booking_dep_title <- case_when(input$measure_select_booking == "booking_number" ~ paste0("Antenatal booking numbers by deprivation: ", input$geoname_booking),
-                              input$measure_select_booking == "booking_gestation" ~ paste0("Average gestation at antenatal booking by deprivation: ", input$geoname_booking))
-  
+   booking_age_title_n <- paste0("Antenatal booking numbers by age group: ", input$geoname_booking)
+   booking_dep_title_n <- paste0("Antenatal booking numbers by deprivation: ", input$geoname_booking)
+   
+   booking_age_title_g <- paste0("Average gestation at antenatal booking by age group: ", input$geoname_booking)
+   booking_dep_title_g <- paste0("Average gestation at antenatal booking by deprivation: ", input$geoname_booking)
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_booking <-  tagList(p("Space for any meta-data/commentary about booking"))
   
   # Function to create common layout to all immunisation charts
-  booking_layout <- function(plot_trend, plot_age, plot_dep){
+  booking_layout <- function(plot_trend_n,plot_trend_g, plot_age_n, plot_age_g, plot_dep_n, plot_dep_g){
     tagList(fluidRow(column(12,
-                            h4(paste0(booking_title))),
-                     p(booking_subtitle),
-                     withSpinner(plotlyOutput("booking_trend"))),
+                            p(booking_subtitle),
+                            h4(paste0(booking_title_n)),
+                            withSpinner(plotlyOutput("booking_trend_n")),
+                            h4(paste0(booking_title_g)),
+                            withSpinner(plotlyOutput("booking_trend_g")))),
             #only if scotland selected display age and deprivation breakdowns
-            if (input$geotype_booking == "Scotland"){
-              fluidRow(column(6,br(), br(),
-                              h4(paste0(booking_age_title)),
-                              br(), br(),
-                              withSpinner(plotlyOutput("booking_age"))),
-                       column(6, br(), br(),
-                              h4(paste0(booking_dep_title)),
-                              actionButton("btn_modal_simd_preg", "What is SIMD and deprivation?",
-                                           icon = icon('question-circle')),
-                              withSpinner(plotlyOutput("booking_dep"))))},
+            if (input$geotype_booking2 == "Scotland"){
+              tagList(
+                fluidRow(column(12,p("At Scotland level only data this data is also presented broken down by age and deprivation group"))),
+                fluidRow(column(6,br(), br(),
+                                h4(paste0(booking_age_title_n)),
+                                br(), br(),
+                                withSpinner(plotlyOutput("booking_age_n")),
+                                h4(paste0(booking_dep_title_n)),
+                                br(), br(),
+                                withSpinner(plotlyOutput("booking_dep_n"))),
+                         column(6, br(), br(),
+                                h4(paste0(booking_age_title_g)),
+                                br(), br(),
+                                withSpinner(plotlyOutput("booking_age_g")),
+                                h4(paste0(booking_dep_title_g)),
+                                br(), br(),
+                                withSpinner(plotlyOutput("booking_dep_g"))))
+              )#tagList from if statement
+            },
             fluidRow(column(12, renderUI(commentary_booking))))
   }
   
   #link plot functions to layouts
-  if (input$measure_select_booking == "booking_number") {
-    booking_layout(plot_trend="booking_trend", plot_age="plot_booking_age", plot_dep="plot_booking_dep")
-  }  else if (input$measure_select_booking == "booking_gestation"){
-    booking_layout(plot_trend="booking_trend")
-  }
-  
-})
-
+     booking_layout(plot_trend_n="booking_trend_n", plot_trend_g="booking_trend_g",
+                     plot_age_n="booking_age_n", plot_age_g="booking_age_g",
+                     plot_dep_n="booking_dep_n", plot_dep_g="booking_dep_g")
+}) #close booking explorer
 
 
 #############################################.
 ## Antenatal booking chart functions ----
 ############################################.
 
-#function to draw trend chart
 
-plot_booking_split <- function(dataset, split){
+## Trend plot for weekly bookings numbers and average gestation at booking
+plot_booking_trend <- function(measure){
   
-  #dataset <- ante_booking_filter_split()
-  plot_data <- dataset
+  plot_data <- ante_booking_filter()
   
-  #switch y-axis according to which measure is selected
-  if(input$measure_select_booking == "booking_number"){
-    yaxis_measure <- dataset$booked_no
-    yaxis_plots[["title"]] <- "Number of bookings"
-    tooltip_booking <- c(paste0("Week commencing: ",format(dataset$week_book_starting,"%d %b %y"),"<br>",
-                                "Number of antenatal bookings: ",dataset$booked_no))
+  # Display message if island/small board is supplied and no chart available
+  if (is.data.frame(plot_data) && nrow(plot_data) == 0)
+  { plot_nodata(height = 50, text_nodata = "No data shown for small island boards")
+  } else {
     
-    #"Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+    # legend label should respond when dataset updates  
+    centreline <- paste0("Scotland centre line up to ","xxxx")
     
-  } else if (input$measure_select_booking  == "booking_gestation") {
-    yaxis_measure <- dataset$ave_gest
-    yaxis_plots[["title"]] <- "Average gestation at booking (weeks)"
-    tooltip_booking <- c(paste0("Week commencing: ",format(dataset$week_book_starting,"%d %b %y"),"<br>",
-                                "Average gestation: ",dataset$ave_gest," weeks"))
+    #switch y-axis according to which measure is selected
+    if(measure == "booking_number"){
+      yaxis_measure <- plot_data$booked_no
+      yaxis_plots[["title"]] <- "Number of bookings"
+      tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
+                                  "Number of antenatal bookings: ",plot_data$booked_no))
+      dotted_line <-  plot_data$dottedline_no
+      centre_line <-  plot_data$centreline_no
+      yname <- "# booking"
+      
+    } else if (measure  == "booking_gestation") {
+      yaxis_measure <- plot_data$ave_gest
+      yaxis_plots[["title"]] <- "Average gestation at booking (weeks)"
+      tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
+                                  "Average gestation: ",format(plot_data$week_book_starting,"%d %b %y")," weeks"))
+      dotted_line <-  plot_data$dottedline_g
+      centre_line <-  plot_data$centreline_g
+      yname <- "Average gestation"
+    }
+    
+    #Creating time trend plot
+    plot_ly(data=plot_data, x=~week_book_starting) %>%
+      add_lines(y = ~yaxis_measure,  
+                line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                marker = list(color = "black"), name = yname) %>% 
+      add_lines(y = ~dotted_line, name = "Scotland projected",
+                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                name = "Centreline") %>%
+      add_lines(y = ~centre_line, name = centreline,
+                line = list(color = "blue"), hoverinfo="none",
+                name = "Centreline") %>% 
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      #leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }
   
+}
+
+
+## Trend plot for weekly bookings numbers and average gestation at booking split by age group and simd quintile 
+
+plot_booking_split <- function(dataset, split, measure){
+  
+  plot_data <- dataset
+  
+  #label to appear in tool tip
+  tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"),split=="dep" ~ paste0("Deprivation group:"))
+  
+  #switch y-axis according to which measure is selected
+  if(measure == "booking_number"){
+    yaxis_measure <- dataset$booked_no
+    yaxis_plots[["title"]] <- "Number of bookings"
+    tooltip_booking <- c(paste0(tool_tip_split,dataset$category,"<br>",
+                                "Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
+                                "Number of antenatal bookings: ",plot_data$booked_no))
+    
+  } else if (measure  == "booking_gestation") {
+    yaxis_measure <- dataset$ave_gest
+    yaxis_plots[["title"]] <- "Average gestation at booking (weeks)"
+    tooltip_booking <- c(paste0(tool_tip_split,dataset$category,"<br>",
+                                "Week commencing: ",format(dataset$week_book_starting,"%d %b %y"),"<br>",
+                                "Average gestation: ",dataset$ave_gest," weeks"))
+  }
   
   #adjust datasets accordig to which data split to be displayed
   if(split == "age"){
     dataset <- dataset %>%
-    mutate(category = factor(category, levels = c("Under 20", "20-24", "25-29","30-34", "35-39", "40 plus")))
+      mutate(category = factor(category, levels = c("Under 20", "20-24", "25-29","30-34", "35-39", "40 plus")))
     pallette <- pal_age}
   
   if(split == "dep"){
     dataset <- dataset %>% 
-    mutate(category = factor(category, levels = c("1 - most deprived", "2", "3","4", "5 - least deprived")))
+      mutate(category = factor(category, levels = c("1 - most deprived", "2", "3","4", "5 - least deprived")))
     pallette <- pal_depr}
-
+  
   #Creating time trend plot
   plot_ly(data=plot_data, x=~week_book_starting, y = ~yaxis_measure) %>%
     add_trace(type = 'scatter', mode = 'lines',
@@ -232,6 +248,7 @@ plot_booking_split <- function(dataset, split){
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 }
+
 
 ###############################################.
 ## Data downloads ----
@@ -256,4 +273,5 @@ output$booking_commentary <- renderUI({
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
     h2("Antenatal bookings - 28th October 2020"))
 })
+
 
