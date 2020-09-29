@@ -100,7 +100,7 @@ output$perinatal_explorer <- renderUI({
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
                     Whilst each stillbirth is clearly a tragedy for the family involved, stillbirths are uncommon events in Scotland: 10 stillbirths (and 4,088 total 
-                    [live and still] births) occurring in Scotland in August 2020 had been registered by 23 September 2020 (the date the data used for this tool was extracted).")
+                    [live and still] births) occurring in Scotland in August 2020 had been registered by 20 September 2020.")
   } else if (input$measure_select_perinatal == "pnnd") {
     intro_text <- p("Post-neonatal deaths refer to", tags$a(href=link_perinatal, 
                     "deaths occuring after the first 4 weeks but within the first year", target="_blank"), "of life.",
@@ -108,7 +108,7 @@ output$perinatal_explorer <- renderUI({
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
                     Whilst each post-neonatal death is clearly a tragedy for the family involved, post-neonatal deaths are uncommon events in Scotland: 2 post-neonatal deaths 
-                    (and 4,078 live births) occurring in Scotland in August 2020 had been registered by 23 September 2020 (the date the data used for this tool was extracted).")
+                    (and 4,078 live births) occurring in Scotland in August 2020 had been registered by 20 September 2020.")
   } else if (input$measure_select_perinatal == "nnd") {
     intro_text <- p("Neonatal deaths refer to", tags$a(href=link_perinatal, 
                   "deaths in the first four weeks", target="_blank"), "of life.",
@@ -116,7 +116,7 @@ output$perinatal_explorer <- renderUI({
                   tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                          "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
                   Whilst each neonatal death is clearly a tragedy for the family involved, neonatal deaths are uncommon events in Scotland: 6 neonatal deaths (and 4,078 live births) 
-                  occurring in Scotland in August 2020 had been registered by 23 September 2020 (the date the data used for this tool was extracted).")
+                  occurring in Scotland in August 2020 had been registered by 20 September 2020.")
   } else if (input$measure_select_perinatal == "extperi") {
     intro_text <- p("Extended perinatal deaths refer to", tags$a(href=link_perinatal, 
 "the sum of stillbirths and neonatal mortality", target="_blank"), "(deaths within the first 4 weeks of life).",
@@ -124,7 +124,7 @@ peri_common_intro,
 tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
        "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
 Whilst each extended perinatal death is clearly a tragedy for the family involved, extended perinatal deaths are uncommon events in Scotland: 16 extended perinatal deaths (and 4,088 total 
-[live and still] births) occurring in Scotland in August 2020 had been registered by 23 September 2020 (the date the data used for this tool was extracted).")
+[live and still] births) occurring in Scotland in August 2020 had been registered by 20 September 2020.")
   } else if (input$measure_select_perinatal == "infantdeaths") {
     intro_text <- p("Infant deaths refer to", tags$a(href=link_perinatal, 
                     "all deaths in the first year", target="_blank"), "of life; 
@@ -133,7 +133,7 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
                     Whilst each infant death is clearly a tragedy for the family involved, infant deaths are uncommon events in Scotland: 8 infant deaths (and 4,078 live births) 
-                    occurring in Scotland in August 2020 had been registered by 23 September 2020 (the date the data used for this tool was extracted).")
+                    occurring in Scotland in August 2020 had been registered by 20 September 2020.")
   }
 
   nrs_commentary <- p("It is important to note that chart data is based on month of occurence rather than month of registration used in NRS publications, and so
