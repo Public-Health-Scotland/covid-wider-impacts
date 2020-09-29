@@ -77,7 +77,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("cardio_button", "Cardiovascular", width="150px"),br() ,
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
                           actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
-                          actionLink("breastfeeding_button", "Breastfeeding", width="150px"),
+                          actionLink("breastfeeding_button", "Breastfeeding", width="150px"), br(),
                           actionLink("childdev_button", "Child development", width="150px"), br(),
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
                           actionLink("mentalhealth_button", "Mental health", width="150px")
