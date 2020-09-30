@@ -4,9 +4,16 @@
 # Pop-up modal explaining source of data
 observeEvent(input$btn_top_modal, 
              showModal(modalDialog(#Maternal HEALTH MODAL
-              title = "What is the data source?",
-              p("These data are derived from the Notifications of Abortion to the Chief Medical Officer for Scotland (CMO) under the Abortion (Scotland) Regulations 1991."),
-              size = "m",
+               title = "What is the data source?",
+               p("These data are derived from the Notifications of Abortion to the Chief Medical Officer for Scotland (CMO) under the Abortion (Scotland) Regulations 1991."),
+               p("Public Health Scotland (PHS) is responsible for the collation of data derived from notifications of terminations of pregnancy on behalf of the Chief Medical Officer (CMO) in Scotland. A termination of pregnancy (also referred to as a therapeutic or induced abortion) is carried out under the terms of the Abortion Act 1967, which applies to England, Wales and Scotland. Two doctors must agree that a termination of pregnancy is necessary under at least one of the grounds as specified in the 1991 Regulations. There is a legal requirement to notify the CMO in Scotland of all terminations carried out in Scotland within seven days of the termination of pregnancy."),
+               p("Further information is available from the PHS ",
+                 tags$a(href="https://beta.isdscotland.org/media/5320/2020-08-25-terminations-2019-report.pdf", "annual report on termination of pregnancy up to December 2019",class="externallink"),
+                 "the ",
+                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/sexual-health/termination-of-pregnancy-statistics/", "data tables and charts.",class="externallink"),
+                 "are also available."),
+               p("Data is presented at Scotland level and this represents the total of all the NHS boards including the island boards, however NHS Orkney, NHS Shetland and NHS Western Isles are not available to drill down to at board of residence level because the number of terminations can be small and therefore disclosive."),
+               size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain SIMD and deprivation
@@ -82,12 +89,12 @@ output$top_dep_g <- renderPlotly({plot_top_split(dataset=top_filter_split("dep")
 output$top_explorer <- renderUI({
   
   # text for titles of cut charts
-  top_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
-  top_trend_title <- paste0("Antenatal bookings: ",input$geoname_booking)
+  top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
+  top_trend_title <- paste0("Termination of pregnancy: ",input$geoname_top)
   top_title_n <-  paste0("Number of terminations")
   top_title_g <-   paste0("Average gestation at termination")
   
-  chart_explanation <- paste0("The black line on the ‘number of terminations’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of terminations over the period 1st Mar 2019 to 28 Feb 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at antenatal booking’ charts follow a similar format")
+  chart_explanation <- paste0("The black line on the ‘number of terminations’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of terminations over the period 1st Mar 2019 to 28 Feb 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at termination’ charts follow a similar format")
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_top <-  tagList(p("Space for any meta-data/commentary about terminations"))
@@ -140,7 +147,7 @@ output$top_explorer <- renderUI({
 ## Termination chart functions ----
 ############################################.
 
-## Trend plot for monthly TOP numbers and average gestation at booking
+## Trend plot for monthly TOP numbers and average gestation 
 plot_top_trend <- function(measure){  
   
   plot_data <- top_filter()
