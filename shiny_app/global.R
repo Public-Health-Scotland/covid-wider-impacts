@@ -86,7 +86,7 @@ fourtofive <- readRDS("data/fourtofive_data.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "24th August 2020"
+immunisation_extract_date <- "28th September 2020"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
@@ -198,11 +198,11 @@ pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine
 
 pal_immun <- c("2019" = '#000000',
                "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", "MAR 2020" = "#7477d1",
-               "APR 2020" = "#045a8d", "MAY 2020" = "#022b43",
-               "W/B 01-JUN-2020" = "#fee391", "W/B 08-JUN-2020" = "#fec44f",
-               "W/B 15-JUN-2020" = "#e49901", "W/B 22-JUN-2020" = "#ec7014",
-               "W/B 29-JUN-2020" = "#cc4c02", "W/B 06-JUL-2020" = "#8c2d04",
-               "W/B 13-JUL-2020" = "#662506")
+               "APR 2020" = "#045a8d", "MAY 2020" = "#022b43", "JUN 2020" = "#71d9c4",
+               "W/B 29-JUN-2020" = "#fee391", "W/B 06-JUL-2020" = "#fec44f",
+               "W/B 13-JUL-2020" = "#e49901", "W/B 20-JUL-2020" = "#ec7014",
+               "W/B 27-JUL-2020" = "#cc4c02", "W/B 03-AUG-2020" = "#8c2d04",
+               "W/B 10-AUG-2020" = "#662506")
 
 # second colour palette for SIMD immunisation chart - ideally they could use same colour palette but during build dfferent time frame available
 pal_immun2 <- c("2019" = '#000000',
