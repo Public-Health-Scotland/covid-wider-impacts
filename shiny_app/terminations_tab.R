@@ -157,7 +157,7 @@ plot_top_trend <- function(measure){
   } else {
     
   # legend label should respond when dataset updates  
-  centreline <- paste0("Scotland centre line up to ","xxxx")    
+  centreline <- paste0("Scotland centreline 01/03/2018 to 28/02/2020")    
   
   #switch y-axis according to which measure is selected
   if(measure == "top_number"){
