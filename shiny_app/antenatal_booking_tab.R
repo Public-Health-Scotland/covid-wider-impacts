@@ -45,7 +45,9 @@ output$geoname_ui_booking <- renderUI({
 #Dataset behind trend plot (available at scotland and NHS board level)
 ante_booking_filter <- function(){
   
-  booking %>% filter(area_name == input$geoname_booking &
+  booking %>% 
+    select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
+    filter(area_name == input$geoname_booking &
                        area_type == input$geotype_booking &
                        type %in% c("Scotland","Health board"))
 }
@@ -53,7 +55,9 @@ ante_booking_filter <- function(){
 #Dataset behind deprivation/age plots (only available at scotland level)
 ante_booking_filter_split <- function(split){
   
-  booking %>% filter(area_name == "Scotland" &
+  booking %>% 
+    select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
+    filter(area_name == "Scotland" &
                        area_type == "Scotland" &
                        type==split) %>%
     droplevels()
@@ -252,7 +256,7 @@ plot_booking_split <- function(dataset, split, measure){
 ###############################################.
 
 antebooking_down_data <- reactive({
-  booking_gest_download
+  booking_download
 })
 
 output$download_ante_booking_data <- downloadHandler(

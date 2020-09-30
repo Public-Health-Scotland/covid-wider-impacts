@@ -1033,20 +1033,22 @@ saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 ## Pregnancy (antenatal booking) ----
 ###############################################.
 
-ante_booking_no <- read_csv(paste0(data_folder,"pregnancy/antenatal_booking/booking_sep2.csv"),
-                         col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
-                                         centreline=col_number())) %>%
-  janitor::clean_names() %>%
-  select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
-  rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked)
+#field with date all antenatal booking data files prepared
+antenatal_booking_date <- "17092020"
 
-
-## Antenatal booking average gestation
-ante_booking_gest <- read_csv(paste0(data_folder,"pregnancy/antenatal_booking/gestation_sep2.csv"),
-                            col_types =list(week_book_starting=col_date(format="%d-%b-%y"),
-                                            centreline=col_number())) %>%
+# open booking number excel sheet
+ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
+                                    sheet = "Data for Dashboard Charts") %>%
   janitor::clean_names() %>%
-  rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked)
+  rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked) %>%
+  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y"))
+
+# open booking gestation excel sheet
+ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
+                              sheet = "Data for Dashboard Charts") %>%
+  janitor::clean_names() %>%
+  rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked) %>%
+  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y"))
 
 # join two (numbers and average gestation) booking sheets to form single rds file
 #is left join the best join?? what if mismatch in numbers of rows?
@@ -1076,35 +1078,47 @@ ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher"))
 
 saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
 
-## Antenatal booking data download
-ante_booking_download <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_09092020.xlsx"),
-                                sheet = "Monthly Data for Download") %>%
-  janitor::clean_names()
-
-# Match area names from lookup & format for shinyapp
-ante_booking_download <- left_join(ante_booking_download, hb_lookup, by = c("area" = "hb_cypher")) %>%
-  mutate(area_name=case_when(area=="Scotland" ~ "Scotland", T~ area_name),
-         area_type=case_when(area=="Scotland" ~ "Scotland", T~ area_type)) %>%
-  select(-area) %>%
-  rename(booking_month=month_booking, number_of_bookings=booked) %>%
-  arrange(area_type, booking_month)
-
-saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_number_download.rds"))
+# ## Antenatal booking data download
+# ante_booking_download <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
+#                                 sheet = "Monthly Data for Download") %>%
+#   janitor::clean_names()
+# 
+# # Match area names from lookup & format for shinyapp
+# ante_booking_download <- left_join(ante_booking_download, hb_lookup, by = c("area" = "hb_cypher")) %>%
+#   mutate(area_name=case_when(area=="Scotland" ~ "Scotland", T~ area_name),
+#          area_type=case_when(area=="Scotland" ~ "Scotland", T~ area_type)) %>%
+#   select(-area) %>%
+#   rename(booking_month=month_booking, number_of_bookings=booked) %>%
+#   arrange(area_type, booking_month)
+# 
+# saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_number_download.rds"))
 
 ## Average gestation at booking data download
-gest_booking_download <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_09092020.xlsx"),
+gest_booking_download <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
                                     sheet = "Monthly Data for Download") %>%
   janitor::clean_names()
 
 # Match area names from lookup & format for shinyapp
 gest_booking_download <- left_join(gest_booking_download, hb_lookup, by = c("area" = "hb_cypher")) %>%
   mutate(area_name=case_when(area=="Scotland" ~ "Scotland", T~ area_name),
-         area_type=case_when(area=="Scotland" ~ "Scotland", T~ area_type)) %>%
+         area_type=case_when(area=="Scotland" ~ "Scotland", T~ area_type),
+         time_period="monthly") %>%
   select(-area) %>%
   rename(booking_month=month_booking, number_of_bookings=booked, average_gestation=ave_gest) %>%
   arrange(area_type, booking_month)
 
-saveRDS(gest_booking_download, paste0("shiny_app/data/","ante_booking_gest_download.rds"))
+ante_booking_download1 <- ante_booking %>%
+  mutate(time_period="weekly") %>%
+  rename(booking_week=week_book_starting, number_of_bookings=booked_g, average_gestation=ave_gest)
+
+# Add final aggregation files to one master file
+ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download) %>%
+  select(time_period,booking_week, booking_month, area_name, area_type, type, category,
+         number_of_bookings, centreline_no, dottedline_no,
+         g_u10wks,g_10to12wks,g_13pluswks,
+         average_gestation, centreline_g, dottedline_g)
+
+saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_download.rds"))
 
 
 ###############################################.
@@ -1127,7 +1141,7 @@ top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rd
          category=case_when(type=="Scotland" ~ "All",
                             type=="Health board" ~ "All")) 
 
-top_scot <- rap_adm <- readRDS(paste0(data_folder, "pregnancy/terminations/SCOTLAND_CHARTS.rds")) %>%  
+top_scot <- readRDS(paste0(data_folder, "pregnancy/terminations/SCOTLAND_CHARTS.rds")) %>%  
   janitor::clean_names() %>%
   ungroup() %>% # for some reason dataset appears to be grouped which prevents formatting 
   rename(area_name=hbres, month=date, category=variable) %>%
@@ -1143,11 +1157,14 @@ saveRDS(top, paste0("shiny_app/data/","top_data.rds"))
 
 ## Terminations data download
 top_download <- readRDS(paste0(data_folder, "pregnancy/terminations/DOWNLOAD.rds")) %>%  
-  janitor::clean_names() %>%
-  rename(area_name=hbres, month=date)
+  janitor::clean_names() %>% 
+  rename(area_name=hbres, termination_month=date, number_of_terminations=total,
+        g_u10wks=x9_weeks,g_10to12wks=x10_12_weeks,g_13pluswks=x13_weeks) %>%
+  mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                             area_name=="Scotland" ~ "Scotland", TRUE ~ "Other")) %>%
+  select(termination_month, area_name, area_type, number_of_terminations,g_u10wks,g_10to12wks,g_13pluswks)
 
 saveRDS(top_download, paste0("shiny_app/data/","top_download.rds"))
-
 
 
 
