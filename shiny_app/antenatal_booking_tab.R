@@ -90,9 +90,9 @@ output$booking_explorer <- renderUI({
   booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
   booking_trend_title <- paste0("Antenatal bookings: ",input$geoname_booking)
   booking_title_n <-  paste0("Number of bookings")
-  booking_title_g <-  paste0("Average gestation at booking (completed weeks")
+  booking_title_g <-  paste0("Average gestation at booking (completed weeks)")
   
-  chart_explanation <- paste0("The black line on the ‘antenatal booking numbers’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of bookings over the period 1st Mar 2019 to 28 Feb 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at antenatal booking’ charts follow a similar format")
+  chart_explanation <- paste0("The black line on the ‘antenatal booking numbers’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of bookings over the period 1st Mar 2019 to 28 Feb 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at antenatal booking’ charts follow a similar format.")
   
   #Additional commentart/meta data to appear on booking tab
   commentary_booking <-  tagList(p("Space for any meta-data/commentary about booking"))

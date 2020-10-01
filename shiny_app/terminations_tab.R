@@ -92,9 +92,9 @@ output$top_explorer <- renderUI({
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
   top_trend_title <- paste0("Termination of pregnancy: ",input$geoname_top)
   top_title_n <-  paste0("Number of terminations")
-  top_title_g <-   paste0("Average gestation at termination (completed weeks")
+  top_title_g <-   paste0("Average gestation at termination (completed weeks)")
   
-  chart_explanation <- paste0("The black line on the ‘number of terminations’ charts for Scotland, and each Health Board, shows a monthly time series of data. The solid blue centreline is the average number of terminations over the period January 2018 to February 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at termination’ charts follow a similar format")
+  chart_explanation <- paste0("The black line on the ‘number of terminations’ charts for Scotland, and each Health Board, shows a monthly time series of data. The solid blue centreline is the average number of terminations over the period January 2018 to February 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at termination’ charts follow a similar format.")
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_top <-  tagList(p("Space for any meta-data/commentary about terminations"))
@@ -156,8 +156,9 @@ plot_top_trend <- function(measure){
   { plot_nodata(height = 50, text_nodata = "No data shown for small island boards")
   } else {
     
-  # legend label should respond when dataset updates  
-  centreline <- paste0("Scotland centreline 01/03/2018 to 28/02/2020")    
+  # chart legend labels  
+  centreline_name <- paste0(input$geoname_top," centreline 01/03/2018 to 29/02/2020")    
+  dottedline_name <- paste0(input$geoname_top," projected") 
   
   #switch y-axis according to which measure is selected
   if(measure == "top_number"){
@@ -172,8 +173,11 @@ plot_top_trend <- function(measure){
     
   } else if (measure  == "top_gestation") {
     yaxis_measure <- plot_data$av_gest
-    yaxis_plots[["title"]] <- "Average gestation at termination (completed weeks)"
+    yaxis_plots[["title"]] <- "Average gestation at termination (completed wks)"
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10 weeks
+    #yaxis_plots[["tickfont"]] <- list(size=8)
+    yaxis_plots[["titlefont"]] <- list(size=12)
+    #tickfont = list(size=14), titlefont = list(size=14)
     
 
     tooltip_top <- c(paste0("Month: ",plot_data$month,"<br>",
@@ -188,10 +192,10 @@ plot_top_trend <- function(measure){
     add_lines(y = ~yaxis_measure,  
               line = list(color = "black"), text=tooltip_top, hoverinfo="text",
               marker = list(color = "black"), name = yname ) %>% 
-    add_lines(y = ~dotted_line, name = "Scotland projected",
+    add_lines(y = ~dotted_line, name = dottedline_name,
               line = list(color = "blue", dash = "longdash"), hoverinfo="none",
               name = "Centreline") %>%
-    add_lines(y = ~centre_line, name = centreline,
+    add_lines(y = ~centre_line, name = centreline_name,
               line = list(color = "blue"), hoverinfo="none",
               name = "Centreline") %>% 
     #Layout
@@ -214,15 +218,15 @@ plot_top_split <- function(dataset, split, measure){
     yaxis_measure <- dataset$terminations
     yaxis_plots[["title"]] <- "Number of terminations"
     tooltip_top <- c(paste0(tool_tip_split,dataset$category,"<br>",
-                            "Week commencing: ",dataset$month,"<br>",
+                            "Month: ",dataset$month,"<br>",
                             "Number of terminations: ",dataset$terminations))
     
   } else if (measure  == "top_gestation") {
     yaxis_measure <- dataset$av_gest
-    yaxis_plots[["title"]] <- "Average gestation at top (completed weeks)"
+    yaxis_plots[["title"]] <- "Average gestation at termination (completed wks)"
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10 weeks
     tooltip_top <- c(paste0(tool_tip_split,dataset$category,"<br>",
-                            "Week commencing: ",dataset$month,"<br>",
+                            "Month: ",dataset$month,"<br>",
                             "Average gestation at termination: ",format(dataset$av_gest,digits = 1,nsmall=1)," weeks"))
   }
 
