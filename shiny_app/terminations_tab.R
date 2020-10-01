@@ -92,9 +92,9 @@ output$top_explorer <- renderUI({
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
   top_trend_title <- paste0("Termination of pregnancy: ",input$geoname_top)
   top_title_n <-  paste0("Number of terminations")
-  top_title_g <-   paste0("Average gestation at termination")
+  top_title_g <-   paste0("Average gestation at termination (completed weeks")
   
-  chart_explanation <- paste0("The black line on the ‘number of terminations’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of terminations over the period 1st Mar 2019 to 28 Feb 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at termination’ charts follow a similar format")
+  chart_explanation <- paste0("The black line on the ‘number of terminations’ charts for Scotland, and each Health Board, shows a monthly time series of data. The solid blue centreline is the average number of terminations over the period January 2018 to February 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at termination’ charts follow a similar format")
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_top <-  tagList(p("Space for any meta-data/commentary about terminations"))
@@ -120,7 +120,7 @@ output$top_explorer <- renderUI({
                                 withSpinner(plotlyOutput("top_age_n"))),
                          column(6,
                                 #h4(paste0(top_dep_title_n)),
-                                h4("Average gestation at termination (weeks)"),
+                                h4("Average gestation at termination (completed weeks)"),
                                 br(),
                                 withSpinner(plotlyOutput("top_age_g")))),
                 fluidRow(column(12,h4("Terminations by deprivation: Scotland"),
@@ -130,7 +130,7 @@ output$top_explorer <- renderUI({
                                 h4("Number of terminations"),br(), 
                                 withSpinner(plotlyOutput("top_dep_n"))),
                          column(6,
-                                h4("Average gestation at termination (weeks)"),br(),
+                                h4("Average gestation at termination (completed weeks)"),br(),
                                 withSpinner(plotlyOutput("top_dep_g"))))
               )#tagList from if statement
             },
@@ -172,7 +172,7 @@ plot_top_trend <- function(measure){
     
   } else if (measure  == "top_gestation") {
     yaxis_measure <- plot_data$av_gest
-    yaxis_plots[["title"]] <- "Average gestation at termination (weeks)"
+    yaxis_plots[["title"]] <- "Average gestation at termination (completed weeks)"
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10 weeks
     
 
@@ -219,7 +219,7 @@ plot_top_split <- function(dataset, split, measure){
     
   } else if (measure  == "top_gestation") {
     yaxis_measure <- dataset$av_gest
-    yaxis_plots[["title"]] <- "Average gestation at top (weeks)"
+    yaxis_plots[["title"]] <- "Average gestation at top (completed weeks)"
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10 weeks
     tooltip_top <- c(paste0(tool_tip_split,dataset$category,"<br>",
                             "Week commencing: ",dataset$month,"<br>",

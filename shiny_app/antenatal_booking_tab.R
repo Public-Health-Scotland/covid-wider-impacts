@@ -4,7 +4,8 @@
 observeEvent(input$btn_booking_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("The Antenatal Booking Data presented is based on a new data collection established as a rapid response to COVID-19. Data is collected each week, from the clinical information system (BadgerNet Maternity (most NHS boards), TrakCare Maternity (Lothian) or Eclipse (A&A) used by the midwives who ‘book’ the pregnant woman for maternity care. Historic data from March 2019 was also collected as a ‘catch-up’ extract from the same source (and in Tayside and Highland from the systems in use before the introduction of BadgerNet Maternity) in order to identify all women who were currently pregnant during the COVID-19 period."),
+               p("The Antenatal Booking Data presented is based on a new data collection established as a rapid response to COVID-19. Data is collected each week, from the clinical information system (BadgerNet Maternity (most NHS boards), TrakCare Maternity (Lothian) or Eclipse (A&A) used by the midwives who ‘book’ the pregnant woman for maternity care."),
+               p("Historic data from APRIL 2019 was also collected as a ‘catch-up’ extract in order to identify all women who were currently pregnant during the COVID-19 period. This was either from the same source or - in Tayside and Highland - from the systems in use before the introduction of BadgerNet Maternity."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -89,7 +90,7 @@ output$booking_explorer <- renderUI({
   booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
   booking_trend_title <- paste0("Antenatal bookings: ",input$geoname_booking)
   booking_title_n <-  paste0("Number of bookings")
-  booking_title_g <-  paste0("Average gestation at booking")
+  booking_title_g <-  paste0("Average gestation at booking (completed weeks")
   
   chart_explanation <- paste0("The black line on the ‘antenatal booking numbers’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of bookings over the period 1st Mar 2019 to 28 Feb 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at antenatal booking’ charts follow a similar format")
   
@@ -115,10 +116,10 @@ output$booking_explorer <- renderUI({
               tagList(
                 fluidRow(column(12,h4("Antenatal bookings by age group: Scotland"))),
                 fluidRow(column(6,
-                                h4("Number of antenatal bookings"),br(),
+                                h4("Number of bookings"),br(),
                                 withSpinner(plotlyOutput("booking_age_n"))),
                          column(6,
-                                h4("Average gestation at booking (weeks)"),br(),
+                                h4("Average gestation at booking (completed weeks)"),br(),
                                 withSpinner(plotlyOutput("booking_age_g"))),
                          fluidRow(column(12,h4("Antenatal booking by deprivation: Scotland"),
                                          actionButton("btn_modal_simd_booking", "What is SIMD and deprivation?",
@@ -127,7 +128,7 @@ output$booking_explorer <- renderUI({
                                 h4("Number of bookings"),br(),
                                 withSpinner(plotlyOutput("booking_dep_n"))),
                          column(6,
-                                h4("Average gestation at termination (weeks)"),br(),
+                                h4("Average gestation at booking (completed weeks)"),br(),
                                 withSpinner(plotlyOutput("booking_dep_g"))))
               )#tagList from if statement
             },
@@ -170,7 +171,7 @@ plot_booking_trend <- function(measure){
       
     } else if (measure  == "booking_gestation") {
       yaxis_measure <- plot_data$ave_gest
-      yaxis_plots[["title"]] <- "Average gestation at booking (weeks)"
+      yaxis_plots[["title"]] <- "Average gestation at booking (completed weeks)"
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
                                   "Average gestation: ",format(plot_data$week_book_starting,"%d %b %y")," weeks"))
       dotted_line <-  plot_data$dottedline_g
@@ -218,7 +219,7 @@ plot_booking_split <- function(dataset, split, measure){
     
   } else if (measure  == "booking_gestation") {
     yaxis_measure <- dataset$ave_gest
-    yaxis_plots[["title"]] <- "Average gestation at booking (weeks)"
+    yaxis_plots[["title"]] <- "Average gestation at booking (completed weeks)"
     tooltip_booking <- c(paste0(tool_tip_split,dataset$category,"<br>",
                                 "Week commencing: ",format(dataset$week_book_starting,"%d %b %y"),"<br>",
                                 "Average gestation: ",dataset$ave_gest," weeks"))
