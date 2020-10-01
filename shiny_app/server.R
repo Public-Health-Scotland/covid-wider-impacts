@@ -14,9 +14,9 @@ function(input, output, session) {
   # Summary trends tab
   source(file.path("summary_tab.R"),  local = TRUE)$value
 
-  ###############################################.
-  # Cardiovascular tab
-  source(file.path("cardio_tab.R"),  local = TRUE)$value
+  # ###############################################.
+  # # Cardiovascular tab
+  # source(file.path("cardio_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Immunisation tab
@@ -38,9 +38,9 @@ function(input, output, session) {
   # Breastfeeding tab
   source(file.path("breastfeeding_tab.R"),  local = TRUE)$value
   
-  ###############################################.
-  # Mental health tab
-  source(file.path("mental_health_tab.R"),  local = TRUE)$value
+  # ###############################################.
+  # # Mental health tab
+  # source(file.path("mental_health_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Data tab
