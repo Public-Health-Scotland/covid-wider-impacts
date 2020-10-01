@@ -390,6 +390,8 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 7 September 2020"),
+    p("In this release of information on uptake of pre-school immunisations data have been updated to include children who became eligible until early August. The overall trends described in the commentary for 2 September 2020 below continue to apply."),
     h2("Immunisations - 2 September 2020"),
     p("Information on uptake of pre-school immunisations was updated in this tool on 2 September. The updated data show that uptake of pre-school immunisations for children who became eligible during March 2020 was maintained at a similar level to that seen before the Covid-19 pandemic (children becoming eligible in 2019 and early 2020). Early uptake for children becoming eligible for their immunisation more recently (April 2020 through to early July 2020) has increased, and is now noticeably higher than that seen before the pandemic."),
     p("The data also show that the increase in early uptake of immunisations seen from April 2020 onwards has been seen for children from all deprivation levels. For the 3 doses of the 6-in-1 immunisation, the recent increase in early uptake has been highest in children from the most deprived areas, resulting in a reduction in inequality in early uptake for these immunisations. For the 2 doses of the MMR immunisation, the recent increase in early uptake has been broadly similar across deprivation groups."),
