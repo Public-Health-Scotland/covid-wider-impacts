@@ -92,7 +92,7 @@ output$booking_explorer <- renderUI({
   booking_title_n <-  paste0("Number of bookings")
   booking_title_g <-  paste0("Average gestation at booking (completed weeks)")
   
-  chart_explanation <- paste0("The black line on the ‘antenatal booking numbers’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of bookings over the period 1st Mar 2019 to 28 Feb 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at antenatal booking’ charts follow a similar format.")
+  chart_explanation <- paste0("The black line on the ‘antenatal booking numbers’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of bookings over the period 1st April 2019 to 29th February 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at antenatal booking’ charts follow a similar format.")
   
   #Additional commentart/meta data to appear on booking tab
   commentary_booking <-  tagList(p("Space for any meta-data/commentary about booking"))
@@ -157,7 +157,10 @@ plot_booking_trend <- function(measure){
   } else {
     
     # legend label should respond when dataset updates  
-    centreline <- paste0("Scotland centre line up to ","xxxx")
+    #centreline <- paste0("Scotland centre line up to ","xxxx")
+    # chart legend labels  
+    centreline_name <- paste0(input$geoname_booking," centreline 01/04/2019 to 29/02/2020")    
+    dottedline_name <- paste0(input$geoname_booking," projected") 
     
     #switch y-axis according to which measure is selected
     if(measure == "booking_number"){
@@ -173,7 +176,7 @@ plot_booking_trend <- function(measure){
       yaxis_measure <- plot_data$ave_gest
       yaxis_plots[["title"]] <- "Average gestation at booking (completed weeks)"
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
-                                  "Average gestation: ",format(plot_data$week_book_starting,"%d %b %y")," weeks"))
+                                  "Average gestation: ",format(plot_data$ave_gest,digits = 1,nsmall=1)," weeks"))
       dotted_line <-  plot_data$dottedline_g
       centre_line <-  plot_data$centreline_g
       yname <- "Average gestation"
@@ -184,10 +187,10 @@ plot_booking_trend <- function(measure){
       add_lines(y = ~yaxis_measure,  
                 line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
                 marker = list(color = "black"), name = yname) %>% 
-      add_lines(y = ~dotted_line, name = "Scotland projected",
+      add_lines(y = ~dotted_line, name = dottedline_name,
                 line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-                name = "Centreline") %>%
-      add_lines(y = ~centre_line, name = centreline,
+                name = centreline_name) %>%
+      add_lines(y = ~centre_line, name = centreline_name,
                 line = list(color = "blue"), hoverinfo="none",
                 name = "Centreline") %>% 
       #Layout
@@ -222,7 +225,7 @@ plot_booking_split <- function(dataset, split, measure){
     yaxis_plots[["title"]] <- "Average gestation at booking (completed weeks)"
     tooltip_booking <- c(paste0(tool_tip_split,dataset$category,"<br>",
                                 "Week commencing: ",format(dataset$week_book_starting,"%d %b %y"),"<br>",
-                                "Average gestation: ",dataset$ave_gest," weeks"))
+                                "Average gestation: ",format(dataset$ave_gest,digits = 1,nsmall=1)," weeks"))
   }
   
   #adjust datasets accordig to which data split to be displayed

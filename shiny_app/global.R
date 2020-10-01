@@ -104,7 +104,7 @@ mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
 #Pregancy data
 #antenatal booking
-booking_extract_date <- "17th September 2020"
+booking_extract_date <- "1st October 2020"
 booking <- readRDS("data/ante_booking_data.rds")
 #booking_number_download <- readRDS("data/ante_booking_number_download.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")

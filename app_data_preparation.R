@@ -1034,7 +1034,7 @@ saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 ###############################################.
 
 #field with date all antenatal booking data files prepared
-antenatal_booking_date <- "17092020"
+antenatal_booking_date <- "01102020"
 
 # open booking number excel sheet
 ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
