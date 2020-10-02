@@ -157,7 +157,7 @@ plot_top_trend <- function(measure){
   } else {
     
   # chart legend labels  
-  centreline_name <- paste0(input$geoname_top," centreline 01/03/2018 to 29/02/2020")    
+  centreline_name <- paste0(input$geoname_top," centreline 01/01/2018 to 01/03/2020")    
   dottedline_name <- paste0(input$geoname_top," projected") 
   
   #switch y-axis according to which measure is selected
