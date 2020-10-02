@@ -176,7 +176,7 @@ plot_top_trend <- function(measure){
     yaxis_plots[["title"]] <- "Average gestation at termination (completed wks)"
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10 weeks
     #yaxis_plots[["tickfont"]] <- list(size=8)
-    yaxis_plots[["titlefont"]] <- list(size=12)
+    #yaxis_plots[["titlefont"]] <- list(size=12)
     #tickfont = list(size=14), titlefont = list(size=14)
     
 

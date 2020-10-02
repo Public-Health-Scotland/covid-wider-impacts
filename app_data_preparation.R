@@ -1038,11 +1038,10 @@ antenatal_booking_date <- "01102020"
 
 # open booking number excel sheet
 ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
-                                    sheet = "Data for Dashboard Charts") %>%
+                              sheet = "Data for Dashboard Charts") %>%
   janitor::clean_names() %>%
   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y"))
-
 # open booking gestation excel sheet
 ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
                               sheet = "Data for Dashboard Charts") %>%
@@ -1051,7 +1050,6 @@ ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y"))
 
 # join two (numbers and average gestation) booking sheets to form single rds file
-#is left join the best join?? what if mismatch in numbers of rows?
 ante_booking <- left_join(ante_booking_no, ante_booking_gest, by = c("week_book_starting","area"))
 
 # Match area names from lookup & format for shinyapp
@@ -1073,7 +1071,8 @@ ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher"))
                             area=="SIMD 3" ~ "3",
                             area=="SIMD 4" ~ "4",
                             area=="SIMD 5" ~ "5 - least deprived",
-                            type=="age" ~ category, T ~area_name)) %>%
+                            type=="age" ~ category, T ~area_name),
+         category=case_when(category=="40 plus" ~ "40 and over",TRUE ~ category)) %>%
   select(-area)
 
 saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
@@ -1104,19 +1103,28 @@ gest_booking_download <- left_join(gest_booking_download, hb_lookup, by = c("are
          area_type=case_when(area=="Scotland" ~ "Scotland", T~ area_type),
          time_period="monthly") %>%
   select(-area) %>%
-  rename(booking_month=month_booking, number_of_bookings=booked, average_gestation=ave_gest) %>%
+  rename(booking_month=month_booking, number_of_bookings=booked, average_gestation_at_booking=ave_gest) %>%
   arrange(area_type, booking_month)
 
 ante_booking_download1 <- ante_booking %>%
   mutate(time_period="weekly") %>%
-  rename(booking_week=week_book_starting, number_of_bookings=booked_g, average_gestation=ave_gest)
+  rename(booking_week_beginning=week_book_starting, number_of_bookings=booked_g, average_gestation_at_booking=ave_gest)
 
 # Add final aggregation files to one master file
 ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download) %>%
-  select(time_period,booking_week, booking_month, area_name, area_type, type, category,
-         number_of_bookings, centreline_no, dottedline_no,
-         g_u10wks,g_10to12wks,g_13pluswks,
-         average_gestation, centreline_g, dottedline_g)
+  rename(chart_type=type,chart_category=category,
+         number_of_women_booking=number_of_bookings,
+         centreline_number=centreline_no,
+         dottedline_number=dottedline_no,
+         number_of_women_booking_gest_under_10wks=g_u10wks,
+         number_of_women_booking_gest_10to12wks=g_10to12wks,
+         number_of_women_booking_gest_over_12wks=g_13pluswks,
+         centreline_gestation=centreline_g,
+         dottedline_gestation=dottedline_g) %>%
+  select(time_period, booking_week_beginning, booking_month, area_name, area_type, chart_type, chart_category,
+         number_of_women_booking, centreline_number, dottedline_number,
+         number_of_women_booking_gest_under_10wks,number_of_women_booking_gest_10to12wks,number_of_women_booking_gest_over_12wks,
+         average_gestation_at_booking, centreline_gestation, dottedline_gestation)
 
 saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_download.rds"))
 
