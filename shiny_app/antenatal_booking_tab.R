@@ -23,6 +23,7 @@ observeEvent(input$btn_booking_rules,
                         'PHS guide to statistical process control charts', target="_blank"),"."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
 # Modal to explain run charts rules
 observeEvent(input$btn_booking_rules2,
              showModal(modalDialog(
@@ -37,7 +38,6 @@ observeEvent(input$btn_booking_rules2,
                         'PHS guide to statistical process control charts', target="_blank"),"."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
 
 # Modal to explain SIMD and deprivation
 # Link action button click to modal launch 
@@ -133,7 +133,6 @@ output$booking_explorer <- renderUI({
   booking_layout <- function(plot_trend_n,plot_trend_g, plot_age_n, plot_age_g, plot_dep_n, plot_dep_g){
     tagList(fluidRow(column(12,
                             h4(booking_trend_title)),
-                            #p(chart_explanation)),
                      column(6,
                             h4(paste0(booking_title_n)),
                             actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
@@ -201,7 +200,7 @@ plot_booking_trend <- function(measure, shift, trend){
       dotted_line <-  plot_data$dottedline_no
       centre_line <-  plot_data$centreline_no
       yname <- "Number of women booking"
-      xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting))
+      xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting)) #force x-axis to display first week of data
 
       
     } else if (measure  == "ave_gest") {

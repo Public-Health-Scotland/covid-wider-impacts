@@ -1123,21 +1123,6 @@ ante_booking <- ante_booking %>%
 
 saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
 
-# ## Antenatal booking data download
-# ante_booking_download <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
-#                                 sheet = "Monthly Data for Download") %>%
-#   janitor::clean_names()
-# 
-# # Match area names from lookup & format for shinyapp
-# ante_booking_download <- left_join(ante_booking_download, hb_lookup, by = c("area" = "hb_cypher")) %>%
-#   mutate(area_name=case_when(area=="Scotland" ~ "Scotland", T~ area_name),
-#          area_type=case_when(area=="Scotland" ~ "Scotland", T~ area_type)) %>%
-#   select(-area) %>%
-#   rename(booking_month=month_booking, number_of_bookings=booked) %>%
-#   arrange(area_type, booking_month)
-# 
-# saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_number_download.rds"))
-
 ## Average gestation at booking data download
 gest_booking_download <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
                                     sheet = "Monthly Data for Download") %>%
@@ -1179,7 +1164,7 @@ saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_download.r
 ## Pregnancy (terminations) ----
 ###############################################.
 
-## Antenatal booking average gestation
+## Termination data for run chart (scotland and nhs board)
 top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rds")) %>%  
   janitor::clean_names() %>%
   rename(area_name=hbres, month=date,
@@ -1195,17 +1180,64 @@ top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rd
          category=case_when(type=="Scotland" ~ "All",
                             type=="Health board" ~ "All")) 
 
+## Termination data for scotland only by age and dep
 top_scot <- readRDS(paste0(data_folder, "pregnancy/terminations/SCOTLAND_CHARTS.rds")) %>%  
   janitor::clean_names() %>%
   ungroup() %>% # for some reason dataset appears to be grouped which prevents formatting 
   rename(area_name=hbres, month=date, category=variable) %>%
   mutate(month=as.Date(month),
-    type=case_when(chart=="AGEGRP" ~ "age",chart=="SIMD" ~ "dep",TRUE ~ "other"),
+         type=case_when(chart=="AGEGRP" ~ "age",chart=="SIMD" ~ "dep",TRUE ~ "other"),
          area_type="Scotland")
-
-#add area based and age/dep terminations data
+         
+## Combine area based and age/dep terminations data, format and add shifts/trends
 top <- bind_rows(top_runchart, top_scot) %>%
-  select(-chart)
+  select(-chart) %>%
+  mutate(category=case_when(category=="40+" ~ as.character("40 and over"),TRUE ~ category),
+         dottedline_no= case_when(is.na(dottedline_no)~centreline_no,TRUE ~ dottedline_no),
+         dottedline_g= case_when(is.na(dottedline_g)~centreline_g,TRUE ~ dottedline_g)) %>% #recode age group as required
+  arrange(area_name, area_type,type, month) %>%
+  mutate(# Shift: run of 6 or more consecutive data points above or below the centreline
+    # First id when this run is happening and then finding all points part of it
+    # SHIFT NUMBER OF terminations
+    shift_i_top_no = case_when((terminations > dottedline_no & lag(terminations, 1) > dottedline_no 
+                                   & lag(terminations, 2) > dottedline_no & lag(terminations, 3) > dottedline_no 
+                                   & lag(terminations, 4) > dottedline_no & lag(terminations, 5) > dottedline_no) |
+                                    (terminations < dottedline_no & lag(terminations, 1) < dottedline_no 
+                                     & lag(terminations, 2) < dottedline_no & lag(terminations, 3) < dottedline_no 
+                                     & lag(terminations, 4) < dottedline_no & lag(terminations, 5) < dottedline_no) ~ T , T ~ F),
+    shift_top_no = case_when(shift_i_top_no == T | lead(shift_i_top_no, 1) == T | lead(shift_i_top_no, 2) == T
+                                | lead(shift_i_top_no, 3) == T | lead(shift_i_top_no, 4) == T
+                                | lead(shift_i_top_no, 5) == T  ~ T, T ~ F),
+    # SHIFT FOR AVERAGE GESTATION
+    shift_i_top_gest = case_when((av_gest > dottedline_g & lag(av_gest, 1) > dottedline_g 
+                                     & lag(av_gest, 2) > dottedline_g & lag(av_gest, 3) > dottedline_g 
+                                     & lag(av_gest, 4) > dottedline_g & lag(av_gest, 5) > dottedline_g) |
+                                      (av_gest < dottedline_g & lag(av_gest, 1) < dottedline_g 
+                                       & lag(av_gest, 2) < dottedline_g & lag(av_gest, 3) < dottedline_g 
+                                       & lag(av_gest, 4) < dottedline_g & lag(av_gest, 5) < dottedline_g) ~ T , T ~ F),
+    shift_top_gest = case_when(shift_i_top_gest == T | lead(shift_i_top_gest, 1) == T | lead(shift_i_top_gest, 2) == T
+                                  | lead(shift_i_top_gest, 3) == T | lead(shift_i_top_gest, 4) == T
+                                  | lead(shift_i_top_gest, 5) == T  ~ T, T ~ F),
+    # Trend: A run of 5 or more consecutive data points - NUMBERS OF TOP
+    trend_i_top_no = case_when((terminations > lag(terminations ,1) & lag(terminations, 1) > lag(terminations, 2) 
+                                   & lag(terminations, 2) > lag(terminations, 3)  & lag(terminations, 3) > lag(terminations, 4)) |
+                                    (terminations < lag(terminations ,1) & lag(terminations, 1) < lag(terminations, 2) 
+                                     & lag(terminations, 2) < lag(terminations, 3)  & lag(terminations, 3) < lag(terminations, 4) )  
+                                  ~ T , T ~ F),
+    trend_top_no = case_when(trend_i_top_no == T | lead(trend_i_top_no, 1) == T | lead(trend_i_top_no, 2) == T
+                                | lead(trend_i_top_no, 3) == T | lead(trend_i_top_no, 4) == T
+                                ~ T, T ~ F),
+    # Trend: A run of 5 or more consecutive data points - AVERAGE GESTATION TOP
+    trend_i_top_gest = case_when((av_gest > lag(av_gest ,1) & lag(av_gest, 1) > lag(av_gest, 2) 
+                                     & lag(av_gest, 2) > lag(av_gest, 3)  & lag(av_gest, 3) > lag(av_gest, 4)) |
+                                      (av_gest < lag(av_gest ,1) & lag(av_gest, 1) < lag(av_gest, 2) 
+                                       & lag(av_gest, 2) < lag(av_gest, 3)  & lag(av_gest, 3) < lag(av_gest, 4) )  
+                                    ~ T , T ~ F),
+    trend_top_gest = case_when(trend_i_top_gest == T | lead(trend_i_top_gest, 1) == T | lead(trend_i_top_gest, 2) == T
+                                  | lead(trend_i_top_gest, 3) == T | lead(trend_i_top_gest, 4) == T
+                                  ~ T, T ~ F)) %>%
+  select(-shift_i_top_no, -trend_i_top_no,-shift_i_top_gest, -trend_i_top_gest) %>%
+  ungroup()
 
 saveRDS(top, paste0("shiny_app/data/","top_data.rds"))
 
