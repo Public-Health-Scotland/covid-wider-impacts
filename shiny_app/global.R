@@ -52,67 +52,67 @@ intro_box <- function(title_box, button_name, description) {
 ## Data ----
 ###############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
-# spec_lookup <- readRDS("data/spec_lookup.rds")
-# ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
+spec_lookup <- readRDS("data/spec_lookup.rds")
+ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 
-# rapid <- readRDS("data/rapid_data.rds") #RAPID data
-# aye <- readRDS("data/ae_data.rds") #A&E data
-# ooh <- readRDS("data/ooh_data.rds") # OOH data
-# nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
-# sas <- readRDS("data/sas_data.rds") # OOH data
-# deaths <- readRDS("data/deaths_data.rds") # deaths data
-# 
-# #Cardiovascular data
-# ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
-# cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
-# cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
-# 
-# ## mental health data
-# mentalhealth_drugs <- readRDS("data/mentalhealth_drugs_data.rds")
-# ae_mh <- readRDS("data/mh_A&E_data.rds")
-# mh_ooh <- readRDS("data/mh_ooh_data.rds")
-# 
-# ## Child Health Data
-# child_extract_date <- "24th August 2020"
-# first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
-# firsttable <- readRDS("data/first_visit_datatable.rds")
-# sixtoeight <- readRDS("data/six_to_eight_data.rds")
-# sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
-# thirteen <- readRDS("data/thirteen_data.rds")
-# thirteentable <- readRDS("data/thirteen_datatable.rds")
-# twentyseven <- readRDS("data/twentyseven_data.rds")
-# twentyseventable <- readRDS("data/twentyseven_datatable.rds")
-# fourtofive <- readRDS("data/fourtofive_data.rds")
-# fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
-# 
-# ## Immunisation Data
-# immunisation_extract_date <- "24th August 2020"
-# month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
-# age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
-# age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
-# 
-# #Immunisations s-curve data
-# six_alldose <- readRDS("data/six_alldose_data.rds")
-# mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
-# 
-# #Immunisations data table data
-# sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table (all dose)
-# mmrtable <- readRDS("data/mmr_datatable.rds") # mmr summary table (all dose)
-# 
-# #data quality issues require additional data file for NHS grampian
-# mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary for just grampian mmr dose 2
-# 
-# #Immunisations SIMD data
-# six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
-# six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
-# six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
-# mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
-# mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
-# 
-# # Breastfeeding data
-# breastfeeding <- readRDS("data/breastfeeding_data.rds")
-# #Child development data
-# child_dev <- readRDS("data/child_dev_data.rds")
+rapid <- readRDS("data/rapid_data.rds") #RAPID data
+aye <- readRDS("data/ae_data.rds") #A&E data
+ooh <- readRDS("data/ooh_data.rds") # OOH data
+nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
+sas <- readRDS("data/sas_data.rds") # OOH data
+deaths <- readRDS("data/deaths_data.rds") # deaths data
+
+#Cardiovascular data
+ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
+cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
+cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
+
+## mental health data
+mentalhealth_drugs <- readRDS("data/mentalhealth_drugs_data.rds")
+ae_mh <- readRDS("data/mh_A&E_data.rds")
+mh_ooh <- readRDS("data/mh_ooh_data.rds")
+
+## Child Health Data
+child_extract_date <- "24th August 2020"
+first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
+firsttable <- readRDS("data/first_visit_datatable.rds")
+sixtoeight <- readRDS("data/six_to_eight_data.rds")
+sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
+thirteen <- readRDS("data/thirteen_data.rds")
+thirteentable <- readRDS("data/thirteen_datatable.rds")
+twentyseven <- readRDS("data/twentyseven_data.rds")
+twentyseventable <- readRDS("data/twentyseven_datatable.rds")
+fourtofive <- readRDS("data/fourtofive_data.rds")
+fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
+
+## Immunisation Data
+immunisation_extract_date <- "24th August 2020"
+month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
+age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
+age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
+
+#Immunisations s-curve data
+six_alldose <- readRDS("data/six_alldose_data.rds")
+mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
+
+#Immunisations data table data
+sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table (all dose)
+mmrtable <- readRDS("data/mmr_datatable.rds") # mmr summary table (all dose)
+
+#data quality issues require additional data file for NHS grampian
+mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary for just grampian mmr dose 2
+
+#Immunisations SIMD data
+six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
+six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
+six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
+mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
+mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
+
+# Breastfeeding data
+breastfeeding <- readRDS("data/breastfeeding_data.rds")
+#Child development data
+child_dev <- readRDS("data/child_dev_data.rds")
 
 ###############################################.
 ## Objects, names, lists ----
@@ -121,53 +121,53 @@ geo_lookup <- readRDS("data/geo_lookup.rds")
 ## perinatal mortality data
 perinatal <- readRDS("data/perinatal_data.rds")
 
-# spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
-#                     "Medical (incl. Cardiology & Cancer)",
-#                     "Paediatrics (medical & surgical)")) # specialty list
-# 
-# data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
-#                "NHS 24 completed contacts" = "nhs24", 
-#                "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
-#                "Excess mortality" = "deaths")
-# 
-# #List of data items available in step 2 of immunisation tab
-# data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
-#                      "6-in-1 second dose" = "sixin_dose2",
-#                      "6-in-1 third dose" = "sixin_dose3",
-#                      "MMR first dose" = "mmr_dose1",
-#                      "MMR second dose" = "mmr_dose2")
-# 
-# # List of data items available in step 2 of immunisation tab
-# data_list_child <- c("Health Visitor first visit" = "first_visit",
-#                      "6-8 Week Review" = "six_eightwks",
-#                      "13-15 Month Review" = "13_15mnth",
-#                      "27-30 Month Review" = "27_30mnth",
-#                      "4-5 Year Review" = "4_5yr")
-# 
-# data_list_childdev <- c("13-15 month review" = "13_15mnth",
-#                      "27-30 month review" = "27_30mnth")
-# 
-# data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
-#                         "A&E cardiovascular attendances" = "ae_cardio",
-#                         "Cardiac procedures" = "cath_lab",
-#                         "6-in-1 first dose"  = "sixin_8wks",
-#                         "6-in-1 second dose" = "sixin_8wks_second",
-#                         "6-in-1 third dose" = "sixin_8wks_third",
-#                         "MMR first dose" = "mmr_1dose",
-#                         "MMR second dose" = "mmr_2dose",
-#                         "Health Visitor first visit" = "first_visit",
-#                         "6-8 week child health review" = "sixtoeight_visit",
-#                         "13-15 month child health review" = "thirteen_visit",
-#                         "27-30 month child health review" = "twentyseven_visit",
-#                         "4-5 year child health review" = "fourtofive_visit",
-#                         "Stillbirths and infant deaths" = "perinatal",
-#                         "Mental health prescribing" = "mhdrugs",
-#                         "A&E mental health attendances" = "ae_mh",
-#                         "Out of hours mental health cases" = "ooh_mh"
-#                         )
-# 
-# cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
-#                  "Cardiac procedures" = "cath")
+spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
+                    "Medical (incl. Cardiology & Cancer)",
+                    "Paediatrics (medical & surgical)")) # specialty list
+
+data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
+               "NHS 24 completed contacts" = "nhs24",
+               "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
+               "Excess mortality" = "deaths")
+
+#List of data items available in step 2 of immunisation tab
+data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
+                     "6-in-1 second dose" = "sixin_dose2",
+                     "6-in-1 third dose" = "sixin_dose3",
+                     "MMR first dose" = "mmr_dose1",
+                     "MMR second dose" = "mmr_dose2")
+
+# List of data items available in step 2 of immunisation tab
+data_list_child <- c("Health Visitor first visit" = "first_visit",
+                     "6-8 Week Review" = "six_eightwks",
+                     "13-15 Month Review" = "13_15mnth",
+                     "27-30 Month Review" = "27_30mnth",
+                     "4-5 Year Review" = "4_5yr")
+
+data_list_childdev <- c("13-15 month review" = "13_15mnth",
+                     "27-30 month review" = "27_30mnth")
+
+data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
+                        "A&E cardiovascular attendances" = "ae_cardio",
+                        "Cardiac procedures" = "cath_lab",
+                        "6-in-1 first dose"  = "sixin_8wks",
+                        "6-in-1 second dose" = "sixin_8wks_second",
+                        "6-in-1 third dose" = "sixin_8wks_third",
+                        "MMR first dose" = "mmr_1dose",
+                        "MMR second dose" = "mmr_2dose",
+                        "Health Visitor first visit" = "first_visit",
+                        "6-8 week child health review" = "sixtoeight_visit",
+                        "13-15 month child health review" = "thirteen_visit",
+                        "27-30 month child health review" = "twentyseven_visit",
+                        "4-5 year child health review" = "fourtofive_visit",
+                        "Stillbirths and infant deaths" = "perinatal",
+                        "Mental health prescribing" = "mhdrugs",
+                        "A&E mental health attendances" = "ae_mh",
+                        "Out of hours mental health cases" = "ooh_mh"
+                        )
+
+cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
+                 "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Stillbirths"="stillbirths",
@@ -176,10 +176,10 @@ data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
 
-# data_list_bf <- c("Health Visitor first visit" = "First visit",
-#                   "6-8 week review" = "6-8 week")
-# 
-# mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye", "Out of hours cases" = "ooh")
+data_list_bf <- c("Health Visitor first visit" = "First visit",
+                  "6-8 week review" = "6-8 week")
+
+mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye", "Out of hours cases" = "ooh")
 
 ###############################################.
 ## Palettes and plot parameters ----
