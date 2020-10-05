@@ -143,7 +143,7 @@ ooh %<>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-04-26")))
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_54_533692232303717034.xlsx")) %>% 
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_52_9132969511060154171.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -183,7 +183,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-09-20")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-09-27")
 
 ###############################################.
 ## A&E data ----
@@ -1256,7 +1256,7 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-0
 
 mh_aye <- rbind(read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) ,
-                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to20092020.csv"))) %>% 
+                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to27092020.csv"))) %>% 
   clean_names() 
 
 # List of terms used to identify mh cases
@@ -1368,13 +1368,13 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-09-20")
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-09-27")
 
 ###############################################.
 ## OOH - mental health ----
 ###############################################.
 
-mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/GP_OOH_MH_WIDER_IMPACT_280920.txt")) %>%
+mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/GP_OOH_MH_WIDER_IMPACT_5oct.txt")) %>%
   janitor::clean_names() %>%
   rename(hb=patient_nhs_board_description_current, 
          dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
@@ -1401,7 +1401,7 @@ mh_ooh %<>% gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>%
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
-  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-09-20")))
+  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-09-27")))
 
 mh_ooh_all <- mh_ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
 mh_ooh_sex <- mh_ooh %>% agg_cut(grouper="sex") %>% rename(category = sex)
@@ -1414,6 +1414,6 @@ mh_ooh %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_ooh, "mh_ooh", last_week = "2020-09-20")
+prepare_final_data(mh_ooh, "mh_ooh", last_week = "2020-09-27")
 
 ##END
