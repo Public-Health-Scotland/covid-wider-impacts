@@ -369,7 +369,7 @@ prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-09-27")
 ###############################################.
 ## Deaths ----
 ###############################################.
-deaths <- readRDS(paste0(data_folder, "deaths/deaths_data (replaced on 25-Sep-2020).rds"))
+deaths <- readRDS(paste0(data_folder, "deaths/deaths_data.rds"))
 saveRDS(deaths, "shiny_app/data/deaths_data.rds")
 saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 
