@@ -445,7 +445,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
 
   if (base_var != F) {
     simd_plot <- simd_plot %>% 
-      add_trace(type = 'bar', y = ~get(base_var)/4, #THis value needs to change depending on how many months are shown
+      add_trace(type = 'bar', y = ~get(base_var)/5, #THis value needs to change depending on how many months are shown
                 name = "2019", marker = list(color = "black"),
                 text= tooltip_2019, hoverinfo="text") 
   }

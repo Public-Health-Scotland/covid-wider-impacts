@@ -203,9 +203,9 @@ tabPanel(title = "Child health reviews", icon = icon("user-check"), value = "chi
                    uiOutput("child_health_explorer")
          )# mainPanel bracket
    ), # tabpanel bracket
-###############################################.
-## Breastfeeding tab ----
-##############################################.
+# ###############################################.
+# ## Breastfeeding tab ----
+# ##############################################.
 tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -228,9 +228,9 @@ tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
                    uiOutput("breastfeeding_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-###############################################.
-## Child development ----
-###############################################.
+# ###############################################.
+# ## Child development ----
+# ###############################################.
 tabPanel(title = "Child development", icon = icon("seedling"), value = "child_dev",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -252,9 +252,9 @@ tabPanel(title = "Child development", icon = icon("seedling"), value = "child_de
                    uiOutput("childdev_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-###############################################.
-## Perinatal Tab ----
-###############################################.
+# ###############################################.
+# ## Perinatal Tab ----
+# ###############################################.
 tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
