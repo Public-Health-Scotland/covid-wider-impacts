@@ -1255,9 +1255,21 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-0
 ###############################################.
 
 mh_aye <- rbind(read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv")) %>% 
-                  filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) ,
-                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to27092020.csv"))) %>% 
+                  filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
+                  mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
+                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to27092020.csv")) %>%
+                  mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%d/%m/%Y"))) %>%
+                
   clean_names() 
+
+# test_historic <- read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv")) %>% 
+#                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
+#   clean_names() %>%
+#   mutate(arrival_date=as.Date(arrival_date,format="%Y/%m/%d"))
+# 
+# test_new <- read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to27092020.csv")) %>% 
+#   clean_names() %>%
+#   mutate(arrival_date=as.Date(arrival_date,format="%d/%m/%Y"))
 
 # List of terms used to identify mh cases
 mh_aye_freetext <- toupper(paste0("overdose|'OD|O/D|drug od|drugs od|drug overdose|", 
