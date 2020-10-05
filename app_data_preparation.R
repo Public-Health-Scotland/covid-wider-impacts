@@ -369,7 +369,7 @@ prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-09-20")
 ###############################################.
 ## Deaths ----
 ###############################################.
-deaths <- readRDS(paste0(data_folder, "deaths/deaths_data.rds"))
+deaths <- readRDS(paste0(data_folder, "deaths/deaths_data (replaced on 25-Sep-2020).rds"))
 saveRDS(deaths, "shiny_app/data/deaths_data.rds")
 saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 
@@ -561,7 +561,7 @@ prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-09-27")
 ###############################################.
 ## 6-in-1 s-curve data ----
 ###############################################.
-six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashboard_20200824.csv"), 
+six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/six_in_one_dashboard_20200928.csv"), 
                 col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_factor())) %>%
 janitor::clean_names()
@@ -581,7 +581,7 @@ saveRDS(six_alldose, "shiny_app/data/six_alldose_data.rds")
 ## immunisations data table dataset prep ----
 ## immunisation team supply a single csv file that is split into two rds files (one for each immunisation)
 
-imms_datatable <- format_immchild_table("immunisations/dashboardtable_20200824")
+imms_datatable <- format_immchild_table("immunisations/dashboardtable_20200928")
                            
 six_datatable <- imms_datatable %>%
   filter(str_detect(immunisation,"six-in-one")) %>%
@@ -594,18 +594,18 @@ mmr_datatable <- imms_datatable %>%
 saveRDS(mmr_datatable, paste0("shiny_app/data/","mmr_datatable.rds"))
 
 # Grampian data
-mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/dashboardtable_grampian_20200824") 
+mmr_dose2_datatable_grampian <- format_immchild_table("immunisations/mmr/dashboardtable_grampian_20200928") 
 saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
 
 ###############################################.
 ## 6-in-1 simd data ---- 
-six_dose1_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 1_simd_20200824")
+six_dose1_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 1_simd_20200928")
 saveRDS(six_dose1_simdtable, paste0("shiny_app/data/","six_dose1_simdtable.rds"))
 
-six_dose2_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 2_simd_20200824")
+six_dose2_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 2_simd_20200928")
 saveRDS(six_dose2_simdtable, paste0("shiny_app/data/","six_dose2_simdtable.rds"))
 
-six_dose3_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 3_simd_20200824")
+six_dose3_simdtable <- format_immsimd_data("immunisations/6in1/six-in-one dose 3_simd_20200928")
 saveRDS(six_dose3_simdtable, paste0("shiny_app/data/","six_dose3_simdtable.rds"))
 
 ###############################################.
@@ -662,7 +662,7 @@ saveRDS(month_defs_imm, "shiny_app/data/month_eligibility_immun.rds")
 ## MMR s-curve data ----
 ###############################################.
 # mmr dose 1 & 2 - scurve data
-mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard_20200824.csv"),
+mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/mmr_dashboard_20200928.csv"),
                       col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
                                       time_period_eligible=col_factor())) %>%
   janitor::clean_names()
@@ -711,17 +711,17 @@ saveRDS(mmr_alldose, paste0("shiny_app/data/","mmr_alldose_data.rds"))
 ###############################################.
 ## MMR simd data ----
 ###############################################.
-mmr_dose1_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 1_simd_20200824")
+mmr_dose1_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 1_simd_20200928")
 saveRDS(mmr_dose1_simdtable, paste0("shiny_app/data/","mmr_dose1_simdtable.rds"))
 
-mmr_dose2_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 2_simd_20200824")
+mmr_dose2_simdtable <- format_immsimd_data("immunisations/mmr/mmr dose 2_simd_20200928")
 saveRDS(mmr_dose2_simdtable, paste0("shiny_app/data/","mmr_dose2_simdtable.rds"))
 
 ###############################################.
 ## Child health review: first visit ----
 ###############################################.
 ## First visit - scurve data
-first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20200824.csv"), 
+first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20200928.csv"), 
                 col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -743,7 +743,7 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
 
 # First visit - summary table data
-first_datatable_download <- format_immchild_table("child_health/firstvisit_dashboardtab_20200824") 
+first_datatable_download <- format_immchild_table("child_health/firstvisit_dashboardtab_20200928") 
 
 saveRDS(first_datatable_download, paste0("shiny_app/data/","first_visit_datatable_download.rds"))
 
@@ -757,7 +757,7 @@ saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 ###############################################.
 
 ## 6 to 8 weeks visit - scurve data
-sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200824.csv"), 
+sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20200928.csv"), 
                   col_types =list(week_6_start=col_date(format="%m/%d/%Y"),
                                   time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -780,7 +780,7 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight_data.rds"))
 
 # 6-8 weeks visit - summary table data
-sixtoeight_datatable_download <- format_immchild_table("child_health/sixtoeight_dashboardtab_20200824") 
+sixtoeight_datatable_download <- format_immchild_table("child_health/sixtoeight_dashboardtab_20200928") 
 
 saveRDS(sixtoeight_datatable_download, paste0("shiny_app/data/","six_to_eight_datatable_download.rds"))
 
@@ -795,7 +795,7 @@ saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.r
 ###############################################.
 
 ## 13 to 15 month visit - scurve data
-thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20200824.csv"), 
+thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20200928.csv"), 
                        col_types =list(week_57_start=col_date(format="%m/%d/%Y"),
                                        time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -818,7 +818,7 @@ thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
 saveRDS(thirteen, paste0("shiny_app/data/","thirteen_data.rds"))
 
 # 13 to 15 month visit - summary table data
-thirteen_datatable_download <- format_immchild_table("child_health/thirteen_dashboardtab_20200824") 
+thirteen_datatable_download <- format_immchild_table("child_health/thirteen_dashboardtab_20200928") 
 
 saveRDS(thirteen_datatable_download, paste0("shiny_app/data/","thirteen_datatable_download.rds"))
 
@@ -832,7 +832,7 @@ saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
 ###############################################.
 
 ## 27 to 30 month visit - scurve data
-twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20200824.csv"), 
+twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20200928.csv"), 
                      col_types =list(week_117_start=col_date(format="%m/%d/%Y"),
                                      time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -856,7 +856,7 @@ saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
 
 # 27 to 30 month visit - summary table data
 # Data for data download should include complete months and all weeks
-twentyseven_datatable_download <- format_immchild_table("child_health/twentyseven_dashboardtab_20200824") 
+twentyseven_datatable_download <- format_immchild_table("child_health/twentyseven_dashboardtab_20200928") 
 
 saveRDS(twentyseven_datatable_download, paste0("shiny_app/data/","twentyseven_datatable_download.rds"))
 
@@ -871,7 +871,7 @@ saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.r
 ###############################################.
 
 ## 4 to 5 year visit - scurve data
-fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard20200824.csv"), 
+fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard20200928.csv"), 
                         col_types =list(week_209_start=col_date(format="%m/%d/%Y"),
                                         time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -895,7 +895,7 @@ saveRDS(fourtofive, paste0("shiny_app/data/","fourtofive_data.rds"))
 
 # 4 to 5 year review - summary table data
 # Data for data download should include complete months and all weeks
-fourtofive_datatable_download <- format_immchild_table("child_health/fourtofive_dashboardtab_20200824") %>% 
+fourtofive_datatable_download <- format_immchild_table("child_health/fourtofive_dashboardtab_20200928") %>% 
   filter(area_name != "NHS Dumfries & Galloway") %>%  
   filter(area_name != "NHS Highland")
 
