@@ -254,7 +254,8 @@ plot_booking_split <- function(dataset, split, measure){
   plot_data <- dataset
   
   #label to appear in tool tip
-  tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"),split=="dep" ~ paste0("Deprivation group:"))
+  tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"),
+                              split=="dep" ~ paste0("Deprivation group:"))
   
   #switch y-axis according to which measure is selected
   if(measure == "booking_number"){
@@ -279,13 +280,13 @@ plot_booking_split <- function(dataset, split, measure){
   
   #adjust datasets accordig to which data split to be displayed
   if(split == "age"){
-    dataset <- dataset %>%
+    plot_data <- plot_data %>%
       droplevels() %>%
       mutate(category = factor(category, levels = c("Under 20", "20-24", "25-29","30-34", "35-39","40 and over")))
     pallette <- pal_age}
   
   if(split == "dep"){
-    dataset <- dataset %>% 
+    plot_data <- plot_data %>% 
       mutate(category = factor(category, levels = c("1 - most deprived", "2", "3","4", "5 - least deprived")))
     pallette <- pal_depr}
   
