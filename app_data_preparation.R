@@ -1075,40 +1075,51 @@ ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher"))
          category=case_when(category=="40 plus" ~ "40 and over",TRUE ~ category)) %>%
   select(-area)
 
-a_ante <- ante_booking %>%
+#add control chart flags for charting
+ante_booking <- ante_booking %>%
   group_by(area_name, area_type, type, category) %>% 
   mutate(# Shift: run of 6 or more consecutive data points above or below the centreline
     # First id when this run is happening and then finding all points part of it
+    # SHIFT NUMBER OF WOMEN BOOKING
     shift_i_booked_no = case_when((booked_no > dottedline_no & lag(booked_no, 1) > dottedline_no 
-                              & lag(booked_no, 2) > dottedline_no & lag(booked_no, 3) > dottedline_no 
-                              & lag(booked_no, 4) > dottedline_no & lag(booked_no, 5) > dottedline_no) |
-                               (booked_no < dottedline_no & lag(booked_no, 1) < dottedline_no 
-                                & lag(booked_no, 2) < dottedline_no & lag(booked_no, 3) < dottedline_no 
-                                & lag(booked_no, 4) < dottedline_no & lag(booked_no, 5) < dottedline_no) ~ T , T ~ F),
+                                   & lag(booked_no, 2) > dottedline_no & lag(booked_no, 3) > dottedline_no 
+                                   & lag(booked_no, 4) > dottedline_no & lag(booked_no, 5) > dottedline_no) |
+                                    (booked_no < dottedline_no & lag(booked_no, 1) < dottedline_no 
+                                     & lag(booked_no, 2) < dottedline_no & lag(booked_no, 3) < dottedline_no 
+                                     & lag(booked_no, 4) < dottedline_no & lag(booked_no, 5) < dottedline_no) ~ T , T ~ F),
     shift_booked_no = case_when(shift_i_booked_no == T | lead(shift_i_booked_no, 1) == T | lead(shift_i_booked_no, 2) == T
-                           | lead(shift_i_booked_no, 3) == T | lead(shift_i_booked_no, 4) == T
-                           | lead(shift_i_booked_no, 5) == T  ~ T, T ~ F),
+                                | lead(shift_i_booked_no, 3) == T | lead(shift_i_booked_no, 4) == T
+                                | lead(shift_i_booked_no, 5) == T  ~ T, T ~ F),
+    # SHIFT FOR AVERAGE GESTATION
     shift_i_booked_gest = case_when((ave_gest > dottedline_g & lag(ave_gest, 1) > dottedline_g 
-                                   & lag(ave_gest, 2) > dottedline_g & lag(ave_gest, 3) > dottedline_g 
-                                   & lag(ave_gest, 4) > dottedline_g & lag(ave_gest, 5) > dottedline_g) |
-                                    (ave_gest < dottedline_g & lag(ave_gest, 1) < dottedline_g 
-                                     & lag(ave_gest, 2) < dottedline_g & lag(ave_gest, 3) < dottedline_g 
-                                     & lag(ave_gest, 4) < dottedline_g & lag(ave_gest, 5) < dottedline_g) ~ T , T ~ F),
+                                     & lag(ave_gest, 2) > dottedline_g & lag(ave_gest, 3) > dottedline_g 
+                                     & lag(ave_gest, 4) > dottedline_g & lag(ave_gest, 5) > dottedline_g) |
+                                      (ave_gest < dottedline_g & lag(ave_gest, 1) < dottedline_g 
+                                       & lag(ave_gest, 2) < dottedline_g & lag(ave_gest, 3) < dottedline_g 
+                                       & lag(ave_gest, 4) < dottedline_g & lag(ave_gest, 5) < dottedline_g) ~ T , T ~ F),
     shift_booked_gest = case_when(shift_i_booked_gest == T | lead(shift_i_booked_gest, 1) == T | lead(shift_i_booked_gest, 2) == T
-                                | lead(shift_i_booked_gest, 3) == T | lead(shift_i_booked_gest, 4) == T
-                                | lead(shift_i_booked_gest, 5) == T  ~ T, T ~ F))
-
-
-# Trend: A run of 5 or more consecutive data points
-trend_i_excl = case_when((pc_excl > lag(pc_excl ,1) & lag(pc_excl, 1) > lag(pc_excl, 2) 
-                          & lag(pc_excl, 2) > lag(pc_excl, 3)  & lag(pc_excl, 3) > lag(pc_excl, 4)) |
-                           (pc_excl < lag(pc_excl ,1) & lag(pc_excl, 1) < lag(pc_excl, 2) 
-                            & lag(pc_excl, 2) < lag(pc_excl, 3)  & lag(pc_excl, 3) < lag(pc_excl, 4) )  
-                         ~ T , T ~ F),
-trend_excl = case_when(trend_i_excl == T | lead(trend_i_excl, 1) == T | lead(trend_i_excl, 2) == T
-                       | lead(trend_i_excl, 3) == T | lead(trend_i_excl, 4) == T
-                       ~ T, T ~ F)) %>% 
-
+                                  | lead(shift_i_booked_gest, 3) == T | lead(shift_i_booked_gest, 4) == T
+                                  | lead(shift_i_booked_gest, 5) == T  ~ T, T ~ F),
+    # Trend: A run of 5 or more consecutive data points - NUMBERS OF WOMEN BOOKING
+    trend_i_booked_no = case_when((booked_no > lag(booked_no ,1) & lag(booked_no, 1) > lag(booked_no, 2) 
+                                   & lag(booked_no, 2) > lag(booked_no, 3)  & lag(booked_no, 3) > lag(booked_no, 4)) |
+                                    (booked_no < lag(booked_no ,1) & lag(booked_no, 1) < lag(booked_no, 2) 
+                                     & lag(booked_no, 2) < lag(booked_no, 3)  & lag(booked_no, 3) < lag(booked_no, 4) )  
+                                  ~ T , T ~ F),
+    trend_booked_no = case_when(trend_i_booked_no == T | lead(trend_i_booked_no, 1) == T | lead(trend_i_booked_no, 2) == T
+                                | lead(trend_i_booked_no, 3) == T | lead(trend_i_booked_no, 4) == T
+                                ~ T, T ~ F),
+    # Trend: A run of 5 or more consecutive data points - AVERAGE GESTATION
+    trend_i_booked_gest = case_when((ave_gest > lag(ave_gest ,1) & lag(ave_gest, 1) > lag(ave_gest, 2) 
+                                   & lag(ave_gest, 2) > lag(ave_gest, 3)  & lag(ave_gest, 3) > lag(ave_gest, 4)) |
+                                    (ave_gest < lag(ave_gest ,1) & lag(ave_gest, 1) < lag(ave_gest, 2) 
+                                     & lag(ave_gest, 2) < lag(ave_gest, 3)  & lag(ave_gest, 3) < lag(ave_gest, 4) )  
+                                  ~ T , T ~ F),
+    trend_booked_gest = case_when(trend_i_booked_gest == T | lead(trend_i_booked_gest, 1) == T | lead(trend_i_booked_gest, 2) == T
+                                | lead(trend_i_booked_gest, 3) == T | lead(trend_i_booked_gest, 4) == T
+                                ~ T, T ~ F)) %>%
+  select(-shift_i_booked_no, -trend_i_booked_no,-shift_i_booked_gest, -trend_i_booked_gest) %>%
+  ungroup()
 
 saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
 

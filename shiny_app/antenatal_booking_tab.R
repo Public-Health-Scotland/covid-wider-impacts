@@ -201,6 +201,8 @@ plot_booking_trend <- function(measure){
       centre_line <-  plot_data$centreline_no
       yname <- "Number of women booking"
       xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting))
+      shift <- plot_data$shift_booked_no
+      trend <- plot_data$trend_booked_no
       
     } else if (measure  == "booking_gestation") {
       yaxis_measure <- plot_data$ave_gest
@@ -212,6 +214,8 @@ plot_booking_trend <- function(measure){
       centre_line <-  plot_data$centreline_g
       yname <- "Average gestation"
       xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting))
+      shift <- plot_data$shift_booked_gest
+      trend <- plot_data$trend_booked_gest
     }
     
     #Creating time trend plot
@@ -224,7 +228,14 @@ plot_booking_trend <- function(measure){
                 name = centreline_name, showlegend = FALSE) %>%
       add_lines(y = ~centre_line, name = centreline_name,
                 line = list(color = "blue"), hoverinfo="none",
-                name = "Centreline") %>% 
+                name = "Centreline") %>%
+      # adding shifts
+      add_markers(data = plot_data %>% filter(shift == T), y = ~ yaxis_measure,
+                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>% 
+      # adding trends
+      add_markers(data = plot_data %>% filter(trend == T), y = ~ yaxis_measure,
+                   marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%  
+      
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots,  xaxis = xaxis_plots,
