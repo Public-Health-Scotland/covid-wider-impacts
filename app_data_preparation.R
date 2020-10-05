@@ -9,7 +9,7 @@ source("functions_packages_data_prep.R")
 ## RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_28-Sep.rds")) %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_05-Oct.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -97,7 +97,7 @@ rap_adm <- rbind(rap_adm, spec_med, paed_com) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-09-20", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-09-27", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -1216,7 +1216,7 @@ mentalhealth_drugs_hist_all <- mentalhealth_drugs_historic %>%
 mentalhealth_drugs_historic <- rbind(mentalhealth_drugs_historic, mentalhealth_drugs_hist_all)
 
 ### Newer MH drugs data ##
-mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_59_4369629294437342675.xlsx")) %>% 
+mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_56_1425384649862172891.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -1235,7 +1235,7 @@ mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new i
   rename(category = condition,
          count = incident_cases_week_01) %>% 
   select(week_ending, area_name, area_type, type, category, count) %>%
-  filter(between(week_ending, as.Date("2020-07-05"), as.Date("2020-09-20")))
+  filter(week_ending >= as.Date("2020-07-05"))
 
 mentalhealth_drugs_all <- mentalhealth_drugs %>% 
   group_by(week_ending, area_name, area_type, type) %>% 
@@ -1248,7 +1248,7 @@ mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all)
 
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_historic)
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-09-20")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-09-27")
 
 ###############################################.
 ## A&E - mental health ----
