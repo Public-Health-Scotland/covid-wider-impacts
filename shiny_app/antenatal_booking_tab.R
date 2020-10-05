@@ -95,8 +95,10 @@ ante_booking_filter_split <- function(split){
 ###############################################.
 
 # chart outputs for Scotland/NHS board trends
-output$booking_trend_n <- renderPlotly({plot_booking_trend(measure="booking_number")})
-output$booking_trend_g <- renderPlotly({plot_booking_trend(measure="booking_gestation")})
+output$booking_trend_n <- renderPlotly({
+  plot_booking_trend(measure="booked_no", shift = "shift_booked_no", trend = "trend_booked_no")})
+output$booking_trend_g <- renderPlotly({
+  plot_booking_trend(measure="ave_gest", shift = "shift_booked_gest", trend = "trend_booked_gest")})
 
 # chart outputs for age split numbers and average gestation
 output$booking_age_n <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("age"), split="age", measure="booking_number")})
@@ -178,7 +180,7 @@ output$booking_explorer <- renderUI({
 ############################################.
 
 ## Trend plot for weekly bookings numbers and average gestation at booking
-plot_booking_trend <- function(measure){
+plot_booking_trend <- function(measure, shift, trend){
   
   plot_data <- ante_booking_filter()
   
@@ -192,8 +194,7 @@ plot_booking_trend <- function(measure){
     centreline_name <- paste0(input$geoname_booking," centreline 01/04/2019 to 29/02/2020")    
      
     #switch y-axis according to which measure is selected
-    if(measure == "booking_number"){
-      yaxis_measure <- plot_data$booked_no
+    if(measure == "booked_no"){
       yaxis_plots[["title"]] <- "Number of women booking"
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
                                   "Number of women booking: ",plot_data$booked_no))
@@ -201,11 +202,9 @@ plot_booking_trend <- function(measure){
       centre_line <-  plot_data$centreline_no
       yname <- "Number of women booking"
       xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting))
-      shift <- plot_data$shift_booked_no
-      trend <- plot_data$trend_booked_no
+
       
-    } else if (measure  == "booking_gestation") {
-      yaxis_measure <- plot_data$ave_gest
+    } else if (measure  == "ave_gest") {
       yaxis_plots[["title"]] <- "Average gestation at booking"
       yaxis_plots[["range"]] <- c(0, 16)  # forcing range from 0 to 16 weeks
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
@@ -214,13 +213,11 @@ plot_booking_trend <- function(measure){
       centre_line <-  plot_data$centreline_g
       yname <- "Average gestation"
       xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting))
-      shift <- plot_data$shift_booked_gest
-      trend <- plot_data$trend_booked_gest
     }
     
     #Creating time trend plot
     plot_ly(data=plot_data, x=~week_book_starting) %>%
-      add_lines(y = ~yaxis_measure,  
+      add_lines(y = ~get(measure),  
                 line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
                 marker = list(color = "black"), name = yname) %>% 
       add_lines(y = ~dotted_line,
@@ -230,12 +227,12 @@ plot_booking_trend <- function(measure){
                 line = list(color = "blue"), hoverinfo="none",
                 name = "Centreline") %>%
       # adding shifts
-      add_markers(data = plot_data %>% filter(shift == T), y = ~ yaxis_measure,
-                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>% 
+      add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
+                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>%
       # adding trends
-      add_markers(data = plot_data %>% filter(trend == T), y = ~ yaxis_measure,
-                   marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%  
-      
+      add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
+                   marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%
+
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots,  xaxis = xaxis_plots,
@@ -265,8 +262,7 @@ plot_booking_split <- function(dataset, split, measure){
                                 "Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
                                 "Number of women booking: ",plot_data$booked_no))
     xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting))
-    #xaxis_plots[["tickfont"]] <- list(size=10)
-    
+
   } else if (measure  == "booking_gestation") {
     yaxis_measure <- dataset$ave_gest
     yaxis_plots[["title"]] <- "Average gestation at booking"
@@ -275,7 +271,6 @@ plot_booking_split <- function(dataset, split, measure){
                                 "Week commencing: ",format(dataset$week_book_starting,"%d %b %y"),"<br>",
                                 "Average gestation: ",format(dataset$ave_gest,digits = 1,nsmall=1)," weeks"))
     xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting))
-    #xaxis_plots[["tickfont"]] <- list(size=10)
     }
   
   #adjust datasets accordig to which data split to be displayed
