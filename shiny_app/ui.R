@@ -144,6 +144,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                    uiOutput("cardio_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
+
 ###############################################.
 ## Child health navbarmenu ----
 ###############################################.
@@ -272,7 +273,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
   ) # tabpanel bracket
-), #navbarMenu bracket
+),#, #navbarMenu bracket
 ###############################################.
 ## Mental Health ----
 ###############################################.
@@ -292,7 +293,7 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
          mainPanel(width = 12,
                    uiOutput("mh_explorer")
          )# mainPanel bracket
-),#tabPanel bracket  
+),#tabPanel bracket
 ###############################################.
 ## Data ----
 ###############################################.

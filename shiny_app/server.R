@@ -54,7 +54,7 @@ function(input, output, session) {
    observeEvent(input$jump_to_cardio, {updateTabsetPanel(session, "intabset", selected = "cardio")})
    observeEvent(input$jump_to_table, {updateTabsetPanel(session, "intabset", selected = "table")})
    observeEvent(input$jump_to_immunisation, {updateTabsetPanel(session, "intabset", selected = "imm")})
-   observeEvent(input$jump_to_childreview, {updateTabsetPanel(session, "intabset", selected = "child_review")})  
+   observeEvent(input$jump_to_childreview, {updateTabsetPanel(session, "intabset", selected = "child_review")})
   observeEvent(input$jump_to_perinatal_mortality, {updateTabsetPanel(session, "intabset", selected = "perinatal")})
   observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
@@ -66,12 +66,12 @@ function(input, output, session) {
    observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")})
    observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")})
+  # observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_breastfed, {updateTabsetPanel(session, "intabset", selected = "comment")})
     observeEvent(input$jump_commentary_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_oohissue, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_oohissue_sum, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  
+
 #trying to find way to link multiple action buttons to one observeEvent - sort of works but then creates an loop with undesired effect
 observe({
     input_btn <- paste0("jump_commentary_", input$intabset)
@@ -101,10 +101,10 @@ observeEvent(input$perinatal_button, ({
   
   observeEvent(input$mentalhealth_button, ({
     updateCollapse(session, "collapse_commentary", open = "Mental health")}))
-  
+
   observeEvent(input$childdev_button, ({
     updateCollapse(session, "collapse_commentary", open = "Child development")}))
-  
+
   observeEvent(input$breastfeeding_button, ({
     updateCollapse(session, "collapse_commentary", open = "Breastfeeding")}))
   

@@ -125,8 +125,8 @@ spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)",
                     "Paediatrics (medical & surgical)")) # specialty list
 
-data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
-               "NHS 24 completed contacts" = "nhs24", 
+data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
+               "NHS 24 completed contacts" = "nhs24",
                "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
                "Excess mortality" = "deaths")
 
@@ -166,7 +166,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Out of hours mental health cases" = "ooh_mh"
                         )
 
-cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
+cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
                  "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
