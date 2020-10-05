@@ -265,6 +265,10 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
+    h2("Stillbirths and infant deaths - 7th October 2020"),
+          p("In this release of information on stillbirths and infant deaths (7 Oct 2020), data have been updated to include events that occurred in August 2020.", br(),
+            "Last month it was noted that the rate of stillbirths in July breached the warning limit (though not the control limit). Continued monitoring shows that this rate has returned to a lower level in August, at 2.4 per 1,000 total births.", br(),
+            "Neonatal, post-neonatal and infant deaths have remained within the expected range, and were relatively low in August 2020."),
     h2("Stillbirths and infant deaths - 2nd September 2020"),
           p("In this release of information on stillbirths and infant deaths (2 Sept 2020) data have been updated to include events that occurred in July 2020.", br(),
             "In July the rate of stillbirths was 6.0 per 1,000 total births, which was higher than the warning limit of 5.8, but below the control limit of 6.7. 
