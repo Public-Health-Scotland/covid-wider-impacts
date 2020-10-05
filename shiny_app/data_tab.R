@@ -26,6 +26,8 @@ data_table <- reactive({
          "thirteen_visit" = thirteentable,
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
+         "childdev" = child_dev,
+         "breastfeeding" = breastfeeding,
          "perinatal" = perinatal,
          "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
          "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
@@ -187,12 +189,37 @@ data_table <- reactive({
              "Number of deaths" = number_of_deaths_in_month,
              "Rate" = rate,
              "Type" = type)
+  } else if (input$data_select %in% "childdev") {
+    table_data %<>%
+      select(area_name, month_review, review, number_reviews = no_reviews, 
+             meaningful_reviews = no_meaningful_reviews,
+             "% meaningful reviews" = pc_meaningful,
+             "One or more concerns" = concerns_1_plus,
+             "% one or more concerns" = pc_1_plus)
+  } else if (input$data_select %in% "breastfeeding") {
+    table_data %<>%
+      select(area_name, month_review, review, number_reviews = no_reviews, 
+             number_valid_reviews = no_valid_reviews,
+             exclusive_breastfeeding = exclusive_bf,
+             "% exclusive breastfeeding" = pc_excl,
+             overall_breastfeeding = overall_bf,
+             "% overall breastfeeding" = pc_overall,
+             ever_breastfeeding = ever_bf,
+             "% ever breastfeeding" = pc_ever)
   }
   
-  table_data %>% 
+  
+  table_data %<>% 
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
-    select(sort(current_vars())) %>%  # order columns alphabetically
     mutate_if(is.numeric, round, 1)
+  
+  if (!(input$data_select %in% c("childdev", "breastfeeding"))) {
+    table_data %<>% 
+      select(sort(current_vars()))  # order columns alphabetically
+  }
+  
+  table_data
+  
 })
 
 ###############################################.
