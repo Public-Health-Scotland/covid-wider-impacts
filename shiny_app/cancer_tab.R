@@ -101,7 +101,7 @@ output$cancer_explorer <- renderUI({
 
 output$cancer_overall <- renderPlotly({plot_overall_chart(cancer_data_type(), data_name = "cancer_data_type")})
 output$cancer_sex_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_sex, "sex", data_name = "cancer_data_type")})
-output$cancert_age_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_age, "age", data_name = "cancer_data_type")})
+output$cancer_age_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_age, "age", data_name = "cancer_data_type")})
 output$cancer_depr_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_depr, "dep", data_name = "cancer_data_type")})
 
 
