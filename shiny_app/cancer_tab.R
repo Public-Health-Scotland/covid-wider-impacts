@@ -63,12 +63,10 @@ output$cancer_explorer <- renderUI({
   
   
   cancer_chart_title <- paste0("Percentage change in number of pathology referrals for ", dataset, 
-                               " cancer compared with the corresponding time in 2018-2019 by")
+                               " cancer compared with the corresponding time in 2018-2019 by ")
   
   tagList(
     h3("Weekly pathology referrals"),
-    # actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
-    
     tagList(
       plot_box(paste0("2020 compared with the 2018-2019 average"), "cancer_overall"),
       
@@ -82,15 +80,6 @@ output$cancer_explorer <- renderUI({
                             icon = icon('question-circle'))),
       
       plot_box(paste0(cancer_chart_title, "SIMD quintile"), "cancer_depr_var")))
-  # Function to create the standard layout for all the different charts/sections
-  # cut_charts <- function(title, source, data_name) {
-  # 
-  # }
-  # 
-  # # Charts and rest of UI
-  # 
-  # cut_charts(title= "Weekly pathology referrals", source = "",
-  #            data_name = "cancer_data_type")
   
 })
 
@@ -99,10 +88,10 @@ output$cancer_explorer <- renderUI({
 ###############################################.
 # Creating plots for each cut and dataset
 
-output$cancer_overall <- renderPlotly({plot_overall_chart(cancer_data_type(), data_name = "cancer_data_type")})
-output$cancer_sex_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_sex, "sex", data_name = "cancer_data_type")})
-output$cancer_age_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_age, "age", data_name = "cancer_data_type")})
-output$cancer_depr_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_depr, "dep", data_name = "cancer_data_type")})
+output$cancer_overall <- renderPlotly({plot_overall_chart(cancer_data_type(), data_name = "cancer")})
+output$cancer_sex_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_sex, "sex", tab = "cancer")})
+output$cancer_age_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_age, "age", tab = "cancer")})
+output$cancer_depr_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_depr, "dep", tab = "cancer")})
 
 
 ###############################################.
