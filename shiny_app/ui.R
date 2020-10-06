@@ -229,8 +229,7 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
                   uiOutput("geoname_ui_cancer")),
            column(4, div(title="Select Cancer Type",
                          selectInput("cancer_type", label = NULL, choices = cancer_type_list,
-                                     selected = "All Cancer Types")),
-                  
+                                     selected = "All Cancer Types"))),
            
            column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
                   fluidRow(br()),
@@ -242,7 +241,7 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
          mainPanel(width = 12,
                    uiOutput("cancer_explorer")
          )# mainPanel bracket
-), # tabpanel bracket
+) # tabpanel bracket
 
 ###############################################.
 ## Data ----

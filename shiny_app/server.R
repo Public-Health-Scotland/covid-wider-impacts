@@ -32,7 +32,7 @@ function(input, output, session) {
   # 
   ###############################################.
   # Cancertab
-  # source(file.path("cancer_tab.R"),  local = TRUE)$value
+  source(file.path("cancer_tab.R"),  local = TRUE)$value
   # ###############################################.
   # # Data tab
   # source(file.path("data_tab.R"),  local = TRUE)$value

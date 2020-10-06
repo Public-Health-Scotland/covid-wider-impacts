@@ -65,32 +65,32 @@ output$cancer_explorer <- renderUI({
   cancer_chart_title <- paste0("Percentage change in number of pathology referrals for ", dataset, 
                                " cancer compared with the corresponding time in 2018-2019 by")
   
-  
-  # Function to create the standard layout for all the different charts/sections
-  cut_charts <- function(title, source, data_name) {
+  tagList(
+    h3("Weekly pathology referrals"),
+    # actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
+    
     tagList(
-      h3(title),
-      actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
+      plot_box(paste0("2020 compared with the 2018-2019 average"), "cancer_overall"),
       
-      tagList(
-        plot_box(paste0("2020 compared with the 2018-2019 average"), "cancer_type"),
-        
-        plot_cut_box(paste0(cancer_chart_title, "sex"), "cancer_type"),
-        
-        plot_cut_box(paste0(cancer_chart_title, "age group"), "cancer_type"),
-        
-        fluidRow(column(6, h4(paste0(cancer_chart_title, "SIMD quintile")))),
-        
-        fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
-                              icon = icon('question-circle'))),
-        
-        plot_cut_box(paste0(cancer_chart_title, "SIMD quintile"), "cancer_type")))
-  }
-  
-  # Charts and rest of UI
-  
-  cut_charts(title= "Weekly pathology referrals", source = "",
-             data_name = "cancer_data_type")
+      plot_box(paste0(cancer_chart_title, "sex"), "cancer_sex_var"),
+      
+      plot_box(paste0(cancer_chart_title, "age group"), "cancer_age_var"),
+      
+      fluidRow(column(6, h4(paste0(cancer_chart_title, "SIMD quintile")))),
+      
+      fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
+                            icon = icon('question-circle'))),
+      
+      plot_box(paste0(cancer_chart_title, "SIMD quintile"), "cancer_depr_var")))
+  # Function to create the standard layout for all the different charts/sections
+  # cut_charts <- function(title, source, data_name) {
+  # 
+  # }
+  # 
+  # # Charts and rest of UI
+  # 
+  # cut_charts(title= "Weekly pathology referrals", source = "",
+  #            data_name = "cancer_data_type")
   
 })
 
