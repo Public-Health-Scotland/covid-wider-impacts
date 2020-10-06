@@ -71,7 +71,7 @@ cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
 
 #Cancer data
 cancer_data <- readRDS("data/cancer_data.rds") # Cancer data
-
+cancer_extract_date <- "ahdhfh"
 
 
 ## Child Health Data
