@@ -262,7 +262,7 @@ ooh_data_cardiac <- ooh_data_cardiac %>% rename(count=number_of_cases, hb=nhs_bo
                              "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
                              "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
                              "90+" = "85 and over"),
-         sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
+         sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "NOT SPEC" = NA_character_, "NOT KNOWN" = NA_character_),
          dep = recode(dep, 
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
                       "4" = "4", "5" = "5 - least deprived"),
@@ -295,7 +295,7 @@ ooh_cd_age <- ooh_data_cardiac %>% agg_cut(grouper="age") %>% rename(category = 
 ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-08-23")
+prepare_final_data(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-09-13")
 
 ###############################################.
 ## Preparing NHS24 Cardiac data ----
@@ -305,25 +305,42 @@ nhs24_data_cardiac <- read_csv(paste0(data_folder, "NHS24_Cardio/Weekly_Symptoms
   janitor::clean_names()
 
 # Change file into correct format prior to getting final specification
-
 # Age Bands
+nhs24_data_cardiac = nhs24_data_cardiac %>%
+  mutate(age_group = case_when(
+    between(age, 0, 4) ~ "0-4",
+    between(age, 5, 9) ~ "5-9",
+    between(age, 10, 14) ~ "10-14",
+    between(age, 15, 19) ~ "15-19",
+    between(age, 20, 24) ~ "20-24",
+    between(age, 25, 29) ~ "25-29",
+    between(age, 30, 34) ~ "30-34",
+    between(age, 35, 39) ~ "35-39",
+    between(age, 40, 44) ~ "40-44",
+    between(age, 45, 49) ~ "45-49",
+    between(age, 50, 54) ~ "50-54",
+    between(age, 55, 59) ~ "55-59",
+    between(age, 60, 64) ~ "60-64",
+    between(age, 65, 69) ~ "65-69",
+    between(age, 70, 74) ~ "70-74",
+    between(age, 75, 79) ~ "75-79",
+    between(age, 80, 84) ~ "80-84",
+    between(age, 85, 89) ~ "85-89",    
+    age >= 90 ~ "90+"))
+
 nhs24_data_cardiac <-  nhs24_data_cardiac %>%
-  mutate(age_group = age_group(age),
-         hscp = "") %>% 
+  mutate(hscp = "") %>% 
   rename(nhs_board = reporting_health_board_name_as_at_date_of_episode,
          gender = gender_description,
          deprivation_quintile = nhs_24_patient_prompt_dataset_deprivation_scot_quintile,
          number_of_cases = number_of_nhs_24_records) %>% 
   mutate(week_ending = dmy(week_ending))
 
-
-
 # remove diagnosis field as just showing total cardiac
 nhs24_data_cardiac <- nhs24_data_cardiac %>%
   group_by(week_ending, nhs_board, hscp, age_group, gender, deprivation_quintile) %>%
   summarise(number_of_cases = sum(number_of_cases)) %>% 
   ungroup()
-
 
 nhs24_data_cardiac <- nhs24_data_cardiac %>% rename(count=number_of_cases, hb=nhs_board, 
                                                     sex=gender, dep=deprivation_quintile) %>%
@@ -334,14 +351,13 @@ nhs24_data_cardiac <- nhs24_data_cardiac %>% rename(count=number_of_cases, hb=nh
                              "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
                              "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
                              "90+" = "85 and over"),
-         sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
+         sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "0" = NA_character_, "NOT KNOWN" = NA_character_),
          dep = recode(dep, 
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
                       "4" = "4", "5" = "5 - least deprived"),
          week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
-
 
 nhs24_data_cardiac <- nhs24_data_cardiac %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
@@ -366,8 +382,11 @@ nhs24_cd_age <- nhs24_data_cardiac %>% agg_cut(grouper="age") %>% rename(categor
 
 nhs24_cardiac <- rbind(nhs24_cd_all, nhs24_cd_sex, nhs24_cd_dep, nhs24_cd_age)
 
+# Filter out HSC partnership for now, may include in future
+nhs24_cardiac <- nhs24_cardiac %>% filter(area_type != "HSC partnership")
+
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24_cardiac, filename = "nhs24_cardiac", last_week = "2020-08-23")
+prepare_final_data(dataset = nhs24_cardiac, filename = "nhs24_cardiac", last_week = "2020-09-13")
 
 
 ###############################################.
@@ -417,7 +436,7 @@ sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
 sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-08-23")
+prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-09-27")
 
 
 ###############################################.
