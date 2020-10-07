@@ -24,21 +24,6 @@ observeEvent(input$btn_booking_rules,
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
-# Modal to explain run charts rules
-observeEvent(input$btn_booking_rules2,
-             showModal(modalDialog(
-               title = "How do we identify patterns in the data?",
-               p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend"),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
-               p("Further information on these methods of presenting data can be found in the ",                      
-                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts', target="_blank"),"."),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
 # Modal to explain SIMD and deprivation
 # Link action button click to modal launch 
 observeEvent(input$btn_modal_simd_booking, { showModal(
@@ -52,8 +37,6 @@ observeEvent(input$btn_modal_simd_booking, { showModal(
     size = "l", 
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   ))}) 
-
-
 
 ###############################################.
 ## Pregnancy Reactive controls  ----
@@ -118,7 +101,8 @@ output$booking_explorer <- renderUI({
   booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
   booking_trend_title <- paste0("Women booking for antenatal care: ",input$geoname_booking)
   booking_title_n <-  paste0("Number of women booking for antenatal care")
-  booking_title_g <-  paste0("Average gestation at booking (completed weeks of pregnancy)")
+  booking_title_g <-  paste0("Average gestation at booking")
+  booking_title_g2 <-  paste0("(based on completed weeks of pregnancy)")
   
   #chart_explanation <- paste0("The black line on the ‘antenatal booking numbers’ charts for Scotland, and each Health Board, shows a weekly time series of data. The solid blue centreline is the average number of bookings over the period 1st April 2019 to 29th February 2020. The dotted line continues that average to allow determination of whether there has been a change.  The ‘average gestation at antenatal booking’ charts follow a similar format.")
   chart_explanation <- 
@@ -139,7 +123,7 @@ output$booking_explorer <- renderUI({
                             withSpinner(plotlyOutput("booking_trend_n"))),
                      column(6,
                             h4(paste0(booking_title_g)),
-                            actionButton("btn_booking_rules2", "How do we identify patterns in the data?"),
+                            h4(paste0(booking_title_g2)),
                             withSpinner(plotlyOutput("booking_trend_g"))),
                      column(12,
                             p(booking_subtitle),
