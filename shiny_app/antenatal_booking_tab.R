@@ -240,9 +240,7 @@ plot_booking_trend <- function(measure, shift, trend){
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }
-  
 }
-
 
 ## Trend plot for weekly bookings numbers and average gestation at booking split by age group and simd quintile 
 plot_booking_split <- function(dataset, split, measure){

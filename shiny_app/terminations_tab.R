@@ -1,6 +1,5 @@
 ##Server script for terminations tab
 
-
 # Pop-up modal explaining source of data
 observeEvent(input$btn_top_modal, 
              showModal(modalDialog(#Maternal HEALTH MODAL
@@ -8,9 +7,9 @@ observeEvent(input$btn_top_modal,
                p("These data are derived from the Notifications of Abortion to the Chief Medical Officer for Scotland (CMO) under the Abortion (Scotland) Regulations 1991."),
                p("Public Health Scotland (PHS) is responsible for the collation of data derived from notifications of terminations of pregnancy on behalf of the Chief Medical Officer (CMO) in Scotland. A termination of pregnancy (also referred to as a therapeutic or induced abortion) is carried out under the terms of the Abortion Act 1967, which applies to England, Wales and Scotland. Two doctors must agree that a termination of pregnancy is necessary under at least one of the grounds as specified in the 1991 Regulations. There is a legal requirement to notify the CMO in Scotland of all terminations carried out in Scotland within seven days of the termination of pregnancy."),
                p("Further information is available from the PHS ",
-                 tags$a(href="https://beta.isdscotland.org/media/5320/2020-08-25-terminations-2019-report.pdf", "annual report on termination of pregnancy up to December 2019",class="externallink"),
-                 "the ",
-                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/sexual-health/termination-of-pregnancy-statistics/", "data tables and charts.",class="externallink"),
+                 tags$a(href="https://beta.isdscotland.org/media/5320/2020-08-25-terminations-2019-report.pdf", "annual report on termination of pregnancy up to December 2019.",class="externallink"),
+                 "The ",
+                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/sexual-health/termination-of-pregnancy-statistics/", "data tables and charts",class="externallink"),
                  "are also available."),
                p("The number of terminations of pregnancy is shown for each month from January 2018 onwards.  Data is shown at all Scotland level and for each mainland NHS Board of residence.  Due to small numbers, data is not shown for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles, however the Island Boards are included in the Scotland total."),
                size = "m",
@@ -51,14 +50,14 @@ observeEvent(input$btn_top_rules2,
 observeEvent(input$btn_modal_simd_top, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
-    p("Children have been allocated to different levels of deprivation based on the small area (data zone) 
+    p("Women have been allocated to different levels of deprivation based on the small area (data zone) 
       in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
                                           class="externallink"), "score for that area. 
       SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: 
       income; employment; health; education, skills and training; housing; geographic access; and crime. 
-      In this tool we have presented results for children living in different SIMD ‘quintiles’. 
+      In this tool we have presented results for women living in different SIMD ‘quintiles’. 
       To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) 
-      of the overall population of Scotland are identified. Children living in the most and least deprived areas 
+      of the overall population of Scotland are identified. Women living in the most and least deprived areas 
       that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
     size = "l", 
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
@@ -189,18 +188,18 @@ plot_top_trend <- function(measure, shift, trend){
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
-                text_nodata = "Weekly data not shown due to small numbers.Monthly data is available through the Download data button above")
+              text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
   } else {
     
   # chart legend labels  
-  centreline_name <- paste0(input$geoname_top," centreline 01/01/2018 to 01/03/2020")    
+  centreline_name <- paste0(input$geoname_top," centreline 01/01/2018 to 29/02/2020")    
   dottedline_name <- paste0(input$geoname_top," projected") 
   
   #switch y-axis according to which measure is selected
   if(measure == "terminations"){
     yaxis_plots[["title"]] <- "Number of terminations"
     
-    tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %y"),"<br>",
+    tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
                             "Number of terminations: ",plot_data$terminations))
     dotted_line <-  plot_data$dottedline_no
     centre_line <-  plot_data$centreline_no
@@ -218,7 +217,7 @@ plot_top_trend <- function(measure, shift, trend){
     #tickfont = list(size=14), titlefont = list(size=14)
     
 
-    tooltip_top <- c(paste0("Month: ",format(plot_data$month,"%B %y"),"<br>",
+    tooltip_top <- c(paste0("Month: ",format(plot_data$month,"%B %Y"),"<br>",
                             "Average gestation at termination: ",format(plot_data$av_gest,digits = 1,nsmall=1)," weeks"))                           
         dotted_line <-  plot_data$dottedline_g
     centre_line <-  plot_data$centreline_g

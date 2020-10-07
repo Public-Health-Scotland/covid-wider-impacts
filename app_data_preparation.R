@@ -1036,20 +1036,21 @@ saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 #field with date all antenatal booking data files prepared
 antenatal_booking_date <- "01102020"
 
-# open booking number excel sheet
+# Excel workbook containing number of women booking for antenatal care - weekly file (Scotland and NHS board except small islands)
 ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
                               sheet = "Data for Dashboard Charts") %>%
   janitor::clean_names() %>%
   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y"))
-# open booking gestation excel sheet
+
+# Excel workbook containing avergage gestation of women booking for antenatal care  - weekly file (Scotland and NHS board except small islands)
 ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
                               sheet = "Data for Dashboard Charts") %>%
   janitor::clean_names() %>%
   rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y"))
 
-# join two (numbers and average gestation) booking sheets to form single rds file
+# join two (numbers and average gestation) booking sheets to form single file for shiny app
 ante_booking <- left_join(ante_booking_no, ante_booking_gest, by = c("week_book_starting","area"))
 
 # Match area names from lookup & format for shinyapp
@@ -1123,7 +1124,10 @@ ante_booking <- ante_booking %>%
 
 saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
 
-## Average gestation at booking data download
+## ANTENATAL DATA DOWNLOAD FILE FOR SHINY APP
+## Data download to include weekly Scotland data for age/deprivation breakdown PLUS monthly booking data for all NHS boards (even the small island boards)
+
+## Monthly booking numbers and average gestation at booking data 
 gest_booking_download <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
                                     sheet = "Monthly Data for Download") %>%
   janitor::clean_names()
@@ -1137,11 +1141,12 @@ gest_booking_download <- left_join(gest_booking_download, hb_lookup, by = c("are
   rename(booking_month=month_booking, number_of_bookings=booked, average_gestation_at_booking=ave_gest) %>%
   arrange(area_type, booking_month)
 
+# Weekly scotland level booking numbers and gestation
 ante_booking_download1 <- ante_booking %>%
   mutate(time_period="weekly") %>%
   rename(booking_week_beginning=week_book_starting, number_of_bookings=booked_g, average_gestation_at_booking=ave_gest)
 
-# Add final aggregation files to one master file
+# Add weekly and month files into one file
 ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download) %>%
   rename(chart_type=type,chart_category=category,
          number_of_women_booking=number_of_bookings,
@@ -1163,9 +1168,11 @@ saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_download.r
 ###############################################.
 ## Pregnancy (terminations) ----
 ###############################################.
+#field with date all antenatal booking data files prepared
+top_date <- "02102020"
 
-## Termination data for run chart (scotland and nhs board)
-top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rds")) %>%  
+## Termination data for run chart (scotland and nhs board) - monthly
+top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS_",top_date,".rds")) %>%  
   janitor::clean_names() %>%
   rename(area_name=hbres, month=date,
          centreline_no = av_pre_pan_terminations,
@@ -1174,40 +1181,42 @@ top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS.rd
          dottedline_g = ext_av_gest) %>%
   mutate(terminations=as.numeric(terminations),
          month=as.Date(month),
-    type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+         type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name), 
          category=case_when(type=="Scotland" ~ "All",
-                            type=="Health board" ~ "All")) 
+                            type=="Health board" ~ "All"))
 
 ## Termination data for scotland only by age and dep
-top_scot <- readRDS(paste0(data_folder, "pregnancy/terminations/SCOTLAND_CHARTS.rds")) %>%  
+top_scot <- readRDS(paste0(data_folder, "pregnancy/terminations/SCOTLAND_CHARTS_",top_date,".rds")) %>%  
   janitor::clean_names() %>%
   ungroup() %>% # for some reason dataset appears to be grouped which prevents formatting 
   rename(area_name=hbres, month=date, category=variable) %>%
   mutate(month=as.Date(month),
          type=case_when(chart=="AGEGRP" ~ "age",chart=="SIMD" ~ "dep",TRUE ~ "other"),
-         area_type="Scotland")
+         area_type="Scotland",
+         category=as.character(case_when(category=="40+" ~ "40 and over",TRUE ~ as.character(category))))
          
 ## Combine area based and age/dep terminations data, format and add shifts/trends
 top <- bind_rows(top_runchart, top_scot) %>%
   select(-chart) %>%
-  mutate(category=case_when(category=="40+" ~ as.character("40 and over"),TRUE ~ category),
-         dottedline_no= case_when(is.na(dottedline_no)~centreline_no,TRUE ~ dottedline_no),
+  #dotted line used to assess shifts or trends therefore need to fill cells which are set to NA 
+  mutate(dottedline_no= case_when(is.na(dottedline_no)~centreline_no,TRUE ~ dottedline_no),
          dottedline_g= case_when(is.na(dottedline_g)~centreline_g,TRUE ~ dottedline_g)) %>% #recode age group as required
+  #sort data to ensure trends/shifts compare correct data points
   arrange(area_name, area_type,type, month) %>%
   mutate(# Shift: run of 6 or more consecutive data points above or below the centreline
     # First id when this run is happening and then finding all points part of it
     # SHIFT NUMBER OF terminations
     shift_i_top_no = case_when((terminations > dottedline_no & lag(terminations, 1) > dottedline_no 
-                                   & lag(terminations, 2) > dottedline_no & lag(terminations, 3) > dottedline_no 
-                                   & lag(terminations, 4) > dottedline_no & lag(terminations, 5) > dottedline_no) |
-                                    (terminations < dottedline_no & lag(terminations, 1) < dottedline_no 
-                                     & lag(terminations, 2) < dottedline_no & lag(terminations, 3) < dottedline_no 
-                                     & lag(terminations, 4) < dottedline_no & lag(terminations, 5) < dottedline_no) ~ T , T ~ F),
+                                & lag(terminations, 2) > dottedline_no & lag(terminations, 3) > dottedline_no 
+                                & lag(terminations, 4) > dottedline_no & lag(terminations, 5) > dottedline_no) |
+                                 (terminations < dottedline_no & lag(terminations, 1) < dottedline_no 
+                                  & lag(terminations, 2) < dottedline_no & lag(terminations, 3) < dottedline_no 
+                                  & lag(terminations, 4) < dottedline_no & lag(terminations, 5) < dottedline_no) ~ T , T ~ F),
     shift_top_no = case_when(shift_i_top_no == T | lead(shift_i_top_no, 1) == T | lead(shift_i_top_no, 2) == T
-                                | lead(shift_i_top_no, 3) == T | lead(shift_i_top_no, 4) == T
-                                | lead(shift_i_top_no, 5) == T  ~ T, T ~ F),
+                             | lead(shift_i_top_no, 3) == T | lead(shift_i_top_no, 4) == T
+                             | lead(shift_i_top_no, 5) == T  ~ T, T ~ F),
     # SHIFT FOR AVERAGE GESTATION
     shift_i_top_gest = case_when((av_gest > dottedline_g & lag(av_gest, 1) > dottedline_g 
                                      & lag(av_gest, 2) > dottedline_g & lag(av_gest, 3) > dottedline_g 
@@ -1241,17 +1250,59 @@ top <- bind_rows(top_runchart, top_scot) %>%
 
 saveRDS(top, paste0("shiny_app/data/","top_data.rds"))
 
-## Terminations data download
-top_download <- readRDS(paste0(data_folder, "pregnancy/terminations/DOWNLOAD.rds")) %>%  
-  janitor::clean_names() %>% 
-  rename(area_name=hbres, termination_month=date, number_of_terminations=total,
-        g_u10wks=x9_weeks,g_10to12wks=x10_12_weeks,g_13pluswks=x13_weeks) %>%
+
+## TERMINATIONS DATA DOWNLOAD FILE FOR SHINY APP
+## Data download to include monthly Scotland data for age/deprivation breakdown PLUS monthly data for NHS boards (excluding the small island boards)
+
+## Scotland level terminations data download - sourced from SCOTLAND CHARTS rds file
+top_download_scotfile <- top_scot %>%
+  # messing about with date format hopefully not needed.
+  # mutate(month=as.POSIXct(strptime(month, "%Y-%m-%d")),
+  #        month=format(month,"%b %y"))
+  rename(chart_type=type,chart_category=category,
+         number_of_terminations=terminations,
+         average_gestation_at_termination = av_gest) %>%
+  mutate(termination_month=as.Date(month)) %>%
+  select(-chart, -month)
+
+## NHS board monthly 
+top_download_file <- readRDS(paste0(data_folder, "pregnancy/terminations/DOWNLOAD_",top_date,".rds"))%>%  
+  janitor::clean_names() %>%
+  #mutate(termination_month=as.Date(date,format=format("%B %y"))) %>%
+  mutate(termination_month=as.Date(date)) %>%
+  rename(area_name=hbres, 
+         number_of_terminations=terminations,
+         centreline_number=av_pre_pan_terminations,
+         dottedline_number=ext_av_count,
+         number_of_terminations_gest_under_10wks=x9_weeks,
+         number_of_terminations_gest_10to12wks=x10_12_weeks,
+         number_of_terminations_gest_over_12wks=x13_weeks,
+         average_gestation_at_termination = av_gest,
+         centreline_gestation = pre_pan_av_gest,
+         dottedline_gestation = ext_av_gest) %>%
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
-                             area_name=="Scotland" ~ "Scotland", TRUE ~ "Other")) %>%
-  select(termination_month, area_name, area_type, number_of_terminations,g_u10wks,g_10to12wks,g_13pluswks)
+                             area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         chart_category=case_when(area_type=="Scotland" ~ "All",
+                            area_type=="Health board" ~ "All"),
+         chart_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other")) %>%
+  select(-date)
 
+##add scotland 
+top_download <- bind_rows(top_download_file, top_download_scotfile) %>%
+  select(termination_month, area_name, area_type, chart_type, chart_category, 
+         number_of_terminations, centreline_number, dottedline_number,
+         number_of_terminations_gest_under_10wks,
+         number_of_terminations_gest_10to12wks,
+         number_of_terminations_gest_over_12wks,
+         average_gestation_at_termination, centreline_gestation, dottedline_gestation) %>%
+  arrange(area_name, area_type,chart_type, termination_month) %>%
+  #strange date formatting means so weird reformatting needed to get dates to display the way I want
+  mutate(month=as.POSIXct(strptime(termination_month, "%Y-%m-%d")),
+        termination_month=format(month,"%b %y")) %>%
+  select(-month)
+        
 saveRDS(top_download, paste0("shiny_app/data/","top_download.rds"))
-
 
 
 ##END
