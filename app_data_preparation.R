@@ -404,7 +404,7 @@ sas_data_cardiac <- sas_data_cardiac %>% rename(hb=reporting_health_board_name_c
          dep=patient_prompt_dataset_deprivation_scot_quintile,
          count=number_of_incidents,gender=gender_description) %>%
   # Formatting dates and sex
-  mutate(week_ending = as.Date(week_ending, format="%d-%b-%Y"),
+  mutate(week_ending = as.Date(week_ending, format="%d/%m/%Y"),
          sex=case_when(is.na(gender)~"Missing", gender=="" ~"Missing", gender=="MALE" ~ "Male", gender=="FEMALE" ~"Female", 
                        gender %in% c(0, 9 ) ~ "Missing", TRUE ~ as.character(gender))) %>% 
   proper() %>% #convert HB names to correct format
