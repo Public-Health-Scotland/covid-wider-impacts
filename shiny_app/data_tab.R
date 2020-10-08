@@ -230,15 +230,43 @@ output$table_filtered <- DT::renderDataTable({
   
   # Remove the underscore from column names in the table
   table_colnames  <-  gsub("_", " ", colnames(data_table()))
+
+
+  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths")) {
+    
+    data_table() <- data_table() %>% 
+      mutate(dummy_date = as.Date("Week ending", "%d %b %y")) #dummy variable to allow sorting in table
+    
+    date_sorted <- case_when(input$data_select == "rapid" ~ 9,
+                             input$data_select %in% c("aye", "nhs24", "ooh", "sas", "deaths") ~ 7)
+    
+    sorting_var <- case_when(input$data_select == "rapid" ~ 10,
+                             input$data_select %in% c("aye", "nhs24", "ooh", "sas", "deaths") ~ 8)
+    
+    DT::datatable(data_table(), style = 'bootstrap',
+                  class = 'table-bordered table-condensed',
+                  rownames = FALSE,
+                  options = list(pageLength = 20,
+                                 dom = 'tip',
+                                 autoWidth = TRUE,
+                                 columnDefs = list( #sorting variables
+                                   list(targets = date_sorted, orderData = sorting_var),
+                                   list(targets = sorting_var, visible = FALSE))
+                                 ),
+                  filter = "top",
+                  colnames = table_colnames) 
+      
+  } else {
+    DT::datatable(data_table(), style = 'bootstrap',
+                  class = 'table-bordered table-condensed',
+                  rownames = FALSE,
+                  options = list(pageLength = 20,
+                                 dom = 'tip',
+                                 autoWidth = TRUE),
+                  filter = "top",
+                  colnames = table_colnames)
+  }
   
-  DT::datatable(data_table(), style = 'bootstrap',
-                class = 'table-bordered table-condensed',
-                rownames = FALSE,
-                options = list(pageLength = 20,
-                               dom = 'tip',
-                               autoWidth = TRUE),
-                filter = "top",
-                colnames = table_colnames)
 })
 
 ###############################################.
