@@ -396,6 +396,101 @@ prepare_final_data(dataset = nhs24_cardiac, filename = "nhs24_cardiac", last_wee
 sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/Weekly_Diagnosis_SAS.csv")) %>%
   janitor::clean_names()
 
+# Change file into correct format prior to getting final specification
+# Age Bands
+sas_data_cardiac = sas_data_cardiac %>%
+  mutate(age_group = case_when(
+    between(age, 0, 4) ~ "0-4",
+    between(age, 5, 9) ~ "5-9",
+    between(age, 10, 14) ~ "10-14",
+    between(age, 15, 19) ~ "15-19",
+    between(age, 20, 24) ~ "20-24",
+    between(age, 25, 29) ~ "25-29",
+    between(age, 30, 34) ~ "30-34",
+    between(age, 35, 39) ~ "35-39",
+    between(age, 40, 44) ~ "40-44",
+    between(age, 45, 49) ~ "45-49",
+    between(age, 50, 54) ~ "50-54",
+    between(age, 55, 59) ~ "55-59",
+    between(age, 60, 64) ~ "60-64",
+    between(age, 65, 69) ~ "65-69",
+    between(age, 70, 74) ~ "70-74",
+    between(age, 75, 79) ~ "75-79",
+    between(age, 80, 84) ~ "80-84",
+    between(age, 85, 89) ~ "85-89",    
+    age >= 90 ~ "90+"))
+
+sas_data_cardiac <-  sas_data_cardiac %>%
+  mutate(hscp = "") %>% 
+  rename(nhs_board = reporting_health_board_name_current,
+         gender = gender_description,
+         deprivation_quintile = patient_prompt_dataset_deprivation_scot_quintile,
+         number_of_cases = number_of_incidents) %>% 
+  mutate(week_ending = dmy(week_ending))
+
+# remove diagnosis field as just showing total cardiac
+sas_data_cardiac <- sas_data_cardiac %>%
+  group_by(week_ending, nhs_board, hscp, age_group, gender, deprivation_quintile) %>%
+  summarise(number_of_cases = sum(number_of_cases)) %>% 
+  ungroup()
+
+sas_data_cardiac <- sas_data_cardiac %>% rename(count=number_of_cases, hb=nhs_board, 
+                                                sex=gender, dep=deprivation_quintile) %>%
+  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
+                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
+                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
+                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
+                             "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
+                             "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
+                             "90+" = "85 and over"),
+         sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "0" = NA_character_, "NOT KNOWN" = NA_character_),
+         dep = recode(dep, 
+                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
+                      "4" = "4", "5" = "5 - least deprived"),
+         week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
+         scot = "Scotland") %>% 
+  proper() # convert HB names to correct format
+
+sas_data_cardiac <- sas_data_cardiac %>% 
+  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() 
+
+# Amend this when final data available
+# %>% 
+#  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-06-28"))) #filter complete weeks (Mon-Sun)
+
+#bind old and new ooh data
+#ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
+
+# Creating totals for groups
+sas_cd_all <- sas_data_cardiac %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+sas_cd_sex <- sas_data_cardiac %>% agg_cut(grouper="sex") %>% rename(category = sex)
+sas_cd_dep <- sas_data_cardiac %>% agg_cut(grouper="dep") %>% rename(category = dep)
+sas_cd_age <- sas_data_cardiac %>% agg_cut(grouper="age") %>% rename(category = age)
+
+sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
+
+# Filter out HSC partnership for now, may include in future
+sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
+
+# Formatting file for shiny app
+prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-09-13")
+
+
+
+
+
+
+
+#old sas
+
+sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/Weekly_Diagnosis_SAS.csv")) %>%
+  janitor::clean_names()
+
 sas_data_cardiac <- mutate(sas_data_cardiac, hscp = "")
 
 #WEEKLY DATA UPDATE
