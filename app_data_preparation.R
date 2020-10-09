@@ -478,7 +478,7 @@ sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
 sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-09-13")
+prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-09-27")
 
 
 ###############################################.
