@@ -334,7 +334,7 @@ observeEvent(input$btn_cardio_modal,
                  title = "What is the data source?",
                  p("The charts provide a weekly summary of Scottish Ambulance Service emergency calls attended with historical trends for comparison purposes. 
                    The recent trend data is shown by age group, sex and broad deprivation category (SIMD). The figures presented in this tool 
-                   relate to incidents concerning both COVID-19 and non-COVID issues. Please note that the source of this data is the Unscheduled Care 
+                   relate to incidents for chest pain and heart problems concerning both COVID-19 and non-COVID issues. Please note that the source of this data is the Unscheduled Care 
                    Datamart and represents a sub-set of the total Scottish Ambulance service activity. Figures include emergencies, where a vehicle arrived 
                    at the scene of the incident, and excludes both data from resources which were cleared as ‘dealt with by another vehicle’ and air ambulance data."),
                  p("If required, more detailed analysis of SAS activity may be available on request to ",
