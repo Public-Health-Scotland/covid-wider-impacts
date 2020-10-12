@@ -304,6 +304,9 @@ prepare_final_data(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = 
 nhs24_data_cardiac <- read_csv(paste0(data_folder, "NHS24_Cardio/Weekly_Symptoms_NHS24_IR.csv")) %>% 
   janitor::clean_names()
 
+# Filter age > 44
+nhs24_data_cardiac <- nhs24_data_cardiac %>% filter(age > 44)
+
 # Change file into correct format prior to getting final specification
 # Age Bands
 nhs24_data_cardiac = nhs24_data_cardiac %>%
