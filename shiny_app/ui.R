@@ -37,9 +37,9 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                 p("Depending on the topic being looked at, information will be shown for patients in different age groups;
                     for males and females; and for people living in areas with different levels of material deprivation.
                     Information will also be shown for different locations across Scotland, such as NHS Board areas."),
-                p("This tool will be updated weekly. New releases will be published at the same time as the Public Health Scotland ",
+                p("This tool will be updated monthly. New releases will be published at the same time as the Public Health Scotland ",
                   tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/",
-                         "COVID-19 weekly report for Scotland.",  target="_blank")),
+                         "COVID-19 report for Scotland.",  target="_blank")),
                 p("Note that some numbers may not sum to the total as disclosure control methods have been applied
                     to the data in order to protect patient confidentiality."),
                 p("If you have any questions relating to the data presented please contact us at: ",
