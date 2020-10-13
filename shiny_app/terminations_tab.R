@@ -127,7 +127,7 @@ output$top_explorer <- renderUI({
                             withSpinner(plotlyOutput("top_trend_n"))),
                      column(6,
                             h4(paste0(top_title_g)),
-                            h4(paste0(top_title_g2)),
+                            h4(paste0(top_title_g2)),br(),
                             withSpinner(plotlyOutput("top_trend_g"))),
                      column(12,
                             p(top_subtitle),
@@ -180,7 +180,9 @@ plot_top_trend <- function(measure, shift, trend){
   # chart legend labels  
   centreline_name <- paste0(input$geoname_top," centreline 01/01/2018 to 29/02/2020")    
   dottedline_name <- paste0(input$geoname_top," projected") 
-  
+
+  xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
+    
   #switch y-axis according to which measure is selected
   if(measure == "terminations"){
     yaxis_plots[["title"]] <- "Number of terminations"
@@ -190,19 +192,10 @@ plot_top_trend <- function(measure, shift, trend){
     dotted_line <-  plot_data$dottedline_no
     centre_line <-  plot_data$centreline_no
     yname <- "Number of terminations"
-    xaxis_plots[["range"]] <- c(min(plot_data$month), max(plot_data$month))
-    
-    
   } else if (measure  == "av_gest") {
     #yaxis_measure <- plot_data$av_gest
     yaxis_plots[["title"]] <- "Average gestation at termination"
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10 weeks
-    xaxis_plots[["range"]] <- c(min(plot_data$month), max(plot_data$month))
-    #yaxis_plots[["tickfont"]] <- list(size=8)
-    #yaxis_plots[["titlefont"]] <- list(size=12)
-    #tickfont = list(size=14), titlefont = list(size=14)
-    
-
     tooltip_top <- c(paste0("Month: ",format(plot_data$month,"%B %Y"),"<br>",
                             "Average gestation at termination: ",format(plot_data$av_gest,digits = 1,nsmall=1)," weeks"))                           
         dotted_line <-  plot_data$dottedline_g

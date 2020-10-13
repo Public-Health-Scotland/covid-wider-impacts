@@ -1169,7 +1169,7 @@ saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_download.r
 ## Pregnancy (terminations) ----
 ###############################################.
 #field with date all antenatal booking data files prepared
-top_date <- "02102020"
+top_date <- "20201002"
 
 ## Termination data for run chart (scotland and nhs board) - monthly
 top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS_",top_date,".rds")) %>%  
@@ -1250,26 +1250,13 @@ top <- bind_rows(top_runchart, top_scot) %>%
 
 saveRDS(top, paste0("shiny_app/data/","top_data.rds"))
 
-
 ## TERMINATIONS DATA DOWNLOAD FILE FOR SHINY APP
 ## Data download to include monthly Scotland data for age/deprivation breakdown PLUS monthly data for NHS boards (excluding the small island boards)
 
-## Scotland level terminations data download - sourced from SCOTLAND CHARTS rds file
-top_download_scotfile <- top_scot %>%
-  # messing about with date format hopefully not needed.
-  # mutate(month=as.POSIXct(strptime(month, "%Y-%m-%d")),
-  #        month=format(month,"%b %y"))
-  rename(chart_type=type,chart_category=category,
-         number_of_terminations=terminations,
-         average_gestation_at_termination = av_gest) %>%
-  mutate(termination_month=as.Date(month)) %>%
-  select(-chart, -month)
-
-## NHS board monthly 
-top_download_file <- readRDS(paste0(data_folder, "pregnancy/terminations/DOWNLOAD_",top_date,".rds"))%>%  
+top_download <- read_csv(paste0(data_folder, "pregnancy/terminations/DOWNLOAD_",top_date,".csv"))%>%  
   janitor::clean_names() %>%
-  #mutate(termination_month=as.Date(date,format=format("%B %y"))) %>%
-  mutate(termination_month=as.Date(date)) %>%
+  mutate(date=as.Date(date,format="%Y-%m-%d"),
+         termination_month=format(date,"%b %Y")) %>%
   rename(area_name=hbres, 
          number_of_terminations=terminations,
          centreline_number=av_pre_pan_terminations,
@@ -1283,25 +1270,18 @@ top_download_file <- readRDS(paste0(data_folder, "pregnancy/terminations/DOWNLOA
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          chart_category=case_when(area_type=="Scotland" ~ "All",
-                            area_type=="Health board" ~ "All"),
+                                  area_type=="Health board" ~ "All"),
          chart_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
-                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other")) %>%
-  select(-date)
-
-##add scotland 
-top_download <- bind_rows(top_download_file, top_download_scotfile) %>%
+                              area_name=="Scotland" ~ "Scotland", TRUE ~ "Other")) %>%
   select(termination_month, area_name, area_type, chart_type, chart_category, 
          number_of_terminations, centreline_number, dottedline_number,
          number_of_terminations_gest_under_10wks,
          number_of_terminations_gest_10to12wks,
          number_of_terminations_gest_over_12wks,
-         average_gestation_at_termination, centreline_gestation, dottedline_gestation) %>%
-  arrange(area_name, area_type,chart_type, termination_month) %>%
-  #strange date formatting means so weird reformatting needed to get dates to display the way I want
-  mutate(month=as.POSIXct(strptime(termination_month, "%Y-%m-%d")),
-        termination_month=format(month,"%b %y")) %>%
-  select(-month)
-        
+         average_gestation_at_termination, centreline_gestation, dottedline_gestation,date) %>%
+  arrange(area_name, area_type,chart_type, date) %>% 
+  select(-date)
+
 saveRDS(top_download, paste0("shiny_app/data/","top_download.rds"))
 
 

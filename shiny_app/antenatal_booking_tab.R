@@ -175,7 +175,9 @@ plot_booking_trend <- function(measure, shift, trend){
     
     # chart legend labels  
     centreline_name <- paste0(input$geoname_booking," centreline 01/04/2019 to 29/02/2020")    
-     
+    # format max and min x-axis to show initial time period and to add padding so markers aren't cut in half at start and end of chart
+    xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting)-7, max(plot_data$week_book_starting)+7) #force x-axis to display first week of data
+    
     #switch y-axis according to which measure is selected
     if(measure == "booked_no"){
       yaxis_plots[["title"]] <- "Number of women booking"
@@ -184,18 +186,14 @@ plot_booking_trend <- function(measure, shift, trend){
       dotted_line <-  plot_data$dottedline_no
       centre_line <-  plot_data$centreline_no
       yname <- "Number of women booking"
-      xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting)) #force x-axis to display first week of data
-
-      
     } else if (measure  == "ave_gest") {
       yaxis_plots[["title"]] <- "Average gestation at booking"
-      yaxis_plots[["range"]] <- c(0, 16)  # forcing range from 0 to 16 weeks
+      yaxis_plots[["range"]] <- c(0, 16)  # forcing range from 0 to 16 weeks to ensure doesn't change when NHS board selected
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
                                   "Average gestation: ",format(plot_data$ave_gest,digits = 1,nsmall=1)," weeks"))
       dotted_line <-  plot_data$dottedline_g
       centre_line <-  plot_data$centreline_g
       yname <- "Average gestation"
-      xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting), max(plot_data$week_book_starting))
     }
     
     #Creating time trend plot
@@ -216,7 +214,7 @@ plot_booking_trend <- function(measure, shift, trend){
       add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
                   marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
       #Layout
-      layout(margin = list(b = 80, t=5, pad=5), #to avoid labels getting cut out
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots,  xaxis = xaxis_plots,
              #legend = list(x = 0.1, y = 0.1)) %>% #position of legend inside plot
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
