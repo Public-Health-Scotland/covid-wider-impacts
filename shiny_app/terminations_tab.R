@@ -217,16 +217,16 @@ plot_top_trend <- function(measure, shift, trend){
               marker = list(color = "black"), name = yname ) %>% 
     add_lines(y = ~dotted_line, name = dottedline_name,
               line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-              name = "Centreline") %>%
+              name = "Centreline", showlegend = FALSE) %>%
     add_lines(y = ~centre_line, name = centreline_name,
               line = list(color = "blue"), hoverinfo="none",
               name = "Centreline") %>%
-    # adding shifts
-    add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
-                marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>%
     # adding trends
     add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
-                marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%
+                marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
+    # adding shifts - add these last so that shifts are always visible on top of trends
+    add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
+                marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
            yaxis = yaxis_plots,  xaxis = xaxis_plots,

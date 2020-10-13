@@ -1204,7 +1204,7 @@ top <- bind_rows(top_runchart, top_scot) %>%
   mutate(dottedline_no= case_when(is.na(dottedline_no)~centreline_no,TRUE ~ dottedline_no),
          dottedline_g= case_when(is.na(dottedline_g)~centreline_g,TRUE ~ dottedline_g)) %>% #recode age group as required
   #sort data to ensure trends/shifts compare correct data points
-  arrange(area_name, area_type,type, month) %>%
+  group_by(area_name, area_type, type) %>%
   mutate(# Shift: run of 6 or more consecutive data points above or below the centreline
     # First id when this run is happening and then finding all points part of it
     # SHIFT NUMBER OF terminations
