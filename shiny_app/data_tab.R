@@ -26,7 +26,9 @@ data_table <- reactive({
          "thirteen_visit" = thirteentable,
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
-         "perinatal" = perinatal
+         "perinatal" = perinatal,
+         "top" = top_download ,
+         "ante_booking" = booking_download 
         ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -186,6 +188,10 @@ data_table <- reactive({
              "Number of deaths" = number_of_deaths_in_month,
              "Rate" = rate,
              "Type" = type)
+  } else if (input$data_select %in% "top") {
+    table_data <- table_data
+  } else if (input$data_select %in% "ante_booking") {
+    table_data <- table_data
   }
   
   table_data %>% 
