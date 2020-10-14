@@ -222,14 +222,14 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 ###############################################.
 tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
   wellPanel(
-           column(4, div(title="Select a geography level first, then select the are you want from the list.",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+           column(4, div(p(tags$b("Step 1. Select a geography level and then an area of interest.")),
                          selectInput("geotype_cancer", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
                   uiOutput("geoname_ui_cancer")),
-           column(4, div(title="Select Cancer Type",
+           column(4, div(p(tags$b("Step 2. Select all or specific cancer type")),
                          selectInput("cancer_type", label = NULL, choices = cancer_type_list,
-                                     selected = "All Cancer Types"))),
+                                     selected = "All Cancer Types")),
+                     div(radioButtons("gender", "Gender", list("All","Male","Female"), inline = TRUE, selected = "All"))),
            
            column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
                   fluidRow(br()),

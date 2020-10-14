@@ -17,7 +17,10 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type == split & area_name == input$geoname)
     } else if (tab == "cardio") {
-      trend_data <- dataset %>% # filtering data by cut and area name
+      trend_data <- dataset%>%  # filtering data by cut and area name
+       filter(type %in% split)
+    } else if (tab == "cancer") {
+      trend_data <- dataset%>%  # filtering data by cut and area name
         filter(type %in% split)
     }
  # if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
@@ -42,6 +45,13 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     } else if (tab == "cardio") {
       trend_data <- trend_data %>% 
         mutate(category = factor(category, levels = c("All", "<65", "65+")))
+    } else if (tab == "cancer") {
+      trend_data <- trend_data %>% 
+        mutate(category = factor(category, levels = c("Under 5", "5-9", "10-14", "15-19",  
+                                                      "20-24", "25-29", "30-34", 
+                                                      "35-39", "40-44", "45-49", 
+                                                      "50-54", "55-59", "60-64", 
+                                                      "65-69", "70-74", "75-79","80 and over")))
     }
   } else if (split == "condition") {
       if (tab == "cardio") {
@@ -98,6 +108,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                               data_name == "sas" ~ "Incidents: ",
                               data_name == "cath" ~ "Cases: ",
                               data_name == "drug_presc" ~ "Items prescribed: ",
+                              data_name == "cancer" ~ "Referrals: ",
                               data_name == "deaths" ~ "Deaths: ")
     
     #Text for tooltip
@@ -187,6 +198,52 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
   
 }
+
+###############################################.
+## Function for overall cancer charts ----
+###############################################.
+
+plot_overall_cancer_chart <- function(dataset) {
+  
+  yaxis_title <- "Number of referrals"
+  
+  #Modifying standard layout
+  yaxis_plots[["title"]] <- yaxis_title
+  
+  # hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "cancer") ~ "Average 2018-2019",
+  #                         data_name == "deaths" ~ "Average 2015-2019")
+  
+  # measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
+  #                           data_name == "aye" ~ "Attendances: ",
+  #                           data_name == "ooh" ~ "Consultations: ",
+  #                           data_name == "nhs24" ~ "Completed contacts: ",
+  #                           data_name == "sas" ~ "Incidents: ",
+  #                           data_name == "cath" ~ "Cases: ",
+  #                           data_name == "drug_presc" ~ "Items prescribed: ",
+  #                           data_name == "deaths" ~ "Deaths: ",
+  #                           data_name == "cancer" ~ "Referrals: ")
+  
+  #Text for tooltip
+  # tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+  #                          "<br>", measure_name, trend_data$count,
+  #                          "<br>", "Historic average: ", trend_data$count_average))
+  
+  #Creating time trend plot
+  plot_ly(data=dataset, x=~week_ending) %>%
+    # 2020 line
+    add_lines(y = ~count20, line = list(color = pal_overall[1]),
+              name = "2020") %>%
+    # Average of previous years line
+    add_lines(y = ~count19, line = list(color = pal_overall[2], dash = 'dash'),
+              name = "2019") %>%
+    #Layout
+    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+           yaxis = list(title = "Cumulative Count"), xaxis = list(title = "Week"),
+           legend = list(x = 100, y = 0.5)) %>% #position of legend
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
+  
+}
 ###############################################.
 ## # Function that creates specialty charts.   ----
 ###############################################.
@@ -247,9 +304,9 @@ plot_spec <- function(type) {
 ## Function for filtering ----
 ###############################################.
 # Function to filter the datasets for the overall charts and download data based on user input
-filter_data <- function(dataset, area = T) {
+filter_data <- function(dataset, area) {
   if (area == T) {
-    dataset %>% filter(type == "sex") %>%
+    dataset %>% filter(category == "sex") %>%
       filter(area_name == input$geoname &
                category == "All")
   } else { #this works for cath data

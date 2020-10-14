@@ -68,18 +68,16 @@ output$cancer_explorer <- renderUI({
   tagList(
     h3("Weekly pathology referrals"),
     tagList(
-      plot_box(paste0("2020 compared with the 2018-2019 average"), "cancer_overall"),
+      plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_overall"),
       
-      plot_box(paste0(cancer_chart_title, "sex"), "cancer_sex_var"),
+      plot_box(paste0("Percentage change 2019/2020"), "cancer_sex_var"),
       
-      plot_box(paste0(cancer_chart_title, "age group"), "cancer_age_var"),
+      # fluidRow(column(6, h4(paste0(cancer_chart_title, "SIMD quintile")))),
       
-      fluidRow(column(6, h4(paste0(cancer_chart_title, "SIMD quintile")))),
+      # fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
+        #                    icon = icon('question-circle'))),
       
-      fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
-                            icon = icon('question-circle'))),
-      
-      plot_box(paste0(cancer_chart_title, "SIMD quintile"), "cancer_depr_var")))
+      # plot_box(paste0(cancer_chart_title, "SIMD quintile"), "cancer_depr_var")))
   
 })
 
@@ -90,8 +88,8 @@ output$cancer_explorer <- renderUI({
 
 output$cancer_overall <- renderPlotly({plot_overall_chart(cancer_data_type(), data_name = "cancer")})
 output$cancer_sex_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_sex, "sex", tab = "cancer")})
-output$cancer_age_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_age, "age", tab = "cancer")})
-output$cancer_depr_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_depr, "dep", tab = "cancer")})
+# output$cancer_age_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_age, "age", tab = "cancer")})
+# output$cancer_depr_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_depr, "dep", tab = "cancer")})
 
 
 ###############################################.
