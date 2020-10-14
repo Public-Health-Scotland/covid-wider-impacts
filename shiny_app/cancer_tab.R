@@ -22,12 +22,22 @@ observeEvent(input$btn_cancer_modal,
 ## Reactive datasets ----
 ###############################################.
 
+# graph of cumulative incidence by week
+
 cancer_data_hb <- reactive({
-  cancer_data %>% filter(health_board_name == input$geoname_cancer) 
+  cancer_data2 %>% filter(category == "sex", type == input$gender) %>% 
+    group_by(week_ending) %>%
+    summarise(count = n()) %>% 
+ #   mutate(cum_hb = cumsum(count)) %>% 
+    ungroup()
 })
 
 cancer_data_type <- reactive({
-  cancer_data_hb() %>% filter(site_descript == input$cancer_type_select) 
+  cancer_data_hb() %>% filter(site == input$cancer_type_select) %>% 
+    group_by(week_ending) %>%
+    summarise(count = n()) %>% 
+    mutate(cum_ct = cumsum(count)) %>% 
+    ungroup()
 })
 
 
@@ -40,7 +50,7 @@ cancer_data_type <- reactive({
 output$geoname_ui_cancer <- renderUI({
   #Lists areas available in   
   areas_summary_cancer <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_cancer])
-  selectizeInput("geoname_cancer", label = NULL, choices = areas_summary_cancer, selected = "")
+  selectizeInput("geoname_cancer", label = NULL, choices = areas_summary_cancer, selected = "Scotland")
 })
 
 
@@ -50,27 +60,50 @@ output$geoname_ui_cancer <- renderUI({
 output$cancer_explorer <- renderUI({
   
   # text for titles of cut charts
-  dataset <- case_when(input$cancer_type_select == "breast" ~ "breast",
-                       input$cancer_type_select == "cervical" ~ "cervical",
-                       input$cancer_type_select == "colorectal" ~ "colorectal",
-                       input$cancer_type_select == "headandneck" ~ "headandneck",
-                       input$cancer_type_select == "lung" ~ "lung",
-                       input$cancer_type_select == "lymphoma" ~ "lymphoma",
-                       input$cancer_type_select == "melanoma" ~ "melanoma",
-                       input$cancer_type_select == "ovarian" ~ "ovarian",
-                       input$cancer_type_select == "uppergi" ~ "uppergi",
-                       input$cancer_type_select == "urological" ~ "urological")
+  cancer_site <- case_when(input$cancer_type_select == "All Types" ~ "All Cancers",
+                       input$cancer_type_select == "Bladder" ~ "Bladder",
+                       input$cancer_type_select == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
+                       input$cancer_type_select == "Breast" ~ "Breast",
+                       input$cancer_type_select == "Colorectal" ~ "Colorectal",
+                       input$cancer_type_select == "Head and Neck" ~ "Head and Neck",
+                       input$cancer_type_select == "Hodgkin Lymphoma" ~ "Hodgkin Lymphoma",
+                       input$cancer_type_select == "Kidney" ~ "Kidney",
+                       input$cancer_type_select == "Leukaemias" ~ "Leukaemias",
+                       input$cancer_type_select == "Liver and Intrahepatic Bile Ducts" ~ "Liver and Intrahepatic Bile Ducts",
+                       input$cancer_type_select == "Malignant Brain Cancer" ~ "Malignant Brain Cancer",
+                       input$cancer_type_select == "Malignant Melanoma of the Skin" ~ "Malignant Melanoma of the Skin",
+                       input$cancer_type_select == "Mesothelioma" ~ "Mesothelioma",
+                       input$cancer_type_select == "Multiple Myeloma and malignant plasma cell neoplasms" ~ "Multiple Myeloma and malignant plasma cell neoplasms",
+                       input$cancer_type_select == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
+                       input$cancer_type_select == "Oesophagus" ~ "Oesophagus",
+                       input$cancer_type_select == "Other" ~ "Other",
+                       input$cancer_type_select == "Ovary - Females Only" ~ "Ovary - Females Only",
+                       input$cancer_type_select == "Pancreas" ~ "Pancreas",
+                       input$cancer_type_select == "Penis - Males Only" ~ "Penis - Males Only",
+                       input$cancer_type_select == "Prostate - Males Only" ~ "Prostate - Males Only",
+                       input$cancer_type_select == "Stomach" ~ "Stomach",
+                       input$cancer_type_select == "Testis - Males Only" ~ "Testis - Males Only",
+                       input$cancer_type_select == "Thyroid" ~ "Thyroid",
+                       input$cancer_type_select == "Trachea, Bronchus & Lung" ~ "Trachea, Bronchus & Lung",
+                       input$cancer_type_select == "Uterus - Females Only" ~ "Uterus - Females Only",
+                       input$cancer_type_select == "Vagina - Females Only" ~ "Vagina - Females Only",
+                       input$cancer_type_select == "Vulva - Females Only" ~ "Vulva - Females Only"
+                       )
   
   
-  cancer_chart_title <- paste0("Percentage change in number of pathology referrals for ", dataset, 
-                               " cancer compared with the corresponding time in 2018-2019 by ")
+  cancer_chart_title <- paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site, 
+                               " type, compared with the corresponding time in 2018-2019 by week")
   
   tagList(
     h3("Weekly pathology referrals"),
+    
     tagList(
-      plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_overall"),
+      plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_overall")))
+    
+    
+
       
-      plot_box(paste0("Percentage change 2019/2020"), "cancer_sex_var"),
+      # plot_cut_box(paste0("Percentage change 2019/2020"), "cancer_cat", "Screening Percentage Change 2019/22020", cancer_scr)))
       
       # fluidRow(column(6, h4(paste0(cancer_chart_title, "SIMD quintile")))),
       
@@ -86,11 +119,13 @@ output$cancer_explorer <- renderUI({
 ###############################################.
 # Creating plots for each cut and dataset
 
-output$cancer_overall <- renderPlotly({plot_overall_chart(cancer_data_type(), data_name = "cancer")})
-output$cancer_sex_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_sex, "sex", tab = "cancer")})
-# output$cancer_age_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_age, "age", tab = "cancer")})
-# output$cancer_depr_var <- renderPlotly({plot_trend_chart(cancer_data_type(), pal_depr, "dep", tab = "cancer")})
+output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data2 
+                                          %>% filter(hbres == input$geoname_cancer))})
 
+
+# output$cancer_cat <- renderPlotly({plot_trend_chart(cancer_data_hb(), data_name = input$geoname_cancer, split = c("all","age","sex","simd"), area = F)})
+
+# output$cancer_scr <- renderPlotly({plot_trend_chart(cancer_data_hb(), data_name = input$geoname_cancer, split = , area = F)})
 
 ###############################################.
 ## Data downloads ----

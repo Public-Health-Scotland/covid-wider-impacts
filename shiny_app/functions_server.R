@@ -19,9 +19,6 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     } else if (tab == "cardio") {
       trend_data <- dataset%>%  # filtering data by cut and area name
        filter(type %in% split)
-    } else if (tab == "cancer") {
-      trend_data <- dataset%>%  # filtering data by cut and area name
-        filter(type %in% split)
     }
  # if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
   } else { # for cases outside summary tab
@@ -229,7 +226,7 @@ plot_overall_cancer_chart <- function(dataset) {
   #                          "<br>", "Historic average: ", trend_data$count_average))
   
   #Creating time trend plot
-  plot_ly(data=dataset, x=~week_ending) %>%
+  plot_ly(data=dataset, x=~week_number) %>%
     # 2020 line
     add_lines(y = ~count20, line = list(color = pal_overall[1]),
               name = "2020") %>%
