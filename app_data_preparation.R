@@ -1253,7 +1253,7 @@ saveRDS(top, paste0("shiny_app/data/","top_data.rds"))
 ## TERMINATIONS DATA DOWNLOAD FILE FOR SHINY APP
 ## Data download to include monthly Scotland data for age/deprivation breakdown PLUS monthly data for NHS boards (excluding the small island boards)
 
-top_download <- read_csv(paste0(data_folder, "pregnancy/terminations/DOWNLOAD_",top_date,".csv"))%>%  
+top_download_board <- read_csv(paste0(data_folder, "pregnancy/terminations/DOWNLOAD_",top_date,".csv"))%>%  
   janitor::clean_names() %>%
   mutate(date=as.Date(date,format="%Y-%m-%d"),
          termination_month=format(date,"%b %Y")) %>%
@@ -1284,6 +1284,18 @@ top_download <- read_csv(paste0(data_folder, "pregnancy/terminations/DOWNLOAD_",
          average_gestation_at_termination, centreline_gestation, dottedline_gestation,date) %>%
   arrange(area_name, area_type,chart_type, date) %>% 
   select(-date)
+
+top_download_scot <- top_scot %>%
+  mutate(month=as.Date(month,format="%Y-%m-%d"),
+         termination_month=format(month,"%b %Y"),
+         av_gest =format(av_gest,digits = 1, nsmall = 1)) %>%
+  rename(number_of_terminations=terminations,
+         average_gestation_at_termination = av_gest,
+         chart_category=category,
+         chart_type=type) %>%
+  select(-chart, -month)
+
+top_download <- bind_rows(top_download_board, top_download_scot)
 
 saveRDS(top_download, paste0("shiny_app/data/","top_download.rds"))
 
