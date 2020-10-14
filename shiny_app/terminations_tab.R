@@ -20,8 +20,8 @@ observeEvent(input$btn_top_rules,
              showModal(modalDialog(
                title = "How do we identify patterns in the data?",
                p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend"),
+               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
+                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
                        tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
                        tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
                p("Further information on these methods of presenting data can be found in the ",                      
@@ -112,22 +112,22 @@ output$top_explorer <- renderUI({
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                     'run charts', target="_blank")," to present the data above."),
-            p("Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Terminations of pregnancy’ chart above, the dots joined by a solid black line show the number of terminations of pregnancy in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of terminations of pregnancy over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of terminations of pregnancy."),
-            p("The ‘Average gestation at termination’ chart follows a similar format.  In this chart, the dots joined by a solid black line show the average (mean) gestation (in completed weeks of pregnancy) at which the terminations of pregnancy occurred."))
+                     'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
+            p("On the ‘Number of terminations of pregnancy’ chart above, the dots joined by a solid black line show the number of terminations of pregnancy in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of terminations of pregnancy over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of terminations of pregnancy."),
+            p("The ‘Average gestation at termination’ chart follows a similar format.  In this chart, the dots joined by a solid black line show the average (mean) gestation at which the terminations of pregnancy occurred (based on gestation at termination measured in completed weeks of pregnancy)."))
   
   # Function to create common layout to all immunisation charts
   top_layout <- function(plot_trend_n,plot_trend_g, plot_age_n,plot_age_g,plot_dep_n,plot_dep_g){
     tagList(fluidRow(column(12,
-                            h4(top_trend_title)),
+                            h4(top_trend_title),
+                            actionButton("btn_top_rules", "How do we identify patterns in the data?")),
                      column(6,
-                            h4(paste0(top_title_n)),
-                            actionButton("btn_top_rules", "How do we identify patterns in the data?"),
+                            h4(paste0(top_title_n)), br(),p(" "),
+                            #actionButton("btn_top_rules", "How do we identify patterns in the data?"),
                             withSpinner(plotlyOutput("top_trend_n"))),
                      column(6,
                             h4(paste0(top_title_g)),
-                            h4(paste0(top_title_g2)),br(),
+                            p(paste0(top_title_g2)),
                             withSpinner(plotlyOutput("top_trend_g"))),
                      column(12,
                             p(top_subtitle),
@@ -137,25 +137,25 @@ output$top_explorer <- renderUI({
               tagList(
                 fluidRow(column(12,h4("Terminations of pregnancy, by age group: Scotland"))),
                 fluidRow(column(6,
-                                h4("Number of terminations of pregnancy"),br(),
+                                h4("Number of terminations of pregnancy"),br(),p(" "),
                                 withSpinner(plotlyOutput("top_age_n"))),
                          column(6,
-                                #h4(paste0(top_dep_title_n)),
-                                h4("Average gestation at termination (completed weeks of pregnancy)"),
-                                br(),
+                                h4("Average gestation at termination"),
+                                p("(based on completed weeks of pregnancy)"),
                                 withSpinner(plotlyOutput("top_age_g")))),
                 fluidRow(column(12,h4("Terminations of pregnancy, by deprivation: Scotland"),
                                 actionButton("btn_modal_simd_top", "What is SIMD and deprivation?",
                                              icon = icon('question-circle')))),
                 fluidRow(column(6,
-                                h4("Number of terminations of pregnancy"),br(), 
+                                h4("Number of terminations of pregnancy"),br(),p(" "), 
                                 withSpinner(plotlyOutput("top_dep_n"))),
                          column(6,
-                                h4("Average gestation at termination (completed weeks of pregnancy)"),br(),
+                                h4("Average gestation at termination"),
+                                p("(based on completed weeks of pregnancy)"),
                                 withSpinner(plotlyOutput("top_dep_g"))))
               )#tagList from if statement
             })
-}
+  }
   
   #link plot functions to layouts
   top_layout(plot_trend_n="top_trend_n", plot_trend_g="top_trend_g",
@@ -178,9 +178,9 @@ plot_top_trend <- function(measure, shift, trend){
   } else {
     
   # chart legend labels  
-  centreline_name <- paste0(input$geoname_top," centreline 01/01/2018 to 29/02/2020")    
-  dottedline_name <- paste0(input$geoname_top," projected") 
+  centreline_name <- paste0(input$geoname_top," average up to end Feb 2020")    
 
+  # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
   xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
     
   #switch y-axis according to which measure is selected
@@ -208,7 +208,7 @@ plot_top_trend <- function(measure, shift, trend){
     add_lines(y = ~get(measure),  
               line = list(color = "black"), text=tooltip_top, hoverinfo="text",
               marker = list(color = "black"), name = yname ) %>% 
-    add_lines(y = ~dotted_line, name = dottedline_name,
+    add_lines(y = ~dotted_line, name = FALSE,
               line = list(color = "blue", dash = "longdash"), hoverinfo="none",
               name = "Centreline", showlegend = FALSE) %>%
     add_lines(y = ~centre_line, name = centreline_name,

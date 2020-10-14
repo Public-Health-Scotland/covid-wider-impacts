@@ -102,11 +102,13 @@ six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
-#Pregancy data
+## perinatal mortality data
+perinatal <- readRDS("data/perinatal_data.rds")
+
+#Pregnancy tab
 #antenatal booking
 booking_extract_date <- "7th October 2020"
 booking <- readRDS("data/ante_booking_data.rds")
-#booking_number_download <- readRDS("data/ante_booking_number_download.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
@@ -114,13 +116,9 @@ top_extract_date <- "2nd October 2020"
 top <- readRDS("data/top_data.rds")
 top_download <- readRDS("data/top_download.rds")
 
-
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
-
-## perinatal mortality data
-perinatal <- readRDS("data/perinatal_data.rds")
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)",

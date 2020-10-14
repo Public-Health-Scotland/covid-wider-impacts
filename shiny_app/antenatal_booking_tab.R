@@ -4,8 +4,9 @@
 observeEvent(input$btn_booking_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("The Antenatal Booking Data presented is based on a new data collection established as a rapid response to COVID-19. Data is collected each week, from the clinical information system (BadgerNet Maternity (most NHS boards), TrakCare Maternity (Lothian) or Eclipse (A&A) used by the midwives who ‘book’ the pregnant woman for maternity care."),
-               p("Historic data from APRIL 2019 was also collected as a ‘catch-up’ extract in order to identify all women who were currently pregnant during the COVID-19 period. This was either from the same source or - in Tayside and Highland - from the systems in use before the introduction of BadgerNet Maternity."),
+               p("The Antenatal Booking Data presented is based on a new data collection established as a rapid response to COVID-19. Data is collected each week, from the clinical information system (BadgerNet Maternity (most NHS boards), TrakCare Maternity (Lothian) or Eclipse (A&A) used by the midwives who ‘book’ the pregnant woman for maternity care."),br(),
+               p("Historic data from April 2019 was also collected as a ‘catch-up’ extract in order to identify all women who were currently pregnant during the COVID-19 period. This was either from the same source or - in Tayside and Highland - from the systems in use before the introduction of BadgerNet Maternity."),br(),
+               p("The charts presented on this page show the number of women booking for antenatal care in each week from the week beginning 1 April 2019 onwards.  Data is shown at all Scotland level and for each mainland NHS Board of residence.  Due to small numbers, weekly data is not shown for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles), however the Island Boards are included in the Scotland total.  In addition to the weekly data, the ‘Download data’ button provides monthly data (based on exact month of booking rather than summation of sequential weeks) for each NHS Board of residence, including the Island Boards."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -14,8 +15,8 @@ observeEvent(input$btn_booking_rules,
              showModal(modalDialog(
                title = "How do we identify patterns in the data?",
                p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend"),
+               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
+                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
                        tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
                        tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
                p("Further information on these methods of presenting data can be found in the ",                      
@@ -108,22 +109,22 @@ output$booking_explorer <- renderUI({
   chart_explanation <- 
     tagList(p("We have used ",                      
       tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-             'run charts', target="_blank")," to present the data above."),
-      p("Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-      p("On the ‘Women booking for antenatal care’ chart above, the dots joined by a solid black line show the number of women booking for antenatal care in each week from the week beginning 1 April 2019 onwards.  The solid blue centreline on the chart shows the average (median) number of bookings over the period April 2019 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of women booking."),
-      p("The ‘Average gestation at booking’ chart follows a similar format.  In this chart, the dots joined by a solid black line show the average (mean) gestation (in completed weeks of pregnancy) at which women booked for their antenatal care."))
+             'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
+      p("On the ‘Number of women booking for antenatal care’ chart above, the dots joined by a solid black line show the number of women booking for antenatal care in each week from the week beginning 1 April 2019 onwards. The solid blue centreline on the chart shows the average (median) number of bookings per week over the period April 2019 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of women booking."),
+      p("The ‘Average gestation at booking’ chart follows a similar format. In this chart, the dots joined by a solid black line show the average (mean) gestation at which women booked for their antenatal care (based on gestation at booking measured in completed weeks of pregnancy)."))
   
   # Function to create common layout to all immunisation charts
   booking_layout <- function(plot_trend_n,plot_trend_g, plot_age_n, plot_age_g, plot_dep_n, plot_dep_g){
     tagList(fluidRow(column(12,
-                            h4(booking_trend_title)),
+                            h4(booking_trend_title),
+                            actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
                      column(6,
-                            h4(paste0(booking_title_n)),
-                            actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
+                            h4(paste0(booking_title_n)), br(), p(" "),
+                            #actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
                             withSpinner(plotlyOutput("booking_trend_n"))),
                      column(6,
                             h4(paste0(booking_title_g)),
-                            h4(paste0(booking_title_g2)),
+                            p(paste0(booking_title_g2)),
                             withSpinner(plotlyOutput("booking_trend_g"))),
                      column(12,
                             p(booking_subtitle),
@@ -133,19 +134,23 @@ output$booking_explorer <- renderUI({
               tagList(
                 fluidRow(column(12,h4("Women booking for antenatal care, by age group: Scotland"))),
                 fluidRow(column(6,
-                                h4("Number of women booking for antenatal care"),br(),
+                                h4("Number of women booking for antenatal care"),
+                                br(),p(" "), #required to balance out alignment of charts in columns
                                 withSpinner(plotlyOutput("booking_age_n"))),
                          column(6,
-                                h4("Average gestation at booking (completed weeks of pregnancy)"),br(),
+                                h4("Average gestation at booking"),
+                                p("(completed weeks of pregnancy)"),
                                 withSpinner(plotlyOutput("booking_age_g"))),
                          fluidRow(column(12,h4("Women booking for antenatal care, by deprivation: Scotland"),
                                          actionButton("btn_modal_simd_booking", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          column(6,
-                                h4("Number of women booking for antenatal care"),br(),
+                                h4("Number of women booking for antenatal care"),
+                                br(),p(" "), #required to balance out alignment of charts in columns
                                 withSpinner(plotlyOutput("booking_dep_n"))),
                          column(6,
-                                h4("Average gestation at booking (completed weeks of pregnancy)"),br(),
+                                h4("Average gestation at booking"),
+                                p("(completed weeks of pregnancy)"),
                                 withSpinner(plotlyOutput("booking_dep_g"))))
               )#tagList from if statement
             })#close top taglist
@@ -174,7 +179,7 @@ plot_booking_trend <- function(measure, shift, trend){
   } else {
     
     # chart legend labels  
-    centreline_name <- paste0(input$geoname_booking," centreline 01/04/2019 to 29/02/2020")    
+    centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")    
     # format max and min x-axis to show initial time period and to add padding so markers aren't cut in half at start and end of chart
     xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting)-7, max(plot_data$week_book_starting)+7) #force x-axis to display first week of data
     

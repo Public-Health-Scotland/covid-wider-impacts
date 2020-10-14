@@ -243,7 +243,7 @@ tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking
                    uiOutput("booking_explorer")
          )# mainPanel bracket
 ), #tab panel
-tabPanel(title = "Terminations", icon = icon("bars"), value = "terminations",
+tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "terminations",
           wellPanel(
             column(4, div(title="Select a breakdown",
                           p(tags$b("Step 1. Select a geography level and then an area of interest.")),
