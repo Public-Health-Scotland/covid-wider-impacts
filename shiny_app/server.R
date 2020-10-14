@@ -62,15 +62,16 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_top, {updateTabsetPanel(session, "intabset", selected = "comment")})
   
 #trying to find way to link multiple action buttons to one observeEvent - sort of works but then creates an loop with undesired effect
-observe({
-    input_btn <- paste0("jump_commentary_", input$intabset)
-    lapply(input_btn,
-           function(x){
-             observeEvent(
-               input[[x]],
-               {updateTabsetPanel(session, "intabset", selected = "comment")}
-             )}
-    )})
+#keep commented out 
+  # observe({
+#     input_btn <- paste0("jump_commentary_", input$intabset)
+#     lapply(input_btn,
+#            function(x){
+#              observeEvent(
+#                input[[x]],
+#                {updateTabsetPanel(session, "intabset", selected = "comment")}
+#              )}
+#     )})
 
 ## ObserveEvents to open collapsepanels in commentary tab when sidepanel option clicked
    observeEvent(input$summary_button, ({
