@@ -139,7 +139,7 @@ output$booking_explorer <- renderUI({
                                 withSpinner(plotlyOutput("booking_age_n"))),
                          column(6,
                                 h4("Average gestation at booking"),
-                                p("(completed weeks of pregnancy)"),
+                                p("(based on completed weeks of pregnancy)"),
                                 withSpinner(plotlyOutput("booking_age_g"))),
                          fluidRow(column(12,h4("Women booking for antenatal care, by deprivation: Scotland"),
                                          actionButton("btn_modal_simd_booking", "What is SIMD and deprivation?",
@@ -150,7 +150,7 @@ output$booking_explorer <- renderUI({
                                 withSpinner(plotlyOutput("booking_dep_n"))),
                          column(6,
                                 h4("Average gestation at booking"),
-                                p("(completed weeks of pregnancy)"),
+                                p("(based on completed weeks of pregnancy)"),
                                 withSpinner(plotlyOutput("booking_dep_g"))))
               )#tagList from if statement
             })#close top taglist
