@@ -305,7 +305,7 @@ nhs24_data_cardiac <- read_csv(paste0(data_folder, "NHS24_Cardio/Weekly_Symptoms
   janitor::clean_names()
 
 # Filter age > 44
-nhs24_data_cardiac <- nhs24_data_cardiac %>% filter(age > 44)
+#nhs24_data_cardiac <- nhs24_data_cardiac %>% filter(age > 44)
 
 # Change file into correct format prior to getting final specification
 # Age Bands
