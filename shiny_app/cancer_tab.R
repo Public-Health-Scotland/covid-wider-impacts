@@ -30,16 +30,6 @@ cancer_data_cum_site <- reactive({
   cancer_data_cum %>% filter(category == "HB", site == input$cancer_type) 
 })
 
-# graph of cumulative incidence by week
-
-# cancer_data_type <- reactive({
-#   cancer_data_hb() %>% filter(site == input$cancer_type_select) %>% 
-#     group_by(week_ending) %>%
-#     summarise(count = n()) %>% 
-#     mutate(cum_ct = cumsum(count)) %>% 
-#     ungroup()
-# })
-
 
 
 ###############################################.
@@ -105,18 +95,7 @@ output$cancer_explorer <- renderUI({
         h3("Weekly pathology referrals"),
         plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_site"))
     }
-    
-
-      
-      # plot_cut_box(paste0("Percentage change 2019/2020"), "cancer_cat", "Screening Percentage Change 2019/22020", cancer_scr)))
-      
-      # fluidRow(column(6, h4(paste0(cancer_chart_title, "SIMD quintile")))),
-      
-      # fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?", 
-        #                    icon = icon('question-circle'))),
-      
-      # plot_box(paste0(cancer_chart_title, "SIMD quintile"), "cancer_depr_var")))
-  
+   
 })
 
 ###############################################.
@@ -127,10 +106,6 @@ output$cancer_explorer <- renderUI({
 output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
 output$cancer_site <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_site())})
 
-
-# output$cancer_cat <- renderPlotly({plot_trend_chart(cancer_data_hb(), data_name = input$geoname_cancer, split = c("all","age","sex","simd"), area = F)})
-
-# output$cancer_scr <- renderPlotly({plot_trend_chart(cancer_data_hb(), data_name = input$geoname_cancer, split = , area = F)})
 
 ###############################################.
 ## Data downloads ----

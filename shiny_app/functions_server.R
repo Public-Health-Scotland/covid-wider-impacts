@@ -207,18 +207,7 @@ plot_overall_cancer_chart <- function(dataset) {
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  # hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "cancer") ~ "Average 2018-2019",
-  #                         data_name == "deaths" ~ "Average 2015-2019")
-  
-  # measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
-  #                           data_name == "aye" ~ "Attendances: ",
-  #                           data_name == "ooh" ~ "Consultations: ",
-  #                           data_name == "nhs24" ~ "Completed contacts: ",
-  #                           data_name == "sas" ~ "Incidents: ",
-  #                           data_name == "cath" ~ "Cases: ",
-  #                           data_name == "drug_presc" ~ "Items prescribed: ",
-  #                           data_name == "deaths" ~ "Deaths: ",
-  #                           data_name == "cancer" ~ "Referrals: ")
+  # hist_legend <- 
   
   #Text for tooltip
   # tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
@@ -228,10 +217,10 @@ plot_overall_cancer_chart <- function(dataset) {
   #Creating time trend plot
   plot_ly(data=dataset, x=~week_number) %>%
     # 2020 line
-    add_lines(y = ~count20, line = list(color = pal_overall[1]),
+    add_lines(y = ~count20_cum, line = list(color = pal_overall[1]),
               name = "2020") %>%
     # Average of previous years line
-    add_lines(y = ~count19, line = list(color = pal_overall[2], dash = 'dash'),
+    add_lines(y = ~count19_cum, line = list(color = pal_overall[2], dash = 'dash'),
               name = "2019") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
