@@ -22,23 +22,23 @@ observeEvent(input$btn_cancer_modal,
 ## Reactive datasets ----
 ###############################################.
 
+cancer_data_cum_main <- reactive({
+  cancer_data_cum %>% filter(site == "All", type == input$gender) 
+})
+
+cancer_data_cum_site <- reactive({
+  cancer_data_cum %>% filter(category == "HB", site == input$cancer_type) 
+})
+
 # graph of cumulative incidence by week
 
-cancer_data_hb <- reactive({
-  cancer_data2 %>% filter(category == "sex", type == input$gender) %>% 
-    group_by(week_ending) %>%
-    summarise(count = n()) %>% 
- #   mutate(cum_hb = cumsum(count)) %>% 
-    ungroup()
-})
-
-cancer_data_type <- reactive({
-  cancer_data_hb() %>% filter(site == input$cancer_type_select) %>% 
-    group_by(week_ending) %>%
-    summarise(count = n()) %>% 
-    mutate(cum_ct = cumsum(count)) %>% 
-    ungroup()
-})
+# cancer_data_type <- reactive({
+#   cancer_data_hb() %>% filter(site == input$cancer_type_select) %>% 
+#     group_by(week_ending) %>%
+#     summarise(count = n()) %>% 
+#     mutate(cum_ct = cumsum(count)) %>% 
+#     ungroup()
+# })
 
 
 
@@ -60,7 +60,7 @@ output$geoname_ui_cancer <- renderUI({
 output$cancer_explorer <- renderUI({
   
   # text for titles of cut charts
-  cancer_site <- case_when(input$cancer_type_select == "All Types" ~ "All Cancers",
+  cancer_site <- case_when(input$cancer_type_select == "All Types" ~ "All",
                        input$cancer_type_select == "Bladder" ~ "Bladder",
                        input$cancer_type_select == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
                        input$cancer_type_select == "Breast" ~ "Breast",
@@ -94,12 +94,17 @@ output$cancer_explorer <- renderUI({
   cancer_chart_title <- paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site, 
                                " type, compared with the corresponding time in 2018-2019 by week")
   
-  tagList(
-    h3("Weekly pathology referrals"),
+
     
+   if(input$cancer_type == "All") {
     tagList(
-      plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_overall")))
-    
+      h3("Weekly pathology referrals"),
+      plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_overall"))
+    } else {
+      tagList(
+        h3("Weekly pathology referrals"),
+        plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_site"))
+    }
     
 
       
@@ -119,8 +124,8 @@ output$cancer_explorer <- renderUI({
 ###############################################.
 # Creating plots for each cut and dataset
 
-output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data2 
-                                          %>% filter(hbres == input$geoname_cancer))})
+output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
+output$cancer_site <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_site())})
 
 
 # output$cancer_cat <- renderPlotly({plot_trend_chart(cancer_data_hb(), data_name = input$geoname_cancer, split = c("all","age","sex","simd"), area = F)})
