@@ -53,25 +53,27 @@ function(input, output, session) {
   observeEvent(input$jump_to_top, {updateTabsetPanel(session, "intabset", selected = "terminations")})
   
 # To jump to commentary tab - requires multiple lines becuase action buttons must have unique ID
-  observeEvent(input$jump_commentary_child, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  observeEvent(input$jump_commentary_booking, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  observeEvent(input$jump_commentary_top, {updateTabsetPanel(session, "intabset", selected = "comment")})
+  observeEvent(input$jump_commentary_child, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Immunisation")})
   
-#trying to find way to link multiple action buttons to one observeEvent - sort of works but then creates an loop with undesired effect
-#keep commented out 
-  # observe({
-#     input_btn <- paste0("jump_commentary_", input$intabset)
-#     lapply(input_btn,
-#            function(x){
-#              observeEvent(
-#                input[[x]],
-#                {updateTabsetPanel(session, "intabset", selected = "comment")}
-#              )}
-#     )})
+  observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Child health reviews")})
+  
+  observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Cardiovascular")})
+  
+  observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Summary trends")})
+  
+  observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Stillbirths and infant deaths")})
+  
+  observeEvent(input$jump_commentary_booking, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Antenatal bookings")})
+  
+  observeEvent(input$jump_commentary_top, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")})
+  
 
 ## ObserveEvents to open collapsepanels in commentary tab when sidepanel option clicked
    observeEvent(input$summary_button, ({
