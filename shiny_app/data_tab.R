@@ -27,7 +27,7 @@ data_table <- reactive({
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
          "perinatal" = perinatal,
-         "top" = top_download ,
+        # "top" = top_download ,
          "ante_booking" = booking_download 
         ) %>% 
     # Note: character variables are converted to factors in each

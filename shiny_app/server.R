@@ -29,7 +29,7 @@ function(input, output, session) {
   ###############################################.
   # Pregnancy tabs
   source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
-  source(file.path("terminations_tab.R"),  local = TRUE)$value
+  #source(file.path("terminations_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Perinatal tab
