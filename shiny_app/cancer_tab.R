@@ -23,11 +23,11 @@ observeEvent(input$btn_cancer_modal,
 ###############################################.
 
 cancer_data_cum_main <- reactive({
-  cancer_data_cum %>% filter(site == "All", type == input$gender) 
+  cancer_data %>% filter(type == input$gender)
 })
 
 cancer_data_cum_site <- reactive({
-  cancer_data_cum %>% filter(category == "HB", site == input$cancer_type) 
+  cancer_data %>% filter(type == input$cancer_type) 
 })
 
 

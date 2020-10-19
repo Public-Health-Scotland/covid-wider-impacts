@@ -217,10 +217,10 @@ plot_overall_cancer_chart <- function(dataset) {
   #Creating time trend plot
   plot_ly(data=dataset, x=~week_number) %>%
     # 2020 line
-    add_lines(y = ~count20_cum, line = list(color = pal_overall[1]),
+    add_lines(y = ~cum_count20, line = list(color = pal_overall[1]),
               name = "2020") %>%
     # Average of previous years line
-    add_lines(y = ~count19_cum, line = list(color = pal_overall[2], dash = 'dash'),
+    add_lines(y = ~cum_count19, line = list(color = pal_overall[2], dash = 'dash'),
               name = "2019") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
