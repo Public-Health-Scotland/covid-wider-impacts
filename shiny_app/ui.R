@@ -225,8 +225,8 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
            column(4, div(p(tags$b("Step 1. Select a geography level and then an area of interest.")),
                          selectInput("geotype_cancer", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
-                  uiOutput("geoname_ui_cancer"),
-                  div(radioButtons("split", "Data Type", list("Cumulative","Incidence"), inline = TRUE, selected = "Cumulative"))),
+                  uiOutput("geoname_ui_cancer")),
+                  
            column(4, div(p(tags$b("Step 2. Select all or specific cancer type")),
                          selectInput("cancer_type", label = NULL, choices = cancer_type_list,
                                      selected = "All Cancer Types")),
@@ -237,8 +237,10 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
                   fluidRow(br()),
                   downloadButton('download_cancer_data', 'Download data'),
                   fluidRow(br()),
-                  actionButton('jump_commentary_cancer','Go to commentary')
-           )
+                  actionButton('jump_commentary_cancer','Go to commentary'),
+                  fluidRow(br()),
+                  div(radioButtons("data", "Data Type", list("Cumulative","Incidence"), 
+                                   inline = TRUE, selected = "Cumulative")))
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("cancer_explorer")

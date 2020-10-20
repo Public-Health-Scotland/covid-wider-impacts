@@ -475,8 +475,8 @@ diff_data <- cancer_combined %>%
 # save as excel  and RDS file
 #write_xlsx(cancer_joined, "CWT Dashboard Input Data.xlsx")
 
-saveRDS(diff_data, "data/cancer_data_1.rds")
-saveRDS(cancer_dist, "data/cancer_data_2.rds")
+saveRDS(diff_data, "data/cancer_data1.rds")
+saveRDS(cancer_dist, "data/cancer_data2.rds")
 
 
 #############################################################################################

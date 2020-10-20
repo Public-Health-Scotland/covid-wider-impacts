@@ -22,17 +22,22 @@ observeEvent(input$btn_cancer_modal,
 ## Reactive datasets ----
 ###############################################.
 
+
+
+
 cancer_data_cum_main <- reactive({
-  cancer_data %>% filter(type == input$gender, area == "Scotland")
+  cancer_data %>% filter(type == input$gender, area == input$geoname_cancer)
 })
 
 cancer_data_cum_site <- reactive({
-  cancer_data %>% filter(type == input$cancer_type, area == "Scotland") 
+  cancer_data %>% filter(type == input$cancer_type) 
 })
 
 cancer_data_cum_split <- reactive({
-  cancer_data %>% filter(category == input$split_type, area == input$geoname_cancer)
+  cancer_data %>% filter(category == input$split, area == input$geoname_cancer)
 })
+
+
 
 
 ###############################################.
@@ -43,7 +48,11 @@ cancer_data_cum_split <- reactive({
 output$geoname_ui_cancer <- renderUI({
   #Lists areas available in   
   areas_summary_cancer <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_cancer])
-  selectizeInput("geoname_cancer", label = NULL, choices = areas_summary_cancer, selected = "Scotland")
+  if(input$geotype_cancer != "Scotland") {
+  selectizeInput("geoname_cancer", label = NULL, choices = areas_summary_cancer, selected = areas_summary_cancer[1])
+  } else {
+    selectizeInput("geoname_cancer", label = NULL, choices = "Scotland", selected = "Scotland")  
+  }  
 })
 
 
@@ -51,6 +60,9 @@ output$geoname_ui_cancer <- renderUI({
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$cancer_explorer <- renderUI({
+  
+  
+  
   
   # text for titles of cut charts
   cancer_site <- case_when(input$cancer_type_select == "All Types" ~ "All",
@@ -82,24 +94,30 @@ output$cancer_explorer <- renderUI({
                        input$cancer_type_select == "Vagina - Females Only" ~ "Vagina - Females only",
                        input$cancer_type_select == "Vulva - Females Only" ~ "Vulva - Females only"
                        )
-  
-  
-  cancer_chart_title <- paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site, 
-                               " type, compared with the corresponding time in 2018-2019 by week")
-  
 
-    
-   if(input$cancer_type == "All") {
+
+  
+  if(input$geotype_cancer == "Scotland") {
+    # disable("geoname_cancer")
+    enable("cancer_type")
+    enable("gender")
     tagList(
       h3("Weekly pathology referrals"),
-      plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_overall"),
-      plot_box(paste0("Percentage change between 2019 and 2020"), "cancer_split"))
-    } else {
-      tagList(
-        h3("Weekly pathology referrals"),
-        plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_site"),
-        plot_box(paste0("Percentage change between 2019 and 2020"), "cancer_split"))
-    }
+      plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
+                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
+      plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
+                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
+  } else {
+    # enable("geoname_cancer")
+    disable("cancer_type")
+    disable("gender")
+    tagList(
+      h3("Weekly pathology referrals"),
+      plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
+                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_site"),
+      plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
+                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
+  }  
    
 })
 
@@ -111,7 +129,7 @@ output$cancer_explorer <- renderUI({
 output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
 output$cancer_site <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_site())})
 
-output$cancer_split <- renderPlotly({plot_cancer_trend_chart(cancer_data_cum_main(), pal_sex, 
+output$cancer_split <- renderPlotly({plot_cancer_trend_chart(cancer_data_cum_split(), pal_sex, 
                                                       split = input$split)})
 
 ###############################################.
