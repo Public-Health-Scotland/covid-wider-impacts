@@ -35,8 +35,7 @@ data_table <- reactive({
         ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
-    # This is because dropdown prompts on the table filters only
-    # appear for factors
+    # This is because dropdown prompts on the table filters only appear for factors
     mutate_if(is.character, as.factor) 
   
   if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths")) {
@@ -234,8 +233,8 @@ output$table_filtered <- DT::renderDataTable({
 
   if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths")) {
     
-    data_table() <- data_table() %>% 
-      mutate(dummy_date = as.Date("Week ending", "%d %b %y")) #dummy variable to allow sorting in table
+    data_table_sort <- data_table() %>% 
+      mutate(dummy_date = as.Date(Week_ending, "%d %b %y")) #dummy variable to allow sorting in table
     
     date_sorted <- case_when(input$data_select == "rapid" ~ 9,
                              input$data_select %in% c("aye", "nhs24", "ooh", "sas", "deaths") ~ 7)
@@ -243,7 +242,7 @@ output$table_filtered <- DT::renderDataTable({
     sorting_var <- case_when(input$data_select == "rapid" ~ 10,
                              input$data_select %in% c("aye", "nhs24", "ooh", "sas", "deaths") ~ 8)
     
-    DT::datatable(data_table(), style = 'bootstrap',
+    DT::datatable(data_table_sort, style = 'bootstrap',
                   class = 'table-bordered table-condensed',
                   rownames = FALSE,
                   options = list(pageLength = 20,
