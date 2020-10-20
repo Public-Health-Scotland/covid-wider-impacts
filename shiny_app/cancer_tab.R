@@ -23,17 +23,17 @@ observeEvent(input$btn_cancer_modal,
 ###############################################.
 
 
-
-
 cancer_data_cum_main <- reactive({
-  cancer_data %>% filter(type == input$gender | type == input$cancer_type, area == input$geoname_cancer)
+  if(input$cancer_type == "All") {
+   cancer_data %>% filter(type == input$gender, area == input$geoname_cancer)
+  } else {
+   cancer_data %>% filter(type == input$cancer_type, area == "Scotland")
+  }
 })
-
 
 cancer_data_cum_split <- reactive({
   cancer_data %>% filter(category == input$split, area == input$geoname_cancer)
 })
-
 
 
 
@@ -53,14 +53,10 @@ output$geoname_ui_cancer <- renderUI({
 })
 
 
-
-
 # The charts and text shown on the app will depend on what the user wants to see
 output$cancer_explorer <- renderUI({
   
-  
-  
-  
+
   # text for titles of cut charts
   cancer_site <- case_when(input$cancer_type_select == "All Types" ~ "All",
                        input$cancer_type_select == "Bladder" ~ "Bladder",
@@ -92,8 +88,6 @@ output$cancer_explorer <- renderUI({
                        input$cancer_type_select == "Vulva - Females Only" ~ "Vulva - Females only"
                        )
 
-
-  
   if(input$geotype_cancer == "Scotland") {
     # disable("geoname_cancer")
     enable("cancer_type")
@@ -123,10 +117,14 @@ output$cancer_explorer <- renderUI({
 ###############################################.
 # Creating plots for each cut and dataset
 
+# output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
+
 output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
 
-output$cancer_split <- renderPlotly({plot_cancer_trend_chart(cancer_data_cum_split(), pal_sex, 
-                                                      split = input$split)})
+# output$cancer_by_type <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_type())})
+
+# output$cancer_split <- renderPlotly({plot_cancer_trend_chart(cancer_data_cum_split(), pal_sex, 
+#                                                       split = input$split)})
 
 ###############################################.
 ## Data downloads ----

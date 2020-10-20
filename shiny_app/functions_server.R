@@ -206,7 +206,6 @@ plot_overall_cancer_chart <- function(dataset) {
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
-  
 
   
   #Creating time trend plot
@@ -226,16 +225,13 @@ plot_overall_cancer_chart <- function(dataset) {
   
 }
 
+
 ###############################################.
 ## Function for cancer trend charts ----
 ###############################################.
 
 plot_cancer_trend_chart <- function(dataset, pal_chose, split=F) {
   
-  # period_data <- case_when(period == "weekly" ~ "Week ending: ",
-  #                          period == "monthly" ~ "Month: ")
-  # 
- 
   
     # Formatting age groups as factor so they appear in the correct order in the legend
     if ( split == "age") {
@@ -255,9 +251,7 @@ plot_cancer_trend_chart <- function(dataset, pal_chose, split=F) {
     #Creating time trend plot
   plot_ly(data=trend_data, x=~week_ending,  y = ~difference)  %>%
       
-    add_lines(color = ~type, colors = pal_chose)
-    
-   
+    add_lines(color = ~type, colors = pal_chose) %>% 
     
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
