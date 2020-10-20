@@ -26,11 +26,11 @@ observeEvent(input$btn_cancer_modal,
 
 
 cancer_data_cum_main <- reactive({
-  cancer_data %>% filter(type == input$gender, area == input$geoname_cancer)
+  cancer_data %>% filter(type == input$gender | type == input$cancer_type, area == input$geoname_cancer)
 })
 
 cancer_data_cum_site <- reactive({
-  cancer_data %>% filter(type == input$cancer_type) 
+  cancer_data %>% filter(type == input$cancer_type, area == input$geoname_cancer) 
 })
 
 cancer_data_cum_split <- reactive({
@@ -114,7 +114,7 @@ output$cancer_explorer <- renderUI({
     tagList(
       h3("Weekly pathology referrals"),
       plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
-                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_site"),
+                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
       plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
                       " type, compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
   }  
@@ -127,7 +127,6 @@ output$cancer_explorer <- renderUI({
 # Creating plots for each cut and dataset
 
 output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
-output$cancer_site <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_site())})
 
 output$cancer_split <- renderPlotly({plot_cancer_trend_chart(cancer_data_cum_split(), pal_sex, 
                                                       split = input$split)})

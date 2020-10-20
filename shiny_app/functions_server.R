@@ -207,6 +207,7 @@ plot_overall_cancer_chart <- function(dataset) {
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
+
   
   #Creating time trend plot
   plot_ly(data=dataset, x=~week_number) %>%
