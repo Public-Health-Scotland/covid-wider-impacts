@@ -244,16 +244,18 @@ cancer_hb_2019 <- cancer_dist %>%
  group_by(hbres, week_number) %>%
  summarise(count19 = n()) %>%
  mutate(cum_count19 = cumsum(count19)) %>% 
-  mutate(category = "area") %>% 
-  rename(type = hbres)
+  mutate(category = "HB") %>%
+  rename(area = hbres) %>% 
+  mutate(type = "All")
 
 cancer_hb_2020 <- cancer_dist %>%
   filter(year == 2020, site == "All") %>%
   group_by(hbres, week_number) %>%
   summarise(count20 = n()) %>%
   mutate(cum_count20 = cumsum(count20)) %>% 
-  mutate(category = "area") %>% 
-  rename(type = hbres)
+  mutate(category = "HB") %>% 
+  rename(area = hbres) %>% 
+  mutate(type = "All")
 
 cancer_hb <- left_join(cancer_hb_2020, cancer_hb_2019)
 
@@ -264,7 +266,8 @@ cancer_sex_2019 <- cancer_dist %>%
  summarise(count19 = n()) %>%
  mutate(cum_count19 = cumsum(count19)) %>% 
   mutate(category = "sex", sex = as.character(sex)) %>%
-  rename(type = sex) 
+  mutate(area = "Scotland") %>% 
+  rename(type = sex)
 
 cancer_sex_2020 <- cancer_dist %>%
   filter(year == 2020, site == "All") %>%
@@ -272,6 +275,7 @@ cancer_sex_2020 <- cancer_dist %>%
   summarise(count20 = n()) %>%
   mutate(cum_count20 = cumsum(count20)) %>% 
   mutate(category = "sex", sex = as.character(sex)) %>%
+  mutate(area = "Scotland") %>%  
   rename(type = sex) 
 
 cancer_sex <- left_join(cancer_sex_2020, cancer_sex_2019)
@@ -283,6 +287,7 @@ cancer_simd_2019 <- cancer_dist %>%
  summarise(count19 = n()) %>%
  mutate(cum_count19 = cumsum(count19)) %>% 
   mutate(category = "SIMD", dep = as.character(dep)) %>%
+  mutate(area = "Scotland") %>% 
   rename(type = dep)
 
 cancer_simd_2020 <- cancer_dist %>%
@@ -291,6 +296,7 @@ cancer_simd_2020 <- cancer_dist %>%
   summarise(count20 = n()) %>%
   mutate(cum_count20 = cumsum(count20)) %>% 
   mutate(category = "SIMD", dep = as.character(dep)) %>%
+  mutate(area = "Scotland") %>%  
   rename(type = dep)
 
 cancer_simd <- left_join(cancer_simd_2020, cancer_simd_2019)
@@ -302,6 +308,7 @@ cancer_age_2019 <- cancer_dist %>%
  summarise(count19 = n()) %>%
  mutate(cum_count19 = cumsum(count19))%>% 
   mutate(category = "Age", age_group = as.character(age_group)) %>%
+  mutate(area = "Scotland") %>%  
   rename(type = age_group) 
 
 # # to add cumulative totals for each age group
@@ -311,6 +318,7 @@ cancer_age_2020 <- cancer_dist %>%
   summarise(count20 = n()) %>%
   mutate(cum_count20 = cumsum(count20))%>% 
   mutate(category = "Age", age_group = as.character(age_group)) %>%
+  mutate(area = "Scotland") %>%  
   rename(type = age_group)
 
 cancer_age <- left_join(cancer_age_2020, cancer_age_2019)
@@ -322,6 +330,7 @@ cancer_site_2019 <- cancer_dist %>%
   summarise(count19 = n()) %>%
   mutate(cum_count19 = cumsum(count19)) %>% 
   mutate(category = "Site", site = as.character(site)) %>%
+  mutate(area = "Scotland") %>% 
   rename(type = site)
 
 cancer_site_2020 <- cancer_dist %>%
@@ -330,6 +339,7 @@ cancer_site_2020 <- cancer_dist %>%
   summarise(count20 = n()) %>%
   mutate(cum_count20 = cumsum(count20)) %>% 
   mutate(category = "Site", site = as.character(site)) %>%
+  mutate(area = "Scotland") %>% 
   rename(type = site)
 
 cancer_site <- left_join(cancer_site_2020, cancer_site_2019)
@@ -465,8 +475,8 @@ diff_data <- cancer_combined %>%
 # save as excel  and RDS file
 #write_xlsx(cancer_joined, "CWT Dashboard Input Data.xlsx")
 
-saveRDS(diff_data, "data/cancer_data1.rds")
-saveRDS(cancer_dist, "data/cancer_data2.rds")
+saveRDS(diff_data, "data/cancer_data_1.rds")
+saveRDS(cancer_dist, "data/cancer_data_2.rds")
 
 
 #############################################################################################

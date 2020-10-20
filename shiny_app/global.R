@@ -70,7 +70,7 @@ ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 
 
 #Cancer data
-cancer_data <- readRDS("data/cancer_data1.rds") # Cancer cumulative data
+cancer_data <- readRDS("data/cancer_data_1.rds") # Cancer cumulative data
 cancer_extract_date <- "ahdhfh"  # need to set each time?
 
 
@@ -183,17 +183,17 @@ cancer_type_list <- c("All Cancer Types" = "All",
                       "Non-Melanoma Skin Cancer" = "Non-Melanoma Skin Cancer",
                       "Oesophagus" = "Oesophagus",
                       "Other" = "Other",
-                      "Ovary - Females Only" = "Ovary - Females Only",
+                      "Ovary - Females Only" = "Ovary - Females only",
                       "Pancreas" = "Pancreas",
-                      "Penis - Males Only" = "Penis - Males Only",
-                      "Prostate - Males Only" = "Prostate - Males Only",
+                      "Penis - Males Only" = "Penis - Males only",
+                      "Prostate - Males Only" = "Prostate - Males only",
                       "Stomach" = "Stomach",
-                      "Testis - Males Only" = "Testis - Males Only",
+                      "Testis - Males Only" = "Testis - Males only",
                       "Thyroid" = "Thyroid",
-                      "Trachea, Bronchus & Lung" = "Trachea, Bronchus & Lung",
-                      "Uterus - Females Only" = "Uterus - Females Only",
-                      "Vagina - Females Only" = "Vagina - Females Only",
-                      "Vulva - Females Only" = "Vulva - Females Only")
+                      "Trachea, Bronchus and Lung" = "Trachea, Bronchus and Lung",
+                      "Uterus - Females only" = "Uterus - Females only",
+                      "Vagina - Females only" = "Vagina - Females only",
+                      "Vulva - Females only" = "Vulva - Females only")
 
 
 # cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 

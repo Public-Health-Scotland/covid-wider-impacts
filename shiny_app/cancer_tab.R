@@ -23,13 +23,16 @@ observeEvent(input$btn_cancer_modal,
 ###############################################.
 
 cancer_data_cum_main <- reactive({
-  cancer_data %>% filter(type == input$gender)
+  cancer_data %>% filter(type == input$gender, area == "Scotland")
 })
 
 cancer_data_cum_site <- reactive({
-  cancer_data %>% filter(type == input$cancer_type) 
+  cancer_data %>% filter(type == input$cancer_type, area == "Scotland") 
 })
 
+cancer_data_cum_split <- reactive({
+  cancer_data %>% filter(category == input$split_type, area == input$geoname_cancer)
+})
 
 
 ###############################################.
@@ -67,17 +70,17 @@ output$cancer_explorer <- renderUI({
                        input$cancer_type_select == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
                        input$cancer_type_select == "Oesophagus" ~ "Oesophagus",
                        input$cancer_type_select == "Other" ~ "Other",
-                       input$cancer_type_select == "Ovary - Females Only" ~ "Ovary - Females Only",
+                       input$cancer_type_select == "Ovary - Females Only" ~ "Ovary - Females only",
                        input$cancer_type_select == "Pancreas" ~ "Pancreas",
                        input$cancer_type_select == "Penis - Males Only" ~ "Penis - Males Only",
-                       input$cancer_type_select == "Prostate - Males Only" ~ "Prostate - Males Only",
+                       input$cancer_type_select == "Prostate - Males Only" ~ "Prostate - Males only",
                        input$cancer_type_select == "Stomach" ~ "Stomach",
-                       input$cancer_type_select == "Testis - Males Only" ~ "Testis - Males Only",
+                       input$cancer_type_select == "Testis - Males Only" ~ "Testis - Males only",
                        input$cancer_type_select == "Thyroid" ~ "Thyroid",
-                       input$cancer_type_select == "Trachea, Bronchus & Lung" ~ "Trachea, Bronchus & Lung",
-                       input$cancer_type_select == "Uterus - Females Only" ~ "Uterus - Females Only",
-                       input$cancer_type_select == "Vagina - Females Only" ~ "Vagina - Females Only",
-                       input$cancer_type_select == "Vulva - Females Only" ~ "Vulva - Females Only"
+                       input$cancer_type_select == "Trachea, Bronchus aandnd Lung" ~ "Trachea, Bronchus  Lung",
+                       input$cancer_type_select == "Uterus - Females Only" ~ "Uterus - Females only",
+                       input$cancer_type_select == "Vagina - Females Only" ~ "Vagina - Females only",
+                       input$cancer_type_select == "Vulva - Females Only" ~ "Vulva - Females only"
                        )
   
   
@@ -89,11 +92,13 @@ output$cancer_explorer <- renderUI({
    if(input$cancer_type == "All") {
     tagList(
       h3("Weekly pathology referrals"),
-      plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_overall"))
+      plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_overall"),
+      plot_box(paste0("Percentage change between 2019 and 2020"), "cancer_split"))
     } else {
       tagList(
         h3("Weekly pathology referrals"),
-        plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_site"))
+        plot_box(paste0("2020 cumulative incidences compared with 2018-2019"), "cancer_site"),
+        plot_box(paste0("Percentage change between 2019 and 2020"), "cancer_split"))
     }
    
 })
@@ -106,6 +111,8 @@ output$cancer_explorer <- renderUI({
 output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
 output$cancer_site <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_site())})
 
+output$cancer_split <- renderPlotly({plot_cancer_trend_chart(cancer_data_cum_main(), pal_sex, 
+                                                      split = input$split)})
 
 ###############################################.
 ## Data downloads ----
