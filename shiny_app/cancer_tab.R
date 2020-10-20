@@ -29,9 +29,6 @@ cancer_data_cum_main <- reactive({
   cancer_data %>% filter(type == input$gender | type == input$cancer_type, area == input$geoname_cancer)
 })
 
-cancer_data_cum_site <- reactive({
-  cancer_data %>% filter(type == input$cancer_type, area == input$geoname_cancer) 
-})
 
 cancer_data_cum_split <- reactive({
   cancer_data %>% filter(category == input$split, area == input$geoname_cancer)
