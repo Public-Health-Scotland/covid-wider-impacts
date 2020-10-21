@@ -118,10 +118,12 @@ output$cancer_explorer <- renderUI({
 # Creating plots for each cut and dataset
 
 output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), 
-                                              var1_chosen = "cum_count20", var2_chosen = "cum_count19")})
+                                              var1_chosen = "cum_count20", var2_chosen = "cum_count19", 
+                                              data_name = "cum")})
 
 output$cancer_split <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), 
-                                                var1_chosen = "difference", var2_chosen = "difference")})
+                                                var1_chosen = "difference", var2_chosen = "difference",
+                                                data_name = "dif")})
 
 ###############################################.
 ## Data downloads ----

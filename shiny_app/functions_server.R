@@ -199,10 +199,14 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
 ###############################################.
 ## Function for overall cancer charts ----
 ###############################################.
-# var_chosen = "cum_count20"
-plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen) {
+
+plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_name) {
   
-  yaxis_title <- "Number of referrals between 2019 and 2020"
+  # yaxis_title <- "Number of referrals between 2019 and 2020"
+  
+  yaxis_title <- case_when(data_name == "cum" ~ "Referrals - Cumulative Total",
+                           data_name == "dif" ~ "Referrals - Percentage Difference 2019/20")
+  
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
@@ -218,7 +222,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen) {
               name = "2019") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = list(title = "Cumulative Count"), xaxis = list(title = "Week"),
+           yaxis = yaxis_plots, xaxis = list(title = "Week"),
            legend = list(x = 100, y = 0.5)) %>% #position of legend
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove) 
