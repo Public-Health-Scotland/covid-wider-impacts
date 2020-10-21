@@ -58,7 +58,7 @@ output$cancer_explorer <- renderUI({
   
 
   # text for titles of cut charts
-  cancer_site <- case_when(input$cancer_type == "All Types" ~ "All Types",
+  cancer_site <- case_when(input$cancer_type == "All" ~ "All Types",
                        input$cancer_type == "Bladder" ~ "Bladder",
                        input$cancer_type == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
                        input$cancer_type == "Breast" ~ "Breast",
@@ -89,7 +89,7 @@ output$cancer_explorer <- renderUI({
                        )
 
   if(input$geotype_cancer == "Scotland") {
-    # disable("geoname_cancer")
+    
     enable("cancer_type")
     enable("gender")
     tagList(
@@ -99,7 +99,7 @@ output$cancer_explorer <- renderUI({
       plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
                       ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
   } else {
-    # enable("geoname_cancer")
+    
     disable("cancer_type")
     disable("gender")
     tagList(

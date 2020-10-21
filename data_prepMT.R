@@ -200,7 +200,7 @@ cancer_all <- cancer_joined %>%
   summarise(week_number = first(week_number),
             age_group = first(age_group),
             dep = min(dep)) %>% 
-  mutate(site = "All Types")
+  mutate(site = "All")
 
 # # All cancer types excluding C44
 # cancer_excl <- cancer_joined %>% 
@@ -240,28 +240,28 @@ cancer_dist <- bind_rows(cancer_types,
 
 # # to add cumulative totals for each HB
 cancer_hb_2019 <- cancer_dist %>%
- filter(year == 2019, site == "All Types") %>%
+ filter(year == 2019, site == "All") %>%
  group_by(hbres, week_number) %>%
  summarise(count19 = n()) %>%
  mutate(cum_count19 = cumsum(count19)) %>% 
   mutate(category = "HB") %>%
   rename(area = hbres) %>% 
-  mutate(type = "All Types")
+  mutate(type = "All")
 
 cancer_hb_2020 <- cancer_dist %>%
-  filter(year == 2020, site == "All Types") %>%
+  filter(year == 2020, site == "All") %>%
   group_by(hbres, week_number) %>%
   summarise(count20 = n()) %>%
   mutate(cum_count20 = cumsum(count20)) %>% 
   mutate(category = "HB") %>% 
   rename(area = hbres) %>% 
-  mutate(type = "All Types")
+  mutate(type = "All")
 
 cancer_hb <- left_join(cancer_hb_2020, cancer_hb_2019)
 
 # # to add cumulative totals for each sex
 cancer_sex_2019 <- cancer_dist %>%
- filter(year == 2019, site == "All Types") %>%
+ filter(year == 2019, site == "All") %>%
  group_by(sex, week_number) %>%
  summarise(count19 = n()) %>%
  mutate(cum_count19 = cumsum(count19)) %>% 
@@ -270,7 +270,7 @@ cancer_sex_2019 <- cancer_dist %>%
   rename(type = sex)
 
 cancer_sex_2020 <- cancer_dist %>%
-  filter(year == 2020, site == "All Types") %>%
+  filter(year == 2020, site == "All") %>%
   group_by(sex, week_number) %>%
   summarise(count20 = n()) %>%
   mutate(cum_count20 = cumsum(count20)) %>% 
@@ -282,7 +282,7 @@ cancer_sex <- left_join(cancer_sex_2020, cancer_sex_2019)
 
 # # to add cumulative totals for each dep group
 cancer_simd_2019 <- cancer_dist %>%
- filter(year == 2019, site == "All Types") %>%
+ filter(year == 2019, site == "All") %>%
  group_by(dep, week_number) %>%
  summarise(count19 = n()) %>%
  mutate(cum_count19 = cumsum(count19)) %>% 
@@ -291,7 +291,7 @@ cancer_simd_2019 <- cancer_dist %>%
   rename(type = dep)
 
 cancer_simd_2020 <- cancer_dist %>%
-  filter(year == 2020, site == "All Types") %>%
+  filter(year == 2020, site == "All") %>%
   group_by(dep, week_number) %>%
   summarise(count20 = n()) %>%
   mutate(cum_count20 = cumsum(count20)) %>% 
@@ -303,7 +303,7 @@ cancer_simd <- left_join(cancer_simd_2020, cancer_simd_2019)
 
 # # to add cumulative totals for each age group
 cancer_age_2019 <- cancer_dist %>%
- filter(year == 2019, site == "All Types") %>%
+ filter(year == 2019, site == "All") %>%
  group_by(age_group, week_number) %>%
  summarise(count19 = n()) %>%
  mutate(cum_count19 = cumsum(count19))%>% 
@@ -313,7 +313,7 @@ cancer_age_2019 <- cancer_dist %>%
 
 # # to add cumulative totals for each age group
 cancer_age_2020 <- cancer_dist %>%
-  filter(year == 2020, site == "All Types") %>%
+  filter(year == 2020, site == "All") %>%
   group_by(age_group, week_number) %>%
   summarise(count20 = n()) %>%
   mutate(cum_count20 = cumsum(count20))%>% 
