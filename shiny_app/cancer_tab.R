@@ -58,34 +58,34 @@ output$cancer_explorer <- renderUI({
   
 
   # text for titles of cut charts
-  cancer_site <- case_when(input$cancer_type_select == "All Types" ~ "All",
-                       input$cancer_type_select == "Bladder" ~ "Bladder",
-                       input$cancer_type_select == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
-                       input$cancer_type_select == "Breast" ~ "Breast",
-                       input$cancer_type_select == "Colorectal" ~ "Colorectal",
-                       input$cancer_type_select == "Head and Neck" ~ "Head and Neck",
-                       input$cancer_type_select == "Hodgkin Lymphoma" ~ "Hodgkin Lymphoma",
-                       input$cancer_type_select == "Kidney" ~ "Kidney",
-                       input$cancer_type_select == "Leukaemias" ~ "Leukaemias",
-                       input$cancer_type_select == "Liver and Intrahepatic Bile Ducts" ~ "Liver and Intrahepatic Bile Ducts",
-                       input$cancer_type_select == "Malignant Brain Cancer" ~ "Malignant Brain Cancer",
-                       input$cancer_type_select == "Malignant Melanoma of the Skin" ~ "Malignant Melanoma of the Skin",
-                       input$cancer_type_select == "Mesothelioma" ~ "Mesothelioma",
-                       input$cancer_type_select == "Multiple Myeloma and malignant plasma cell neoplasms" ~ "Multiple Myeloma and malignant plasma cell neoplasms",
-                       input$cancer_type_select == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
-                       input$cancer_type_select == "Oesophagus" ~ "Oesophagus",
-                       input$cancer_type_select == "Other" ~ "Other",
-                       input$cancer_type_select == "Ovary - Females Only" ~ "Ovary - Females only",
-                       input$cancer_type_select == "Pancreas" ~ "Pancreas",
-                       input$cancer_type_select == "Penis - Males Only" ~ "Penis - Males Only",
-                       input$cancer_type_select == "Prostate - Males Only" ~ "Prostate - Males only",
-                       input$cancer_type_select == "Stomach" ~ "Stomach",
-                       input$cancer_type_select == "Testis - Males Only" ~ "Testis - Males only",
-                       input$cancer_type_select == "Thyroid" ~ "Thyroid",
-                       input$cancer_type_select == "Trachea, Bronchus aandnd Lung" ~ "Trachea, Bronchus  Lung",
-                       input$cancer_type_select == "Uterus - Females Only" ~ "Uterus - Females only",
-                       input$cancer_type_select == "Vagina - Females Only" ~ "Vagina - Females only",
-                       input$cancer_type_select == "Vulva - Females Only" ~ "Vulva - Females only"
+  cancer_site <- case_when(input$cancer_type == "All Types" ~ "All Types",
+                       input$cancer_type == "Bladder" ~ "Bladder",
+                       input$cancer_type == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
+                       input$cancer_type == "Breast" ~ "Breast",
+                       input$cancer_type == "Colorectal" ~ "Colorectal",
+                       input$cancer_type == "Head and Neck" ~ "Head and Neck",
+                       input$cancer_type == "Hodgkin Lymphoma" ~ "Hodgkin Lymphoma",
+                       input$cancer_type == "Kidney" ~ "Kidney",
+                       input$cancer_type == "Leukaemias" ~ "Leukaemias",
+                       input$cancer_type == "Liver and Intrahepatic Bile Ducts" ~ "Liver and Intrahepatic Bile Ducts",
+                       input$cancer_type == "Malignant Brain Cancer" ~ "Malignant Brain Cancer",
+                       input$cancer_type == "Malignant Melanoma of the Skin" ~ "Malignant Melanoma of the Skin",
+                       input$cancer_type == "Mesothelioma" ~ "Mesothelioma",
+                       input$cancer_type == "Multiple Myeloma and malignant plasma cell neoplasms" ~ "Multiple Myeloma and malignant plasma cell neoplasms",
+                       input$cancer_type == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
+                       input$cancer_type == "Oesophagus" ~ "Oesophagus",
+                       input$cancer_type == "Other" ~ "Other",
+                       input$cancer_type == "Ovary - Females Only" ~ "Ovary - Females only",
+                       input$cancer_type == "Pancreas" ~ "Pancreas",
+                       input$cancer_type == "Penis - Males Only" ~ "Penis - Males Only",
+                       input$cancer_type == "Prostate - Males Only" ~ "Prostate - Males only",
+                       input$cancer_type == "Stomach" ~ "Stomach",
+                       input$cancer_type == "Testis - Males Only" ~ "Testis - Males only",
+                       input$cancer_type == "Thyroid" ~ "Thyroid",
+                       input$cancer_type == "Trachea, Bronchus and Lung" ~ "Trachea, Bronchus and Lung",
+                       input$cancer_type == "Uterus - Females Only" ~ "Uterus - Females only",
+                       input$cancer_type == "Vagina - Females Only" ~ "Vagina - Females only",
+                       input$cancer_type == "Vulva - Females Only" ~ "Vulva - Females only"
                        )
 
   if(input$geotype_cancer == "Scotland") {
@@ -95,9 +95,9 @@ output$cancer_explorer <- renderUI({
     tagList(
       h3("Weekly pathology referrals"),
       plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
-                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
+                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
       plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
-                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
+                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
   } else {
     # enable("geoname_cancer")
     disable("cancer_type")
@@ -105,9 +105,9 @@ output$cancer_explorer <- renderUI({
     tagList(
       h3("Weekly pathology referrals"),
       plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
-                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
+                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
       plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
-                      " type, compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
+                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
   }  
    
 })
@@ -119,12 +119,11 @@ output$cancer_explorer <- renderUI({
 
 # output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
 
-output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
+output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), var1_chosen = "cum_count20", var2_chosen = "cum_count19")})
 
 # output$cancer_by_type <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_type())})
 
-# output$cancer_split <- renderPlotly({plot_cancer_trend_chart(cancer_data_cum_split(), pal_sex, 
-#                                                       split = input$split)})
+output$cancer_split <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), var1_chosen = "difference", var2_chosen = "difference")})
 
 ###############################################.
 ## Data downloads ----

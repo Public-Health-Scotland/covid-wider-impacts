@@ -230,17 +230,17 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
            column(4, div(p(tags$b("Step 2. Select all or specific cancer type")),
                          selectInput("cancer_type", label = NULL, choices = cancer_type_list,
                                      selected = "All Cancer Types")),
-                     div(radioButtons("gender", "Gender", list("All","Male","Female"), inline = TRUE, selected = "All")),
-                     div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
+                     div(radioButtons("gender", "Gender", list("All","Male","Female"), inline = TRUE, selected = "All"))),
+                     # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
            
            column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton('download_cancer_data', 'Download data'),
                   fluidRow(br()),
                   actionButton('jump_commentary_cancer','Go to commentary'),
-                  fluidRow(br()),
-                  div(radioButtons("data", "Data Type", list("Cumulative","Incidence"), 
-                                   inline = TRUE, selected = "Cumulative")))
+                  fluidRow(br()))
+                  # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"), 
+                  #                  inline = TRUE, selected = "Cumulative")))
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("cancer_explorer")

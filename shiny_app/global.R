@@ -70,7 +70,7 @@ ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 
 
 #Cancer data
-cancer_data <- readRDS("data/cancer_data1.rds") # Cancer cumulative data
+cancer_data <- readRDS("data/cancer_data_1.rds") # Cancer cumulative data
 cancer_extract_date <- "ahdhfh"  # need to set each time?
 
 
@@ -166,7 +166,7 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
 #                         "Stillbirths and infant deaths" = "perinatal"
 # )
 
-cancer_type_list <- c("All Cancer Types" = "All",
+cancer_type_list <- c("All Types" = "All",
                       "Bladder" = "Bladder",
                       "Bone and Connective Tissue" = "Bone and Connective Tissue",
                       "Breast" = "Breast", 
