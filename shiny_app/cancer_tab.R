@@ -117,13 +117,11 @@ output$cancer_explorer <- renderUI({
 ###############################################.
 # Creating plots for each cut and dataset
 
-# output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main())})
+output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), 
+                                              var1_chosen = "cum_count20", var2_chosen = "cum_count19")})
 
-output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), var1_chosen = "cum_count20", var2_chosen = "cum_count19")})
-
-# output$cancer_by_type <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_type())})
-
-output$cancer_split <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), var1_chosen = "difference", var2_chosen = "difference")})
+output$cancer_split <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), 
+                                                var1_chosen = "difference", var2_chosen = "difference")})
 
 ###############################################.
 ## Data downloads ----
