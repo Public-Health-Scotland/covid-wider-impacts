@@ -97,7 +97,9 @@ output$cancer_explorer <- renderUI({
       plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
                       ", compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
       plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
-                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
+                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"),
+      plot_box(paste0("2020 incidences of pathology referrals for cancer of ", cancer_site,
+                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_incidence"))
   } else {
     
     disable("cancer_type")
@@ -107,7 +109,9 @@ output$cancer_explorer <- renderUI({
       plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
                       ", compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
       plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
-                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"))
+                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"),
+      plot_box(paste0("2020 incidences of pathology referrals for cancer of ", cancer_site,
+                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_incidence"))
   }  
    
 })
@@ -124,6 +128,10 @@ output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum
 output$cancer_split <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), 
                                                 var1_chosen = "difference", var2_chosen = "difference",
                                                 data_name = "dif")})
+
+output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), 
+                                                                 var1_chosen = "count20", var2_chosen = "count19", 
+                                                                 data_name = "inc")})
 
 ###############################################.
 ## Data downloads ----

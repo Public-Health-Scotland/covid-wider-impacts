@@ -205,7 +205,8 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
   
 # Set y axis label
   yaxis_title <- case_when(data_name == "cum" ~ "Referrals - Cumulative Total",
-                           data_name == "dif" ~ "Referrals - Percentage Difference 2019/20")
+                           data_name == "dif" ~ "Referrals - Percentage Difference 2019/20",
+                           data_name == "inc" ~ "Referrals - Weekly Total")
   
   yaxis_plots[["title"]] <- yaxis_title
   
