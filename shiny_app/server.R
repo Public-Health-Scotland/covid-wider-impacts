@@ -16,7 +16,7 @@ function(input, output, session) {
 
   ###############################################.
   # Cardiovascular tab
-  #source(file.path("cardio_tab.R"),  local = TRUE)$value
+  source(file.path("cardio_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Immunisation tab
@@ -29,7 +29,7 @@ function(input, output, session) {
   ###############################################.
   # Pregnancy tabs
   source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
-  #source(file.path("terminations_tab.R"),  local = TRUE)$value
+  source(file.path("terminations_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Perinatal tab
@@ -52,7 +52,7 @@ function(input, output, session) {
   observeEvent(input$jump_to_booking, {updateTabsetPanel(session, "intabset", selected = "booking")})
   observeEvent(input$jump_to_top, {updateTabsetPanel(session, "intabset", selected = "terminations")})
   
-# To jump to commentary tab - requires multiple lines becuase action buttons must have unique ID
+# To jump to commentary tab and ensures correct panel is expanded - requires multiple lines becuase action buttons must have unique ID
   observeEvent(input$jump_commentary_child, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Immunisation")})
   

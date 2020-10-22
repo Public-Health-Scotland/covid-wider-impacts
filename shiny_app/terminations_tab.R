@@ -278,8 +278,6 @@ plot_top_split <- function(dataset, split, measure){
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 }
 
-
-
 ###############################################.
 ## Data downloads ----
 ###############################################.
