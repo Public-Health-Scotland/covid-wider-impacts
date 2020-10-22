@@ -19,6 +19,7 @@ library(flextable)
 library(shinyBS) #for collapsible panels in commentary
 library(zoo)
 library(magrittr)
+library(shinymanager)
 
 ###############################################.
 ## Functions ----

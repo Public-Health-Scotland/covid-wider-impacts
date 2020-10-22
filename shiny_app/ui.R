@@ -1,4 +1,6 @@
 #UI
+secure_app(
+
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -273,7 +275,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
   ) # tabpanel bracket
-))#, #navbarMenu bracket
+)))#, #navbarMenu bracket
 # ###############################################.
 # ## Mental Health ----
 # ###############################################.
