@@ -376,127 +376,32 @@ saveRDS(diff_data, "data/cancer_data_1.rds")
 saveRDS(cancer_dist, "data/cancer_data_2.rds")
 
 
-#############################################################################################
+#############################################
+# Sort Data for download
+#############################################
 
+cancer_dl <- cancer_dist %>%
+  group_by(hbres, year, week_number, site, sex) %>%
+  summarise(count_dl = n()) %>% 
+  mutate(category = "Gender") %>%
+  rename(type = sex)
 
+cancer_dl2 <- cancer_dist %>%
+  group_by(hbres, year, week_number, site, age_group) %>%
+  summarise(count_dl = n()) %>%
+  mutate(category = "Age") %>%
+  rename(type = age_group)
 
+cancer_dl3 <- cancer_dist %>%
+  group_by(hbres, year, week_number, site, dep) %>%
+  summarise(count_dl = n()) %>%
+  mutate(category = "SIMD") %>%
+  rename(type = dep)
 
+cancer_dl3$type <- as.character(cancer_dl3$type)
 
-##########################################
-# Graphs
-##########################################
+cancer_base_data <- rbind(cancer_dl, cancer_dl2, cancer_dl3)
 
-
-   
-
-cancer_cum$year <- factor(cancer_cum$year, levels = c("2019", "2020"))
-
-plot_cancer_inc <- ggplot(cancer_cum, aes(x=week_ending, y=cum_temp)) +
-  geom_line(data = filter(cancer_cum, year == "2019"),aes(colour =  year), se = FALSE) +
-  geom_line(data = filter(cancer_cum, year == "2020"),aes(colour = year), se = FALSE) +
-  xlab("Week Ending") + ylab("Incidences") +
-  ggtitle("Cancer Incidence Pathology 2018/19 & 2020")+
-  xlim(0,30)
-# ggsave("cancer_pathology.pdf")
-
-ggplotly(plot_cancer_inc)
-
-
-# graph of incidence by week by site
-cancer_cum_site <- cancer_dist %>% 
-  group_by(year, week_ending, site) %>% 
-  summarise(count = n()) %>% 
-  ungroup()         
-
-cancer_cum_site$year <- factor(cancer_cum_site$year, levels = c("2019", "2020"))
-cancer_cum_site$site <- factor(cancer_cum_site$site)
-
-plot_cancer_site_2019 <-ggplot(cancer_cum_site, aes(x=week_ending, y=count)) +
-  geom_line(data = filter(cancer_cum_site, year == "2019" & !is.na(site)),aes(colour = site), se = FALSE) +
-  xlab("Week Number") + ylab("Incidences") +
-  ggtitle("Cancer Incidence Pathology by Cancer Type 2019")+
-  xlim(0,30) 
-# ggsave("cancer_pathology_site_2019.pdf")
-
-ggplotly(plot_cancer_site_2019)
-
-plot_cancer_site_2020 <-ggplot(cancer_cum_site, aes(x=week_number, y=count)) +
-  geom_line(data = filter(cancer_cum_site, year == "2020" & !is.na(site)),aes(colour = site), se = FALSE) +
-  xlab("Week Number") + ylab("Incidences") +
-  ggtitle("Cancer Incidence Pathology by Cancer Type 2020")+
-  xlim(0,30) 
-# ggsave("cancer_pathology_site_2020.pdf")
-
-ggplotly(plot_cancer_site_2019)
-
-# graph of incidence by week by sex
-cancer_cum_sex <- cancer_joined %>% 
-  group_by(year, week_number, sex) %>% 
-  summarise(count = n()) %>% 
-  ungroup()         
-
-cancer_cum_sex$year <- factor(cancer_cum_sex$year, levels = c("2019", "2020"))
-
-plot_cancer_sex <-ggplot(cancer_cum_sex, aes(x=week_number, y=count)) +
-  geom_line(data = filter(cancer_cum_sex, year == "2019" & !is.na(sex)),aes(colour = sex, linetype = year), se = FALSE) +
-  geom_line(data = filter(cancer_cum_sex, year == "2020" & !is.na(sex)),aes(colour = sex, linetype = year), se = FALSE) +
-  xlab("Week Number") + ylab("Incidences") +
-  ggtitle("Cancer Incidence Pathology by Sex 2018/19 & 2020")+
-  xlim(0,30) 
-# ggsave("cancer_pathology_sex.pdf")
-
-ggplotly(plot_cancer_sex)
-
-# graphs of incidence by week by HB for 2019 and 2020
-cancer_cum_hb <- cancer_joined %>% 
-  group_by(year, week_number, health_board_name) %>% 
-  summarise(count = n()) %>% 
-  ungroup()
-
-cancer_cum_hb$year <- factor(cancer_cum_hb$year, levels = c("2019", "2020"))
-cancer_cum_hb$health_board_name <- factor(cancer_cum_hb$health_board_name)
-
-plot_cancer_hb_2019 <-ggplot(cancer_cum_hb, aes(x=week_number, y=count)) +
-  geom_line(data = filter(cancer_cum_hb, year == "2019" & !is.na(health_board_name)),aes(colour = health_board_name), se = FALSE) +
-  xlab("Week Number") + ylab("Incidences") +
-  ggtitle("Cancer Incidence Pathology by Health Board 2019")+
-  xlim(0,30) 
-# ggsave("cancer_pathology_hb_2019.pdf")
-
-ggplotly(plot_cancer_hb_2019)
-
-plot_cancer_hb_2020 <- ggplot(cancer_cum_hb, aes(x=week_number, y=count)) +
-  geom_line(data = filter(cancer_cum_hb, year == "2020" & !is.na(health_board_name)),aes(colour = health_board_name), se = FALSE) +
-  xlab("Week Number") + ylab("Incidences") +
-  ggtitle("Cancer Incidence Pathology by Health Board 2020")+
-  xlim(0,30) 
-# ggsave("cancer_pathology_hb_2020.pdf")
-
-ggplotly(plot_cancer_hb_2020)
-
-# graphs of incidence by deprivation quintile by HB for 2019 and 2019
-cancer_cum_depr <- cancer_joined %>% 
-  group_by(year, week_number, deprivation_quintile) %>% 
-  summarise(count = n()) %>% 
-  ungroup()
-
-cancer_cum_depr$year <- factor(cancer_cum_hb$year, levels = c("2019", "2020"))
-cancer_cum_depr$deprivation_quintile <- factor(cancer_cum_depr$deprivation_quintile)
-
-plot_cancer_depr_2019 <-ggplot(cancer_cum_depr, aes(x=week_number, y=count)) +
-  geom_line(data = filter(cancer_cum_depr, year == "2019" & !is.na(deprivation_quintile)),aes(colour = deprivation_quintile), se = FALSE) +
-  xlab("Week Number") + ylab("Incidences") +
-  ggtitle("Cancer Incidence Pathology by SIMD Quintile 2019")+
-  xlim(0,30) 
-# ggsave("cancer_pathology_SIMD_2019.pdf")
-
-ggplotly(plot_cancer_depr_2019)
-
-plot_cancer_depr_2020 <- ggplot(cancer_cum_depr, aes(x=week_number, y=count)) +
-  geom_line(data = filter(cancer_cum_depr, year == "2020" & !is.na(deprivation_quintile)),aes(colour = deprivation_quintile), se = FALSE) +
-  xlab("Week Number") + ylab("Incidences") +
-  ggtitle("Cancer Incidence Pathology by SIMD Quintile 2020")+
-  xlim(0,30) 
-# ggsave("cancer_pathology_SIMD_2020.pdf")
-
-ggplotly(plot_cancer_depr_2020)
+saveRDS(cancer_base_data, "////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects//
+                          20200804-pathology-as-proxy-for-2020-regs//RShiny//CancerPathologyData//
+                          cancer_data_download1.rds")
