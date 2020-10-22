@@ -11,7 +11,7 @@ observeEvent(input$btn_modal_simd_imm, { showModal(
     h5("What is SIMD and deprivation?"),
     p("Children have been allocated to different levels of deprivation based on the small area (data zone) 
       in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
-                                          class="externallink"), "score for that area. 
+                                           target="_blank"), "score for that area. 
       SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: 
       income; employment; health; education, skills and training; housing; geographic access; and crime. 
       In this tool we have presented results for children living in different SIMD ‘quintiles’. 
@@ -29,12 +29,12 @@ observeEvent(input$btn_immune_modal,
                title = "What is the data source?",
                p("The information shown on the numbers of children eligible for, and receiving, routine preschool immunisations is taken from the ",
                  tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=4&SubID=12",
-                        "Scottish Immunisation and Recall System (SIRS).",class="externallink")),
+                        "Scottish Immunisation and Recall System (SIRS).", target="_blank")),
                p(tags$a(href="https://publichealthscotland.scot/",
-                        "Public Health Scotland (PHS)",class="externallink"),
+                        "Public Health Scotland (PHS)", target="_blank"),
                  " routinely receives quarterly data extracts from SIRS for the purpose of producing and ",
                  tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
-                        "publishing",class="externallink"),
+                        "publishing", target="_blank"),
                 " immunisation uptake rates. To allow the more rapid monitoring of the impact of Covid-19 on childhood immunisation uptake rates presented here, PHS is also currently extracting a sub-set of data from SIRS each month."),
                p("SIRS is an electronic system used by all NHS Boards in Scotland. The system facilitates the invitation of children when a scheduled immunisation is due. When a child receives an immunisation, relevant information is returned to administrative staff in the NHS Board child health department. The administrative staff then update the child’s SIRS record accordingly."),
                p("After a child becomes eligible for an immunisation, it takes some time for them to attend their appointment, and for a record of the immunisation provided to subsequently be entered into the SIRS system. We have allowed a 6-week window for this, therefore each release of this page will report on children becoming eligible for an immunisation up to 6 weeks before the date the data were extracted for analysis."),
@@ -163,10 +163,10 @@ output$immunisation_explorer <- renderUI({
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
                   tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
-                         "continue to receive their routine immunisations during the Covid-19 pandemic",class="externallink"),".",
+                         "continue to receive their routine immunisations during the Covid-19 pandemic", target="_blank"),".",
                   "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
-                  tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ",class="externallink"),
-                  " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform",class="externallink"),".")
+                  tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ", target="_blank"),
+                  " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),".")
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_6in1 <-  tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age. The data tables provide the uptake rates at three specific time-points. Data is shown for children who have become eligible for immunisation during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison."),
@@ -390,13 +390,15 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
-    h2("Immunisations - 2 September 2020"),
+    h2("Immunisations - 7th October 2020"),
+    p("In this release of information on uptake of pre-school immunisations data have been updated to include children who became eligible until early August. The overall trends described in the commentary for 2 September 2020 below continue to apply."),
+    h2("Immunisations - 2nd September 2020"),
     p("Information on uptake of pre-school immunisations was updated in this tool on 2 September. The updated data show that uptake of pre-school immunisations for children who became eligible during March 2020 was maintained at a similar level to that seen before the Covid-19 pandemic (children becoming eligible in 2019 and early 2020). Early uptake for children becoming eligible for their immunisation more recently (April 2020 through to early July 2020) has increased, and is now noticeably higher than that seen before the pandemic."),
     p("The data also show that the increase in early uptake of immunisations seen from April 2020 onwards has been seen for children from all deprivation levels. For the 3 doses of the 6-in-1 immunisation, the recent increase in early uptake has been highest in children from the most deprived areas, resulting in a reduction in inequality in early uptake for these immunisations. For the 2 doses of the MMR immunisation, the recent increase in early uptake has been broadly similar across deprivation groups."),
     p("As discussed in the previous commentary below, there are a number of likely reasons for the recent improvement in early uptake of pre-school immunisations. These include increased awareness among parents of the importance of immunisation reinforced by national communications to encourage attendance, as well as local communications and new processes introduced in response to the pandemic. For example, immunisation teams in some NHS Boards have recently been phoning parents/carers shortly before the day of appointment to ensure families are free of symptoms of Covid-19 before attending, reassure them, and answer questions."),
     p("Although recent improvements in early immunisation uptake rates are evident, often among children living in the most deprived areas in particular, it is too soon to determine whether this early improvement will translate into improved final uptake and a reduction in the inequalities gap when measured at later ages.  Information on final achieved uptake will continue to be provided through ",
       tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
-             "official statistics publications",class="externallink"), "."),
+             "official statistics publications", target="_blank"), "."),
     h2("Immunisations - 12th August 2020"),
     p("Information on uptake of pre-school immunisations was updated in this tool on 12 August (and new information was added to the data download function on uptake in Health and Social Care Partnerships and in the Island NHS Boards).  The updated data show that uptake of pre-school immunisations for children who became eligible during March 2020 was maintained at a similar level to that seen before the Covid-19 pandemic (children becoming eligible in 2019 and early 2020).  Early uptake for children becoming eligible for their immunisation more recently (April 2020 through to early June 2020) has increased, and is now noticeably higher than that seen before the pandemic."),
     p("New information on uptake of pre-school immunisations for children living in areas with different levels of deprivation (Scotland level only) was also added to this tool on 12 August.  Early uptake (achieved by 4 weeks after the children became eligible for their immunisation) is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort. The data show that before the Covid-19 pandemic, children living in the most deprived areas of Scotland were less likely to have received their pre-school immunisations within 4 weeks of becoming eligible than children living in the least deprived areas."),
@@ -406,18 +408,18 @@ output$immun_commentary_section <- renderUI({
     p("On 8 July, information on uptake of the first and second doses of MMR vaccine was added to the tool."),
     p("The first dose of MMR vaccine is offered from 12 months of age at the immunisation appointment scheduled at 12-13 months. Data before the pandemic, for children eligible (turning 12 months) in 2019 show that uptake in Scotland was 65.4% by the time children turned 13 months old. Uptake rates by 13 months were maintained for children eligible in March 2020 and have increased for children eligible in April and early May 2020, with uptake in each of the latest 4 weeks exceeding 75%. This means in April and early May, more children than usual received their immunisation soon after they first became eligible, indicating fewer non-attendances at, or postponements of, scheduled appointments."),
     p("There are a number of likely reasons for this improved early uptake, including increased awareness among parents of the importance of immunisation reinforced by national communications to encourage attendance, as well as local communications and new processes introduced in response to the pandemic. For example, immunisation teams in some NHS Boards have recently been phoning parents/carers shortly before the day of appointment to ensure families are free of symptoms of Covid-19 before attending, reassure them, and answer questions. Although more children received the first dose of MMR immunised by 13 months of age, it is too early to determine whether this will result in any increase in the uptake of the vaccine at 16 months of age, as measured in the tool, or later when measured at the standard reporting age of 2 years in the",
-      tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/","routinely published statistics",class="externallink",".")),
+      tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/","routinely published statistics", target="_blank",".")),
     p("The second dose of MMR vaccine is offered at 3 year 4 months. Data before the pandemic, for children eligible in 2019 show that uptake was 52.0% by 3 years 5 months. There was a small decrease in uptake rates by 3 years 5 months for children eligible for immunisation in March 2020 to 49.6%. However, as seen for the first dose of MMR, early uptake rates (by 3 years 5 months) have since increased for children eligible in April and early May 2020, with uptake in each of the latest 3 weeks exceeding 60%."),
     p("This release also includes updated uptake data on each of the doses of the 6-in-1 vaccine, offered at 8, 12 and 16 weeks, to include children eligible in each week in April and early May 2020. Uptake of each of the doses have been maintained throughout the pandemic. For children eligible in April and early May, the pattern of more children than usual receiving their immunisations soon after becoming eligible, is also observed, most notably for the third dose of vaccine, although the effect is less pronounced than was observed for the MMR immunisations. This is because uptake within 4 weeks of becoming eligible is already high for immunisations offered at the earliest ages, as shown in the data before the pandemic. Doses of vaccine which are routinely offered later in schedule of childhood immunisations take longer to reach the high levels of uptake compared to the immunisations offered at the first appointment due to the cumulative effect of missed appointments, and the need to have appropriate intervals between receiving doses of vaccine."),br(),
     h2("Immunisations - 17th June 2020"), 
     p("Information on the uptake of ",
       tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
-             are routinely offered to all preschool children",class="externallink"),
+             are routinely offered to all preschool children", target="_blank"),
       " has been included in this tool for the first time on 3 June 2020.", br(),
       "Immunisation protects children against many serious infectious diseases including diphtheria, 
       whooping cough, and measles.",
       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
-             "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic", class="externallink"),".",
+             "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic",  target="_blank"),".",
       "It is important to maintain the best possible immunisation uptake rates to ensure children 
       remain protected and to prevent a resurgence of these infections.  Including information on 
       childhood immunisation rates in this tool will help us to ensure that immunisation rates remain 
@@ -430,12 +432,12 @@ output$immun_commentary_section <- renderUI({
     h2("Immunisations - 3rd June 2020"),
     p("Information on the uptake of ",
       tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
-             are routinely offered to all preschool children",class="externallink"),
+             are routinely offered to all preschool children", target="_blank"),
       " has been included in this tool for the first time on 3 June 2020.", br(),
       "Immunisation protects children against many serious infectious diseases including diphtheria, 
       whooping cough, and measles.",
       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
-             "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic", class="externallink"),".",
+             "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic",  target="_blank"),".",
       "It is important to maintain the best possible immunisation uptake rates to ensure children 
       remain protected and to prevent a resurgence of these infections.  Including information on 
       childhood immunisation rates in this tool will help us to ensure that immunisation rates remain 

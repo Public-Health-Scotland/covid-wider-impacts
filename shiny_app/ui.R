@@ -13,6 +13,9 @@ tagList( #needed for shinyjs
 ## Introduction ----
 ###############################################.
 tabPanel("Home", icon = icon("info-circle"), value = "intro",
+         tags$b(span("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH)
+           data was identified and was corrected on 23/09/2020– for more details please see ",
+                     actionLink("jump_commentary_oohissue", "commentary"), ".", style="color:red")),
                   h3("COVID-19 wider impacts on the health care system"),
                 p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
                     than those that occur as the direct result of infection"),
@@ -36,30 +39,30 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                 p("Depending on the topic being looked at, information will be shown for patients in different age groups;
                     for males and females; and for people living in areas with different levels of material deprivation.
                     Information will also be shown for different locations across Scotland, such as NHS Board areas."),
-                p("This tool will be updated weekly. New releases will be published at the same time as the Public Health Scotland ",
+                p("This tool will be updated monthly. New releases will be published at the same time as the Public Health Scotland ",
                   tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/",
-                         "COVID-19 weekly report for Scotland.", class="externallink")),
+                         "COVID-19 report for Scotland.",  target="_blank")),
                 p("Note that some numbers may not sum to the total as disclosure control methods have been applied
                     to the data in order to protect patient confidentiality."),
                 p("If you have any questions relating to the data presented please contact us at: ",
-                  tags$b(tags$a(href="mailto:phs.statsgov@nhs.net", "phs.statsgov@nhs.net", class="externallink")), "."),
+                  tags$b(tags$a(href="mailto:phs.statsgov@phs.scot", "phs.statsgov@phs.scot",  target="_blank")), "."),
                 p("You can access the code used to produce this tool in this ",
-                  tags$a(href="https://github.com/Health-SocialCare-Scotland/covid-wider-impact", "GitHub repository", class="externallink"), "."),
+                  tags$a(href="https://github.com/Health-SocialCare-Scotland/covid-wider-impact", "GitHub repository",  target="_blank"), "."),
          h3("Other sources of information: "),
          tags$ul(
            tags$li("Public Health Scotland publishes ",
-                   tags$a(href="(https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information", class="externallink"),
+                   tags$a(href="https://publichealthscotland.scot/our-areas-of-work/sharing-our-data-and-intelligence/coronavirus-covid-19-data-and-guidance/", "information",  target="_blank"),
                     "on the direct health
                    impacts of COVID-19 as well as guidance for professionals and public."),
            tags$li("The Scottish Government publishes a ",
-                   tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard", class="externallink"),
+                   tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard",  target="_blank"),
                    " which brings together data and
           evidence on the impacts of COVID-19 on health, society and the economy."),
            tags$li("The Improvement Service publishes a ",
-                   tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard", class="externallink"),
+                   tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard",  target="_blank"),
                    " on the economic impacts of the pandemic in Scotland."),
            tags$li("Transport Scotland publishes ",
-                   tags$a(href="https://www.transport.gov.scot/publications/", "information", class="externallink"),
+                   tags$a(href="https://www.transport.gov.scot/publications/", "information",  target="_blank"),
             " on transport trends and public attitudes towards
                    transport for the pandemic period.")
          )
@@ -76,19 +79,27 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("cardio_button", "Cardiovascular", width="150px"),br() ,
                           actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
                           actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
-                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"),br(),
+                          #actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"),br(),
                           actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
                           actionLink("top_button", "Termination of pregnancy", width="150px")
-                  ),
+                          actionLink("breastfeeding_button", "Breastfeeding", width="150px"), br(),
+                          actionLink("childdev_button", "Child development", width="150px"), br(),
+                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
+                          actionLink("mentalhealth_button", "Mental health", width="150px")
+                         ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
                                      bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
                                      bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
                                      bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
                                      bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
-                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
+                                     #bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
                                      bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
                                      bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary"))
+                                     bsCollapsePanel("Breastfeeding", uiOutput("breastfeeding_commentary")),
+                                     bsCollapsePanel("Child development", uiOutput("childdev_commentary")),
+                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
+                                     bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary"))
                           )))
 ), #tab panel
 ###############################################.
@@ -139,6 +150,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                    uiOutput("cardio_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
+
 ###############################################.
 ## Child health navbarmenu ----
 ###############################################.
@@ -197,9 +209,58 @@ tabPanel(title = "Child health reviews", icon = icon("user-check"), value = "chi
                    uiOutput("child_health_explorer")
          )# mainPanel bracket
    ), # tabpanel bracket
-###############################################.
-## Perinatal Tab ----
-###############################################.
+# ###############################################.
+# ## Breastfeeding tab ----
+# ##############################################.
+tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
+         wellPanel(
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_select_bf",
+                                           label= "Step 1. Select the data you want to explore.",
+                                           choices = data_list_bf, status = "primary",
+                                           direction = "vertical", justified = T))),
+           column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                         p(tags$b("Step 2. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_bf", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_bf")),
+           column(4,actionButton("btn_breastfed_modal", "Data source and definitions", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_bf_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_breastfed","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("breastfeeding_explorer")
+         )# mainPanel bracket
+), # tabpanel bracket
+# ###############################################.
+# ## Child development ----
+# ###############################################.
+tabPanel(title = "Child development", icon = icon("seedling"), value = "child_dev",
+         wellPanel(
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_select_childdev",
+                                           label= "Step 1 - Select the data you want to explore.",
+                                           choices = data_list_childdev, status = "primary",
+                                           direction = "vertical", justified = T))),
+                      column(4, selectizeInput("geotype_childdev", "Step 2 - Select a geography level and then an area of interest.",
+                                               choices = c("Scotland", "Health board"), selected = "Scotland"),
+                             uiOutput("geoname_childdev_ui")),
+           column(4,actionButton("btn_childdev_modal", "Data source and definitions",
+                                 icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_childdev_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_childdev','Go to commentary'))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("childdev_explorer")
+         )# mainPanel bracket
+), # tabpanel bracket
+# ###############################################.
+# ## Perinatal Tab ----
+# ###############################################.
 tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -217,7 +278,28 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
          mainPanel(width = 12,
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
-)), # tabpanel bracket #navbarMenu bracket
+  ) # tabpanel bracket
+),#, #navbarMenu bracket
+###############################################.
+## Mental Health ----
+###############################################.
+tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
+         wellPanel(
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_mh_select",
+                                           label= "Step 1 - Select the data you want to explore.",
+                                           choices = mentalhealth_list, status = "primary",
+                                           direction = "vertical", justified = T))),
+           column(4, uiOutput("geotype_mh_ui"),
+                  uiOutput("geoname_mh_ui")),
+           column(4, downloadButton("download_mentalhealth_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_mentalhealth','Go to commentary'))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("mh_explorer")
+         )# mainPanel bracket
+),#tabPanel bracket
 ###############################################.
 ## Pregnancy ----
 ###############################################.
@@ -270,7 +352,7 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
         You can also download the data as a csv using the download button.
         The data is also hosted in the",
         tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
-               "Scottish Health and Social Care Open Data portal", class="externallink"), "."),
+               "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
       column(6, selectInput("data_select", "Select the data you want to explore.",
                            choices = data_list_data_tab)),
       column(6, downloadButton('download_table_csv', 'Download data')),
