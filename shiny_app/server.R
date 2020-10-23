@@ -1,11 +1,11 @@
 #Server side
-credentials <- readRDS("shiny app admin/credentials_test.rds")
+credentials_perinatal <- readRDS("shiny app admin/credentials_perinatal.rds")
 
 function(input, output, session) {
   
   # Shinymanager Auth
   res_auth <- secure_server(
-    check_credentials = check_credentials(credentials)
+    check_credentials = check_credentials(credentials_perinatal)
   )
   
   output$auth_output <- renderPrint({
