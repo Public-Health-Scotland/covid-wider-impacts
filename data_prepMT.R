@@ -360,7 +360,8 @@ cancer_combined <- rbind(cancer_hb,
 
 diff_data <- cancer_combined %>%
   mutate(difference = 100*(count20 - count19)/count19)  %>%
-  mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1))) %>% 
+  mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1))) %>%
+  mutate(month = format(week_ending, "%B")) %>% 
   replace_na(list(count19 = 0, count20 = 0))
 
 
@@ -400,6 +401,10 @@ cancer_dl3 <- cancer_dist %>%
 
 cancer_dl3$type <- as.character(cancer_dl3$type)
 
-cancer_base_data <- rbind(cancer_dl, cancer_dl2, cancer_dl3)
+cancer_base_data <- rbind(cancer_dl, cancer_dl2, cancer_dl3) 
+
+cancer_base_data <- cancer_base_data %>% 
+  mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1)))
+
 
 saveRDS(cancer_base_data, "shiny_app/data/cancer_data_2.rds")

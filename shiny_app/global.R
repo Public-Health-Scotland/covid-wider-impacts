@@ -71,7 +71,7 @@ ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 
 #Cancer data
 cancer_data <- readRDS("data/cancer_data_1.rds")
-# cancer_data2 <- readRDS("data/cancer_data_A.rds")
+cancer_data2 <- readRDS("data/cancer_data_2.rds")
 cancer_extract_date <- "ahdhfh"  # need to set each time?
 
 
