@@ -192,51 +192,51 @@ cancer_joined$hbres <- recode(cancer_joined$hbres,
 # Individual cancer types 
 
 cancer_types <- cancer_joined %>% 
-  group_by(year, site, person_id, sex, hbres) %>% 
+  group_by(year, hbres, site, sex, person_id) %>% 
   summarise(week_number = first(week_number), 
             age_group = first(age_group),
-            dep = min(dep))
+            dep = min(dep)) %>% 
+  group_by(year, week_number, hbres, site, sex, age_group, dep) %>%
+  summarise(count = n())
 
 # All cancer types
-cancer_all <- cancer_joined %>%
-  group_by(year, person_id, sex, hbres) %>%
-  summarise(week_number = first(week_number),
-            age_group = first(age_group),
-            dep = min(dep)) %>% 
-  mutate(site = "All Cancers")
+cancer_all <- cancer_types %>%
+  group_by(year, week_number, hbres, sex, age_group, dep) %>% 
+  mutate(site = "All Cancers") %>% 
+  summarise(count = sum(count))
 
 # All cancer types excluding C44
-cancer_excl <- cancer_joined %>%
-  filter(siteno != 1920) %>%
-  group_by(year, person_id, sex, hbres) %>%
-  summarise(week_number = first(week_number),
-            age_group = first(age_group),
-            dep = min(dep)) %>%
-  mutate(site = "All Malignant Neoplasms (Excl. C44)")
+cancer_excl <- cancer_types %>%
+  filter(site != "Non-Melanoma Skin Cancer") %>%
+  group_by(year, week_number, hbres, sex, age_group, dep) %>% 
+  mutate(site = "All Malignant Neoplasms (Excl. C44)") %>% 
+  summarise(count = sum(count))
 
 # join all
 
-cancer_dist <- bind_rows(cancer_types, cancer_all, cancer_excl)
+cancer_dist <- bind_rows(cancer_types, cancer_all, cancer_excl) %>% 
+  ungroup()
 
 cancer_networks <- cancer_dist %>% 
   mutate(hbres = case_when(hbres == "NHS Grampian" ~ "NCA",
-                           hbres =="NHS Highland" ~ "NCA",
-                           hbres =="NHS Orkney" ~ "NCA",
-                           hbres =="NHS Shetland" ~ "NCA",
-                           hbres =="NHS Tayside" ~ "NCA",
-                           hbres =="NHS Western Isles" ~ "NCA",
-                           hbres =="NHS Borders" ~ "SCAN",
-                           hbres =="NHS Dumfries & Galloway" ~ "SCAN",
-                           hbres =="NHS Fife" ~ "SCAN",
-                           hbres =="NHS Lothian" ~ "SCAN",
-                           hbres =="NHS Ayrshire & Arran" ~ "WOSCAN",
-                           hbres =="NHS Forth Valley" ~ "WOSCAN",
-                           hbres =="NHS Greater Glasgow & Clyde" ~ "WOSCAN",
-                           hbres =="NHS Lanarkshire" ~ "WOSCAN"))  %>% 
+                           hbres == "NHS Highland" ~ "NCA",
+                           hbres == "NHS Orkney" ~ "NCA",
+                           hbres == "NHS Shetland" ~ "NCA",
+                           hbres == "NHS Tayside" ~ "NCA",
+                           hbres == "NHS Western Isles" ~ "NCA",
+                           hbres == "NHS Borders" ~ "SCAN",
+                           hbres == "NHS Dumfries & Galloway" ~ "SCAN",
+                           hbres == "NHS Fife" ~ "SCAN",
+                           hbres == "NHS Lothian" ~ "SCAN",
+                           hbres == "NHS Ayrshire & Arran" ~ "WOSCAN",
+                           hbres == "NHS Forth Valley" ~ "WOSCAN",
+                           hbres == "NHS Greater Glasgow & Clyde" ~ "WOSCAN",
+                           hbres == "NHS Lanarkshire" ~ "WOSCAN"))  %>% 
   group_by(year, week_number, site, age_group, dep, sex, hbres) %>% 
   summarise(count = sum(count))
 
 cancer_scot <- cancer_dist %>% 
+  group_by(year, week_number, site, age_group, dep, sex, hbres) %>% 
   mutate(hbres = "Scotland")%>% 
   summarise(count = sum(count))
 
@@ -270,116 +270,95 @@ cancer_dist <- cancer_dist %>%
 #
 #########################################################
 
-# to add cumulative totals for each HB
-cancer_hb_2019 <- cancer_dist %>%
-  filter(year == 2019, site == "All") %>%
-  group_by(hbres, week_number) %>%
-  summarise(count19 = n()) %>%
-  mutate(cum_count19 = cumsum(count19)) %>% 
-  mutate(category = "HB") %>%
-  rename(area = hbres) %>% 
-  mutate(type = "All")
-
-cancer_hb_2020 <- cancer_dist %>%
-  filter(year == 2020, site == "All") %>%
-  group_by(hbres, week_number) %>%
-  summarise(count20 = n()) %>%
-  mutate(cum_count20 = cumsum(count20)) %>% 
-  mutate(category = "HB") %>% 
-  rename(area = hbres) %>% 
-  mutate(type = "All")
-
-cancer_hb <- left_join(cancer_hb_2020, cancer_hb_2019)
-
-# # to add cumulative totals for each sex
+# to add cumulative totals for each sex
 cancer_sex_2019 <- cancer_dist %>%
-  filter(year == 2019, site == "All") %>%
-  group_by(sex, week_number) %>%
-  summarise(count19 = n()) %>%
-  mutate(cum_count19 = cumsum(count19)) %>% 
+  filter(year == 2019, site == "All Malignant Neoplasms (Excl. C44)") %>%
+  group_by(scotland, network, hbres, site, sex, week_number) %>%
+  summarise(count19 = sum(count)) %>%
+  ungroup() %>% 
   mutate(category = "sex", sex = as.character(sex)) %>%
-  mutate(area = "Scotland") %>% 
+  filter(hbres == "Scotland") %>% 
   rename(type = sex)
 
 cancer_sex_2020 <- cancer_dist %>%
-  filter(year == 2020, site == "All") %>%
-  group_by(sex, week_number) %>%
-  summarise(count20 = n()) %>%
-  mutate(cum_count20 = cumsum(count20)) %>% 
+  filter(year == 2020, site == "All Malignant Neoplasms (Excl. C44)") %>%
+  group_by(scotland, network, hbres, site, sex, week_number) %>%
+  summarise(count20 = sum(count)) %>%
+  ungroup() %>% 
   mutate(category = "sex", sex = as.character(sex)) %>%
-  mutate(area = "Scotland") %>%  
+  filter(hbres == "Scotland") %>%  
   rename(type = sex) 
 
 cancer_sex <- left_join(cancer_sex_2020, cancer_sex_2019)
 
-# # to add cumulative totals for each dep group
+# to add cumulative totals for each dep group
 cancer_simd_2019 <- cancer_dist %>%
-  filter(year == 2019, site == "All") %>%
-  group_by(dep, week_number) %>%
+  filter(year == 2019, site == "All Malignant Neoplasms (Excl. C44)") %>%
+  group_by(scotland, network, hbres, dep, week_number) %>%
   summarise(count19 = n()) %>%
-  mutate(cum_count19 = cumsum(count19)) %>% 
+  ungroup() %>% 
   mutate(category = "SIMD", dep = as.character(dep)) %>%
-  mutate(area = "Scotland") %>% 
+  filter(hbres == "Scotland") %>% 
   rename(type = dep)
 
 cancer_simd_2020 <- cancer_dist %>%
-  filter(year == 2020, site == "All") %>%
-  group_by(dep, week_number) %>%
+  filter(year == 2020, site == "All Malignant Neoplasms (Excl. C44)") %>%
+  group_by(scotland, network, hbres, dep, week_number) %>%
   summarise(count20 = n()) %>%
-  mutate(cum_count20 = cumsum(count20)) %>% 
+  ungroup() %>% 
   mutate(category = "SIMD", dep = as.character(dep)) %>%
-  mutate(area = "Scotland") %>%  
+  filter(hbres == "Scotland") %>%  
   rename(type = dep)
 
 cancer_simd <- left_join(cancer_simd_2020, cancer_simd_2019)
 
-# # to add cumulative totals for each age group
+# to add cumulative totals for each age group
 cancer_age_2019 <- cancer_dist %>%
-  filter(year == 2019, site == "All") %>%
-  group_by(age_group, week_number) %>%
+  filter(year == 2019, site == "All Malignant Neoplasms (Excl. C44)") %>%
+  group_by(scotland, network, hbres, age_group, week_number) %>%
   summarise(count19 = n()) %>%
-  mutate(cum_count19 = cumsum(count19))%>% 
+  ungroup() %>% 
   mutate(category = "Age", age_group = as.character(age_group)) %>%
-  mutate(area = "Scotland") %>%  
+  filter(hbres == "Scotland") %>%  
   rename(type = age_group) 
 
-# # to add cumulative totals for each age group
+# to add cumulative totals for each age group
 cancer_age_2020 <- cancer_dist %>%
-  filter(year == 2020, site == "All") %>%
-  group_by(age_group, week_number) %>%
+  filter(year == 2020, site == "All Malignant Neoplasms (Excl. C44)") %>%
+  group_by(scotland, network, hbres, age_group, week_number) %>%
   summarise(count20 = n()) %>%
-  mutate(cum_count20 = cumsum(count20))%>% 
+  ungroup() %>% 
   mutate(category = "Age", age_group = as.character(age_group)) %>%
-  mutate(area = "Scotland") %>%  
+  filter(hbres == "Scotland") %>%  
   rename(type = age_group)
 
 cancer_age <- left_join(cancer_age_2020, cancer_age_2019)
 
-# # to add cumulative totals for each cancer site
-cancer_site_2019 <- cancer_dist %>%
+# to add cumulative totals for cancer
+cancer_2019 <- cancer_dist %>%
   filter(year == 2019) %>%
-  group_by(site, week_number) %>%
+  group_by(scotland, network, hbres, site, sex, week_number) %>%
   summarise(count19 = n()) %>%
-  mutate(cum_count19 = cumsum(count19)) %>% 
-  mutate(category = "Site", site = as.character(site)) %>%
-  mutate(area = "Scotland") %>% 
-  rename(type = site)
+  ungroup() %>% 
+  mutate(category = "Age", age_group = as.character(age_group)) %>%
+  filter(hbres == "Scotland") %>%  
+  rename(type = age_group) 
 
-cancer_site_2020 <- cancer_dist %>%
+# to add cumulative totals for cancer
+cancer_2020 <- cancer_dist %>%
   filter(year == 2020) %>%
-  group_by(site, week_number) %>%
+  group_by(scotland, network, hbres, site, sex, week_number) %>%
   summarise(count20 = n()) %>%
-  mutate(cum_count20 = cumsum(count20)) %>% 
-  mutate(category = "Site", site = as.character(site)) %>%
-  mutate(area = "Scotland") %>% 
-  rename(type = site)
+  ungroup() %>% 
+  mutate(category = "Age", age_group = as.character(age_group)) %>%
+  filter(hbres == "Scotland") %>%  
+  rename(type = age_group)
 
-cancer_site <- left_join(cancer_site_2020, cancer_site_2019)
+cancer_all <- left_join(cancer_2020, cancer_2019)
 
 #Bind rows
 
-cancer_combined <- rbind(cancer_hb,
-                         cancer_site,
+cancer_combined <- rbind(cancer_all,
                          cancer_age,
                          cancer_sex,
                          cancer_simd) 
