@@ -211,18 +211,35 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
   yaxis_plots[["title"]] <- yaxis_title
   
   
+  measure_name <- case_when(data_name == "cum" ~ "Referrals(cumulative): ",
+                            data_name == "dif" ~ "Percentage difference: ",
+                            data_name == "inc" ~ "Referrals: ")
+ 
+  
+  value1 <- dataset[[var1_chosen]]
+  
+  value2 <- dataset[[var2_chosen]]
+  
+  
+  #Text for tooltips
+  tooltip_1 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+                            "<br>", measure_name, value1))
+  
+  tooltip_2 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+                              "<br>", measure_name, value2))
+  
   #Creating time trend plot
-  plot_ly(data=dataset, x=~week_number) %>%
+  plot_ly(data=dataset, x=~week_ending) %>%
     # 2020 line
-    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),
+    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_1, hoverinfo="text",
               name = "2020") %>%
     # 2019 line
-    add_lines(y = ~get(var2_chosen), line = list(color = pal_overall[2], dash = 'dash'),
-              name = "2019") %>%
+    add_lines(y = ~get(var2_chosen), line = list(color = pal_overall[2], dash = 'dash'),text=tooltip_2, 
+              hoverinfo="text", name = "2019") %>%
     
     #Layout
     layout(margin = list(b = 80, t=5), 
-           yaxis = yaxis_plots, xaxis = list(title = "Week"),
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% 
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove) 
@@ -230,41 +247,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
 }
 
 
-# ###############################################.
-# ## Function for cancer trend charts ----
-# ###############################################.
-# 
-# plot_cancer_trend_chart <- function(dataset, pal_chose, split=F) {
-#   
-#   
-#     # Formatting age groups as factor so they appear in the correct order in the legend
-#     if ( split == "age") {
-#         trend_data <- dataset %>% 
-#           filter(category == split) %>% 
-#           mutate(type = factor(type, levels = c("Under 5", "5-9", "10-14", "15-19",  
-#                                                         "20-24", "25-29", "30-34", 
-#                                                         "35-39", "40-44", "45-49", 
-#                                                         "50-54", "55-59", "60-64", 
-#                                                         "65-69", "70-74", "75-79","80 and over"))) 
-#     } else {
-#         trend_data <- dataset %>%
-#           filter(category == split) %>% 
-#           mutate(type = factor(type, levels = c(1, 2, 3, 4, 5)))
-#     }
-#     
-#     #Creating time trend plot
-#   plot_ly(data=trend_data, x=~week_ending,  y = ~difference)  %>%
-#       
-#     add_lines(color = ~type, colors = pal_chose) %>% 
-#     
-#     #Layout
-#     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-#            yaxis = list(title = "Percentage Difference"), xaxis = list(title = "Week"),
-#            legend = list(x = 100, y = 0.5))  #position of legend
-#     
-#     # config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-#     
-# }
+
 
 ###############################################.
 ## # Function that creates specialty charts.   ----
