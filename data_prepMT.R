@@ -372,8 +372,8 @@ diff_data <- cancer_combined %>%
 # save as excel  and RDS file
 #write_xlsx(cancer_joined, "CWT Dashboard Input Data.xlsx")
 
-saveRDS(diff_data, "data/cancer_data_1.rds")
-saveRDS(cancer_dist, "data/cancer_data_2.rds")
+saveRDS(diff_data, "shiny_app/data/cancer_data_1.rds")
+
 
 
 #############################################
@@ -402,6 +402,4 @@ cancer_dl3$type <- as.character(cancer_dl3$type)
 
 cancer_base_data <- rbind(cancer_dl, cancer_dl2, cancer_dl3)
 
-saveRDS(cancer_base_data, "////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects//
-                          20200804-pathology-as-proxy-for-2020-regs//RShiny//CancerPathologyData//
-                          cancer_data_download1.rds")
+saveRDS(cancer_base_data, "shiny_app/data/cancer_data_2.rds")

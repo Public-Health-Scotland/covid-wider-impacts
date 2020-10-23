@@ -137,7 +137,13 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
 ## Data downloads ----
 ###############################################.
 
-# 
+
+output$download_cancer_data <- downloadHandler(
+  filename ="cancer_extract.csv",
+  content = function(file) {
+    write_csv(cancer_data2,
+              file) } 
+) 
 
 ###############################################.
 ## Commentary ----
