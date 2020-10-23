@@ -1103,7 +1103,7 @@ ante_booking <- ante_booking %>%
   select(-shift_i_booked_no, -trend_i_booked_no,-shift_i_booked_gest, -trend_i_booked_gest) %>%
   ungroup()
 
-saveRDS(ante_booking, paste0("shiny_app/data/","ante_booking_data.rds"))
+saveRDS(ante_booking, "shiny_app/data/ante_booking_data.rds")
 
 ## ANTENATAL DATA DOWNLOAD FILE FOR SHINY APP
 ## Data download to include weekly Scotland data for age/deprivation breakdown PLUS monthly booking data for all NHS boards (even the small island boards)
@@ -1143,8 +1143,7 @@ ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download
          number_of_women_booking_gest_under_10wks,number_of_women_booking_gest_10to12wks,number_of_women_booking_gest_over_12wks,
          average_gestation_at_booking, centreline_gestation, dottedline_gestation)
 
-saveRDS(ante_booking_download, paste0("shiny_app/data/","ante_booking_download.rds"))
-
+saveRDS(ante_booking_download, "shiny_app/data/ante_booking_download.rds")
 
 ###############################################.
 ## Pregnancy (terminations) ----
@@ -1176,7 +1175,9 @@ top_scot <- readRDS(paste0(data_folder, "pregnancy/terminations/SCOTLAND_CHARTS_
   mutate(month=as.Date(month),
          type=case_when(chart=="AGEGRP" ~ "age",chart=="SIMD" ~ "dep",TRUE ~ "other"),
          area_type="Scotland",
-         category=as.character(case_when(category=="40+" ~ "40 and over",TRUE ~ as.character(category))))
+         category=as.character(case_when(category=="40+" ~ "40 and over", 
+                                         category=="under 20" ~ "Under 20", 
+                                         TRUE ~ as.character(category))))
          
 ## Combine area based and age/dep terminations data, format and add shifts/trends
 top <- bind_rows(top_runchart, top_scot) %>%
@@ -1229,7 +1230,7 @@ top <- bind_rows(top_runchart, top_scot) %>%
   select(-shift_i_top_no, -trend_i_top_no,-shift_i_top_gest, -trend_i_top_gest) %>%
   ungroup()
 
-saveRDS(top, paste0("shiny_app/data/","top_data.rds"))
+saveRDS(top, "shiny_app/data/top_data.rds")
 
 ## TERMINATIONS DATA DOWNLOAD FILE FOR SHINY APP
 ## Data download to include monthly Scotland data for age/deprivation breakdown PLUS monthly data for NHS boards (excluding the small island boards)
@@ -1278,7 +1279,7 @@ top_download_scot <- top_scot %>%
 
 top_download <- bind_rows(top_download_board, top_download_scot)
 
-saveRDS(top_download, paste0("shiny_app/data/","top_download.rds"))
+saveRDS(top_download, "shiny_app/data/top_download.rds")
 
 ###############################################.
 ## Child development ----

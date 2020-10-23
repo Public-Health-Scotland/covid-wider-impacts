@@ -255,7 +255,7 @@ plot_top_split <- function(dataset, split, measure){
   #adjust datasets accordig to which data split to be displayed
   if(split == "age"){
     dataset <- dataset %>%
-      mutate(category = factor(category, levels = c("under 20", "20-24", "25-29","30-34","35-39", "40 and over")))
+      mutate(category = factor(category, levels = c("Under 20", "20-24", "25-29","30-34","35-39", "40 and over")))
     pallette <- pal_age}
   
   if(split == "dep"){
