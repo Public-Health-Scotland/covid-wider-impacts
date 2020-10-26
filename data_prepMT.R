@@ -288,7 +288,8 @@ cancer_2020 <- cancer_dist %>%
   group_by(hbres, site, sex, dep, age_group, week_number) %>%
   summarise(count20 = sum(count))
 
-cancer_dist <- full_join(cancer_2020, cancer_2019) 
+cancer_dist <- full_join(cancer_2020, cancer_2019) %>% 
+  ungroup()
 
 cancer_dist <- cancer_dist %>% 
   mutate(count20 = case_when(
@@ -406,6 +407,13 @@ diff_data <- cancer_combined %>%
 
 diff_data <-  diff_data %>% 
   mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1)))
+
+##########################################
+# Complete Weeks only
+##########################################
+
+diff_data <-  diff_data %>% 
+  filter(week_number <= 26)
 
 ##########################################
 # Export Data
