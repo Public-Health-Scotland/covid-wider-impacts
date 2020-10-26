@@ -105,9 +105,7 @@ output$breastfeeding_explorer <- renderUI({
   }
   
   control_chart_commentary <- p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
-                                                       "‘control charts’",class="externallink"), "to present the percentages above.", br(),
-                                "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
-                      Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
+                                                       "‘run charts’",class="externallink", target="_blank"), " to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
                                 "The dots joined by a solid black line in the chart above show the percentage of children receiving a child health review who 
                                 were recorded as being breastfed on their review record. Data is shown for each month from January 2019 onwards. ", br(),  
                                 "The blue line on the chart, the centreline, is there to help show how unexpected any observed changes are. 
