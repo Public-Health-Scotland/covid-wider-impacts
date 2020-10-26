@@ -398,8 +398,7 @@ cancer_combined <- rbind(cancer_hb, cancer_sex) %>%
 
 diff_data <- cancer_combined %>%
   mutate(difference = case_when(
-    !is.na(count19) ~ 100*(count20 - count19)/count19),
-    TRUE ~ NA)
+    count19 > 0 ~ 100*(count20 - count19)/count19))
 
 ##########################################
 # Week ending labels
