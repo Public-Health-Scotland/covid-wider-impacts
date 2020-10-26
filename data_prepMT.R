@@ -71,59 +71,91 @@ cancer <- cancer %>%
 # there's 100% an easier way to do this, filter based on starts with C then use numbers?
 
 cancer <- cancer %>% 
-  mutate(siteno = case_when(str_detect(icd10_conv, "C67")  ~ 210,
-                            str_detect(icd10_conv, "C50")  ~ 510,
-                            str_detect(icd10_conv, "C56")  ~ 740,
-                            str_detect(icd10_conv, "C52")  ~ 760,
-                            str_detect(icd10_conv, "C51")  ~ 770,
-                            str_detect(icd10_conv, "C73")  ~ 870,
-                            str_detect(icd10_conv, "C81")  ~ 910,
-                            str_detect(icd10_conv, "C22")  ~ 1210,
-                            str_detect(icd10_conv, "C45")  ~ 1320,
-                            str_detect(icd10_conv, "C60")  ~ 1410,
-                            str_detect(icd10_conv, "C61")  ~ 1420,
-                            str_detect(icd10_conv, "C62")  ~ 1430,
-                            str_detect(icd10_conv, "C90")  ~ 1510,
-                            str_detect(icd10_conv, "C15")  ~ 1710,
-                            str_detect(icd10_conv, "C25")  ~ 1810,
-                            str_detect(icd10_conv, "C43")  ~ 1910,
-                            str_detect(icd10_conv, "C44")  ~ 1920,
-                            str_detect(icd10_conv, "C16")  ~ 2010,
-                            str_detect(icd10_conv, "C40") | 
-                              str_detect(icd10_conv, "C41") | 
-                              str_detect(icd10_conv, "C47") |
-                              str_detect(icd10_conv, "C49")  ~ 320,
-                            str_detect(icd10_conv, "C71") ~ 410,
-                            str_detect(icd10_conv, "C17") | 
-                              str_detect(icd10_conv, "C18") | 
-                              str_detect(icd10_conv, "C19") | 
-                              str_detect(icd10_conv, "C20") ~ 610,
-                            str_detect(icd10_conv, "C53") | 
-                              str_detect(icd10_conv, "C54") | 
-                              str_detect(icd10_conv, "C55") ~ 750,
-                            str_detect(icd10_conv, "C0") | 
-                              str_detect(icd10_conv, "C10") | 
-                              str_detect(icd10_conv, "C11") | 
-                              str_detect(icd10_conv, "C12") | 
-                              str_detect(icd10_conv, "C13") | 
-                              str_detect(icd10_conv, "C14") |
-                              str_detect(icd10_conv, "C30") |
-                              str_detect(icd10_conv, "C31") | 
-                              str_detect(icd10_conv, "C32") ~ 810,
-                            str_detect(icd10_conv, "C64") | 
-                              str_detect(icd10_conv, "C65") ~ 1010,
-                            str_detect(icd10_conv, "C91") | 
-                              str_detect(icd10_conv, "C92") | 
-                              str_detect(icd10_conv, "C93") | 
-                              str_detect(icd10_conv, "C94") ~ 1110,
-                            str_detect(icd10_conv, "C33") | 
-                              str_detect(icd10_conv, "C34") ~ 1310,
-                            str_detect(icd10_conv, "C82") |
-                              str_detect(icd10_conv, "C83") |
-                              str_detect(icd10_conv, "C84") |
-                              str_detect(icd10_conv, "C85") |
-                              str_detect(icd10_conv, "C86") ~ 1610,
-                            str_detect(icd10_conv, "C") ~ 999)) 
+  filter(str_detect(icd10_conv, "C")) %>% 
+  mutate(icd_2 = as.integer(substr(icd10_conv, 2, 3))) %>% 
+  mutate(siteno = case_when(icd_2 == 67 ~ 210,
+                            icd_2 == 71 ~ 410,
+                            icd_2 == 50 ~ 510,
+                            icd_2 == 56 ~ 740,
+                            icd_2 == 52 ~ 760,
+                            icd_2 == 51 ~ 770,
+                            icd_2 == 73 ~ 870,
+                            icd_2 == 81 ~ 910,
+                            icd_2 == 22 ~ 1210,
+                            icd_2 == 45 ~ 1320,
+                            icd_2 == 60 ~ 1410,
+                            icd_2 == 61 ~ 1420,
+                            icd_2 == 62 ~ 1430,
+                            icd_2 == 90 ~ 1510,
+                            icd_2 == 15 ~ 1710,
+                            icd_2 == 25 ~ 1810,
+                            icd_2 == 43 ~ 1910,
+                            icd_2 == 44 ~ 1920,
+                            icd_2 == 16 ~ 2010,
+                            between(icd_2, 40, 41)| icd_2 == 47| icd_2 == 49 ~ 320,
+                            between(icd_2, 18, 20) ~ 610,
+                            between(icd_2, 53, 55) ~ 750,
+                            between(icd_2, 00, 14)| between(icd_2, 30,32) ~ 810,
+                            between(icd_2, 64, 65) ~ 1010,
+                            between(icd_2, 91, 95) ~ 1110,
+                            between(icd_2, 33, 34) ~ 1310,
+                            between(icd_2, 82,86) ~ 1610,
+                            TRUE ~ 999))
+
+# cancer <- cancer %>% 
+#   mutate(siteno = case_when(str_detect(icd10_conv, "C67")  ~ 210,
+#                             str_detect(icd10_conv, "C50")  ~ 510,
+#                             str_detect(icd10_conv, "C56")  ~ 740,
+#                             str_detect(icd10_conv, "C52")  ~ 760,
+#                             str_detect(icd10_conv, "C51")  ~ 770,
+#                             str_detect(icd10_conv, "C73")  ~ 870,
+#                             str_detect(icd10_conv, "C81")  ~ 910,
+#                             str_detect(icd10_conv, "C22")  ~ 1210,
+#                             str_detect(icd10_conv, "C45")  ~ 1320,
+#                             str_detect(icd10_conv, "C60")  ~ 1410,
+#                             str_detect(icd10_conv, "C61")  ~ 1420,
+#                             str_detect(icd10_conv, "C62")  ~ 1430,
+#                             str_detect(icd10_conv, "C90")  ~ 1510,
+#                             str_detect(icd10_conv, "C15")  ~ 1710,
+#                             str_detect(icd10_conv, "C25")  ~ 1810,
+#                             str_detect(icd10_conv, "C43")  ~ 1910,
+#                             str_detect(icd10_conv, "C44")  ~ 1920,
+#                             str_detect(icd10_conv, "C16")  ~ 2010,
+#                             str_detect(icd10_conv, "C40") | 
+#                               str_detect(icd10_conv, "C41") | 
+#                               str_detect(icd10_conv, "C47") |
+#                               str_detect(icd10_conv, "C49")  ~ 320,
+#                             str_detect(icd10_conv, "C71") ~ 410,
+#                               str_detect(icd10_conv, "C18") | 
+#                               str_detect(icd10_conv, "C19") | 
+#                               str_detect(icd10_conv, "C20") ~ 610,
+#                             str_detect(icd10_conv, "C53") | 
+#                               str_detect(icd10_conv, "C54") | 
+#                               str_detect(icd10_conv, "C55") ~ 750,
+#                             str_detect(icd10_conv, "C0") | 
+#                               str_detect(icd10_conv, "C10") | 
+#                               str_detect(icd10_conv, "C11") | 
+#                               str_detect(icd10_conv, "C12") | 
+#                               str_detect(icd10_conv, "C13") | 
+#                               str_detect(icd10_conv, "C14") |
+#                               str_detect(icd10_conv, "C30") |
+#                               str_detect(icd10_conv, "C31") | 
+#                               str_detect(icd10_conv, "C32") ~ 810,
+#                             str_detect(icd10_conv, "C64") | 
+#                               str_detect(icd10_conv, "C65") ~ 1010,
+#                             str_detect(icd10_conv, "C91") | 
+#                               str_detect(icd10_conv, "C92") | 
+#                               str_detect(icd10_conv, "C93") | 
+#                               str_detect(icd10_conv, "C94") |
+#                               str_detect(icd10_conv,"C95") ~ 1110,
+#                             str_detect(icd10_conv, "C33") | 
+#                               str_detect(icd10_conv, "C34") ~ 1310,
+#                             str_detect(icd10_conv, "C82") |
+#                               str_detect(icd10_conv, "C83") |
+#                               str_detect(icd10_conv, "C84") |
+#                               str_detect(icd10_conv, "C85") |
+#                               str_detect(icd10_conv, "C86") ~ 1610,
+#                             str_detect(icd10_conv, "C") ~ 999)) 
 
 # add cancer description
 
@@ -250,27 +282,6 @@ cancer_dist <- cancer_dist %>%
   bind_rows(cancer_networks, cancer_scot) %>% 
   filter(hbres != "Unknown")
 
-# 
-# cancer_dist <- cancer_dist %>% 
-#   filter(hbres != "Unknown") %>% 
-#   mutate(scotland = "Scotland",
-#          network = case_when(hbres == "NHS Grampian" ~ "NCA",
-#                              hbres == "NHS Highland" ~ "NCA",
-#                              hbres == "NHS Orkney" ~ "NCA",
-#                              hbres == "NHS Shetland" ~ "NCA",
-#                              hbres == "NHS Tayside" ~ "NCA",
-#                              hbres == "NHS Western Isles" ~ "NCA",
-#                              hbres == "NHS Borders" ~ "SCAN",
-#                              hbres == "NHS Dumfries & Galloway" ~ "SCAN",
-#                              hbres == "NHS Fife" ~ "SCAN",
-#                              hbres == "NHS Lothian" ~ "SCAN",
-#                              hbres == "NHS Ayrshire & Arran" ~ "WOSCAN",
-#                              hbres == "NHS Forth Valley" ~ "WOSCAN",
-#                              hbres == "NHS Greater Glasgow & Clyde" ~ "WOSCAN",
-#                              hbres == "WOSCAN" ~ "WOSCAN",
-#                              hbres == "SCAN" ~ "SCAN",
-#                              hbres == "NCA" ~ "NCA",
-#                              hbres == "Scotland" ~ "Scotland"))
 
 ########################################################
 #
