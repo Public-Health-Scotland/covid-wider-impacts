@@ -68,7 +68,6 @@ cancer <- cancer %>%
 
 
 # create cancer siteno
-# there's 100% an easier way to do this, filter based on starts with C then use numbers?
 
 cancer <- cancer %>% 
   filter(str_detect(icd10_conv, "C")) %>% 
