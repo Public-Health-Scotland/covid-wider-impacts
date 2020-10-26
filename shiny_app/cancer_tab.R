@@ -24,11 +24,11 @@ observeEvent(input$btn_cancer_modal,
 
 
 cancer_data_cum_main <- reactive({
-  if(input$cancer_type == "All") {
-   cancer_data %>% filter(type == input$gender, area == input$geoname_cancer)
-  } else {
-   cancer_data %>% filter(type == input$cancer_type, area == "Scotland")
-  }
+  # if(input$gender != "All") {
+   cancer_data2 %>% filter(sex == input$gender, hbres == input$geoname_cancer, site == input$cancer_type)
+  # } else {
+  #  cancer_data2 %>% filter(site == input$cancer_type, hbres == input$geoname_cancer)
+  # }
 })
 
 cancer_data_cum_split <- reactive({
@@ -45,9 +45,11 @@ cancer_data_cum_split <- reactive({
 output$geoname_ui_cancer <- renderUI({
   #Lists areas available in   
   areas_summary_cancer <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_cancer])
-  if(input$geotype_cancer != "Scotland") {
+  if(input$geotype_cancer == "Health Board") {
   selectizeInput("geoname_cancer", label = NULL, choices = areas_summary_cancer, selected = areas_summary_cancer[1])
-  } else {
+  } else if (input$geotype_cancer == "Cancer Network") {
+    selectizeInput("geoname_cancer", label = NULL, choices = c("NCA", "SCAN", "WOSCAN"), selected = "NCA")  
+  } else if (input$geotype_cancer == "Scotland") {
     selectizeInput("geoname_cancer", label = NULL, choices = "Scotland", selected = "Scotland")  
   }  
 })
@@ -89,10 +91,10 @@ output$cancer_explorer <- renderUI({
                        input$cancer_type == "Vulva - Females Only" ~ "Vulva - Females only"
                        )
 
-  if(input$geotype_cancer == "Scotland") {
+  # if(input$geotype_cancer == "Scotland") {
     
-    enable("cancer_type")
-    enable("gender")
+    # enable("cancer_type")
+    # enable("gender")
     tagList(
       h3("Weekly pathology referrals"),
       plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
@@ -101,20 +103,20 @@ output$cancer_explorer <- renderUI({
                       ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"),
       plot_box(paste0("2020 incidences of pathology referrals for cancer of ", cancer_site,
                       ", compared with the corresponding time in 2018-2019 by week"), "cancer_incidence"))
-  } else {
-    
-    disable("cancer_type")
-    disable("gender")
-    tagList(
-      h3("Weekly pathology referrals"),
-      plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
-                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
-      plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
-                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"),
-      plot_box(paste0("2020 incidences of pathology referrals for cancer of ", cancer_site,
-                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_incidence"))
-  }  
-   
+  # } else {
+  #   
+  #   disable("cancer_type")
+  #   disable("gender")
+  #   tagList(
+  #     h3("Weekly pathology referrals"),
+  #     plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
+  #                     ", compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
+  #     plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
+  #                     ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"),
+  #     plot_box(paste0("2020 incidences of pathology referrals for cancer of ", cancer_site,
+  #                     ", compared with the corresponding time in 2018-2019 by week"), "cancer_incidence"))
+  # }  
+  #  
 })
 
 ###############################################.

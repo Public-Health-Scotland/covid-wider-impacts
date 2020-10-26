@@ -223,7 +223,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
   wellPanel(
            column(4, div(p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_cancer", label = NULL, choices= c("Scotland", "Health board"),
+                         selectInput("geotype_cancer", label = NULL, choices= c("Scotland", "Cancer Network", "Health board"),
                                      selected = "Scotland")),
                   uiOutput("geoname_ui_cancer")),
                   

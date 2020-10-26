@@ -417,35 +417,34 @@ diff_data <-  diff_data %>%
 saveRDS(diff_data, "shiny_app/data/cancer_data_1.rds")
 
 
-
 #############################################
 # Sort Data for download
 #############################################
 
-cancer_dl <- cancer_dist %>%
-  group_by(hbres, year, week_number, site, sex) %>%
-  summarise(count_dl = n()) %>% 
-  mutate(category = "Gender") %>%
-  rename(type = sex)
-
-cancer_dl2 <- cancer_dist %>%
-  group_by(hbres, year, week_number, site, age_group) %>%
-  summarise(count_dl = n()) %>%
-  mutate(category = "Age") %>%
-  rename(type = age_group)
-
-cancer_dl3 <- cancer_dist %>%
-  group_by(hbres, year, week_number, site, dep) %>%
-  summarise(count_dl = n()) %>%
-  mutate(category = "SIMD") %>%
-  rename(type = dep)
-
-cancer_dl3$type <- as.character(cancer_dl3$type)
-
-cancer_base_data <- rbind(cancer_dl, cancer_dl2, cancer_dl3) 
-
-cancer_base_data <- cancer_base_data %>% 
-  mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1)))
-
-
-saveRDS(cancer_base_data, "shiny_app/data/cancer_data_2.rds")
+# cancer_dl <- cancer_dist %>%
+#   group_by(hbres, year, week_number, site, sex) %>%
+#   summarise(count_dl = n()) %>% 
+#   mutate(category = "Gender") %>%
+#   rename(type = sex)
+# 
+# cancer_dl2 <- cancer_dist %>%
+#   group_by(hbres, year, week_number, site, age_group) %>%
+#   summarise(count_dl = n()) %>%
+#   mutate(category = "Age") %>%
+#   rename(type = age_group)
+# 
+# cancer_dl3 <- cancer_dist %>%
+#   group_by(hbres, year, week_number, site, dep) %>%
+#   summarise(count_dl = n()) %>%
+#   mutate(category = "SIMD") %>%
+#   rename(type = dep)
+# 
+# cancer_dl3$type <- as.character(cancer_dl3$type)
+# 
+# cancer_base_data <- rbind(cancer_dl, cancer_dl2, cancer_dl3) 
+# 
+# cancer_base_data <- cancer_base_data %>% 
+#   mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1)))
+# 
+# 
+# saveRDS(cancer_base_data, "shiny_app/data/cancer_data_2.rds")
