@@ -58,7 +58,8 @@ output$cancer_explorer <- renderUI({
   
 
   # text for titles of cut charts
-  cancer_site <- case_when(input$cancer_type == "All" ~ "All Types",
+  cancer_site <- case_when(input$cancer_type == "All Cancers" ~ "All Cancers",
+                       input$cancer_type == "All Malignant Neoplasms (Excl. C44)" ~ "All Malignant Neoplasms (Excl. C44)",
                        input$cancer_type == "Bladder" ~ "Bladder",
                        input$cancer_type == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
                        input$cancer_type == "Breast" ~ "Breast",

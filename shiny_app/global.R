@@ -167,7 +167,8 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
 #                         "Stillbirths and infant deaths" = "perinatal"
 # )
 
-cancer_type_list <- c("All Types" = "All",
+cancer_type_list <- c("All Cancers" = "All Cancers",
+                      "All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "Bladder" = "Bladder",
                       "Bone and Connective Tissue" = "Bone and Connective Tissue",
                       "Breast" = "Breast", 
