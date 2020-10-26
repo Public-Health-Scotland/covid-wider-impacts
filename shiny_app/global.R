@@ -109,6 +109,20 @@ six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
+## perinatal mortality data
+perinatal <- readRDS("data/perinatal_data.rds")
+
+#Pregnancy tab
+#antenatal booking
+booking_extract_date <- "7th October 2020"
+booking <- readRDS("data/ante_booking_data.rds")
+booking_download <- readRDS("data/ante_booking_download.rds")
+
+#terminations
+top_extract_date <- "2nd October 2020"
+top <- readRDS("data/top_data.rds")
+top_download <- readRDS("data/top_download.rds")
+
 # Breastfeeding data
 breastfeeding <- readRDS("data/breastfeeding_data.rds")
 #Child development data
@@ -117,9 +131,6 @@ child_dev <- readRDS("data/child_dev_data.rds")
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
-
-## perinatal mortality data
-perinatal <- readRDS("data/perinatal_data.rds")
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)",
@@ -137,12 +148,20 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
                      "MMR first dose" = "mmr_dose1",
                      "MMR second dose" = "mmr_dose2")
 
-# List of data items available in step 2 of immunisation tab
+# List of data items available in step 2 of child health tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
                      "6-8 Week Review" = "six_eightwks",
                      "13-15 Month Review" = "13_15mnth",
                      "27-30 Month Review" = "27_30mnth",
                      "4-5 Year Review" = "4_5yr")
+
+## Data lists for pregnancy tab
+# List of data items available in step 1 of antenatal booking
+data_list_booking <- c("Number" = "booking_number",
+                    "Average gestation" = "booking_gestation")
+# List of data items available in step 1 of terminations
+data_list_top <- c("Number" = "top_number",
+                       "Average gestation" = "top_gestation")
 
 data_list_childdev <- c("13-15 month review" = "13_15mnth",
                      "27-30 month review" = "27_30mnth")
@@ -161,6 +180,8 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "27-30 month child health review" = "twentyseven_visit",
                         "4-5 year child health review" = "fourtofive_visit",
                         "Stillbirths and infant deaths" = "perinatal",
+                        "Termination of pregnancy" = "top",
+                        "Antenatal bookings" = "ante_booking",
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh"

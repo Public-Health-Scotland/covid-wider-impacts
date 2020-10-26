@@ -27,6 +27,8 @@ data_table <- reactive({
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
          "perinatal" = perinatal,
+         "top" = top_download ,
+         "ante_booking" = booking_download, 
          "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
          "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
          "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
@@ -187,6 +189,10 @@ data_table <- reactive({
              "Number of deaths" = number_of_deaths_in_month,
              "Rate" = rate,
              "Type" = type)
+  } else if (input$data_select %in% "top") {
+    table_data <- table_data
+  } else if (input$data_select %in% "ante_booking") {
+    table_data <- table_data
   }
   
   table_data %>% 
