@@ -24,8 +24,8 @@ observeEvent(input$btn_cancer_modal,
 
 
 cancer_data_cum_main <- reactive({
-  # if(input$gender != "All") {
-   cancer_data2 %>% filter(sex == input$gender, hbres == input$geoname_cancer, site == input$cancer_type)
+  # if(input$gender != "All Persons") {
+   cancer_data2 %>% filter(sex == input$gender, area == input$geoname_cancer, site == input$cancer_type)
   # } else {
   #  cancer_data2 %>% filter(site == input$cancer_type, hbres == input$geoname_cancer)
   # }

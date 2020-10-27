@@ -439,34 +439,34 @@ saveRDS(diff_data, "shiny_app/data/cancer_data_1.rds")
 # Cumulative totals
 ##########################################
 
-cancer_cum <- diff_data %>% 
-  filter(category == "sex") %>% 
-  rename(sex = type) %>% 
-  select(area, site, sex, week_ending, count19, count20, difference) %>% 
-  group_by(area, site, sex) %>% 
+cancer_cum <- diff_data %>%
+  filter(category == "sex") %>%
+  rename(sex = type) %>%
+  select(area, site, sex, week_ending, count19, count20, difference) %>%
+  group_by(area, site, sex) %>%
   mutate(cum_count19 = cumsum(count19),
          cum_count20 = cumsum(count20))
-
-
-cancer_all_sex <- diff_data %>% 
-  filter(category == "hb") %>% 
-  mutate(sex = "All Persons") %>% 
-  select(area, site, sex, week_ending, count19, count20, difference) %>% 
-  group_by(area, site, sex) %>% 
+#
+#
+cancer_all_sex <- diff_data %>%
+  filter(category == "hb") %>%
+  mutate(sex = "All Persons") %>%
+  select(area, site, sex, week_ending, count19, count20, difference) %>%
+  group_by(area, site, sex) %>%
   mutate(cum_count19 = cumsum(count19),
          cum_count20 = cumsum(count20))
-
-
+#
+#
 cancer_cum <- bind_rows(cancer_cum, cancer_all_sex)
 
-saveRDS(cancer_data_cum_tot, "shiny_app/data/cancer_data_2.rds")
+saveRDS(cancer_cum, "shiny_app/data/cancer_data_2.rds")
 
 # cancer_dist1 <- cancer_dist %>%
-#   filter(sex != "Unspecified") %>% 
-#   filter(week_number <= 26) %>% 
-#   group_by(hbres, site, week_number, sex) %>% 
+#   filter(sex != "Unspecified") %>%
+#   filter(week_number <= 26) %>%
+#   group_by(hbres, site, week_number, sex) %>%
 #   summarise(count20 = sum(count20),
-#             count19 = sum(count19)) %>% 
+#             count19 = sum(count19)) %>%
 #   ungroup()
 # 
 # 
@@ -479,18 +479,18 @@ saveRDS(cancer_data_cum_tot, "shiny_app/data/cancer_data_2.rds")
 #   group_by(hbres, site, sex) %>%
 #   mutate(cum_count20 = cumsum(count20)) %>%
 #   ungroup()
-# # 
+# #
 # cancer_data_cum <- full_join(cancer_2020, cancer_2019)
 # 
 # cancer_all_sex <- cancer_dist %>%
-#   filter(sex != "Unspecified") %>% 
+#   filter(sex != "Unspecified") %>%
 #   filter(week_number <= 26) %>%
-#   group_by(hbres, site, week_number) %>% 
+#   group_by(hbres, site, week_number) %>%
 #   summarise(count20 = sum(count20),
 #             count19 = sum(count19)) %>%
-#   mutate(cum_count19 = cumsum(count19)) %>% 
-#   mutate(cum_count20 = cumsum(count20)) %>% 
-#   mutate(sex = "All") %>% 
+#   mutate(cum_count19 = cumsum(count19)) %>%
+#   mutate(cum_count20 = cumsum(count20)) %>%
+#   mutate(sex = "All Persons") %>%
 #   ungroup()
 # 
 # 
@@ -499,8 +499,8 @@ saveRDS(cancer_data_cum_tot, "shiny_app/data/cancer_data_2.rds")
 # 
 # cancer_data_cum_tot <- cancer_data_cum_tot %>%
 #   mutate(difference = case_when(
-#     count19 > 0 ~ 100*(count20 - count19)/count19)) %>% 
-#   mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1))) 
+#     count19 > 0 ~ 100*(count20 - count19)/count19)) %>%
+#   mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1)))
 # 
 # saveRDS(cancer_data_cum_tot, "shiny_app/data/cancer_data_2.rds")
 
