@@ -150,6 +150,10 @@ cancer <- cancer %>%
 cancer_joined <- inner_join(cancer, depriv_dir) %>%
   replace_na(list(hbres = "Unknown", dep = 9, sex = 9))
 
+# filter impossible sex
+cancer_joined <- cancer_joined %>% 
+  filter(!(sex != 2 & (siteno >= 740 & siteno <= 770))) %>% 
+  filter(!(sex != 1 & (siteno >= 1410 & siteno <= 1430)))
 
 # Sex labels
 cancer_joined$sex <- factor(cancer_joined$sex, levels = c(1,2,9), 
@@ -187,7 +191,8 @@ cancer_excl <- cancer_types %>%
   group_by(year, week_number, hbres, site, sex, age_group, dep) %>% 
   summarise(count = n())
 
-# bind cancer types
+# summarise cancer_types
+
 cancer_types <- cancer_types %>% 
   group_by(year, week_number, hbres, site, sex, age_group, dep) %>%
   summarise(count = n())
