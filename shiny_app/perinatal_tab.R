@@ -266,7 +266,10 @@ output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
     h2("Stillbirths and infant deaths - 4th November 2020"),
-          p("NOVEMBER COMMENTARY TEXT"),
+          p("In this release of information on stillbirths and infant deaths (4 Nov 2020) data have been updated to include events that occurred in September 2020. 
+In September the rate of stillbirths, neonatal deaths and extended perinatal deaths remained within control limits. Post-neonatal deaths are those which occur after 4 weeks of age, but within the first year of life. In September the rate of post-neonatal deaths was 2.2 per 1,000 live births. This is above the warning limit of 2.1 per 1,000, but below the control limit of 2.6 per 1,000. These thresholds are shown on the control charts, and are used to help differentiate between expected random variation and substantial changes which warrant further investigation. The overall infant mortality rate, which includes all deaths of children aged under 1 year (both below and above 4 weeks of age), remained within the warning limit. This pattern suggests that the higher rate of post-neonatal deaths in September reflects random variation in what is a tragic, but fortunately rare event. 
+Monthly monitoring of these data will continue. 
+"),
     h2("Stillbirths and infant deaths - 7th October 2020"),
           p("In this release of information on stillbirths and infant deaths (7 Oct 2020), data have been updated to include events that occurred in August 2020.", br(),
             "Last month it was noted that the rate of stillbirths in July breached the warning limit (though not the control limit). Continued monitoring shows that this rate has returned to a lower level in August, at 2.4 per 1,000 total births.", br(),
