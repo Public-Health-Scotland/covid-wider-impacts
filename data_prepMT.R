@@ -307,7 +307,7 @@ cancer_dist <- cancer_dist %>%
     count20 >= 0 ~ as.double(count20)),
     count19 = case_when(
       is.na(count19) ~ 0,
-      count19 >= 0 ~ as.double(count20)))
+      count19 >= 0 ~ as.double(count19)))
          
 # for comparison of sex
 cancer_sex <- cancer_dist %>%
