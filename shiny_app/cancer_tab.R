@@ -9,10 +9,13 @@ observeEvent(input$btn_cancer_modal,
                title = "What is the data source?",
                p("",
                  tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/Scottish-Cancer-Registry/How-data-are-collected/",class="externallink")),
-               p(""),
-               p(""),
-               p(""),
-               
+               p("Cancer is not a statutorily notifiable disease, so cases are not reported prospectively. 
+              Instead it is reliant on a complex process involving record linkage and data processing of multiple 
+              records from multiple sources of potentially new cases of cancer, with the aim of maximising 
+              case ascertainment and data accuracy: "),
+               p("In an effort to more rapidly assess the impact of COVID-19 on new diagnoses of cancer, we have opted 
+              to analyse pathology records, comparing trends in weekly numbers of cancer diagnoses 
+              (based on dates of pathology specimen receipt) for 2020 compared to 2019."),
                p("Data are reported by NHS Board of treatment "),
                p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
                size = "m",
@@ -158,34 +161,76 @@ output$download_cancer_data <- downloadHandler(
 ###############################################.
 output$cancer_commentary <- renderUI({
   tagList(
-    bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
-    h2("Cancer - xxth xxx 2020"), 
-    
-    h3("Commentary"),
-    p(""),
+    # bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
+    h2("Cancer in Scotland in 2020"),
+    h1("Background"),
+    p("COVID-19 has had a wide impact on cancer in Scotland. Some parts of this are better understood
+      than others.   For example, cancer screening programmes were paused and urgent referrals for
+      suspected cancer fell.  Any effects on patients being less likely to seek help, delays in
+      investigations and treatment, or changes in usual treatment, are less clear."),
+    p("The aim of this work is to describe the occurrence of new cancers in Scotland after COVID-19.
+      Final high-quality cancer incidence data will not be published until 2022, when all information
+      can be considered by the Scottish Cancer Registry.   As a proxy measure, the Registry is able to
+      report pathology records where cancer was diagnosed."),
+    h1("What these data do and do not show"),
+    p("The numbers in this dashboard are individuals from whom a pathology sample found cancer in 2019
+      and 2020 in Scotland.  Each individual was counted once the first time they appeared from 1st
+      January; subsequent samples by the same individual were not counted (except when reporting cancer
+      site-specific numbers, where an individual could contribute to more than one site)."),
+    p("In most cases, these indicate a new diagnosis (incidence) of cancer but in some cases they are
+      follow-up samples of cancers that were diagnosed previously."),
+    p("Cancer is often diagnosed initially through clinical examination (including radiology) followed
+      by pathological confirmation.  Not all cancers are diagnosed by pathology: some are better diagnosed
+      through other methods (e.g. blood tests) and for some, the tumour is inaccessible for tissue sampling."),
+    p("Any delays in receiving pathology records are likely to affect the most recent information.  For this
+      reason, the penultimate week (week ending 21st June) rather than the final week of June is described
+      in these comments."),
+    p("It is not known whether any differences in numbers of pathologically confirmed cancers in 2020 compared
+      to 2019 are due to changes in:"),
     tags$ul(
-      tags$li("Cancer is not a statutorily notifiable disease, so cases are not reported prospectively. 
-              Instead reliant on a complex process involving record linkage and data processing of multiple 
-              records from multiple sources of potentially new cases of cancer, with the aim of maximising 
-              case ascertainment and data accuracy: "),
-      tags$li("In an effort to more rapidly assess the impact of COVID-19 on new diagnoses of cancer, opted 
-              to analyse pathology records, comparing trends in weekly numbers of cancer diagnoses 
-              (based on dates of pathology specimen receipt) for 2020 compared to 2019.",
-              tags$ul(
-                tags$li("Advantages of using pathology records:"),
-                tags$li("- Pathology records are one of the main sources of new incident cases for the cancer registry."),
-                tags$li("- For many anatomical sites of cancer, a pathology report is generated for the overwhelming majority of new cases"),
-                tags$li("-	In most cases, a pathology record is received by the cancer registry within weeks of the definitive diagnosis being made."),
-                tags$li("Limitations of using pathology records:"),
-                tags$li("- While the majority of pathology records relate to new incident cancers, some records relate to disease recurrences and/or metastatic disease."),
-                tags$li("- As with any system of data collection, there can be errors in the SNOMED code allocated, but these are relatively rare."),
-                tags$li("- In some cases, multiple pathology records are generated for the same incident tumour, eg, breast needle biopsy, wide local excision specimen, 
-                        axillary lymph node biopsy, etc. This can be mitigated to some extent by restricting to a single record per person (although some individuals will 
-                        genuinely have multiple synchronous independent primary tumours), or to a single record per major tumour site (although some individuals will genuinely 
-                        have multiple synchronous independent primary tumours at the same anatomical site and, as noted above, some records may relate to metastatic rather 
-                        than primary disease, eg, secondary tumours of the liver).")
-                )
-              )
-              )
-              )
+      tags$li("patients seeking or obtaining an initial medical consultation"),
+      tags$li("availability of cancer screening"),
+      tags$li("availability of diagnostic services"),
+      tags$li("treatment (particularly surgery, which may provide the pathology sample)")),
+    p("Differences may also be due to artefacts because of missing pathology data.  However, a quality
+      assurance consultation with Scottish cancer clinicians suggests that the differences between 2020 and
+      2019 correspond to the actual change in diagnoses."),
+    h1("Overall trends in pathologically confirmed cancers"),
+    p("In 2020, numbers were similar to 2019 until the end of March.  They fell by about 40% of comparable
+      weeks until the end of June 2020, when the latest data were available."),
+    P("By week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer
+      (excluding non-melanoma skin cancers) was 16,902 in 2020 and 20,963 in 2019, an absolute difference of
+      4,061. This suggests that about 4,000 fewer patients had a pathologically confirmed cancer diagnosis by
+      the end of June 2020 than would have been expected. "),
+    h1("Cancer sites"),
+    tags$ul(
+      tags$li("-	Lung cancer numbers fell by about 40% of 2019 levels, with no evidence of recovery by the
+              end of June.  The difference was -376 individuals by w/e 21/6/2020"),
+      tags$li("-	Breast cancer numbers in women fell by about 40% of 2019 levels, with no evidence of recovery
+              by the end of June.  The difference was -799 individuals by w/e 21/6/2020 "),
+      tags$li("-	Colorectal cancers numbers initially fell by about 60% of the 2019 numbers with some evidence
+              of recovery.  The difference was -677 individuals by w/e 21/6/2020."),
+      tags$li("-	Prostate cancer numbers fell with no evidence of recovery by the end of June.  The difference
+              was -279 individuals by w/e 21/6/2020."),
+      tags$li("-	Malignant melanoma skin fell by -111 individuals by w/e 21/6/2020"),
+      tags$li("-	Non-melanoma skin cancers fell by about 80% of 2019 numbers with some recovery.  The difference
+              was -3508 by w/e 21/6/2020."),
+      tags$li("-	Haematological cancers – important to note that a pathological sample is often not the basis
+              of making a diagnosis.  There was little change in Hodgkin’s disease; leukaemias down -233 but were
+              somewhat lower throughout 2020 comparing to 2019, probably reflecting the way data are gathered."),
+      tags$li("-	Malignant brain cancers fell.  By  w/e 21/6/2020 -53 individuals but it should be noted that
+              the majority are not diagnosed from a pathology sample.")),
+    h1("Age , sex and socio-economic patterns (all cancers excluding non-melanoma skin cancers)"),
+    tags$ul(
+      tags$li("-	In general, numbers were higher with increasing age."),
+      tags$li("-	Numbers were higher in people from the least deprived compared to the most deprived throughout
+              2020.  Underlying this total are variations by cancer site, with, for example, breast and prostate
+              cancers being more common in individuals from less deprived areas and lung and head and neck cancers
+              being more common in more deprived areas.  By the week ending 29th March 2020, the numbers in the
+              least and most deprived were 2175 and 1978, respectively.  By the week ending 21st June, these were
+              3489 and 3070, respectively.  This indicates a widening of the difference in numbers between the least
+              and most deprived after the end of March."),
+      tags$li("-	The decrease in 2020 numbers was similar in men and women.  By 21/3/2020, the difference in numbers
+              between 2020 and 2019 was -2068 men and -1987 women.")))
+
 })
