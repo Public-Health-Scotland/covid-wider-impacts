@@ -101,61 +101,6 @@ cancer <- cancer %>%
                             between(icd_2, 82,86) ~ 1610,
                             TRUE ~ 999))
 
-# cancer <- cancer %>% 
-#   mutate(siteno = case_when(str_detect(icd10_conv, "C67")  ~ 210,
-#                             str_detect(icd10_conv, "C50")  ~ 510,
-#                             str_detect(icd10_conv, "C56")  ~ 740,
-#                             str_detect(icd10_conv, "C52")  ~ 760,
-#                             str_detect(icd10_conv, "C51")  ~ 770,
-#                             str_detect(icd10_conv, "C73")  ~ 870,
-#                             str_detect(icd10_conv, "C81")  ~ 910,
-#                             str_detect(icd10_conv, "C22")  ~ 1210,
-#                             str_detect(icd10_conv, "C45")  ~ 1320,
-#                             str_detect(icd10_conv, "C60")  ~ 1410,
-#                             str_detect(icd10_conv, "C61")  ~ 1420,
-#                             str_detect(icd10_conv, "C62")  ~ 1430,
-#                             str_detect(icd10_conv, "C90")  ~ 1510,
-#                             str_detect(icd10_conv, "C15")  ~ 1710,
-#                             str_detect(icd10_conv, "C25")  ~ 1810,
-#                             str_detect(icd10_conv, "C43")  ~ 1910,
-#                             str_detect(icd10_conv, "C44")  ~ 1920,
-#                             str_detect(icd10_conv, "C16")  ~ 2010,
-#                             str_detect(icd10_conv, "C40") | 
-#                               str_detect(icd10_conv, "C41") | 
-#                               str_detect(icd10_conv, "C47") |
-#                               str_detect(icd10_conv, "C49")  ~ 320,
-#                             str_detect(icd10_conv, "C71") ~ 410,
-#                               str_detect(icd10_conv, "C18") | 
-#                               str_detect(icd10_conv, "C19") | 
-#                               str_detect(icd10_conv, "C20") ~ 610,
-#                             str_detect(icd10_conv, "C53") | 
-#                               str_detect(icd10_conv, "C54") | 
-#                               str_detect(icd10_conv, "C55") ~ 750,
-#                             str_detect(icd10_conv, "C0") | 
-#                               str_detect(icd10_conv, "C10") | 
-#                               str_detect(icd10_conv, "C11") | 
-#                               str_detect(icd10_conv, "C12") | 
-#                               str_detect(icd10_conv, "C13") | 
-#                               str_detect(icd10_conv, "C14") |
-#                               str_detect(icd10_conv, "C30") |
-#                               str_detect(icd10_conv, "C31") | 
-#                               str_detect(icd10_conv, "C32") ~ 810,
-#                             str_detect(icd10_conv, "C64") | 
-#                               str_detect(icd10_conv, "C65") ~ 1010,
-#                             str_detect(icd10_conv, "C91") | 
-#                               str_detect(icd10_conv, "C92") | 
-#                               str_detect(icd10_conv, "C93") | 
-#                               str_detect(icd10_conv, "C94") |
-#                               str_detect(icd10_conv,"C95") ~ 1110,
-#                             str_detect(icd10_conv, "C33") | 
-#                               str_detect(icd10_conv, "C34") ~ 1310,
-#                             str_detect(icd10_conv, "C82") |
-#                               str_detect(icd10_conv, "C83") |
-#                               str_detect(icd10_conv, "C84") |
-#                               str_detect(icd10_conv, "C85") |
-#                               str_detect(icd10_conv, "C86") ~ 1610,
-#                             str_detect(icd10_conv, "C") ~ 999)) 
-
 # add cancer description
 
 cancer <- cancer %>%
@@ -202,7 +147,7 @@ cancer <- cancer %>%
 
 # get Health Boards of residence and deprivation quintil rank from postcodes
 
-cancer_joined <- left_join(cancer, depriv_dir) %>%
+cancer_joined <- inner_join(cancer, depriv_dir) %>%
   replace_na(list(hbres = "Unknown", dep = 9, sex = 9))
 
 
