@@ -46,7 +46,12 @@ output$geoname_ui_cancer <- renderUI({
   #Lists areas available in   
   areas_summary_cancer <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_cancer])
   if(input$geotype_cancer == "Health Board") {
-  selectizeInput("geoname_cancer", label = NULL, choices = areas_summary_cancer, selected = areas_summary_cancer[1])
+  selectizeInput("geoname_cancer", label = NULL, choices = c("NHS Ayrshire & Arran", "NHS Borders", "NHS Dumfries & Galloway",
+                                                             "NHS Fife", "NHS Forth Valley", "NHS Grampian", 
+                                                             "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                                             "NHS Lanarkshire", "NHS Lothian", "NHS Orkney",
+                                                             "NHS Shetland", "NHS Tayside", "NHS Western Isles"), 
+                                                              selected = "NHS Ayrshire & Arran")
   } else if (input$geotype_cancer == "Cancer Network") {
     selectizeInput("geoname_cancer", label = NULL, choices = c("NCA", "SCAN", "WOSCAN"), selected = "NCA")  
   } else if (input$geotype_cancer == "Scotland") {

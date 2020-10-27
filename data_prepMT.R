@@ -435,6 +435,55 @@ diff_data <-  diff_data %>%
 saveRDS(diff_data, "shiny_app/data/cancer_data_1.rds")
 
 
+##########################################
+# Cumulative totals
+##########################################
+
+cancer_dist1 <- cancer_dist %>%
+  filter(sex != "Unspecified") %>% 
+  filter(week_number <= 26) %>% 
+  group_by(hbres, site, week_number, sex) %>% 
+  summarise(count20 = sum(count20),
+            count19 = sum(count19)) %>% 
+  ungroup()
+
+
+cancer_2019 <- cancer_dist1 %>%
+  group_by(hbres, site, sex) %>%
+  mutate(cum_count19 = cumsum(count19)) %>%
+  ungroup()
+
+cancer_2020 <- cancer_dist1 %>%
+  group_by(hbres, site, sex) %>%
+  mutate(cum_count20 = cumsum(count20)) %>%
+  ungroup()
+# 
+cancer_data_cum <- full_join(cancer_2020, cancer_2019)
+
+cancer_all_sex <- cancer_dist %>%
+  filter(sex != "Unspecified") %>% 
+  filter(week_number <= 26) %>%
+  group_by(hbres, site, week_number) %>% 
+  summarise(count20 = sum(count20),
+            count19 = sum(count19)) %>%
+  mutate(cum_count19 = cumsum(count19)) %>% 
+  mutate(cum_count20 = cumsum(count20)) %>% 
+  mutate(sex = "All") %>% 
+  ungroup()
+
+
+cancer_data_cum_tot <- bind_rows(cancer_data_cum, cancer_all_sex)
+
+
+cancer_data_cum_tot <- cancer_data_cum_tot %>%
+  mutate(difference = case_when(
+    count19 > 0 ~ 100*(count20 - count19)/count19)) %>% 
+  mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1))) 
+
+saveRDS(cancer_data_cum_tot, "shiny_app/data/cancer_data_2.rds")
+
+
+
 #############################################
 # Sort Data for download
 #############################################
