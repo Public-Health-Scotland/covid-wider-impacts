@@ -102,11 +102,11 @@ output$cancer_explorer <- renderUI({
     # enable("gender")
     tagList(
       h3("Weekly pathology referrals"),
-      plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
+      plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer type:  ", cancer_site,
                       ", compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
-      plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
+      plot_box(paste0("Percentage change in number of pathology referrals for cancer type: ", cancer_site,
                       ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"),
-      plot_box(paste0("2020 incidences of pathology referrals for cancer of ", cancer_site,
+      plot_box(paste0("2020 incidences of pathology referrals for cancer type: ", cancer_site,
                       ", compared with the corresponding time in 2018-2019 by week"), "cancer_incidence"))
   # } else {
   #   
