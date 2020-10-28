@@ -150,12 +150,19 @@ cancer <- cancer %>%
 cancer_joined <- inner_join(cancer, depriv_dir) %>%
   replace_na(list(hbres = "Unknown", dep = 9, sex = 9))
 
+# filter impossible sex cancer combo
+
+cancer_joined <- cancer_joined %>% 
+  filter(!(sex != 2 & (siteno >= 740 & siteno <= 770))) %>% 
+  filter(!(sex != 1 & (siteno >= 1410 & siteno <= 1430)))
 
 # Sex labels
+
 cancer_joined$sex <- factor(cancer_joined$sex, levels = c(1,2,9), 
                             labels = c("Male", "Female", "Unspecified"))
 
 # Change the health board labels
+
 cancer_joined$hbres <- recode(cancer_joined$hbres, 
                               "NHS Ayrshire and Arran" = "NHS Ayrshire & Arran", 
                               "NHS Dumfries and Galloway" = "NHS Dumfries & Galloway", 
@@ -187,7 +194,8 @@ cancer_excl <- cancer_types %>%
   group_by(year, week_number, hbres, site, sex, age_group, dep) %>% 
   summarise(count = n())
 
-# bind cancer types
+# summarise cancer_types
+
 cancer_types <- cancer_types %>% 
   group_by(year, week_number, hbres, site, sex, age_group, dep) %>%
   summarise(count = n())
