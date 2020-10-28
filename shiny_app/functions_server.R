@@ -203,6 +203,11 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
 plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_name) {
   
   
+  if (is.data.frame(dataset) && nrow(dataset) == 0)
+  { plot_nodata(height = 50, text_nodata = "Chart not available, no referrals recorded")
+  } else {
+  
+  
 # Set y axis label
   yaxis_title <- case_when(data_name == "cum" ~ "Referrals - Cumulative Total",
                            data_name == "dif" ~ "Referrals - Percentage Difference 2019/20",
@@ -242,7 +247,8 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
            yaxis = yaxis_plots, xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% 
     # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove) 
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+  }
   
 }
 

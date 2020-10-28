@@ -68,8 +68,8 @@ output$cancer_explorer <- renderUI({
   
 
   # text for titles of cut charts
-  cancer_site <- case_when(input$cancer_type == "All Cancers" ~ "All Cancers",
-                       input$cancer_type == "All Malignant Neoplasms (Excl. C44)" ~ "All Malignant Neoplasms (Excl. C44)",
+  cancer_site <- case_when(input$cancer_type == "All Malignant Neoplasms (Excl. C44)" ~ "All Malignant Neoplasms (Excl. C44)",
+                       input$cancer_type == "All Cancers" ~ "All Cancers",
                        input$cancer_type == "Bladder" ~ "Bladder",
                        input$cancer_type == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
                        input$cancer_type == "Breast" ~ "Breast",
@@ -86,17 +86,17 @@ output$cancer_explorer <- renderUI({
                        input$cancer_type == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
                        input$cancer_type == "Oesophagus" ~ "Oesophagus",
                        input$cancer_type == "Other" ~ "Other",
-                       input$cancer_type == "Ovary - Females Only" ~ "Ovary - Females only",
+                       input$cancer_type == "Ovary - Females only" ~ "Ovary - Females only",
                        input$cancer_type == "Pancreas" ~ "Pancreas",
-                       input$cancer_type == "Penis - Males Only" ~ "Penis - Males Only",
-                       input$cancer_type == "Prostate - Males Only" ~ "Prostate - Males only",
+                       input$cancer_type == "Penis - Males only" ~ "Penis - Males Only",
+                       input$cancer_type == "Prostate - Males only" ~ "Prostate - Males only",
                        input$cancer_type == "Stomach" ~ "Stomach",
-                       input$cancer_type == "Testis - Males Only" ~ "Testis - Males only",
+                       input$cancer_type == "Testis - Males only" ~ "Testis - Males only",
                        input$cancer_type == "Thyroid" ~ "Thyroid",
                        input$cancer_type == "Trachea, Bronchus and Lung" ~ "Trachea, Bronchus and Lung",
-                       input$cancer_type == "Uterus - Females Only" ~ "Uterus - Females only",
-                       input$cancer_type == "Vagina - Females Only" ~ "Vagina - Females only",
-                       input$cancer_type == "Vulva - Females Only" ~ "Vulva - Females only"
+                       input$cancer_type == "Uterus - Females only" ~ "Uterus - Females only",
+                       input$cancer_type == "Vagina - Females only" ~ "Vagina - Females only",
+                       input$cancer_type == "Vulva - Females only" ~ "Vulva - Females only"
                        )
 
   # if(input$geotype_cancer == "Scotland") {

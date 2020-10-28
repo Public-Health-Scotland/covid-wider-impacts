@@ -229,7 +229,7 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
                   
            column(4, div(p(tags$b("Step 2. Select all or specific cancer type")),
                          selectInput("cancer_type", label = NULL, choices = cancer_type_list,
-                                     selected = "All Cancer Types")),
+                                     selected = "All Malignant Neoplasms (Excl. C44)")),
                      div(radioButtons("gender", "Gender", list("All Persons","Male","Female"), inline = TRUE, selected = "All Persons"))),
                      # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
            
