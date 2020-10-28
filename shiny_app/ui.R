@@ -297,7 +297,6 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
 ## Data ----
 ###############################################.
     tabPanel(title = "Data", icon = icon("table"), value = "table",
-             actionButton("browser", "browser"),
       p("This section allows you to view the data in table format.
         You can use the filters to select the data you are interested in.
         You can also download the data as a csv using the download button.
