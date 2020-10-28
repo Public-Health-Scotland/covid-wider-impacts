@@ -40,6 +40,16 @@ depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2020_2_simd2020v2.rds"
 # Add Age Groups, Cancer Types and Screening Cohorts
 ###########################################################
 
+# temporarily needed 
+
+cancer <- cancer %>% 
+  mutate(sex = case_when(person_id == 24654927 ~ 2,
+               person_id == 24936892 ~ 2,
+               person_id == 24942426 ~ 2,
+               person_id == 24942658 ~ 1,
+               person_id == 25068183 ~ 1,
+      TRUE ~ sex ))
+
 # creates age column
 cancer <- cancer %>% 
   mutate(dob = dmy(date_of_birth), 
@@ -159,7 +169,7 @@ cancer_joined <- cancer_joined %>%
 # Sex labels
 
 cancer_joined$sex <- factor(cancer_joined$sex, levels = c(1,2,9), 
-                            labels = c("Male", "Female", "Unspecified"))
+                            labels = c("Male", "Female", "Unknown"))
 
 # Change the health board labels
 
@@ -174,39 +184,15 @@ cancer_joined$hbres <- recode(cancer_joined$hbres,
 
 # Individual cancer types 
 
-cancer_types <- cancer_joined %>% 
-  group_by(year, hbres, site, sex, person_id) %>% 
-  summarise(week_number = first(week_number), 
-            age_group = first(age_group),
-            dep = min(dep)) %>% 
+# health boards
+base_cancer <- cancer_joined %>% 
+  group_by(year, week_number, hbres, site, sex, person_id) %>% 
+  summarise() %>% 
   ungroup()
 
-# All cancer types
-cancer_all <- cancer_types %>%
-  mutate(site = "All Cancers") %>% 
-  group_by(year, week_number, hbres, site, sex, age_group, dep) %>% 
-  summarise(count = n())
+# networks
 
-# All cancer types excluding C44
-cancer_excl <- cancer_types %>%
-  filter(site != "Non-Melanoma Skin Cancer") %>%
-  mutate(site = "All Malignant Neoplasms (Excl. C44)") %>% 
-  group_by(year, week_number, hbres, site, sex, age_group, dep) %>% 
-  summarise(count = n())
-
-# summarise cancer_types
-
-cancer_types <- cancer_types %>% 
-  group_by(year, week_number, hbres, site, sex, age_group, dep) %>%
-  summarise(count = n())
-
-# join all
-
-cancer_dist <- bind_rows(cancer_types, cancer_all, cancer_excl) %>% 
-  ungroup()
-
-cancer_networks <- cancer_dist %>% 
-  filter(hbres != "Unknown") %>% 
+networks <- base_cancer %>% 
   mutate(hbres = case_when(hbres == "NHS Grampian" ~ "NCA",
                            hbres == "NHS Highland" ~ "NCA",
                            hbres == "NHS Orkney" ~ "NCA",
@@ -220,20 +206,67 @@ cancer_networks <- cancer_dist %>%
                            hbres == "NHS Ayrshire & Arran" ~ "WOSCAN",
                            hbres == "NHS Forth Valley" ~ "WOSCAN",
                            hbres == "NHS Greater Glasgow & Clyde" ~ "WOSCAN",
-                           hbres == "NHS Lanarkshire" ~ "WOSCAN"))  %>% 
-  group_by(year, week_number, site, age_group, dep, sex, hbres) %>% 
-  summarise(count = sum(count))
+                           hbres == "NHS Lanarkshire" ~ "WOSCAN")) %>% 
+  group_by(year, week_number, hbres, site, sex, person_id) %>% 
+  summarise() %>% 
+  ungroup()
 
-cancer_scot <- cancer_dist %>% 
-  filter(hbres != "Unknown") %>% 
-  mutate(hbres = "Scotland")%>% 
-  group_by(year, week_number, site, age_group, dep, sex, hbres) %>% 
-  summarise(count = sum(count))
+# scotland
+
+scotland <- base_cancer %>%
+  mutate(hbres = "Scotland") %>% 
+  group_by(year, week_number, hbres, site, sex, person_id) %>% 
+  summarise() %>% 
+  ungroup()
+
+# bind all health board values
+
+base_cancer <-rbind(base_cancer, networks, scotland)
+
+# create all persons
+
+base_allperson <- base_cancer %>% 
+  mutate(sex = "All Persons") %>% 
+  group_by(year, week_number, hbres, site, sex, person_id) %>% 
+  summarise() %>% 
+  ungroup()
+
+base_cancer <-rbind(base_cancer, base_allperson)
+
+
+##########################################
+# All cancer types
+##########################################
+
+
+allcancers <- base_cancer %>%
+  mutate(site = "All Cancers") %>% 
+  group_by(year, week_number, hbres, site, sex, person_id) %>% 
+  summarise()
+
+
+##########################################
+# All cancer types excl C44
+##########################################
+
+exccancers <- base_cancer %>%
+  filter(site != "Non-Melanoma Skin Cancer") %>%
+  mutate(site = "All Malignant Neoplasms (Excl. C44)") %>% 
+  group_by(year, week_number, hbres, site, sex, person_id) %>% 
+  summarise()
+
+##########################################
+# combine cancer types
+##########################################
+
+
+cancer_dist <- bind_rows(base_cancer, allcancers, exccancers) %>% 
+  ungroup()
 
 cancer_dist <- cancer_dist %>% 
-  bind_rows(cancer_networks, cancer_scot) %>% 
-  filter(hbres != "Unknown")
-
+  group_by(year, week_number, hbres, site, sex) %>% 
+  summarise(count = n())
+  
 
 ########################################################
 #
@@ -243,12 +276,12 @@ cancer_dist <- cancer_dist %>%
 
 cancer_2019 <- cancer_dist %>% 
   filter(year == 2019) %>%
-  group_by(hbres, site, sex, dep, age_group, week_number) %>%
+  group_by(hbres, site, sex, week_number) %>%
   summarise(count19 = sum(count))
 
 cancer_2020 <- cancer_dist %>% 
   filter(year == 2020) %>% 
-  group_by(hbres, site, sex, dep, age_group, week_number) %>%
+  group_by(hbres, site, sex, week_number) %>%
   summarise(count20 = sum(count))
 
 cancer_dist <- full_join(cancer_2020, cancer_2019) %>% 
@@ -265,12 +298,11 @@ cancer_dist <- cancer_dist %>%
 # for comparison of sex
 cancer_sex <- cancer_dist %>%
   mutate(category = "sex", sex = as.character(sex)) %>%
-  filter(sex != "Unspecified") %>% 
+  filter(sex != "Unknown") %>% 
   rename(type = sex) %>% 
   group_by(hbres, site, week_number, category, type) %>% 
   summarise(count20 = sum(count20),
             count19 = sum(count19))
-
 
 # for comparison of health board 
 cancer_hb <- cancer_dist %>%
@@ -279,74 +311,6 @@ cancer_hb <- cancer_dist %>%
   group_by(hbres, site, week_number, category, type) %>%
   summarise(count19 = sum(count19),
             count20 = sum(count20))
-
-#  Commenting this out for now as we don't need it yet
-
-
-# # to add cumulative totals for each dep group
-# cancer_simd <- cancer_dist %>%
-#   filter(year == 2019, site == "All Malignant Neoplasms (Excl. C44)") %>%
-#   group_by(hbres, dep, week_number) %>%
-#   summarise(count19 = n()) %>%
-#   ungroup() %>% 
-#   mutate(category = "SIMD", dep = as.character(dep)) %>%
-#   filter(hbres == "Scotland") %>% 
-#   rename(type = dep)
-# 
-# cancer_simd_2020 <- cancer_dist %>%
-#   filter(year == 2020, site == "All Malignant Neoplasms (Excl. C44)") %>%
-#   group_by(hbres, dep, week_number) %>%
-#   summarise(count20 = n()) %>%
-#   ungroup() %>% 
-#   mutate(category = "SIMD", dep = as.character(dep)) %>%
-#   filter(hbres == "Scotland") %>%  
-#   rename(type = dep)
-# 
-# cancer_simd <- left_join(cancer_simd_2020, cancer_simd_2019)
-# 
-# # to add cumulative totals for each age group
-# cancer_age_2019 <- cancer_dist %>%
-#   filter(year == 2019, site == "All Malignant Neoplasms (Excl. C44)") %>%
-#   group_by(hbres, age_group, week_number) %>%
-#   summarise(count19 = n()) %>%
-#   ungroup() %>% 
-#   mutate(category = "Age", age_group = as.character(age_group)) %>%
-#   filter(hbres == "Scotland") %>%  
-#   rename(type = age_group) 
-# 
-# # to add cumulative totals for each age group
-# cancer_age_2020 <- cancer_dist %>%
-#   filter(year == 2020, site == "All Malignant Neoplasms (Excl. C44)") %>%
-#   group_by(hbres, age_group, week_number) %>%
-#   summarise(count20 = n()) %>%
-#   ungroup() %>% 
-#   mutate(category = "Age", age_group = as.character(age_group)) %>%
-#   filter(hbres == "Scotland") %>%  
-#   rename(type = age_group)
-# 
-# cancer_age <- left_join(cancer_age_2020, cancer_age_2019)
-# 
-# # to add cumulative totals for cancer
-# cancer_2019 <- cancer_dist %>%
-#   filter(year == 2019) %>%
-#   group_by(hbres, site, sex, week_number) %>%
-#   summarise(count19 = n()) %>%
-#   ungroup() %>% 
-#   mutate(category = "Age", age_group = as.character(age_group)) %>%
-#   filter(hbres == "Scotland") %>%  
-#   rename(type = age_group) 
-# 
-# # to add cumulative totals for cancer
-# cancer_2020 <- cancer_dist %>%
-#   filter(year == 2020) %>%
-#   group_by(hbres, site, sex, week_number) %>%
-#   summarise(count20 = n()) %>%
-#   ungroup() %>% 
-#   mutate(category = "Age", age_group = as.character(age_group)) %>%
-#   filter(hbres == "Scotland") %>%  
-#   rename(type = age_group)
-# 
-# cancer_all <- left_join(cancer_2020, cancer_2019)
 
 #Bind rows
 
@@ -358,10 +322,10 @@ cancer_combined <- rbind(cancer_hb, cancer_sex) %>%
 # Calculate % Difference
 ##########################################
 
-
 diff_data <- cancer_combined %>%
   mutate(difference = case_when(
     count19 > 0 ~ 100*(count20 - count19)/count19))
+
 
 ##########################################
 # Week ending labels
@@ -369,6 +333,7 @@ diff_data <- cancer_combined %>%
 
 diff_data <-  diff_data %>% 
   mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1))) 
+
 
 ##########################################
 # Complete Weeks only
@@ -378,6 +343,7 @@ diff_data <-  diff_data %>%
   filter(week_number <= 26) %>%
   ungroup()
 
+
 ##########################################
 # Export Data
 ##########################################
@@ -385,11 +351,11 @@ diff_data <-  diff_data %>%
 # save as excel  and RDS file
 #write_xlsx(cancer_joined, "CWT Dashboard Input Data.xlsx")
 
-saveRDS(diff_data, "shiny_app/data/cancer_data_1.rds")
+saveRDS(diff_data, "shiny_app/data/cancer_data.rds")
 
 
 ##########################################
-# Cumulative totals
+# To be added to app data prep
 ##########################################
 
 cancer_cum <- diff_data %>%
@@ -399,93 +365,7 @@ cancer_cum <- diff_data %>%
   group_by(area, site, sex) %>%
   mutate(cum_count19 = cumsum(count19),
          cum_count20 = cumsum(count20))
-#
-#
-cancer_all_sex <- diff_data %>%
-  filter(category == "hb") %>%
-  mutate(sex = "All Persons") %>%
-  select(area, site, sex, week_ending, count19, count20, difference) %>%
-  group_by(area, site, sex) %>%
-  mutate(cum_count19 = cumsum(count19),
-         cum_count20 = cumsum(count20))
-#
-#
-cancer_cum <- bind_rows(cancer_cum, cancer_all_sex)
+
 
 saveRDS(cancer_cum, "shiny_app/data/cancer_data_2.rds")
 
-# cancer_dist1 <- cancer_dist %>%
-#   filter(sex != "Unspecified") %>%
-#   filter(week_number <= 26) %>%
-#   group_by(hbres, site, week_number, sex) %>%
-#   summarise(count20 = sum(count20),
-#             count19 = sum(count19)) %>%
-#   ungroup()
-# 
-# 
-# cancer_2019 <- cancer_dist1 %>%
-#   group_by(hbres, site, sex) %>%
-#   mutate(cum_count19 = cumsum(count19)) %>%
-#   ungroup()
-# 
-# cancer_2020 <- cancer_dist1 %>%
-#   group_by(hbres, site, sex) %>%
-#   mutate(cum_count20 = cumsum(count20)) %>%
-#   ungroup()
-# #
-# cancer_data_cum <- full_join(cancer_2020, cancer_2019)
-# 
-# cancer_all_sex <- cancer_dist %>%
-#   filter(sex != "Unspecified") %>%
-#   filter(week_number <= 26) %>%
-#   group_by(hbres, site, week_number) %>%
-#   summarise(count20 = sum(count20),
-#             count19 = sum(count19)) %>%
-#   mutate(cum_count19 = cumsum(count19)) %>%
-#   mutate(cum_count20 = cumsum(count20)) %>%
-#   mutate(sex = "All Persons") %>%
-#   ungroup()
-# 
-# 
-# cancer_data_cum_tot <- bind_rows(cancer_data_cum, cancer_all_sex)
-# 
-# 
-# cancer_data_cum_tot <- cancer_data_cum_tot %>%
-#   mutate(difference = case_when(
-#     count19 > 0 ~ 100*(count20 - count19)/count19)) %>%
-#   mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1)))
-# 
-# saveRDS(cancer_data_cum_tot, "shiny_app/data/cancer_data_2.rds")
-
-
-#############################################
-# Sort Data for download
-#############################################
-
-# cancer_dl <- cancer_dist %>%
-#   group_by(hbres, year, week_number, site, sex) %>%
-#   summarise(count_dl = n()) %>% 
-#   mutate(category = "Gender") %>%
-#   rename(type = sex)
-# 
-# cancer_dl2 <- cancer_dist %>%
-#   group_by(hbres, year, week_number, site, age_group) %>%
-#   summarise(count_dl = n()) %>%
-#   mutate(category = "Age") %>%
-#   rename(type = age_group)
-# 
-# cancer_dl3 <- cancer_dist %>%
-#   group_by(hbres, year, week_number, site, dep) %>%
-#   summarise(count_dl = n()) %>%
-#   mutate(category = "SIMD") %>%
-#   rename(type = dep)
-# 
-# cancer_dl3$type <- as.character(cancer_dl3$type)
-# 
-# cancer_base_data <- rbind(cancer_dl, cancer_dl2, cancer_dl3) 
-# 
-# cancer_base_data <- cancer_base_data %>% 
-#   mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1)))
-# 
-# 
-# saveRDS(cancer_base_data, "shiny_app/data/cancer_data_2.rds")
