@@ -29,6 +29,8 @@ data_table <- reactive({
          "childdev" = child_dev,
          "breastfeeding" = breastfeeding,
          "perinatal" = perinatal,
+         "top" = top_download ,
+         "ante_booking" = booking_download, 
          "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
          "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
          "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
@@ -205,6 +207,10 @@ data_table <- reactive({
              "% overall breastfeeding" = pc_overall,
              ever_breastfeeding = ever_bf,
              "% ever breastfeeding" = pc_ever)
+  } else if (input$data_select %in% "top") {
+    table_data <- table_data
+  } else if (input$data_select %in% "ante_booking") {
+    table_data <- table_data
   }
   
   

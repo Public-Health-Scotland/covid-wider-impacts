@@ -73,7 +73,7 @@ ae_mh <- readRDS("data/mh_A&E_data.rds")
 mh_ooh <- readRDS("data/mh_ooh_data.rds")
 
 ## Child Health Data
-child_extract_date <- "24th August 2020"
+child_extract_date <- "28th September 2020"
 first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 sixtoeight <- readRDS("data/six_to_eight_data.rds")
@@ -86,7 +86,7 @@ fourtofive <- readRDS("data/fourtofive_data.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "24th August 2020"
+immunisation_extract_date <- "28th September 2020"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
@@ -109,6 +109,20 @@ six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
+## perinatal mortality data
+perinatal <- readRDS("data/perinatal_data.rds")
+
+#Pregnancy tab
+#antenatal booking
+booking_extract_date <- "7th October 2020"
+booking <- readRDS("data/ante_booking_data.rds")
+booking_download <- readRDS("data/ante_booking_download.rds")
+
+#terminations
+top_extract_date <- "2nd October 2020"
+top <- readRDS("data/top_data.rds")
+top_download <- readRDS("data/top_download.rds")
+
 # Breastfeeding data
 breastfeeding <- readRDS("data/breastfeeding_data.rds")
 #Child development data
@@ -118,15 +132,12 @@ child_dev <- readRDS("data/child_dev_data.rds")
 ## Objects, names, lists ----
 ###############################################.
 
-## perinatal mortality data
-perinatal <- readRDS("data/perinatal_data.rds")
-
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)",
                     "Paediatrics (medical & surgical)")) # specialty list
 
-data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye", 
-               "NHS 24 completed contacts" = "nhs24", 
+data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
+               "NHS 24 completed contacts" = "nhs24",
                "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
                "Excess mortality" = "deaths")
 
@@ -137,12 +148,20 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
                      "MMR first dose" = "mmr_dose1",
                      "MMR second dose" = "mmr_dose2")
 
-# List of data items available in step 2 of immunisation tab
+# List of data items available in step 2 of child health tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
                      "6-8 Week Review" = "six_eightwks",
                      "13-15 Month Review" = "13_15mnth",
                      "27-30 Month Review" = "27_30mnth",
                      "4-5 Year Review" = "4_5yr")
+
+## Data lists for pregnancy tab
+# List of data items available in step 1 of antenatal booking
+data_list_booking <- c("Number" = "booking_number",
+                    "Average gestation" = "booking_gestation")
+# List of data items available in step 1 of terminations
+data_list_top <- c("Number" = "top_number",
+                       "Average gestation" = "top_gestation")
 
 data_list_childdev <- c("13-15 month review" = "13_15mnth",
                      "27-30 month review" = "27_30mnth")
@@ -165,12 +184,14 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Breastfeeding" = "breastfeeding",
                         # "Breastfeeding 6-8 week review" = "bf_6_8",
                         "Stillbirths and infant deaths" = "perinatal",
+                        "Termination of pregnancy" = "top",
+                        "Antenatal bookings" = "ante_booking",
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh"
                         )
 
-cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
+cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
                  "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
@@ -202,23 +223,23 @@ pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine
 
 pal_immun <- c("2019" = '#000000',
                "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", "MAR 2020" = "#7477d1",
-               "APR 2020" = "#045a8d", "MAY 2020" = "#022b43",
-               "W/B 01-JUN-2020" = "#fee391", "W/B 08-JUN-2020" = "#fec44f",
-               "W/B 15-JUN-2020" = "#e49901", "W/B 22-JUN-2020" = "#ec7014",
-               "W/B 29-JUN-2020" = "#cc4c02", "W/B 06-JUL-2020" = "#8c2d04",
-               "W/B 13-JUL-2020" = "#662506")
+               "APR 2020" = "#045a8d", "MAY 2020" = "#022b43", "JUN 2020" = "#71d9c4",
+               "W/B 29-JUN-2020" = "#fee391", "W/B 06-JUL-2020" = "#fec44f",
+               "W/B 13-JUL-2020" = "#e49901", "W/B 20-JUL-2020" = "#ec7014",
+               "W/B 27-JUL-2020" = "#cc4c02", "W/B 03-AUG-2020" = "#8c2d04",
+               "W/B 10-AUG-2020" = "#662506")
 
 # second colour palette for SIMD immunisation chart - ideally they could use same colour palette but during build dfferent time frame available
 pal_immun2 <- c("2019" = '#000000',
-                "MAR 2020" = "#abd9e9", "APR 2020" = "#74add1", "MAY 2020" = "#7477d1", "JUN 2020" ="#045a8d" )
+                "MAR 2020" = "#abd9e9", "APR 2020" = "#74add1", "MAY 2020" = "#7477d1", "JUN 2020" ="#045a8d","JUL 2020" ="#022b43"  )
 
 pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
                "MAR 2020" = "#7477d1", "APR 2020" = "#0570b0", 
-               "MAY 2020" = "#045a8d",
-               "W/B 01-JUN-2020" = "#fec44f",
-               "W/B 08-JUN-2020" = "#fe9929", "W/B 15-JUN-2020" = "#ec7014",
-               "W/B 22-JUN-2020" = "#cc4c02", "W/B 29-JUN-2020" = "#8c2d04",
-               "W/B 06-JUL-2020" = "#662506")
+               "MAY 2020" = "#045a8d", "JUN 2020" = "#022b43",
+               "W/B 29-JUN-2020" = "#fee391", "W/B 06-JUL-2020" = "#fec44f",
+               "W/B 13-JUL-2020" = "#e49901", "W/B 20-JUL-2020" = "#ec7014", 
+               "W/B 27-JUL-2020" = "#cc4c02", "W/B 03-AUG-2020" = "#8c2d04", 
+               "W/B 10-AUG-2020" = "#662506")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
