@@ -204,7 +204,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
   
   
   if (is.data.frame(dataset) && nrow(dataset) == 0)
-  { plot_nodata(height = 50, text_nodata = "Chart not available, no referrals recorded")
+  { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
   } else {
   
   
@@ -214,6 +214,13 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
                            data_name == "inc" ~ "Referrals - Weekly Total")
   
   yaxis_plots[["title"]] <- yaxis_title
+  
+  # xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
+  # xaxis_plots[["title"]] <- "Weeks"
+  # xaxis_plots[["tickvals"]] <- week_end_date
+  # xaxis_plots[["ticktext"]] <- week_end_date
+  # xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7)
+
   
   
   measure_name <- case_when(data_name == "cum" ~ "Referrals(cumulative): ",
@@ -225,6 +232,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
   
   value2 <- dataset[[var2_chosen]]
   
+  week_end_date <- as.character(dataset$week_ending)
   
   #Text for tooltips
   tooltip_1 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
@@ -234,7 +242,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
                               "<br>", measure_name, value2))
   
   #Creating time trend plot
-  plot_ly(data=dataset, x=~week_ending) %>%
+  plot_ly(data=dataset, x=~week_end_date) %>%
     # 2020 line
     add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_1, hoverinfo="text",
               name = "2020") %>%
@@ -244,7 +252,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
     
     #Layout
     layout(margin = list(b = 80, t=5), 
-           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           yaxis = yaxis_plots, xaxis = list(title = "Week", tickfont = list(size = 10)),
            legend = list(x = 100, y = 0.5)) %>% 
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)

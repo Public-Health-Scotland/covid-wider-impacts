@@ -368,7 +368,7 @@ diff_data <- cancer_combined %>%
 ##########################################
 
 diff_data <-  diff_data %>% 
-  mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1)))
+  mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1))) 
 
 ##########################################
 # Complete Weeks only
