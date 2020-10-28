@@ -161,9 +161,9 @@ output$download_cancer_data <- downloadHandler(
 ###############################################.
 output$cancer_commentary <- renderUI({
   tagList(
-    # bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
-    h2("Cancer in Scotland in 2020"),
-    h1("Background"),
+    bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
+    h3("Cancer in Scotland in 2020"),
+    h4("Background"),
     p("COVID-19 has had a wide impact on cancer in Scotland. Some parts of this are better understood
       than others.   For example, cancer screening programmes were paused and urgent referrals for
       suspected cancer fell.  Any effects on patients being less likely to seek help, delays in
@@ -172,7 +172,7 @@ output$cancer_commentary <- renderUI({
       Final high-quality cancer incidence data will not be published until 2022, when all information
       can be considered by the Scottish Cancer Registry.   As a proxy measure, the Registry is able to
       report pathology records where cancer was diagnosed."),
-    h1("What these data do and do not show"),
+    h4("What these data do and do not show"),
     p("The numbers in this dashboard are individuals from whom a pathology sample found cancer in 2019
       and 2020 in Scotland.  Each individual was counted once the first time they appeared from 1st
       January; subsequent samples by the same individual were not counted (except when reporting cancer
@@ -195,42 +195,43 @@ output$cancer_commentary <- renderUI({
     p("Differences may also be due to artefacts because of missing pathology data.  However, a quality
       assurance consultation with Scottish cancer clinicians suggests that the differences between 2020 and
       2019 correspond to the actual change in diagnoses."),
-    h1("Overall trends in pathologically confirmed cancers"),
+    h4("Overall trends in pathologically confirmed cancers"),
     p("In 2020, numbers were similar to 2019 until the end of March.  They fell by about 40% of comparable
       weeks until the end of June 2020, when the latest data were available."),
-    P("By week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer
+    p("By week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer
       (excluding non-melanoma skin cancers) was 16,902 in 2020 and 20,963 in 2019, an absolute difference of
       4,061. This suggests that about 4,000 fewer patients had a pathologically confirmed cancer diagnosis by
       the end of June 2020 than would have been expected. "),
-    h1("Cancer sites"),
+    h4("Cancer sites"),
     tags$ul(
-      tags$li("-	Lung cancer numbers fell by about 40% of 2019 levels, with no evidence of recovery by the
+      tags$li("	Lung cancer numbers fell by about 40% of 2019 levels, with no evidence of recovery by the
               end of June.  The difference was -376 individuals by w/e 21/6/2020"),
-      tags$li("-	Breast cancer numbers in women fell by about 40% of 2019 levels, with no evidence of recovery
+      tags$li("	Breast cancer numbers in women fell by about 40% of 2019 levels, with no evidence of recovery
               by the end of June.  The difference was -799 individuals by w/e 21/6/2020 "),
-      tags$li("-	Colorectal cancers numbers initially fell by about 60% of the 2019 numbers with some evidence
+      tags$li("	Colorectal cancers numbers initially fell by about 60% of the 2019 numbers with some evidence
               of recovery.  The difference was -677 individuals by w/e 21/6/2020."),
-      tags$li("-	Prostate cancer numbers fell with no evidence of recovery by the end of June.  The difference
+      tags$li("	Prostate cancer numbers fell with no evidence of recovery by the end of June.  The difference
               was -279 individuals by w/e 21/6/2020."),
-      tags$li("-	Malignant melanoma skin fell by -111 individuals by w/e 21/6/2020"),
-      tags$li("-	Non-melanoma skin cancers fell by about 80% of 2019 numbers with some recovery.  The difference
+      tags$li("	Malignant melanoma skin fell by -111 individuals by w/e 21/6/2020"),
+      tags$li("	Non-melanoma skin cancers fell by about 80% of 2019 numbers with some recovery.  The difference
               was -3508 by w/e 21/6/2020."),
-      tags$li("-	Haematological cancers – important to note that a pathological sample is often not the basis
+      tags$li("	Haematological cancers – important to note that a pathological sample is often not the basis
               of making a diagnosis.  There was little change in Hodgkin’s disease; leukaemias down -233 but were
               somewhat lower throughout 2020 comparing to 2019, probably reflecting the way data are gathered."),
-      tags$li("-	Malignant brain cancers fell.  By  w/e 21/6/2020 -53 individuals but it should be noted that
+      tags$li("	Malignant brain cancers fell.  By  w/e 21/6/2020 -53 individuals but it should be noted that
               the majority are not diagnosed from a pathology sample.")),
-    h1("Age , sex and socio-economic patterns (all cancers excluding non-melanoma skin cancers)"),
+    h4("Age , sex and socio-economic patterns (all cancers excluding non-melanoma skin cancers)"),
     tags$ul(
-      tags$li("-	In general, numbers were higher with increasing age."),
-      tags$li("-	Numbers were higher in people from the least deprived compared to the most deprived throughout
+      tags$li("	In general, numbers were higher with increasing age."),
+      tags$li("	Numbers were higher in people from the least deprived compared to the most deprived throughout
               2020.  Underlying this total are variations by cancer site, with, for example, breast and prostate
               cancers being more common in individuals from less deprived areas and lung and head and neck cancers
               being more common in more deprived areas.  By the week ending 29th March 2020, the numbers in the
               least and most deprived were 2175 and 1978, respectively.  By the week ending 21st June, these were
               3489 and 3070, respectively.  This indicates a widening of the difference in numbers between the least
               and most deprived after the end of March."),
-      tags$li("-	The decrease in 2020 numbers was similar in men and women.  By 21/3/2020, the difference in numbers
-              between 2020 and 2019 was -2068 men and -1987 women.")))
+      tags$li("	The decrease in 2020 numbers was similar in men and women.  By 21/3/2020, the difference in numbers
+              between 2020 and 2019 was -2068 men and -1987 women."))
+  )
 
 })
