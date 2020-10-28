@@ -208,9 +208,21 @@ data_table <- reactive({
              ever_breastfeeding = ever_bf,
              "% ever breastfeeding" = pc_ever)
   } else if (input$data_select %in% "top") {
-    table_data <- table_data
+    table_data <- table_data %>% 
+      select(area_name, area_type, termination_month, category = chart_category,
+             number_of_terminations, number_of_terminations_gest_under_10wks,
+             number_of_terminations_gest_10to12wks, number_of_terminations_gest_over_12wks,
+             average_gestation_at_termination)
   } else if (input$data_select %in% "ante_booking") {
-    table_data <- table_data
+    table_data <- table_data %>% 
+      select(area_name, area_type, booking_month, booking_week_beginning, category = chart_category,
+             number_of_women_booking, number_of_women_booking_gest_under_10wks,
+             number_of_women_booking_gest_10to12wks, number_of_women_booking_gest_over_12wks,
+             average_gestation_at_booking) %>% 
+      mutate(category = case_when(category %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived") ~ paste0(category),
+                                                  TRUE ~ "All"))
   }
   
   
