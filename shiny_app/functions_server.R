@@ -215,34 +215,33 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
   
   yaxis_plots[["title"]] <- yaxis_title
   
-  # xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
-  # xaxis_plots[["title"]] <- "Weeks"
-  # xaxis_plots[["tickvals"]] <- week_end_date
-  # xaxis_plots[["ticktext"]] <- week_end_date
-  # xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7)
 
-  
+#Text for tooltips  
   
   measure_name <- case_when(data_name == "cum" ~ "Referrals(cumulative): ",
                             data_name == "dif" ~ "Percentage difference: ",
                             data_name == "inc" ~ "Referrals: ")
  
-  
   value1 <- dataset[[var1_chosen]]
+  # value1 <- format(round(value1, 2), nsmall = 2)
   
   value2 <- dataset[[var2_chosen]]
+  # value2 <- format(round(value2, 2), nsmall = 2)
   
-  week_end_date <- as.character(dataset$week_ending)
-  
-  #Text for tooltips
   tooltip_1 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
                             "<br>", measure_name, value1))
   
   tooltip_2 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
-                              "<br>", measure_name, value2))
+                        "<br>", measure_name, value2))
   
-  #Creating time trend plot
-  plot_ly(data=dataset, x=~week_end_date) %>%
+  tooltip_3 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+                              "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
+
+if(data_name != "dif") { 
+  
+  #Creating time trend plot for cumulative totals and incidence
+  plot_ly(data=dataset, x=~week_ending) %>%
+    
     # 2020 line
     add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_1, hoverinfo="text",
               name = "2020") %>%
@@ -252,10 +251,28 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
     
     #Layout
     layout(margin = list(b = 80, t=5), 
-           yaxis = yaxis_plots, xaxis = list(title = "Week", tickfont = list(size = 10)),
+           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
            legend = list(x = 100, y = 0.5)) %>% 
+    
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+
+} else {
+  
+  #Creating time trend plot for difference
+  plot_ly(data=dataset, x=~week_ending) %>%
+    
+    # 2020 line
+    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_3, hoverinfo="text",
+              name = "2020") %>%
+    
+    #Layout
+    layout(margin = list(b = 80, t=5), 
+           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
+           legend = list(x = 100, y = 0.5)) %>% 
+    
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
   }
   
 }

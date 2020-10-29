@@ -220,16 +220,16 @@ output$cancer_commentary <- renderUI({
               somewhat lower throughout 2020 comparing to 2019, probably reflecting the way data are gathered."),
       tags$li("	Malignant brain cancers fell.  By  w/e 21/6/2020 -53 individuals but it should be noted that
               the majority are not diagnosed from a pathology sample.")),
-    h4("Age , sex and socio-economic patterns (all cancers excluding non-melanoma skin cancers)"),
+    h4("Sex (all cancers excluding non-melanoma skin cancers)"),
     tags$ul(
-      tags$li("	In general, numbers were higher with increasing age."),
-      tags$li("	Numbers were higher in people from the least deprived compared to the most deprived throughout
-              2020.  Underlying this total are variations by cancer site, with, for example, breast and prostate
-              cancers being more common in individuals from less deprived areas and lung and head and neck cancers
-              being more common in more deprived areas.  By the week ending 29th March 2020, the numbers in the
-              least and most deprived were 2175 and 1978, respectively.  By the week ending 21st June, these were
-              3489 and 3070, respectively.  This indicates a widening of the difference in numbers between the least
-              and most deprived after the end of March."),
+      # tags$li("	In general, numbers were higher with increasing age."),
+      # tags$li("	Numbers were higher in people from the least deprived compared to the most deprived throughout
+      #         2020.  Underlying this total are variations by cancer site, with, for example, breast and prostate
+      #         cancers being more common in individuals from less deprived areas and lung and head and neck cancers
+      #         being more common in more deprived areas.  By the week ending 29th March 2020, the numbers in the
+      #         least and most deprived were 2175 and 1978, respectively.  By the week ending 21st June, these were
+      #         3489 and 3070, respectively.  This indicates a widening of the difference in numbers between the least
+      #         and most deprived after the end of March."),
       tags$li("	The decrease in 2020 numbers was similar in men and women.  By 21/3/2020, the difference in numbers
               between 2020 and 2019 was -2068 men and -1987 women."))
   )

@@ -1015,6 +1015,17 @@ saveRDS(perinatal, paste0("shiny_app/data/","perinatal_data.rds"))
 ## Cancer Data
 ##########################################################
 
+cancer_cum <- cancer_data1 %>%
+  filter(category == "sex") %>%
+  rename(sex = type) %>%
+  select(area, site, sex, week_ending, count19, count20, difference) %>%
+  group_by(area, site, sex) %>%
+  mutate(cum_count19 = cumsum(count19),
+         cum_count20 = cumsum(count20))
+
+
+saveRDS(cancer_cum, "shiny_app/data/cancer_data_2.rds")
+
 
 
 
