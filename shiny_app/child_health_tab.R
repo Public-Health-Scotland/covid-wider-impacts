@@ -194,8 +194,11 @@ visit_data_download <- reactive({
     "27_30mnth" = filter(twentyseventable, area_name == input$geoname_child),
     "4_5yr" = filter(fourtofivetable, area_name == input$geoname_child)
   ) %>% 
-    select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>% 
-    rename(cohort = time_period_eligible)
+    select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+    mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+    arrange(desc(cohort)) %>% 
+    select(-cohort) %>% 
+    rename(cohort = time_period_eligible) 
 })
 
 output$download_visit_data <- downloadHandler(
