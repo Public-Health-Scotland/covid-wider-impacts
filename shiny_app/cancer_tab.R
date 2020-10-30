@@ -9,14 +9,15 @@ observeEvent(input$btn_cancer_modal,
                title = "What is the data source?",
                p("",
                  tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/Scottish-Cancer-Registry/How-data-are-collected/",class="externallink")),
-               p("Cancer is not a statutorily notifiable disease, so cases are not reported prospectively. 
-              Instead it is reliant on a complex process involving record linkage and data processing of multiple 
-              records from multiple sources of potentially new cases of cancer, with the aim of maximising 
-              case ascertainment and data accuracy: "),
-               p("In an effort to more rapidly assess the impact of COVID-19 on new diagnoses of cancer, we have opted 
-              to analyse pathology records, comparing trends in weekly numbers of cancer diagnoses 
-              (based on dates of pathology specimen receipt) for 2020 compared to 2019."),
-               p("Data are reported by NHS Board of treatment "),
+               p("The Scottish Cancer Register receives notifications of cancer from many data sources. 
+                 Pathology records are one of the main sources, which are routinely transferred to us from 
+                 the health board laboratories. These data are valuable to identify and maximise case 
+                 ascertainment of potential new cancers."),
+               p("The pathology records contain diagnosis information, which has been determined by examining the cells and tissues microscopically. 
+                 The specimens used to determine diagnosis are received from various procedures such as simple diagnostic punch biopsies and lymph node 
+                 biopsies to fuller wide local excisions and resections. Therefore, it is highly likely that there are numerous pathology reports for 
+                 one individual. The reports received by the registry related to solid tissue and cytology specimens. The majority of pathology records 
+                 will relate to new primary cancers, some records will relate to disease recurrence or known primary cancers and/or metastatic disease."),
                p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
@@ -27,11 +28,9 @@ observeEvent(input$btn_cancer_modal,
 
 
 cancer_data_cum_main <- reactive({
-  # if(input$gender != "All Persons") {
+
    cancer_data2 %>% filter(sex == input$gender, area == input$geoname_cancer, site == input$cancer_type)
-  # } else {
-  #  cancer_data2 %>% filter(site == input$cancer_type, hbres == input$geoname_cancer)
-  # }
+
 })
 
 cancer_data_cum_split <- reactive({
@@ -99,32 +98,16 @@ output$cancer_explorer <- renderUI({
                        input$cancer_type == "Vulva - Females only" ~ "Vulva - Females only"
                        )
 
-  # if(input$geotype_cancer == "Scotland") {
-    
-    # enable("cancer_type")
-    # enable("gender")
+  
     tagList(
-      h3("Weekly pathology referrals"),
-      plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer type:  ", cancer_site,
-                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
-      plot_box(paste0("Percentage change in number of pathology referrals for cancer type: ", cancer_site,
-                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"),
-      plot_box(paste0("2020 incidences of pathology referrals for cancer type: ", cancer_site,
-                      ", compared with the corresponding time in 2018-2019 by week"), "cancer_incidence"))
-  # } else {
-  #   
-  #   disable("cancer_type")
-  #   disable("gender")
-  #   tagList(
-  #     h3("Weekly pathology referrals"),
-  #     plot_box(paste0("2020 cumulative incidences of pathology referrals for cancer of ", cancer_site,
-  #                     ", compared with the corresponding time in 2018-2019 by week"), "cancer_overall"),
-  #     plot_box(paste0("Percentage change in number of pathology referrals for cancer of ", cancer_site,
-  #                     ", compared with the corresponding time in 2018-2019 by week"), "cancer_split"),
-  #     plot_box(paste0("2020 incidences of pathology referrals for cancer of ", cancer_site,
-  #                     ", compared with the corresponding time in 2018-2019 by week"), "cancer_incidence"))
-  # }  
-  #  
+      # h3("Weekly pathology referrals"),
+      plot_box(paste0("Total count of individuals having a cancer of type:  ", cancer_site,
+                      " confirmed on a pathological specimen since January for 2019/2020"), "cancer_overall"),
+      plot_box(paste0("Percentage change of individuals having a cancer of type: ", cancer_site,
+                      "confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"),
+      plot_box(paste0("Weekly count of individuals having a cancer of type: ", cancer_site,
+                      "confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"))
+ 
 })
 
 ###############################################.

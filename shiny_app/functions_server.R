@@ -202,31 +202,30 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
 
 plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_name) {
   
-  
+# set plot display if no data  
   if (is.data.frame(dataset) && nrow(dataset) == 0)
   { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
   } else {
   
   
 # Set y axis label
-  yaxis_title <- case_when(data_name == "cum" ~ "Referrals - Cumulative Total",
-                           data_name == "dif" ~ "Referrals - Percentage Difference 2019/20",
-                           data_name == "inc" ~ "Referrals - Weekly Total")
+  yaxis_title <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals",
+                           data_name == "dif" ~ "Percentage Difference 2019/20",
+                           data_name == "inc" ~ "Weekly Total of Individuals")
   
   yaxis_plots[["title"]] <- yaxis_title
   
 
 #Text for tooltips  
   
-  measure_name <- case_when(data_name == "cum" ~ "Referrals(cumulative): ",
-                            data_name == "dif" ~ "Percentage difference: ",
-                            data_name == "inc" ~ "Referrals: ")
+  measure_name <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals: ",
+                            data_name == "dif" ~ "Percentage Difference 2019/20: ",
+                            data_name == "inc" ~ "Weekly Total of Individuals: ")
  
   value1 <- dataset[[var1_chosen]]
-  # value1 <- format(round(value1, 2), nsmall = 2)
   
   value2 <- dataset[[var2_chosen]]
-  # value2 <- format(round(value2, 2), nsmall = 2)
+  
   
   tooltip_1 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
                             "<br>", measure_name, value1))
