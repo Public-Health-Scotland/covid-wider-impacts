@@ -1,4 +1,6 @@
 #UI
+# secure_app( #uncomment if needing password protection
+
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -207,9 +209,9 @@ tabPanel(title = "Child health reviews", icon = icon("user-check"), value = "chi
                    uiOutput("child_health_explorer")
          )# mainPanel bracket
    ), # tabpanel bracket
-# ###############################################.
-# ## Breastfeeding tab ----
-# ##############################################.
+###############################################.
+## Breastfeeding tab ----
+##############################################.
 tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -232,9 +234,9 @@ tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
                    uiOutput("breastfeeding_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-# ###############################################.
-# ## Child development ----
-# ###############################################.
+###############################################.
+## Child development ----
+###############################################.
 tabPanel(title = "Child development", icon = icon("seedling"), value = "child_dev",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -256,9 +258,9 @@ tabPanel(title = "Child development", icon = icon("seedling"), value = "child_de
                    uiOutput("childdev_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-# ###############################################.
-# ## Perinatal Tab ----
-# ###############################################.
+###############################################.
+## Perinatal ----
+###############################################.
 tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -277,7 +279,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
   ) # tabpanel bracket
-),#, #navbarMenu bracket
+), #navbarMenu bracket
 ###############################################.
 ## Mental Health ----
 ###############################################.

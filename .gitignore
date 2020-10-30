@@ -1,6 +1,9 @@
 # they include API keys
 cookie-control.js
 deploying_app.R
+credentials_perinatal.R
+credentials_test.R
+create_credentials.R
 
 #Not needed
 rsconnect
@@ -16,6 +19,7 @@ packrat/lib*/
 # 'data' folder #
 data/
 archive/
+shiny app admin/
 
 # Common text files that may contain data #
 *.[cC][sS][vV]
