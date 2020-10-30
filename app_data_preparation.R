@@ -1367,8 +1367,10 @@ breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/Breastf
                        read_xlsx(paste0(data_folder, "/breastfeeding/breastfeeding_6_8_26thOct.xlsx")) %>% 
                          mutate(review = "6-8 week")) %>% 
   clean_names() %>% 
-  rename(area_name = hb) %>% 
-  mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland", T ~ "Health board"),
+  rename(area_name = geography) %>% 
+  mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland",
+                               stringr::str_sub(area_name, start = -4) == "HSCP" ~ "HSCP",
+                               T ~ "Health board"),
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
                                TRUE ~ area_name),
          month_review = as.Date(month_review)) %>% 
