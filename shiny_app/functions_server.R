@@ -801,8 +801,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
                       coverage_tot_num=paste0("Children recorded as receiving their review by the date information was extracted for analysis (",child_extract_date,")"),
                       coverage_tot_percent=paste0("Children recorded as receiving their review by the date information was extracted for analysis (",child_extract_date,")")) %>%
     footnote(i = 1, j = c(1:2, 4),
-             value = as_paragraph(c("W/B : Week beginning",
-                                    "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
+             value = as_paragraph(c("Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
                                     paste0("Blue cells indicate cohorts that have not reached ", age_not_reached, " of age"))),
              part = "header") %>%
     merge_at(i = 1, j = 3:4, part = "header") %>%
