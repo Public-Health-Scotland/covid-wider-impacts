@@ -612,8 +612,8 @@ plot_scurve_child <- function(dataset, age_week) {
   
   if (is.data.frame(scurve_data) && age_week == "4 years" && input$geoname_child == "NHS Dumfries & Galloway")
   { plot_nodata(height = 50, text_nodata = "No data shown as review only implemented in May 2020")
-  } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_child == "NHS Grampian")
-  { plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  # } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_child == "NHS Grampian")
+  # { plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
   } else if (is.data.frame(scurve_data) && age_week == "4 years" && input$geoname_child == "NHS Highland")
   { plot_nodata(height = 50, text_nodata = "No data shown as review has not been implemented yet. Implementation scheduled for 3/8/20.")
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
@@ -706,10 +706,13 @@ child_table <- function(dataset, age_week, age_not_reached) {
   
   table_data <- filter_table_data_child(dataset) 
   
+  table_data <- table_data %>%
+    filter(substr(time_period_eligible,1,3) != "W/B") #filter child health table to exclude weekly cohorts that should only be downloadable
+  
   if (age_week == "2 weeks") {
     format_col <- c("denominator","coverage_6weeks_num","coverage_18weeks_num","coverage_tot_num")
-    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B" |
-                                           time_period_eligible == "JUN 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "JUL 2020" |
+                                           time_period_eligible == "AUG 2020"))
     
     child_table <- table_data %>%
     select (time_period_eligible, denominator, coverage_6weeks_num, 
@@ -726,8 +729,8 @@ child_table <- function(dataset, age_week, age_not_reached) {
   } 
   else if (age_week == "6 weeks") {
     format_col <- c("denominator","coverage_10weeks_num","coverage_22weeks_num","coverage_tot_num")
-    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
-                                           substr(time_period_eligible,1,3) == "JUN"))
+    no_complete_row <- with(table_data, (time_period_eligible == "JUL 2020" |
+                                           time_period_eligible == "AUG 2020"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_10weeks_num, 
@@ -744,8 +747,8 @@ child_table <- function(dataset, age_week, age_not_reached) {
   }
   else if (age_week == "13 months") {
     format_col <- c("denominator","coverage_14months_num","coverage_17months_num","coverage_tot_num")
-    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
-                                           substr(time_period_eligible,1,3) == "JUN"))
+    no_complete_row <- with(table_data, (time_period_eligible == "JUL 2020" |
+                                           time_period_eligible == "AUG 2020"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_14months_num, 
@@ -762,8 +765,8 @@ child_table <- function(dataset, age_week, age_not_reached) {
   }
   else if (age_week == "27 months") {
     format_col <- c("denominator","coverage_28months_num","coverage_31months_num","coverage_tot_num")
-    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
-                                           substr(time_period_eligible,1,3) == "JUN"))
+    no_complete_row <- with(table_data, (time_period_eligible == "JUL 2020" |
+                                           time_period_eligible == "AUG 2020"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_28months_num, 
@@ -780,8 +783,8 @@ child_table <- function(dataset, age_week, age_not_reached) {
   }
   else if (age_week == "4 years") {
     format_col <- c("denominator","coverage_49months_num","coverage_52months_num","coverage_tot_num")
-    no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|
-                                           substr(time_period_eligible,1,3) == "JUN"))
+    no_complete_row <- with(table_data, (time_period_eligible == "JUL 2020" |
+                                           time_period_eligible == "AUG 2020"))
     
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_49months_num, 

@@ -750,8 +750,7 @@ first_datatable_download <- format_immchild_table("child_health/firstvisit_dashb
 
 saveRDS(first_datatable_download, paste0("shiny_app/data/","first_visit_datatable_download.rds"))
 
-first_datatable <- first_datatable_download %>% 
-  filter(exclude == 0)
+first_datatable <- first_datatable_download 
 
 saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 
@@ -788,8 +787,7 @@ sixtoeight_datatable_download <- format_immchild_table("child_health/sixtoeight_
 
 saveRDS(sixtoeight_datatable_download, paste0("shiny_app/data/","six_to_eight_datatable_download.rds"))
 
-sixtoeight_datatable <- sixtoeight_datatable_download %>% 
-  filter(exclude == 0)
+sixtoeight_datatable <- sixtoeight_datatable_download 
 
 saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.rds"))
 
@@ -827,8 +825,7 @@ thirteen_datatable_download <- format_immchild_table("child_health/thirteen_dash
 
 saveRDS(thirteen_datatable_download, paste0("shiny_app/data/","thirteen_datatable_download.rds"))
 
-thirteen_datatable <- thirteen_datatable_download %>% 
-  filter(exclude == 0)
+thirteen_datatable <- thirteen_datatable_download 
 
 saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
 
@@ -866,9 +863,7 @@ twentyseven_datatable_download <- format_immchild_table("child_health/twentyseve
 
 saveRDS(twentyseven_datatable_download, paste0("shiny_app/data/","twentyseven_datatable_download.rds"))
 
-# Data for flextable should include complete months and weeks for incomplete months only
-twentyseven_datatable <- twentyseven_datatable_download %>% 
-  filter(exclude == 0)
+twentyseven_datatable <- twentyseven_datatable_download 
 
 saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
 
@@ -908,9 +903,7 @@ fourtofive_datatable_download <- format_immchild_table("child_health/fourtofive_
 
 saveRDS(fourtofive_datatable_download, paste0("shiny_app/data/","fourtofive_datatable_download.rds"))
 
-# Data for flextable should include complete months and weeks for incomplete months only
-fourtofive_datatable <- fourtofive_datatable_download %>% 
-  filter(exclude == 0)
+fourtofive_datatable <- fourtofive_datatable_download
 
 saveRDS(fourtofive_datatable, paste0("shiny_app/data/","fourtofive_datatable.rds"))
 
