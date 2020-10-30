@@ -27,12 +27,14 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                             the NHS or are anxious about the risk of infection."),
                   tags$li("The health service delaying preventative and non-urgent care such as some screening
                             services and planned surgery."),
-                  tags$li("Other indirect effects of interventions to control COVID-19, such as mental or physical
-                            consequences of distancing measures.")
+                  tags$li("Other indirect effects of interventions to control COVID-19, such as changes to employment and income, changes in access to education, social isolation, family violence and abuse, changes in the accessibility and use of food, alcohol, drugs and gambling, or changes in physical activity and transport pattern.")
                 ),
-                p("This information tool provides an overview of changes in health and use of healthcare during the COVID-19
+         p("More detailed background information on these potential impacts is provided by the Scottish Public Health Observatory in a section on ",
+           tags$a(href="https://www.scotpho.org.uk/comparative-health/coronavirus-covid-19/covid-19-wider-impacts/",
+                  "Covid-19 wider impacts", class="externallink",target="_blank"),"."),
+         p("This information tool provides an overview of changes in health and use of healthcare during the COVID-19
                     pandemic in Scotland, drawing on a range of national data sources."),
-                p("We are providing information on different topics as quickly as we can, given the different time lags
+         p("We are providing information on different topics as quickly as we can, given the different time lags
                     that apply to different national data sources. For example, Public Health Scotland receives information
                     on patients attending Accident & Emergency within days; but there can be a delay of at least six weeks
                     before we receive detailed information on patients discharged from hospital after having a baby."),
@@ -82,6 +84,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("breastfeeding_button", "Breastfeeding", width="150px"), br(),
                           actionLink("childdev_button", "Child development", width="150px"), br(),
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
+                          actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
+                          actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
                           actionLink("mentalhealth_button", "Mental health", width="150px")
                          ),
                    column(10,
@@ -93,38 +97,38 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Breastfeeding", uiOutput("breastfeeding_commentary")),
                                      bsCollapsePanel("Child development", uiOutput("childdev_commentary")),
                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
-                                     bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary"))
+                                     bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
+                                     bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
+                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary"))
                           )))
 ), #tab panel
-
 ###############################################.
 ## Summary trends ----
 ##############################################.
-tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
-  wellPanel(
-    column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                  p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                  selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
-                              selected = "Scotland")),
-           uiOutput("geoname_ui")),
-    column(4, div(title="Select the data you want to explore.", # tooltip
-        radioGroupButtons("measure_select",
-                          label= "Step 2 – Select the data you want to explore.",
-                          choices = data_list, status = "primary",
-                          direction = "vertical", justified = T))),
-    column(4,
-           selectInput("adm_type", label = "Step 3. Select type of admission.",
-                       choices = c("All", "Emergency", "Planned"), selected = "All"),
-           downloadButton('download_chart_data', 'Download data'),
-           fluidRow(br()),
-           actionButton('jump_commentary_summary','Go to commentary')
-    )
-  ), #wellPanel bracket
-  mainPanel(width = 12,
-            uiOutput("data_explorer")
-  )# mainPanel bracket
-), # tabpanel bracket
-
+    tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
+      wellPanel(
+        column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                      p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                      selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
+                                  selected = "Scotland")),
+               uiOutput("geoname_ui")),
+        column(4, div(title="Select the data you want to explore.", # tooltip
+            radioGroupButtons("measure_select",
+                              label= "Step 2 – Select the data you want to explore.",
+                              choices = data_list, status = "primary",
+                              direction = "vertical", justified = T))),
+        column(4,
+               selectInput("adm_type", label = "Step 3. Select type of admission.",
+                           choices = c("All", "Emergency", "Planned"), selected = "All"),
+               downloadButton('download_chart_data', 'Download data'),
+               fluidRow(br()),
+               actionButton('jump_commentary_summary','Go to commentary')
+        )
+      ), #wellPanel bracket
+      mainPanel(width = 12,
+                uiOutput("data_explorer")
+      )# mainPanel bracket
+    ), # tabpanel bracket
 ###############################################.
 ## Cardiovascular ----
 ###############################################.
@@ -150,10 +154,10 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ###############################################.
 ## Child health navbarmenu ----
 ###############################################.
-navbarMenu("Child health", icon = icon("child"),
-##############################################.
-# Immunisation Tab ----
-##############################################.
+ navbarMenu("Child health", icon = icon("child"),
+###############################################.
+## Immunisation Tab ----
+###############################################.
 tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -296,6 +300,49 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
                    uiOutput("mh_explorer")
          )# mainPanel bracket
 ),#tabPanel bracket
+###############################################.
+## Pregnancy ----
+###############################################.
+navbarMenu("Pregnancy", icon = icon("venus"),
+###############################################.
+tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_booking", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_booking")),
+           column(4,offset=4,
+                  actionButton("btn_booking_modal", "Data source: Antenatal Booking Collection", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_ante_booking_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_booking","Go to commentary"))
+           #actionButton("browser", "Browser")
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("booking_explorer")
+         )# mainPanel bracket
+), #tab panel
+tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "terminations",
+          wellPanel(
+            column(4, div(title="Select a breakdown",
+                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                          selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
+                                      selected = "Scotland")),
+                   uiOutput("geoname_ui_top")),
+            column(4,offset=4,
+                   actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
+                   fluidRow(br()),
+           downloadButton("download_termination_data", "Download data"),
+           fluidRow(br()),
+           actionButton("jump_commentary_top","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("top_explorer")
+         )# mainPanel bracket
+) #tab panel
+), # navbar menu bracket
 ###############################################.
 ## Data ----
 ###############################################.

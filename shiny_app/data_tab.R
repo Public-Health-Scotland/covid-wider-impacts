@@ -26,15 +26,18 @@ data_table <- reactive({
          "thirteen_visit" = thirteentable,
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
+         "childdev" = child_dev,
+         "breastfeeding" = breastfeeding,
          "perinatal" = perinatal,
+         "top" = top_download ,
+         "ante_booking" = booking_download, 
          "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
          "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
          "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
         ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
-    # This is because dropdown prompts on the table filters only
-    # appear for factors
+    # This is because dropdown prompts on the table filters only appear for factors
     mutate_if(is.character, as.factor) 
   
   if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths")) {
@@ -187,12 +190,53 @@ data_table <- reactive({
              "Number of deaths" = number_of_deaths_in_month,
              "Rate" = rate,
              "Type" = type)
+  } else if (input$data_select %in% "childdev") {
+    table_data %<>%
+      select(area_name, month_review, review, number_reviews = no_reviews, 
+             meaningful_reviews = no_meaningful_reviews,
+             "% meaningful reviews" = pc_meaningful,
+             "One or more concerns" = concerns_1_plus,
+             "% one or more concerns" = pc_1_plus)
+  } else if (input$data_select %in% "breastfeeding") {
+    table_data %<>%
+      select(area_name, month_review, review, number_reviews = no_reviews, 
+             number_valid_reviews = no_valid_reviews,
+             exclusive_breastfeeding = exclusive_bf,
+             "% exclusive breastfeeding" = pc_excl,
+             overall_breastfeeding = overall_bf,
+             "% overall breastfeeding" = pc_overall,
+             ever_breastfeeding = ever_bf,
+             "% ever breastfeeding" = pc_ever)
+  } else if (input$data_select %in% "top") {
+    table_data <- table_data %>% 
+      select(area_name, area_type, termination_month, category = chart_category,
+             number_of_terminations, number_of_terminations_gest_under_10wks,
+             number_of_terminations_gest_10to12wks, number_of_terminations_gest_over_12wks,
+             average_gestation_at_termination)
+  } else if (input$data_select %in% "ante_booking") {
+    table_data <- table_data %>% 
+      select(area_name, area_type, booking_month, booking_week_beginning, category = chart_category,
+             number_of_women_booking, number_of_women_booking_gest_under_10wks,
+             number_of_women_booking_gest_10to12wks, number_of_women_booking_gest_over_12wks,
+             average_gestation_at_booking) %>% 
+      mutate(category = case_when(category %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived") ~ paste0(category),
+                                                  TRUE ~ "All"))
   }
   
-  table_data %>% 
+  
+  table_data %<>% 
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
-    select(sort(current_vars())) %>%  # order columns alphabetically
     mutate_if(is.numeric, round, 1)
+  
+  if (!(input$data_select %in% c("childdev", "breastfeeding"))) {
+    table_data %<>% 
+      select(sort(current_vars()))  # order columns alphabetically
+  }
+  
+  table_data
+  
 })
 
 ###############################################.
@@ -212,6 +256,7 @@ output$table_filtered <- DT::renderDataTable({
                                autoWidth = TRUE),
                 filter = "top",
                 colnames = table_colnames)
+  
 })
 
 ###############################################.
