@@ -57,7 +57,10 @@ data_table <- reactive({
            week_ending = format(week_ending, "%d %b %y"))
   } else if (input$data_select %in% "first_visit") { 
     table_data %<>%
-      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+      mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+      arrange(desc(cohort)) %>% 
+      select(-cohort) %>%
       rename(Cohort = time_period_eligible, "Total number of children" = denominator,
              "Coverage of review at 6 weeks of age (N)" = coverage_6weeks_num,
              "Coverage of review at 6 weeks of age (%)" = coverage_6weeks_percent,
@@ -67,7 +70,10 @@ data_table <- reactive({
              "Total coverage of review (%)" = coverage_tot_percent)
   } else if (input$data_select %in% "sixtoeight_visit") { 
     table_data %<>%
-      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+      mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+      arrange(desc(cohort)) %>% 
+      select(-cohort) %>%
       rename(Cohort = time_period_eligible, "Total number of children" = denominator,
              "Coverage of review at 10 weeks of age (N)" = coverage_10weeks_num,
              "Coverage of review at 10 weeks of age (%)" = coverage_10weeks_percent,
@@ -77,7 +83,10 @@ data_table <- reactive({
              "Total coverage of review (%)" = coverage_tot_percent)
   } else if (input$data_select %in% "thirteen_visit") { 
     table_data %<>%
-      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+      mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+      arrange(desc(cohort)) %>% 
+      select(-cohort) %>%
       rename(Cohort = time_period_eligible, "Total number of children" = denominator,
              "Coverage of review at 14 months of age (N)" = coverage_14months_num,
              "Coverage of review at 14 months of age (%)" = coverage_14months_percent,
@@ -87,7 +96,10 @@ data_table <- reactive({
              "Total coverage of review (%)" = coverage_tot_percent)
   } else if (input$data_select %in% "twentyseven_visit") { 
     table_data %<>%
-      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+      mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+      arrange(desc(cohort)) %>% 
+      select(-cohort) %>%
       rename(Cohort = time_period_eligible, "Total number of children" = denominator,
              "Coverage of review at 28 months of age (N)" = coverage_28months_num,
              "Coverage of review at 28 months of age (%)" = coverage_28months_percent,
@@ -97,7 +109,10 @@ data_table <- reactive({
              "Total coverage of review (%)" = coverage_tot_percent)
   } else if (input$data_select %in% "fourtofive_visit") { 
     table_data %<>%
-      select(area_name, time_period_eligible, denominator, starts_with("coverage")) %>%
+      select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+      mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+      arrange(desc(cohort)) %>% 
+      select(-cohort) %>%
       rename(Cohort = time_period_eligible, "Total number of children" = denominator,
              "Coverage of review at 49 months of age (N)" = coverage_49months_num,
              "Coverage of review at 49 months of age (%)" = coverage_49months_percent,
