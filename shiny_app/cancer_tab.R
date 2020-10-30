@@ -9,15 +9,19 @@ observeEvent(input$btn_cancer_modal,
                title = "What is the data source?",
                p("",
                  tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/Scottish-Cancer-Registry/How-data-are-collected/",class="externallink")),
-               p("The Scottish Cancer Register receives notifications of cancer from many data sources. 
-                 Pathology records are one of the main sources, which are routinely transferred to us from 
-                 the health board laboratories. These data are valuable to identify and maximise case 
+               p("The Scottish Cancer Register receives notifications of cancer from many data sources.
+                 Pathology records are one of the main sources, which are routinely transferred to us from
+                 the health board laboratories. These data are valuable to identify and maximise case
                  ascertainment of potential new cancers."),
-               p("The pathology records contain diagnosis information, which has been determined by examining the cells and tissues microscopically. 
-                 The specimens used to determine diagnosis are received from various procedures such as simple diagnostic punch biopsies and lymph node 
-                 biopsies to fuller wide local excisions and resections. Therefore, it is highly likely that there are numerous pathology reports for 
-                 one individual. The reports received by the registry related to solid tissue and cytology specimens. The majority of pathology records 
-                 will relate to new primary cancers, some records will relate to disease recurrence or known primary cancers and/or metastatic disease."),
+               p("Pathology records contain diagnosis information, which has been determined by examining the
+               cells and tissues microscopically.  Microscopic examination is generally considered as the most 
+                 accurate method of diagnosis. The specimens used to determine diagnosis are received from various 
+                 procedures such as smears and fluids, simple diagnostic punch biopsies, lymph node biopsies to 
+                 fuller wide local excisions and resections. Therefore, it is highly likely that there are numerous 
+                 pathology reports for one individual. The reports received by the registry related to solid tissue 
+                 and cytology specimens. Peripheral blood smears are not included such as leukaemia diagnosed from 
+                 peripheral blood film.  The majority of pathology records will relate to new primary cancers, some 
+                 records will relate to disease recurrence or known primary cancers and/or metastatic disease."),
                p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
