@@ -1,4 +1,6 @@
 #UI
+secure_app( #uncomment if needing password protection
+
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -265,4 +267,5 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
     #   ) # tabpanel bracket
     )# page bracket
  )# taglist bracket
+)#secure app
 ##END
