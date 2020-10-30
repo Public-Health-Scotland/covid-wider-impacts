@@ -45,7 +45,7 @@ observeEvent(input$measure_cardio_select, {
   }
   
   if (x == "ooh_cardiac") {
-    cardio_label = "Step 2 - Select geography level for cardiovascular OOH consultations"
+    cardio_label = "Step 2 - Select geography level for cardiovascular OOH cases"
     cardio_choices = c("Scotland", "Health board")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
@@ -337,6 +337,17 @@ observeEvent(input$btn_cardio_modal,
                    relate to incidents for chest pain and heart problems concerning both COVID-19 and non-COVID issues. Please note that the source of this data is the Unscheduled Care 
                    Datamart and represents a sub-set of the total Scottish Ambulance service activity. Figures include emergencies, where a vehicle arrived 
                    at the scene of the incident, and excludes both data from resources which were cleared as ‘dealt with by another vehicle’ and air ambulance data."),
+                 p("The list of presenting complaints included in the figures are;"),
+                 p("Chest Pain"),
+                 p("Chest Pain, Chest Pain (non-traumatic) Alpha Override, Chest Pain (non-traumatic) Charlie Override,
+                   Chest Pain with Abnormal Breathing, Chest Pain over 35 Breathing Normally, Chest Pain with Nausea or Vomitting,
+                   Chest Pain (non-traumatic) Delta Override, Not Alert with Chest Pains, Difficulty Speaking between Breaths,
+                   Changing Colour, Clammy or Cold Sweats with Chest Pains, Heart Attack or Angina History with Chest Pains"),
+                 p("Heart Problems"),
+                 p("Heart Problem with Abnormal Breathing, Heart Problems with Chest Pain/discomfort - >35yrs,
+                   Heart Problems with Cardiac History, Heart Problems/Difficulty Speaking between Breaths,
+                   Heart Problems and Changing Colour, Heart Problems and Clammy or Cold Sweats, 
+                   Just Resuscitated and/or Defibrillated"),                 
                  p("If required, more detailed analysis of SAS activity may be available on request to ",
                    tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                           class="externallink"), "."),
@@ -471,18 +482,18 @@ output$cardio_explorer <- renderUI({
       
      } else if (input$measure_cardio_select == "ooh_cardiac") {
         tagList(# OOH Attendances
-          h3(paste0("Weekly cardiovascular cases in out of hours services ", input$geoname_cardio)),
+          h3(paste0("Weekly cardiovascular cases in out of hours services in ", input$geoname_cardio)),
           actionButton("btn_cardio_modal", "Data source: PHS GP OOH Datamart", icon = icon('question-circle')),
           plot_box("2020 compared with 2018-2019 average", "ooh_cardio_all"),
-          plot_cut_box(paste0("Percentage change in cardiovascular consultations in ", input$geoname_cardio, " compared with the corresponding
+          plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "ooh_cardio_sex_var",
-                       paste0("Weekly number of cardiovascular consultations in ", input$geoname_cardio, " by sex"), "ooh_cardio_sex_tot"),
-          plot_cut_box(paste0("Percentage change in cardiovascular consultations ", input$geoname_cardio, " compared with the corresponding
+                       paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by sex"), "ooh_cardio_sex_tot"),
+          plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by age group"), "ooh_cardio_age_var",
-                       paste0("Weekly number of cardiovascular consultations in ", input$geoname_cardio, " by age group"), "ooh_cardio_age_tot"),
-          plot_cut_box(paste0("Percentage change in cardiovascular consultations in ", input$geoname_cardio, " compared with the corresponding
+                       paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by age group"), "ooh_cardio_age_tot"),
+          plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by SIMD quintile"), "ooh_cardio_depr_var",
-                       paste0("Weekly number of cardiovascular consultations in ", input$geoname_cardio, " by SIMD quintile"), "ooh_cardio_depr_tot",
+                       paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by SIMD quintile"), "ooh_cardio_depr_tot",
                        extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?", 
                                                     icon = icon('question-circle')))
         )
@@ -512,7 +523,7 @@ output$cardio_explorer <- renderUI({
        )
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# OOH Attendances
-         h3(paste0("Weekly attended incidents by Scottish Ambulance Service ", input$geoname_cardio)),
+         h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service ", input$geoname_cardio)),
          actionButton("btn_cardio_modal", "Data source: PHS Unscheduled Care Datamart", icon = icon('question-circle')),
          plot_box("2020 compared with 2018-2019 average", "sas_cardio_all"),
          plot_cut_box(paste0("Percentage change in cardiovascular incidents in ", input$geoname_cardio, " compared with the corresponding
@@ -742,15 +753,15 @@ output$cardio_commentary <- renderUI({
                     proportion of coronary interventions occur in a context of patients suffering a heart 
                     attack. A proportion of coronary interventions are also planned and elective in nature. "),
             tags$li("The number of device procedures has been lower than expected since the end of March 2020.")),
-    h3("Cardiovascular OOH consultations"),
-    p("Information on OOH consultations..."),
+    h3("Cardiovascular OOH cases"),
+    p("Information on OOH cases..."),
     tags$ul(
-      tags$li("From the Middle of April there was a significant increase in OOH cardiac consultations. This lasted until 
+      tags$li("From the Middle of April there was a significant increase in OOH cardiac cases. This lasted until 
               the middle of July. The largest increase was in the week ending 15 March 2020, 346 compared to a historic average
-              of 195 consultations."),
-      tags$li("There was a significant increase at the start of May for females, 202 consultations compared to the 
+              of 195 cases."),
+      tags$li("There was a significant increase at the start of May for females, 202 cases compared to the 
               historic average of 110."),
-      tags$li("There was an increase in OOH cardiac consultations from the middle of April for all SIMD quintiles.")),
+      tags$li("There was an increase in OOH cardiac cases from the middle of April for all SIMD quintiles.")),
     h3("Cardiovascular NHS24 consultations"),
     p("Information on NHS24 consultations..."),
     tags$ul(
@@ -767,8 +778,9 @@ output$cardio_commentary <- renderUI({
     tags$ul(
       tags$li("There was a large decrease in SAS incidents from the start of April to the middle of July.
                The largest decrease was in the ending 19 April 2020, 665 compared to a historic average 
-               of 1079 incidents"),
-      tags$li("The decrease in SAS incidents was similar at gender and SIMD level and affected all age groups."))
+               of 1079 incidents."),
+      tags$li("The decrease in SAS incidents was similar at gender and SIMD level and affected all age groups."),
+      tags$li("From the end of July there has been a significant increase in SAS incidents which are above the historic average."))
 )
   
 })

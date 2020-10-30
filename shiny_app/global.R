@@ -119,7 +119,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "A&E cardiovascular attendances" = "ae_cardio",
                         "Cardiac procedures" = "cath_lab",
                         "Cardiovascular NHS24 completed contacts" = "nhs24_cardiac",
-                        "Cardiovascular OOH consultations" = "ooh_cardiac",
+                        "Cardiovascular OOH cases" = "ooh_cardiac",
                         "Cardiovascular SAS incidents" = "sas_cardiac",
                         "6-in-1 first dose"  = "sixin_8wks",
                         "6-in-1 second dose" = "sixin_8wks_second",
@@ -133,7 +133,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         )
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
-                 "Cardiac procedures" = "cath", "Out of hours consultations" = "ooh_cardiac",
+                 "Cardiac procedures" = "cath", "Out of hours cases" = "ooh_cardiac",
                  "NHS24 completed contacts" = "nhs24_cardiac","Scottish Ambulance Service" = "sas_cardiac")
 
 #List of data items available in step 2 of perinatal tab

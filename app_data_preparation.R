@@ -216,10 +216,14 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-07-26")
 ## Preparing OOH Cardiac data ----
 ###############################################.
 
-ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/Weekly_Diagnosis_OOH_IR.csv")) %>% 
+ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/Weekly Diagnosis OOH CSV.csv")) %>% 
   janitor::clean_names()
 
 # Change file into correct format prior to getting final specification
+ooh_data_cardiac <- ooh_data_cardiac %>% rename(nhs_board = reporting_health_board_name_as_at_date_of_episode)
+ooh_data_cardiac <- ooh_data_cardiac %>% rename(deprivation_quintile = patient_prompt_dataset_deprivation_scot_quintile)
+ooh_data_cardiac <- ooh_data_cardiac %>% rename(gender = gender_description)
+ooh_data_cardiac <- ooh_data_cardiac %>% rename(number_of_cases = gp_ooh_number_of_cases)
 
 # Age Bands
 ooh_data_cardiac = ooh_data_cardiac %>%
@@ -294,14 +298,17 @@ ooh_cd_age <- ooh_data_cardiac %>% agg_cut(grouper="age") %>% rename(category = 
 
 ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
 
+# Filter out HSC partnership for now, may include in future
+ooh_cardiac <- ooh_cardiac %>% filter(area_type != "HSC partnership")
+
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-11")
+prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-11")
 
 ###############################################.
 ## Preparing NHS24 Cardiac data ----
 ###############################################.
 
-nhs24_data_cardiac <- read_csv(paste0(data_folder, "NHS24_Cardio/Weekly_Symptoms_NHS24_IR.csv")) %>% 
+nhs24_data_cardiac <- read_csv(paste0(data_folder, "NHS24_Cardio/Weekly Symptoms NHS 24 CSV.csv")) %>% 
   janitor::clean_names()
 
 # Filter age > 44
@@ -389,15 +396,18 @@ nhs24_cardiac <- rbind(nhs24_cd_all, nhs24_cd_sex, nhs24_cd_dep, nhs24_cd_age)
 nhs24_cardiac <- nhs24_cardiac %>% filter(area_type != "HSC partnership")
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24_cardiac, filename = "nhs24_cardiac", last_week = "2020-10-11")
+prepare_final_data_cardiac(dataset = nhs24_cardiac, filename = "nhs24_cardiac", last_week = "2020-10-11")
 
 
 ###############################################.
 ## SAS Cardiac data ----
 ###############################################.
 
-sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/Weekly_Diagnosis_SAS.csv")) %>%
+sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/Weekly Diagnosis SAS CSV.csv")) %>%
   janitor::clean_names()
+
+# Filter age > 14
+sas_data_cardiac <- sas_data_cardiac %>% filter(age > 14)
 
 # Change file into correct format prior to getting final specification
 # Age Bands
@@ -481,7 +491,7 @@ sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
 sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-11")
+prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-11")
 
 
 ###############################################.
