@@ -209,7 +209,13 @@ output$childdev_no_concerns <- renderPlotly({
 ## Data downloads ----
 ###############################################.
 childdev_down <- reactive({
-  child_dev_filt() %>% select(-shift, -trend) %>% 
+  
+  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
+                              input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
+  
+  child_dev %>% 
+    filter(review == review_chosen) %>% 
+    select(-hscp2019_code, -shift, -trend) %>% 
     mutate(month_review = format(month_review, "%b %y")) %>% 
     rename(no_reviews_meaningful_data = no_meaningful_reviews, pc_meaningful_data = pc_meaningful)
 })
