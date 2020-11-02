@@ -267,9 +267,11 @@ output$breastfeeding_commentary <- renderUI({
 ## Data downloads ----
 ###############################################.
 breast_down <- reactive({
-  breastfeeding_filt() %>% select(-shift_excl, -trend_excl,
-                                  -shift_ever, -trend_ever,
-                                  -shift_over, -trend_over) %>% 
+  breastfeeding %>% filter(review == input$measure_select_bf) %>% 
+    select(-hscp2019_code, 
+           -shift_excl, -trend_excl,
+           -shift_ever, -trend_ever,
+           -shift_over, -trend_over) %>% 
     mutate(month_review = format(month_review, "%b %y")) %>% 
     rename(no_reviews_with_data = no_valid_reviews, pc_with_data = pc_valid, 
            pc_with_data_centreline = pc_valid_centreline)
