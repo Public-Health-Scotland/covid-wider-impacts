@@ -180,7 +180,13 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
   tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
                             "<br>", measure_name, trend_data$count,
                             "<br>", "Historic average: ", trend_data$count_average))
-  
+
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50)
+  } else {
+    
   #Creating time trend plot
   plot_ly(data=trend_data, x=~week_ending) %>%
     # 2020 line
@@ -198,7 +204,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
   
-}
+}}
 ###############################################.
 ## # Function that creates specialty charts.   ----
 ###############################################.
