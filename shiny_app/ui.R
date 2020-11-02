@@ -103,7 +103,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           )))
 ), #tab panel
 ###############################################.
-## Summary trends ----
+# Summary trends ----
 ##############################################.
     tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
       wellPanel(

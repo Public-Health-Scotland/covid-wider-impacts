@@ -405,6 +405,9 @@ plot_imm_simd <- function(dataset, age_week, dose,
   
   imm_simd_data <- dataset %>% filter(exclude == 0) 
   
+  #count the number of distinct months in the dataset - used later to correctly adjust chart
+  month_count <- length(unique(imm_simd_data$time_period_eligible))
+
   dataset_name <- deparse(substitute(dataset)) # character name of the data
   
   elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
@@ -445,7 +448,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
 
   if (base_var != F) {
     simd_plot <- simd_plot %>% 
-      add_trace(type = 'bar', y = ~get(base_var)/5, #THis value needs to change depending on how many months are shown
+      add_trace(type = 'bar', y = ~get(base_var)/month_count, 
                 name = "2019", marker = list(color = "black"),
                 text= tooltip_2019, hoverinfo="text") 
   }
