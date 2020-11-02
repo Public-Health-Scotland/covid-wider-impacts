@@ -138,7 +138,7 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
 output$download_cancer_data <- downloadHandler(
   filename ="cancer_extract.csv",
   content = function(file) {
-    write_csv(cancer_data2,
+    write_csv(cancer_data_cum_main(),
               file) } 
 ) 
 
