@@ -253,6 +253,11 @@ output$bf_ever_pc <- renderPlotly({
 output$breastfeeding_commentary <- renderUI({
   tagList(
     bsButton("jump_to_breastfed",label = "Go to data"), #this button can only be used once
+    h2("Breastfeeding - 4th November 2020"),
+    p("Information on breastfeeding has been updated in this tool on 4th November 2020. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old."),
+    p("Data is shown by month of review from January 2019 to August 2020, so comparisons can be made for babies receiving their reviews before and during the COVID-19 pandemic."),
+    p("Information is now included for NHS Grampian, as their data recording issues have now been resolved. Information is also shown at Health & Social Care Partnership level, but this is only available in the data download function."),
+    p("Further background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
     h2("Breastfeeding - 30th September 2020"),
     p("Information on breastfeeding has been included in this tool for the first time on 30th September 2020. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old."),
     p("Data is shown on breastfeeding initiation (has the child ever been breastfed), and the child’s breastfeeding status over the 24 hours prior to their child health review (exclusive breastfeeding and overall breastfeeding [includes mixed breast and formula feeding])."),
