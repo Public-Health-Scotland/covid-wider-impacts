@@ -106,10 +106,10 @@ output$cancer_explorer <- renderUI({
       # h3("Weekly pathology referrals"),
       plot_box(paste0("Total count of individuals having a cancer of type:  ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_overall"),
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", cancer_site,
-                      "confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"),
       plot_box(paste0("Weekly count of individuals having a cancer of type: ", cancer_site,
-                      "confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"))
+                      "confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"),
+      plot_box(paste0("Percentage change of individuals having a cancer of type: ", cancer_site,
+                      "confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"))
  
 })
 
