@@ -37,6 +37,20 @@ cancer_data_cum_main <- reactive({
 
 })
 
+cancer_data_dl <- reactive({
+  
+  cancer_data_cum_main() %>% 
+    rename("Area name" = area, "Cancer Type" = site,
+           "Sex" = sex,
+           "Week Ending" = week_ending,
+           "Count 2019" = count19,
+           "Count 2020" = count20,
+           "Cumulative Count 2019" = cum_count19,
+           "Cumulative Count 2020" = cum_count20,
+           "Variation (%)" = difference)
+  
+})
+
 cancer_data_cum_split <- reactive({
   cancer_data %>% filter(category == input$split, area == input$geoname_cancer)
 })
@@ -154,7 +168,7 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
 output$download_cancer_data <- downloadHandler(
   filename ="cancer_extract.csv",
   content = function(file) {
-    write_csv(cancer_data_cum_main(),
+    write_csv(cancer_data_dl(),
               file) } 
 ) 
 

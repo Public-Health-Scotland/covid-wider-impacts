@@ -73,7 +73,7 @@ ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 #Cancer data
 # cancer_data1 <- readRDS("data/cancer_data_1.rds")
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
-cancer_extract_date <- "19th September 2020"  
+cancer_extract_date <- "16th September 2020"  
 
 
 ## Child Health Data
