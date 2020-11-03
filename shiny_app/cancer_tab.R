@@ -117,7 +117,28 @@ output$cancer_explorer <- renderUI({
 
   
     tagList(
-      
+      p("Cancer services in Scotland have been disrupted since late March 2020 as a result of the coronavirus 
+        pandemic.  It is important to understand whether fewer patients have been diagnosed with cancer as a 
+        result of these changes.  The Scottish Cancer Registry will publish its high quality figures on cancer 
+        incidence for 2020 in 2022.  As a rapid proxy measure of new cancer diagnoses, this dashboard presents 
+        numbers of individuals from whom a pathology sample found cancer in 2020 and compares them to 2019. 
+        This does not include all patients who have been newly diagnosed with cancer and includes some patients 
+        who are being followed-up from an earlier diagnosis. "),
+      p("In 2020, the number of individuals was similar to 2019 until the end of March.  Weekly numbers then 
+        fell by about 40% of those in 2019.  By the week ending 21st June 2020, numbers had not increased again 
+        to 2019 levels for most cancers."),
+      p("By week ending 21st June 2020, the total number of individuals in Scotland with a pathologically confirmed 
+        cancer (excluding non-melanoma skin cancers) was 16,902 in 2020 and 20,963 in 2019, an absolute difference 
+        of 4,061 individuals (and an overall cumulative difference of 19%).  That is to say, more than 4,000 fewer 
+        patients in Scotland had a pathologically confirmed cancer diagnosis by the end of June 2020 than would have 
+        been expected."),
+      p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and bowel.  By the week 
+        ending 21st June 2020, compared to the same week in 2019, there were 376 fewer lung cancers (a total fall of 23%); 
+        799 fewer breast cancers (a total fall of 20%); 279 prostate cancers (a total of 17%); and 677 fewer bowel 
+        cancers (a total fall of 27%)."),
+      p("While these numbers are only proxy measures of new cancer diagnoses in Scotland, the size of the changes 
+        corresponds with those reported by cancer clinicians. "),
+      br(),
       plot_box(paste0("Total count of individuals having a cancer of type:  ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_overall"),
       p("The graph shows the cumulative total, or running sum, of individuals from whom a pathology 
