@@ -165,7 +165,8 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
 #                         "13-15 month child health review" = "thirteen_visit",
 #                         "27-30 month child health review" = "twentyseven_visit",
 #                         "4-5 year child health review" = "fourtofive_visit",
-#                         "Stillbirths and infant deaths" = "perinatal"
+#                         "Stillbirths and infant deaths" = "perinatal",
+#                         "Cancer" = "cancer"
 # )
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",

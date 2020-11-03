@@ -24,7 +24,8 @@ data_table <- reactive({
          "thirteen_visit" = thirteentable,
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
-         "perinatal" = perinatal
+         "perinatal" = perinatal,
+         "cancer" = cancer_data2
         ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -162,6 +163,16 @@ data_table <- reactive({
              "Number of deaths" = number_of_deaths_in_month,
              "Rate" = rate,
              "Type" = type)
+    
+  } else if (input$data_select %in% "cancer") {
+    table_data <- table_data %>%
+      select(area, site, sex, week_ending, count19, count20, difference) %>%
+      mutate("Variation (%)" = format(round(difference, 2), nsmall = 2)) %>% 
+      rename("Area name" = area, "Cancer Type" = site,
+             "Sex" = sex,
+             "Week Ending" = week_ending,
+             "Count 2019" = count19,
+             "Count 2020" = count20)
   }
   
   table_data %>% 
