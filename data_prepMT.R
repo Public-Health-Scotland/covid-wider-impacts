@@ -117,7 +117,7 @@ cancer <- cancer %>%
   filter(!(is.na(siteno))) %>% 
   mutate(site = case_when(siteno == 210 ~ "Bladder",
                           siteno == 320 ~ "Bone and Connective Tissue",
-                          siteno == 410 ~ "Malignant Brain Cancer",
+                          siteno == 410 ~ "Brain Tumour",
                           siteno == 510 ~ "Breast",
                           siteno == 610 ~ "Colorectal",
                           siteno == 740 ~ "Ovary - Females only",

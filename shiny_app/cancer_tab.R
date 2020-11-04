@@ -95,7 +95,7 @@ output$cancer_explorer <- renderUI({
                        input$cancer_type == "Kidney" ~ "Kidney",
                        input$cancer_type == "Leukaemias" ~ "Leukaemias",
                        input$cancer_type == "Liver and Intrahepatic Bile Ducts" ~ "Liver and Intrahepatic Bile Ducts",
-                       input$cancer_type == "Malignant Brain Cancer" ~ "Malignant Brain Cancer",
+                       input$cancer_type == "Brain Tumour" ~ "Brain Tumour",
                        input$cancer_type == "Malignant Melanoma of the Skin" ~ "Malignant Melanoma of the Skin",
                        input$cancer_type == "Mesothelioma" ~ "Mesothelioma",
                        input$cancer_type == "Multiple Myeloma and malignant plasma cell neoplasms" ~ "Multiple Myeloma and malignant plasma cell neoplasms",
@@ -148,7 +148,7 @@ output$cancer_explorer <- renderUI({
       br(),
       br(),
       plot_box(paste0("Weekly count of individuals having a cancer of type: ", cancer_site,
-                      "confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"),
+                      " confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"),
       p("The graph shows the weekly total of individuals from whom a pathology 
         specimen showed cancer since the start of each year.  The Community Health Index (CHI) was 
         used to count individuals.  If the same individual had a subsequent cancer specimen reported 
@@ -156,7 +156,7 @@ output$cancer_explorer <- renderUI({
       br(),
       br(),
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", cancer_site,
-                      "confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"),
+                      " confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"),
       p("The graph shows the percentage change in the number of individuals from whom a pathology 
         specimen showed cancer since the start of each year.  The Community Health Index (CHI) was 
         used to count individuals.  If the same individual had a subsequent cancer specimen reported 

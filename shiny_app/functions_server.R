@@ -159,7 +159,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath", "cancer") ~ "Average 2018-2019",
+  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", "cath") ~ "Average 2018-2019",
                           data_name == "deaths" ~ "Average 2015-2019")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
@@ -169,8 +169,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T) {
                             data_name == "sas" ~ "Incidents: ",
                             data_name == "cath" ~ "Cases: ",
                             data_name == "drug_presc" ~ "Items prescribed: ",
-                            data_name == "deaths" ~ "Deaths: ",
-                            data_name == "cancer" ~ "Referrals: ")
+                            data_name == "deaths" ~ "Deaths: ")
   
   #Text for tooltip
   tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
@@ -210,7 +209,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
   
 # Set y axis label
   yaxis_title <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals",
-                           data_name == "dif" ~ "Percentage Difference 2019/20",
+                           data_name == "dif" ~ "Percentage Difference (2019-2020)/2020",
                            data_name == "inc" ~ "Weekly Total of Individuals")
   
   yaxis_plots[["title"]] <- yaxis_title
@@ -219,7 +218,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
 #Text for tooltips  
   
   measure_name <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals: ",
-                            data_name == "dif" ~ "Percentage Difference 2019/20: ",
+                            data_name == "dif" ~ "Percentage Difference (2019-2020)/2020: ",
                             data_name == "inc" ~ "Weekly Total of Individuals: ")
  
   value1 <- dataset[[var1_chosen]]
