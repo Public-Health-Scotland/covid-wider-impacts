@@ -121,46 +121,61 @@ output$cancer_explorer <- renderUI({
         pandemic.  It is important to understand whether fewer patients have been diagnosed with cancer as a 
         result of these changes.  The Scottish Cancer Registry will publish its high quality figures on cancer 
         incidence for 2020 in 2022.  As a rapid proxy measure of new cancer diagnoses, this dashboard presents 
-        numbers of individuals from whom a pathology sample found cancer in 2020 and compares them to 2019. 
-        This does not include all patients who have been newly diagnosed with cancer and includes some patients 
-        who are being followed-up from an earlier diagnosis. "),
+        numbers of individuals from whom a pathology sample found cancer in 2020 and compares them to 2019."), 
+       p(strong("Note - this does not include all patients who have been newly diagnosed with cancer, and also will include some patients 
+        who are being followed-up from an earlier diagnosis of cancer. ")),
       p("In 2020, the number of individuals was similar to 2019 until the end of March.  Weekly numbers then 
         fell by about 40% of those in 2019.  By the week ending 21st June 2020, numbers had not increased again 
         to 2019 levels for most cancers."),
       p("By week ending 21st June 2020, the total number of individuals in Scotland with a pathologically confirmed 
-        cancer (excluding non-melanoma skin cancers) was 16,902 in 2020 and 20,963 in 2019, an absolute difference 
-        of 4,061 individuals (and an overall cumulative difference of 19%).  That is to say, more than 4,000 fewer 
+        cancer (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference 
+        of 4,063 individuals (and an overall cumulative difference of 19%).  Thus, more than 4,000 fewer 
         patients in Scotland had a pathologically confirmed cancer diagnosis by the end of June 2020 than would have 
         been expected."),
       p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and bowel.  By the week 
         ending 21st June 2020, compared to the same week in 2019, there were 376 fewer lung cancers (a total fall of 23%); 
-        799 fewer breast cancers (a total fall of 20%); 279 prostate cancers (a total of 17%); and 677 fewer bowel 
+        799 fewer breast cancers (a total fall of 20%); 279 prostate cancers (a total fall of 17%); and 677 fewer bowel 
         cancers (a total fall of 27%)."),
       p("While these numbers are only proxy measures of new cancer diagnoses in Scotland, the size of the changes 
         corresponds with those reported by cancer clinicians. "),
+      strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and 
+             may also change historical data. This commentary refers to pathological specimens reported to the week 
+             ending 21st June 2020, which were available for inclusion in the analysis when the data were extracted 
+             on 28th October; the dashboard may now reflect more recent information."),
+      br(),
+      strong("Last updated = 11/11/2020;  date of extraction of data = 28/10/2020, with pathological records to week ending 
+        21/06/2020.  "),
+      br(),
+      br(),
+      p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of 
+        each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had 
+        a subsequent cancer specimen reported that year for the same type of cancer, they were not counted again; but they 
+        were counted twice or more for those with different types of cancer. "),
+      p("The first chart shows the cumulative total, or a running sum of the individuals confirmed pathologically as having 
+        cancer.  The second and third charts show the weekly numbers and the weekly percent differences between 2020 and 
+        2019 of new individuals confirmed each week.  "),
+      p("Drop-down menus allow further details for specific Health Boards, cancer types and sex to be selected"),
+      br(),
       br(),
       plot_box(paste0("Total count of individuals having a cancer of type:  ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_overall"),
-      p("The graph shows the cumulative total, or running sum, of individuals from whom a pathology 
-        specimen showed cancer since the start of each year.  The Community Health Index (CHI) was 
-        used to count individuals.  If the same individual had a subsequent cancer specimen reported 
-        that year for the same type of cancer, they were not counted again."),
-      br(),
       br(),
       plot_box(paste0("Weekly count of individuals having a cancer of type: ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"),
-      p("The graph shows the weekly total of individuals from whom a pathology 
-        specimen showed cancer since the start of each year.  The Community Health Index (CHI) was 
-        used to count individuals.  If the same individual had a subsequent cancer specimen reported 
-        that year for the same type of cancer, they were not counted again."),
-      br(),
       br(),
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"),
-      p("The graph shows the percentage change in the number of individuals from whom a pathology 
-        specimen showed cancer since the start of each year.  The Community Health Index (CHI) was 
-        used to count individuals.  If the same individual had a subsequent cancer specimen reported 
-        that year for the same type of cancer, they were not counted again."))
+      br(),
+      p("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
+        than for other cancer sites. Such cancers are relatively common and usually non-fatal. There is a propensity 
+        for multiple tumours to occur in one individual and cancer registries adopt different practices in recording 
+        these. The tumours are most common in the elderly population and the completeness of registration in the very 
+        elderly is likely to be less than for younger patients. Furthermore, increasing numbers of these cancers are 
+        diagnosed and treated within GP surgeries and the registration scheme is not confident that all such cases 
+        are notified. Because cancer registries across the world have different practices for recording non-melanoma 
+        skin cancer (some do not record them at all), the category 'All Malignant Neoplasms (Excl. C44)' omits these tumours 
+        in the interests of making international comparisons of cancer incidence more valid."))
+
  
 })
 
@@ -244,8 +259,8 @@ output$cancer_commentary <- renderUI({
       pathologically confirmed cancers each week had not fully returned to 2019 levels by the week ending 21st 
       June 2020, when the latest data were available."),
     p("By week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer 
-      (excluding non-melanoma skin cancers) was 16,902 in 2020 and 20,963 in 2019, an absolute difference of 
-      4,061 individuals (and an overall cumulative difference of 19%).  That is to say, more than 4,000 fewer 
+      (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference of 
+      4,063 individuals (and an overall cumulative difference of 19%).  That is to say, more than 4,000 fewer 
       patients in Scotland had a pathologically confirmed cancer diagnosis by the end of June 2020 than would 
       have been expected."),
     h4("Cancer sites – note individuals can be counted in more than one cancer site for those who happen to have more than one type of cancer"),
@@ -266,7 +281,7 @@ output$cancer_commentary <- renderUI({
               greater percentage drop for confirmed colorectal cancers. Additionally, the National Bowel Screening 
               Programme was also paused in March, which will account for some of the fall in numbers."),
       tags$li(" Prostate cancer numbers fell with no evidence of return to expected numbers by the end of June 2020. 
-              There were -279 fewer men confirmed by w/e 21/06/2020."),
+              There were -279 fewer men confirmed by w/e 21/06/2020, a fall of 17%"),
       tags$li("	Oesophageal cancer numbers fell by over 50% immediately after lockdown, but there is evidence that 
               these have returned to expected levels by the end of June.  Cumulatively, there remains 69 fewer individuals 
               by week ending 21/06/20."),
@@ -274,21 +289,22 @@ output$cancer_commentary <- renderUI({
               to the expected numbers by 21/06/20, with 70 fewer patients cumulatively with a pathologically confirmed 
               stomach cancer."),
       tags$li("	Initially there was not a sudden fall just after lockdown, however, the expected numbers each week started 
-              to diverge in May and there were 111 fewer patients with malignant melanoma of the skin comfirmed pathologically 
+              to diverge in May and there were 111 fewer patients with malignant melanoma of the skin confirmed pathologically 
               by w/e 21st June in 2020 compared to 2019."),
       tags$li("	Haematological cancers are not often diagnosed on the basis of a pathological sample and therefore any 
               differences observed are likely to be random variation.  Other sources of information are needed to better 
               understand the incidence of these types of cancer."),
       tags$li("	Brain tumour numbers fell.  By w/e 21st June there were 53 fewer individuals in 2020 compared with 2019, 
               a cumulative fall of 29%.  However, it is important to note that a pathological sample is often not the basis 
-              of making a diagnosis of a brain cancer and therefore other sources of information are needed to better 
+              of making a diagnosis of a brain tumour and therefore other sources of information are needed to better 
               understand their incidence.")),
     p("Additionally, although not generally reported in the totals for all cancers, there was a fall in the numbers of 
       patients with pathologically confirmed non-melanoma skin cancer. Immediately after lockdown the numbers fell by 
       about 80% of 2019 numbers, and although there was  some return to expected numbers by the end of June 2020, there 
       were still about 40% fewer cases each week. In total, there had been 3508 fewer patients by w/e 21/6/2020, a cumulative 
-      drop of 35%.")
-  )
+      drop of 35%."),
+    p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "(Data Source)"))
     
+  ) 
 
 })
