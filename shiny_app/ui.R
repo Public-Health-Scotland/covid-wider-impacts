@@ -325,23 +325,84 @@ tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking
          )# mainPanel bracket
 ), #tab panel
 tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "terminations",
-          wellPanel(
-            column(4, div(title="Select a breakdown",
-                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                          selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
-                                      selected = "Scotland")),
-                   uiOutput("geoname_ui_top")),
-            column(4,offset=4,
-                   actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
-                   fluidRow(br()),
-           downloadButton("download_termination_data", "Download data"),
-           fluidRow(br()),
-           actionButton("jump_commentary_top","Go to commentary"))
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_top")),
+           column(4,offset=4,
+                  actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_termination_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_top","Go to commentary"))
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("top_explorer")
          )# mainPanel bracket
-) #tab panel
+), # top tab panel
+tabPanel(title = "Deliveries", icon = icon("bars"), value = "deliveries",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_deliv", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_deliv")),
+           column(4,offset=4,
+                  actionButton("btn_deliv_modal", "Data source: XXXX", icon = icon('question-circle')),
+                  fluidRow(br()))
+                  #,
+                  #downloadButton("download_deliv_data", "Download data"),
+                  #fluidRow(br()),
+                  #actionButton("jump_commentary_deliv","Go to commentary"))
+           ), #well panel
+           mainPanel(width = 12
+                     #,
+                     #uiOutput("deliv_explorer")
+           )# mainPanel bracket
+         ), # deliveries tab panel
+tabPanel(title = "Inductions", icon = icon("bars"), value = "inductions",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_deliv", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_deliv")),
+           column(4,offset=4,
+                  actionButton("btn_deliv_modal", "Data source: XXXX", icon = icon('question-circle')),
+                  fluidRow(br()))
+           #,
+           #downloadButton("download_deliv_data", "Download data"),
+           #fluidRow(br()),
+           #actionButton("jump_commentary_deliv","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12
+                   #,
+                   #uiOutput("deliv_explorer")
+         )# mainPanel bracket
+) # deliveries tab panel
+tabPanel(title = "Deliveries", icon = icon("bars"), value = "deliveries",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_deliv", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_deliv")),
+           column(4,offset=4,
+                  actionButton("btn_deliv_modal", "Data source: XXXX", icon = icon('question-circle')),
+                  fluidRow(br()))
+           #,
+           #downloadButton("download_deliv_data", "Download data"),
+           #fluidRow(br()),
+           #actionButton("jump_commentary_deliv","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12
+                   #,
+                   #uiOutput("deliv_explorer")
+         )# mainPanel bracket
+) # deliveries tab panel
+
 ), # navbar menu bracket
 ###############################################.
 ## Data ----
