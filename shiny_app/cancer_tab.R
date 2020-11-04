@@ -284,7 +284,7 @@ output$cancer_commentary <- renderUI({
               greater percentage drop for confirmed colorectal cancers. Additionally, the National Bowel Screening 
               Programme was also paused in March, which will account for some of the fall in numbers."),
       tags$li(" Prostate cancer numbers fell with no evidence of return to expected numbers by the end of June 2020. 
-              There were -279 fewer men confirmed by w/e 21/06/2020, a fall of 17%"),
+              There were 279 fewer men confirmed by w/e 21/06/2020, a fall of 17%"),
       tags$li("	Oesophageal cancer numbers fell by over 50% immediately after lockdown, but there is evidence that 
               these have returned to expected levels by the end of June.  Cumulatively, there remains 69 fewer individuals 
               by week ending 21/06/20."),
