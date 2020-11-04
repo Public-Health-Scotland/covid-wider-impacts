@@ -143,7 +143,7 @@ output$cancer_explorer <- renderUI({
              ending 21st June 2020, which were available for inclusion in the analysis when the data were extracted 
              on 28th October; the dashboard may now reflect more recent information."),
       br(),
-      strong("Last updated = 04/11/2020;  date of extraction of data = 16/09/2020, with pathological records to week ending 
+      strong("Last updated: - 04/11/2020 ;  date of extraction of data: - 16/09/2020, with pathological records to week ending 
         21/06/2020.  "),
       br(),
       br(),
