@@ -129,7 +129,7 @@ output$cancer_explorer <- renderUI({
         to 2019 levels for most cancers."),
       p("By week ending 21st June 2020, the total number of individuals in Scotland with a pathologically confirmed 
         cancer (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference 
-        of 4,063 individuals (and an overall cumulative difference of 19%).  Thus, more than 4,000 fewer 
+        of 4,063 individuals (and an overall cumulative difference of 19%).  Thus, around 4,000 fewer 
         patients in Scotland had a pathologically confirmed cancer diagnosis by the end of June 2020 than would have 
         been expected."),
       p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and bowel.  By the week 
@@ -263,7 +263,7 @@ output$cancer_commentary <- renderUI({
       June 2020, when the latest data were available."),
     p("By week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer 
       (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference of 
-      4,063 individuals (and an overall cumulative difference of 19%).  That is to say, more than 4,000 fewer 
+      4,063 individuals (and an overall cumulative difference of 19%).  That is to say, around 4,000 fewer 
       patients in Scotland had a pathologically confirmed cancer diagnosis by the end of June 2020 than would 
       have been expected."),
     h4("Cancer sites – note individuals can be counted in more than one cancer site for those who happen to have more than one type of cancer"),
