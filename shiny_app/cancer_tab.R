@@ -241,7 +241,7 @@ output$cancer_commentary <- renderUI({
       follow-up samples of cancers that were diagnosed previously."),
     p("Cancer is often diagnosed initially through clinical examination (including radiology) followed by pathological 
       confirmation.  However, not all cancers are diagnosed by pathology: some are better diagnosed through other methods 
-      (e.g. blood tests) and for some, the tumour is inaccessible for tissue sampling.  On average, around 85% of cancers 
+      (e.g. blood tests) and for some, the tumour is inaccessible for tissue sampling.  On average, around 80% of cancers 
       have pathological confirmation, though this varies by the type of cancer."),
     p("There is generally a 2-3 month time lag between the pathology sample being reported on by the laboratory and 
       the complete data to have been received and processed by the Scottish Cancer Registry; as such the data shown 
