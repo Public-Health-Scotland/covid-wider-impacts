@@ -1251,6 +1251,58 @@ top_download <- bind_rows(top_download_board, top_download_scot)
 saveRDS(top_download, "shiny_app/data/top_download.rds")
 
 ###############################################.
+## Pregnancy (mode of delivery) ----
+###############################################.
+#field with date all antenatal booking data files prepared
+mod_date <- "2020-10-13"
+
+## mod data for run chart (scotland and nhs board) - monthly
+mod_runchart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIVERIES_RUNCHARTS_",mod_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date) %>%
+  mutate(month=as.Date(month),
+         type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name), 
+         category=case_when(type=="Scotland" ~ "All",
+                            type=="Health board" ~ "All"))
+
+## mod data for scotland only by age and dep
+mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIVERIES_SCOTLAND_CHARTS_",mod_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  #ungroup() %>% # for some reason dataset appears to be grouped which prevents formatting 
+  rename(area_name=hbres, month=date, category=variable) %>%
+  mutate(month=as.Date(month),
+         chart=case_when(category=="1 - most deprived" ~ "dep",
+                        category=="2" ~ "dep",
+                        category=="3" ~ "dep",
+                        category=="4" ~ "dep",
+                        category=="5 - least deprived" ~ "dep",TRUE~ "age"),
+         area_type="Scotland")
+
+## Combine area based and age/dep terminations data, format and add shifts/trends
+mod <- bind_rows(mod_runchart, mod_scot) %>%
+#media line used to assess shifts or trends therefore need to fill cells which are set to NA 
+mutate(median_csection_all= case_when(is.na(median_csection_all)~ext_csection_all,TRUE ~ median_csection_all),
+       median_csection_elec= case_when(is.na(median_csection_elec)~ext_csection_elec,TRUE ~ median_csection_elec),
+       median_csection_emer= case_when(is.na(median_csection_emer)~ext_csection_emer,TRUE ~ median_csection_emer)) %>% #recode age group as required
+  #sort data to ensure trends/shifts compare correct data points
+  group_by(area_name, area_type, type) %>%
+  runchart_flags(shift="csection_all_shift",trend="csection_all_trend", value="perc_csection_all", median="median_csection_all") %>%
+  runchart_flags(shift="csection_emer_shift",trend="csection_emer_trend", value="perc_csection_emer", median="median_csection_emer") %>%
+  runchart_flags(shift="csection_elec_shift",trend="csection_elec_trend", value="perc_csection_elec", median="median_csection_elec") %>%
+  ungroup()
+
+saveRDS(mod, "shiny_app/data/mod_data.rds")
+
+
+
+
+
+
+
+
+###############################################.
 ## Child development ----
 ###############################################.
 # Do we need any sort of supression - look at island values.
