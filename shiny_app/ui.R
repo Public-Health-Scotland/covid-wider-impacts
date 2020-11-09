@@ -86,7 +86,10 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
                           actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
                           actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
-                          actionLink("mentalhealth_button", "Mental health", width="150px")
+                          actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
+                          actionLink("mod_button", "Mode of delivery", width="150px"), br(),
+                          actionLink("induction_button", "Induction of labour", width="150px"),br(),
+                          actionLink("gest_at_delivery_button", "Gestation at delivery", width="150px")
                          ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
@@ -99,7 +102,10 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
                                      bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
                                      bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
-                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary"))
+                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
+                                     bsCollapsePanel("Mode of delivery", uiOutput("mod_commentary")),
+                                     bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
+                                     bsCollapsePanel("Gestation at delivery", uiOutput("gest_at_delivery_commentary"))
                           )))
 ), #tab panel
 ###############################################.
@@ -360,10 +366,9 @@ tabPanel(title = "Inductions", icon = icon("hand-holding-medical"), value = "ind
            column(4,offset=4,
                   actionButton("btn_ind_modal", "Data source: SMR02", icon = icon('question-circle')),
                   fluidRow(br()))
-                  #,
-                  #downloadButton("download_ind_data", "Download data"),
-                  #fluidRow(br()),
-                  #actionButton("jump_commentary_ind","Go to commentary"))
+                  # downloadButton("download_mod_data", "Download data"),
+                  # fluidRow(br()),
+                  # actionButton("jump_commentary_mod","Go to commentary"))
            ), #well panel
            mainPanel(width = 12
                      #,
@@ -373,24 +378,22 @@ tabPanel(title = "Inductions", icon = icon("hand-holding-medical"), value = "ind
 ###############################################.
 ## Mode of delivery Tab ----
 ###############################################.
-tabPanel(title = "Mode of delivery", icon = icon("hospital-user"), value = "delivery",
+tabPanel(title = "Mode of delivery", icon = icon("hospital-user"), value = "mod",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_delivery", label = NULL, choices= c("Scotland", "Health board"),
+                         selectInput("geotype_mod", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
-                  uiOutput("geoname_ui_delivery")),
+                  uiOutput("geoname_ui_mod")),
            column(4,offset=4,
-                  actionButton("btn_delivery_modal", "Data source: SMR02", icon = icon('question-circle')),
-                  fluidRow(br()))
-           #,
-           #downloadButton("download_delivery_data", "Download data"),
-           #fluidRow(br()),
-           #actionButton("jump_commentary_delivery","Go to commentary"))
+                  actionButton("btn_mod_modal", "Data source: SMR02", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_mod_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_mod","Go to commentary"))
          ), #well panel
-         mainPanel(width = 12
-                   #,
-                   #uiOutput("deliv_explorer")
+         mainPanel(width = 12,
+                   uiOutput("mod_explorer")
          )# mainPanel bracket
 ), # deliveries tab panel
 ###############################################.

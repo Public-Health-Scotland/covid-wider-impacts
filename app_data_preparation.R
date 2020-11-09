@@ -1283,24 +1283,17 @@ mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIVERIE
 ## Combine area based and age/dep terminations data, format and add shifts/trends
 mod <- bind_rows(mod_runchart, mod_scot) %>%
 #media line used to assess shifts or trends therefore need to fill cells which are set to NA 
-mutate(median_csection_all= case_when(is.na(median_csection_all)~ext_csection_all,TRUE ~ median_csection_all),
-       median_csection_elec= case_when(is.na(median_csection_elec)~ext_csection_elec,TRUE ~ median_csection_elec),
-       median_csection_emer= case_when(is.na(median_csection_emer)~ext_csection_emer,TRUE ~ median_csection_emer)) %>% #recode age group as required
+mutate(ext_csection_all= case_when(is.na(ext_csection_all)~median_csection_all,TRUE ~ ext_csection_all),
+       ext_csection_elec= case_when(is.na(ext_csection_elec)~median_csection_elec,TRUE ~ ext_csection_elec),
+       ext_csection_emer= case_when(is.na(ext_csection_emer)~median_csection_emer,TRUE ~ ext_csection_emer)) %>% #recode age group as required
   #sort data to ensure trends/shifts compare correct data points
   group_by(area_name, area_type, type) %>%
-  runchart_flags(shift="csection_all_shift",trend="csection_all_trend", value="perc_csection_all", median="median_csection_all") %>%
-  runchart_flags(shift="csection_emer_shift",trend="csection_emer_trend", value="perc_csection_emer", median="median_csection_emer") %>%
-  runchart_flags(shift="csection_elec_shift",trend="csection_elec_trend", value="perc_csection_elec", median="median_csection_elec") %>%
+  runchart_flags(shift="csection_all_shift",trend="csection_all_trend", value="perc_csection_all", median="ext_csection_all") %>%
+  runchart_flags(shift="csection_emer_shift",trend="csection_emer_trend", value="perc_csection_emer", median="ext_csection_emer") %>%
+  runchart_flags(shift="csection_elec_shift",trend="csection_elec_trend", value="perc_csection_elec", median="ext_csection_elec") %>%
   ungroup()
 
 saveRDS(mod, "shiny_app/data/mod_data.rds")
-
-
-
-
-
-
-
 
 ###############################################.
 ## Child development ----

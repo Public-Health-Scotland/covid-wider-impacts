@@ -124,6 +124,10 @@ top_extract_date <- "2nd October 2020"
 top <- readRDS("data/top_data.rds")
 top_download <- readRDS("data/top_download.rds")
 
+#mode of delivery (pregnanacy tab)
+mod_extract_date <- "13th October 2020"
+mod <- readRDS("data/mod_data.rds")
+
 # Breastfeeding data
 breastfeeding <- readRDS("data/breastfeeding_data.rds")
 #Child development data
