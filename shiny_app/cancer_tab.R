@@ -277,7 +277,7 @@ output$cancer_commentary <- renderUI({
               National Breast Screening Programme being paused in March, with no new invitations sent out to eligible 
               women between March and August. "),
       tags$li("	Colorectal cancers numbers initially fell by about 60% of the 2019 numbers immediately after lockdown, 
-              and although there was evidence of improvement towards the expected numbers, there were still quarter 
+              and although there was evidence of recovery towards the expected numbers, there were still a quarter 
               fewer patients having pathologically confirmed colorectal cancers each week.  Overall, there had been 
               a total of 677 fewer individuals, or 27% cumulatively lower by w/e 21/06/2020.  It is known that there 
               have been, and continue to be delays in patients accessing colonoscopies which may explain some of the 

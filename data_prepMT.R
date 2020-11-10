@@ -266,7 +266,7 @@ cancer_dist <- bind_rows(base_cancer, allcancers, exccancers) %>%
 cancer_dist <- cancer_dist %>% 
   group_by(year, week_number, hbres, site, sex) %>% 
   summarise(count = n())
-  
+
 
 ########################################################
 #
