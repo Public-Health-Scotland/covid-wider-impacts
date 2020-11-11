@@ -56,13 +56,23 @@ output$geoname_ui_mod <- renderUI({
 ##  Reactive datasets  ----
 ###############################################.
 
-#Dataset behind trend plot (available at scotland and NHS board level)
+#Dataset behind trend run chart  (available at scotland and NHS board level)
 mod_filter <- function(){
   
   mod %>% filter(area_name == input$geoname_mod &
                    area_type == input$geotype_mod &
                    type %in% c("Scotland","Health board"))
 }
+
+
+#Dataset behind line chart  (available at scotland and NHS board level)
+mod_line_filter <- function(){
+  
+  mod_linechart  %>% filter(area_name == input$geoname_mod &
+                   area_type == input$geotype_mod &
+                   type %in% c("Scotland","Health board"))
+}
+
 
 ###############################################.
 ## Mode of delivery Charts ----
@@ -73,8 +83,8 @@ output$mod_trend_csection_all <- renderPlotly({plot_mod_trend(measure="perc_csec
 output$mod_trend_csection_elec <- renderPlotly({plot_mod_trend(measure="perc_csection_elec", shift = "csection_elec_shift", trend = "csection_elec_trend")})
 output$mod_trend_csection_emer <- renderPlotly({plot_mod_trend(measure="perc_csection_emer", shift = "csection_emer_shift", trend = "csection_emer_trend")})
 
-
-
+output$mod_linechart_number <- renderPlotly({plot_mod_linechart(measure="births")})
+output$mod_linechart_percent <- renderPlotly({plot_mod_linechart(measure="percent_births")})
 
 ###############################################.
 ##  Reactive layout  ----
@@ -96,7 +106,8 @@ output$mod_explorer <- renderUI({
             p("The ‘Average gestation at termination’ chart follows a similar format.  In this chart, the dots joined by a solid black line show the average (mean) gestation at which the terminations of pregnancy occurred (based on gestation at termination measured in completed weeks of pregnancy)."))
   
   # Function to create common layout to all immunisation charts
-  mod_layout <- function(mod_trend_csection_all,mod_trend_csection_elec,mod_trend_csection_emer){
+  mod_layout <- function(mod_trend_csection_all,mod_trend_csection_elec,mod_trend_csection_emer,mod_linechart_number,
+                         mod_linechart_percent){
     tagList(fluidRow(column(12,
                             h4(mod_title),
                             p(mod_title_detail),
@@ -110,30 +121,33 @@ output$mod_explorer <- renderUI({
                      column(4,
                           h4("emergency"),
                           withSpinner(plotlyOutput("mod_trend_csection_emer"))),
+                     column(6,
+                            p("Line - number"),
+                            withSpinner(plotlyOutput("mod_linechart_number"))),
+                     column(6,
+                            p("line - %"),
+                            withSpinner(plotlyOutput("mod_linechart_percent"))),
                      column(12,
-                            p("Line charts"),
                             p(chart_explanation))))}
     
-
   # #link plot functions to layouts
   mod_layout(mod_trend_csection_all="mod_trend_csection_all",
              mod_trend_csection_elec="mod_trend_csection_elec",
-             mod_trend_csection_emer="mod_trend_csection_emer")
-  #            plot_age_n="top_age_n", plot_age_g="top_age_g",
-  #            plot_dep_n="top_dep_n", plot_dep_g="top_dep_g")
+             mod_trend_csection_emer="mod_trend_csection_emer",
+             mod_linechart_number="mod_linechart_number",
+             mod_linechart_percent="mod_linechart_percent")
 })
 
 
 
-
-
-
-
 #############################################.
-## Termination chart functions ----
+## Mode of delivery chart functions ----
 ############################################.
 
-## Trend plot for monthly TOP numbers and average gestation 
+## Runchart trend chart for monthly c-section percentages 
+## Rather than try and present all the modes of delivery we have opted just to produce a run chart
+## showing rates of c-section (by type all, emergency, elective) as these are the modes of deliver that people most want to see
+
 plot_mod_trend <- function(measure, shift, trend){  
   
   plot_data <- mod_filter()
@@ -185,13 +199,40 @@ plot_mod_trend <- function(measure, shift, trend){
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots,  xaxis = xaxis_plots,
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
-      #legend = list(x = 0.1, y = 0.1)) %>% #position of legend
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }}
 
 
+## Line chart showing  
 
+plot_mod_linechart <- function(measure){  
+
+plot_data <- mod_line_filter()
+
+# Create tooltip for scurve
+tooltip <- c(paste0("Mode of delivery: ", plot_data$mode,
+                           "Number of births: ", plot_data$births))
+
+if (is.data.frame(plot_data) && nrow(plot_data) == 0)
+{ plot_nodata(height = 50, 
+              text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
+} else {
+
+  #Creating trend plot
+  plot_ly(data=plot_data, x=~month,  y = ~get(measure)) %>%
+    add_trace(type = 'scatter', mode = 'lines',
+              color = ~mode,
+              text= tooltip, hoverinfo="text") %>%
+    #Layout
+    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+           yaxis = yaxis_plots,  xaxis = xaxis_plots,
+           legend = list(orientation = 'h')) %>% #position of legend underneath plot
+    #leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+}
+
+}
 
 ###############################################.
 ## Commentary tab content  ----

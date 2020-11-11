@@ -1256,6 +1256,7 @@ saveRDS(top_download, "shiny_app/data/top_download.rds")
 #field with date all antenatal booking data files prepared
 mod_date <- "2020-10-13"
 
+## RUNCHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
 mod_runchart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIVERIES_RUNCHARTS_",mod_date,".rds")) %>%  
   janitor::clean_names() %>%
@@ -1294,6 +1295,28 @@ mutate(ext_csection_all= case_when(is.na(ext_csection_all)~median_csection_all,T
   ungroup()
 
 saveRDS(mod, "shiny_app/data/mod_data.rds")
+
+## LINECHART DATA
+## mod data for run chart (scotland and nhs board) - monthly
+mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIVERIES_MODEOFDELIVERY_LINECHART_",mod_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date2) %>%
+  mutate(month=as.Date(month, format="%Y-%m-%d"),
+         month=format(date,"%b %Y"),
+         type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name), 
+         category=case_when(type=="Scotland" ~ "All",
+                            type=="Health board" ~ "All")) %>%
+  group_by(area_name, month) %>% 
+  mutate(tot_births=sum(births/2), # divide by two because total births already a row in the dataset
+         percent_births=(births/tot_births)*100) %>% 
+  ungroup()
+
+saveRDS(mod_linechart, "shiny_app/data/mod_linechart_data.rds")  
+
+
+
 
 ###############################################.
 ## Child development ----
