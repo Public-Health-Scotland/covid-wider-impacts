@@ -1271,15 +1271,17 @@ mod_runchart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIV
 ## mod data for scotland only by age and dep
 mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIVERIES_SCOTLAND_CHARTS_",mod_date,".rds")) %>%  
   janitor::clean_names() %>%
-  #ungroup() %>% # for some reason dataset appears to be grouped which prevents formatting 
   rename(area_name=hbres, month=date, category=variable) %>%
   mutate(month=as.Date(month),
-         chart=case_when(category=="1 - most deprived" ~ "dep",
+         area_type="Scotland",
+         chart_type=case_when(category=="1 - most deprived" ~ "dep",
                         category=="2" ~ "dep",
                         category=="3" ~ "dep",
                         category=="4" ~ "dep",
                         category=="5 - least deprived" ~ "dep",TRUE~ "age"),
-         area_type="Scotland")
+         category=as.character(case_when(category=="40+" ~ "40 and over", 
+                                         category=="under 20" ~ "Under 20", 
+                                         TRUE ~ as.character(category))))
 
 ## Combine area based and age/dep terminations data, format and add shifts/trends
 mod <- bind_rows(mod_runchart, mod_scot) %>%
@@ -1302,7 +1304,7 @@ mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELI
   janitor::clean_names() %>%
   rename(area_name=hbres, month=date2) %>%
   mutate(month=as.Date(month, format="%Y-%m-%d"),
-         month=format(date,"%b %Y"),
+         #month=format(month,"%b %Y"),
          type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name), 
@@ -1314,8 +1316,6 @@ mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELI
   ungroup()
 
 saveRDS(mod_linechart, "shiny_app/data/mod_linechart_data.rds")  
-
-
 
 
 ###############################################.
