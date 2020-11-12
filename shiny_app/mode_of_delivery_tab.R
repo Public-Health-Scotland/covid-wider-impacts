@@ -4,9 +4,7 @@
 observeEvent(input$btn_mod_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("The Antenatal Booking Data presented is based on a new data collection established as a rapid response to COVID-19. Data is collected each week, from the clinical information system (BadgerNet Maternity (most NHS boards), TrakCare Maternity (Lothian) or Eclipse (A&A) used by the midwives who ‘book’ the pregnant woman for maternity care."),br(),
-               p("Historic data from April 2019 was also collected as a ‘catch-up’ extract in order to identify all women who were currently pregnant during the COVID-19 period. This was either from the same source or - in Tayside and Highland - from the systems in use before the introduction of BadgerNet Maternity."),br(),
-               p("The charts presented on this page show the number of women booking for antenatal care in each week from the week beginning 1 April 2019 onwards.  Data is shown at all Scotland level and for each mainland NHS Board of residence.  Due to small numbers, weekly data is not shown for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles), however the Island Boards are included in the Scotland total.  In addition to the weekly data, the ‘Download data’ button provides monthly data (based on exact month of booking rather than summation of sequential weeks) for each NHS Board of residence, including the Island Boards."),
+               p("need some details about SMR02"),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -51,7 +49,6 @@ output$geoname_ui_mod <- renderUI({
   selectizeInput("geoname_mod", label = NULL, choices = areas_summary_mod, selected = "")
 })
 
-
 ###############################################.
 ##  Reactive datasets  ----
 ###############################################.
@@ -60,8 +57,8 @@ output$geoname_ui_mod <- renderUI({
 mod_filter <- function(){
   
   mod_runchart %>% filter(area_name == input$geoname_mod &
-                   area_type == input$geotype_mod &
-                   type %in% c("Scotland","Health board"))
+                            area_type == input$geotype_mod &
+                            type %in% c("Scotland","Health board")) 
 }
 
 #Dataset behind line charts for age and deprivation (available for scotland only)
@@ -79,7 +76,6 @@ mod_linechart_filter <- function(){
                    area_type == input$geotype_mod &
                    type %in% c("Scotland","Health board"))
 }
-
 
 ###############################################.
 ## Mode of delivery Charts ----
@@ -109,16 +105,15 @@ output$mod_explorer <- renderUI({
   
   # text for titles of cut charts
   mod_data_timeperiod <-  paste0("Figures based on data extracted ",mod_extract_date)
-  mod_title <- paste0("Percentage of births by caesarian section: ",input$geoname_mod)
-  mod_title_detail <-  paste0("Singleton live births only, all gestations")
+  mod_title <- paste0("Percentage of singleton live births delivered by caesarian section: ",input$geoname_mod)
+  mod_title_detail <-  paste0("(all gestations)")
 
-  
+
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Number of caesarian sections’ chart above, the dots joined by a solid black line show the number of terminations of pregnancy in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of terminations of pregnancy over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of terminations of pregnancy."),
-            p("The ‘Average gestation at termination’ chart follows a similar format.  In this chart, the dots joined by a solid black line show the average (mean) gestation at which the terminations of pregnancy occurred (based on gestation at termination measured in completed weeks of pregnancy)."))
+            p("On the ‘Percentage of births by caesarian sections’ charts above, the dots joined by a solid black line show the percentage of births by caesarian sections in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of caesarian sections over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of caesarian sections."))
   
   # Function to create common layout to all immunisation charts
   mod_layout <- function(mod_trend_csection_all,mod_trend_csection_elec,mod_trend_csection_emer,mod_linechart_age_n, mod_linechart_age_p,mod_linechart_dep_n, mod_linechart_dep_p,mod_linechart_number,mod_linechart_percent){
@@ -135,35 +130,43 @@ output$mod_explorer <- renderUI({
                      column(4,
                             h4("Emergency caesarian sections"),
                             withSpinner(plotlyOutput("mod_trend_csection_emer"))),
+                     column(12,
+                            p(chart_explanation)),
                      #only if scotland selected display age and deprivation breakdowns
                      if (input$geotype_mod == "Scotland"){
                        tagList(
-                         fluidRow(column(12,h4("splits for scot only"))),
+                         fluidRow(column(12,
+                                         h4("Singleton live births delivered by caesarian section by age group: Scotland"),
+                                         p("(all gestations)"))),
                          fluidRow(column(6,
-                                         h4("Numbers"),
+                                         h4("Number of births by caesarian section"),
                                          withSpinner(plotlyOutput("mod_linechart_age_n"))),
                                   column(6,
-                                         h4("percentage"),
+                                         h4("Percentage of births by caesarian section"),
                                          withSpinner(plotlyOutput("mod_linechart_age_p")))),
-                         fluidRow(column(12,h4("Caesarian sections by deprivation: Scotland"),
+                         fluidRow(column(12,
+                                         br(), # spacing
+                                         h4("Singleton live births delivered by caesarian section by deprivation: Scotland"),
                                          actionButton("btn_modal_simd_mod", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          fluidRow(column(6,
-                                         h4("c section number"),
+                                         h4("Number of births delivered by caesarian section"),
                                         withSpinner(plotlyOutput("mod_linechart_dep_n"))),
                                   column(6,
-                                         h4("csection %"),
+                                         h4("Percentage of births delivered by caesarian section"),
                                          withSpinner(plotlyOutput("mod_linechart_dep_p"))))
                        )#tagList from if statement
                      },
+                     column(12,
+                            br(), #sapcing
+                            h4(paste0("Singleton live births by mode of delivery: ",input$geoname_mod))),
                      column(6,
-                            p("Line - number"),
+                            p("Number of births"),
                             withSpinner(plotlyOutput("mod_linechart_number"))),
                      column(6,
-                            p("line - %"),
-                            withSpinner(plotlyOutput("mod_linechart_percent"))),
-                     column(12,
-                            p(chart_explanation))))}
+                            p("Percentage of births"),
+                            withSpinner(plotlyOutput("mod_linechart_percent")))
+                     ))}
   
   # #link plot functions to layouts
   mod_layout(mod_trend_csection_all="mod_trend_csection_all",
@@ -182,33 +185,35 @@ output$mod_explorer <- renderUI({
 ## Mode of delivery chart functions ----
 ############################################.
 
-## Runchart trend chart for monthly c-section percentages 
+## Runchart trend chart for monthly c-section percentages : Scotland & NHS Board (except island boards) 
 ## Rather than try and present all the modes of delivery we have opted just to produce a run chart
 ## showing rates of c-section (by type all, emergency, elective) as these are the modes of deliver that people most want to see
 
 plot_mod_trend <- function(measure, shift, trend){  
   
   plot_data <- mod_filter()
-  
+
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
                 text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
   } else {
     
     # chart legend labels  
-    centreline_name <- paste0(input$geoname_mod," average up to end XXX 2020")    
+    centreline_name <- paste0(input$geoname_mod," average up to end Feb 2020") 
+    
+    # format y axis
     yname <- "Percentage (%)"
-    yaxis_plots[["range"]] <- c(0, 40)  # forcing range from 0 to60
+    yaxis_plots[["range"]] <- c(0, 40)  # forcing range from 0 to 40%
+    yaxis_plots[["title"]] <- "Percentage (%)"
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
     
-    
-    yaxis_plots[["title"]] <- "Percentage (%)"
-    
     tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
-                            "Percentage of all live births: ",format(plot_data$perc_csection_all,digits = 1,nsmall=1)))
-    
+                            "Percentage: ",format(plot_data$perc_csection_all,digits = 1,nsmall=1),"%", "<br>"))
+                            #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
+     
+    # Adjust the column used for median line according to which cut of chart to be shown
     centre_line <- case_when(measure == "perc_csection_all" ~ plot_data$median_csection_all,
                              measure == "perc_csection_elec" ~ plot_data$median_csection_elec,
                              measure == "perc_csection_emer" ~ plot_data$median_csection_emer)
@@ -235,26 +240,39 @@ plot_mod_trend <- function(measure, shift, trend){
                   marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }}
 
 
-##
-## Line chart showing modes of delivery by age group and deprivation, numbers and percentages - Scotland level only
+
+## LINECHART SCOTLAND: caesarian delivery by age group and deprivation, numbers and percentages - Scotland level only
 plot_mod_split <- function(dataset, split, measure){  
 
   plot_data <- dataset
   
   # Create tooltip for line chart
-  tooltip <- c(paste0("Caesarian sections",
-                      "Number: ", plot_data$csection))
+  tooltip <- c(paste0("Month: ", format(plot_data$month, "%B %Y"),"<br>",
+                      "Number: ", plot_data$csection_all, "<br>",
+                      "Percentage: ", format(plot_data$perc_csection_all,digits=1,nsmall = 1),"%"))
   
-  #adjust datasets accordig to which data split to be displayed
+  # adjust chart y axis according to what is being displayed
+  if(measure == "perc_csection_all"){
+    yaxis_plots[["title"]] <- "Percentage (%)"  
+    if(split == "age"){
+      yaxis_plots[["range"]] <- c(0, 70)}  # forcing range from 0 to 70% for age group
+    if(split == "dep"){
+      yaxis_plots[["range"]] <- c(0, 50)}  # forcing range from 0 to 40% for dep
+  }
+  if(measure == "csection_all"){
+    yaxis_plots[["title"]] <- "Number"
+  }
+  
+  #adjust datasets according to which data split to be displayed
   if(split == "age"){
-    plot_data<- plot_data %>%
+      plot_data<- plot_data %>%
       mutate(category = factor(category, levels = c("Under 20", "20-24", "25-29","30-34","35-39", "40 and over")))
     pallette <- pal_age}
   
@@ -278,17 +296,25 @@ plot_mod_split <- function(dataset, split, measure){
 }
 
 
+## LINECHART SCOTLAND & NHS BOARD: Births by mode of delivery numbers and percentages
 
-##
-## Line chart showing modes of delivery numbers and percentages - NHS board and Scotland
 plot_mod_linechart <- function(measure){  
   
 plot_data <- mod_linechart_filter()
 
+# adjust chart y axis according to what is being displayed
+if(measure == "percent_births"){
+  yaxis_plots[["title"]] <- "Percentage (%)"} 
+if(measure == "births"){
+  yaxis_plots[["title"]] <- "Number"
+}
+
 # Create tooltip for line chart
-tooltip <- c(paste0("Mode of delivery: ", plot_data$mode,"<br>",
+tooltip <- c(paste0("Area selected: ",plot_data$area_name,"<br>",
+                    "Month: ",  format(plot_data$month, "%B %Y"),"<br>",
+                    "Mode of delivery: ", plot_data$mode,"<br>",
                     "Number of births: ", plot_data$births,"<br>",
-                    plot_data$area_name))
+                    "Percentage of births: ", format(plot_data$percent_births,digits = 1,nsmall=1),"%"))
 
 if (is.data.frame(plot_data) && nrow(plot_data) == 0)
 { plot_nodata(height = 50, 
