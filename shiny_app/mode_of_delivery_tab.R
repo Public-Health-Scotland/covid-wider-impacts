@@ -149,11 +149,11 @@ output$mod_explorer <- renderUI({
                                          actionButton("btn_modal_simd_mod", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          fluidRow(column(6,
-                                         h4("c section number")),
-                                        # withSpinner(plotlyOutput("mod_linechart_dep_n"))),
+                                         h4("c section number"),
+                                        withSpinner(plotlyOutput("mod_linechart_dep_n"))),
                                   column(6,
-                                         h4("csection %")))
-                                        # withSpinner(plotlyOutput("mod_linechart_age_p"))))
+                                         h4("csection %"),
+                                         withSpinner(plotlyOutput("mod_linechart_dep_p"))))
                        )#tagList from if statement
                      },
                      column(6,
