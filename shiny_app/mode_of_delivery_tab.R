@@ -59,7 +59,7 @@ output$geoname_ui_mod <- renderUI({
 #Dataset behind trend run chart  (available at scotland and NHS board level)
 mod_filter <- function(){
   
-  mod %>% filter(area_name == input$geoname_mod &
+  mod_runchart %>% filter(area_name == input$geoname_mod &
                    area_type == input$geotype_mod &
                    type %in% c("Scotland","Health board"))
 }
@@ -67,9 +67,9 @@ mod_filter <- function(){
 #Dataset behind line charts for age and deprivation (available for scotland only)
 mod_linechart_split <- function(split){
   
-  mod  %>% filter(area_name == "Scotland" &
+  mod_scot  %>% filter(area_name == "Scotland" &
                     area_type == "Scotland" &
-                    chart_type==split)
+                    type==split)
 }
 
 #Dataset behind line chart  (available at scotland and NHS board level)
@@ -93,11 +93,11 @@ output$mod_trend_csection_emer <- renderPlotly({plot_mod_trend(measure="perc_cse
 output$mod_linechart_number <- renderPlotly({plot_mod_linechart(measure="births")})
 output$mod_linechart_percent <- renderPlotly({plot_mod_linechart(measure="percent_births")})
 
-output$mod_linechart_age_n <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="age"),split="age", measure="csection")})
-output$mod_linechart_age_p <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="age"),split="age", measure="percent_csection")})
+output$mod_linechart_age_n <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="age"),split="age", measure="csection_all")})
+output$mod_linechart_age_p <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="age"),split="age", measure="perc_csection_all")})
 
-output$mod_linechart_dep_n <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="dep"),split="dep", measure="csection")})
-output$mod_linechart_dep_p <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="dep"),split="dep", measure="percent_csection")})
+output$mod_linechart_dep_n <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="dep"),split="dep", measure="csection_all")})
+output$mod_linechart_dep_p <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="dep"),split="dep", measure="perc_csection_all")})
 
 
 
@@ -109,15 +109,15 @@ output$mod_explorer <- renderUI({
   
   # text for titles of cut charts
   mod_data_timeperiod <-  paste0("Figures based on data extracted ",mod_extract_date)
-  mod_title <- paste0("Percentage of caesarian sections: ",input$geoname_mod)
-  mod_title_detail <-  paste0("Singleton live births, all gestations")
+  mod_title <- paste0("Percentage of births by caesarian section: ",input$geoname_mod)
+  mod_title_detail <-  paste0("Singleton live births only, all gestations")
 
   
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Number of terminations of pregnancy’ chart above, the dots joined by a solid black line show the number of terminations of pregnancy in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of terminations of pregnancy over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of terminations of pregnancy."),
+            p("On the ‘Number of caesarian sections’ chart above, the dots joined by a solid black line show the number of terminations of pregnancy in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of terminations of pregnancy over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of terminations of pregnancy."),
             p("The ‘Average gestation at termination’ chart follows a similar format.  In this chart, the dots joined by a solid black line show the average (mean) gestation at which the terminations of pregnancy occurred (based on gestation at termination measured in completed weeks of pregnancy)."))
   
   # Function to create common layout to all immunisation charts
@@ -127,13 +127,13 @@ output$mod_explorer <- renderUI({
                             p(mod_title_detail),
                             actionButton("btn_mod_rules", "How do we identify patterns in the data?")),
                      column(4,
-                            h4("all"),
+                            h4("All caesarian sections"),
                             withSpinner(plotlyOutput("mod_trend_csection_all"))),
                      column(4,
-                            h4("elective"),
+                            h4("Elective caesarian sections"),
                             withSpinner(plotlyOutput("mod_trend_csection_elec"))),
                      column(4,
-                            h4("emergency"),
+                            h4("Emergency caesarian sections"),
                             withSpinner(plotlyOutput("mod_trend_csection_emer"))),
                      #only if scotland selected display age and deprivation breakdowns
                      if (input$geotype_mod == "Scotland"){
@@ -245,9 +245,7 @@ plot_mod_trend <- function(measure, shift, trend){
 ##
 ## Line chart showing modes of delivery by age group and deprivation, numbers and percentages - Scotland level only
 plot_mod_split <- function(dataset, split, measure){  
-  
-  #plot_data <- mod_line_split(split)
-  
+
   plot_data <- dataset
   
   # Create tooltip for line chart
@@ -310,8 +308,20 @@ if (is.data.frame(plot_data) && nrow(plot_data) == 0)
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
 }
 
+###############################################.
+## Data downloads ----
+###############################################.
 
+mod_download_data <- reactive({
+  top_download
+})
 
+output$download_mod_data <- downloadHandler(
+  filename ="mode_of_delivery_extract.csv",
+  content = function(file) {
+    write_csv(mod_download_data(),
+              file) } 
+)
 
 ###############################################.
 ## Commentary tab content  ----

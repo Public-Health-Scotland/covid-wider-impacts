@@ -206,7 +206,13 @@ format_immsimd_data <- function(filename) {
     }
 
 
-# Add shifts and trends to run chart data
+# Function to flag shifts and trends on run chart data
+# Parameters:
+# shift: name for new field where shift is flagged
+# trend: name for new field where trend is flagged
+# value: which column in dataset contains value being evaluated
+# median: which column in dataset contains the median against which value is tested
+
 runchart_flags <- function(dataset,shift,trend,value,median) {
 
   dataset <- dataset %>%

@@ -1254,11 +1254,12 @@ saveRDS(top_download, "shiny_app/data/top_download.rds")
 ## Pregnancy (mode of delivery) ----
 ###############################################.
 #field with date all antenatal booking data files prepared
+mod_folder <- "20201013"
 mod_date <- "2020-10-13"
 
 ## RUNCHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
-mod_runchart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIVERIES_RUNCHARTS_",mod_date,".rds")) %>%  
+mod_runchart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_RUNCHART_mode_",mod_date,".rds")) %>%  
   janitor::clean_names() %>%
   rename(area_name=hbres, month=date) %>%
   mutate(month=as.Date(month),
@@ -1266,43 +1267,57 @@ mod_runchart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIV
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type=case_when(type=="Health board" ~ "Health board", TRUE ~ area_name), 
          category=case_when(type=="Scotland" ~ "All",
-                            type=="Health board" ~ "All"))
-
-## mod data for scotland only by age and dep
-mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIVERIES_SCOTLAND_CHARTS_",mod_date,".rds")) %>%  
-  janitor::clean_names() %>%
-  rename(area_name=hbres, month=date, category=variable) %>%
-  mutate(month=as.Date(month),
-         area_type="Scotland",
-         chart_type=case_when(category=="1 - most deprived" ~ "dep",
-                        category=="2" ~ "dep",
-                        category=="3" ~ "dep",
-                        category=="4" ~ "dep",
-                        category=="5 - least deprived" ~ "dep",TRUE~ "age"),
-         category=as.character(case_when(category=="40+" ~ "40 and over", 
-                                         category=="under 20" ~ "Under 20", 
-                                         TRUE ~ as.character(category))))
-
-## Combine area based and age/dep terminations data, format and add shifts/trends
-mod <- bind_rows(mod_runchart, mod_scot) %>%
-#media line used to assess shifts or trends therefore need to fill cells which are set to NA 
+                            type=="Health board" ~ "All")) %>%
+# the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
+# ext_ columns are extended median which are blank before projection time period
 mutate(ext_csection_all= case_when(is.na(ext_csection_all)~median_csection_all,TRUE ~ ext_csection_all),
        ext_csection_elec= case_when(is.na(ext_csection_elec)~median_csection_elec,TRUE ~ ext_csection_elec),
        ext_csection_emer= case_when(is.na(ext_csection_emer)~median_csection_emer,TRUE ~ ext_csection_emer)) %>% #recode age group as required
-  #sort data to ensure trends/shifts compare correct data points
-  group_by(area_name, area_type, type) %>%
+  group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
+  #call function to add flags for runchart shifts and trends
+  #shift: name for new field where shift is flagged
+  #trend: name for new field where trend is flagged
+  #value: which column in dataset contains value being evaluated
+  #median: which column in dataset contains the median against which value is tested
   runchart_flags(shift="csection_all_shift",trend="csection_all_trend", value="perc_csection_all", median="ext_csection_all") %>%
   runchart_flags(shift="csection_emer_shift",trend="csection_emer_trend", value="perc_csection_emer", median="ext_csection_emer") %>%
   runchart_flags(shift="csection_elec_shift",trend="csection_elec_trend", value="perc_csection_elec", median="ext_csection_elec") %>%
   ungroup()
 
-saveRDS(mod, "shiny_app/data/mod_data.rds")
+saveRDS(mod_runchart, "shiny_app/data/mod_runchart_data.rds")
+
+## mod data for scotland only by age and dep
+mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_SCOT_CHARTS_mode_",mod_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date, category=variable) %>%
+  mutate(month=as.Date(month),
+         area_type="Scotland",
+         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep",TRUE ~ "other"),
+         category=as.character(category))
+
+saveRDS(mod_scot, "shiny_app/data/mod_scot_data.rds")
+
+
+## Combine area based and age/dep terminations data, format and add shifts/trends
+# mod <- bind_rows(mod_runchart, mod_scot) %>%
+# #media line used to assess shifts or trends therefore need to fill cells which are set to NA 
+# mutate(ext_csection_all= case_when(is.na(ext_csection_all)~median_csection_all,TRUE ~ ext_csection_all),
+#        ext_csection_elec= case_when(is.na(ext_csection_elec)~median_csection_elec,TRUE ~ ext_csection_elec),
+#        ext_csection_emer= case_when(is.na(ext_csection_emer)~median_csection_emer,TRUE ~ ext_csection_emer)) %>% #recode age group as required
+#   #sort data to ensure trends/shifts compare correct data points
+#   group_by(area_name, area_type, type) %>%
+#   runchart_flags(shift="csection_all_shift",trend="csection_all_trend", value="perc_csection_all", median="ext_csection_all") %>%
+#   runchart_flags(shift="csection_emer_shift",trend="csection_emer_trend", value="perc_csection_emer", median="ext_csection_emer") %>%
+#   runchart_flags(shift="csection_elec_shift",trend="csection_elec_trend", value="perc_csection_elec", median="ext_csection_elec") %>%
+#   ungroup()
+
+#saveRDS(mod, "shiny_app/data/mod_data.rds")
 
 ## LINECHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
-mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELIVERIES_MODEOFDELIVERY_LINECHART_",mod_date,".rds")) %>%  
+mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_MODEOFDELIVERY_LINECHART_",mod_date,".rds")) %>%  
   janitor::clean_names() %>%
-  rename(area_name=hbres, month=date2) %>%
+  rename(area_name=hbres, month=date) %>%
   mutate(month=as.Date(month, format="%Y-%m-%d"),
          #month=format(month,"%b %Y"),
          type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
@@ -1316,6 +1331,25 @@ mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/WI_DELI
   ungroup()
 
 saveRDS(mod_linechart, "shiny_app/data/mod_linechart_data.rds")  
+
+
+## Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
+mod_download <- read_csv(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_DOWNLOAD_mode_",mod_date,".csv"))%>%  
+  janitor::clean_names() %>%
+  mutate(date=as.Date(date,format="%Y-%m-%d"),
+         delivery_month=format(date,"%b %Y")) %>%
+  rename(area_name=hbres) %>% 
+  mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                             area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         chart_category=case_when(area_type=="Scotland" ~ "All",
+                                  area_type=="Health board" ~ "All"),
+         chart_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                              area_name=="Scotland" ~ "Scotland", TRUE ~ "Other")) %>%
+  select(-date)
+
+saveRDS(mod_download, "shiny_app/data/mod_download_data.rds")  
+
+
 
 
 ###############################################.
