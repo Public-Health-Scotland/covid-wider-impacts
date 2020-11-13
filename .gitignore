@@ -17,6 +17,7 @@ packrat/lib*/
 # 'data' folder #
 data/
 archive/
+shiny app admin/
 
 # Common text files that may contain data #
 *.[cC][sS][vV]
