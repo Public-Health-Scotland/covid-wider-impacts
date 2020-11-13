@@ -126,11 +126,22 @@ top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
 mod_extract_date <- "13th October 2020"
-
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
 mod_download <- readRDS("data/mod_download_data.rds")
+
+#inductions (pregnanacy tab)
+induct_extract_date <- "13th October 2020"
+induct_runchart <- readRDS("data/induct_runchart_data.rds")
+induct_scot <- readRDS("data/induct_scot_data.rds")
+induct_download <- readRDS("data/induct_download_data.rds")
+
+#gestation at delivery (pregnanacy tab)
+gestation_extract_date <- "13th October 2020"
+gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
+gestation_scot <- readRDS("data/gestation_scot_data.rds")
+gestation_download <- readRDS("data/gestation_download_data.rds")
 
 # Breastfeeding data
 breastfeeding <- readRDS("data/breastfeeding_data.rds")

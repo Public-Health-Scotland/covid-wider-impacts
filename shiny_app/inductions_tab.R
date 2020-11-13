@@ -1,7 +1,7 @@
-##Server script for pregnancy mode of delivery tab
+##Server script for pregnancy - inductions tab
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_mod_modal, 
+observeEvent(input$btn_induct_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
                p("need some details about SMR02"),
@@ -9,7 +9,7 @@ observeEvent(input$btn_mod_modal,
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
-observeEvent(input$btn_mod_rules,
+observeEvent(input$btn_induct_rules,
              showModal(modalDialog(
                title = "How do we identify patterns in the data?",
                p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
@@ -25,7 +25,7 @@ observeEvent(input$btn_mod_rules,
 
 #Modal to explain SIMD and deprivation
 #Link action button click to modal launch
-observeEvent(input$btn_modal_simd_mod, { showModal(
+observeEvent(input$btn_modal_simd_induct, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
     p("Women have been allocated to different levels of deprivation based on the small area (data zone) in which they live and the",
@@ -37,15 +37,16 @@ observeEvent(input$btn_modal_simd_mod, { showModal(
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   ))})
 
+
 ###############################################.
-## Deliveries Reactive controls  ----
+## Induction Reactive controls  ----
 ###############################################.
 
 # deliveries reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_mod <- renderUI({
+output$geoname_ui_induct <- renderUI({
   #Lists areas available in   
-  areas_summary_mod <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_mod])
-  selectizeInput("geoname_mod", label = NULL, choices = areas_summary_mod, selected = "")
+  areas_summary_induct <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_induct])
+  selectizeInput("geoname_induct", label = NULL, choices = areas_summary_induct, selected = "")
 })
 
 ###############################################.
@@ -53,61 +54,46 @@ output$geoname_ui_mod <- renderUI({
 ###############################################.
 
 #Dataset behind trend run chart  (available at scotland and NHS board level)
-mod_filter <- function(){
+induct_filter <- function(){
   
-  mod_runchart %>% filter(area_name == input$geoname_mod &
-                            area_type == input$geotype_mod &
+  induct_runchart %>% filter(area_name == input$geoname_induct &
+                            area_type == input$geotype_induct &
                             type %in% c("Scotland","Health board")) 
 }
 
 #Dataset behind line charts for age and deprivation (available for scotland only)
-mod_linechart_split <- function(split){
+induct_linechart_split <- function(split){
   
-  mod_scot  %>% filter(area_name == "Scotland" &
-                    area_type == "Scotland" &
-                    type==split)
-}
-
-#Dataset behind line chart  (available at scotland and NHS board level)
-mod_linechart_filter <- function(){
-  
-  mod_linechart %>% filter(area_name == input$geoname_mod &
-                   area_type == input$geotype_mod &
-                   type %in% c("Scotland","Health board"))
+  induct_scot  %>% filter(area_name == "Scotland" &
+                         area_type == "Scotland" &
+                         type==split)
 }
 
 ###############################################.
-## Mode of delivery Charts ----
+## Induction Chart calls to chart function ----
 ###############################################.
 
 # chart outputs for trend
-output$mod_trend_csection_all <- renderPlotly({plot_mod_trend(measure="perc_csection_all", shift = "csection_all_shift", trend = "csection_all_trend")})
-output$mod_trend_csection_elec <- renderPlotly({plot_mod_trend(measure="perc_csection_elec", shift = "csection_elec_shift", trend = "csection_elec_trend")})
-output$mod_trend_csection_emer <- renderPlotly({plot_mod_trend(measure="perc_csection_emer", shift = "csection_emer_shift", trend = "csection_emer_trend")})
+output$induct_trend <- renderPlotly({plot_induct_trend()})
 
-output$mod_linechart_number <- renderPlotly({plot_mod_linechart(measure="births")})
-output$mod_linechart_percent <- renderPlotly({plot_mod_linechart(measure="percent_births")})
+output$induct_linechart_age_n <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="age"),split="age", measure="ind_37_42")})
+output$induct_linechart_age_p <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="age"),split="age", measure="perc_ind_37_42")})
 
-output$mod_linechart_age_n <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="age"),split="age", measure="csection_all")})
-output$mod_linechart_age_p <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="age"),split="age", measure="perc_csection_all")})
-
-output$mod_linechart_dep_n <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="dep"),split="dep", measure="csection_all")})
-output$mod_linechart_dep_p <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="dep"),split="dep", measure="perc_csection_all")})
-
-
+output$induct_linechart_dep_n <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="dep"),split="dep", measure="ind_37_42")})
+output$induct_linechart_dep_p <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="dep"),split="dep", measure="perc_ind_37_42")})
 
 ###############################################.
 ##  Reactive layout  ----
 ###############################################.
 # The charts and text shown on the app will depend on what the user wants to see
-output$mod_explorer <- renderUI({
+output$induct_explorer <- renderUI({
   
   # text for titles of cut charts
-  mod_data_timeperiod <-  paste0("Figures based on data extracted ",mod_extract_date)
-  mod_title <- paste0("Percentage of singleton live births delivered by caesarean section: ",input$geoname_mod)
-  mod_title_detail <-  paste0("(all gestations)")
-
-
+  induct_data_timeperiod <-  paste0("Figures based on data extracted ",induct_extract_date)
+  induct_title <- paste0("Percentage of singleton live births delivered by caesarean section: ",input$geoname_induct)
+  induct_title_detail <-  paste0("(all gestations)")
+  
+  
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
@@ -115,128 +101,111 @@ output$mod_explorer <- renderUI({
             p("On the ‘Percentage of births by caesarean sections’ charts above, the dots joined by a solid black line show the percentage of births by caesarean sections in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of caesarean sections over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of caesarean sections."))
   
   # Function to create common layout to all immunisation charts
-  mod_layout <- function(mod_trend_csection_all,mod_trend_csection_elec,mod_trend_csection_emer,mod_linechart_age_n, mod_linechart_age_p,mod_linechart_dep_n, mod_linechart_dep_p,mod_linechart_number,mod_linechart_percent){
+  induct_layout <- function(induct_trend,induct_linechart_age_n,induct_linechart_age_p,induct_linechart_dep_n,induct_linechart_dep_p){
     tagList(fluidRow(column(12,
-                            h4(mod_title),
-                            p(mod_title_detail),
-                            actionButton("btn_mod_rules", "How do we identify patterns in the data?")),
+                            h4(induct_title),
+                            p(induct_title_detail),
+                            actionButton("btn_induct_rules", "How do we identify patterns in the data?")),
                      column(4,
-                            h4("All caesarean sections"),
-                            withSpinner(plotlyOutput("mod_trend_csection_all"))),
-                     column(4,
-                            h4("Elective caesarean sections"),
-                            withSpinner(plotlyOutput("mod_trend_csection_elec"))),
-                     column(4,
-                            h4("Emergency caesarean sections"),
-                            withSpinner(plotlyOutput("mod_trend_csection_emer"))),
+                            h4("Inductions"),
+                            withSpinner(plotlyOutput("induct_trend"))),
                      column(12,
                             p(chart_explanation)),
                      #only if scotland selected display age and deprivation breakdowns
-                     if (input$geotype_mod == "Scotland"){
+                     if (input$geotype_induct == "Scotland"){
                        tagList(
                          fluidRow(column(12,
                                          h4("Singleton live births delivered by caesarean section by age group: Scotland"),
                                          p("(all gestations)"))),
                          fluidRow(column(6,
                                          h4("Number of births by caesarean section"),
-                                         withSpinner(plotlyOutput("mod_linechart_age_n"))),
+                                         withSpinner(plotlyOutput("induct_linechart_age_n"))),
                                   column(6,
                                          h4("Percentage of births by caesarean section"),
-                                         withSpinner(plotlyOutput("mod_linechart_age_p")))),
+                                         withSpinner(plotlyOutput("induct_linechart_age_p")))),
                          fluidRow(column(12,
                                          br(), # spacing
                                          h4("Singleton live births delivered by caesarean section by deprivation: Scotland"),
-                                         actionButton("btn_modal_simd_mod", "What is SIMD and deprivation?",
+                                         actionButton("btn_modal_simd_induct", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          fluidRow(column(6,
                                          h4("Number of births delivered by caesarean section"),
-                                        withSpinner(plotlyOutput("mod_linechart_dep_n"))),
+                                         withSpinner(plotlyOutput("induct_linechart_dep_n"))),
                                   column(6,
                                          h4("Percentage of births delivered by caesarean section"),
-                                         withSpinner(plotlyOutput("mod_linechart_dep_p"))))
+                                         withSpinner(plotlyOutput("induct_linechart_dep_p"))))
                        )#tagList from if statement
-                     },
-                     column(12,
-                            br(), #sapcing
-                            h4(paste0("Singleton live births by mode of delivery: ",input$geoname_mod))),
-                     column(6,
-                            p("Number of births"),
-                            withSpinner(plotlyOutput("mod_linechart_number"))),
-                     column(6,
-                            p("Percentage of births"),
-                            withSpinner(plotlyOutput("mod_linechart_percent")))
-                     ))}
+                     }))}
   
   # #link plot functions to layouts
-  mod_layout(mod_trend_csection_all="mod_trend_csection_all",
-             mod_trend_csection_elec="mod_trend_csection_elec",
-             mod_trend_csection_emer="mod_trend_csection_emer",
-             mod_linechart_age_n="mod_linechart_age_n",
-             mod_linechart_age_p="mod_linechart_age_p",
-             mod_linechart_dep_n="mod_linechart_dep_n",
-             mod_linechart_dep_p="mod_linechart_dep_p",
-             mod_linechart_number="mod_linechart_number",
-             mod_linechart_percent="mod_linechart_percent")
+  induct_layout(induct_trend="induct_trend",
+             induct_linechart_age_n="induct_linechart_age_n",
+             induct_linechart_age_p="induct_linechart_age_p",
+             induct_linechart_dep_n="induct_linechart_dep_n",
+             induct_linechart_dep_p="induct_linechart_dep_p")
 })
 
 
 #############################################.
-## Mode of delivery chart functions ----
+## Induction chart functions ----
 ############################################.
 
-## Runchart trend chart for monthly c-section percentages : Scotland & NHS Board (except island boards) 
-## Rather than try and present all the modes of delivery we have opted just to produce a run chart
-## showing rates of c-section (by type all, emergency, elective) as these are the modes of deliver that people most want to see
+## Runchart trend chart for monthly inductions percentages : Scotland & NHS Board (except island boards) 
 
-plot_mod_trend <- function(measure, shift, trend){  
+plot_induct_trend <- function(){  
   
-  plot_data <- mod_filter()
-
+  plot_data <- induct_filter()
+  
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
                 text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
   } else {
     
     # chart legend labels  
-    centreline_name <- paste0(input$geoname_mod," average up to end Feb 2020") 
+    centreline_name <- paste0(input$geoname_induct," average up to end Feb 2020") 
     
     # format y axis
     yname <- "Percentage (%)"
-    yaxis_plots[["range"]] <- c(0, 40)  # forcing range from 0 to 40%
+    #yaxis_plots[["range"]] <- c(0, 40)  # forcing range from 0 to 40%
     yaxis_plots[["title"]] <- "Percentage (%)"
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
     
     tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
-                            "Percentage: ",format(plot_data$perc_csection_all,digits = 1,nsmall=1),"%", "<br>"))
-                            #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
-     
+                            "Percentage: ",format(plot_data$perc_ind_37_42,digits = 1,nsmall=1),"%", "<br>"))
+  
     # Adjust the column used for median line according to which cut of chart to be shown
-    centre_line <- case_when(measure == "perc_csection_all" ~ plot_data$median_csection_all,
-                             measure == "perc_csection_elec" ~ plot_data$median_csection_elec,
-                             measure == "perc_csection_emer" ~ plot_data$median_csection_emer)
-    dotted_line <- case_when(measure == "perc_csection_all" ~ plot_data$ext_csection_all,
-                             measure == "perc_csection_elec" ~ plot_data$ext_csection_elec,
-                             measure == "perc_csection_emer" ~ plot_data$ext_csection_emer)                        
+    # centre_line <- case_when(measure == "perc_csection_all" ~ plot_data$median_csection_all,
+    #                          measure == "perc_csection_elec" ~ plot_data$median_csection_elec,
+    #                          measure == "perc_csection_emer" ~ plot_data$median_csection_emer)
+    # dotted_line <- case_when(measure == "perc_csection_all" ~ plot_data$ext_csection_all,
+    #                          measure == "perc_csection_elec" ~ plot_data$ext_csection_elec,
+    #                          measure == "perc_csection_emer" ~ plot_data$ext_csection_emer)                        
     
     #Creating time trend plot
     plot_ly(data=plot_data, x=~month) %>%
-      add_lines(y = ~get(measure),  
+      add_lines(y = ~perc_ind_37_42,  
                 line = list(color = "black"), text=tooltip_top, hoverinfo="text",
                 marker = list(color = "black"), name = yname ) %>% 
-      add_lines(y = ~dotted_line, name = FALSE,
+      add_lines(y = ~ext_ind_37_42, name = FALSE,
                 line = list(color = "blue", dash = "longdash"), hoverinfo="none",
                 name = "Centreline", showlegend = FALSE) %>%
-      add_lines(y = ~centre_line, name = centreline_name,
+      add_lines(y = ~median_ind_37_42, name = centreline_name,
                 line = list(color = "blue"), hoverinfo="none",
                 name = "Centreline") %>%
       # adding trends
-      add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
-                  marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
-      # adding shifts - add these last so that shifts are always visible on top of trends
-      add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
-                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
+      add_markers(data = plot_data %>% filter(induction_trend == T), y = ~induction_trend ,
+                  marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%  
+            # adding shifts
+      add_markers(data = plot_data %>% filter(induction_shift == T), y = ~ induction_shift,
+                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>% 
+      # # adding trends
+      # add_markers(data = plot_data %>% filter_at(induction_trend, all_vars(. == T)), y = ~induction_trend,
+      #             marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
+      # # adding shifts - add these last so that shifts are always visible on top of trends
+      # add_markers(data = plot_data %>% filter_at(induction_shift, all_vars(. == T)), y = ~~induction_shift,
+      #             marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -246,32 +215,31 @@ plot_mod_trend <- function(measure, shift, trend){
   }}
 
 
-
 ## LINECHART SCOTLAND: caesarean delivery by age group and deprivation, numbers and percentages - Scotland level only
-plot_mod_split <- function(dataset, split, measure){  
-
+plot_induct_split <- function(dataset, split, measure){  
+  
   plot_data <- dataset
   
   # Create tooltip for line chart
   tooltip <- c(paste0("Month: ", format(plot_data$month, "%B %Y"),"<br>",
-                      "Number: ", plot_data$csection_all, "<br>",
-                      "Percentage: ", format(plot_data$perc_csection_all,digits=1,nsmall = 1),"%"))
+                      "Number: ", plot_data$ind_37_42, "<br>",
+                      "Percentage: ", format(plot_data$perc_ind_37_42,digits=1,nsmall = 1),"%"))
   
   # adjust chart y axis according to what is being displayed
-  if(measure == "perc_csection_all"){
+  if(measure == "perc_ind_37_42"){
     yaxis_plots[["title"]] <- "Percentage (%)"  
     if(split == "age"){
       yaxis_plots[["range"]] <- c(0, 70)}  # forcing range from 0 to 70% for age group
     if(split == "dep"){
       yaxis_plots[["range"]] <- c(0, 50)}  # forcing range from 0 to 40% for dep
   }
-  if(measure == "csection_all"){
+  if(measure == "ind_37_42"){
     yaxis_plots[["title"]] <- "Number"
   }
   
   #adjust datasets according to which data split to be displayed
   if(split == "age"){
-      plot_data<- plot_data %>%
+    plot_data<- plot_data %>%
       mutate(category = factor(category, levels = c("Under 20", "20-24", "25-29","30-34","35-39", "40 and over")))
     pallette <- pal_age}
   
@@ -294,61 +262,18 @@ plot_mod_split <- function(dataset, split, measure){
   
 }
 
-
-## LINECHART SCOTLAND & NHS BOARD: Births by mode of delivery numbers and percentages
-
-plot_mod_linechart <- function(measure){  
-  
-plot_data <- mod_linechart_filter() 
-
-# adjust chart y axis according to what is being displayed
-if(measure == "percent_births"){
-  yaxis_plots[["title"]] <- "Percentage (%)" 
-  plot_data <- plot_data %>%
-    filter(mode!="All births")}
-  
-
-if(measure == "births"){
-  yaxis_plots[["title"]] <- "Number"
-}
-
-# Create tooltip for line chart
-tooltip <- c(paste0("Area selected: ",plot_data$area_name,"<br>",
-                    "Month: ",  format(plot_data$month, "%B %Y"),"<br>",
-                    "Mode of delivery: ", plot_data$mode,"<br>",
-                    "Number of births: ", plot_data$births,"<br>",
-                    "Percentage of births: ", format(plot_data$percent_births,digits = 1,nsmall=1),"%"))
-
-if (is.data.frame(plot_data) && nrow(plot_data) == 0)
-{ plot_nodata(height = 50, 
-              text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
-} else {
-
-  #Creating trend plot
-  plot_ly(data=plot_data, x=~month,  y = ~get(measure)) %>%
-    add_trace(type = 'scatter', mode = 'lines',
-              color = ~mode,
-              text= tooltip, hoverinfo="text") %>%
-    #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots,  xaxis = xaxis_plots,
-           legend = list(orientation = 'h')) %>% #position of legend underneath plot
-    #leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
-}
-
 ###############################################.
 ## Data downloads ----
 ###############################################.
 
-mod_download_data <- reactive({
-  top_download
+induct_download_data <- reactive({
+  induct_download
 })
 
-output$download_mod_data <- downloadHandler(
-  filename ="mode_of_delivery_extract.csv",
+output$download_induct_data <- downloadHandler(
+  filename ="induced_deliveries_extract.csv",
   content = function(file) {
-    write_csv(mod_download_data(),
+    write_csv(induct_download_data(),
               file) } 
 )
 
@@ -357,17 +282,14 @@ output$download_mod_data <- downloadHandler(
 ###############################################.
 
 #action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
-observeEvent(input$switch_to_mod,{
+observeEvent(input$switch_to_induct,{
   updateTabsetPanel(session, "intabset", selected = "comment")
-  updateCollapse(session, "collapse_commentary", open = "Mode of delivery")
+  updateCollapse(session, "collapse_commentary", open = "Induction of labour")
 })
 
 
-output$mod_commentary <- renderUI({
+output$induct_commentary <- renderUI({
   tagList(
-    bsButton("jump_to_mod",label = "Go to data"), #this button can only be used once
-    h2("Mode of delivery - 16th December 2020"))
+    bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
+    h2("Induced delivery - 16th December 2020"))
 })
-
-
-

@@ -1253,7 +1253,7 @@ saveRDS(top_download, "shiny_app/data/top_download.rds")
 ###############################################.
 ## Pregnancy (mode of delivery) ----
 ###############################################.
-#field with date all antenatal booking data files prepared
+#field with date data files prepared
 mod_folder <- "20201013"
 mod_date <- "2020-10-13"
 
@@ -1335,6 +1335,134 @@ mod_download <- read_csv(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_f
   select(-date)
 
 saveRDS(mod_download, "shiny_app/data/mod_download_data.rds")  
+
+###############################################.
+## Pregnancy (inductions) ----
+###############################################.
+induct_folder <- "20201013"
+induct_date <- "2020-10-13"
+
+## 1-RUNCHART DATA
+## mod data for run chart (scotland and nhs board) - monthly
+induct_runchart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_RUNCHART_induced_",induct_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name = hbres, month = date) %>%
+  mutate(month = as.Date(month),
+         type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                          area_name=="Scotland" ~ "Scotland"),
+         area_type = type, 
+         category = "All") %>%
+  # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
+  # ext_ columns are extended median which are blank before projection time period
+  mutate(ext_ind_37_42 = case_when(is.na(ext_ind_37_42) ~ median_ind_37_42,
+                                      TRUE ~ ext_ind_37_42)) %>%
+  group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
+  #call function to add flags for runchart shifts and trends
+  #shift: name for new field where shift is flagged
+  #trend: name for new field where trend is flagged
+  #value: which column in dataset contains value being evaluated
+  #median: which column in dataset contains the median against which value is tested
+  runchart_flags(shift="induction_shift", trend="induction_trend", 
+                 value=perc_ind_37_42, median=ext_ind_37_42) %>%
+  ungroup()
+
+saveRDS(induct_runchart, "shiny_app/data/induct_runchart_data.rds")
+
+## 2- LINECHART DATA inductions for Scotland only by age and dep
+induct_scot <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_SCOT_CHARTS_induced_",induct_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date, category=variable) %>%
+  mutate(month=as.Date(month),
+         area_type="Scotland",
+         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
+         category=as.character(category))
+
+saveRDS(induct_scot, "shiny_app/data/induct_scot_data.rds")
+
+
+## 3- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
+induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_DOWNLOAD_induced_",induct_date,".csv"))%>%  
+  janitor::clean_names() %>%
+  mutate(date=as.Date(date,format="%Y-%m-%d"),
+         delivery_month=format(date,"%b %Y")) %>%
+  rename(area_name=hbres) %>% 
+  mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                             area_name=="Scotland" ~ "Scotland"),
+         chart_category="All",
+         chart_type= area_type) %>%
+  select(-date)
+
+saveRDS(induct_download, "shiny_app/data/induct_download_data.rds")  
+
+###############################################.
+## Pregnancy (gestation at delivery) ----
+###############################################.
+
+gestation_folder <- "20201013"
+gestation_date <- "2020-10-13"
+
+## 1-RUNCHART DATA
+gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_RUNCHART_gestation_",gestation_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name = hbres, month = date) %>%
+  mutate(month = as.Date(month),
+         type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                          area_name=="Scotland" ~ "Scotland"),
+         area_type = type, 
+         category = "All") %>%
+  # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
+  # ext_ columns are extended median which are blank before projection time period
+  mutate(ext_under32 = case_when(is.na(ext_under32) ~ median_under32,
+                                   TRUE ~ ext_under32),
+         ext_under37 = case_when(is.na(ext_under37) ~ median_under37,
+                                 TRUE ~ ext_under37),
+         ext_32_36 = case_when(is.na(ext_32_36) ~ median_32_36,
+                                 TRUE ~ ext_32_36),
+         ext_42plus = case_when(is.na(ext_42plus) ~ median_42plus,
+                                 TRUE ~ ext_42plus)) %>%
+  group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
+  #call function to add flags for runchart shifts and trends
+  #shift: name for new field where shift is flagged
+  #trend: name for new field where trend is flagged
+  #value: which column in dataset contains value being evaluated
+  #median: which column in dataset contains the median against which value is tested
+  runchart_flags(shift="gest_under32_shift", trend="gest_under32_trend", 
+                 value=perc_under32, median=ext_under32) %>%
+  runchart_flags(shift="gest_under37_shift", trend="gest_under37_trend", 
+                 value=perc_under37, median=ext_under37) %>%
+  runchart_flags(shift="gest_32_36_shift", trend="gest_32_36_trend", 
+                 value=perc_32_36, median=ext_32_36) %>%
+  runchart_flags(shift="gest_42plus_shift", trend="gest_42plus_trend", 
+                 value=perc_42plus, median=ext_42plus) %>%
+  ungroup()
+
+saveRDS(gestation_runchart, "shiny_app/data/gestation_runchart_data.rds")
+
+## 2- LINECHART DATA inductions for Scotland only by age and dep
+gestation_scot <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_SCOT_CHARTS_gestation_",gestation_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date, category=variable) %>%
+  mutate(month=as.Date(month),
+         area_type="Scotland",
+         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
+         category=as.character(category))
+
+saveRDS(gestation_scot, "shiny_app/data/gestation_scot_data.rds")
+
+## 3- DATA DOWNLOAD FILE FOR SHINY APP
+gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_DOWNLOAD_gestation_",gestation_date,".csv"))%>%  
+  janitor::clean_names() %>%
+  mutate(date=as.Date(date,format="%Y-%m-%d"),
+         delivery_month=format(date,"%b %Y")) %>%
+  rename(area_name=hbres) %>% 
+  mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                             area_name=="Scotland" ~ "Scotland"),
+         chart_category="All",
+         chart_type= area_type) %>%
+  select(-date)
+
+saveRDS(gestation_download, "shiny_app/data/gestation_download_data.rds") 
+
 
 ###############################################.
 ## Child development ----

@@ -360,19 +360,18 @@ tabPanel(title = "Inductions", icon = icon("hand-holding-medical"), value = "ind
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_ind", label = NULL, choices= c("Scotland", "Health board"),
+                         selectInput("geotype_induct", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
-                  uiOutput("geoname_ui_ind")),
+                  uiOutput("geoname_ui_induct")),
            column(4,offset=4,
-                  actionButton("btn_ind_modal", "Data source: SMR02", icon = icon('question-circle')),
-                  fluidRow(br()))
-                  # downloadButton("download_mod_data", "Download data"),
-                  # fluidRow(br()),
-                  # actionButton("jump_commentary_mod","Go to commentary"))
+                  actionButton("btn_induct_modal", "Data source: SMR02", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_induct_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_induct","Go to commentary"))
            ), #well panel
-           mainPanel(width = 12
-                     #,
-                     #uiOutput("induction_explorer")
+           mainPanel(width = 12,
+                     uiOutput("induct_explorer")
            )# mainPanel bracket
          ), # inductions tab panel
 ###############################################.
