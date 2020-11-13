@@ -126,7 +126,6 @@ top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
 mod_extract_date <- "13th October 2020"
-mod <- readRDS("data/mod_data.rds")
 
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
