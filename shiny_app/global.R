@@ -56,78 +56,77 @@ geo_lookup <- readRDS("data/geo_lookup.rds")
 spec_lookup <- readRDS("data/spec_lookup.rds")
 ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 
-# rapid <- readRDS("data/rapid_data.rds") #RAPID data
-# aye <- readRDS("data/ae_data.rds") #A&E data
-# ooh <- readRDS("data/ooh_data.rds") # OOH data
-# nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
-# sas <- readRDS("data/sas_data.rds") # OOH data
-# deaths <- readRDS("data/deaths_data.rds") # deaths data
+rapid <- readRDS("data/rapid_data.rds") #RAPID data
+aye <- readRDS("data/ae_data.rds") #A&E data
+ooh <- readRDS("data/ooh_data.rds") # OOH data
+nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
+sas <- readRDS("data/sas_data.rds") # OOH data
+deaths <- readRDS("data/deaths_data.rds") # deaths data
 
 #Cardiovascular data
-# ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
-# cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
-# cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
+ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
+cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
+cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
 
 
 
 #Cancer data
-# cancer_data1 <- readRDS("data/cancer_data_1.rds")
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
 cancer_extract_date <- "16th September 2020"  
 
 
 ## Child Health Data
-# child_extract_date <- "27th July 2020"
-# first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
-# firsttable <- readRDS("data/first_visit_datatable.rds")
-# sixtoeight <- readRDS("data/six_to_eight_data.rds")
-# sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
-# thirteen <- readRDS("data/thirteen_data.rds")
-# thirteentable <- readRDS("data/thirteen_datatable.rds")
-# twentyseven <- readRDS("data/twentyseven_data.rds")
-# twentyseventable <- readRDS("data/twentyseven_datatable.rds")
-# fourtofive <- readRDS("data/fourtofive_data.rds")
-# fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
-# 
-# ## Immunisation Data
-# immunisation_extract_date <- "27th July 2020"
-# month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
-# age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
-# age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
-# 
-# #Immunisations s-curve data
-# six_alldose <- readRDS("data/six_alldose_data.rds")
-# mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
-# 
-# #Immunisations data table data
-# sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table dose 1
-# sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6-in-1 summary table dose 2
-# sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6-in-1 summary table dose 3
-# mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
-# mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation data table summary
-# mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary
-# 
-# #Immunisations hscp data
-# six_hscp_dose1 <- readRDS("data/six_dose1_hscp.rds")
-# six_hscp_dose2 <- readRDS("data/six_dose2_hscp.rds")
-# six_hscp_dose3 <- readRDS("data/six_dose3_hscp.rds")
-# mmr_hscp_dose1 <- readRDS("data/mmr_dose1_hscp.rds")
-# mmr_hscp_dose2 <- readRDS("data/mmr_dose2_hscp.rds")
-# mmr_hscp_dose2_grampian <- readRDS("data/mmr_dose2_hscp_grampian.rds")
-# 
-# #Immunisations SIMD data
-# six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
-# six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
-# six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
-# mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
-# mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
+child_extract_date <- "27th July 2020"
+first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
+firsttable <- readRDS("data/first_visit_datatable.rds")
+sixtoeight <- readRDS("data/six_to_eight_data.rds")
+sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
+thirteen <- readRDS("data/thirteen_data.rds")
+thirteentable <- readRDS("data/thirteen_datatable.rds")
+twentyseven <- readRDS("data/twentyseven_data.rds")
+twentyseventable <- readRDS("data/twentyseven_datatable.rds")
+fourtofive <- readRDS("data/fourtofive_data.rds")
+fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
+
+## Immunisation Data
+immunisation_extract_date <- "27th July 2020"
+month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
+age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
+age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
+
+#Immunisations s-curve data
+six_alldose <- readRDS("data/six_alldose_data.rds")
+mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
+
+#Immunisations data table data
+sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table dose 1
+sixtable_dose2 <- readRDS("data/sixinone_dose2_datatable.rds") # 6-in-1 summary table dose 2
+sixtable_dose3 <- readRDS("data/sixinone_dose3_datatable.rds") # 6-in-1 summary table dose 3
+mmrtable_dose1 <- readRDS("data/mmr_dose1_datatable.rds") # mmr immunisation data table summary
+mmrtable_dose2 <- readRDS("data/mmr_dose2_datatable.rds") # mmr immunisation data table summary
+mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary
+
+#Immunisations hscp data
+six_hscp_dose1 <- readRDS("data/six_dose1_hscp.rds")
+six_hscp_dose2 <- readRDS("data/six_dose2_hscp.rds")
+six_hscp_dose3 <- readRDS("data/six_dose3_hscp.rds")
+mmr_hscp_dose1 <- readRDS("data/mmr_dose1_hscp.rds")
+mmr_hscp_dose2 <- readRDS("data/mmr_dose2_hscp.rds")
+mmr_hscp_dose2_grampian <- readRDS("data/mmr_dose2_hscp_grampian.rds")
+
+#Immunisations SIMD data
+six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
+six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
+six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
+mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
+mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
 
-## perinatal mortality data
-# perinatal <- readRDS("data/perinatal_data.rds")
+# perinatal mortality data
+perinatal <- readRDS("data/perinatal_data.rds")
 
 spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
                     "Medical (incl. Cardiology & Cancer)",
@@ -139,35 +138,35 @@ data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "Excess mortality" = "deaths")
 
 #List of data items available in step 2 of immunisation tab
-# data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
-#                      "6-in-1 second dose" = "sixin_dose2",
-#                      "6-in-1 third dose" = "sixin_dose3",
-#                      "MMR first dose" = "mmr_dose1",
-#                      "MMR second dose" = "mmr_dose2")
+data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
+                     "6-in-1 second dose" = "sixin_dose2",
+                     "6-in-1 third dose" = "sixin_dose3",
+                     "MMR first dose" = "mmr_dose1",
+                     "MMR second dose" = "mmr_dose2")
 
 # List of data items available in step 2 of immunisation tab
-# data_list_child <- c("Health Visitor first visit" = "first_visit",
-#                      "6-8 Week Review" = "six_eightwks",
-#                      "13-15 Month Review" = "13_15mnth",
-#                      "27-30 Month Review" = "27_30mnth",
-#                      "4-5 Year Review" = "4_5yr")
+data_list_child <- c("Health Visitor first visit" = "first_visit",
+                     "6-8 Week Review" = "six_eightwks",
+                     "13-15 Month Review" = "13_15mnth",
+                     "27-30 Month Review" = "27_30mnth",
+                     "4-5 Year Review" = "4_5yr")
 
-# data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
-#                         "A&E cardiovascular attendances" = "ae_cardio",
-#                         "Cardiac procedures" = "cath_lab",
-#                         "6-in-1 first dose"  = "sixin_8wks",
-#                         "6-in-1 second dose" = "sixin_8wks_second",
-#                         "6-in-1 third dose" = "sixin_8wks_third",
-#                         "MMR first dose" = "mmr_1dose",
-#                         "MMR second dose" = "mmr_2dose",
-#                         "Health Visitor first visit" = "first_visit",
-#                         "6-8 week child health review" = "sixtoeight_visit",
-#                         "13-15 month child health review" = "thirteen_visit",
-#                         "27-30 month child health review" = "twentyseven_visit",
-#                         "4-5 year child health review" = "fourtofive_visit",
-#                         "Stillbirths and infant deaths" = "perinatal",
-#                         "Cancer" = "cancer"
-# )
+data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
+                        "A&E cardiovascular attendances" = "ae_cardio",
+                        "Cardiac procedures" = "cath_lab",
+                        "6-in-1 first dose"  = "sixin_8wks",
+                        "6-in-1 second dose" = "sixin_8wks_second",
+                        "6-in-1 third dose" = "sixin_8wks_third",
+                        "MMR first dose" = "mmr_1dose",
+                        "MMR second dose" = "mmr_2dose",
+                        "Health Visitor first visit" = "first_visit",
+                        "6-8 week child health review" = "sixtoeight_visit",
+                        "13-15 month child health review" = "thirteen_visit",
+                        "27-30 month child health review" = "twentyseven_visit",
+                        "4-5 year child health review" = "fourtofive_visit",
+                        "Stillbirths and infant deaths" = "perinatal",
+                        "Cancer" = "cancer"
+)
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",
@@ -200,18 +199,18 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Vulva - Females only" = "Vulva - Females only")
 
 
-# cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
-#                  "Cardiac procedures" = "cath")
-# 
-# 
-# 
-# 
-# #List of data items available in step 2 of perinatal tab
-# data_list_perinatal <- c("Stillbirths"="stillbirths",
-#                          "Neonatal deaths"="nnd",
-#                          "Extended perinatal deaths"="extperi",
-#                          "Post-neonatal deaths"="pnnd",
-#                          "Infant deaths"="infantdeaths")
+cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
+                 "Cardiac procedures" = "cath")
+
+
+
+
+#List of data items available in step 2 of perinatal tab
+data_list_perinatal <- c("Stillbirths"="stillbirths",
+                         "Neonatal deaths"="nnd",
+                         "Extended perinatal deaths"="extperi",
+                         "Post-neonatal deaths"="pnnd",
+                         "Infant deaths"="infantdeaths")
 
 ###############################################.
 ## Palettes and plot parameters ----

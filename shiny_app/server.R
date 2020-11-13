@@ -20,32 +20,32 @@ function(input, output, session) {
   # Sourcing file with functions code
   source(file.path("functions_server.R"),  local = TRUE)$value
 
-  # ###############################################.
-  # # Summary trends tab  
-  # source(file.path("summary_tab.R"),  local = TRUE)$value
-  # 
-  # ###############################################.
-  # # Cardiovascular tab
+  ###############################################.
+  # Summary trends tab
+  source(file.path("summary_tab.R"),  local = TRUE)$value
+
+  ###############################################.
+  # Cardiovascular tab
   # source(file.path("cardio_tab.R"),  local = TRUE)$value
-  # 
-  # ###############################################.
-  # # Immunisation tab
-  # source(file.path("immunisation_tab.R"),  local = TRUE)$value
-  # 
-  # ###############################################.
-  # # Child Health tab
-  # source(file.path("child_health_tab.R"),  local = TRUE)$value
-  # 
-  # ###############################################.
-  # # Perinatal tab
-  # source(file.path("perinatal_tab.R"),  local = TRUE)$value
-  # 
+
+  ###############################################.
+  # Immunisation tab
+  source(file.path("immunisation_tab.R"),  local = TRUE)$value
+
+  ###############################################.
+  # Child Health tab
+  source(file.path("child_health_tab.R"),  local = TRUE)$value
+
+  ###############################################.
+  # Perinatal tab
+  source(file.path("perinatal_tab.R"),  local = TRUE)$value
+
   ###############################################.
   # Cancertab
   source(file.path("cancer_tab.R"),  local = TRUE)$value
-  # ###############################################.
-  # # Data tab
-  # source(file.path("data_tab.R"),  local = TRUE)$value
+  ###############################################.
+  # Data tab
+  source(file.path("data_tab.R"),  local = TRUE)$value
   
   ###############################################.
 
@@ -67,17 +67,6 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_cancer, {updateTabsetPanel(session, "intabset", selected = "comment")})
     
-#trying to find way to link multiple action buttons to one observeEvent - sort of works but then creates an loop with undesired effect
-# observe({
-#     input_btn <- paste0("jump_commentary_", input$intabset)
-#     lapply(input_btn,
-#            function(x){
-#              observeEvent(
-#                input[[x]],
-#                {updateTabsetPanel(session, "intabset", selected = "comment")}
-#              )}
-#     )})
-
 ## ObserveEvents to open collapsepanels in commentary tab when sidepanel option clicked
   observeEvent(input$summary_button, ({
     updateCollapse(session, "collapse_commentary", open = "Summary trends")}))

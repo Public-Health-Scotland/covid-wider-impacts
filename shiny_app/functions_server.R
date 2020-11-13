@@ -338,9 +338,9 @@ plot_spec <- function(type) {
 ## Function for filtering ----
 ###############################################.
 # Function to filter the datasets for the overall charts and download data based on user input
-filter_data <- function(dataset, area) {
+filter_data <- function(dataset, area = T) {
   if (area == T) {
-    dataset %>% filter(category == "sex") %>%
+    dataset %>% filter(type == "sex") %>%
       filter(area_name == input$geoname &
                category == "All")
   } else { #this works for cath data
