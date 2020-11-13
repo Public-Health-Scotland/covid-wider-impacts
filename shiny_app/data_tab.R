@@ -17,7 +17,6 @@ data_table <- reactive({
          "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
          "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average),
          "ooh_cardiac" = ooh_cardiac %>% rename(average_2018_2019 = count_average),
-         "nhs24_cardiac" = nhs24_cardiac %>% rename(average_2018_2019 = count_average),
          "sas_cardiac" = sas_cardiac %>% rename(average_2018_2019 = count_average),        
          "sixin_8wks" = sixtable,
          "sixin_8wks_second" = sixtable_dose2,
@@ -35,7 +34,7 @@ data_table <- reactive({
     # appear for factors
     mutate_if(is.character, as.factor) 
   
-  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths", "nhs24_cardiac", "ooh_cardiac", "sas_cardiac")) {
+  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths", "ooh_cardiac", "sas_cardiac")) {
     table_data <- table_data %>% 
     # Formatting to a "nicer" style
     select(-type) %>% 

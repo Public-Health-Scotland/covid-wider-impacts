@@ -51,13 +51,6 @@ observeEvent(input$measure_cardio_select, {
     enable("area_cardio_select")
   }
   
-  if (x == "nhs24_cardiac") {
-    cardio_label = "Step 2 - Select geography level for cardiovascular NHS24 consultations"
-    cardio_choices = c("Scotland", "Health board")
-    shinyjs::show("geoname_cardio_ui")
-    enable("area_cardio_select")
-  }
- 
   if (x == "sas_cardiac") {
     cardio_label = "Step 2 - Select geography level for cardiovascular Scottish Ambulance Service incidents"
     cardio_choices = c("Scotland", "Health board")
@@ -294,41 +287,6 @@ observeEvent(input$btn_cardio_modal,
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-             } else if (input$measure_cardio_select == "nhs24_cardiac") { #NHS24 CALLS MODAL
-               showModal(modalDialog(
-                 title = "What is the data source?",
-                 p("For many people an NHS 24 call provides the first point of contact for urgent access 
-                   to healthcare advice and, where necessary, onward treatment. At this time NHS 24 will 
-                   receive calls that relate to both COVID-19 and the wide range of other healthcare 
-                   issues that can and do occur all year round. Contacting NHS 24 provides many people 
-                   with access to healthcare advice, urgent clinical advice and, where necessary, onward treatment. 
-                   As well as telephone contact NHS 24 also provide digital (online) services through NHS Inform and self-help guidance."),
-                 p("The figures presented in this tool relate to contacts concerning both COVID-19 and non-COVID 
-                   issues however they do not represent the complete picture of NHS 24 activity or demand. 
-                   The figures below only show data where there has been contact with 111 service and an individual
-                   has spoken to a member of NHS 24 staff. They do not include activity relating to non-clinical 
-                   hotlines or digital (online) services such as NHS Inform. The charts 
-                   provide a weekly summary of contacts recorded in the recent past and historical 
-                   trends for comparison purposes. The recent trend data is shown by age group, sex and broad 
-                   deprivation category (SIMD)." ),
-                 p("Symptoms reported indicating a possible cardiovascular issue include: "),
-                 tags$ul(
-                   tags$li("chest pain, complaints of abnormal breathing, stroke, dizziness and palpitation.")),
-                 p("Figures by NHS health board include those calls made by residents of each health board area."),
-                 p("If required, more detailed analysis of NHS24 activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
-                          class="externallink"), "."),
-                 p("The NHS24 dataset is managed by ", 
-                   tags$a(href="https://publichealthscotland.scot/", 
-                          "Public Health Scotland", class="externallink"), "and ",
-                   tags$a(href="https://www.nhs24.scot/", 
-                          "NHS 24", class="externallink"), ".",
-                   "This analysis is drawn from the ",
-                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
-                 ),
-                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
-                 size = "m",
-                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }else if (input$measure_cardio_select == "sas_cardiac") { #NHS24 CALLS MODAL
                showModal(modalDialog(
                  title = "What is the data source?",
@@ -495,30 +453,6 @@ output$cardio_explorer <- renderUI({
                        extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?", 
                                                     icon = icon('question-circle')))
         )
-     } else if (input$measure_cardio_select == "nhs24_cardiac") {
-       tagList(# OOH Attendances
-         h3(paste0("Weekly completed cardiovascular contacts with NHS24 in ", input$geoname_cardio)),
-         actionButton("btn_cardio_modal", "Data source: PHS Unscheduled Care Datamart", icon = icon('question-circle')),
-        p("The data used in this chart are taken from the Unscheduled Care Datamart.  
-          As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
-                                       "COVID-19 weekly report for Scotland", class="externallink"), 
-             "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 
-          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. 
-          Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that 
-          can be shown in this publication."),
-         plot_box("2020 compared with 2018-2019 average", "nhs24_cardio_all"),
-         plot_cut_box(paste0("Percentage change in completed cardiovascular contacts in ", input$geoname_cardio, " compared with the corresponding
-                     time in 2018-2019 by sex"), "nhs24_cardio_sex_var",
-                      paste0("Weekly number of completed cardiovascular contacts in ", input$geoname_cardio, " by sex"), "nhs24_cardio_sex_tot"),
-         plot_cut_box(paste0("Percentage change in completed cardiovascular contacts in ", input$geoname_cardio, " compared with the corresponding
-                     time in 2018-2019 by age group"), "nhs24_cardio_age_var",
-                      paste0("Weekly number of completed cardiovascular contacts in ", input$geoname_cardio, " by age group"), "nhs24_cardio_age_tot"),
-         plot_cut_box(paste0("Percentage change in completed cardiovascular contacts in ", input$geoname_cardio, " compared with the corresponding
-                     time in 2018-2019 by SIMD quintile"), "ooh_cardio_depr_var",
-                      paste0("Weekly number of completed cardiovascular contacts in ", input$geoname_cardio, " by SIMD quintile"), "nhs24_cardio_depr_tot",
-                      extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?", 
-                                                   icon = icon('question-circle')))
-       )
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# OOH Attendances
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service ", input$geoname_cardio)),
@@ -589,23 +523,6 @@ output$ooh_cardio_depr_tot <- renderPlotly({plot_trend_chart(ooh_cardiac %>% fil
                                                              pal_depr, split = "dep", type = "total",data_name = "ooh_cardiac", tab = "cardio")})
 ###############################################.
 
-###############################################.
-# NHS24 charts
-output$nhs24_cardio_all <- renderPlotly({plot_overall_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
-                                                          data_name = "ooh_cardiac", area = "All")})
-output$nhs24_cardio_sex_var <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
-                                                            pal_sex, split = "sex", type = "variation", data_name = "nhs24_cardiac", tab = "cardio")})
-output$nhs24_cardio_sex_tot <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
-                                                            pal_sex, split = "sex", type = "total", data_name = "nhs24_cardiac", tab = "cardio")})
-output$nhs24_cardio_age_var <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
-                                                            pal_age, split = "age", type = "variation", data_name = "nhs24_cardiac", tab = "cardio")})
-output$nhs24_cardio_age_tot <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
-                                                            pal_age, split = "age", type = "total", data_name = "nhs24_cardiac", tab = "cardio")})
-output$nhs24_cardio_depr_var <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
-                                                             pal_depr, split = "dep", type = "variation",data_name = "nhs24_cardiac", tab = "cardio")})
-output$nhs24_cardio_depr_tot <- renderPlotly({plot_trend_chart(nhs24_cardiac %>% filter(area_name == input$geoname_cardio), 
-                                                             pal_depr, split = "dep", type = "total",data_name = "nhs24_cardiac", tab = "cardio")})
-###############################################.
 
 ###############################################.
 # SAS charts
@@ -656,12 +573,6 @@ overall_cardio_download <- reactive({
   new_var_name <- "average_2018_2019"
   }
   
-  # NHS24
-  if (input$measure_cardio_select == "nhs24_cardiac") {
-    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
-    new_var_name <- "average_2018_2019"
-  }
-  
   # SAS
   if (input$measure_cardio_select == "sas_cardiac") {
     selection <- c("week_ending", "area_name", "count", "count_average", "variation")
@@ -675,7 +586,6 @@ overall_cardio_download <- reactive({
     "aye" = filter_data(ae_cardio, area = F),
     "drug_presc" = filter_data(cardio_drugs, area = F),
     "ooh_cardiac" = filter_data(ooh_cardiac, area = F),
-    "nhs24_cardiac" = filter_data(nhs24_cardiac, area = F),
     "sas_cardiac" = filter_data(sas_cardiac, area = F)    
   ) %>% 
     select_at(selection) %>% 
@@ -760,17 +670,6 @@ output$cardio_commentary <- renderUI({
       tags$li("There was a significant increase at the start of May for females, 202 cases compared to the 
               historic average of 110."),
       tags$li("There was an increase in OOH cardiac cases from the middle of April for all SIMD quintiles.")),
-    h3("Cardiovascular NHS24 consultations"),
-    p("Information on NHS24 consultations..."),
-    tags$ul(
-     tags$li("There was a large increase initially in NHS24 cardiovascular consultations between January and the middle 
-             of March. The largest increase was in the week ending 15 March 2020, 3976 compared to a historic average 
-             of 1548 consultations."),
-     tags$li("The pattern of consultations for males and females followed the same pattern as the historic average."),
-     tags$li("For age groups the most significant increase from the historic average was in the 15-44 and 45-64 age groups."),
-     tags$li("The pattern of consultations for SIMD followed the same pattern as the historic average with the most 
-             deprived having the largest increase in consultations."),
-     tags$li("From the end of March NHS24 cardiac consultations returned to levels seen in the historic average.")),
     h3("Cardiovascular SAS incidents"),
     p("Information on SAS incidents..."),
     tags$ul(
