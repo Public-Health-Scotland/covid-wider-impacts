@@ -40,13 +40,13 @@ cancer_data_cum_main <- reactive({
 cancer_data_dl <- reactive({
   
   cancer_data_cum_main() %>% 
-    rename("Area name" = area, "Cancer Type" = site,
+    rename("Area name" = area, "Cancer type" = site,
            "Sex" = sex,
-           "Week Ending" = week_ending,
+           "Week ending" = week_ending,
            "Count 2019" = count19,
            "Count 2020" = count20,
-           "Cumulative Count 2019" = cum_count19,
-           "Cumulative Count 2020" = cum_count20,
+           "Cumulative count 2019" = cum_count19,
+           "Cumulative count 2020" = cum_count20,
            "Variation (%)" = difference)
   
 })

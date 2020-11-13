@@ -1,5 +1,5 @@
 #UI
-secure_app( #uncomment if needing password protection
+# secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -224,15 +224,16 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
 ###############################################.
 tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
   wellPanel(
-           column(4, div(p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_cancer", label = NULL, choices= c("Scotland", "Cancer Network", "Health Board"),
-                                     selected = "Scotland")),
+           column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.", 
+                                 choices= c("Scotland", "Cancer Network", "Health Board"),
+                                     selected = "Scotland"),
                   uiOutput("geoname_ui_cancer")),
                   
-           column(4, div(p(tags$b("Step 2. Select all or specific cancer type")),
-                         selectInput("cancer_type", label = NULL, choices = cancer_type_list,
-                                     selected = "All Malignant Neoplasms (Excl. C44)")),
-                     div(radioButtons("gender", "Sex", list("All Persons","Male","Female"), inline = TRUE, selected = "All Persons"))),
+           column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
+                                     selected = "All Malignant Neoplasms (Excl. C44)"),
+                     div(radioButtons("gender", "Step 3. Select sex", 
+                                      list("All Persons","Male","Female"), inline = TRUE, 
+                                      selected = "All Persons"))),
                      # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
            
            column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
@@ -266,5 +267,5 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
       ) # tabpanel bracket
     )# page bracket
  )# taglist bracket
-)#secure app
+# )#secure app
 ##END
