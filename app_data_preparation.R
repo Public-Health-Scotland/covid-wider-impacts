@@ -283,13 +283,6 @@ ooh_data_cardiac <- ooh_data_cardiac %>%
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() 
 
-# Amend this when final data available
-# %>% 
-#  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-06-28"))) #filter complete weeks (Mon-Sun)
-
-#bind old and new ooh data
-#ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
-
 # Creating totals for groups
 ooh_cd_all <- ooh_data_cardiac %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
 ooh_cd_sex <- ooh_data_cardiac %>% agg_cut(grouper="sex") %>% rename(category = sex)
@@ -310,9 +303,6 @@ prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last
 
 nhs24_data_cardiac <- read_csv(paste0(data_folder, "NHS24_Cardio/Weekly Symptoms NHS 24 CSV.csv")) %>% 
   janitor::clean_names()
-
-# Filter age > 44
-#nhs24_data_cardiac <- nhs24_data_cardiac %>% filter(age > 44)
 
 # Change file into correct format prior to getting final specification
 # Age Bands
@@ -376,13 +366,6 @@ nhs24_data_cardiac <- nhs24_data_cardiac %>%
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() 
-
-# Amend this when final data available
-# %>% 
-#  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-06-28"))) #filter complete weeks (Mon-Sun)
-
-#bind old and new ooh data
-#ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
 
 # Creating totals for groups
 nhs24_cd_all <- nhs24_data_cardiac %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
@@ -471,13 +454,6 @@ sas_data_cardiac <- sas_data_cardiac %>%
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() 
-
-# Amend this when final data available
-# %>% 
-#  filter(between(week_ending, as.Date("2020-05-03"), as.Date("2020-06-28"))) #filter complete weeks (Mon-Sun)
-
-#bind old and new ooh data
-#ooh <- rbind(ooh_may_onwards, ooh_new, ooh)
 
 # Creating totals for groups
 sas_cd_all <- sas_data_cardiac %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
