@@ -217,7 +217,7 @@ output$download_cancer_data <- downloadHandler(
 output$cancer_commentary <- renderUI({
   tagList(
     bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
-    h3("Cancer in Scotland in 2020"),
+    h3("Cancer in Scotland in 2020 - 18th November 2020"),
     h5("Note: as the information provided in this dashboard is updated, it will both add more recent 
        data and may also change historical data.  This commentary refers to pathological specimens 
        reported to the week ending 21st June 2020, which were available for inclusion in the analysis 
