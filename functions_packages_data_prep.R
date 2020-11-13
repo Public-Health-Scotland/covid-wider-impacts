@@ -213,22 +213,22 @@ format_immsimd_data <- function(filename) {
 # value: which column in dataset contains value being evaluated
 # median: which column in dataset contains the median against which value is tested
 
-runchart_flags <- function(dataset,shift,trend,value,median) {
+runchart_flags <- function(dataset, shift, trend, value, median) {
 
   dataset <- dataset %>%
-    mutate(shift_i = case_when((value > median & lag(value, 1) > median & 
-                                  lag(value, 2) > median & lag(value, 3) > median & 
-                                  lag(value, 4) > median & lag(value, 5) > median) 
-                               | (value < median & lag(value, 1) < median & 
-                                    lag(value, 2) < median & lag(value, 3) < median & 
-                                    lag(value, 4) < median & lag(value, 5) < median) ~ T , T ~ F),
+    mutate(shift_i = case_when(({{value}} > {{median}} & lag({{value}}, 1) > {{median}} & 
+                                  lag({{value}}, 2) > {{median}} & lag({{value}}, 3) > {{median}} & 
+                                  lag({{value}}, 4) > {{median}} & lag({{value}}, 5) > {{median}}) 
+                               | ({{value}} < {{median}} & lag({{value}}, 1) < {{median}} & 
+                                    lag({{value}}, 2) < {{median}} & lag({{value}}, 3) < {{median}} & 
+                                    lag({{value}}, 4) < {{median}} & lag({{value}}, 5) < {{median}}) ~ T , T ~ F),
            shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
                              | lead(shift_i, 3) == T | lead(shift_i, 4) == T
                              | lead(shift_i, 5) == T  ~ T, T ~ F),
-           trend_i = case_when((value > lag(value ,1) & lag(value, 1) > lag(value, 2)
-                                & lag(value, 2) > lag(value, 3)  & lag(value, 3) > lag(value, 4)) |
-                                 (value < lag(value ,1) & lag(value, 1) < lag(value, 2)
-                                  & lag(value, 2) < lag(value, 3)  & lag(value, 3) < lag(value, 4) )
+           trend_i = case_when(({{value}} > lag({{value}} ,1) & lag({{value}}, 1) > lag({{value}}, 2)
+                                & lag({{value}}, 2) > lag({{value}}, 3)  & lag({{value}}, 3) > lag({{value}}, 4)) |
+                                 ({{value}} < lag({{value}} ,1) & lag({{value}}, 1) < lag({{value}}, 2)
+                                  & lag({{value}}, 2) < lag({{value}}, 3)  & lag({{value}}, 3) < lag({{value}}, 4) )
                                ~ T , T ~ F),
            trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
                              | lead(trend_i, 3) == T | lead(trend_i, 4) == T
