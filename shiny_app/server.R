@@ -43,6 +43,7 @@ function(input, output, session) {
   source(file.path("terminations_tab.R"),  local = TRUE)$value
   source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
   source(file.path("inductions_tab.R"),  local = TRUE)$value
+  source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Perinatal tab

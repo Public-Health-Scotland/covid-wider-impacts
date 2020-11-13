@@ -402,40 +402,37 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_gestation", label = NULL, choices= c("Scotland", "Health board"),
+                         selectInput("geotype_gest", label = NULL, choices= c("Scotland", "Health board"),
                                      selected = "Scotland")),
-                  uiOutput("geoname_ui_gestation")),
+                  uiOutput("geoname_ui_gest")),
            column(4,offset=4,
-                  actionButton("btn_gestation_modal", "Data source: SMR02", icon = icon('question-circle')),
-                  fluidRow(br()))
-           #,
-           #downloadButton("download_grstation_data", "Download data"),
-           #fluidRow(br()),
-           #actionButton("jump_commentary_gestation","Go to commentary"))
+                  actionButton("btn_gest_modal", "Data source: SMR02", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_gest_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_gestation","Go to commentary"))
          ), #well panel
-         mainPanel(width = 12
-                   #,
-                   #uiOutput("gestation_explorer")
+         mainPanel(width = 12,
+                   uiOutput("gestation_explorer")
          )# mainPanel bracket
 ) # deliveries tab panel
-
 ), # navbar menu bracket
 ###############################################.
 ## Data ----
 ###############################################.
-    tabPanel(title = "Data", icon = icon("table"), value = "table",
-      p("This section allows you to view the data in table format.
+tabPanel(title = "Data", icon = icon("table"), value = "table",
+         p("This section allows you to view the data in table format.
         You can use the filters to select the data you are interested in.
         You can also download the data as a csv using the download button.
         The data is also hosted in the",
-        tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
-               "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
-      column(6, selectInput("data_select", "Select the data you want to explore.",
-                           choices = data_list_data_tab)),
-      column(6, downloadButton('download_table_csv', 'Download data')),
-      mainPanel(width = 12,
-                DT::dataTableOutput("table_filtered"))
-      ) # tabpanel bracket
-    )# page bracket
- )# taglist bracket
+           tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
+                  "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
+         column(6, selectInput("data_select", "Select the data you want to explore.",
+                               choices = data_list_data_tab)),
+         column(6, downloadButton('download_table_csv', 'Download data')),
+         mainPanel(width = 12,
+                   DT::dataTableOutput("table_filtered"))
+) # tabpanel bracket
+  )# page bracket
+)# taglist bracket
 #END
