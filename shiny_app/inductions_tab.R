@@ -74,7 +74,7 @@ induct_linechart_split <- function(split){
 ###############################################.
 
 # chart outputs for trend
-output$induct_trend <- renderPlotly({plot_induct_trend()})
+output$induct_trend <- renderPlotly({plot_induct_trend(measure="perc_ind_37_42",shift = "induction_shift", trend = "induction_trend")})
 
 output$induct_linechart_age_n <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="age"),split="age", measure="ind_37_42")})
 output$induct_linechart_age_p <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="age"),split="age", measure="perc_ind_37_42")})
@@ -90,24 +90,21 @@ output$induct_explorer <- renderUI({
   
   # text for titles of cut charts
   induct_data_timeperiod <-  paste0("Figures based on data extracted ",induct_extract_date)
-  induct_title <- paste0("Percentage of singleton live births delivered by caesarean section: ",input$geoname_induct)
-  induct_title_detail <-  paste0("(all gestations)")
-  
+  induct_title <- paste0("of singleton live birth deliveries following induction of labour: ",input$geoname_induct)
+  induct_title_detail <-  paste0("(37-42 weeks gestation)")
   
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Percentage of births by caesarean sections’ charts above, the dots joined by a solid black line show the percentage of births by caesarean sections in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of caesarean sections over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of caesarean sections."))
+            p("On the ‘Percentage of deliveries following induction of labour’ chart above, the dots joined by a solid black line show the percentage of births following induction of labour in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of births following induction of labour over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of deliveries following induction of labour."))
   
   # Function to create common layout to all immunisation charts
   induct_layout <- function(induct_trend,induct_linechart_age_n,induct_linechart_age_p,induct_linechart_dep_n,induct_linechart_dep_p){
     tagList(fluidRow(column(12,
-                            h4(induct_title),
+                            h4(paste0("Percentage ", induct_title)),
                             p(induct_title_detail),
-                            actionButton("btn_induct_rules", "How do we identify patterns in the data?")),
-                     column(4,
-                            h4("Inductions"),
+                            actionButton("btn_induct_rules", "How do we identify patterns in the data?"),
                             withSpinner(plotlyOutput("induct_trend"))),
                      column(12,
                             p(chart_explanation)),
@@ -115,28 +112,28 @@ output$induct_explorer <- renderUI({
                      if (input$geotype_induct == "Scotland"){
                        tagList(
                          fluidRow(column(12,
-                                         h4("Singleton live births delivered by caesarean section by age group: Scotland"),
-                                         p("(all gestations)"))),
+                                         h4("Singleton live birth deliveries following induction of labour by maternal age group: Scotland"),
+                                         p("(37-42 weeks gestation)"))),
                          fluidRow(column(6,
-                                         h4("Number of births by caesarean section"),
+                                         h4("Number of births following induction of labour"),
                                          withSpinner(plotlyOutput("induct_linechart_age_n"))),
                                   column(6,
-                                         h4("Percentage of births by caesarean section"),
+                                         h4("Percentage of births following induction of labour"),
                                          withSpinner(plotlyOutput("induct_linechart_age_p")))),
                          fluidRow(column(12,
                                          br(), # spacing
-                                         h4("Singleton live births delivered by caesarean section by deprivation: Scotland"),
+                                         h4("Singleton live birth deliveries following induction of labour by maternal deprivation level: Scotland"),
                                          actionButton("btn_modal_simd_induct", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          fluidRow(column(6,
-                                         h4("Number of births delivered by caesarean section"),
+                                         h4("Number of births following induction of labour"),
                                          withSpinner(plotlyOutput("induct_linechart_dep_n"))),
                                   column(6,
-                                         h4("Percentage of births delivered by caesarean section"),
+                                         h4("Percentage of births following induction of labour"),
                                          withSpinner(plotlyOutput("induct_linechart_dep_p"))))
                        )#tagList from if statement
                      }))}
-  
+
   # #link plot functions to layouts
   induct_layout(induct_trend="induct_trend",
              induct_linechart_age_n="induct_linechart_age_n",
@@ -150,14 +147,15 @@ output$induct_explorer <- renderUI({
 ## Induction chart functions ----
 ############################################.
 
-## Runchart trend chart for monthly inductions percentages : Scotland & NHS Board (except island boards) 
+## Runchart trend chart for monthly inductions percentages: Scotland & NHS Board (except island boards) 
+## Function could be simplified to run without parameters but copied logic from other pregnancy tabs therefore easier to keep same structure.
 
-plot_induct_trend <- function(){  
+plot_induct_trend <- function(measure, shift, trend){  
   
   plot_data <- induct_filter()
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
-  { plot_nodata(height = 50, 
+  { plot_nodata(height = 65, 
                 text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
   } else {
     
@@ -165,24 +163,16 @@ plot_induct_trend <- function(){
     centreline_name <- paste0(input$geoname_induct," average up to end Feb 2020") 
     
     # format y axis
-    yname <- "Percentage (%)"
-    #yaxis_plots[["range"]] <- c(0, 40)  # forcing range from 0 to 40%
-    yaxis_plots[["title"]] <- "Percentage (%)"
+    yname <- "Percentage of births following induction(%)"
+    yaxis_plots[["range"]] <- c(0, 60)  # forcing range from 0 to 60%
+    yaxis_plots[["title"]] <- "Percentage of births following induction (%)"
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
     
     tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
                             "Percentage: ",format(plot_data$perc_ind_37_42,digits = 1,nsmall=1),"%", "<br>"))
-  
-    # Adjust the column used for median line according to which cut of chart to be shown
-    # centre_line <- case_when(measure == "perc_csection_all" ~ plot_data$median_csection_all,
-    #                          measure == "perc_csection_elec" ~ plot_data$median_csection_elec,
-    #                          measure == "perc_csection_emer" ~ plot_data$median_csection_emer)
-    # dotted_line <- case_when(measure == "perc_csection_all" ~ plot_data$ext_csection_all,
-    #                          measure == "perc_csection_elec" ~ plot_data$ext_csection_elec,
-    #                          measure == "perc_csection_emer" ~ plot_data$ext_csection_emer)                        
-    
+
     #Creating time trend plot
     plot_ly(data=plot_data, x=~month) %>%
       add_lines(y = ~perc_ind_37_42,  
@@ -195,17 +185,11 @@ plot_induct_trend <- function(){
                 line = list(color = "blue"), hoverinfo="none",
                 name = "Centreline") %>%
       # adding trends
-      add_markers(data = plot_data %>% filter(induction_trend == T), y = ~induction_trend ,
-                  marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%  
+      add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
+                  marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%  
             # adding shifts
-      add_markers(data = plot_data %>% filter(induction_shift == T), y = ~ induction_shift,
-                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>% 
-      # # adding trends
-      # add_markers(data = plot_data %>% filter_at(induction_trend, all_vars(. == T)), y = ~induction_trend,
-      #             marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
-      # # adding shifts - add these last so that shifts are always visible on top of trends
-      # add_markers(data = plot_data %>% filter_at(induction_shift, all_vars(. == T)), y = ~~induction_shift,
-      #             marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
+      add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
+                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>% 
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -213,7 +197,6 @@ plot_induct_trend <- function(){
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }}
-
 
 ## LINECHART SCOTLAND: caesarean delivery by age group and deprivation, numbers and percentages - Scotland level only
 plot_induct_split <- function(dataset, split, measure){  
@@ -227,14 +210,14 @@ plot_induct_split <- function(dataset, split, measure){
   
   # adjust chart y axis according to what is being displayed
   if(measure == "perc_ind_37_42"){
-    yaxis_plots[["title"]] <- "Percentage (%)"  
+    yaxis_plots[["title"]] <- "Percentage of births following induction (%)"
     if(split == "age"){
-      yaxis_plots[["range"]] <- c(0, 70)}  # forcing range from 0 to 70% for age group
+      yaxis_plots[["range"]] <- c(0, 60)}  # forcing range from 0 to 70% for age group
     if(split == "dep"){
       yaxis_plots[["range"]] <- c(0, 50)}  # forcing range from 0 to 40% for dep
   }
   if(measure == "ind_37_42"){
-    yaxis_plots[["title"]] <- "Number"
+    yaxis_plots[["title"]] <- "Number of births following induction"
   }
   
   #adjust datasets according to which data split to be displayed
