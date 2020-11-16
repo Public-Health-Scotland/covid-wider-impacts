@@ -37,6 +37,8 @@ spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) 
   select("Specialty name" = spec_name, "Specialty group" = dash_groups)
 
 saveRDS(spec_lookup, "shiny_app/data/spec_lookup.rds")
+saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # Formatting groups
 rap_adm %<>% 
@@ -368,13 +370,6 @@ sas <- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-10-25")
 
 ###############################################.
-## Deaths ----
-###############################################.
-deaths <- readRDS(paste0(data_folder, "deaths/deaths_data.rds"))
-saveRDS(deaths, "shiny_app/data/deaths_data.rds")
-saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
-
-###############################################.
 ## Cath labs - cardiac procedures ----
 ###############################################.
 # Data for cardiovascular app
@@ -464,6 +459,8 @@ cath_labs_2020 <- left_join(cath_labs %>% filter(year(week_ending) %in% c("2020"
          variation = case_when((count<5 | is.na(count)) ~ NA_real_, TRUE ~ variation))
 
 saveRDS(cath_labs_2020, "shiny_app/data/cath_lab_data.rds")
+saveRDS(cath_labs_2020, paste0(data_folder,"final_app_files/cath_lab_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## A&E Cardio ----
@@ -472,6 +469,8 @@ saveRDS(cath_labs_2020, "shiny_app/data/cath_lab_data.rds")
 # Reads in A&E cardio ICD 10 codes for modal, only required to run in case code list changes
 ae_cardio_codes <- read_xlsx(paste0(data_folder, "A&E_Cardio/A&E-CardioConditionCodes.xlsx"))
 saveRDS(ae_cardio_codes, "shiny_app/data/ae_cardio_codes.rds")
+saveRDS(ae_cardio_codes, paste0(data_folder,"final_app_files/ae_cardio_codes_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 rm(ae_cardio_codes)
 
 # Read in data, clean names + some simple mutations
@@ -580,7 +579,9 @@ six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher
   arrange(cohort) %>%
   select (extract_date, exclude, immunisation, eligible_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
-saveRDS(six_alldose, "shiny_app/data/six_alldose_data.rds")
+saveRDS(six_alldose, "shiny_app/data/six_alldose.rds")
+saveRDS(six_alldose, paste0(data_folder,"final_app_files/six_alldose_", 
+                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## immunisations data table dataset prep ----
@@ -592,26 +593,48 @@ six_datatable <- imms_datatable %>%
   filter(str_detect(immunisation,"six-in-one")) %>%
   select(-uptake_13m_num:-uptake_3y8m_percent) #remove uptake columns that related to mmr 
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
+saveRDS(six_datatable, paste0(data_folder,"final_app_files/sixinone_datatable_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 mmr_datatable <- imms_datatable %>%
   filter(str_detect(immunisation,"mmr")) %>%
   select(-uptake_12weeks_num:-uptake_32weeks_percent) #remove uptake columns that related to mmr 
 saveRDS(mmr_datatable, paste0("shiny_app/data/","mmr_datatable.rds"))
+saveRDS(mmr_datatable, paste0(data_folder,"final_app_files/mmr_datatable_", 
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # Grampian data
 mmr_dose2_datatable_grampian <- format_immchild_table(paste0("immunisations/mmr/dashboardtable_grampian_",imms_date)) 
 saveRDS(mmr_dose2_datatable_grampian, paste0("shiny_app/data/","mmr_dose2_datatable_grampian.rds"))
-
+saveRDS(mmr_dose2_datatable_grampian, paste0(data_folder,"final_app_files/mmr_dose2_datatable_grampian_", 
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 ###############################################.
 ## 6-in-1 simd data ---- 
 six_dose1_simdtable <- format_immsimd_data(paste0("immunisations/6in1/six-in-one dose 1_simd_",imms_date))
 saveRDS(six_dose1_simdtable, paste0("shiny_app/data/","six_dose1_simdtable.rds"))
+saveRDS(six_dose1_simdtable, paste0(data_folder,"final_app_files/six_dose1_simdtable_", 
+                                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 six_dose2_simdtable <- format_immsimd_data(paste0("immunisations/6in1/six-in-one dose 2_simd_",imms_date))
 saveRDS(six_dose2_simdtable, paste0("shiny_app/data/","six_dose2_simdtable.rds"))
+saveRDS(six_dose2_simdtable, paste0(data_folder,"final_app_files/six_dose2_simdtable_", 
+                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 six_dose3_simdtable <- format_immsimd_data(paste0("immunisations/6in1/six-in-one dose 3_simd_",imms_date))
 saveRDS(six_dose3_simdtable, paste0("shiny_app/data/","six_dose3_simdtable.rds"))
+saveRDS(six_dose3_simdtable, paste0(data_folder,"final_app_files/six_dose3_simdtable_", 
+                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+###############################################.
+## 6-in-1 hscp data ----
+six_1_hscp <- format_immhscp_table("immunisations/6in1/six in one_1_dashboardtab-hscp_20200622")
+saveRDS(six_1_hscp, paste0("shiny_app/data/","six_dose1_hscp.rds"))
+
+six_2_hscp <- format_immhscp_table("immunisations/6in1/six in one_2_dashboardtab-hscp_20200622")
+saveRDS(six_2_hscp, paste0("shiny_app/data/","six_dose2_hscp.rds"))
+
+six_3_hscp <- format_immhscp_table("immunisations/6in1/six in one_3_dashboardtab-hscp_20200622")
+saveRDS(six_3_hscp, paste0("shiny_app/data/","six_dose3_hscp.rds"))
 
 ###############################################.
 # Immunisation definitions ----
@@ -632,6 +655,8 @@ age_defs_imm_mmr <- age_defs_imm_mmr %>% flextable() %>%
 age_defs_imm_mmr # checking
 
 saveRDS(age_defs_imm_mmr, "shiny_app/data/age_elig_mmr.rds")
+saveRDS(age_defs_imm_mmr, paste0(data_folder,"final_app_files/age_defs_imm_mmr_", 
+                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # 6 in one age eligibility
 age_defs_imm_6inone <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
@@ -647,6 +672,8 @@ age_defs_imm_6inone <- age_defs_imm_6inone %>% flextable() %>%
 age_defs_imm_6inone #checking
 
 saveRDS(age_defs_imm_6inone, "shiny_app/data/age_elig_6inone.rds")
+saveRDS(age_defs_imm_6inone, paste0(data_folder,"final_app_files/age_defs_imm_6inone_", 
+                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # month eligibility table
 month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
@@ -662,6 +689,8 @@ month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible d
 month_defs_imm #checking everything looks ok
 
 saveRDS(month_defs_imm, "shiny_app/data/month_eligibility_immun.rds")
+saveRDS(month_defs_imm, paste0(data_folder,"final_app_files/month_eligibility_immun_", 
+                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## MMR s-curve data ----
@@ -685,16 +714,33 @@ mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher
   #rename(week_12_start=week_16_start) %>%
   select (extract_date, exclude, immunisation, eligible_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
-saveRDS(mmr_alldose, paste0("shiny_app/data/","mmr_alldose_data.rds"))
+saveRDS(mmr_alldose, paste0("shiny_app/data/","mmr_alldose.rds"))
+saveRDS(mmr_alldose, paste0(data_folder,"final_app_files/mmr_alldose_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## MMR simd data ----
 ###############################################.
 mmr_dose1_simdtable <- format_immsimd_data(paste0("immunisations/mmr/mmr dose 1_simd_",imms_date))
 saveRDS(mmr_dose1_simdtable, paste0("shiny_app/data/","mmr_dose1_simdtable.rds"))
+saveRDS(mmr_dose1_simdtable, paste0(data_folder,"final_app_files/mmr_dose1_simdtable_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 mmr_dose2_simdtable <- format_immsimd_data(paste0("immunisations/mmr/mmr dose 2_simd_",imms_date))
 saveRDS(mmr_dose2_simdtable, paste0("shiny_app/data/","mmr_dose2_simdtable.rds"))
+saveRDS(mmr_dose2_simdtable, paste0(data_folder,"final_app_files/mmr_dose2_simdtable_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+###############################################.
+## MMR hscp data ----
+mmr_1_hscp <- format_immhscp_table("immunisations/mmr/mmr_dose1_dashboardtab-hscp_20200727")
+saveRDS(mmr_1_hscp, paste0("shiny_app/data/","mmr_dose1_hscp.rds"))
+
+mmr_2_hscp <- format_immhscp_table("immunisations/mmr/mmr_dose2_dashboardtab-hscp_20200727")
+saveRDS(mmr_2_hscp, paste0("shiny_app/data/","mmr_dose2_hscp.rds"))
+
+mmr_2_hscp_grampian <- format_immhscp_table("immunisations/mmr/mmr_dose2_dashboardtab_grampian_hscp_20200727")
+saveRDS(mmr_2_hscp_grampian, paste0("shiny_app/data/","mmr_dose2_hscp_grampian.rds"))
 
 ###############################################.
 ## Child health review: first visit ----
@@ -720,16 +766,16 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
-saveRDS(first, paste0("shiny_app/data/","first_visit_data.rds"))
+saveRDS(first, paste0("shiny_app/data/","first_visit.rds"))
+saveRDS(first, paste0(data_folder,"final_app_files/first_visit_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # First visit - summary table data
-first_datatable_download <- format_immchild_table("child_health/firstvisit_dashboardtab_20201026") 
-
-saveRDS(first_datatable_download, paste0("shiny_app/data/","first_visit_datatable_download.rds"))
-
-first_datatable <- first_datatable_download 
+first_datatable <- format_immchild_table("child_health/firstvisit_dashboardtab_20201026") 
 
 saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
+saveRDS(first_datatable, paste0(data_folder,"final_app_files/first_visit_datatable_", 
+                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Child health review: 6-8 weeks  ----
@@ -757,17 +803,16 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   select (extract_date, review, week_6_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
   filter(interv<168)
 
-saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight_data.rds"))
+saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight.rds"))
+saveRDS(sixtoeight, paste0(data_folder,"final_app_files/six_to_eight_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # 6-8 weeks visit - summary table data
-sixtoeight_datatable_download <- format_immchild_table("child_health/sixtoeight_dashboardtab_20201026") 
-
-saveRDS(sixtoeight_datatable_download, paste0("shiny_app/data/","six_to_eight_datatable_download.rds"))
-
-sixtoeight_datatable <- sixtoeight_datatable_download 
+sixtoeight_datatable <- format_immchild_table("child_health/sixtoeight_dashboardtab_20201026") 
 
 saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.rds"))
-
+saveRDS(sixtoeight_datatable, paste0(data_folder,"final_app_files/six_to_eight_datatable_", 
+                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Child health review: 13-15 month ----
@@ -978,14 +1023,8 @@ perinatal %<>%
   select(-shift_i, -trend_i, -outer_i, -inner_i) 
 
 saveRDS(perinatal, "shiny_app/data/perinatal_data.rds")
-
-##########################################################.
-## Cancer Data ----
-##########################################################.
-
-cancer <- readRDS(paste0(data_folder,"cancer/cancer_data_2.rds"))
-
-saveRDS(cancer, "shiny_app/data/cancer_data_2.rds")
+saveRDS(perinatal, paste0(data_folder,"final_app_files/perinatal_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Pregnancy (antenatal booking) ----
@@ -1081,6 +1120,8 @@ ante_booking <- ante_booking %>%
   ungroup()
 
 saveRDS(ante_booking, "shiny_app/data/ante_booking_data.rds")
+saveRDS(ante_booking, paste0(data_folder,"final_app_files/ante_booking_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## ANTENATAL DATA DOWNLOAD FILE FOR SHINY APP
 ## Data download to include weekly Scotland data for age/deprivation breakdown PLUS monthly booking data for all NHS boards (even the small island boards)
@@ -1121,6 +1162,8 @@ ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download
          average_gestation_at_booking, centreline_gestation, dottedline_gestation)
 
 saveRDS(ante_booking_download, "shiny_app/data/ante_booking_download.rds")
+saveRDS(ante_booking_download, paste0(data_folder,"final_app_files/ante_booking_download_", 
+                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Pregnancy (terminations) ----
