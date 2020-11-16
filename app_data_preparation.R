@@ -295,7 +295,7 @@ ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
 ooh_cardiac <- ooh_cardiac %>% filter(area_type != "HSC partnership")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-11")
+prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-25")
 
 
 ###############################################.
@@ -383,7 +383,7 @@ sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
 sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-11")
+prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-25")
 
 
 ###############################################.
