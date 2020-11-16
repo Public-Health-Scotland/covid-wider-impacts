@@ -28,13 +28,16 @@ data_table <- reactive({
          "fourtofive_visit" = fourtofivetable,
          "childdev" = child_dev,
          "breastfeeding" = breastfeeding,
-         "perinatal" = perinatal,
-         "top" = top_download ,
-         "ante_booking" = booking_download, 
-         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
-         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
-         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
-        ) %>% 
+        "perinatal" = perinatal,
+        "top" = top_download ,
+        "ante_booking" = booking_download,
+        "induct" = induct_download,
+        "mod"= mod_download,
+        "gestatation" =gestation_download,
+        "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+        "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+        "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
+  ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
     # This is because dropdown prompts on the table filters only appear for factors

@@ -301,21 +301,24 @@ plot_mod_linechart <- function(measure){
   
 plot_data <- mod_linechart_filter() 
 
+pallette <- pal_med
+
 # adjust chart y axis according to what is being displayed
 if(measure == "percent_births"){
-  yaxis_plots[["title"]] <- "Percentage of births(%)" 
-  plot_data <- plot_data %>%
-    filter(mode!="All births")}
-  
+  yaxis_plots[["title"]] <- "Percentage of births (%)" 
+  plot_data <- plot_data %>%  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
+    filter(mode!="All births")
+}
 
 if(measure == "births"){
   yaxis_plots[["title"]] <- "Number of births"
+  plot_data <- plot_data %>% #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
+    filter(mode!="All births")
 }
-
 # Create tooltip for line chart
-tooltip <- c(paste0("Area selected: ",plot_data$area_name,"<br>",
+tooltip <- c(paste0("Mode of delivery: ", plot_data$mode,"<br>",
+                    "Area: ",plot_data$area_name,"<br>",
                     "Month: ",  format(plot_data$month, "%B %Y"),"<br>",
-                    "Mode of delivery: ", plot_data$mode,"<br>",
                     "Number of births: ", plot_data$births,"<br>",
                     "Percentage of births: ", format(plot_data$percent_births,digits = 1,nsmall=1),"%"))
 
@@ -327,7 +330,7 @@ if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   #Creating trend plot
   plot_ly(data=plot_data, x=~month,  y = ~get(measure)) %>%
     add_trace(type = 'scatter', mode = 'lines',
-              color = ~mode,
+              color = ~mode, colors = pallette,
               text= tooltip, hoverinfo="text") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
