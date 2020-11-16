@@ -155,7 +155,9 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
   
   final_data <<- data_2020
   
-  saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
+  saveRDS(data_2020, paste0("shiny_app/data/", filename,".rds"))
+  saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
 }
 
