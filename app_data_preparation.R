@@ -626,17 +626,6 @@ saveRDS(six_dose3_simdtable, paste0(data_folder,"final_app_files/six_dose3_simdt
                                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
-## 6-in-1 hscp data ----
-six_1_hscp <- format_immhscp_table("immunisations/6in1/six in one_1_dashboardtab-hscp_20200622")
-saveRDS(six_1_hscp, paste0("shiny_app/data/","six_dose1_hscp.rds"))
-
-six_2_hscp <- format_immhscp_table("immunisations/6in1/six in one_2_dashboardtab-hscp_20200622")
-saveRDS(six_2_hscp, paste0("shiny_app/data/","six_dose2_hscp.rds"))
-
-six_3_hscp <- format_immhscp_table("immunisations/6in1/six in one_3_dashboardtab-hscp_20200622")
-saveRDS(six_3_hscp, paste0("shiny_app/data/","six_dose3_hscp.rds"))
-
-###############################################.
 # Immunisation definitions ----
 # apply both for MRR and 6 in one
 age_defs_imm_mmr <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
@@ -730,17 +719,6 @@ mmr_dose2_simdtable <- format_immsimd_data(paste0("immunisations/mmr/mmr dose 2_
 saveRDS(mmr_dose2_simdtable, paste0("shiny_app/data/","mmr_dose2_simdtable.rds"))
 saveRDS(mmr_dose2_simdtable, paste0(data_folder,"final_app_files/mmr_dose2_simdtable_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-
-###############################################.
-## MMR hscp data ----
-mmr_1_hscp <- format_immhscp_table("immunisations/mmr/mmr_dose1_dashboardtab-hscp_20200727")
-saveRDS(mmr_1_hscp, paste0("shiny_app/data/","mmr_dose1_hscp.rds"))
-
-mmr_2_hscp <- format_immhscp_table("immunisations/mmr/mmr_dose2_dashboardtab-hscp_20200727")
-saveRDS(mmr_2_hscp, paste0("shiny_app/data/","mmr_dose2_hscp.rds"))
-
-mmr_2_hscp_grampian <- format_immhscp_table("immunisations/mmr/mmr_dose2_dashboardtab_grampian_hscp_20200727")
-saveRDS(mmr_2_hscp_grampian, paste0("shiny_app/data/","mmr_dose2_hscp_grampian.rds"))
 
 ###############################################.
 ## Child health review: first visit ----
@@ -840,16 +818,16 @@ thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
   filter(interv>=371 & interv<=518) 
 
-saveRDS(thirteen, paste0("shiny_app/data/","thirteen_data.rds"))
+saveRDS(thirteen, paste0("shiny_app/data/","thirteen.rds"))
+saveRDS(thirteen, paste0(data_folder,"final_app_files/thirteen_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # 13 to 15 month visit - summary table data
-thirteen_datatable_download <- format_immchild_table("child_health/thirteen_dashboardtab_20201026") 
-
-saveRDS(thirteen_datatable_download, paste0("shiny_app/data/","thirteen_datatable_download.rds"))
-
-thirteen_datatable <- thirteen_datatable_download 
+thirteen_datatable <- format_immchild_table("child_health/thirteen_dashboardtab_20201026") 
 
 saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
+saveRDS(thirteen_datatable, paste0(data_folder,"final_app_files/thirteen_datatable_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Child health review: 27-30 month ----
@@ -877,17 +855,18 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   select (extract_date, review, week_117_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
   filter(interv>=791 & interv<=945) 
 
-saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven_data.rds"))
+saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven.rds"))
+saveRDS(twentyseven, paste0(data_folder,"final_app_files/twentyseven_", 
+                                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
 
 # 27 to 30 month visit - summary table data
 # Data for data download should include complete months and all weeks
-twentyseven_datatable_download <- format_immchild_table("child_health/twentyseven_dashboardtab_20201026") 
-
-saveRDS(twentyseven_datatable_download, paste0("shiny_app/data/","twentyseven_datatable_download.rds"))
-
-twentyseven_datatable <- twentyseven_datatable_download 
+twentyseven_datatable <- format_immchild_table("child_health/twentyseven_dashboardtab_20201026") 
 
 saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
+saveRDS(twentyseven_datatable, paste0(data_folder,"final_app_files/twentyseven_datatable_", 
+                                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Child health review: 4-5 year ----
@@ -915,19 +894,18 @@ fourtofive %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
   select (extract_date, review, week_209_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
   filter(interv>=1428 & interv<=1582)
 
-saveRDS(fourtofive, paste0("shiny_app/data/","fourtofive_data.rds"))
-
+saveRDS(fourtofive, paste0("shiny_app/data/","fourtofive.rds"))
+saveRDS(fourtofive, paste0(data_folder,"final_app_files/fourtofive_", 
+                                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 # 4 to 5 year review - summary table data
 # Data for data download should include complete months and all weeks
-fourtofive_datatable_download <- format_immchild_table("child_health/fourtofive_dashboardtab_20201026") %>% 
+fourtofive_datatable <- format_immchild_table("child_health/fourtofive_dashboardtab_20201026") %>% 
   filter(area_name != "NHS Dumfries & Galloway") %>%  
   filter(area_name != "NHS Highland")
 
-saveRDS(fourtofive_datatable_download, paste0("shiny_app/data/","fourtofive_datatable_download.rds"))
-
-fourtofive_datatable <- fourtofive_datatable_download
-
 saveRDS(fourtofive_datatable, paste0("shiny_app/data/","fourtofive_datatable.rds"))
+saveRDS(fourtofive_datatable, paste0(data_folder,"final_app_files/fourtofive_datatable_", 
+                                      format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Perinatal mortality ----
@@ -1022,7 +1000,7 @@ perinatal %<>%
   ungroup %>% 
   select(-shift_i, -trend_i, -outer_i, -inner_i) 
 
-saveRDS(perinatal, "shiny_app/data/perinatal_data.rds")
+saveRDS(perinatal, "shiny_app/data/perinatal.rds")
 saveRDS(perinatal, paste0(data_folder,"final_app_files/perinatal_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
@@ -1119,7 +1097,7 @@ ante_booking <- ante_booking %>%
   select(-shift_i_booked_no, -trend_i_booked_no,-shift_i_booked_gest, -trend_i_booked_gest) %>%
   ungroup()
 
-saveRDS(ante_booking, "shiny_app/data/ante_booking_data.rds")
+saveRDS(ante_booking, "shiny_app/data/ante_booking.rds")
 saveRDS(ante_booking, paste0(data_folder,"final_app_files/ante_booking_", 
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
@@ -1250,7 +1228,9 @@ top <- bind_rows(top_runchart, top_scot) %>%
   select(-shift_i_top_no, -trend_i_top_no,-shift_i_top_gest, -trend_i_top_gest) %>%
   ungroup()
 
-saveRDS(top, "shiny_app/data/top_data.rds")
+saveRDS(top, "shiny_app/data/top.rds")
+saveRDS(top, paste0(data_folder,"final_app_files/top_", 
+                                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## TERMINATIONS DATA DOWNLOAD FILE FOR SHINY APP
 ## Data download to include monthly Scotland data for age/deprivation breakdown PLUS monthly data for NHS boards (excluding the small island boards)
@@ -1300,6 +1280,8 @@ top_download_scot <- top_scot %>%
 top_download <- bind_rows(top_download_board, top_download_scot)
 
 saveRDS(top_download, "shiny_app/data/top_download.rds")
+saveRDS(top_download, paste0(data_folder,"final_app_files/top_download_", 
+                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Child development ----
@@ -1384,7 +1366,9 @@ child_dev %<>%
 
 remove(child_dev_centreline, child_dev_centreline_scot, child_dev_centreline_hb)
 
-saveRDS(child_dev, "shiny_app/data/child_dev_data.rds")
+saveRDS(child_dev, "shiny_app/data/child_dev.rds")
+saveRDS(child_dev, paste0(data_folder,"final_app_files/child_dev_", 
+                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Breastfeeding ----
@@ -1482,7 +1466,9 @@ breastfeeding %<>%
 
 remove(breastfeeding_centreline)
 
-saveRDS(breastfeeding, "shiny_app/data/breastfeeding_data.rds")
+saveRDS(breastfeeding, "shiny_app/data/breastfeeding.rds")
+saveRDS(breastfeeding, paste0(data_folder,"final_app_files/breastfeeding_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Prescribing - Mental health ----
