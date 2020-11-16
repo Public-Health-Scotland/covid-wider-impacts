@@ -1,5 +1,10 @@
 # This script reads the latest version of each file and saves it in your local repository.
-
+###############################################.
+## Functions ----
+###############################################.
+# Function to save final file from common folder to local app folder
+# Takes two arguments, the dataset filename and the date stamp on the name of the file
+# using a dd_mmm_yy format
 save_final_file <- function(dataset, date_saved) {
   final_data <- readRDS(paste0(data_folder,"final_app_files/", dataset, "_", date_saved, ".rds"))
   saveRDS(final_data, paste0("shiny_app/data/", dataset,".rds"))
@@ -8,9 +13,12 @@ save_final_file <- function(dataset, date_saved) {
 }
 
 ###############################################.
+## Saving data ----
+###############################################.
+###############################################.
 ## Deaths ----
 deaths <- readRDS(paste0(data_folder, "deaths/deaths_data.rds"))
-saveRDS(deaths, "shiny_app/data/deaths_data.rds")
+saveRDS(deaths, "shiny_app/data/deaths.rds")
 saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 ##########################################################.
 ## Cancer ----
@@ -41,6 +49,7 @@ save_final_file("cardio_drugs", "16_Nov_20")
 save_final_file("six_alldose", "16_Nov_20")
 save_final_file("six_dose1_simdtable", "16_Nov_20")
 save_final_file("six_dose2_simdtable", "16_Nov_20")
+save_final_file("six_dose3_simdtable", "16_Nov_20")
 save_final_file("sixinone_datatable", "16_Nov_20")
 ## Immunisations - MMR ----
 save_final_file("mmr_alldose", "16_Nov_20")
