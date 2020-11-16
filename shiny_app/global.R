@@ -93,8 +93,8 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 ## Immunisation Data
 immunisation_extract_date <- "26th October 2020"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
-age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
-age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
+age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
+age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
 
 #Immunisations s-curve data
 six_alldose <- readRDS("data/six_alldose.rds")
@@ -106,21 +106,6 @@ mmrtable <- readRDS("data/mmr_datatable.rds") # mmr summary table (all dose)
 
 #data quality issues require additional data file for NHS grampian
 mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary for just grampian mmr dose 2
-
-#Immunisations SIMD data
-six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
-six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
-six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
-mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
-mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
-
-#Immunisations hscp data
-six_hscp_dose1 <- readRDS("data/six_dose1_hscp.rds")
-six_hscp_dose2 <- readRDS("data/six_dose2_hscp.rds")
-six_hscp_dose3 <- readRDS("data/six_dose3_hscp.rds")
-mmr_hscp_dose1 <- readRDS("data/mmr_dose1_hscp.rds")
-mmr_hscp_dose2 <- readRDS("data/mmr_dose2_hscp.rds")
-mmr_hscp_dose2_grampian <- readRDS("data/mmr_dose2_hscp_grampian.rds")
 
 #Immunisations SIMD data
 six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
