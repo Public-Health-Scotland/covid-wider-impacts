@@ -356,7 +356,7 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
 ###############################################.
 ## Inductions Tab ----
 ###############################################.
-tabPanel(title = "Inductions", icon = icon("hand-holding-medical"), value = "inductions",
+tabPanel(title = "Induction of labour", icon = icon("hand-holding-medical"), value = "inductions",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),

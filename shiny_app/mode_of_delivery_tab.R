@@ -201,9 +201,9 @@ plot_mod_trend <- function(measure, shift, trend){
     centreline_name <- paste0(input$geoname_mod," average up to end Feb 2020") 
     
     # format y axis
-    yname <- "Percentage (%)"
+    yname <- "Percentage of births delivered by caesarean (%)"
     yaxis_plots[["range"]] <- c(0, 40)  # forcing range from 0 to 40%
-    yaxis_plots[["title"]] <- "Percentage (%)"
+    yaxis_plots[["title"]] <- "Percentage of births(%)"
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
@@ -259,14 +259,14 @@ plot_mod_split <- function(dataset, split, measure){
   
   # adjust chart y axis according to what is being displayed
   if(measure == "perc_csection_all"){
-    yaxis_plots[["title"]] <- "Percentage (%)"  
+    yaxis_plots[["title"]] <- "Percentage of births (%)"  
     if(split == "age"){
       yaxis_plots[["range"]] <- c(0, 70)}  # forcing range from 0 to 70% for age group
     if(split == "dep"){
       yaxis_plots[["range"]] <- c(0, 50)}  # forcing range from 0 to 40% for dep
   }
   if(measure == "csection_all"){
-    yaxis_plots[["title"]] <- "Number"
+    yaxis_plots[["title"]] <- "Number of births"
   }
   
   #adjust datasets according to which data split to be displayed
@@ -303,13 +303,13 @@ plot_data <- mod_linechart_filter()
 
 # adjust chart y axis according to what is being displayed
 if(measure == "percent_births"){
-  yaxis_plots[["title"]] <- "Percentage (%)" 
+  yaxis_plots[["title"]] <- "Percentage of births(%)" 
   plot_data <- plot_data %>%
     filter(mode!="All births")}
   
 
 if(measure == "births"){
-  yaxis_plots[["title"]] <- "Number"
+  yaxis_plots[["title"]] <- "Number of births"
 }
 
 # Create tooltip for line chart

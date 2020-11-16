@@ -262,7 +262,7 @@ plot_gest_split <- function(dataset, split, measure){
   
   # adjust chart y axis according to what is being displayed
   if(measure == "perc_under37"){
-     yaxis_plots[["title"]] <- "Percentage births (%)"  
+     yaxis_plots[["title"]] <- "Percentage of births (%)"  
     if(split == "age"){
       yaxis_plots[["range"]] <- c(0, 20)}  # forcing range from 0 to 20% for age group
     if(split == "dep"){
