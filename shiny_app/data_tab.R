@@ -248,7 +248,6 @@ data_table <- reactive({
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
                                                   "5 - least deprived") ~ paste0(category),
                                                   TRUE ~ "All"))
->>>>>>> master
   }
   
   
