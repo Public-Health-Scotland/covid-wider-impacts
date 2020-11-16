@@ -170,9 +170,13 @@ plot_induct_trend <- function(measure, shift, trend){
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
     
-    tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
+    #improve grammar of label to appear in tool tip
+    tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"), split=="dep" ~ paste0("Deprivation group:"))
+    #specify tool tip
+    tooltip_top <- c(paste0(tool_tip_split,dataset$category,"<br>",
+                            "Month: ",format(plot_data$month, "%B %Y"),"<br>",
                             "Percentage: ",format(plot_data$perc_ind_37_42,digits = 1,nsmall=1),"%", "<br>"))
-
+    
     #Creating time trend plot
     plot_ly(data=plot_data, x=~month) %>%
       add_lines(y = ~perc_ind_37_42,  
@@ -203,8 +207,12 @@ plot_induct_split <- function(dataset, split, measure){
   
   plot_data <- dataset
   
+  #improve grammar of label to appear in tool tip
+  tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"), split=="dep" ~ paste0("Deprivation group:"))
+  
   # Create tooltip for line chart
-  tooltip <- c(paste0("Month: ", format(plot_data$month, "%B %Y"),"<br>",
+  tooltip <- c(paste0(tool_tip_split,dataset$category,"<br>",
+    "Month: ", format(plot_data$month, "%B %Y"),"<br>",
                       "Number: ", plot_data$ind_37_42, "<br>",
                       "Percentage: ", format(plot_data$perc_ind_37_42,digits=1,nsmall = 1),"%"))
   

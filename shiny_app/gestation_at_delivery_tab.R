@@ -97,8 +97,6 @@ output$gest_linechart_age_p <- renderPlotly({plot_gest_split(dataset=gest_linech
 output$gest_linechart_dep_n <- renderPlotly({plot_gest_split(dataset=gest_linechart_split(split="dep"),split="dep", measure="births_under37")})
 output$gest_linechart_dep_p <- renderPlotly({plot_gest_split(dataset=gest_linechart_split(split="dep"),split="dep", measure="perc_under37")})
 
-
-
 ###############################################.
 ##  Reactive layout  ----
 ###############################################.
@@ -107,32 +105,29 @@ output$gestation_explorer <- renderUI({
   
   # text for titles of cut charts
   gest_data_timeperiod <-  paste0("Figures based on data extracted ",gestation_extract_date)
-  gest_title <- paste0("Percentage of singleton live births delivered by caesarean section: ",input$geoname_gest)
-  gest_title_detail <-  paste0("(all gestations)")
-  
-  
+  gest_title <- paste0("Percentage of singleton live births by gestation at delivery: ",input$geoname_gest)
+
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Percentage of births by caesarean sections’ charts above, the dots joined by a solid black line show the percentage of births by caesarean sections in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of caesarean sections over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of caesarean sections."))
+            p("On the ‘Percentage of births by gestation at delivery’ charts above, the dots joined by a solid black line show the percentage of births by gestation at delivery in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of deliveries by over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of caesarean sections."))
   
   # Function to create common layout to all immunisation charts
   gest_layout <- function(gest_trend_u32,gest_trend_u37,gest_trend_32_36,gest_trend_42plus,gest_linechart_age_n,gest_linechart_age_p,gest_linechart_dep_n,gest_linechart_dep_p ){
     tagList(fluidRow(column(12,
                             h4(gest_title),
-                            p(gest_title_detail),
                             actionButton("btn_gest_rules", "How do we identify patterns in the data?")),
                      column(6,
-                            h4("All caesarean sections"),
+                            h4("Percentage of singleton live births delivered at <32 weeks gestation"),
                             withSpinner(plotlyOutput("gest_trend_u32")),
-                            h4("Emergency caesarean sections"),
+                            h4("Percentage of singleton live births delivered at 32-36 weeks gestation"),
                             withSpinner(plotlyOutput("gest_trend_32_36"))),
                      column(6,
-                            h4("Elective caesarean sections"),
+                            h4("Percentage of singleton live births delivered at <37 weeks gestation"),
                             withSpinner(plotlyOutput("gest_trend_u37")),
                      #column(4,
-                            h4("Emergency caesarean sections"),
+                            h4("Percentage of singleton live births delivered at >41 weeks gestation"),
                             withSpinner(plotlyOutput("gest_trend_42plus"))),
                      column(12,
                             p(chart_explanation)),
@@ -140,24 +135,23 @@ output$gestation_explorer <- renderUI({
                      if (input$geotype_gest == "Scotland"){
                        tagList(
                          fluidRow(column(12,
-                                         h4("Singleton live births delivered by caesarean section by age group: Scotland"),
-                                         p("(all gestations)"))),
+                                         h4("Singleton live births delivered at <37 weeks gestation by maternal age: Scotland"))),
                          fluidRow(column(6,
-                                         h4("Number of births by caesarean section"),
+                                         h4("Number of births at <37 weeks gestation"),
                                          withSpinner(plotlyOutput("gest_linechart_age_n"))),
                                   column(6,
-                                         h4("Percentage of births by caesarean section"),
+                                         h4("Percentage of births at <37 weeks gestation"),
                                          withSpinner(plotlyOutput("gest_linechart_age_p")))),
                          fluidRow(column(12,
                                          br(), # spacing
-                                         h4("Singleton live births delivered by caesarean section by deprivation: Scotland"),
+                                         h4("Singleton live births delivered at <37 weeks gestation by deprivation: Scotland"),
                                          actionButton("btn_modal_simd_gest", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          fluidRow(column(6,
-                                         h4("Number of births delivered by caesarean section"),
+                                         h4("Number of births at <37 weeks gestation"),
                                          withSpinner(plotlyOutput("gest_linechart_dep_n"))),
                                   column(6,
-                                         h4("Percentage of births delivered by caesarean section"),
+                                         h4("Percentage of births at <37 weeks gestation"),
                                          withSpinner(plotlyOutput("gest_linechart_dep_p"))))
                        )#tagList from if statement
                      }
@@ -206,9 +200,9 @@ plot_gest_trend <- function(measure, shift, trend){
     centreline_name <- paste0(input$geoname_gest," average up to end Feb 2020") 
     
     # format y axis
-    yname <- "Percentage (%)"
-    #yaxis_plots[["range"]] <- c(0, 40)  # forcing range from 0 to 40%
-    yaxis_plots[["title"]] <- "Percentage (%)"
+    yname <- "Percentage births by gestation at delivery"
+    yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 8%
+    yaxis_plots[["title"]] <- "Percentage of births (%)"
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
@@ -256,22 +250,26 @@ plot_gest_trend <- function(measure, shift, trend){
 plot_gest_split <- function(dataset, split, measure){  
   
   plot_data <- dataset
+
+  #improve grammar of label to appear in tool tip
+  tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"), split=="dep" ~ paste0("Deprivation group:"))
   
   # Create tooltip for line chart
-  tooltip <- c(paste0("Month: ", format(plot_data$month, "%B %Y"),"<br>",
+  tooltip <- c(paste0(tool_tip_split,dataset$category,"<br>",
+                      "Month: ", format(plot_data$month, "%B %Y"),"<br>",
                       "Number: ", plot_data$csection_all, "<br>",
                       "Percentage: ", format(plot_data$perc_under37,digits=1,nsmall = 1),"%"))
   
   # adjust chart y axis according to what is being displayed
   if(measure == "perc_under37"){
-    yaxis_plots[["title"]] <- "Percentage (%)"  
+     yaxis_plots[["title"]] <- "Percentage births (%)"  
     if(split == "age"){
-      yaxis_plots[["range"]] <- c(0, 70)}  # forcing range from 0 to 70% for age group
+      yaxis_plots[["range"]] <- c(0, 20)}  # forcing range from 0 to 20% for age group
     if(split == "dep"){
-      yaxis_plots[["range"]] <- c(0, 50)}  # forcing range from 0 to 40% for dep
+      yaxis_plots[["range"]] <- c(0, 20)}  # forcing range from 0 to 20% for dep
   }
   if(measure == "births_under37"){
-    yaxis_plots[["title"]] <- "Number"
+        yaxis_plots[["title"]] <- "Number of births"
   }
   
   #adjust datasets according to which data split to be displayed

@@ -4,7 +4,7 @@
 observeEvent(input$btn_mod_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("need some details about SMR02"),
+               p("***need some details about SMR02**"),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
