@@ -1,8 +1,6 @@
 # they include API keys
 cookie-control.js
 deploying_app.R
-credentials_perinatal.R
-credentials_test.R
 create_credentials.R
 
 #Not needed

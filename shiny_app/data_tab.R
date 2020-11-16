@@ -26,6 +26,7 @@ data_table <- reactive({
          "thirteen_visit" = thirteentable,
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
+         "cancer" = cancer_data2,
          "childdev" = child_dev,
          "breastfeeding" = breastfeeding,
          "perinatal" = perinatal,
@@ -205,6 +206,15 @@ data_table <- reactive({
              "Number of deaths" = number_of_deaths_in_month,
              "Rate" = rate,
              "Type" = type)
+  } else if (input$data_select %in% "cancer") {
+    table_data <- table_data %>%
+      select(area, site, sex, week_ending, count19, count20, difference) %>%
+      mutate("Variation (%)" = format(round(difference, 2), nsmall = 2)) %>% 
+      rename("Area name" = area, "Cancer Type" = site,
+             "Sex" = sex,
+             "Week Ending" = week_ending,
+             "Count 2019" = count19,
+             "Count 2020" = count20)
   } else if (input$data_select %in% "childdev") {
     table_data %<>%
       select(area_name, month_review, review, number_reviews = no_reviews, 
@@ -238,6 +248,7 @@ data_table <- reactive({
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
                                                   "5 - least deprived") ~ paste0(category),
                                                   TRUE ~ "All"))
+>>>>>>> master
   }
   
   

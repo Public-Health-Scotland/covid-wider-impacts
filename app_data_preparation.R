@@ -979,6 +979,14 @@ perinatal %<>%
 
 saveRDS(perinatal, "shiny_app/data/perinatal_data.rds")
 
+##########################################################.
+## Cancer Data ----
+##########################################################.
+
+cancer <- readRDS(paste0(data_folder,"cancer/cancer_data_2.rds"))
+
+saveRDS(cancer, "shiny_app/data/cancer_data_2.rds")
+
 ###############################################.
 ## Pregnancy (antenatal booking) ----
 ###############################################.

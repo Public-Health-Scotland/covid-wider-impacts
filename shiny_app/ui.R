@@ -86,7 +86,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
                           actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
                           actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
-                          actionLink("mentalhealth_button", "Mental health", width="150px")
+                          actionLink("mentalhealth_button", "Mental health", width="150px"),
+                          actionLink("cancer_button", "Cancer", width="150px")
                          ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
@@ -99,7 +100,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
                                      bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
                                      bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
-                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary"))
+                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
+                                     bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
                           )))
 ), #tab panel
 ###############################################.
@@ -281,6 +283,36 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
   ) # tabpanel bracket
 ), #navbarMenu bracket
 ###############################################.
+## Cancer ----
+###############################################.
+tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
+  wellPanel(
+           column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.", 
+                                 choices= c("Scotland", "Cancer Network", "Health Board"),
+                                     selected = "Scotland"),
+                  uiOutput("geoname_ui_cancer")),
+                  
+           column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
+                                     selected = "All Malignant Neoplasms (Excl. C44)"),
+                     div(radioButtons("gender", "Step 3. Select sex", 
+                                      list("All Persons","Male","Female"), inline = TRUE, 
+                                      selected = "All Persons"))),
+                     # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
+           
+           column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton('download_cancer_data', 'Download data'),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_cancer','Go to commentary'),
+                  fluidRow(br()))
+                  # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"), 
+                  #                  inline = TRUE, selected = "Cumulative")))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("cancer_explorer")
+         )# mainPanel bracket
+), # tabpanel bracket
+###############################################
 ## Mental Health ----
 ###############################################.
 tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
@@ -361,4 +393,5 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
       ) # tabpanel bracket
     )# page bracket
  )# taglist bracket
+# )#secure app
 #END

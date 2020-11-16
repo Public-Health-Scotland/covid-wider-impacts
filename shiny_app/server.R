@@ -12,15 +12,14 @@ function(input, output, session) {
     reactiveValuesToList(res_auth)
   })
   
-  
   # For debugging
    # observeEvent(input$browser, browser())
 
-  ###############################################.
-  ## Functions 
+  ##############################################.
+  # Functions
   # Sourcing file with functions code
   source(file.path("functions_server.R"),  local = TRUE)$value
-  
+
   ###############################################.
   # Summary trends tab
   source(file.path("summary_tab.R"),  local = TRUE)$value
@@ -59,6 +58,10 @@ function(input, output, session) {
   source(file.path("mental_health_tab.R"),  local = TRUE)$value
 
   ###############################################.
+  # Cancer tab
+  source(file.path("cancer_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
   # Data tab
   source(file.path("data_tab.R"),  local = TRUE)$value
   
@@ -75,9 +78,10 @@ function(input, output, session) {
   observeEvent(input$jump_to_perinatal_mortality, {updateTabsetPanel(session, "intabset", selected = "perinatal")})
   observeEvent(input$jump_to_booking, {updateTabsetPanel(session, "intabset", selected = "booking")})
   observeEvent(input$jump_to_top, {updateTabsetPanel(session, "intabset", selected = "terminations")})
-   observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
+  observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
   observeEvent(input$jump_to_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "mentalhealth")})
+  observeEvent(input$jump_to_cancer, {updateTabsetPanel(session, "intabset", selected = "cancer")})
   
 # To jump to commentary tab and ensures correct panel is expanded - requires multiple lines becuase action buttons must have unique ID
   observeEvent(input$jump_commentary_child, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -109,7 +113,10 @@ function(input, output, session) {
   
    observeEvent(input$jump_commentary_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Mental health")})
-  
+   
+   observeEvent(input$jump_commentary_cancer, {updateTabsetPanel(session, "intabset", selected = "comment")
+     updateCollapse(session, "collapse_commentary", open = "Cancer")})
+   
   observeEvent(input$jump_commentary_oohissue, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_oohissue_sum, {updateTabsetPanel(session, "intabset", selected = "comment")})
   
@@ -144,5 +151,8 @@ function(input, output, session) {
   
   observeEvent(input$top_button, ({
     updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")}))
+  
+  observeEvent(input$cancer_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Cancer")}))
   
 } # server end
