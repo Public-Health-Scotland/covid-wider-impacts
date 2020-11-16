@@ -14,6 +14,7 @@ library(tidyr) # for wide to long formatting
 library(readxl) # reading excel
 library(flextable)
 library(magrittr)
+library(haven)
 
 ###############################################.
 ## Filepaths ----
