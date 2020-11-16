@@ -1,6 +1,5 @@
 ##Server script for pregnancy gestation at delivery tab
 
-
 # Pop-up modal explaining source of data
 observeEvent(input$btn_gest_modal, 
              showModal(modalDialog(
@@ -154,15 +153,15 @@ output$gestation_explorer <- renderUI({
                                          h4("Percentage of births at <37 weeks gestation"),
                                          withSpinner(plotlyOutput("gest_linechart_dep_p"))))
                        )#tagList from if statement
-                     }
-                     # column(12,
-                     #        br(), #sapcing
-                     #        h4(paste0("Singleton live births by mode of delivery: ",input$geoname_mod))),
-                     # column(6,
-                     #        p("Number of births"),
+                     },
+                      column(12,
+                             br(), #spacing
+                             h4(paste0("Singleton live births by gestation at delivery: ",input$geoname_mod))),
+                      column(6,
+                             p("Number of births")),
                      #        withSpinner(plotlyOutput("mod_linechart_number"))),
-                     # column(6,
-                     #        p("Percentage of births"),
+                      column(6,
+                             p("Percentage of births"))#,
                      #        withSpinner(plotlyOutput("mod_linechart_percent")))
     ))}
   
@@ -175,8 +174,8 @@ output$gestation_explorer <- renderUI({
              gest_linechart_age_p="gest_linechart_age_p",
              gest_linechart_dep_n="gest_linechart_dep_n",
              gest_linechart_dep_p="gest_linechart_dep_p")})
-             # mod_linechart_number="mod_linechart_number",
-             # mod_linechart_percent="mod_linechart_percent")
+             # gest_linechart_number="gest_linechart_number",
+             # gest_linechart_percent="gest_linechart_percent")
 
 
 #############################################.

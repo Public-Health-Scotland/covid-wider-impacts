@@ -157,7 +157,7 @@ output$mod_explorer <- renderUI({
                        )#tagList from if statement
                      },
                      column(12,
-                            br(), #sapcing
+                            br(), #spacing
                             h4(paste0("Singleton live births by mode of delivery: ",input$geoname_mod))),
                      column(6,
                             p("Number of births"),
