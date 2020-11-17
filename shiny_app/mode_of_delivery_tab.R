@@ -80,21 +80,20 @@ mod_linechart_filter <- function(){
 ## Mode of delivery Charts ----
 ###############################################.
 
-# chart outputs for trend
+# chart outputs for trend runcharts
 output$mod_trend_csection_all <- renderPlotly({plot_mod_trend(measure="perc_csection_all", shift = "csection_all_shift", trend = "csection_all_trend")})
 output$mod_trend_csection_elec <- renderPlotly({plot_mod_trend(measure="perc_csection_elec", shift = "csection_elec_shift", trend = "csection_elec_trend")})
 output$mod_trend_csection_emer <- renderPlotly({plot_mod_trend(measure="perc_csection_emer", shift = "csection_emer_shift", trend = "csection_emer_trend")})
 
+#chart outputs for line charts for NHS board and Scot
 output$mod_linechart_number <- renderPlotly({plot_mod_linechart(measure="births")})
 output$mod_linechart_percent <- renderPlotly({plot_mod_linechart(measure="percent_births")})
 
+#chart outputs for line charts for Scotland only age and deprivation line charts
 output$mod_linechart_age_n <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="age"),split="age", measure="csection_all")})
 output$mod_linechart_age_p <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="age"),split="age", measure="perc_csection_all")})
-
 output$mod_linechart_dep_n <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="dep"),split="dep", measure="csection_all")})
 output$mod_linechart_dep_p <- renderPlotly({plot_mod_split(dataset=mod_linechart_split(split="dep"),split="dep", measure="perc_csection_all")})
-
-
 
 ###############################################.
 ##  Reactive layout  ----

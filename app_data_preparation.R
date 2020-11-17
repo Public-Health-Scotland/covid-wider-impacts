@@ -1254,8 +1254,8 @@ saveRDS(top_download, "shiny_app/data/top_download.rds")
 ## Pregnancy (mode of delivery) ----
 ###############################################.
 #field with date data files prepared
-mod_folder <- "20201013"
-mod_date <- "2020-10-13"
+mod_folder <- "20201116"
+mod_date <- "2020-11-16"
 
 ##mode of delivery data supplied in 4 files: runchart data, line charts for scotland (age and dep split), line charts for NHS board and data download
 
@@ -1305,7 +1305,7 @@ mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder
 saveRDS(mod_scot, "shiny_app/data/mod_scot_data.rds")
 
 ## 3- LINECHART DATA mode of delivery for Scotland & NHS board
-mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_MODEOFDELIVERY_LINECHART_",mod_date,".rds")) %>%  
+mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_LINECHART_mode_",mod_date,".rds")) %>%  
   janitor::clean_names() %>%
   rename(area_name=hbres, month=date) %>%
   mutate(month=as.Date(month, format="%Y-%m-%d "),
@@ -1339,8 +1339,8 @@ saveRDS(mod_download, "shiny_app/data/mod_download_data.rds")
 ###############################################.
 ## Pregnancy (inductions) ----
 ###############################################.
-induct_folder <- "20201013"
-induct_date <- "2020-10-13"
+induct_folder <- "20201116"
+induct_date <- "2020-11-16"
 
 ## 1-RUNCHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
@@ -1379,8 +1379,22 @@ induct_scot <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder
 
 saveRDS(induct_scot, "shiny_app/data/induct_scot_data.rds")
 
+## 3- LINECHART DATA inductions for Scotland & NHS board
+induct_linechart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_LINECHART_induced_",induct_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date) %>%
+  mutate(month=as.Date(month, format="%Y-%m-%d "),
+         type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         area_type = type, 
+         category="All") %>%
+  group_by(area_name, month) %>% 
+  mutate(percent_ind_births=(ind_37_42/births_37_42)*100) %>% 
+  ungroup()
 
-## 3- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
+saveRDS(induct_linechart, "shiny_app/data/induct_linechart_data.rds")  
+
+## 4- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
 induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_DOWNLOAD_induced_",induct_date,".csv"))%>%  
   janitor::clean_names() %>%
   mutate(date=as.Date(date,format="%Y-%m-%d"),
@@ -1398,8 +1412,8 @@ saveRDS(induct_download, "shiny_app/data/induct_download_data.rds")
 ## Pregnancy (gestation at delivery) ----
 ###############################################.
 
-gestation_folder <- "20201013"
-gestation_date <- "2020-10-13"
+gestation_folder <- "20201116"
+gestation_date <- "2020-11-16"
 
 ## 1-RUNCHART DATA
 gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_RUNCHART_gestation_",gestation_date,".rds")) %>%  
@@ -1449,7 +1463,24 @@ gestation_scot <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/"
 
 saveRDS(gestation_scot, "shiny_app/data/gestation_scot_data.rds")
 
-## 3- DATA DOWNLOAD FILE FOR SHINY APP
+## 3- LINECHART DATA gestation for Scotland & NHS board
+gestation_linechart <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_LINECHART_gestation_",gestation_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date) %>%
+  mutate(month=as.Date(month, format="%Y-%m-%d "),
+         type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         area_type = type, 
+         category="All") %>%
+  group_by(area_name, month) %>% 
+ # mutate(tot_births=sum(births_37_42/2), # divide by two because total births already a row in the dataset
+  #       percent_births=(births_37_42/tot_births)*100) %>% 
+  ungroup()
+
+saveRDS(induct_linechart, "shiny_app/data/gestation_linechart_data.rds")  
+
+
+## 4- DATA DOWNLOAD FILE FOR SHINY APP
 gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_DOWNLOAD_gestation_",gestation_date,".csv"))%>%  
   janitor::clean_names() %>%
   mutate(date=as.Date(date,format="%Y-%m-%d"),

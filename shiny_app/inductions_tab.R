@@ -69,6 +69,14 @@ induct_linechart_split <- function(split){
                          type==split)
 }
 
+#Dataset behind line chart  (available at scotland and NHS board level)
+induct_linechart_filter <- function(){
+  
+  induct_linechart %>% filter(area_name == input$geoname_induct &
+                                area_type == input$geotype_induct &
+                                type %in% c("Scotland","Health board"))
+}
+
 ###############################################.
 ## Induction Chart calls to chart function ----
 ###############################################.
@@ -76,9 +84,13 @@ induct_linechart_split <- function(split){
 # chart outputs for trend
 output$induct_trend <- renderPlotly({plot_induct_trend(measure="perc_ind_37_42",shift = "induction_shift", trend = "induction_trend")})
 
+#chart outputs for line charts for NHS board and Scot
+output$induct_linechart_number <- renderPlotly({plot_induct_linechart(measure="number")})
+output$induct_linechart_percent <- renderPlotly({plot_induct_linechart(measure="percent")})
+
+#chart outputs for line charts for Scotland only age and deprivation line charts
 output$induct_linechart_age_n <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="age"),split="age", measure="ind_37_42")})
 output$induct_linechart_age_p <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="age"),split="age", measure="perc_ind_37_42")})
-
 output$induct_linechart_dep_n <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="dep"),split="dep", measure="ind_37_42")})
 output$induct_linechart_dep_p <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="dep"),split="dep", measure="perc_ind_37_42")})
 
@@ -100,7 +112,7 @@ output$induct_explorer <- renderUI({
             p("On the ‘Percentage of deliveries following induction of labour’ chart above, the dots joined by a solid black line show the percentage of births following induction of labour in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of births following induction of labour over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of deliveries following induction of labour."))
   
   # Function to create common layout to all immunisation charts
-  induct_layout <- function(induct_trend,induct_linechart_age_n,induct_linechart_age_p,induct_linechart_dep_n,induct_linechart_dep_p){
+  induct_layout <- function(induct_trend,induct_linechart_age_n,induct_linechart_age_p,induct_linechart_dep_n,induct_linechart_dep_p,induct_linechart_number,induct_linechart_percent){
     tagList(fluidRow(column(12,
                             h4(paste0("Percentage ", induct_title)),
                             p(induct_title_detail),
@@ -132,14 +144,27 @@ output$induct_explorer <- renderUI({
                                          h4("Percentage of births following induction of labour"),
                                          withSpinner(plotlyOutput("induct_linechart_dep_p"))))
                        )#tagList from if statement
-                     }))}
-
+                     },
+                     column(12,
+                            br(), #spacing
+                            h4(paste0("Singleton live birth deliveries following induction of labour: ",input$geoname_induct)),
+                            p("(37-42 weeks gestation)")),
+                     column(6,
+                            p("Number of births"),
+                            withSpinner(plotlyOutput("induct_linechart_number"))),
+                     column(6,
+                            p("Percentage of births"),
+                            withSpinner(plotlyOutput("induct_linechart_percent")))))}
+                     
+           
   # #link plot functions to layouts
   induct_layout(induct_trend="induct_trend",
              induct_linechart_age_n="induct_linechart_age_n",
              induct_linechart_age_p="induct_linechart_age_p",
              induct_linechart_dep_n="induct_linechart_dep_n",
-             induct_linechart_dep_p="induct_linechart_dep_p")
+             induct_linechart_dep_p="induct_linechart_dep_p",
+             induct_linechart_number="induct_linechart_number",
+             induct_linechart_percent="induct_linechart_percent")
 })
 
 
@@ -151,7 +176,6 @@ output$induct_explorer <- renderUI({
 ## Function could be simplified to run without parameters but copied logic from other pregnancy tabs therefore easier to keep same structure.
 
 plot_induct_trend <- function(measure, shift, trend){  
-  
   plot_data <- induct_filter()
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
@@ -199,7 +223,62 @@ plot_induct_trend <- function(measure, shift, trend){
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }}
 
-## LINECHART SCOTLAND: caesarean delivery by age group and deprivation, numbers and percentages - Scotland level only
+#####################################################################################################################
+## LINECHART SCOTLAND & NHS BOARD: births (37-42 weeks gestation) where delivery induced, numbers and percentages - Scotland level only
+
+plot_induct_linechart <- function(measure){  
+  
+  plot_data <- induct_linechart_filter() 
+
+  #pallette <- pal_med
+  
+  # adjust chart y axis according to what is being displayed
+  if(measure == "number"){
+    y1name <- "Number of births following induction"
+    y2name <- "Total number of births"
+    yaxis_plots[["title"]] <- "Number of births" 
+    y1 <- plot_data$ind_37_42
+    y2 <- plot_data$births_37_42
+  }
+  
+  if(measure == "percent"){
+    y1name <- "Number of births following induction(%)"
+    yaxis_plots[["title"]] <- "Percentage of births (%)"
+    yaxis_plots[["range"]] <- c(0, 60)  # forcing range from 0 to 60%
+    y1 <- plot_data$percent_ind_births
+  
+    # dont really need a second line on the chart as % would be 100 but can't find a way to make chart work
+    y2 <- plot_data$percent_ind_births
+    y2name <- "(%)"
+  }
+  
+  # Create tooltip for line chart
+  tooltip <- c(paste0("Deliveries following induction of labour","<br>",
+                      "Area: ",plot_data$area_name,"<br>",
+                      "Month: ",  format(plot_data$month, "%B %Y"),"<br>",
+                      "Number of births: ", plot_data$births_37_42,"<br>",
+                      "Percentage of births: ", format(plot_data$percent_ind_births,digits = 1,nsmall=1),"%"))
+  
+  if (is.data.frame(plot_data) && nrow(plot_data) == 0)
+  { plot_nodata(height = 50, 
+                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
+  } else {
+    
+    #Creating trend plot
+    plot_ly(data=plot_data, x=~month) %>%
+      add_lines(y = ~y1,line = list(color = "black"),text=tooltip,name = y1name,hoverinfo="text") %>% 
+      #if(measure == "number"){
+      add_lines(y = ~y2,line = list(color = "blue"), text=tooltip,name = y2name,hoverinfo="text") %>%
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(orientation = 'h')) %>% #position of legend underneath plot
+      #leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
+}
+
+#####################################################################################################################
+## LINECHART SCOTLAND: inductced deliveries by age group and deprivation, numbers and percentages - Scotland level only
 plot_induct_split <- function(dataset, split, measure){  
   
   plot_data <- dataset
