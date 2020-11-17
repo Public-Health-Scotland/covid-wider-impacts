@@ -1382,15 +1382,20 @@ saveRDS(induct_scot, "shiny_app/data/induct_scot_data.rds")
 ## 3- LINECHART DATA inductions for Scotland & NHS board
 induct_linechart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_LINECHART_induced_",induct_date,".rds")) %>%  
   janitor::clean_names() %>%
+  mutate(tot_births_37_42=births_37_42) %>%
+  #reshape data file for ease of creation of line chart with percentages
+  pivot_longer(cols = ind_37_42:births_37_42, names_to = "ind",values_to = "births") %>%
   rename(area_name=hbres, month=date) %>%
   mutate(month=as.Date(month, format="%Y-%m-%d "),
          type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type = type, 
-         category="All") %>%
-  group_by(area_name, month) %>% 
-  mutate(percent_ind_births=(ind_37_42/births_37_42)*100) %>% 
-  ungroup()
+         category="All",
+         percent_births=format(((births/tot_births_37_42)*100),digits=1, nsmall=1),
+         #NOTE the gestation categories are not mutually exclusive - <37 contains <32
+         ind=case_when(ind=="ind_37_42" ~ "Induced (37-42 weeks)",
+                       ind=="births_37_42" ~ "Total births (37-42 weeks)",
+                       TRUE~as.character(ind))) 
 
 saveRDS(induct_linechart, "shiny_app/data/induct_linechart_data.rds")  
 
@@ -1466,19 +1471,26 @@ saveRDS(gestation_scot, "shiny_app/data/gestation_scot_data.rds")
 ## 3- LINECHART DATA gestation for Scotland & NHS board
 gestation_linechart <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_LINECHART_gestation_",gestation_date,".rds")) %>%  
   janitor::clean_names() %>%
+  mutate(tot_births_18_44=births_18_44) %>%
+  #reshape data file for ease of creation of line chart with percentages
+  pivot_longer(cols = births_under32:births_18_44, names_to = "gest",values_to = "births") %>%
   rename(area_name=hbres, month=date) %>%
   mutate(month=as.Date(month, format="%Y-%m-%d "),
          type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type = type, 
-         category="All") %>%
-  group_by(area_name, month) %>% 
- # mutate(tot_births=sum(births_37_42/2), # divide by two because total births already a row in the dataset
-  #       percent_births=(births_37_42/tot_births)*100) %>% 
-  ungroup()
+         category="All",
+         percent_births=format(((births/tot_births_18_44)*100),digits=1, nsmall=1),
+         #NOTE the gestation categories are not mutually exclusive - <37 contains <32
+         gest=case_when(gest=="births_under32" ~ "Under 32 weeks",
+                        gest=="births_under37" ~ "Under 37 weeks",
+                        gest=="births_32_36" ~ "32 to 36 weeks",
+                        gest=="births_37_41" ~ "37 to 41 weeks",
+                        gest=="births_18_44" ~ "18 to 44 weeks",
+                        gest=="births_42plus" ~ "42 weeks plus",
+                        TRUE~as.character(gest))) 
 
-saveRDS(induct_linechart, "shiny_app/data/gestation_linechart_data.rds")  
-
+saveRDS(gestation_linechart, "shiny_app/data/gestation_linechart_data.rds")  
 
 ## 4- DATA DOWNLOAD FILE FOR SHINY APP
 gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_DOWNLOAD_gestation_",gestation_date,".csv"))%>%  

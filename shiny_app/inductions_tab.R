@@ -85,8 +85,8 @@ induct_linechart_filter <- function(){
 output$induct_trend <- renderPlotly({plot_induct_trend(measure="perc_ind_37_42",shift = "induction_shift", trend = "induction_trend")})
 
 #chart outputs for line charts for NHS board and Scot
-output$induct_linechart_number <- renderPlotly({plot_induct_linechart(measure="number")})
-output$induct_linechart_percent <- renderPlotly({plot_induct_linechart(measure="percent")})
+output$induct_linechart_number <- renderPlotly({plot_induct_linechart(measure="births")})
+output$induct_linechart_percent <- renderPlotly({plot_induct_linechart(measure="percent_births")})
 
 #chart outputs for line charts for Scotland only age and deprivation line charts
 output$induct_linechart_age_n <- renderPlotly({plot_induct_split(dataset=induct_linechart_split(split="age"),split="age", measure="ind_37_42")})
@@ -225,39 +225,30 @@ plot_induct_trend <- function(measure, shift, trend){
 
 #####################################################################################################################
 ## LINECHART SCOTLAND & NHS BOARD: births (37-42 weeks gestation) where delivery induced, numbers and percentages - Scotland level only
-
 plot_induct_linechart <- function(measure){  
   
   plot_data <- induct_linechart_filter() 
-
-  #pallette <- pal_med
+  
+  pallette <- pal_age
   
   # adjust chart y axis according to what is being displayed
-  if(measure == "number"){
-    y1name <- "Number of births following induction"
-    y2name <- "Total number of births"
-    yaxis_plots[["title"]] <- "Number of births" 
-    y1 <- plot_data$ind_37_42
-    y2 <- plot_data$births_37_42
+  if(measure == "percent_births"){
+    yaxis_plots[["title"]] <- "Percentage of births (%)" 
+    plot_data <- plot_data %>%  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
+      filter(ind!="Total births (37-42 weeks)")
   }
   
-  if(measure == "percent"){
-    y1name <- "Number of births following induction(%)"
-    yaxis_plots[["title"]] <- "Percentage of births (%)"
-    yaxis_plots[["range"]] <- c(0, 60)  # forcing range from 0 to 60%
-    y1 <- plot_data$percent_ind_births
-  
-    # dont really need a second line on the chart as % would be 100 but can't find a way to make chart work
-    y2 <- plot_data$percent_ind_births
-    y2name <- "(%)"
+  if(measure == "births"){
+    yaxis_plots[["title"]] <- "Number of births"
+    # plot_data <- plot_data %>% #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
+    #   filter(gest!="18 to 44 weeks")
   }
-  
   # Create tooltip for line chart
-  tooltip <- c(paste0("Deliveries following induction of labour","<br>",
+  tooltip <- c(paste0("Deliveries following induction of labour: ", plot_data$ind,"<br>",
                       "Area: ",plot_data$area_name,"<br>",
                       "Month: ",  format(plot_data$month, "%B %Y"),"<br>",
-                      "Number of births: ", plot_data$births_37_42,"<br>",
-                      "Percentage of births: ", format(plot_data$percent_ind_births,digits = 1,nsmall=1),"%"))
+                      "Number of births: ", plot_data$births,"<br>",
+                      "Percentage of births: ", format(plot_data$percent_births,digits = 1,nsmall=1),"%"))
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
@@ -265,10 +256,10 @@ plot_induct_linechart <- function(measure){
   } else {
     
     #Creating trend plot
-    plot_ly(data=plot_data, x=~month) %>%
-      add_lines(y = ~y1,line = list(color = "black"),text=tooltip,name = y1name,hoverinfo="text") %>% 
-      #if(measure == "number"){
-      add_lines(y = ~y2,line = list(color = "blue"), text=tooltip,name = y2name,hoverinfo="text") %>%
+    plot_ly(data=plot_data, x=~month,  y = ~get(measure)) %>%
+      add_trace(type = 'scatter', mode = 'lines',
+                color = ~ind, colors = pallette,
+                text= tooltip, hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots,  xaxis = xaxis_plots,
@@ -276,6 +267,7 @@ plot_induct_linechart <- function(measure){
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
 }
+
 
 #####################################################################################################################
 ## LINECHART SCOTLAND: inductced deliveries by age group and deprivation, numbers and percentages - Scotland level only
