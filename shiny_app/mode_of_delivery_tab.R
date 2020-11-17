@@ -4,9 +4,10 @@
 observeEvent(input$btn_mod_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("***need some details about SMR02**"),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+               p("These data are derived from the Scottish Morbidity Record 02 (SMR02). An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient obstetric care, mainly categorised as an antenatal, a postnatal or a delivery episode. The data used for these indicators are from the delivery episode and are based on month of discharge from hospital of the woman after the delivery episode. Only singleton live births are included. From October 2019 the guidance for reporting on homebirths was updated, enabling maternity units to submit an SMR02 record for a homebirth."),
+               p("Although there is no legal requirement to submit these data to PHS, the level of submission falls only slightly short of the National Records for Scotland (NRS) statutory birth registrations. For the period 1 April 2018 to 31 March 2019, live births recorded on SMR02 represented 98.4% of the live births registered with NRS. Further information based on SMR02 data is also available from the annual ",
+                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/congenital-anomalies-in-scotland/", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
+               size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
 observeEvent(input$btn_mod_rules,
@@ -52,7 +53,7 @@ output$geoname_ui_mod <- renderUI({
 ##  Reactive datasets  ----
 ###############################################.
 
-#Dataset behind trend run chart  (available at scotland and NHS board level)
+#Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 mod_filter <- function(){
   
   mod_runchart %>% filter(area_name == input$geoname_mod &
@@ -60,7 +61,7 @@ mod_filter <- function(){
                             type %in% c("Scotland","Health board")) 
 }
 
-#Dataset behind line charts for age and deprivation (available for scotland only)
+#Dataset 2: behind line charts for age and deprivation (available for scotland only)
 mod_linechart_split <- function(split){
   
   mod_scot  %>% filter(area_name == "Scotland" &
@@ -68,7 +69,7 @@ mod_linechart_split <- function(split){
                     type==split)
 }
 
-#Dataset behind line chart  (available at scotland and NHS board level)
+#Dataset 3: behind line chart (available at scotland and NHS board level)
 mod_linechart_filter <- function(){
   
   mod_linechart %>% filter(area_name == input$geoname_mod &
@@ -106,7 +107,6 @@ output$mod_explorer <- renderUI({
   mod_title <- paste0("Percentage of singleton live births delivered by caesarean section: ",input$geoname_mod)
   mod_title_detail <-  paste0("(all gestations)")
 
-
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
@@ -129,6 +129,7 @@ output$mod_explorer <- renderUI({
                             h4("Emergency caesarean sections"),
                             withSpinner(plotlyOutput("mod_trend_csection_emer"))),
                      column(12,
+                            p(mod_data_timeperiod),
                             p(chart_explanation)),
                      #only if scotland selected display age and deprivation breakdowns
                      if (input$geotype_mod == "Scotland"){
@@ -157,7 +158,7 @@ output$mod_explorer <- renderUI({
                      },
                      column(12,
                             br(), #spacing
-                            h4(paste0("Singleton live births by mode of delivery: ",input$geoname_mod))),
+                            h4(paste0("Singleton live births by method of delivery: ",input$geoname_mod))),
                      column(6,
                             p("Number of births"),
                             withSpinner(plotlyOutput("mod_linechart_number"))),
@@ -180,10 +181,10 @@ output$mod_explorer <- renderUI({
 
 
 #############################################.
-## Mode of delivery chart functions ----
+## Method of delivery chart functions ----
 ############################################.
 
-## Runchart trend chart for monthly c-section percentages : Scotland & NHS Board (except island boards) 
+## RUNCHART trend chart for monthly c-section percentages : Scotland & NHS Board (except island boards) 
 ## Rather than try and present all the modes of delivery we have opted just to produce a run chart
 ## showing rates of c-section (by type all, emergency, elective) as these are the modes of deliver that people most want to see
 
@@ -245,7 +246,7 @@ plot_mod_trend <- function(measure, shift, trend){
   }}
 
 
-
+#####################################################################################################################
 ## LINECHART SCOTLAND: caesarean delivery by age group and deprivation, numbers and percentages - Scotland level only
 plot_mod_split <- function(dataset, split, measure){  
 
@@ -293,7 +294,7 @@ plot_mod_split <- function(dataset, split, measure){
   
 }
 
-
+#####################################################################################################################
 ## LINECHART SCOTLAND & NHS BOARD: Births by mode of delivery numbers and percentages
 
 plot_mod_linechart <- function(measure){  
@@ -372,4 +373,4 @@ output$mod_commentary <- renderUI({
 })
 
 
-
+##END

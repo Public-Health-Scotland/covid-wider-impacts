@@ -377,7 +377,7 @@ tabPanel(title = "Induction of labour", icon = icon("hand-holding-medical"), val
 ###############################################.
 ## Mode of delivery Tab ----
 ###############################################.
-tabPanel(title = "Mode of delivery", icon = icon("hospital-user"), value = "mod",
+tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mod",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),

@@ -4,9 +4,10 @@
 observeEvent(input$btn_induct_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("need some details about SMR02"),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+               p("These data are derived from the Scottish Morbidity Record 02 (SMR02). An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient obstetric care, mainly categorised as an antenatal, a postnatal or a delivery episode. The data used for these indicators are from the delivery episode and are based on month of discharge from hospital of the woman after the delivery episode. Only singleton live births are included. From October 2019 the guidance for reporting on homebirths was updated, enabling maternity units to submit an SMR02 record for a homebirth."),
+               p("Although there is no legal requirement to submit these data to PHS, the level of submission falls only slightly short of the National Records for Scotland (NRS) statutory birth registrations. For the period 1 April 2018 to 31 March 2019, live births recorded on SMR02 represented 98.4% of the live births registered with NRS. Further information based on SMR02 data is also available from the annual ",
+                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/congenital-anomalies-in-scotland/", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
+               size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
 observeEvent(input$btn_induct_rules,
@@ -53,7 +54,7 @@ output$geoname_ui_induct <- renderUI({
 ##  Reactive datasets  ----
 ###############################################.
 
-#Dataset behind trend run chart  (available at scotland and NHS board level)
+#Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 induct_filter <- function(){
   
   induct_runchart %>% filter(area_name == input$geoname_induct &
@@ -61,7 +62,7 @@ induct_filter <- function(){
                             type %in% c("Scotland","Health board")) 
 }
 
-#Dataset behind line charts for age and deprivation (available for scotland only)
+#Dataset 2: behind line charts for age and deprivation (available for scotland only)
 induct_linechart_split <- function(split){
   
   induct_scot  %>% filter(area_name == "Scotland" &
@@ -69,7 +70,7 @@ induct_linechart_split <- function(split){
                          type==split)
 }
 
-#Dataset behind line chart  (available at scotland and NHS board level)
+#Dataset 3: behind line chart  (available at scotland and NHS board level)
 induct_linechart_filter <- function(){
   
   induct_linechart %>% filter(area_name == input$geoname_induct &
@@ -119,6 +120,7 @@ output$induct_explorer <- renderUI({
                             actionButton("btn_induct_rules", "How do we identify patterns in the data?"),
                             withSpinner(plotlyOutput("induct_trend"))),
                      column(12,
+                            p(induct_data_timeperiod),
                             p(chart_explanation)),
                      #only if scotland selected display age and deprivation breakdowns
                      if (input$geotype_induct == "Scotland"){
@@ -172,7 +174,7 @@ output$induct_explorer <- renderUI({
 ## Induction chart functions ----
 ############################################.
 
-## Runchart trend chart for monthly inductions percentages: Scotland & NHS Board (except island boards) 
+## RUNCHART trend chart for monthly inductions percentages: Scotland & NHS Board (except island boards) 
 ## Function could be simplified to run without parameters but copied logic from other pregnancy tabs therefore easier to keep same structure.
 
 plot_induct_trend <- function(measure, shift, trend){  
@@ -229,22 +231,29 @@ plot_induct_linechart <- function(measure){
   
   plot_data <- induct_linechart_filter() 
   
+  #arrange sort order for gestation categories
+  plot_data <- plot_data %>%
+    mutate(ind = factor(ind, levels = c("Induced (37-42 weeks)", "Total births (37-42 weeks)")))
+  #pick a colour palette to apply
   pallette <- pal_age
   
   # adjust chart y axis according to what is being displayed
   if(measure == "percent_births"){
     yaxis_plots[["title"]] <- "Percentage of births (%)" 
-    plot_data <- plot_data %>%  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
+    yaxis_plots[["range"]] <- c(0, 60)  # forcing range from 0 to 60%
+
+        plot_data <- plot_data %>%  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
       filter(ind!="Total births (37-42 weeks)")
+   
   }
   
   if(measure == "births"){
     yaxis_plots[["title"]] <- "Number of births"
     # plot_data <- plot_data %>% #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
-    #   filter(gest!="18 to 44 weeks")
+    #   filter(ind!="37 to 42 weeks")
   }
   # Create tooltip for line chart
-  tooltip <- c(paste0("Deliveries following induction of labour: ", plot_data$ind,"<br>",
+  tooltip <- c(paste0( plot_data$ind,"<br>",
                       "Area: ",plot_data$area_name,"<br>",
                       "Month: ",  format(plot_data$month, "%B %Y"),"<br>",
                       "Number of births: ", plot_data$births,"<br>",
@@ -352,3 +361,6 @@ output$induct_commentary <- renderUI({
     bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
     h2("Induced delivery - 16th December 2020"))
 })
+
+
+##END

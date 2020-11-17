@@ -4,9 +4,10 @@
 observeEvent(input$btn_gest_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("need some details about SMR02"),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+               p("These data are derived from the Scottish Morbidity Record 02 (SMR02). An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient obstetric care, mainly categorised as an antenatal, a postnatal or a delivery episode. The data used for these indicators are from the delivery episode and are based on month of discharge from hospital of the woman after the delivery episode. Only singleton live births are included. From October 2019 the guidance for reporting on homebirths was updated, enabling maternity units to submit an SMR02 record for a homebirth."),
+               p("Although there is no legal requirement to submit these data to PHS, the level of submission falls only slightly short of the National Records for Scotland (NRS) statutory birth registrations. For the period 1 April 2018 to 31 March 2019, live births recorded on SMR02 represented 98.4% of the live births registered with NRS. Further information based on SMR02 data is also available from the annual ",
+                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/congenital-anomalies-in-scotland/", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
+               size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
 observeEvent(input$btn_gest_rules,
@@ -53,7 +54,7 @@ output$geoname_ui_gest <- renderUI({
 ##  Reactive datasets  ----
 ###############################################.
 
-#Dataset behind trend run chart  (available at scotland and NHS board level)
+#Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 gest_filter <- function(){
   
   gestation_runchart %>% filter(area_name == input$geoname_gest &
@@ -61,7 +62,7 @@ gest_filter <- function(){
                             type %in% c("Scotland","Health board")) 
 }
 
-#Dataset behind line charts for age and deprivation (available for scotland only)
+#Dataset 2: behind line charts for age and deprivation (available for scotland only)
 gest_linechart_split <- function(split){
   
   gestation_scot  %>% filter(area_name == "Scotland" &
@@ -69,7 +70,7 @@ gest_linechart_split <- function(split){
                          type==split)
 }
 
-#Dataset behind line chart  (available at scotland and NHS board level)
+#Dataset 3: behind line chart  (available at scotland and NHS board level)
 gest_linechart_filter <- function(){
 
   gestation_linechart %>% filter(area_name == input$geoname_gest &
@@ -87,12 +88,13 @@ output$gest_trend_u37 <- renderPlotly({plot_gest_trend(measure="perc_under37", s
 output$gest_trend_32_36 <- renderPlotly({plot_gest_trend(measure="perc_32_36", shift = "gest_32_36_shift", trend = "gest_32_36_trend")})
 output$gest_trend_42plus <- renderPlotly({plot_gest_trend(measure="perc_42plus", shift = "gest_42plus_shift", trend = "gest_42plus_trend")})
  
+#chart outputs for line charts for NHS board and Scot
 output$gest_linechart_number <- renderPlotly({plot_gest_linechart(measure="births")})
 output$gest_linechart_percent <- renderPlotly({plot_gest_linechart(measure="percent_births")})
 
+#chart outputs for line charts for Scotland only age and deprivation line charts
 output$gest_linechart_age_n <- renderPlotly({plot_gest_split(dataset=gest_linechart_split(split="age"),split="age", measure="births_under37")})
 output$gest_linechart_age_p <- renderPlotly({plot_gest_split(dataset=gest_linechart_split(split="age"),split="age", measure="perc_under37")})
-
 output$gest_linechart_dep_n <- renderPlotly({plot_gest_split(dataset=gest_linechart_split(split="dep"),split="dep", measure="births_under37")})
 output$gest_linechart_dep_p <- renderPlotly({plot_gest_split(dataset=gest_linechart_split(split="dep"),split="dep", measure="perc_under37")})
 
@@ -129,6 +131,7 @@ output$gestation_explorer <- renderUI({
                             h4("Percentage of singleton live births delivered at 42 weeks plus gestation"),
                             withSpinner(plotlyOutput("gest_trend_42plus"))),
                      column(12,
+                            p(gest_data_timeperiod),
                             p(chart_explanation)),
                      #only if scotland selected display age and deprivation breakdowns
                      if (input$geotype_gest == "Scotland"){
@@ -184,7 +187,7 @@ output$gestation_explorer <- renderUI({
 ## Gestation chart functions ----
 ############################################.
 
-## Runchart trend chart for monthly c-section percentages : Scotland & NHS Board (except island boards) 
+## RUNCHART:  trend chart for monthly c-section percentages : Scotland & NHS Board (except island boards) 
 ## Rather than try and present all the modes of delivery we have opted just to produce a run chart
 ## showing rates of c-section (by type all, emergency, elective) as these are the modes of deliver that people most want to see
 
@@ -247,6 +250,8 @@ plot_gest_trend <- function(measure, shift, trend){
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }}
 
+
+#####################################################################################################################
 ## LINECHART SCOTLAND: caesarean delivery by age group and deprivation, numbers and percentages - Scotland level only
 plot_gest_split <- function(dataset, split, measure){  
   
@@ -298,17 +303,18 @@ plot_gest_split <- function(dataset, split, measure){
   
 }
 
-
+#####################################################################################################################
 ## LINECHART SCOTLAND & NHS BOARD: Births by gestation numbers and percentages
 
 plot_gest_linechart <- function(measure){  
   
   plot_data <- gest_linechart_filter() 
   
-  #arrange sort order for gestation
+  #arrange sort order for gestation categories
   plot_data <- plot_data %>%
     mutate(gest = factor(gest, levels = c("Under 32 weeks", "Under 37 weeks", "32 to 36 weeks","37 to 41 weeks","42 weeks plus", "18 to 44 weeks")))
   
+  #pick a colour palette to apply
   pallette <- pal_age
   
   # adjust chart y axis according to what is being displayed
@@ -348,7 +354,6 @@ plot_gest_linechart <- function(measure){
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
 }
 
-
 ###############################################.
 ## Data downloads ----
 ###############################################.
@@ -381,3 +386,7 @@ output$gest_commentary <- renderUI({
     h2("Gestation at delivery - 16th December 2020"))
 })
 
+
+
+
+#END

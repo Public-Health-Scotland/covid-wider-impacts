@@ -1391,7 +1391,7 @@ induct_linechart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_f
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type = type, 
          category="All",
-         percent_births=format(((births/tot_births_37_42)*100),digits=1, nsmall=1),
+         percent_births=((births/tot_births_37_42)*100),
          #NOTE the gestation categories are not mutually exclusive - <37 contains <32
          ind=case_when(ind=="ind_37_42" ~ "Induced (37-42 weeks)",
                        ind=="births_37_42" ~ "Total births (37-42 weeks)",
