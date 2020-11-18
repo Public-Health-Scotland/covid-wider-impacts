@@ -99,32 +99,32 @@ output$perinatal_explorer <- renderUI({
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-                    Whilst each stillbirth is clearly a tragedy for the family involved, stillbirths are uncommon events in Scotland: 18 stillbirths (and 4,126 total 
-                    [live and still] births) occurring in Scotland in September 2020 had been registered by 18 October 2020.")
+                    Whilst each stillbirth is clearly a tragedy for the family involved, stillbirths are uncommon events in Scotland: 16 stillbirths (and 4,174 total 
+                    [live and still] births) occurring in Scotland in October 2020 had been registered by 18 November 2020.")
   } else if (input$measure_select_perinatal == "pnnd") {
     intro_text <- p("Post-neonatal deaths refer to", tags$a(href=link_perinatal, 
                     "deaths occuring after the first 4 weeks but within the first year", target="_blank"), "of life.",
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-                    Whilst each post-neonatal death is clearly a tragedy for the family involved, post-neonatal deaths are uncommon events in Scotland: 9 post-neonatal deaths 
-                    (and 4,108 live births) occurring in Scotland in September 2020 had been registered by 18 October 2020.")
+                    Whilst each post-neonatal death is clearly a tragedy for the family involved, post-neonatal deaths are uncommon events in Scotland: 6 post-neonatal deaths 
+                    (and 4,158 live births) occurring in Scotland in October 2020 had been registered by 18 November 2020.")
   } else if (input$measure_select_perinatal == "nnd") {
     intro_text <- p("Neonatal deaths refer to", tags$a(href=link_perinatal, 
                   "deaths in the first four weeks", target="_blank"), "of life.",
                   peri_common_intro,
                   tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                          "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-                  Whilst each neonatal death is clearly a tragedy for the family involved, neonatal deaths are uncommon events in Scotland: 9 neonatal deaths (and 4,108 live births) 
-                  occurring in Scotland in September 2020 had been registered by 18 October 2020.")
+                  Whilst each neonatal death is clearly a tragedy for the family involved, neonatal deaths are uncommon events in Scotland: 3 neonatal deaths (and 4,158 live births) 
+                  occurring in Scotland in October 2020 had been registered by 18 November 2020.")
   } else if (input$measure_select_perinatal == "extperi") {
     intro_text <- p("Extended perinatal deaths refer to", tags$a(href=link_perinatal, 
 "the sum of stillbirths and neonatal mortality", target="_blank"), "(deaths within the first 4 weeks of life).",
 peri_common_intro,
 tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
        "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-Whilst each extended perinatal death is clearly a tragedy for the family involved, extended perinatal deaths are uncommon events in Scotland: 27 extended perinatal deaths (and 4,126 total 
-[live and still] births) occurring in Scotland in September 2020 had been registered by 18 October 2020.")
+Whilst each extended perinatal death is clearly a tragedy for the family involved, extended perinatal deaths are uncommon events in Scotland: 19 extended perinatal deaths (and 4,174 total 
+[live and still] births) occurring in Scotland in October 2020 had been registered by 18 November 2020.")
   } else if (input$measure_select_perinatal == "infantdeaths") {
     intro_text <- p("Infant deaths refer to", tags$a(href=link_perinatal, 
                     "all deaths in the first year", target="_blank"), "of life; 
@@ -132,8 +132,8 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-                    Whilst each infant death is clearly a tragedy for the family involved, infant deaths are uncommon events in Scotland: 18 infant deaths (and 4,108 live births) 
-                    occurring in Scotland in September 2020 had been registered by 18 October 2020.")
+                    Whilst each infant death is clearly a tragedy for the family involved, infant deaths are uncommon events in Scotland: 9 infant deaths (and 4,158 live births) 
+                    occurring in Scotland in October 2020 had been registered by 18 November 2020.")
   }
 
   nrs_commentary <- p("It is important to note that chart data is based on month of occurence rather than month of registration used in NRS publications, and so
@@ -265,6 +265,8 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
+    h2("Stillbirths and infant deaths - 2nd December 2020"),
+    p("Placeholder"),
     h2("Stillbirths and infant deaths - 4th November 2020"),
           p("In this release of information on stillbirths and infant deaths (4 Nov 2020) data have been updated to include events that occurred in September 2020. 
 In September the rate of stillbirths, neonatal deaths and extended perinatal deaths remained within control limits. Post-neonatal deaths are those which occur after 4 weeks of age, but within the first year of life. In September the rate of post-neonatal deaths was 2.2 per 1,000 live births. This is above the warning limit of 2.1 per 1,000, but below the control limit of 2.6 per 1,000. These thresholds are shown on the control charts, and are used to help differentiate between expected random variation and substantial changes which warrant further investigation. The overall infant mortality rate, which includes all deaths of children aged under 1 year (both below and above 4 weeks of age), remained within the warning limit. This pattern suggests that the higher rate of post-neonatal deaths in September reflects random variation in what is a tragic, but fortunately rare event. 
