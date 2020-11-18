@@ -1325,14 +1325,13 @@ saveRDS(mod_linechart, "shiny_app/data/mod_linechart_data.rds")
 ## 4- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
 mod_download <- read_csv(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_DOWNLOAD_mode_",mod_date,".csv"))%>%  
   janitor::clean_names() %>%
-  mutate(date=as.Date(date,format="%Y-%m-%d"),
-         delivery_month=format(date,"%b %Y")) %>%
-  rename(area_name=hbres) %>% 
+  mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
+         month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
+  rename(area_name=nhs_board_of_residence) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
-         chart_type= area_type) %>%
-  select(-date)
+         chart_type= area_type)
 
 saveRDS(mod_download, "shiny_app/data/mod_download_data.rds")  
 
@@ -1402,14 +1401,13 @@ saveRDS(induct_linechart, "shiny_app/data/induct_linechart_data.rds")
 ## 4- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
 induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_DOWNLOAD_induced_",induct_date,".csv"))%>%  
   janitor::clean_names() %>%
-  mutate(date=as.Date(date,format="%Y-%m-%d"),
-         delivery_month=format(date,"%b %Y")) %>%
-  rename(area_name=hbres) %>% 
+  mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
+         month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
+  rename(area_name=nhs_board_of_residence) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
-         chart_type= area_type) %>%
-  select(-date)
+         chart_type= area_type) 
 
 saveRDS(induct_download, "shiny_app/data/induct_download_data.rds")  
 
@@ -1495,14 +1493,13 @@ saveRDS(gestation_linechart, "shiny_app/data/gestation_linechart_data.rds")
 ## 4- DATA DOWNLOAD FILE FOR SHINY APP
 gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_DOWNLOAD_gestation_",gestation_date,".csv"))%>%  
   janitor::clean_names() %>%
-  mutate(date=as.Date(date,format="%Y-%m-%d"),
-         delivery_month=format(date,"%b %Y")) %>%
-  rename(area_name=hbres) %>% 
+  mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
+         month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
+  rename(area_name=nhs_board_of_residence) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
-         chart_type= area_type) %>%
-  select(-date)
+         chart_type= area_type) 
 
 saveRDS(gestation_download, "shiny_app/data/gestation_download_data.rds") 
 
