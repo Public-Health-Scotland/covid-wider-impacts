@@ -1147,10 +1147,11 @@ saveRDS(ante_booking_download, paste0(data_folder,"final_app_files/ante_booking_
 ## Pregnancy (terminations) ----
 ###############################################.
 #field with date all antenatal booking data files prepared
-top_date <- "20201002"
+top_date <- "2020-11-05"
 
 ## Termination data for run chart (scotland and nhs board) - monthly
-top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS_",top_date,".rds")) %>%  
+top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/",top_date,
+                               "/WI_TERMINATIONS_RUNCHARTS_",top_date,".rds")) %>%  
   janitor::clean_names() %>%
   rename(area_name=hbres, month=date,
          centreline_no = av_pre_pan_terminations,
@@ -1166,7 +1167,8 @@ top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/RUNCHARTS_",
                             type=="Health board" ~ "All"))
 
 ## Termination data for scotland only by age and dep
-top_scot <- readRDS(paste0(data_folder, "pregnancy/terminations/SCOTLAND_CHARTS_",top_date,".rds")) %>%  
+top_scot <- readRDS(paste0(data_folder, "pregnancy/terminations/",top_date,
+                           "/WI_TERMINATIONS_SCOTLAND_CHARTS_",top_date,".rds")) %>%  
   janitor::clean_names() %>%
   ungroup() %>% # for some reason dataset appears to be grouped which prevents formatting 
   rename(area_name=hbres, month=date, category=variable) %>%
@@ -1235,7 +1237,8 @@ saveRDS(top, paste0(data_folder,"final_app_files/top_",
 ## TERMINATIONS DATA DOWNLOAD FILE FOR SHINY APP
 ## Data download to include monthly Scotland data for age/deprivation breakdown PLUS monthly data for NHS boards (excluding the small island boards)
 
-top_download_board <- read_csv(paste0(data_folder, "pregnancy/terminations/WI_TERMINATIONS_DOWNLOAD_",top_date,".csv"))%>%  
+top_download_board <- read_csv(paste0(data_folder, "pregnancy/terminations/",top_date,
+                                      "/WI_TERMINATIONS_DOWNLOAD_",top_date,".csv"))%>%  
   janitor::clean_names() %>%
   mutate(date=as.Date(date,format="%Y-%m-%d"),
          termination_month=format(date,"%b %Y")) %>%
