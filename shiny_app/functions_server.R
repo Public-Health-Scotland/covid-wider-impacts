@@ -46,8 +46,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     } else if (tab == "cardio") {
       trend_data <- trend_data %>% 
         mutate(category = factor(category, levels = c("All", "Under 5", "5 - 14", "Under 65", "15 - 44",  
-                                                      "45 - 64","<65", "65 - 74", "65+","65 and over", 
-                                                      "75 - 84", "85 and over", "<65", "65+"))) 
+                                                      "45 - 64", "<65", "65 - 74", "65+","65 and over", 
+                                                      "75 - 84", "85 and over"))) 
 
     } else if (tab == "cancer") {
       trend_data <- trend_data %>% 

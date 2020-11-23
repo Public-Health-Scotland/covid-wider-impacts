@@ -228,8 +228,8 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Vulva - Females only" = "Vulva - Females only")
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
-                 "Cardiac procedures" = "cath", "Out of hours cases" = "ooh_cardiac",
-                 "Scottish Ambulance Service" = "sas_cardiac")
+                 "Out of hours cases" = "ooh_cardiac",
+                 "Scottish Ambulance Service" = "sas_cardiac", "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Stillbirths"="stillbirths",
