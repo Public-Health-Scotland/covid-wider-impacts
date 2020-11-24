@@ -520,7 +520,7 @@ rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-10-25")
 
 ###############################################.
-## OOH Cardiac data ----
+## OOH Cardiac  ----
 ###############################################.
 
 ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/Weekly Diagnosis OOH CSV.csv")) %>% 
@@ -602,11 +602,10 @@ ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
 ooh_cardiac <- ooh_cardiac %>% filter(area_type != "HSC partnership")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-25")
-
+prepare_final_data(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-25")
 
 ###############################################.
-## SAS Cardiac data ----
+## SAS Cardiac ----
 ###############################################.
 
 sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/Weekly Diagnosis SAS CSV.csv")) %>%
@@ -690,7 +689,7 @@ sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
 sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-25")
+prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-25")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----

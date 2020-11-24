@@ -162,62 +162,6 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
 }
 
-
-# Function to format cardiac data in the right format for the Shiny app
-prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars = NULL) {
-  
-  # Creating week number to be able to compare pre-covid to covid period
-  dataset <- dataset %>% mutate(week_no = isoweek(week_ending),
-                                # Fixing HSCP names
-                                area_name = gsub(" and ", " & ", area_name))
-  
-  
-  # Creating average admissions of pre-covid data (2018-2019) by day of the year
-  historic_data <- dataset %>% filter(year(week_ending) %in% c("2018", "2019")) %>% 
-    group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
-    # Not using mean to avoid issues with missing data for some weeks
-    summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
-  
-  # Joining with 2020 data
-  # Filtering weeks with incomplete week too!! Temporary
-  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020")), 
-                         historic_data, 
-                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
-    # Filtering cases without information on age, sex, area or deprivation (still counted in all)
-    filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
-               is.na(area_name) | 
-               area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND",
-                                "ENGland/Wales/Northern Ireland", "NANA"))) %>% 
-    # Creating %variation from precovid to covid period 
-    mutate(count_average = ifelse(is.na(count_average), 0, count_average),
-           variation = round(-1 * ((count_average - count)/count_average * 100), 1),
-           # Dealing with infinite values from historic average = 0
-           variation =  ifelse(is.infinite(variation), 0, variation)) %>% 
-    select(-week_no) 
-  
-  # Disclosure control
-  # Does not work setting < 5 counts to zero makes graphs look jaggy
-  #data_2020 <- data_2020 %>% 
-  #  mutate(count = if_else(count < 5, 0, count),
-  #         count_average = if_else(count_average < 5, 0, count_average),
-  #         variation = if_else(count < 5, 0, variation))
-  
-  # Filter week
-  #data_2020 <- data_2020 %>%
-  #  filter(week_ending <= as.Date(last_week))
-
-  # Supressing numbers under 5
-  data_2020 <- data_2020 %>% filter(count>=5) %>% 
-    filter(week_ending <= as.Date(last_week)) 
-    
-  final_data <<- data_2020
-  
-  saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
-  saveRDS(data_2020, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/", filename,"_data.rds"))
-
-}
-
-
 #Function to format the immunisations and child health review tables
 format_immchild_table <- function(filename) {
   read_csv(paste0(data_folder, filename, ".csv")) %>%
