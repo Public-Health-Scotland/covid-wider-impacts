@@ -67,8 +67,8 @@ deaths <- readRDS("data/deaths.rds") # deaths data
 ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
 cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
-ooh_cardiac <-  readRDS("data/ooh_cardiac_data.rds") # OOH cardiac data
-sas_cardiac <-  readRDS("data/sas_cardiac_data.rds") # SAS cardiac data
+ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
+sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
