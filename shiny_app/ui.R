@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -477,7 +477,7 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
          mainPanel(width = 12,
                    uiOutput("gestation_explorer")
          )# mainPanel bracket
-)))) # deliveries tab panel
+))))) # deliveries tab panel
 #), # navbar menu bracket
 # ###############################################.
 # ## Data ----
