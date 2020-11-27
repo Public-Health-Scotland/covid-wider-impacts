@@ -402,7 +402,7 @@ tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mo
                   actionButton('jump_commentary_perinatal','Go to commentary'))
          ), #well panel
          mainPanel(width = 12,
-                   uiOutput("perinatal_explorer")
+                   uiOutput("mod_explorer")
          )# mainPanel bracket
   ), # tabpanel bracket
  #navbarMenu bracket
