@@ -86,10 +86,15 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
                           actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
                           actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
+
                           actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
                           actionLink("mod_button", "Mode of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
-                          actionLink("gest_at_delivery_button", "Gestation at delivery", width="150px")
+                          actionLink("gest_at_delivery_button", "Gestation at delivery", width="150px"),
+
+                          actionLink("mentalhealth_button", "Mental health", width="150px"),
+                          actionLink("cancer_button", "Cancer", width="150px")
+
                          ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
@@ -103,9 +108,13 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
                                      bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
                                      bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
+
                                      bsCollapsePanel("Mode of delivery", uiOutput("mod_commentary")),
                                      bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
-                                     bsCollapsePanel("Gestation at delivery", uiOutput("gest_at_delivery_commentary"))
+                                     bsCollapsePanel("Gestation at delivery", uiOutput("gest_at_delivery_commentary")),
+
+                                     bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
+
                           )))
 ), #tab panel
 ###############################################.
@@ -387,7 +396,60 @@ tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mo
            column(4,offset=4,
                   actionButton("btn_mod_modal", "Data source: SMR02", icon = icon('question-circle')),
                   fluidRow(br()),
+
                   downloadButton("download_mod_data", "Download data"),
+
+                  actionButton('jump_commentary_perinatal','Go to commentary'))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("perinatal_explorer")
+         )# mainPanel bracket
+  ) # tabpanel bracket
+), #navbarMenu bracket
+###############################################.
+## Cancer ----
+###############################################.
+tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
+  wellPanel(
+           column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.", 
+                                 choices= c("Scotland", "Cancer Network", "Health Board"),
+                                     selected = "Scotland"),
+                  uiOutput("geoname_ui_cancer")),
+                  
+           column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
+                                     selected = "All Malignant Neoplasms (Excl. C44)"),
+                     div(radioButtons("gender", "Step 3. Select sex", 
+                                      list("All Persons","Male","Female"), inline = TRUE, 
+                                      selected = "All Persons"))),
+                     # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
+           
+           column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton('download_cancer_data', 'Download data'),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_cancer','Go to commentary'),
+                  fluidRow(br()))
+                  # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"), 
+                  #                  inline = TRUE, selected = "Cumulative")))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("cancer_explorer")
+         )# mainPanel bracket
+), # tabpanel bracket
+###############################################
+## Mental Health ----
+###############################################.
+tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
+         wellPanel(
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_mh_select",
+                                           label= "Step 1 - Select the data you want to explore.",
+                                           choices = mentalhealth_list, status = "primary",
+                                           direction = "vertical", justified = T))),
+           column(4, uiOutput("geotype_mh_ui"),
+                  uiOutput("geoname_mh_ui")),
+           column(4, downloadButton("download_mentalhealth_data", "Download data"),
+
                   fluidRow(br()),
                   actionButton("jump_commentary_mod","Go to commentary"))
          ), #well panel
@@ -415,8 +477,8 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
          mainPanel(width = 12,
                    uiOutput("gestation_explorer")
          )# mainPanel bracket
-) # deliveries tab panel
-), # navbar menu bracket
+), # deliveries tab panel
+#), # navbar menu bracket
 ###############################################.
 ## Data ----
 ###############################################.
@@ -425,14 +487,28 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
         You can use the filters to select the data you are interested in.
         You can also download the data as a csv using the download button.
         The data is also hosted in the",
+
            tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
                   "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
          column(6, selectInput("data_select", "Select the data you want to explore.",
                                choices = data_list_data_tab)),
          column(6, downloadButton('download_table_csv', 'Download data')),
          mainPanel(width = 12,
-                   DT::dataTableOutput("table_filtered"))
-) # tabpanel bracket
-  )# page bracket
-)# taglist bracket
+                   DT::dataTableOutput("table_filtered")),
+#) # tabpanel bracket
+  #)# page bracket
+#)# taglist bracket
+
+        tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
+               "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
+      column(6, selectInput("data_select", "Select the data you want to explore.",
+                           choices = data_list_data_tab)),
+      column(6, downloadButton('download_table_csv', 'Download data')),
+      mainPanel(width = 12,
+                DT::dataTableOutput("table_filtered"))
+      ) # tabpanel bracket
+    ) #page bracket
+ # taglist bracket
+ #secure app
+
 #END

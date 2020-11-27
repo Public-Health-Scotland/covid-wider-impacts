@@ -46,6 +46,13 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     } else if (tab == "cardio") {
       trend_data <- trend_data %>% 
         mutate(category = factor(category, levels = c("All", "<65", "65+")))
+    } else if (tab == "cancer") {
+      trend_data <- trend_data %>% 
+        mutate(category = factor(category, levels = c("Under 5", "5-9", "10-14", "15-19",  
+                                                      "20-24", "25-29", "30-34", 
+                                                      "35-39", "40-44", "45-49", 
+                                                      "50-54", "55-59", "60-64", 
+                                                      "65-69", "70-74", "75-79","80 and over")))
     }
   } else if (split == "condition") {
       if (tab == "cardio") {
@@ -124,10 +131,11 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                               data_name == "sas" ~ "Incidents: ",
                               data_name == "cath" ~ "Cases: ",
                               data_name == "drug_presc" ~ "Items prescribed: ",
+                              data_name == "cancer" ~ "Referrals: ",
                               data_name == "deaths" ~ "Deaths: ",
                               data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
                               data_name == "mh_ooh" ~ "Consultations: ")
-    
+
     #Text for tooltip
     if (aver_week == T) {
       #Text for tooltip
@@ -196,9 +204,9 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                            data_name == "cath" ~ "Number of cases",
                            data_name == "drug_presc" ~ "Number of items prescribed",
                            data_name == "deaths" ~ "Number of deaths",
+                           data_name == "cancer" ~ "Number of referrals",
                            data_name == "mentalhealth_drugs" ~ "Number of patients",
                            data_name == "mh_ooh" ~ "Number of consultations")
-
   
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
@@ -242,6 +250,90 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
   }
   
 }
+
+###############################################.
+## Function for overall cancer charts ----
+###############################################.
+
+plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_name) {
+  
+# set plot display if no data  
+  if (is.data.frame(dataset) && nrow(dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
+  } else {
+  
+  
+# Set y axis label
+  yaxis_title <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals",
+                           data_name == "dif" ~ "% Change from 2019 to 2020 ",
+                           data_name == "inc" ~ "Weekly Total of Individuals")
+  
+  yaxis_plots[["title"]] <- yaxis_title
+  
+
+#Text for tooltips  
+  
+  measure_name <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals: ",
+                            data_name == "dif" ~ "% Change from 2019 to 2020: ",
+                            data_name == "inc" ~ "Weekly Total of Individuals: ")
+ 
+  value1 <- dataset[[var1_chosen]]
+  
+  value2 <- dataset[[var2_chosen]]
+  
+  
+  tooltip_1 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+                            "<br>", measure_name, value1))
+  
+  tooltip_2 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+                        "<br>", measure_name, value2))
+  
+  tooltip_3 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+                              "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
+
+if(data_name != "dif") { 
+  
+  #Creating time trend plot for cumulative totals and incidence
+  plot_ly(data=dataset, x=~week_ending) %>%
+    
+    # 2020 line
+    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_1, hoverinfo="text",
+              name = "2020") %>%
+    # 2019 line
+    add_lines(y = ~get(var2_chosen), line = list(color = pal_overall[2], dash = 'dash'),text=tooltip_2, 
+              hoverinfo="text", name = "2019") %>%
+    
+    #Layout
+    layout(margin = list(b = 80, t=5), 
+           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
+           legend = list(x = 100, y = 0.5)) %>% 
+    
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+
+} else {
+  
+  #Creating time trend plot for difference
+  plot_ly(data=dataset, x=~week_ending) %>%
+    
+    # 2020 line
+    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_3, hoverinfo="text",
+              name = "2020") %>%
+    
+    #Layout
+    layout(margin = list(b = 80, t=5), 
+           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
+           legend = list(x = 100, y = 0.5)) %>% 
+    
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
+  }
+  
+}
+
+
+
+
 ###############################################.
 ## # Function that creates specialty charts.   ----
 ###############################################.

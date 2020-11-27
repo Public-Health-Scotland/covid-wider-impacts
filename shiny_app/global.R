@@ -56,45 +56,49 @@ geo_lookup <- readRDS("data/geo_lookup.rds")
 spec_lookup <- readRDS("data/spec_lookup.rds")
 ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 
-rapid <- readRDS("data/rapid_data.rds") #RAPID data
-aye <- readRDS("data/ae_data.rds") #A&E data
-ooh <- readRDS("data/ooh_data.rds") # OOH data
-nhs24 <- readRDS("data/nhs24_data.rds") # OOH data
-sas <- readRDS("data/sas_data.rds") # OOH data
-deaths <- readRDS("data/deaths_data.rds") # deaths data
+rapid <- readRDS("data/rapid.rds") #RAPID data
+aye <- readRDS("data/ae.rds") #A&E data
+ooh <- readRDS("data/ooh.rds") # OOH data
+nhs24 <- readRDS("data/nhs24.rds") # OOH data
+sas <- readRDS("data/sas.rds") # OOH data
+deaths <- readRDS("data/deaths.rds") # deaths data
 
 #Cardiovascular data
-ae_cardio <- readRDS("data/ae_cardio_data.rds") # A&E cardio data
-cardio_drugs <- readRDS("data/cardio_drugs_data.rds") # Cardio drugs data
-cath_lab <- readRDS("data/cath_lab_data.rds") # Cath lab data
+ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
+cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
+cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
+
+#Cancer data
+cancer_data2 <- readRDS("data/cancer_data_2.rds")
+cancer_extract_date <- "16th September 2020"  
 
 ## mental health data
-mentalhealth_drugs <- readRDS("data/mentalhealth_drugs_data.rds")
-ae_mh <- readRDS("data/mh_A&E_data.rds")
-mh_ooh <- readRDS("data/mh_ooh_data.rds")
+mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
+ae_mh <- readRDS("data/mh_A&E.rds")
+mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
 child_extract_date <- "26th October 2020"
-first <- readRDS("data/first_visit_data.rds") # first health visit at 2 weeks
+first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
-sixtoeight <- readRDS("data/six_to_eight_data.rds")
+sixtoeight <- readRDS("data/six_to_eight.rds")
 sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
-thirteen <- readRDS("data/thirteen_data.rds")
+thirteen <- readRDS("data/thirteen.rds")
 thirteentable <- readRDS("data/thirteen_datatable.rds")
-twentyseven <- readRDS("data/twentyseven_data.rds")
+twentyseven <- readRDS("data/twentyseven.rds")
 twentyseventable <- readRDS("data/twentyseven_datatable.rds")
-fourtofive <- readRDS("data/fourtofive_data.rds")
+fourtofive <- readRDS("data/fourtofive.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 
 ## Immunisation Data
 immunisation_extract_date <- "26th October 2020"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
-age_defs_imm_6inone <- readRDS("data/age_elig_6inone.rds")
-age_defs_imm_mmr <- readRDS("data/age_elig_mmr.rds")
+age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
+age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
 
 #Immunisations s-curve data
-six_alldose <- readRDS("data/six_alldose_data.rds")
-mmr_alldose <- readRDS("data/mmr_alldose_data.rds") # mmr immunisation scurve data for all doses
+six_alldose <- readRDS("data/six_alldose.rds")
+mmr_alldose <- readRDS("data/mmr_alldose.rds") # mmr immunisation scurve data for all doses
 
 #Immunisations data table data
 sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table (all dose)
@@ -110,18 +114,18 @@ six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
 mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
 mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
-## perinatal mortality data
-perinatal <- readRDS("data/perinatal_data.rds")
+# perinatal mortality data
+perinatal <- readRDS("data/perinatal.rds")
 
 #Pregnancy tab
 #antenatal booking
 booking_extract_date <- "7th October 2020"
-booking <- readRDS("data/ante_booking_data.rds")
+booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
 top_extract_date <- "2nd October 2020"
-top <- readRDS("data/top_data.rds")
+top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
@@ -146,9 +150,9 @@ gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
 gestation_download <- readRDS("data/gestation_download_data.rds")
 
 # Breastfeeding data
-breastfeeding <- readRDS("data/breastfeeding_data.rds")
+breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
-child_dev <- readRDS("data/child_dev_data.rds")
+child_dev <- readRDS("data/child_dev.rds")
 
 ###############################################.
 ## Objects, names, lists ----
@@ -202,9 +206,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "27-30 month child health review" = "twentyseven_visit",
                         "4-5 year child health review" = "fourtofive_visit",
                         "Child development" = "childdev",
-                        # "Child development - 27-30 month review" = "27_30mnth_childdev",
                         "Breastfeeding" = "breastfeeding",
-                        # "Breastfeeding 6-8 week review" = "bf_6_8",
                         "Stillbirths and infant deaths" = "perinatal",
                         "Termination of pregnancy" = "top",
                         "Antenatal bookings" = "ante_booking",
@@ -213,8 +215,39 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Gestation at delivery" = "gestation",
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
-                        "Out of hours mental health cases" = "ooh_mh"
-                        )
+                        "Out of hours mental health cases" = "ooh_mh",
+                        "Cancer" = "cancer"
+)
+
+cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
+                      "All Cancers" = "All Cancers",
+                      "Bladder" = "Bladder",
+                      "Bone and Connective Tissue" = "Bone and Connective Tissue",
+                      "Brain Tumour" = "Brain Tumour",
+                      "Breast" = "Breast", 
+                      "Colorectal" = "Colorectal",
+                      "Head and Neck" = "Head and Neck",
+                      "Hodgkin Lymphoma" = "Hodgkin Lymphoma",
+                      "Kidney" = "Kidney",
+                      "Leukaemias" = "Leukaemias",
+                      "Liver and Intrahepatic Bile Ducts" = "Liver and Intrahepatic Bile Ducts",
+                      "Malignant Melanoma of the Skin" = "Malignant Melanoma of the Skin",
+                      "Mesothelioma" = "Mesothelioma",
+                      "Multiple Myeloma and malignant plasma cell neoplasms" = "Multiple Myeloma and malignant plasma cell neoplasms",
+                      "Non-Melanoma Skin Cancer" = "Non-Melanoma Skin Cancer",
+                      "Oesophagus" = "Oesophagus",
+                      "Other" = "Other",
+                      "Ovary - Females only" = "Ovary - Females only",
+                      "Pancreas" = "Pancreas",
+                      "Penis - Males only" = "Penis - Males only",
+                      "Prostate - Males only" = "Prostate - Males only",
+                      "Stomach" = "Stomach",
+                      "Testis - Males only" = "Testis - Males only",
+                      "Thyroid" = "Thyroid",
+                      "Trachea, Bronchus and Lung" = "Trachea, Bronchus and Lung",
+                      "Uterus - Females only" = "Uterus - Females only",
+                      "Vagina - Females only" = "Vagina - Females only",
+                      "Vulva - Females only" = "Vulva - Females only")
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
                  "Cardiac procedures" = "cath")
