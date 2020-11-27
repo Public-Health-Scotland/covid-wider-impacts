@@ -90,7 +90,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           # actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
                           actionLink("mod_button", "Mode of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
-                          actionLink("gest_at_delivery_button", "Gestation at delivery", width="150px")#,
+                          actionLink("gestation_button", "Gestation at delivery", width="150px")#,
 
                           # actionLink("mentalhealth_button", "Mental health", width="150px"),
                           # actionLink("cancer_button", "Cancer", width="150px")
@@ -111,7 +111,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 
                                      bsCollapsePanel("Mode of delivery", uiOutput("mod_commentary")),
                                      bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
-                                     bsCollapsePanel("Gestation at delivery", uiOutput("gest_at_delivery_commentary"))
+                                     bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary"))
 
                                      # bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
 
