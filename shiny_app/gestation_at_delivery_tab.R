@@ -71,11 +71,20 @@ gest_linechart_split <- function(split){
 }
 
 #Dataset 3: behind line chart  (available at scotland and NHS board level)
-gest_linechart_filter <- function(){
+gest_linechart_filter_one <- function(){
 
   gestation_linechart %>% filter(area_name == input$geoname_gest &
                              area_type == input$geotype_gest &
-                             type %in% c("Scotland","Health board"))
+                             type %in% c("Scotland","Health board") &
+                               gest %in% c("37 to 41 weeks", "All gestations (18-44 weeks)"))
+}
+
+gest_linechart_filter_two <- function(){
+  
+  gestation_linechart %>% filter(area_name == input$geoname_gest &
+                                   area_type == input$geotype_gest &
+                                   type %in% c("Scotland","Health board") &
+                                   gest %in% c("Under 32 weeks", "32 to 36 weeks", "42 weeks plus"))
 }
 
 ###############################################.
@@ -92,6 +101,9 @@ output$gest_trend_42plus <- renderPlotly({plot_gest_trend(measure="perc_42plus",
 output$gest_linechart_number <- renderPlotly({plot_gest_linechart(measure="births")})
 output$gest_linechart_percent <- renderPlotly({plot_gest_linechart(measure="percent_births")})
 
+output$gest_linechart_number_37_41_all <- renderPlotly({plot_gest_linechart_one(measure="births")})
+output$gest_linechart_number_32_3236_42plus <- renderPlotly({plot_gest_linechart_two(measure="births")})
+
 #chart outputs for line charts for Scotland only age and deprivation line charts
 output$gest_linechart_age_n <- renderPlotly({plot_gest_split(dataset=gest_linechart_split(split="age"),split="age", measure="births_under37")})
 output$gest_linechart_age_p <- renderPlotly({plot_gest_split(dataset=gest_linechart_split(split="age"),split="age", measure="perc_under37")})
@@ -106,38 +118,47 @@ output$gestation_explorer <- renderUI({
   
   # text for titles of cut charts
   gest_data_timeperiod <-  paste0("Figures based on data extracted ",gestation_extract_date)
-  gest_title <- paste0("Percentage of singleton live births by gestation at delivery: ",input$geoname_gest)
+  gest_title <- paste0("Percentage of singleton live births delivered at stated gestation: ",input$geoname_gest)
 
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Percentage of births by gestation at delivery’ charts above, the dots joined by a solid black line show the percentage of births by gestation at delivery in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of deliveries by over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of caesarean sections."))
+            p("On the ‘Percentage of births at stated gestation’ charts above, the dots joined by a solid black line show the percentage of singleton live births with known gestation (18-44 weeks) that were delivered at the stated gestation in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of births in each gestation group over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of births in each gestation group."))
   
   # Function to create common layout to all immunisation charts
-  gest_layout <- function(gest_trend_u32,gest_trend_u37,gest_trend_32_36,gest_trend_42plus,gest_linechart_age_n,gest_linechart_age_p,gest_linechart_dep_n,gest_linechart_dep_p,gest_linechart_number,gest_linechart_percent){
+  gest_layout <- function(gest_trend_u32,gest_trend_u37,gest_trend_32_36,gest_trend_42plus,gest_linechart_age_n,gest_linechart_age_p,gest_linechart_dep_n,gest_linechart_dep_p,gest_linechart_number_37_41_all,gest_linechart_number_32_3236_42plus){
     tagList(fluidRow(column(12,
                             h4(gest_title),
                             actionButton("btn_gest_rules", "How do we identify patterns in the data?")),
                      column(6,
-                            h4("Percentage of singleton live births delivered at under 32 weeks gestation"),
+                            h4("Under 32 weeks gestation"),
                             withSpinner(plotlyOutput("gest_trend_u32")),
-                            h4("Percentage of singleton live births delivered at 32-36 weeks gestation"),
+                            h4("32-36 weeks gestation"),
                             withSpinner(plotlyOutput("gest_trend_32_36"))),
                      column(6,
-                            h4("Percentage of singleton live births delivered at under 37 weeks gestation"),
+                            h4("Under 37 weeks gestation"),
                             withSpinner(plotlyOutput("gest_trend_u37")),
                      #column(4,
-                            h4("Percentage of singleton live births delivered at 42 weeks plus gestation"),
+                            h4("At or over 42 weeks gestation"),
                             withSpinner(plotlyOutput("gest_trend_42plus"))),
                      column(12,
                             p(gest_data_timeperiod),
                             p(chart_explanation)),
+                     column(12,
+                            br(), #spacing
+                            h4(paste0("Number of singleton live births delivered at stated gestation: ",input$geoname_gest))),
+                     column(6,
+                            h4("37-41 weeks gestation and all births"),
+                            withSpinner(plotlyOutput("gest_linechart_number_37_41_all"))),
+                     column(6,
+                            h4("Under 32 weeks, 32-36 weeks, and over 42 weeks gestation"),
+                            withSpinner(plotlyOutput("gest_linechart_number_32_3236_42plus"))),
                      #only if scotland selected display age and deprivation breakdowns
                      if (input$geotype_gest == "Scotland"){
                        tagList(
                          fluidRow(column(12,
-                                         h4("Singleton live births delivered at <37 weeks gestation by maternal age: Scotland"))),
+                                         h4("Singleton live births delivered at under 37 weeks gestation by maternal age group: Scotland"))),
                          fluidRow(column(6,
                                          h4("Number of births at under 37 weeks gestation"),
                                          withSpinner(plotlyOutput("gest_linechart_age_n"))),
@@ -146,7 +167,7 @@ output$gestation_explorer <- renderUI({
                                          withSpinner(plotlyOutput("gest_linechart_age_p")))),
                          fluidRow(column(12,
                                          br(), # spacing
-                                         h4("Singleton live births delivered at under 37 weeks gestation by deprivation: Scotland"),
+                                         h4("Singleton live births delivered at under 37 weeks gestation by maternal deprivation level: Scotland"),
                                          actionButton("btn_modal_simd_gest", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          fluidRow(column(6,
@@ -156,16 +177,7 @@ output$gestation_explorer <- renderUI({
                                          h4("Percentage of births at under 37 weeks gestation"),
                                          withSpinner(plotlyOutput("gest_linechart_dep_p"))))
                        )#tagList from if statement
-                     },
-                     column(12,
-                            br(), #spacing
-                            h4(paste0("Singleton live births by gestation at delivery: ",input$geoname_gest))),
-                     column(6,
-                            p("Number of births"),
-                            withSpinner(plotlyOutput("gest_linechart_number"))),
-                     column(6,
-                            p("Percentage of births"),
-                            withSpinner(plotlyOutput("gest_linechart_percent")))
+                     }
     ))}
   
   
@@ -178,8 +190,8 @@ output$gestation_explorer <- renderUI({
              gest_linechart_age_p="gest_linechart_age_p",
              gest_linechart_dep_n="gest_linechart_dep_n",
              gest_linechart_dep_p="gest_linechart_dep_p",
-             gest_linechart_number="gest_linechart_number",
-             gest_linechart_percent="gest_linechart_percent")
+             gest_linechart_number_37_41_all="gest_linechart_number_37_41_all",
+             gest_linechart_number_32_3236_42plus="gest_linechart_number_32_3236_42plus")
 })
 
 
@@ -197,15 +209,15 @@ plot_gest_trend <- function(measure, shift, trend){
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
-                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
+                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
     
     # chart legend labels  
     centreline_name <- paste0(input$geoname_gest," average up to end Feb 2020") 
     
     # format y axis
-    yname <- "Percentage births by gestation at delivery"
-    yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 8%
+    yname <- "Percentage of births at stated gestation"
+    yaxis_plots[["range"]] <- c(0, 15)  # forcing range from 0 to 8%
     yaxis_plots[["title"]] <- "Percentage of births (%)"
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
@@ -306,13 +318,64 @@ plot_gest_split <- function(dataset, split, measure){
 #####################################################################################################################
 ## LINECHART SCOTLAND & NHS BOARD: Births by gestation numbers and percentages
 
-plot_gest_linechart <- function(measure){  
+plot_gest_linechart_one <- function(measure){  
   
-  plot_data <- gest_linechart_filter() 
+  plot_data <- gest_linechart_filter_one() 
   
   #arrange sort order for gestation categories
   plot_data <- plot_data %>%
-    mutate(gest = factor(gest, levels = c("Under 32 weeks", "Under 37 weeks", "32 to 36 weeks","37 to 41 weeks","42 weeks plus", "18 to 44 weeks")))
+    mutate(gest = factor(gest, levels = c("37 to 41 weeks", "All gestations (18-44 weeks)")))
+  
+  #pick a colour palette to apply
+  pallette <- pal_age
+  
+  # adjust chart y axis according to what is being displayed
+  if(measure == "percent_births"){
+    yaxis_plots[["title"]] <- "Percentage of births (%)" 
+    plot_data <- plot_data  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
+
+  }
+  
+  if(measure == "births"){
+    yaxis_plots[["title"]] <- "Number of births"
+    plot_data <- plot_data  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
+
+  }
+  # Create tooltip for line chart
+  tooltip <- c(paste0("Gestation at delivery: ", plot_data$gest,"<br>",
+                      "Area: ",plot_data$area_name,"<br>",
+                      "Month: ",  format(plot_data$month, "%B %Y"),"<br>",
+                      "Number of births: ", plot_data$births,"<br>",
+                      "Percentage of births: ", format(plot_data$percent_births,digits = 1,nsmall=1),"%"))
+  
+  if (is.data.frame(plot_data) && nrow(plot_data) == 0)
+  { plot_nodata(height = 50, 
+                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the data download.")
+  } else {
+    
+    #Creating trend plot
+    plot_ly(data=plot_data, x=~month,  y = ~get(measure)) %>%
+      add_trace(type = 'scatter', mode = 'lines',
+                color = ~gest, colors = pallette,
+                text= tooltip, hoverinfo="text") %>%
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(orientation = 'h')) %>% #position of legend underneath plot
+      #leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
+}
+
+#####################################################################################################################
+## LINECHART SCOTLAND & NHS BOARD: Births by gestation numbers and percentages
+
+plot_gest_linechart_two <- function(measure){  
+  
+  plot_data <- gest_linechart_filter_two() 
+  
+  #arrange sort order for gestation categories
+  plot_data <- plot_data %>%
+    mutate(gest = factor(gest, levels = c("Under 32 weeks", "32 to 36 weeks", "42 weeks plus")))
   
   #pick a colour palette to apply
   pallette <- pal_age
@@ -338,7 +401,7 @@ plot_gest_linechart <- function(measure){
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
-                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
+                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
     
     #Creating trend plot
@@ -359,7 +422,9 @@ plot_gest_linechart <- function(measure){
 ###############################################.
 
 gest_download_data <- reactive({
-  gestation_download
+  gestation_download %>%
+    select(indicator:perc_42plus, perc_denominator:chart_type)
+    
 })
 
 output$download_gest_data <- downloadHandler(
@@ -374,15 +439,15 @@ output$download_gest_data <- downloadHandler(
 ###############################################.
 
 #action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
-observeEvent(input$switch_to_gest,{
+observeEvent(input$switch_to_gestation,{
   updateTabsetPanel(session, "intabset", selected = "comment")
   updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")
 })
 
 
-output$gest_commentary <- renderUI({
+output$gestation_commentary <- renderUI({
   tagList(
-    bsButton("gest_at_delivery",label = "Go to data"), #this button can only be used once
+    bsButton("jump_to_gestation",label = "Go to data"), #this button can only be used once
     h2("Gestation at delivery - 16th December 2020"))
 })
 

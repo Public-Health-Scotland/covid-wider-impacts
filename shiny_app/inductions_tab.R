@@ -103,70 +103,64 @@ output$induct_explorer <- renderUI({
   
   # text for titles of cut charts
   induct_data_timeperiod <-  paste0("Figures based on data extracted ",induct_extract_date)
-  induct_title <- paste0("of singleton live birth deliveries following induction of labour: ",input$geoname_induct)
-  induct_title_detail <-  paste0("(37-42 weeks gestation)")
+  induct_title <- paste0("of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$geoname_induct)
   
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Percentage of deliveries following induction of labour’ chart above, the dots joined by a solid black line show the percentage of births following induction of labour in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of births following induction of labour over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of deliveries following induction of labour."))
+            p("On the ‘Percentage of births that followed induction of labour’ chart above, the dots joined by a solid black line show the percentage of singleton live births at 37-42 weeks gestation that followed induction of labour in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of births that followed induction of labour over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of deliveries following induction of labour."))
   
   # Function to create common layout to all immunisation charts
-  induct_layout <- function(induct_trend,induct_linechart_age_n,induct_linechart_age_p,induct_linechart_dep_n,induct_linechart_dep_p,induct_linechart_number,induct_linechart_percent){
+  induct_layout <- function(induct_trend,induct_linechart_number,induct_linechart_age_n,induct_linechart_age_p,induct_linechart_dep_n,induct_linechart_dep_p){
     tagList(fluidRow(column(12,
                             h4(paste0("Percentage ", induct_title)),
-                            p(induct_title_detail),
                             actionButton("btn_induct_rules", "How do we identify patterns in the data?"),
                             withSpinner(plotlyOutput("induct_trend"))),
                      column(12,
                             p(induct_data_timeperiod),
                             p(chart_explanation)),
+                     column(12,
+                            br(), #spacing
+                            h4(paste0("Number of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$geoname_induct))),
+                     column(12,
+                            withSpinner(plotlyOutput("induct_linechart_number"))),
                      #only if scotland selected display age and deprivation breakdowns
                      if (input$geotype_induct == "Scotland"){
                        tagList(
                          fluidRow(column(12,
-                                         h4("Singleton live birth deliveries following induction of labour by maternal age group: Scotland"),
-                                         p("(37-42 weeks gestation)"))),
+                                         h4("Singleton live births at 37-42 weeks gestation that followed induction of labour by maternal age group: Scotland"))),
                          fluidRow(column(6,
-                                         h4("Number of births following induction of labour"),
+                                         h4("Number of births that followed induction of labour"),
                                          withSpinner(plotlyOutput("induct_linechart_age_n"))),
                                   column(6,
-                                         h4("Percentage of births following induction of labour"),
+                                         h4("Percentage of births that followed induction of labour"),
                                          withSpinner(plotlyOutput("induct_linechart_age_p")))),
                          fluidRow(column(12,
                                          br(), # spacing
-                                         h4("Singleton live birth deliveries following induction of labour by maternal deprivation level: Scotland"),
+                                         h4("Singleton live births at 37-42 weeks gestation that followed induction of labour by maternal deprivation level: Scotland"),
                                          actionButton("btn_modal_simd_induct", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          fluidRow(column(6,
-                                         h4("Number of births following induction of labour"),
+                                         h4("Number of births that followed induction of labour "),
                                          withSpinner(plotlyOutput("induct_linechart_dep_n"))),
                                   column(6,
-                                         h4("Percentage of births following induction of labour"),
+                                         h4("Percentage of births that followed induction of labour"),
                                          withSpinner(plotlyOutput("induct_linechart_dep_p"))))
                        )#tagList from if statement
-                     },
-                     column(12,
-                            br(), #spacing
-                            h4(paste0("Singleton live birth deliveries following induction of labour: ",input$geoname_induct)),
-                            p("(37-42 weeks gestation)")),
-                     column(6,
-                            p("Number of births"),
-                            withSpinner(plotlyOutput("induct_linechart_number"))),
-                     column(6,
-                            p("Percentage of births"),
-                            withSpinner(plotlyOutput("induct_linechart_percent")))))}
+                     }
+
+                     ))}
+
                      
            
   # #link plot functions to layouts
   induct_layout(induct_trend="induct_trend",
+             induct_linechart_number="induct_linechart_number",  
              induct_linechart_age_n="induct_linechart_age_n",
              induct_linechart_age_p="induct_linechart_age_p",
              induct_linechart_dep_n="induct_linechart_dep_n",
-             induct_linechart_dep_p="induct_linechart_dep_p",
-             induct_linechart_number="induct_linechart_number",
-             induct_linechart_percent="induct_linechart_percent")
+             induct_linechart_dep_p="induct_linechart_dep_p")
 })
 
 
@@ -182,16 +176,16 @@ plot_induct_trend <- function(measure, shift, trend){
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 65, 
-                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
+                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
     
     # chart legend labels  
     centreline_name <- paste0(input$geoname_induct," average up to end Feb 2020") 
     
     # format y axis
-    yname <- "Percentage of births following induction(%)"
+    yname <- "Percentage of births that followed induction (%)"
     yaxis_plots[["range"]] <- c(0, 60)  # forcing range from 0 to 60%
-    yaxis_plots[["title"]] <- "Percentage of births(%)"
+    yaxis_plots[["title"]] <- "Percentage of births (%)"
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
@@ -233,7 +227,7 @@ plot_induct_linechart <- function(measure){
   
   #arrange sort order for gestation categories
   plot_data <- plot_data %>%
-    mutate(ind = factor(ind, levels = c("Induced (37-42 weeks)", "Total births (37-42 weeks)")))
+    mutate(ind = factor(ind, levels = c("Births that followed induction", "All births")))
   #pick a colour palette to apply
   pallette <- pal_age
   
@@ -261,7 +255,7 @@ plot_induct_linechart <- function(measure){
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
-                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
+                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
     
     #Creating trend plot
@@ -335,7 +329,9 @@ plot_induct_split <- function(dataset, split, measure){
 ###############################################.
 
 induct_download_data <- reactive({
-  induct_download
+  induct_download %>%
+    rename(not_induced_37_42 = not_induced, induced_37_42 = induced, unknown_induced_37_42 = unknown_induced, perc_not_induced_37_42 = perc_not_induced,
+           perc_induced_37_42 = perc_induced, perc_unknown_induced_37_42 = perc_unknown_induced)
 })
 
 output$download_induct_data <- downloadHandler(
@@ -350,13 +346,13 @@ output$download_induct_data <- downloadHandler(
 ###############################################.
 
 #action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
-observeEvent(input$switch_to_induct,{
+observeEvent(input$switch_to_induction,{
   updateTabsetPanel(session, "intabset", selected = "comment")
   updateCollapse(session, "collapse_commentary", open = "Induction of labour")
 })
 
 
-output$induct_commentary <- renderUI({
+output$induction_commentary <- renderUI({
   tagList(
     bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
     h2("Induced delivery - 16th December 2020"))

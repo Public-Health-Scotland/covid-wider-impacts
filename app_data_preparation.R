@@ -1352,6 +1352,10 @@ mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_f
          percent_births=(births/tot_births)*100) %>% 
   ungroup()
 
+mod_linechart <- mod_linechart %>%
+  mutate(mode = recode(mode, "Spontaneous" = "Spontaneous vaginal", "Assisted" = "Assisted vaginal", "Caesarean - Emergency" = "Emergency caesarean",
+                       "Caesarean - Elective" = "Elective caesarean"))
+
 saveRDS(mod_linechart, "shiny_app/data/mod_linechart_data.rds")  
 
 
@@ -1425,8 +1429,8 @@ induct_linechart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_f
          category="All",
          percent_births=((births/tot_births_37_42)*100),
          #NOTE the gestation categories are not mutually exclusive - <37 contains <32
-         ind=case_when(ind=="ind_37_42" ~ "Induced (37-42 weeks)",
-                       ind=="births_37_42" ~ "Total births (37-42 weeks)",
+         ind=case_when(ind=="ind_37_42" ~ "Births that followed induction",
+                       ind=="births_37_42" ~ "All births",
                        TRUE~as.character(ind))) 
 
 saveRDS(induct_linechart, "shiny_app/data/induct_linechart_data.rds")  
@@ -1517,7 +1521,7 @@ gestation_linechart <- readRDS(paste0(data_folder, "pregnancy/gestation_at_deliv
                         gest=="births_under37" ~ "Under 37 weeks",
                         gest=="births_32_36" ~ "32 to 36 weeks",
                         gest=="births_37_41" ~ "37 to 41 weeks",
-                        gest=="births_18_44" ~ "18 to 44 weeks",
+                        gest=="births_18_44" ~ "All gestations (18-44 weeks)",
                         gest=="births_42plus" ~ "42 weeks plus",
                         TRUE~as.character(gest))) 
 

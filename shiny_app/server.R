@@ -84,7 +84,7 @@ function(input, output, session) {
 
   observeEvent(input$jump_to_mod, {updateTabsetPanel(session, "intabset", selected = "mod")})
   observeEvent(input$jump_to_induction, {updateTabsetPanel(session, "intabset", selected = "inductions")})
-  observeEvent(input$jump_to_gest_at_delivery, {updateTabsetPanel(session, "intabset", selected = "gestation")})
+  observeEvent(input$jump_to_gestation, {updateTabsetPanel(session, "intabset", selected = "gestation")})
 
   observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
@@ -117,9 +117,9 @@ function(input, output, session) {
     updateCollapse(session, "collapse_commentary", open = "Mode of delivery")})
   
   observeEvent(input$jump_commentary_induction, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Induction of labout")})
+    updateCollapse(session, "collapse_commentary", open = "Induction of labour")})
   
-  observeEvent(input$jump_commentary_gest_at_delivery, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
   
   observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -176,7 +176,7 @@ function(input, output, session) {
   observeEvent(input$induction_button, ({
     updateCollapse(session, "collapse_commentary", open = "Induction of labour")}))
   
-  observeEvent(input$gest_at_delivery_button, ({
+  observeEvent(input$gestation_button, ({
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")}))
 
   observeEvent(input$cancer_button, ({
