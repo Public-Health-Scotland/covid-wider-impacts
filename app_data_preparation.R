@@ -9,7 +9,7 @@ source("functions_packages_data_prep.R")
 ## RAPID data ----
 ###############################################.
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_02-Nov.rds")) %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_30-Nov.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
@@ -99,7 +99,7 @@ rap_adm <- rbind(rap_adm, spec_med, paed_com) %>%
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = "2020-10-25", 
+prepare_final_data(rap_adm, "rapid", last_week = "2020-11-22", 
                    extra_vars = c("admission_type", "spec"))
 
 ###############################################.
@@ -249,7 +249,7 @@ prepare_final_data(ae_data, "ae", last_week = "2020-10-25")
      # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
-                read_tsv(paste0(data_folder, "NHS24/NHS24_report_08062020to01112020.txt"))) %>%
+                read_tsv(paste0(data_folder, "NHS24/NHS24_report_08062020to29112020.txt"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
@@ -293,7 +293,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-11-01")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2020-11-29")
 
 ###############################################.
 ## SAS data ----
@@ -1505,7 +1505,7 @@ mentalhealth_drugs_hist_all <- mentalhealth_drugs_historic %>%
 mentalhealth_drugs_historic <- rbind(mentalhealth_drugs_historic, mentalhealth_drugs_hist_all)
 
 ### Newer MH drugs data ##
-mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_20201029.xlsx")) %>% 
+mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/2020-11-26-Weekly new incident emessage - Multi-condition.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -1537,7 +1537,7 @@ mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all)
 
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_historic)
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-10-25")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-11-22")
 
 ###############################################.
 ## A&E - mental health ----
