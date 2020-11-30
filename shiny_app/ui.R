@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+ #secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -352,7 +352,7 @@ tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking
          mainPanel(width = 12,
                    uiOutput("booking_explorer")
          )# mainPanel bracket
-), #tab panel
+),#, #tab panel
 tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "terminations",
           wellPanel(
             column(4, div(title="Select a breakdown",
