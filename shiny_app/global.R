@@ -119,7 +119,8 @@ perinatal <- readRDS("data/perinatal.rds")
 
 #Pregnancy tab
 #antenatal booking
-booking_extract_date <- "7th October 2020"
+
+booking_extract_date <- "12th November 2020"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
