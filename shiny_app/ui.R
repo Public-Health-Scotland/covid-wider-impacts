@@ -15,9 +15,6 @@ tagList( #needed for shinyjs
 ## Introduction ----
 ###############################################.
 tabPanel("Home", icon = icon("info-circle"), value = "intro",
-         # tags$b(span("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH)
-         #   data was identified and was corrected on 23/09/2020– for more details please see ",
-         #             actionLink("jump_commentary_oohissue", "commentary"), ".", style="color:red")),
                   h3("COVID-19 wider impacts on the health care system"),
                 p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
                     than those that occur as the direct result of infection"),
@@ -312,9 +309,9 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
                    uiOutput("cancer_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-###############################################
-## Mental Health ----
-###############################################.
+##############################################
+# Mental Health ----
+##############################################.
 tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -334,7 +331,7 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
 ),#tabPanel bracket
 ###############################################.
 ## Pregnancy ----
-###############################################.
+##############################################.
 navbarMenu("Pregnancy", icon = icon("venus"),
 ###############################################.
 tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking",
@@ -393,5 +390,5 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
       ) # tabpanel bracket
     )# page bracket
  )# taglist bracket
-# )#secure app
+ # )#secure app
 #END
