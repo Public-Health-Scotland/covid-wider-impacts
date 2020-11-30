@@ -26,14 +26,14 @@ cancer <- readRDS(paste0(data_folder,"cancer/cancer_data_2.rds"))
 saveRDS(cancer, "shiny_app/data/cancer_data_2.rds")
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "16_Nov_20")
-save_final_file("spec_lookup", "16_Nov_20")
+save_final_file("rapid", "30_Nov_20")
+save_final_file("spec_lookup", "30_Nov_20")
 ## OOH ----
 save_final_file("ooh", "16_Nov_20")
 ## A&E ----
 save_final_file("ae", "16_Nov_20")
 ## NHS24 ----
-save_final_file("nhs24", "16_Nov_20")
+save_final_file("nhs24", "30_Nov_20")
 ## SAS ----
 save_final_file("sas", "16_Nov_20")
 ##########################################################.
@@ -93,7 +93,7 @@ save_final_file("top", "16_Nov_20")
 save_final_file("top_download", "16_Nov_20")
 ##########################################################.
 ## Mental health - Prescribing ----
-save_final_file("mentalhealth_drugs", "16_Nov_20")
+save_final_file("mentalhealth_drugs", "30_Nov_20")
 ## Mental health - A&E ----
 save_final_file("mh_A&E", "16_Nov_20")
 ## Mental health - OOH ----
