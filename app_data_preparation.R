@@ -1505,7 +1505,7 @@ mentalhealth_drugs_hist_all <- mentalhealth_drugs_historic %>%
 mentalhealth_drugs_historic <- rbind(mentalhealth_drugs_historic, mentalhealth_drugs_hist_all)
 
 ### Newer MH drugs data ##
-mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_20201029.xlsx")) %>% 
+mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/2020-11-26-Weekly new incident emessage - Multi-condition.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -1537,7 +1537,7 @@ mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all)
 
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_historic)
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-10-25")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-11-22")
 
 ###############################################.
 ## A&E - mental health ----
