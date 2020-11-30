@@ -106,16 +106,12 @@ prepare_final_data(rap_adm, "rapid", last_week = "2020-11-22",
 ## OOH data ----
 ###############################################.
 # Saving big files as RDS to avoid unzipping 
-# ooh <- read_csv(unzip(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.zip"),"OOH DATA 2018 - 22032020.csv")) 
-# saveRDS(ooh, paste0(data_folder,"GP_OOH/OOH DATA 2018 - 22032020.rds"))
-# file.remove(paste0(data_folder,"GP_OOH/OOH DATA 2018 - 22032020.zip"))
-# ooh_new <- read_csv(unzip(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip"),"COVID DASHBOARD EXTRACT_2203to0505.csv"))
-# saveRDS(ooh_new, paste0(data_folder,"GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.rds"))
-# file.remove(paste0(data_folder, "GP_OOH/COVID DASHBOARD EXTRACT_2203to0505.zip"))
+# ooh <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data Update_2018to26042020.xlsx")) 
+# saveRDS(ooh, paste0(data_folder,"GP_OOH/OOH DATA 2018to26042020.rds"))
+# file.remove(paste0(data_folder,"GP_OOH/WIDER IMPACT PC OOH Data Update_2018to26042020.xlsx"))
 
 # Read in historic OOH file
-# ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018 - 22032020.rds")) %>%
-ooh <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data Update_2018to26042020.xlsx")) %>% 
+ooh <- readRDS(paste0(data_folder, "GP_OOH/OOH DATA 2018to26042020.rds")) %>%
   janitor::clean_names() %>%
   rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          dep=prompt_dataset_deprivation_scot_quintile,sex=gender,
@@ -145,7 +141,7 @@ ooh %<>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-04-26")))
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_58_5119821775363641353.xlsx")) %>% 
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_56_5474569671804807881.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -185,7 +181,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-10-25")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2020-11-22")
 
 ###############################################.
 ## A&E data ----
@@ -328,7 +324,7 @@ sas %<>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
 #NEW WEEKLY DATA UPDATE
-sas_new <- read_tsv(paste0(data_folder,"SAS/COVID_WIDER_IMPACT_SAS_11052020to25102020.txt")) %>% 
+sas_new <- read_tsv(paste0(data_folder,"SAS/2020-11-30-COVID WIDER IMPACT SAS_Prompt report.txt")) %>% 
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -367,7 +363,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas <- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-10-25")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2020-11-22")
 
 ###############################################.
 ## Cath labs - cardiac procedures ----
@@ -1542,11 +1538,12 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2020-1
 ###############################################.
 ## A&E - mental health ----
 ###############################################.
-
-mh_aye <- rbind(read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv")) %>% 
+# mh_aye_hist <- read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv"))
+# saveRDS(mh_aye_hist, paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds"))
+mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
-                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to25102020.csv"))) %>%
+                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to22112020.csv"))) %>%
   clean_names() 
 
 # List of terms used to identify mh cases
@@ -1658,7 +1655,7 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-10-25")
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2020-11-22")
 
 ###############################################.
 ## OOH - mental health ----
