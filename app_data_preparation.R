@@ -1287,8 +1287,8 @@ saveRDS(top_download, paste0(data_folder,"final_app_files/top_download_",
 ## Pregnancy (mode of delivery) ----
 ###############################################.
 #field with date data files prepared
-mod_folder <- "20201116"
-mod_date <- "2020-11-16"
+mod_folder <- "20201126"
+mod_date <- "2020-11-26"
 
 ##mode of delivery data supplied in 4 files: runchart data, line charts for scotland (age and dep split), line charts for NHS board and data download
 
@@ -1383,8 +1383,8 @@ saveRDS(mod_download, paste0(data_folder,"final_app_files/mod_download_data_",
 ###############################################.
 ## Pregnancy (inductions) ----
 ###############################################.
-induct_folder <- "20201116"
-induct_date <- "2020-11-16"
+induct_folder <- "20201126"
+induct_date <- "2020-11-26"
 
 ## 1-RUNCHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
@@ -1468,8 +1468,8 @@ saveRDS(induct_download, paste0(data_folder,"final_app_files/induct_download_dat
 ## Pregnancy (gestation at delivery) ----
 ###############################################.
 
-gestation_folder <- "20201116"
-gestation_date <- "2020-11-16"
+gestation_folder <- "20201126"
+gestation_date <- "2020-11-26"
 
 ## 1-RUNCHART DATA
 gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_RUNCHART_gestation_",gestation_date,".rds")) %>%  
