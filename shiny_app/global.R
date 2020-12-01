@@ -176,7 +176,7 @@ data_list_childdev <- c("13-15 month review" = "13_15mnth",
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
                         "Cardiac procedures" = "cath_lab",
-                        "Cardiovascular OOH cases" = "ooh_cardiac",
+                        "Cardiovascular OOH contacts" = "ooh_cardiac",
                         "Cardiovascular SAS incidents" = "sas_cardiac",
                         "6-in-1 first dose"  = "sixin_8wks",
                         "6-in-1 second dose" = "sixin_8wks_second",
@@ -228,7 +228,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Vulva - Females only" = "Vulva - Females only")
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
-                 "Out of hours cases" = "ooh_cardiac",
+                 "Out of hours contacts" = "ooh_cardiac",
                  "Scottish Ambulance Service" = "sas_cardiac", "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab

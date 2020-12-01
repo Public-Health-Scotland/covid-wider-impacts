@@ -567,8 +567,8 @@ ooh_data_cardiac <- ungroup(ooh_data_cardiac, gender)
 ooh_data_cardiac <- ooh_data_cardiac %>% rename(count=number_of_cases, hb=nhs_board, 
                                                 sex=gender, dep=deprivation_quintile) %>%
   mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
-                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
-                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
+                             "15-19" = "15 - 24", "20-24" = "15 - 24", "25-29" = "25 - 44", 
+                             "30-34" = "25 - 44", "35-39" = "25 - 44", "40-44" = "25 - 44", 
                              "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
                              "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
                              "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
@@ -600,6 +600,10 @@ ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
 
 # Filter out HSC partnership for now, may include in future
 ooh_cardiac <- ooh_cardiac %>% filter(area_type != "HSC partnership")
+
+# Filter graphs that look odd due to small numbers
+ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway") & type !="age")
+ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Fife", "NHS Highland") & type !="simd")
 
 # Formatting file for shiny app
 prepare_final_data(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-25")
@@ -687,6 +691,11 @@ sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
 
 # Filter out HSC partnership for now, may include in future
 sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
+
+# Filter graphs that look odd due to small numbers
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Shetland"))
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") & type !="simd")
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") & type !="age")
 
 # Formatting file for shiny app
 prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-25")
