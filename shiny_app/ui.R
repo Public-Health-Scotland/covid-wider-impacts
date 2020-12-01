@@ -1,5 +1,5 @@
 #UI
- secure_app( #uncomment if needing password protection
+secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -500,5 +500,4 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
 #     ) #page bracket
 #   ) #taglist bracket
  ) #secure app
-# 
-# #END
+#END
