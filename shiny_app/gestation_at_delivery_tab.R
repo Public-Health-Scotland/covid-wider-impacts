@@ -223,9 +223,27 @@ plot_gest_trend <- function(measure, shift, trend){
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
     
-    tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
-                            "Percentage: ",format(measure,digits = 1,nsmall=1),"%", "<br>"))
-    #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
+    #switch tooltip according to which measure is provided
+    if(measure == "perc_under32"){
+      tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
+                              "Percentage: ",format(plot_data$perc_under32,digits = 1,nsmall=1),"%", "<br>"))
+      #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
+      
+    } else if (measure  == "perc_under37") {
+      tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
+                              "Percentage: ",format(plot_data$perc_under37,digits = 1,nsmall=1),"%", "<br>"))
+      #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
+      
+    } else if (measure  == "perc_32_36") {
+      tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
+                              "Percentage: ",format(plot_data$perc_32_36,digits = 1,nsmall=1),"%", "<br>"))
+      #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
+      
+    } else if (measure  == "perc_42plus") {
+      tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
+                              "Percentage: ",format(plot_data$perc_42plus,digits = 1,nsmall=1),"%", "<br>"))
+      #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
+    }
     
     # Adjust the column used for median line according to which cut of chart to be shown
     centre_line <- case_when(measure == "perc_under32" ~ plot_data$median_under32,
