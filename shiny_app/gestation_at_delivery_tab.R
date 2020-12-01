@@ -228,25 +228,21 @@ plot_gest_trend <- function(measure, shift, trend){
       tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
                               "Percentage: ",format(plot_data$perc_under32,digits = 1,nsmall=1),"%", "<br>"))
       #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
-      title_mod <- "Under 32 weeks gestation"
       
     } else if (measure  == "perc_under37") {
       tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
                               "Percentage: ",format(plot_data$perc_under37,digits = 1,nsmall=1),"%", "<br>"))
       #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
-      title_mod <- "Under 37 weeks gestation"
       
     } else if (measure  == "perc_32_36") {
       tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
                               "Percentage: ",format(plot_data$perc_32_36,digits = 1,nsmall=1),"%", "<br>"))
       #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
-      title_mod <- "32-36 weeks gestation"
       
     } else if (measure  == "perc_42plus") {
       tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
                               "Percentage: ",format(plot_data$perc_42plus,digits = 1,nsmall=1),"%", "<br>"))
       #"Number: ", plot_data$csection_all)) # number of csections have been removed from dataset? not sure if needed
-      title_mod <- "At or over 42 weeks gestation"
     }
     
     # Adjust the column used for median line according to which cut of chart to be shown
@@ -279,9 +275,7 @@ plot_gest_trend <- function(measure, shift, trend){
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(orientation = 'h')#, #position of legend underneath plot
-             #title = title_mod
-             ) %>% 
+             legend = list(orientation = 'h')) %>% 
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }}
