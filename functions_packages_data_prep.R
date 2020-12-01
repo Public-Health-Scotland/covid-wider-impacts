@@ -197,18 +197,18 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
   
   # Disclosure control
   # Does not work setting < 5 counts to zero makes graphs look jaggy
-  #data_2020 <- data_2020 %>% 
-  #  mutate(count = if_else(count < 5, 0, count),
-  #         count_average = if_else(count_average < 5, 0, count_average),
-  #         variation = if_else(count < 5, 0, variation))
+  data_2020 <- data_2020 %>% 
+    mutate(count = if_else(count < 5, 0, count),
+           count_average = if_else(count_average < 5, 0, count_average),
+           variation = if_else(count < 5, 0, variation))
   
   # Filter week
-  #data_2020 <- data_2020 %>%
-  #  filter(week_ending <= as.Date(last_week))
+  data_2020 <- data_2020 %>%
+    filter(week_ending <= as.Date(last_week))
   
   # Supressing numbers under 5
-  data_2020 <- data_2020 %>% filter(count>=10) %>% 
-    filter(week_ending <= as.Date(last_week)) 
+  #data_2020 <- data_2020 %>% filter(count>=5) %>% 
+  #  filter(week_ending <= as.Date(last_week)) 
   
   final_data <<- data_2020
   

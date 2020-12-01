@@ -663,20 +663,16 @@ output$cardio_commentary <- renderUI({
     h3("Cardiovascular OOH contacts"),
     p("Information on OOH contacts..."),
     tags$ul(
-      tags$li("From the Middle of April there was a significant increase in OOH cardiac contacts. This lasted until 
-              the middle of July. The largest increase was in the week ending 15 March 2020, 346 compared to a historic average
-              of 195 contacts."),
-      tags$li("There was a significant increase at the start of May for females, 202 contacts compared to the 
-              historic average of 110."),
-      tags$li("There was an increase in OOH cardiac contacts from the middle of April for all SIMD quintiles.")),
+      tags$li("For GP out of hours services there was a sharp fall of around 30% in contacts for cardiovascular problems 
+               that started in early March 2020, some weeks prior to the introduction of ‘lockdown’ measures in Scotland. 
+               Contact numbers did not return to previous levels until early April, and during April, May and June were 
+               around 20% above the average for 2018-19. Trends were similar by age group and deprivation.")),
     h3("Cardiovascular SAS incidents"),
     p("Information on SAS incidents..."),
     tags$ul(
-      tags$li("There was a large decrease in SAS incidents from the start of April to the middle of July.
-               The largest decrease was in the ending 19 April 2020, 665 compared to a historic average 
-               of 1079 incidents."),
-      tags$li("The decrease in SAS incidents was similar at gender and SIMD level and affected all age groups."),
-      tags$li("From the end of July there has been a significant increase in SAS incidents which are above the historic average."))
+      tags$li("For Scottish Ambulance Service incidents, there was a sharp initial fall of around 40% in cardiovascular 
+               related incidents that started in early April 2020, shortly after the introduction of lockdown restrictions. 
+               This continued until mid-July. The fall in incidents was greatest in the most deprived groups."))
 )
   
 })

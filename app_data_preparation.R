@@ -602,11 +602,15 @@ ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
 ooh_cardiac <- ooh_cardiac %>% filter(area_type != "HSC partnership")
 
 # Filter graphs that look odd due to small numbers
-ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway") & type !="age")
-ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Fife", "NHS Highland") & type !="simd")
+ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
+                                                        "NHS Lanarkshire") | type !="age")
+ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Fife", "NHS Highland") | type !="dep")
+
+#ooh_cardiac <- ooh_cardiac %>% filter(area_name !="NHS Borders", type !="age")
+#ooh_cardiac <- ooh_cardiac %>% filter(area_name !="NHS Borders", type !="simd")
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-25")
+prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-25")
 
 ###############################################.
 ## SAS Cardiac ----
@@ -694,11 +698,11 @@ sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
 
 # Filter graphs that look odd due to small numbers
 sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Shetland"))
-sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") & type !="simd")
-sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") & type !="age")
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | type !="dep")
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | type !="age")
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-25")
+prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-25")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
