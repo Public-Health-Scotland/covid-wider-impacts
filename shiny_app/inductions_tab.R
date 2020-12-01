@@ -329,9 +329,7 @@ plot_induct_split <- function(dataset, split, measure){
 ###############################################.
 
 induct_download_data <- reactive({
-  induct_download %>%
-    rename(not_induced_37_42 = not_induced, induced_37_42 = induced, unknown_induced_37_42 = unknown_induced, perc_not_induced_37_42 = perc_not_induced,
-           perc_induced_37_42 = perc_induced, perc_unknown_induced_37_42 = perc_unknown_induced)
+  induct_download
 })
 
 output$download_induct_data <- downloadHandler(
