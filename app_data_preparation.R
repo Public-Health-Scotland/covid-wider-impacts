@@ -1287,8 +1287,8 @@ saveRDS(top_download, paste0(data_folder,"final_app_files/top_download_",
 ## Pregnancy (mode of delivery) ----
 ###############################################.
 #field with date data files prepared
-mod_folder <- "20201126"
-mod_date <- "2020-11-26"
+mod_folder <- "20201116"
+mod_date <- "2020-11-16"
 
 ##mode of delivery data supplied in 4 files: runchart data, line charts for scotland (age and dep split), line charts for NHS board and data download
 
@@ -1325,6 +1325,8 @@ mutate(ext_csection_all = case_when(is.na(ext_csection_all) ~ median_csection_al
   ungroup()
 
 saveRDS(mod_runchart, "shiny_app/data/mod_runchart_data.rds")
+saveRDS(mod_runchart, paste0(data_folder,"final_app_files/mod_runchart_data_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 2- LINECHART DATA mode of delivery for Scotland only by age and dep
 mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_SCOT_CHARTS_mode_",mod_date,".rds")) %>%  
@@ -1336,6 +1338,8 @@ mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder
          category=as.character(category))
 
 saveRDS(mod_scot, "shiny_app/data/mod_scot_data.rds")
+saveRDS(mod_scot, paste0(data_folder,"final_app_files/mod_scot_data_", 
+                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 3- LINECHART DATA mode of delivery for Scotland & NHS board
 mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_LINECHART_mode_",mod_date,".rds")) %>%  
@@ -1356,7 +1360,9 @@ mod_linechart <- mod_linechart %>%
   mutate(mode = recode(mode, "Spontaneous" = "Spontaneous vaginal", "Assisted" = "Assisted vaginal", "Caesarean - Emergency" = "Emergency caesarean",
                        "Caesarean - Elective" = "Elective caesarean"))
 
-saveRDS(mod_linechart, "shiny_app/data/mod_linechart_data.rds")  
+saveRDS(mod_linechart, "shiny_app/data/mod_linechart_data.rds") 
+saveRDS(mod_linechart, paste0(data_folder,"final_app_files/mod_linechart_data_", 
+                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 
 ## 4- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
@@ -1371,12 +1377,14 @@ mod_download <- read_csv(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_f
          chart_type= area_type)
 
 saveRDS(mod_download, "shiny_app/data/mod_download_data.rds")  
+saveRDS(mod_download, paste0(data_folder,"final_app_files/mod_download_data_", 
+                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Pregnancy (inductions) ----
 ###############################################.
-induct_folder <- "20201126"
-induct_date <- "2020-11-26"
+induct_folder <- "20201116"
+induct_date <- "2020-11-16"
 
 ## 1-RUNCHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
@@ -1403,6 +1411,8 @@ induct_runchart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_fo
   ungroup()
 
 saveRDS(induct_runchart, "shiny_app/data/induct_runchart_data.rds")
+saveRDS(induct_runchart, paste0(data_folder,"final_app_files/induct_runchart_data_", 
+                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 2- LINECHART DATA inductions for Scotland only by age and dep
 induct_scot <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_SCOT_CHARTS_induced_",induct_date,".rds")) %>%  
@@ -1414,6 +1424,8 @@ induct_scot <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder
          category=as.character(category))
 
 saveRDS(induct_scot, "shiny_app/data/induct_scot_data.rds")
+saveRDS(induct_scot, paste0(data_folder,"final_app_files/induct_scot_data_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 3- LINECHART DATA inductions for Scotland & NHS board
 induct_linechart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_LINECHART_induced_",induct_date,".rds")) %>%  
@@ -1433,7 +1445,9 @@ induct_linechart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_f
                        ind=="births_37_42" ~ "All births",
                        TRUE~as.character(ind))) 
 
-saveRDS(induct_linechart, "shiny_app/data/induct_linechart_data.rds")  
+saveRDS(induct_linechart, "shiny_app/data/induct_linechart_data.rds") 
+saveRDS(induct_linechart, paste0(data_folder,"final_app_files/induct_linechart_data_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 4- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
 induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_DOWNLOAD_induced_",induct_date,".csv"))%>%  
@@ -1447,13 +1461,15 @@ induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_f
          chart_type= area_type) 
 
 saveRDS(induct_download, "shiny_app/data/induct_download_data.rds")  
+saveRDS(induct_download, paste0(data_folder,"final_app_files/induct_download_data_", 
+                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Pregnancy (gestation at delivery) ----
 ###############################################.
 
-gestation_folder <- "20201126"
-gestation_date <- "2020-11-26"
+gestation_folder <- "20201116"
+gestation_date <- "2020-11-16"
 
 ## 1-RUNCHART DATA
 gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_RUNCHART_gestation_",gestation_date,".rds")) %>%  
@@ -1491,6 +1507,8 @@ gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_deliver
   ungroup()
 
 saveRDS(gestation_runchart, "shiny_app/data/gestation_runchart_data.rds")
+saveRDS(gestation_runchart, paste0(data_folder,"final_app_files/gestation_runchart_data_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 2- LINECHART DATA inductions for Scotland only by age and dep
 gestation_scot <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_SCOT_CHARTS_gestation_",gestation_date,".rds")) %>%  
@@ -1502,6 +1520,8 @@ gestation_scot <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/"
          category=as.character(category))
 
 saveRDS(gestation_scot, "shiny_app/data/gestation_scot_data.rds")
+saveRDS(gestation_scot, paste0(data_folder,"final_app_files/gestation_scot_data_", 
+                                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 3- LINECHART DATA gestation for Scotland & NHS board
 gestation_linechart <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_LINECHART_gestation_",gestation_date,".rds")) %>%  
@@ -1526,6 +1546,8 @@ gestation_linechart <- readRDS(paste0(data_folder, "pregnancy/gestation_at_deliv
                         TRUE~as.character(gest))) 
 
 saveRDS(gestation_linechart, "shiny_app/data/gestation_linechart_data.rds")  
+saveRDS(gestation_linechart, paste0(data_folder,"final_app_files/gestation_linechart_data_", 
+                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 4- DATA DOWNLOAD FILE FOR SHINY APP
 gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_DOWNLOAD_gestation_",gestation_date,".csv"))%>%  
@@ -1539,6 +1561,8 @@ gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_deliv
          chart_type= area_type) 
 
 saveRDS(gestation_download, "shiny_app/data/gestation_download_data.rds") 
+saveRDS(gestation_download, paste0(data_folder,"final_app_files/gestation_download_data_", 
+                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 
 ###############################################.

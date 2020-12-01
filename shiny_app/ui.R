@@ -477,7 +477,7 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
          mainPanel(width = 12,
                    uiOutput("gestation_explorer")
          )# mainPanel bracket
-))))) # deliveries tab panel
+)))) # deliveries tab panel
 #), # navbar menu bracket
 # ###############################################.
 # ## Data ----
@@ -498,7 +498,7 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
 # 
 #       ) # tabpanel bracket
 #     ) #page bracket
-#  )# taglist bracket
-#  #secure app
+#   ) #taglist bracket
+  ) #secure app
 # 
 # #END
