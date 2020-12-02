@@ -602,12 +602,11 @@ ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
 ooh_cardiac <- ooh_cardiac %>% filter(area_type != "HSC partnership")
 
 # Filter graphs that look odd due to small numbers
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles"))
 ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
                                                         "NHS Lanarkshire") | type !="age")
-ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Fife", "NHS Highland") | type !="dep")
-
-#ooh_cardiac <- ooh_cardiac %>% filter(area_name !="NHS Borders", type !="age")
-#ooh_cardiac <- ooh_cardiac %>% filter(area_name !="NHS Borders", type !="simd")
+ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
+                                                        "NHS Fife", "NHS Highland") | type !="dep")
 
 # Formatting file for shiny app
 prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-25")
@@ -697,7 +696,7 @@ sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
 sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
 
 # Filter graphs that look odd due to small numbers
-sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Shetland"))
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland"))
 sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | type !="dep")
 sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | type !="age")
 
