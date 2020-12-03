@@ -602,7 +602,7 @@ ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
 ooh_cardiac <- ooh_cardiac %>% filter(area_type != "HSC partnership")
 
 # Filter graphs that look odd due to small numbers
-sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles"))
+ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles"))
 ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
                                                         "NHS Lanarkshire") | type !="age")
 ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
