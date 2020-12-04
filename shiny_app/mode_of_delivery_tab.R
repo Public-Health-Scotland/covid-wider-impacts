@@ -140,10 +140,10 @@ output$mod_explorer <- renderUI({
                          fluidRow(column(12,
                                          h4("Singleton live births delivered by caesarean section by maternal age group: Scotland"))),
                          fluidRow(column(6,
-                                         h4("Number of births by caesarean section"),
+                                         h4("Number of births delivered by caesarean section"),
                                          withSpinner(plotlyOutput("mod_linechart_age_n"))),
                                   column(6,
-                                         h4("Percentage of births by caesarean section"),
+                                         h4("Percentage of births delivered by caesarean section"),
                                          withSpinner(plotlyOutput("mod_linechart_age_p")))),
                          fluidRow(column(12,
                                          br(), # spacing
