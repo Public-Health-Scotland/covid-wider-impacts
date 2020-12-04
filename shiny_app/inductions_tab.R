@@ -176,7 +176,7 @@ plot_induct_trend <- function(measure, shift, trend){
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 65, 
-                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the data download.")
+                text_nodata = "Chart not shown due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
     
     # chart legend labels  
@@ -255,7 +255,7 @@ plot_induct_linechart <- function(measure){
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
-                text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the data download.")
+                text_nodata = "Chart not shown due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
     
     #Creating trend plot
