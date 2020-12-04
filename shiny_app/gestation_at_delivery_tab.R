@@ -152,7 +152,7 @@ output$gestation_explorer <- renderUI({
                             h4("37-41 weeks gestation and all births"),
                             withSpinner(plotlyOutput("gest_linechart_number_37_41_all"))),
                      column(6,
-                            h4("Under 32 weeks, 32-36 weeks, and over 42 weeks gestation"),
+                            h4("Under 32 weeks, 32-36 weeks, and at or over 42 weeks gestation"),
                             withSpinner(plotlyOutput("gest_linechart_number_32_3236_42plus"))),
                      #only if scotland selected display age and deprivation breakdowns
                      if (input$geotype_gest == "Scotland"){
@@ -393,7 +393,7 @@ plot_gest_linechart_two <- function(measure){
   
   #arrange sort order for gestation categories
   plot_data <- plot_data %>%
-    mutate(gest = factor(gest, levels = c("Under 32 weeks", "32 to 36 weeks", "42 weeks plus")))
+    mutate(gest = factor(gest, levels = c("Under 32 weeks", "32 to 36 weeks", "At or over 42 weeks")))
   
   #pick a colour palette to apply
   pallette <- pal_age
