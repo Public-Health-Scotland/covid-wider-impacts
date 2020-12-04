@@ -393,10 +393,10 @@ plot_gest_linechart_two <- function(measure){
   
   #arrange sort order for gestation categories
   plot_data <- plot_data %>%
-    mutate(gest = factor(gest, levels = c("Under 32 weeks", "32 to 36 weeks", "At or over 42 weeks")))
+    mutate(gest = factor(gest, levels = c("Under 32 weeks", "32 to 36 weeks", "42 weeks plus")))
   
   #pick a colour palette to apply
-  pallette <- pal_age
+  pallette <- c('#543005', '#8c510a', '#74add1') # specified to ensure grouping of pre-term deliveries using brown lines
   
   # adjust chart y axis according to what is being displayed
   if(measure == "percent_births"){
