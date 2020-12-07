@@ -4,9 +4,12 @@
 observeEvent(input$btn_mod_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("These data are derived from the Scottish Morbidity Record 02 (SMR02). An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient obstetric care, mainly categorised as an antenatal, a postnatal or a delivery episode. The data used for these indicators are from the delivery episode and are based on month of discharge from hospital of the woman after the delivery episode. Only singleton live births are included. From October 2019 the guidance for reporting on homebirths was updated, enabling maternity units to submit an SMR02 record for a homebirth."),
-               p("Although there is no legal requirement to submit these data to PHS, the level of submission falls only slightly short of the National Records for Scotland (NRS) statutory birth registrations. For the period 1 April 2018 to 31 March 2019, live births recorded on SMR02 represented 98.4% of the live births registered with NRS. Further information based on SMR02 data is also available from the annual ",
-                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
+               p("The data used for the method of delivery page comes from the Scottish Morbidity Record 02 (SMR02) database.  An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care.  From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended homebirths."),
+               p("For the method of delivery page, SMR02 records for episodes of care involving the delivery of a singleton live birth (i.e. one baby, not twins or more) at any gestation have been used.  The charts presented show the total number of singleton live births, and the number and percentage with the different methods of delivery, in each month from January 2018 onwards.  Method of delivery has been categorised as spontaneous vaginal delivery; assisted vaginal delivery (including forceps, ventouse, and vaginal breech deliveries); elective (i.e. planned) caesarean section; and emergency caesarean section.  The month is based on the date the woman was discharged from hospital after delivery.  Data is shown at all Scotland level, and for women living in each mainland NHS Board area.  Due to small numbers, the charts for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles) are unstable so these have not been shown.  However, the Island Boards are included in the Scotland total, and data for the Island Boards is available in the spreadsheet provided through the ‘Download data’ button."),
+               p("Data is shown for up to and including the most recent month for which SMR02 records are considered near complete.  Data for the most recent months should be viewed as provisional.  Data for all months will be refreshed every time the dashboard page is updated, and data for the most recent months is likely to change slightly as additional SMR02 records are submitted to PHS."),
+               p("Although there is no legal requirement to submit SMR02 records to PHS, data completeness is very high.  For example, for the period 1 April 2019 to 31 March 2020, live births recorded on SMR02 represented 98.8% of the live births registered by law with National Records of Scotland.  In addition, the recording of method of delivery is very complete.  For the period 1 April 2019 to 31 March 2020, method of delivery was recorded on 99.9% of SMR02 records relating to singleton live births."), 
+               p("Further information based on SMR02 data is also available from the annual ",
+                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/births-in-scottish-hospitals/", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
                size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
@@ -376,7 +379,30 @@ observeEvent(input$switch_to_mod,{
 output$mod_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mod",label = "Go to data"), #this button can only be used once
-    h2("Mode of delivery - 16th December 2020"))
+    h2("Method of delivery - 16th December 2020"),
+    p("Information on method of delivery was included in this tool for the first time on 16 December 2020."),
+    p("The ‘",
+      tags$a(href="https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/assisted-birth", "method of delivery",class="externallink",target="_blank"),
+      "' refers to the way a baby is born.  Different methods of delivery include spontaneous vaginal delivery (a natural birth); assisted vaginal delivery (including vaginal delivery by forceps or ventouse, or vaginal delivery of a breech baby); or a caesarean section (an operation to deliver the baby through a cut in the mother’s abdomen).  A caesarean section can be elective (planned in advance and provided before labour has started) or emergency (unplanned, and usually but not always provided after labour has started)."),
+    p("Care for women around the time they are giving birth is an essential, time critical service that cannot be deferred.  As such, it has been provided throughout the COVID-19 pandemic, and maternity staff have not been redeployed to support other services.  The way that some elements of this care are provided has changed in response to COVID-19 however, to minimise the risk of infection and to allow services to continue to provide safe care during times when a high number of staff may be off work, for example due to needing to isolate."),
+    p("Guidance issued by the ",
+      tags$a(href="https://www.gov.scot/collections/coronavirus-covid-19-guidance/#health,careandsocialwork", "Scottish Government",class="externallink",target="_blank"),
+      " and ",
+      tags$a(href="https://www.rcog.org.uk/coronavirus-pregnancy", "Royal College of Obstetricians and Gynaecologists",class="externallink",target="_blank"),
+      "to maternity services at the height of the first wave of the pandemic noted that:"),
+    tags$ul(
+      tags$li("It may be necessary for services to temporarily suspend the option for women to deliver at home or in midwife led units, and to concentrate delivery care within obstetric units"),
+      tags$li("Additional restrictions on the use of water births were recommended"),
+      tags$li("Care pathways for women requiring induction of labour should be amended to ensure the early stages of the induction process were delivered on an outpatient basis wherever possible"),
+      tags$li("Services should consider deferring a planned induction of labour or elective caesarean section if a woman was isolating due to having COVID-19, or having been in contact with a case, if it was safe to do so"),
+      tags$li("Services should support low risk women in the early latent phase of labour to remain at home wherever possible"),
+      tags$li("In general, strict restrictions on visitors for patients in hospital were advised, however women giving birth could still be accompanied by their chosen birth partner")
+    ),
+    p("The information on method of delivery presented through this tool is taken from hospital discharge records, specifically records relating to the care of women delivering a singleton live birth (i.e. one baby, not twins or more) at any stage of pregnancy.  Further technical information is available through the ‘Data source’ button on the dashboard page."),
+    p("The data shows that, at all Scotland level, the percentage of singleton live births delivered by caesarean section (the ‘caesarean section rate’) has gradually increased from January 2018 (when the data shown starts) to end September 2020 (the latest point for which data is currently available).  The increase is particularly seen in the elective caesarean section rate, but is also evident in the emergency caesarean section rate.  The upward trend in the elective and emergency caesarean section rates predates the COVID-19 pandemic, but it has continued during the pandemic."),
+    p("Prior to the COVID-19 pandemic, the caesarean section rate was somewhat variable between NHS Board areas of residence.  There is also some variation between areas in how the caesarean section rate has changed around the time of the pandemic, for example the emergency caesarean section rate has increased noticeably for women living in NHS Fife, whereas the elective and emergency caesarean section rates have decreased for women living in NHS Lanarkshire."),
+    p("There is a very clear gradient in the caesarean section rate by maternal age, with the rate being lowest among mothers in the youngest (<20 years) age group and highest among mothers in the oldest (40+ years) age group.  As women from the least deprived areas of Scotland tend to have their children at older ages than women from more deprived areas, this means that the caesarean section rate tends to be highest among mothers living in the least deprived areas.  These patterns have persisted during the COVID-19 pandemic.")
+    )
 })
 
 

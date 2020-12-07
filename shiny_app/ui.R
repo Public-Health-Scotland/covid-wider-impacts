@@ -88,7 +88,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
 
                           # actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
-                          actionLink("mod_button", "Mode of delivery", width="150px"), br(),
+                          actionLink("mod_button", "Method of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
                           actionLink("gestation_button", "Gestation at delivery", width="150px")#,
 
@@ -109,7 +109,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
                                      bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
 
-                                     bsCollapsePanel("Mode of delivery", uiOutput("mod_commentary")),
+                                     bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
                                      bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary"))
 
