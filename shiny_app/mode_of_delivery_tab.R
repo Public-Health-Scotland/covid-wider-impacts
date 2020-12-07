@@ -261,8 +261,12 @@ plot_mod_split <- function(dataset, split, measure){
 
   plot_data <- dataset
   
+  #improve grammar of label to appear in tool tip
+  tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"), split=="dep" ~ paste0("Deprivation group:"))
+  
   # Create tooltip for line chart
-  tooltip <- c(paste0("Month: ", format(plot_data$month, "%B %Y"),"<br>",
+  tooltip <- c(paste0(tool_tip_split,dataset$category,"<br>",
+                      "Month: ", format(plot_data$month, "%B %Y"),"<br>",
                       "Number: ", plot_data$csection_all, "<br>",
                       "Percentage: ", format(plot_data$perc_csection_all,digits=1,nsmall = 1),"%"))
   
@@ -324,6 +328,7 @@ if(measure == "births"){
   plot_data <- plot_data #%>% #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
 
 }
+
 # Create tooltip for line chart
 tooltip <- c(paste0("Mode of delivery: ", plot_data$mode,"<br>",
                     "Area: ",plot_data$area_name,"<br>",

@@ -286,7 +286,7 @@ plot_induct_split <- function(dataset, split, measure){
   
   # Create tooltip for line chart
   tooltip <- c(paste0(tool_tip_split,dataset$category,"<br>",
-    "Month: ", format(plot_data$month, "%B %Y"),"<br>",
+                      "Month: ", format(plot_data$month, "%B %Y"),"<br>",
                       "Number: ", plot_data$ind_37_42, "<br>",
                       "Percentage: ", format(plot_data$perc_ind_37_42,digits=1,nsmall = 1),"%"))
   

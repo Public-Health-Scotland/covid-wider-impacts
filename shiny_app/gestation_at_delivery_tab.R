@@ -296,7 +296,7 @@ plot_gest_split <- function(dataset, split, measure){
   # Create tooltip for line chart
   tooltip <- c(paste0(tool_tip_split,dataset$category,"<br>",
                       "Month: ", format(plot_data$month, "%B %Y"),"<br>",
-                      "Number: ", plot_data$csection_all, "<br>",
+                      "Number: ", plot_data$births_under37, "<br>", #number of csections has been removed from dataset
                       "Percentage: ", format(plot_data$perc_under37,digits=1,nsmall = 1),"%"))
   
   # adjust chart y axis according to what is being displayed
