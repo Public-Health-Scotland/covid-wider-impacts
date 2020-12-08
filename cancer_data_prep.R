@@ -26,7 +26,7 @@ input_folder <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Pr
 cl_out <- "/conf/linkage/output/lookups/Unicode/"
 
 # import pathology data
-cancer <- read_csv(paste0(input_folder,"Pathology_Data.csv"), col_names = T) %>%  
+cancer <- read_csv(paste0(input_folder,"Pathology_Data_Nov20.csv"), col_names = T) %>%  
   clean_names() 
 
 # import deprivation lookup
@@ -339,7 +339,7 @@ diff_data <-  diff_data %>%
 ##########################################
 
 diff_data <-  diff_data %>% 
-  filter(week_number <= 25) %>%
+  filter(week_number <= 39) %>%
   ungroup()
 
 
