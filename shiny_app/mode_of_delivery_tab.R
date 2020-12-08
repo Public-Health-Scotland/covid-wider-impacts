@@ -255,8 +255,8 @@ plot_mod_trend <- function(measure, shift, trend){
   }}
 
 
-#####################################################################################################################
-## LINECHART SCOTLAND: caesarean delivery by age group and deprivation, numbers and percentages - Scotland level only
+#####################################################################################################################.
+## LINECHART SCOTLAND: caesarean delivery by age group and deprivation, numbers and percentages - Scotland level only ----
 plot_mod_split <- function(dataset, split, measure){  
 
   plot_data <- dataset
@@ -307,8 +307,8 @@ plot_mod_split <- function(dataset, split, measure){
   
 }
 
-#####################################################################################################################
-## LINECHART SCOTLAND & NHS BOARD: Births by mode of delivery numbers and percentages
+#####################################################################################################################.
+#### LINECHART SCOTLAND & NHS BOARD: Births by mode of delivery numbers and percentages ----
 
 plot_mod_linechart <- function(measure){  
   
