@@ -264,6 +264,8 @@ observeEvent(input$btn_cardio_modal,
                    overnight or during the weekend. An appointment to the service is normally arranged 
                    following contact with NHS 24. The recent trend data is shown by age group, sex and 
                    broad deprivation category (SIMD)."),
+                 p("A GP out of hours case represents one patient contact with the service. Please note that the same person could
+                    become a case on more than one occasion."),
                  p("The charts provide a weekly summary of cardiovascular cases in the recent past and 
                    historical trends for comparison purposes. Cardiovascular cases are identified using the following conditions:"),
                 tags$ul(
