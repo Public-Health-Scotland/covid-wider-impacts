@@ -609,7 +609,7 @@ ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumf
                                                         "NHS Fife", "NHS Highland") | type !="dep")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-10-29")
+prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-11-08")
 
 ###############################################.
 ## SAS Cardiac ----
@@ -701,7 +701,7 @@ sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | t
 sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | type !="age")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-10-29")
+prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-11-22")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
