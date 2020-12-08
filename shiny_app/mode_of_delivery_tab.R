@@ -115,27 +115,38 @@ output$mod_explorer <- renderUI({
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
             p("On the ‘Percentage of births by caesarean section’ charts above, the dots joined by a solid black line show the percentage of singleton live births (at all gestations) that were delivered by caesarean section in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of births that were by caesarean section over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of births by caesarean section."))
   
+  # Charts if data is available and one sign for the three charts if not
+  if (input$geoname_mod %in% c("NHS Shetland", "NHS Orkney", "NHS Western Isles") ){
+    charts_mod <-  tagList(h5("Chart not shown as unstable due to small numbers. 
+                                Data for the Island Boards is included in the data download."))
+  } else {
+    charts_mod <-  tagList(
+      column(4,
+             h4("All caesarean sections"),
+             withSpinner(plotlyOutput("mod_trend_csection_all"))),
+      column(4,
+             h4("Elective caesarean sections"),
+             withSpinner(plotlyOutput("mod_trend_csection_elec"))),
+      column(4,
+             h4("Emergency caesarean sections"),
+             withSpinner(plotlyOutput("mod_trend_csection_emer"))),
+      column(12,
+             p(mod_data_timeperiod),
+             p(chart_explanation)),
+      column(12,
+             br(), #spacing
+             h4(paste0("Number of singleton live births by method of delivery: ",input$geoname_mod))),
+      column(12,
+             withSpinner(plotlyOutput("mod_linechart_number")))
+    )
+  }
+  
+  
   # Function to create common layout to all immunisation charts
   tagList(fluidRow(column(12,
                           h4(mod_title),
                           actionButton("btn_mod_rules", "How do we identify patterns in the data?")),
-                   column(4,
-                          h4("All caesarean sections"),
-                          withSpinner(plotlyOutput("mod_trend_csection_all"))),
-                   column(4,
-                          h4("Elective caesarean sections"),
-                          withSpinner(plotlyOutput("mod_trend_csection_elec"))),
-                   column(4,
-                          h4("Emergency caesarean sections"),
-                          withSpinner(plotlyOutput("mod_trend_csection_emer"))),
-                   column(12,
-                          p(mod_data_timeperiod),
-                          p(chart_explanation)),
-                   column(12,
-                          br(), #spacing
-                          h4(paste0("Number of singleton live births by method of delivery: ",input$geoname_mod))),
-                   column(12,
-                          withSpinner(plotlyOutput("mod_linechart_number"))),
+                   charts_mod,
                    #only if scotland selected display age and deprivation breakdowns
                    if (input$geotype_mod == "Scotland"){
                      tagList(
