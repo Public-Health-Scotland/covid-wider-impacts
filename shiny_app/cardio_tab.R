@@ -43,7 +43,7 @@ observeEvent(input$measure_cardio_select, {
   }
   
   if (x == "ooh_cardiac") {
-    cardio_label = "Step 2 - Select geography level for cardiovascular OOH contacts"
+    cardio_label = "Step 2 - Select geography level for cardiovascular OOH cases"
     cardio_choices = c("Scotland", "Health board")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
@@ -257,19 +257,19 @@ observeEvent(input$btn_cardio_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_cardio_select == "ooh_cardiac"){
-               showModal(modalDialog(# OUT OF HOURS contacts  MODAL
+               showModal(modalDialog(# OUT OF HOURS cases  MODAL
                  title = "What is the data source?",
                  p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor, 
                    when needed at times outside normal general practice hours, such as evenings, 
                    overnight or during the weekend. An appointment to the service is normally arranged 
                    following contact with NHS 24. The recent trend data is shown by age group, sex and 
                    broad deprivation category (SIMD)."),
-                 p("The charts provide a weekly summary of cardiovascular contacts in the recent past and 
-                   historical trends for comparison purposes. Cardiovascular contacts are identified using the following conditions:"),
+                 p("The charts provide a weekly summary of cardiovascular cases in the recent past and 
+                   historical trends for comparison purposes. Cardiovascular cases are identified using the following conditions:"),
                 tags$ul(
                   tags$li("pleuritic pain, atypical chest pain, ischaemic heart disease, acute myocardial infarction, angina pectoris, ischaemic chest pain, chest pain.")),
-                 p("The figures presented in this tool exclude contacts within any of the COVID-19 
-                   hubs or assessment centres and relate only to contacts concerning non-COVID 
+                 p("The figures presented in this tool exclude cases within any of the COVID-19 
+                   hubs or assessment centres and relate only to cases concerning non-COVID 
                    issues. "),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may 
                    be available on request to ",
@@ -437,18 +437,18 @@ output$cardio_explorer <- renderUI({
       
      } else if (input$measure_cardio_select == "ooh_cardiac") {
         tagList(# OOH Attendances
-          h3(paste0("Weekly cardiovascular contacts in out of hours services in ", input$geoname_cardio)),
+          h3(paste0("Weekly cardiovascular cases in out of hours services in ", input$geoname_cardio)),
           actionButton("btn_cardio_modal", "Data source: PHS GP OOH Datamart", icon = icon('question-circle')),
           plot_box("2020 compared with 2018-2019 average", "ooh_cardio_all"),
-          plot_cut_box(paste0("Percentage change in cardiovascular contacts in ", input$geoname_cardio, " compared with the corresponding
+          plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "ooh_cardio_sex_var",
-                       paste0("Weekly number of cardiovascular contacts in ", input$geoname_cardio, " by sex"), "ooh_cardio_sex_tot"),
-          plot_cut_box(paste0("Percentage change in cardiovascular contacts in ", input$geoname_cardio, " compared with the corresponding
+                       paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by sex"), "ooh_cardio_sex_tot"),
+          plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by age group"), "ooh_cardio_age_var",
-                       paste0("Weekly number of cardiovascular contacts in ", input$geoname_cardio, " by age group"), "ooh_cardio_age_tot"),
-          plot_cut_box(paste0("Percentage change in cardiovascular contacts in ", input$geoname_cardio, " compared with the corresponding
+                       paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by age group"), "ooh_cardio_age_tot"),
+          plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by SIMD quintile"), "ooh_cardio_depr_var",
-                       paste0("Weekly number of cardiovascular contacts in ", input$geoname_cardio, " by SIMD quintile"), "ooh_cardio_depr_tot",
+                       paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by SIMD quintile"), "ooh_cardio_depr_tot",
                        extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?", 
                                                     icon = icon('question-circle')))
         )
@@ -660,10 +660,10 @@ output$cardio_commentary <- renderUI({
                     proportion of coronary interventions occur in a context of patients suffering a heart 
                     attack. A proportion of coronary interventions are also planned and elective in nature. "),
             tags$li("The number of device procedures has been lower than expected since the end of March 2020.")),
-    h3("Cardiovascular OOH contacts"),
-    p("Information on OOH contacts..."),
+    h3("Cardiovascular OOH cases"),
+    p("Information on OOH cases..."),
     tags$ul(
-      tags$li("For GP out of hours services there was a sharp fall of around 30% in contacts for cardiovascular problems 
+      tags$li("For GP out of hours services there was a sharp fall of around 30% in cases for cardiovascular problems 
                that started in early March 2020, some weeks prior to the introduction of ‘lockdown’ measures in Scotland. 
                Contact numbers did not return to previous levels until early April, and during April, May and June were 
                around 20% above the average for 2018-19. Trends were similar by age group and deprivation.")),
