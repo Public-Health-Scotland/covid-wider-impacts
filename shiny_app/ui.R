@@ -398,8 +398,9 @@ tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mo
                   fluidRow(br()),
 
                   downloadButton("download_mod_data", "Download data"),
+                  fluidRow(br()),
 
-                  actionButton('jump_commentary_perinatal','Go to commentary'))
+                  actionButton('jump_commentary_mod','Go to commentary'))
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("mod_explorer")

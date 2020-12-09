@@ -117,7 +117,7 @@ output$mod_explorer <- renderUI({
   
   # Charts if data is available and one sign for the three charts if not
   if (input$geoname_mod %in% c("NHS Shetland", "NHS Orkney", "NHS Western Isles") ){
-    charts_mod <-  tagList(h5("Chart not shown as unstable due to small numbers. 
+    charts_mod <-  tagList(h5("Chart not shown as unstable due to small numbers.
                                 Data for the Island Boards is included in the data download."))
   } else {
     charts_mod <-  tagList(

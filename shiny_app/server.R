@@ -114,7 +114,7 @@ function(input, output, session) {
     updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")})
   
   observeEvent(input$jump_commentary_mod, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Mode of delivery")})
+    updateCollapse(session, "collapse_commentary", open = "Method of delivery")})
   
   observeEvent(input$jump_commentary_induction, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Induction of labour")})
@@ -171,7 +171,7 @@ function(input, output, session) {
   
 
   observeEvent(input$mod_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Mode of delivery")}))
+    updateCollapse(session, "collapse_commentary", open = "Method of delivery")}))
   
   observeEvent(input$induction_button, ({
     updateCollapse(session, "collapse_commentary", open = "Induction of labour")}))
