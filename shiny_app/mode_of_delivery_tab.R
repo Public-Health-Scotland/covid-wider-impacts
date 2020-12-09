@@ -376,7 +376,7 @@ output$download_mod_data <- downloadHandler(
 #action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
 observeEvent(input$switch_to_mod,{
   updateTabsetPanel(session, "intabset", selected = "comment")
-  updateCollapse(session, "collapse_commentary", open = "Mode of delivery")
+  updateCollapse(session, "collapse_commentary", open = "Method of delivery")
 })
 
 

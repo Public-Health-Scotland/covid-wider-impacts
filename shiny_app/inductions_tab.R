@@ -356,7 +356,7 @@ observeEvent(input$switch_to_induction,{
 output$induction_commentary <- renderUI({
   tagList(
     bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
-    h2("Induced delivery - 16th December 2020"),
+    h2("Induction of labour - 16th December 2020"),
     p("Information on induction of labour was included in this tool for the first time on 16 December 2020."),
     p("'",
       tags$a(href="https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/getting-ready-for-the-birth/induced-labour", "Induction of labour",class="externallink",target="_blank"),
