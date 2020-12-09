@@ -359,7 +359,9 @@ if (is.data.frame(plot_data) && nrow(plot_data) == 0)
 
 mod_download_data <- reactive({
   mod_download %>%  
-    rename(assisted_vaginal_in_breech = assisted_vaginal, spontaneous_vaginal = spontaneous)
+    rename(assisted_vaginal_inc_breech = assisted_vaginal, spontaneous_vaginal = spontaneous,
+          perc_assisted_vaginal_inc_breech = perc_assisted_vaginal,
+          perc_spontaneous_vaginal = perc_spontaneous)
 })
 
 output$download_mod_data <- downloadHandler(
@@ -405,7 +407,7 @@ output$mod_commentary <- renderUI({
     p("The information on method of delivery presented through this tool is taken from hospital discharge records, specifically records relating to the care of women delivering a singleton live birth (i.e. one baby, not twins or more) at any stage of pregnancy.  Further technical information is available through the ‘Data source’ button on the dashboard page."),
     p("The data shows that, at all Scotland level, the percentage of singleton live births delivered by caesarean section (the ‘caesarean section rate’) has gradually increased from January 2018 (when the data shown starts) to end September 2020 (the latest point for which data is currently available).  The increase is particularly seen in the elective caesarean section rate, but is also evident in the emergency caesarean section rate.  The upward trend in the elective and emergency caesarean section rates predates the COVID-19 pandemic, but it has continued during the pandemic."),
     p("Prior to the COVID-19 pandemic, the caesarean section rate was somewhat variable between NHS Board areas of residence.  There is also some variation between areas in how the caesarean section rate has changed around the time of the pandemic, for example the emergency caesarean section rate has increased noticeably for women living in NHS Fife, whereas the elective and emergency caesarean section rates have decreased for women living in NHS Lanarkshire."),
-    p("There is a very clear gradient in the caesarean section rate by maternal age, with the rate being lowest among mothers in the youngest (<20 years) age group and highest among mothers in the oldest (40+ years) age group.  As women from the least deprived areas of Scotland tend to have their children at older ages than women from more deprived areas, this means that the caesarean section rate tends to be highest among mothers living in the least deprived areas.  These patterns have persisted during the COVID-19 pandemic.")
+    p("There is a very clear gradient in the caesarean section rate by maternal age, with the rate being lowest among mothers in the youngest (<20 years) age group and highest among mothers in the oldest (40+ years) age group. These patterns have persisted during the COVID-19 pandemic. As women from the least deprived areas of Scotland tend to have their children at older ages than women from more deprived areas, this means that the caesarean section rate tends to be highest among mothers living in the least deprived areas.")
     )
 })
 
