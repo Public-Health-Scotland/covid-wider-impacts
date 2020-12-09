@@ -526,6 +526,9 @@ prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-10-25")
 ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/Weekly Diagnosis OOH CSV.csv")) %>% 
   janitor::clean_names()
 
+# Filter age > 14
+ooh_data_cardiac <- ooh_data_cardiac %>% filter(age > 14)
+
 # Change file into correct format prior to getting final specification
 ooh_data_cardiac <- ooh_data_cardiac %>% rename(nhs_board = reporting_health_board_name_as_at_date_of_episode)
 ooh_data_cardiac <- ooh_data_cardiac %>% rename(deprivation_quintile = patient_prompt_dataset_deprivation_scot_quintile)
