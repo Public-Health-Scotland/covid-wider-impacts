@@ -607,6 +607,18 @@ output$download_cardio_data <- downloadHandler(
 output$cardio_commentary <- renderUI({
   tagList(
     bsButton("jump_to_cardio",label = "Go to data"), #this button can only be used once
+    h2("Cardiovascular - 16th December 2020"), 
+    h3("Cardiovascular GP out of hour cases"),
+    tags$ul(
+      tags$li("For GP out of hours services there was a sharp fall of around 30% in cases for cardiovascular problems 
+               that started in early March 2020, some weeks prior to the introduction of ‘lockdown’ measures in Scotland. 
+               Contact numbers did not return to previous levels until early April, and during April, May and June were 
+               around 20% above the average for 2018-19. Trends were similar by age group and deprivation.")),
+    h3("Cardiovascular Scottish Ambulance Service incidents"),
+    tags$ul(
+      tags$li("For Scottish Ambulance Service incidents, there was a sharp initial fall of around 40% in cardiovascular 
+               related incidents that started in early April 2020, shortly after the introduction of lockdown restrictions. 
+               This continued until mid-July. The fall in incidents was greatest in the most deprived groups.")),
     h2("Cardiovascular - 17th June 2020"), 
           h3("Prescribing"),
           p("Information on prescriptions issued for cardiovascular medicines through
@@ -661,20 +673,8 @@ output$cardio_commentary <- renderUI({
             tags$li("The change in percutaneous coronary interventions has been less pronounced. A significant 
                     proportion of coronary interventions occur in a context of patients suffering a heart 
                     attack. A proportion of coronary interventions are also planned and elective in nature. "),
-            tags$li("The number of device procedures has been lower than expected since the end of March 2020.")),
-    h3("Cardiovascular OOH cases"),
-    p("Information on OOH cases..."),
-    tags$ul(
-      tags$li("For GP out of hours services there was a sharp fall of around 30% in cases for cardiovascular problems 
-               that started in early March 2020, some weeks prior to the introduction of ‘lockdown’ measures in Scotland. 
-               Contact numbers did not return to previous levels until early April, and during April, May and June were 
-               around 20% above the average for 2018-19. Trends were similar by age group and deprivation.")),
-    h3("Cardiovascular SAS incidents"),
-    p("Information on SAS incidents..."),
-    tags$ul(
-      tags$li("For Scottish Ambulance Service incidents, there was a sharp initial fall of around 40% in cardiovascular 
-               related incidents that started in early April 2020, shortly after the introduction of lockdown restrictions. 
-               This continued until mid-July. The fall in incidents was greatest in the most deprived groups."))
+            tags$li("The number of device procedures has been lower than expected since the end of March 2020."))
+
 )
   
 })
