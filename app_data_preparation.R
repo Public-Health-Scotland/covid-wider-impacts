@@ -520,71 +520,36 @@ prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-11-22")
 ###############################################.
 
 ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/Weekly Diagnosis OOH CSV.csv")) %>% 
-  janitor::clean_names()
-
-# Filter age > 14
-ooh_data_cardiac <- ooh_data_cardiac %>% filter(age > 14)
+  janitor::clean_names() %>% 
+  filter(age > 14) # Filter age > 14
 
 # Change file into correct format prior to getting final specification
-ooh_data_cardiac <- ooh_data_cardiac %>% rename(nhs_board = reporting_health_board_name_as_at_date_of_episode)
-ooh_data_cardiac <- ooh_data_cardiac %>% rename(deprivation_quintile = patient_prompt_dataset_deprivation_scot_quintile)
-ooh_data_cardiac <- ooh_data_cardiac %>% rename(gender = gender_description)
-ooh_data_cardiac <- ooh_data_cardiac %>% rename(number_of_cases = gp_ooh_number_of_cases)
+ooh_data_cardiac <- ooh_data_cardiac %>% 
+  rename(hb = reporting_health_board_name_as_at_date_of_episode,
+         dep = patient_prompt_dataset_deprivation_scot_quintile, 
+         sex = gender_description,
+         number_of_cases = gp_ooh_number_of_cases)
 
-# Age Bands
 ooh_data_cardiac = ooh_data_cardiac %>%
-  mutate(age_group = case_when(
-    between(age, 0, 4) ~ "0-4",
-    between(age, 5, 9) ~ "5-9",
-    between(age, 10, 14) ~ "10-14",
-    between(age, 15, 19) ~ "15-19",
-    between(age, 20, 24) ~ "20-24",
-    between(age, 25, 29) ~ "25-29",
-    between(age, 30, 34) ~ "30-34",
-    between(age, 35, 39) ~ "35-39",
-    between(age, 40, 44) ~ "40-44",
-    between(age, 45, 49) ~ "45-49",
-    between(age, 50, 54) ~ "50-54",
-    between(age, 55, 59) ~ "55-59",
-    between(age, 60, 64) ~ "60-64",
-    between(age, 65, 69) ~ "65-69",
-    between(age, 70, 74) ~ "70-74",
-    between(age, 75, 79) ~ "75-79",
-    between(age, 80, 84) ~ "80-84",
-    between(age, 85, 89) ~ "85-89",    
-    age >= 90 ~ "90+"))
-
-ooh_data_cardiac <- mutate(ooh_data_cardiac, hscp = "")
+  create_agegroups() %>% #age bands
+  create_depgroups() # deprivation groups format
 
 # remove diagnosis field as just showing total cardiac
 ooh_data_cardiac <- ooh_data_cardiac %>%
-  group_by(week_ending, nhs_board, hscp, age_group, gender, deprivation_quintile) %>%
-  summarise(number_of_cases = sum(number_of_cases))
+  group_by(week_ending, hb, age_grp, sex, dep) %>%
+  summarise(count = sum(number_of_cases, na.rm = T)) %>% ungroup
 
-ooh_data_cardiac <- ungroup(ooh_data_cardiac, gender)
-
-ooh_data_cardiac <- ooh_data_cardiac %>% rename(count=number_of_cases, hb=nhs_board, 
-                                                sex=gender, dep=deprivation_quintile) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
-                             "15-19" = "15 - 24", "20-24" = "15 - 24", "25-29" = "25 - 44", 
-                             "30-34" = "25 - 44", "35-39" = "25 - 44", "40-44" = "25 - 44", 
-                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
-                             "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
-                             "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
-                             "90+" = "85 and over"),
-         sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "NOT SPEC" = NA_character_, "NOT KNOWN" = NA_character_),
-         dep = recode(dep, 
-                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
-                      "4" = "4", "5" = "5 - least deprived"),
+ooh_data_cardiac <- ooh_data_cardiac %>% 
+  mutate( sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "NOT SPEC" = NA_character_, "NOT KNOWN" = NA_character_),
          week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-
 ooh_data_cardiac <- ooh_data_cardiac %>% 
-  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
+  gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
-                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
+                            "scot" = "Scotland")) %>%
+  rename(age = age_grp) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() 
@@ -596,9 +561,6 @@ ooh_cd_dep <- ooh_data_cardiac %>% agg_cut(grouper="dep") %>% rename(category = 
 ooh_cd_age <- ooh_data_cardiac %>% agg_cut(grouper="age") %>% rename(category = age)
 
 ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
-
-# Filter out HSC partnership for now, may include in future
-ooh_cardiac <- ooh_cardiac %>% filter(area_type != "HSC partnership")
 
 # Filter graphs that look odd due to small numbers
 ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles"))
@@ -615,70 +577,35 @@ prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last
 ###############################################.
 
 sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/Weekly Diagnosis SAS CSV.csv")) %>%
-  janitor::clean_names()
-
-# Filter age > 14
-sas_data_cardiac <- sas_data_cardiac %>% filter(age > 14)
+  janitor::clean_names() %>% 
+  filter(age > 14) # Filter age > 14
 
 # Change file into correct format prior to getting final specification
-# Age Bands
-sas_data_cardiac = sas_data_cardiac %>%
-  mutate(age_group = case_when(
-    between(age, 0, 4) ~ "0-4",
-    between(age, 5, 9) ~ "5-9",
-    between(age, 10, 14) ~ "10-14",
-    between(age, 15, 19) ~ "15-19",
-    between(age, 20, 24) ~ "20-24",
-    between(age, 25, 29) ~ "25-29",
-    between(age, 30, 34) ~ "30-34",
-    between(age, 35, 39) ~ "35-39",
-    between(age, 40, 44) ~ "40-44",
-    between(age, 45, 49) ~ "45-49",
-    between(age, 50, 54) ~ "50-54",
-    between(age, 55, 59) ~ "55-59",
-    between(age, 60, 64) ~ "60-64",
-    between(age, 65, 69) ~ "65-69",
-    between(age, 70, 74) ~ "70-74",
-    between(age, 75, 79) ~ "75-79",
-    between(age, 80, 84) ~ "80-84",
-    between(age, 85, 89) ~ "85-89",    
-    age >= 90 ~ "90+"))
-
 sas_data_cardiac <-  sas_data_cardiac %>%
-  mutate(hscp = "") %>% 
-  rename(nhs_board = reporting_health_board_name_current,
-         gender = gender_description,
-         deprivation_quintile = patient_prompt_dataset_deprivation_scot_quintile,
+  rename(hb = reporting_health_board_name_current,
+         sex = gender_description,
+         dep = patient_prompt_dataset_deprivation_scot_quintile,
          number_of_cases = number_of_incidents) %>% 
+  create_agegroups() %>% # Age Bands
+  create_depgroups() %>% 
   mutate(week_ending = dmy(week_ending))
-
+ 
 # remove diagnosis field as just showing total cardiac
 sas_data_cardiac <- sas_data_cardiac %>%
-  group_by(week_ending, nhs_board, hscp, age_group, gender, deprivation_quintile) %>%
-  summarise(number_of_cases = sum(number_of_cases)) %>% 
+  group_by(week_ending, hb, age_grp, sex, dep) %>%
+  summarise(count = sum(number_of_cases, na.rm = T)) %>% 
   ungroup()
 
-sas_data_cardiac <- sas_data_cardiac %>% rename(count=number_of_cases, hb=nhs_board, 
-                                                sex=gender, dep=deprivation_quintile) %>%
-  mutate(age = recode_factor(age_group, "0-4" = "Under 5", "5-9" = "5 - 14",  "10-14" = "5 - 14",  
-                             "15-19" = "15 - 44", "20-24" = "15 - 44", "25-29" = "15 - 44", 
-                             "30-34" = "15 - 44", "35-39" = "15 - 44", "40-44" = "15 - 44", 
-                             "45-49" = "45 - 64", "50-54" = "45 - 64", "55-59" = "45 - 64", 
-                             "60-64" = "45 - 64", "65-69" = "65 - 74", "70-74" = "65 - 74",
-                             "75-79" = "75 - 84", "80-84" = "75 - 84", "85-89" = "85 and over",
-                             "90+" = "85 and over"),
-         sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "0" = NA_character_, "NOT KNOWN" = NA_character_),
-         dep = recode(dep, 
-                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
-                      "4" = "4", "5" = "5 - least deprived"),
+sas_data_cardiac <- sas_data_cardiac %>%
+  mutate(sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "0" = NA_character_, "NOT KNOWN" = NA_character_),
          week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
 sas_data_cardiac <- sas_data_cardiac %>% 
-  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
-  mutate(area_type = recode(area_type, "area_name" = "Health board", 
-                            "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
+  gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>% 
+  rename(age = age_grp) %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() 
@@ -690,9 +617,6 @@ sas_cd_dep <- sas_data_cardiac %>% agg_cut(grouper="dep") %>% rename(category = 
 sas_cd_age <- sas_data_cardiac %>% agg_cut(grouper="age") %>% rename(category = age)
 
 sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
-
-# Filter out HSC partnership for now, may include in future
-sas_cardiac <- sas_cardiac %>% filter(area_type != "HSC partnership")
 
 # Filter graphs that look odd due to small numbers
 sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland"))
