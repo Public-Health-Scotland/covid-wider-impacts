@@ -314,6 +314,12 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Antenatal bookings - 2nd December 2020"),
+    p("In this second release of information on antenatal booking data (2 Dec 2020) data have been updated to include women booking for antenatal care up to the week beginning 26th October 2020.  The initial release of data on 28th October 2020 showed that from mid-May to end September the number of women booking for antenatal 
+      care had been consistently lower than expected based on previous average levels. During October numbers have increased and the most recent data show numbers are at a similar level to the pre-pandemic period. The average gestation at which women booked for antenatal care fell slightly from the end of March 2020, 
+      before increasing back to previous levels around August 2020. The most recent data show that the average gestation at booking during September and October continues to be just below the average based on the pre-pandemic period. Looking at the data for women living in different NHS Board areas across Scotland, 
+      the pattern of a temporary dip in gestation at booking coinciding with the first wave of the COVID-19 pandemic in Scotland is evident in some but not all areas. This probably reflects the fact that the detail of how maternity services were reconfigured in response to COVID-19 varied across Scotland. From August 2020 onwards, 
+      the recorded gestation at booking has remained higher than usual for women living in NHS Tayside. Public Health Scotland is working with NHS Tayside to explore this issue."),
     h2("Antenatal bookings - 28th October 2020"),
     p("Information on the number of women booking for antenatal care, and the average gestation (stage of pregnancy) at which they booked, was included in this tool for the first time on 28 October 2020."),
     p("The ",

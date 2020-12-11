@@ -1,5 +1,5 @@
 #Server side
-credentials <- readRDS("admin/credentials.rds")
+credentials <- readRDS("admin/credentials_top.rds")
 
 function(input, output, session) {
   
@@ -74,7 +74,7 @@ function(input, output, session) {
   observeEvent(input$jump_to_cardio, {updateTabsetPanel(session, "intabset", selected = "cardio")})
   observeEvent(input$jump_to_table, {updateTabsetPanel(session, "intabset", selected = "table")})
   observeEvent(input$jump_to_immunisation, {updateTabsetPanel(session, "intabset", selected = "imm")})
-  observeEvent(input$jump_to_childreview, {updateTabsetPanel(session, "intabset", selected = "child_review")})  
+  observeEvent(input$jump_to_childreview, {updateTabsetPanel(session, "intabset", selected = "child_review")})
   observeEvent(input$jump_to_perinatal_mortality, {updateTabsetPanel(session, "intabset", selected = "perinatal")})
   observeEvent(input$jump_to_booking, {updateTabsetPanel(session, "intabset", selected = "booking")})
   observeEvent(input$jump_to_top, {updateTabsetPanel(session, "intabset", selected = "terminations")})
@@ -86,37 +86,37 @@ function(input, output, session) {
 # To jump to commentary tab and ensures correct panel is expanded - requires multiple lines becuase action buttons must have unique ID
   observeEvent(input$jump_commentary_child, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Immunisation")})
-  
+
   observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Child health reviews")})
-  
+
   observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Cardiovascular")})
-  
+
   observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Summary trends")})
-  
+
   observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Stillbirths and infant deaths")})
-  
+  # 
   observeEvent(input$jump_commentary_booking, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Antenatal bookings")})
   
   observeEvent(input$jump_commentary_top, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")})
-  
+
     observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")
       updateCollapse(session, "collapse_commentary", open = "Child development")})
-  
+
    observeEvent(input$jump_commentary_breastfed, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Breastfeeding")})
 
    observeEvent(input$jump_commentary_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Mental health")})
-   
+
    observeEvent(input$jump_commentary_cancer, {updateTabsetPanel(session, "intabset", selected = "comment")
      updateCollapse(session, "collapse_commentary", open = "Cancer")})
-   
+
   observeEvent(input$jump_commentary_oohissue, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_oohissue_sum, {updateTabsetPanel(session, "intabset", selected = "comment")})
   
@@ -124,18 +124,18 @@ function(input, output, session) {
 ## ObserveEvents to open collapsepanels in commentary tab when sidepanel option clicked
    observeEvent(input$summary_button, ({
      updateCollapse(session, "collapse_commentary", open = "Summary trends")}))
-   
+
    observeEvent(input$immunisation_button, ({
      updateCollapse(session, "collapse_commentary", open = "Immunisation")}))
-   
+
    observeEvent(input$ch_review_button, ({
      updateCollapse(session, "collapse_commentary", open = "Child health reviews")}))
-   
+
    observeEvent(input$cardio_button, ({
      updateCollapse(session, "collapse_commentary", open = "Cardiovascular")}))
-   
+
   observeEvent(input$perinatal_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Stillbirths and infant deaths")})) 
+    updateCollapse(session, "collapse_commentary", open = "Stillbirths and infant deaths")}))
 
   observeEvent(input$mentalhealth_button, ({
     updateCollapse(session, "collapse_commentary", open = "Mental health")}))
@@ -145,13 +145,13 @@ function(input, output, session) {
 
   observeEvent(input$breastfeeding_button, ({
     updateCollapse(session, "collapse_commentary", open = "Breastfeeding")}))
-  
+  # 
   observeEvent(input$booking_button, ({
     updateCollapse(session, "collapse_commentary", open = "Antenatal bookings")}))
   
   observeEvent(input$top_button, ({
     updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")}))
-  
+
   observeEvent(input$cancer_button, ({
     updateCollapse(session, "collapse_commentary", open = "Cancer")}))
   
