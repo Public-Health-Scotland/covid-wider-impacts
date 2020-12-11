@@ -456,7 +456,7 @@ output$cardio_explorer <- renderUI({
         )
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# OOH Attendances
-         h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service ", input$geoname_cardio)),
+         h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$geoname_cardio)),
          actionButton("btn_cardio_modal", "Data source: PHS Unscheduled Care Datamart", icon = icon('question-circle')),
          plot_box("2020 compared with 2018-2019 average", "sas_cardio_all"),
          plot_cut_box(paste0("Percentage change in cardiovascular incidents in ", input$geoname_cardio, " compared with the corresponding
