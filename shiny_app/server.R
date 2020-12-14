@@ -24,7 +24,7 @@ function(input, output, session) {
   # Summary trends tab
   source(file.path("summary_tab.R"),  local = TRUE)$value
   
-  ###############################################.
+  ##############################################.
   # Cardiovascular tab
   source(file.path("cardio_tab.R"),  local = TRUE)$value
 
@@ -40,6 +40,9 @@ function(input, output, session) {
   # Pregnancy tabs
   source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
   source(file.path("terminations_tab.R"),  local = TRUE)$value
+  source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
+  source(file.path("inductions_tab.R"),  local = TRUE)$value
+  source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Perinatal tab
@@ -78,6 +81,11 @@ function(input, output, session) {
   observeEvent(input$jump_to_perinatal_mortality, {updateTabsetPanel(session, "intabset", selected = "perinatal")})
   observeEvent(input$jump_to_booking, {updateTabsetPanel(session, "intabset", selected = "booking")})
   observeEvent(input$jump_to_top, {updateTabsetPanel(session, "intabset", selected = "terminations")})
+
+  observeEvent(input$jump_to_mod, {updateTabsetPanel(session, "intabset", selected = "mod")})
+  observeEvent(input$jump_to_induction, {updateTabsetPanel(session, "intabset", selected = "inductions")})
+  observeEvent(input$jump_to_gestation, {updateTabsetPanel(session, "intabset", selected = "gestation")})
+
   observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
   observeEvent(input$jump_to_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "mentalhealth")})
@@ -104,10 +112,19 @@ function(input, output, session) {
   
   observeEvent(input$jump_commentary_top, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")})
-
-    observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")
-      updateCollapse(session, "collapse_commentary", open = "Child development")})
-
+  
+  observeEvent(input$jump_commentary_mod, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Method of delivery")})
+  
+  observeEvent(input$jump_commentary_induction, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Induction of labour")})
+  
+  observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
+  
+  observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Child development")})
+  
    observeEvent(input$jump_commentary_breastfed, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Breastfeeding")})
 
@@ -152,7 +169,17 @@ function(input, output, session) {
   observeEvent(input$top_button, ({
     updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")}))
 
+  observeEvent(input$mod_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Method of delivery")}))
+  
+  observeEvent(input$induction_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Induction of labour")}))
+  
+  observeEvent(input$gestation_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")}))
+
   observeEvent(input$cancer_button, ({
     updateCollapse(session, "collapse_commentary", open = "Cancer")}))
+
   
 } # server end

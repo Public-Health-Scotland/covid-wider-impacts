@@ -95,6 +95,21 @@ save_final_file("ante_booking_download", "24_Nov_20")
 ## Pregnancy - Terminations ----
 save_final_file("top", "20_Nov_20")
 save_final_file("top_download", "20_Nov_20")
+## Pregnancy - Mode/Method of Delivery ----
+save_final_file("mod_runchart_data", "01_Dec_20")
+save_final_file("mod_scot_data", "01_Dec_20")
+save_final_file("mod_linechart_data", "01_Dec_20")
+save_final_file("mod_download_data", "01_Dec_20")
+## Pregnancy - Inductions ----
+save_final_file("induct_runchart_data", "01_Dec_20")
+save_final_file("induct_scot_data", "01_Dec_20")
+save_final_file("induct_linechart_data", "01_Dec_20")
+save_final_file("induct_download_data", "01_Dec_20")
+## Pregnancy - Gestation at Delivery ----
+save_final_file("gestation_runchart_data", "01_Dec_20")
+save_final_file("gestation_scot_data", "01_Dec_20")
+save_final_file("gestation_linechart_data", "01_Dec_20")
+save_final_file("gestation_download_data", "01_Dec_20")
 ##########################################################.
 ## Mental health - Prescribing ----
 save_final_file("mentalhealth_drugs", "30_Nov_20")

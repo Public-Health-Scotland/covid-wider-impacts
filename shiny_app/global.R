@@ -131,6 +131,27 @@ top_extract_date <- "5th November 2020"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
+#mode of delivery (pregnanacy tab)
+mod_extract_date <- "26th November 2020"
+mod_runchart <- readRDS("data/mod_runchart_data.rds")
+mod_scot <- readRDS("data/mod_scot_data.rds")
+mod_linechart <- readRDS("data/mod_linechart_data.rds")
+mod_download <- readRDS("data/mod_download_data.rds")
+
+#inductions (pregnanacy tab)
+induct_extract_date <- "26th November 2020"
+induct_runchart <- readRDS("data/induct_runchart_data.rds")
+induct_scot <- readRDS("data/induct_scot_data.rds")
+induct_linechart <- readRDS("data/induct_linechart_data.rds")
+induct_download <- readRDS("data/induct_download_data.rds")
+
+#gestation at delivery (pregnanacy tab)
+gestation_extract_date <- "26th November 2020"
+gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
+gestation_scot <- readRDS("data/gestation_scot_data.rds")
+gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
+gestation_download <- readRDS("data/gestation_download_data.rds")
+
 # Breastfeeding data
 breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
@@ -192,6 +213,9 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Stillbirths and infant deaths" = "perinatal",
                         "Termination of pregnancy" = "top",
                         "Antenatal bookings" = "ante_booking",
+                        "Induction of labour" = "induct",
+                        "Method of delivery" = "mod",
+                        "Gestation at delivery" = "gestation",
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",

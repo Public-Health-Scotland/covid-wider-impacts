@@ -232,4 +232,73 @@ format_immchild_table <- function(filename) {
   
 }
 
+#Function to format the immunisations hscp data - probably not needed if we can get data supplied by salomi differntly
+format_immhscp_table <- function(filename) {
+  read_csv(paste0(data_folder, filename, ".csv")) %>%
+    janitor::clean_names() %>%
+    select (-geography) %>%
+    rename(area_name=geography_name) %>%
+    arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+    mutate(time_period_eligible = as.factor(time_period_eligible),
+           area_name=paste0("HSCP ", area_name))
+}
+
+# Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
+format_immsimd_data <- function(filename) {
+  data_simd <-  read_csv(paste0(data_folder, filename, ".csv")) %>%
+    janitor::clean_names() %>%
+    mutate(eligible_start = case_when((str_length(eligible_start)<10) ~ paste0("0", eligible_start), 
+                                      TRUE ~ eligible_start)) %>%
+    arrange (cohort,as.Date(eligible_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
+    mutate(time_period_eligible = as.factor(case_when(cohort == "monthly" ~ paste0(toupper(substr(time_period_eligible, 1, 3)),
+                                                          " 20",substring(time_period_eligible,5,6)), 
+                                                      TRUE ~ time_period_eligible))) %>%
+    rename(area_name = geography, simdq = simd2020v2_sc_quintile) %>%
+    mutate(simdq=case_when(simdq == 6 ~"Scotland", simdq == 1 ~ "1 - most deprived",
+                           simdq == 5 ~ "5 - least deprived", TRUE ~ as.character(simdq))) %>%
+    # filtering out data where simd missing as small numbers lead to massive percentage differences.
+    # filtering out Scotland totals as not plotted
+    filter(!(simdq %in% c("0", "Scotland"))) %>% 
+    droplevels()
+  
+  # Creating levels for factor in chronological order
+  data_simd$time_period_eligible <- factor(data_simd$time_period_eligible, 
+                                          levels=unique(data_simd$time_period_eligible[order(data_simd$eligible_start, decreasing = T)]), 
+                                          ordered=TRUE)
+  return(data_simd)
+    }
+
+
+# Function to flag shifts and trends on run chart data
+# Parameters:
+# shift: name for new field where shift is flagged
+# trend: name for new field where trend is flagged
+# value: which column in dataset contains value being evaluated
+# median: which column in dataset contains the median against which value is tested
+
+runchart_flags <- function(dataset, shift, trend, value, median) {
+
+  dataset <- dataset %>%
+    mutate(shift_i = case_when(({{value}} > {{median}} & lag({{value}}, 1) > {{median}} & 
+                                  lag({{value}}, 2) > {{median}} & lag({{value}}, 3) > {{median}} & 
+                                  lag({{value}}, 4) > {{median}} & lag({{value}}, 5) > {{median}}) 
+                               | ({{value}} < {{median}} & lag({{value}}, 1) < {{median}} & 
+                                    lag({{value}}, 2) < {{median}} & lag({{value}}, 3) < {{median}} & 
+                                    lag({{value}}, 4) < {{median}} & lag({{value}}, 5) < {{median}}) ~ T , T ~ F),
+           shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
+                             | lead(shift_i, 3) == T | lead(shift_i, 4) == T
+                             | lead(shift_i, 5) == T  ~ T, T ~ F),
+           trend_i = case_when(({{value}} > lag({{value}} ,1) & lag({{value}}, 1) > lag({{value}}, 2)
+                                & lag({{value}}, 2) > lag({{value}}, 3)  & lag({{value}}, 3) > lag({{value}}, 4)) |
+                                 ({{value}} < lag({{value}} ,1) & lag({{value}}, 1) < lag({{value}}, 2)
+                                  & lag({{value}}, 2) < lag({{value}}, 3)  & lag({{value}}, 3) < lag({{value}}, 4) )
+                               ~ T , T ~ F),
+           trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
+                             | lead(trend_i, 3) == T | lead(trend_i, 4) == T
+                             ~ T, T ~ F)) %>%
+    rename({{shift}}:=shift,{{trend}}:=trend) %>%
+    select(-shift_i, -trend_i)
+
+  }
+
 ##END
