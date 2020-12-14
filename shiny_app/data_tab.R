@@ -33,7 +33,7 @@ data_table <- reactive({
         "top" = top_download ,
         "ante_booking" = booking_download,
         "induct" = induct_download,
-        "mod"= mod_download %>% rename(assisted_vaginal_delivery_including_breech = assisted_vaginal, spontaneous_vaginal_delivery = spontaneous),
+        "mod"= mod_download,
         "gestation" = gestation_download,
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
@@ -253,7 +253,7 @@ data_table <- reactive({
                                                   TRUE ~ "All"))
   } else if (input$data_select %in% "induct") {
     table_data <- table_data %>% 
-      select(area_name, area_type, month_of_discharge, category = subgroup, variable,
+      select(area_name, area_type, month_of_discharge, subgroup, variable,
              induced_37_42, not_induced_37_42, unknown_induced_37_42, births_37_42,
              perc_induced_37_42, perc_not_induced_37_42, perc_unknown_induced_37_42) %>% 
       rename("Total number of singleton live births at 37-42 weeks gestation" = births_37_42,
@@ -262,25 +262,65 @@ data_table <- reactive({
              "Number of singleton live births at 37-42 weeks gestation unknown" = unknown_induced_37_42,
              "Percentage (%) of singleton live births at 37-42 weeks gestation that followed induction of labour" = perc_induced_37_42,
              "Percentage (%) of singleton live births at 37-42 weeks gestation that were not induced" = perc_not_induced_37_42,
-             "Percentage (%) of singleton live births at 37-42 weeks gestation unknown" = perc_unknown_induced_37_42)
+             "Percentage (%) of singleton live births at 37-42 weeks gestation unknown" = perc_unknown_induced_37_42) %>% 
+      mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived") ~ paste0(variable),
+                                  TRUE ~ "All")) %>% 
+      mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                  TRUE ~ "All"))
 
   } else if (input$data_select %in% "mod") {
     table_data <- table_data %>% 
       select(-c(chart_type, chart_category, ext_csection_all, ext_csection_elec,
                 ext_csection_emer, indicator, median_csection_all, median_csection_elec,
                 median_csection_emer, perc_denominator)) %>% 
-       rename("All births" = births_all, 
-              "Caesarean section - all" = csection_all,
-              "Caesarean section - emergency" = csection_emer,
-              "Caesarean section - elective" = csection_elec,
-              "Other/Not Known" = other_not_known,
-              "Percentage (%) assisted vaginal delivery including breech" = perc_assisted_vaginal, 
-              "Percentage (%) Caesarean section - all" = perc_csection_all,
-              "Percentage (%) Caesarean section - emergency" = perc_csection_emer,
-              "Percentage (%) Caesarean section - elective" = perc_csection_elec,
-              "Percentage (%) spontaneous vaginal delivery" = perc_spontaneous,
-              "Percentage (%) other/not known" = perc_other_not_known)
-  }
+       rename("Number of births - All births" = births_all, 
+              "Number of births - Caesarean section" = csection_all,
+              "Number of births - emergency Caesarean section" = csection_emer,
+              "Number of births - elective Caesarean section" = csection_elec,
+              "Number of births - Other/Not Known" = other_not_known,
+              "Number of births - assisted vaginal delivery including breech" = assisted_vaginal, 
+              "Number of births - spontaneous_vaginal_delivery" = spontaneous,
+              "Percentage (%) of births - assisted vaginal delivery including breech" = perc_assisted_vaginal, 
+              "Percentage (%) of births - Caesarean section" = perc_csection_all,
+              "Percentage (%) of births - emergency Caesarean section" = perc_csection_emer,
+              "Percentage (%) of births - elective Caesarean section" = perc_csection_elec,
+              "Percentage (%) of births - spontaneous vaginal delivery" = perc_spontaneous,
+              "Percentage (%) of births - other/not known" = perc_other_not_known) %>% 
+      mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived") ~ paste0(variable),
+                                  TRUE ~ "All")) %>% 
+      mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                  TRUE ~ "All"))
+    
+  } else if (input$data_select %in% "gestation") {
+  table_data <- table_data %>% 
+    select(-c(chart_type, chart_category, ext_32_36, ext_42plus, ext_under32,
+              ext_under37, indicator, median_32_36, median_42plus, median_under32,
+              median_under37, perc_denominator)) %>% 
+    rename("Number of births - All births (18-44 weeks gestation)" = births_18_44, 
+           "Number of births - 32-36 weeks gestation" = births_32_36,
+           "Number of births - 37-41 weeks gestation" = births_37_41,
+           "Number of births - At or over 42 weeks gestation" = births_42plus,
+           "Number of births - Unknown gestation" = births_gest_unknown,
+           "Number of births - Under 32 weeks gestation" = births_under32, 
+           "Number of births - Under 37 weeks gestation" = births_under37,
+           "Number of births - All births" = births_all,
+           "Percentage (%) of births - 32-36 weeks gestation" = perc_32_36, 
+           "Percentage (%) of births - 37-41 weeks gestation" = perc_37_41,
+           "Percentage (%) of births - At or over 42 weeks gestation" = perc_42plus,
+           "Percentage (%) of births - Under 32 weeks gestation" = perc_under32,
+           "Percentage (%) of births - Under 37 weeks gestation" = perc_under37) %>% 
+    mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived") ~ paste0(variable),
+                              TRUE ~ "All")) %>% 
+    mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                TRUE ~ "All"))
+    
+}
   
   
   table_data %<>% 
