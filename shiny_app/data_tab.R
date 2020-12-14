@@ -33,8 +33,8 @@ data_table <- reactive({
         "top" = top_download ,
         "ante_booking" = booking_download,
         "induct" = induct_download,
-        "mod"= mod_download %>% rename(assisted_vaginal_in_breech = assisted_vaginal, spontaneous_vaginal = spontaneous),
-        "gestatation" = gestation_download,
+        "mod"= mod_download %>% rename(assisted_vaginal_delivery_including_breech = assisted_vaginal, spontaneous_vaginal_delivery = spontaneous),
+        "gestation" = gestation_download,
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
@@ -251,6 +251,35 @@ data_table <- reactive({
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
                                                   "5 - least deprived") ~ paste0(category),
                                                   TRUE ~ "All"))
+  } else if (input$data_select %in% "induct") {
+    table_data <- table_data %>% 
+      select(area_name, area_type, month_of_discharge, category = subgroup, variable,
+             induced_37_42, not_induced_37_42, unknown_induced_37_42, births_37_42,
+             perc_induced_37_42, perc_not_induced_37_42, perc_unknown_induced_37_42) %>% 
+      rename("Total number of singleton live births at 37-42 weeks gestation" = births_37_42,
+             "Number of singleton live births at 37-42 weeks gestation that followed induction of labour" = induced_37_42,
+             "Number of singleton live births at 37-42 weeks gestation that were not induced" = not_induced_37_42,
+             "Number of singleton live births at 37-42 weeks gestation unknown" = unknown_induced_37_42,
+             "Percentage (%) of singleton live births at 37-42 weeks gestation that followed induction of labour" = perc_induced_37_42,
+             "Percentage (%) of singleton live births at 37-42 weeks gestation that were not induced" = perc_not_induced_37_42,
+             "Percentage (%) of singleton live births at 37-42 weeks gestation unknown" = perc_unknown_induced_37_42)
+
+  } else if (input$data_select %in% "mod") {
+    table_data <- table_data %>% 
+      select(-c(chart_type, chart_category, ext_csection_all, ext_csection_elec,
+                ext_csection_emer, indicator, median_csection_all, median_csection_elec,
+                median_csection_emer, perc_denominator)) %>% 
+       rename("All births" = births_all, 
+              "Caesarean section - all" = csection_all,
+              "Caesarean section - emergency" = csection_emer,
+              "Caesarean section - elective" = csection_elec,
+              "Other/Not Known" = other_not_known,
+              "Percentage (%) assisted vaginal delivery including breech" = perc_assisted_vaginal, 
+              "Percentage (%) Caesarean section - all" = perc_csection_all,
+              "Percentage (%) Caesarean section - emergency" = perc_csection_emer,
+              "Percentage (%) Caesarean section - elective" = perc_csection_elec,
+              "Percentage (%) spontaneous vaginal delivery" = perc_spontaneous,
+              "Percentage (%) other/not known" = perc_other_not_known)
   }
   
   
