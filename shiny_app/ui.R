@@ -18,11 +18,11 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                   h3("COVID-19 wider impacts on the health care system"),
                 p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
                     than those that occur as the direct result of infection"),
-                p("Reasons for this may include:"),
-                tags$ul(
-                  tags$li("Individuals being reluctant to use health services because they do not want to burden
+                  p("Reasons for this may include:"),
+                  tags$ul(
+                    tags$li("Individuals being reluctant to use health services because they do not want to burden
                             the NHS or are anxious about the risk of infection."),
-                  tags$li("The health service delaying preventative and non-urgent care such as some screening
+                    tags$li("The health service delaying preventative and non-urgent care such as some screening
                             services and planned surgery."),
                   tags$li("Other indirect effects of interventions to control COVID-19, such as changes to employment and income, changes in access to education, social isolation, family violence and abuse, changes in the accessibility and use of food, alcohol, drugs and gambling, or changes in physical activity and transport pattern.")
                 ),
@@ -35,7 +35,7 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                     that apply to different national data sources. For example, Public Health Scotland receives information
                     on patients attending Accident & Emergency within days; but there can be a delay of at least six weeks
                     before we receive detailed information on patients discharged from hospital after having a baby."),
-                p("Depending on the topic being looked at, information will be shown for patients in different age groups;
+                  p("Depending on the topic being looked at, information will be shown for patients in different age groups;
                     for males and females; and for people living in areas with different levels of material deprivation.
                     Information will also be shown for different locations across Scotland, such as NHS Board areas."),
                 p("This tool will be updated monthly. New releases will be published at the same time as the Public Health Scotland ",
@@ -69,6 +69,7 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
 ###############################################.
 ## Commentary ----
 ###############################################.
+
 tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
          wellPanel(column(12,
                           p("Select topic areas to find commentary relating to data presented in this tool."))),
@@ -101,6 +102,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
                           )))
 ), #tab panel
+
 ###############################################.
 # Summary trends ----
 ##############################################.
@@ -157,7 +159,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ###############################################.
 ## Immunisation Tab ----
 ###############################################.
-tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
+tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -183,9 +185,9 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
          )# mainPanel bracket
 ), # tabpanel bracket
 ###############################################.
-## Child Health review tab ----
+## Child Health Tab ----
 ##############################################.
-tabPanel(title = "Child health reviews", icon = icon("user-check"), value = "child_review",
+tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -260,7 +262,7 @@ tabPanel(title = "Child development", icon = icon("seedling"), value = "child_de
 ###############################################.
 ## Perinatal ----
 ###############################################.
-tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal",
+tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal_mortality",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_perinatal",
@@ -388,7 +390,7 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
       mainPanel(width = 12,
                 DT::dataTableOutput("table_filtered"))
       ) # tabpanel bracket
-    )# page bracket
+   ) # page bracket
  )# taglist bracket
  # )#secure app
 #END
