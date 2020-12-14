@@ -26,24 +26,24 @@ cancer <- readRDS(paste0(data_folder,"cancer/cancer_data_2.rds"))
 saveRDS(cancer, "shiny_app/data/cancer_data_2.rds")
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "16_Nov_20")
-save_final_file("spec_lookup", "16_Nov_20")
+save_final_file("rapid", "30_Nov_20")
+save_final_file("spec_lookup", "30_Nov_20")
 ## OOH ----
-save_final_file("ooh", "16_Nov_20")
+save_final_file("ooh", "30_Nov_20")
 ## A&E ----
-save_final_file("ae", "16_Nov_20")
+save_final_file("ae", "30_Nov_20")
 ## NHS24 ----
-save_final_file("nhs24", "16_Nov_20")
+save_final_file("nhs24", "30_Nov_20")
 ## SAS ----
-save_final_file("sas", "16_Nov_20")
+save_final_file("sas", "30_Nov_20")
 ##########################################################.
 ## Cardio - cath labs ----
 save_final_file("cath_lab", "16_Nov_20")
 ## Cardio - A&E ----
-save_final_file("ae_cardio", "16_Nov_20")
-save_final_file("ae_cardio_codes", "16_Nov_20")
+save_final_file("ae_cardio", "30_Nov_20")
+save_final_file("ae_cardio_codes", "30_Nov_20")
 ## Cardio - Prescribing ----
-save_final_file("cardio_drugs", "16_Nov_20")
+save_final_file("cardio_drugs", "30_Nov_20")
 ##########################################################.
 ## Immunisations - six in one ----
 save_final_file("six_alldose", "16_Nov_20")
@@ -83,14 +83,14 @@ save_final_file("child_dev", "16_Nov_20")
 save_final_file("breastfeeding", "16_Nov_20")
 ##########################################################.
 ## Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "16_Nov_20")
+save_final_file("perinatal", "18_Nov_20")
 ##########################################################.
 ## Pregnancy - Antenatal bookings ----
-save_final_file("ante_booking", "16_Nov_20")
-save_final_file("ante_booking_download", "16_Nov_20")
+save_final_file("ante_booking", "24_Nov_20")
+save_final_file("ante_booking_download", "24_Nov_20")
 ## Pregnancy - Terminations ----
-save_final_file("top", "16_Nov_20")
-save_final_file("top_download", "16_Nov_20")
+save_final_file("top", "20_Nov_20")
+save_final_file("top_download", "20_Nov_20")
 ## Pregnancy - Mode/Method of Delivery ----
 save_final_file("mod_runchart_data", "01_Dec_20")
 save_final_file("mod_scot_data", "01_Dec_20")
@@ -108,10 +108,10 @@ save_final_file("gestation_linechart_data", "01_Dec_20")
 save_final_file("gestation_download_data", "01_Dec_20")
 ##########################################################.
 ## Mental health - Prescribing ----
-save_final_file("mentalhealth_drugs", "16_Nov_20")
+save_final_file("mentalhealth_drugs", "30_Nov_20")
 ## Mental health - A&E ----
-save_final_file("mh_A&E", "16_Nov_20")
+save_final_file("mh_A&E", "30_Nov_20")
 ## Mental health - OOH ----
-save_final_file("mh_ooh", "16_Nov_20")
+save_final_file("mh_ooh", "30_Nov_20")
 
 ##END

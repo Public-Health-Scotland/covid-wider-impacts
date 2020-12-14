@@ -1,5 +1,6 @@
 #UI
-#secure_app( #uncomment if needing password protection
+
+ #secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -15,9 +16,6 @@ tagList( #needed for shinyjs
 ## Introduction ----
 ###############################################.
 tabPanel("Home", icon = icon("info-circle"), value = "intro",
-         # tags$b(span("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH)
-         #   data was identified and was corrected on 23/09/2020– for more details please see ",
-         #             actionLink("jump_commentary_oohissue", "commentary"), ".", style="color:red")),
                   h3("COVID-19 wider impacts on the health care system"),
                 p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
                     than those that occur as the direct result of infection"),
@@ -292,8 +290,38 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
   ) # tabpanel bracket
 ), #navbarMenu bracket
 ###############################################.
-## Mental Health ----
+## Cancer ----
 ###############################################.
+tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
+  wellPanel(
+           column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
+                                 choices= c("Scotland", "Cancer Network", "Health Board"),
+                                     selected = "Scotland"),
+                  uiOutput("geoname_ui_cancer")),
+
+           column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
+                                     selected = "All Malignant Neoplasms (Excl. C44)"),
+                     div(radioButtons("gender", "Step 3. Select sex",
+                                      list("All Persons","Male","Female"), inline = TRUE,
+                                      selected = "All Persons"))),
+                     # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
+
+           column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton('download_cancer_data', 'Download data'),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_cancer','Go to commentary'),
+                  fluidRow(br()))
+                  # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"),
+                  #                  inline = TRUE, selected = "Cumulative")))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("cancer_explorer")
+         )# mainPanel bracket
+), # tabpanel bracket
+##############################################
+# Mental Health ----
+##############################################.
 tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -311,36 +339,36 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
                    uiOutput("mh_explorer")
          )# mainPanel bracket
 ),#tabPanel bracket
-###############################################.
-## Cancer ----
-###############################################.
-tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
-         wellPanel(
-           column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
-                                 choices= c("Scotland", "Cancer Network", "Health Board"),
-                                 selected = "Scotland"),
-                  uiOutput("geoname_ui_cancer")),
-           
-           column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
-                                  selected = "All Malignant Neoplasms (Excl. C44)"),
-                  div(radioButtons("gender", "Step 3. Select sex",
-                                   list("All Persons","Male","Female"), inline = TRUE,
-                                   selected = "All Persons"))),
-           # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
-           
-           column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton('download_cancer_data', 'Download data'),
-                  fluidRow(br()),
-                  actionButton('jump_commentary_cancer','Go to commentary'),
-                  fluidRow(br()))
-           # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"),
-           #                  inline = TRUE, selected = "Cumulative")))
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("cancer_explorer")
-         )# mainPanel bracket
-), # tabpanel bracket
+# ###############################################.
+# ## Cancer ----
+# ###############################################.
+# tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
+#          wellPanel(
+#            column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
+#                                  choices= c("Scotland", "Cancer Network", "Health Board"),
+#                                  selected = "Scotland"),
+#                   uiOutput("geoname_ui_cancer")),
+#            
+#            column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
+#                                   selected = "All Malignant Neoplasms (Excl. C44)"),
+#                   div(radioButtons("gender", "Step 3. Select sex",
+#                                    list("All Persons","Male","Female"), inline = TRUE,
+#                                    selected = "All Persons"))),
+#            # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
+#            
+#            column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
+#                   fluidRow(br()),
+#                   downloadButton('download_cancer_data', 'Download data'),
+#                   fluidRow(br()),
+#                   actionButton('jump_commentary_cancer','Go to commentary'),
+#                   fluidRow(br()))
+#            # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"),
+#            #                  inline = TRUE, selected = "Cumulative")))
+#          ), #well panel
+#          mainPanel(width = 12,
+#                    uiOutput("cancer_explorer")
+#          )# mainPanel bracket
+# ), # tabpanel bracket
 # ##############################################.
 # # Mental Health ----
 # ##############################################.
@@ -364,7 +392,7 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
 # ), # tabpanel bracket
 ###############################################.
 ## Pregnancy ----
-###############################################.
+##############################################.
 navbarMenu("Pregnancy", icon = icon("venus"),
 ###############################################.
 ## Antenatal booking Tab ----
@@ -493,7 +521,7 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
                    DT::dataTableOutput("table_filtered"))
 
       ) # tabpanel bracket
-    ) #page bracket
-  ) #taglist bracket
-# ) #secure app
+    )# page bracket
+ )# taglist bracket
+ # )#secure app
 #END

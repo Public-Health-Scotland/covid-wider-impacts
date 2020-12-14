@@ -119,12 +119,13 @@ perinatal <- readRDS("data/perinatal.rds")
 
 #Pregnancy tab
 #antenatal booking
-booking_extract_date <- "7th October 2020"
+
+booking_extract_date <- "12th November 2020"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "2nd October 2020"
+top_extract_date <- "5th November 2020"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
@@ -216,8 +217,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
-                        "Cancer" = "cancer"
-)
+                        "Cancer" = "cancer")
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",
