@@ -339,7 +339,7 @@ diff_data <-  diff_data %>%
 ##########################################
 
 diff_data <-  diff_data %>% 
-  filter(week_number <= 39) %>%
+  filter(week_number <= 35) %>%
   ungroup()
 
 
