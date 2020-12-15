@@ -1,5 +1,5 @@
 #Server side
-credentials <- readRDS("admin/credentials.rds")
+credentials <- readRDS("admin/credentials_childhealth.rds")
 
 function(input, output, session) {
   
@@ -24,9 +24,9 @@ function(input, output, session) {
   # Summary trends tab
   source(file.path("summary_tab.R"),  local = TRUE)$value
   
-  ##############################################.
-  # Cardiovascular tab
-  source(file.path("cardio_tab.R"),  local = TRUE)$value
+  # ##############################################.
+  # # Cardiovascular tab
+  # source(file.path("cardio_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Immunisation tab
