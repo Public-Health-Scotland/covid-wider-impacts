@@ -265,7 +265,7 @@ data_table <- reactive({
              "Percentage (%) of singleton live births at 37-42 weeks gestation unknown" = perc_unknown_induced_37_42) %>% 
       mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
-                                                  "5 - least deprived") ~ paste0(variable),
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
                                   TRUE ~ "All")) %>% 
       mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                   TRUE ~ "All"))
@@ -290,7 +290,7 @@ data_table <- reactive({
               "Percentage (%) of births - other/not known" = perc_other_not_known) %>% 
       mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
-                                                  "5 - least deprived") ~ paste0(variable),
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
                                   TRUE ~ "All")) %>% 
       mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                   TRUE ~ "All"))
@@ -315,7 +315,7 @@ data_table <- reactive({
            "Percentage (%) of births - Under 37 weeks gestation" = perc_under37) %>% 
     mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
                                               "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
-                                              "5 - least deprived") ~ paste0(variable),
+                                              "5 - least deprived", "Unknown") ~ paste0(variable),
                               TRUE ~ "All")) %>% 
     mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                 TRUE ~ "All"))
