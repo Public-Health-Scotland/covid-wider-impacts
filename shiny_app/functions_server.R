@@ -544,7 +544,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
   simd_plot <- plot_ly(data=imm_simd_data, x = ~simdq) %>% 
     add_trace(type = 'bar', y = ~get(var_plot), split = ~time_period_eligible,
               color=~time_period_eligible,
-              colors = pal_immun2,
+              colors = pal_immun,
               text= tooltip_scurve, hoverinfo="text")
 
   if (base_var != F) {
