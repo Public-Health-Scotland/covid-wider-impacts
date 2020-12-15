@@ -1002,9 +1002,7 @@ saveRDS(fourtofive, paste0(data_folder,"final_app_files/fourtofive_",
                                      format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 # 4 to 5 year review - summary table data
 # Data for data download should include complete months and all weeks
-fourtofive_datatable <- format_immchild_table("child_health/fourtofive_dashboardtab_20201207") %>% 
-  filter(area_name != "NHS Dumfries & Galloway") %>%  
-  filter(area_name != "NHS Highland")
+fourtofive_datatable <- format_immchild_table("child_health/fourtofive_dashboardtab_20201207")
 
 saveRDS(fourtofive_datatable, paste0("shiny_app/data/","fourtofive_datatable.rds"))
 saveRDS(fourtofive_datatable, paste0(data_folder,"final_app_files/fourtofive_datatable_", 

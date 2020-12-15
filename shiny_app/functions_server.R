@@ -716,9 +716,7 @@ plot_scurve_child <- function(dataset, age_week) {
   # %>%
   # droplevels() # might be needed if sort order in legend is to change
   
-  if (is.data.frame(scurve_data) && age_week == "4 years" && input$geoname_child == "NHS Highland")
-  { plot_nodata(height = 50, text_nodata = "No data shown as review has not been implemented yet. Implementation scheduled for 3/8/20.")
-  } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {
     
