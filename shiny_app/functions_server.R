@@ -905,8 +905,8 @@ child_table <- function(dataset, age_week, age_not_reached) {
   child_table %>% 
     set_header_labels(time_period_eligible=paste0("Children turning ", age_week, " in:"),
                       denominator="Total number of children",
-                      coverage_tot_num="Children recorded as receiving their review by the date information was extracted for analysis (22-June-2020)",
-                      coverage_tot_percent="Children recorded as receiving their review by the date information was extracted for analysis (22-June-2020)") %>%
+                      coverage_tot_num=paste0("Children recorded as receiving their review by the date information was extracted for analysis (", child_extract_date,")"),
+                      coverage_tot_percent=paste0("Children recorded as receiving their review by the date information was extracted for analysis (", child_extract_date,")")) %>%
     footnote(i = 1, j = c(1:2, 4),
              value = as_paragraph(c("Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
                                     paste0("Blue cells indicate cohorts that have not reached ", age_not_reached, " of age"))),
