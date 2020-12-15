@@ -1494,7 +1494,13 @@ mod_download <- read_csv(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_f
   janitor::clean_names() %>%
   mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
          month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
-  rename(area_name=nhs_board_of_residence) %>% 
+  rename(area_name=nhs_board_of_residence,
+         centreline_csection_all = median_csection_all,
+         centreline_csection_emer = median_csection_emer,
+         centreline_csection_elec = median_csection_elec,
+         dottedline_csection_all = ext_csection_all,
+         dottedline_csection_emer = ext_csection_emer,
+         dottedline_csection_elec = ext_csection_elec) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
@@ -1578,7 +1584,9 @@ induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_f
   janitor::clean_names() %>%
   mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
          month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
-  rename(area_name=nhs_board_of_residence) %>% 
+  rename(area_name=nhs_board_of_residence,
+         centreline_induced_37_42 = median_induced_37_42,
+         dottedline_induced_37_42 = ext_induced_37_42) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
@@ -1678,7 +1686,15 @@ gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_deliv
   janitor::clean_names() %>%
   mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
          month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
-  rename(area_name=nhs_board_of_residence) %>% 
+  rename(area_name=nhs_board_of_residence,
+         centreline_under32 = median_under32,
+         centreline_32_36 = median_32_36,
+         centreline_under37 = median_under37,
+         centreline_42plus = median_42plus,
+         dottedline_under32 = ext_under32,
+         dottedline_32_36 = ext_32_36,
+         dottedline_under37 = ext_under37,
+         dottedline_42plus = ext_42plus) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
