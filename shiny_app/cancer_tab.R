@@ -153,9 +153,11 @@ output$cancer_explorer <- renderUI({
       strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and 
              may also change historical data. This commentary refers to pathological specimens reported to the week 
              ending 30th August 2020, which were available for inclusion in the analysis when the data were extracted 
-             on 28th October; the dashboard may now reflect more recent information."),
+             on 27th November; the dashboard may now reflect more recent information."),
       br(),
-      strong("Last updated: - 04/11/2020 ;  date of extraction of data: - 27/11/2020, with pathological records to week ending 
+      strong("First updated: - 04/11/2020 ;  date of extraction of data: - 16/9/2020, with pathological records to week ending 
+        21/06/2020.  "),
+      strong("Last updated: - 23/12/2020 ;  date of extraction of data: - 27/11/2020, with pathological records to week ending 
         30/08/2020.  "),
       br(),
       br(),
@@ -275,7 +277,32 @@ output$cancer_commentary <- renderUI({
       pathologically confirmed cancers each week had not fully returned to 2019 levels by the week ending 30th 
       August 2020, when the latest data were available."),
     
-    h4(strong("21st June 2020")),
+    h4(strong("Update 23/12/20: For pathology data to 30/8/2020 (extracted 27/11/20)")),
+    p("By the week ending 30th August 2020, the total number of individuals in Scotland with a pathologically confirmed 
+      cancer (excluding non-melanoma skin cancers) in Scotland was 23,375 in 2020 and 29,364 in 2019, an absolute difference 
+      of 5,989 individuals (and an overall cumulative difference of 26%).  That is to say, just under 6,000 fewer 
+      patients in Scotland had a pathologically confirmed cancer diagnosis by the end of August 2020 than would have 
+      been expected."),
+    p("After the initial fall by 40% of 2019 figures in late March, weekly numbers increased to just under 20% of the previous 
+      year’s numbers by 30th August 2020.  While the total (cumulative) difference in cancer diagnoses between 2020 and 2019 
+      was therefore not increasing as much as at the beginning of the pandemic, it was still increasing, and there continued 
+      to be 20% fewer confirmed cases of cancer in 2020 than in 2019. "),
+    p("Among the most common cancer types, by 30th August:"),
+    tags$ul(
+      tags$li(" Lung cancers: weekly numbers were down a quarter of the previous year’s (-25%) taking the cumulative difference 
+              from the start of the year to 577 individuals."),
+      tags$li(" Breast cancer (female only): weekly numbers were down over a quarter of the previous year’s (-27%) taking the 
+              cumulative difference from the start of the year to 1320 individuals."),
+      tags$li("	Prostate caners (male only): weekly numbers were down nearly 40% of the previous year’s (-39%) taking the 
+              cumulative difference from the start of the year to 482 individuals."),
+      tags$li(" Colorectal cancer: weekly numbers were down over a quarter of the previous year’s (-27%) taking the cumulative 
+              difference from the start of the year to 950 individuals."),
+      tags$li(" Non-melanoma skin cancer. from late March 2020, weekly numbers fell more steeply initially (to -80% of the 2019 figures) 
+              than other cancers but by the end of August, they were down by 18% of the previous year’s.  The cumulative difference 
+              from the start of the year was 4,312 individuals.")),
+    br(),
+    
+    h4(strong("Update 18/11/20: For pathology data to 21/6/2020 (extracted 16/9/20)")),
     p("By the week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer 
       (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference of 
       4,063 individuals (and an overall cumulative difference of 19%).  That is to say, around 4,000 fewer 
@@ -321,31 +348,6 @@ output$cancer_commentary <- renderUI({
         about 80% of 2019 numbers, and although there was  some return to expected numbers by the end of June 2020, there 
         were still about 40% fewer cases each week. In total, there had been 3508 fewer patients by w/e 21/6/2020, a cumulative 
         drop of 35%."),
-    
-    br(),
-    h4(strong("30th August 2020")),
-    p("By the week ending 30th August 2020, the total number of individuals in Scotland with a pathologically confirmed 
-      cancer (excluding non-melanoma skin cancers) in Scotland was 23,375 in 2020 and 29,364 in 2019, an absolute difference 
-      of 5,989 individuals (and an overall cumulative difference of 26%).  That is to say, just under 6,000 fewer 
-      patients in Scotland had a pathologically confirmed cancer diagnosis by the end of August 2020 than would have 
-      been expected."),
-    p("After the initial fall by 40% of 2019 figures in late March, weekly numbers increased to just under 20% of the previous 
-      year’s numbers by 30th August 2020.  While the total (cumulative) difference in cancer diagnoses between 2020 and 2019 
-      was therefore not increasing as much as at the beginning of the pandemic, it was still increasing, and there continued 
-      to be 20% fewer confirmed cases of cancer in 2020 than in 2019. "),
-    p("Among the most common cancer types, by 30th August:"),
-    tags$ul(
-      tags$li(" Lung cancers: weekly numbers were down a quarter of the previous year’s (-25%) taking the cumulative difference 
-              from the start of the year to 577 individuals."),
-      tags$li(" Breast cancer (female only): weekly numbers were down over a quarter of the previous year’s (-27%) taking the 
-              cumulative difference from the start of the year to 1320 individuals."),
-      tags$li("	Prostate caners (male only): weekly numbers were down nearly 40% of the previous year’s (-39%) taking the 
-              cumulative difference from the start of the year to 482 individuals."),
-      tags$li(" Colorectal cancer: weekly numbers were down over a quarter of the previous year’s (-27%) taking the cumulative 
-              difference from the start of the year to 950 individuals."),
-      tags$li(" Non-melanoma skin cancer. from late March 2020, weekly numbers fell more steeply initially (to -80% of the 2019 figures) 
-              than other cancers but by the end of August, they were down by 18% of the previous year’s.  The cumulative difference 
-              from the start of the year was 4,312 individuals.")),
     
       
     p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "(Data Source)"))
