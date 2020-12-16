@@ -46,7 +46,8 @@ data_table <- reactive({
     # This is because dropdown prompts on the table filters only appear for factors
     mutate_if(is.character, as.factor) 
   
-  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths")) {
+  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths",
+                               "ooh_cardiac", "sas_cardiac")) {
     table_data %<>%
     # Formatting to a "nicer" style
     select(-type) %>% 
@@ -188,7 +189,7 @@ data_table <- reactive({
                                       "<65" = "Aged under 65",
                                       "65+" = "Aged 65 and over"),
              week_ending = format(week_ending, "%d %b %y"))
-  } else if (input$data_select == "cardio_drugs") {
+  } else if (input$data_select %in% c("cardio_drugs")) {
     table_data %<>%
       select(-type) %>% 
       rename("Variation (%)" = variation) %>%
@@ -200,17 +201,6 @@ data_table <- reactive({
              "Intervention" = groups) %>%
       mutate(type = recode_factor(type, "age" = "Age Group", "sex" = "Sex"),
              week_ending = format(week_ending, "%d %b %y"))
-  } else if (input$data_select == "ooh_cardiac") {
-    table_data %<>%
-      select(-type) %>% 
-      rename("Variation (%)" = variation) %>%
-      mutate(week_ending = format(week_ending, "%d %b %y")) 
-  } else if (input$data_select == "sas_cardiac") {
-    table_data %<>%
-      select(-type) %>% 
-      rename("Variation (%)" = variation) %>%
-      mutate(week_ending = format(week_ending, "%d %b %y"))
-    
   } else if (input$data_select %in% "perinatal") {
     table_data %<>%
       select(area_name, month_of_year, number_of_deaths_in_month, sample_size, rate, type) %>%
