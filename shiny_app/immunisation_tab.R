@@ -391,7 +391,11 @@ output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
     h2("Immunisations - 23rd December 2020"),
-    p("DECEMBER COMMENTARY"),
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 23 December.  Monthly data are provided on children who became eligible during the COVID-19 pandemic (in March 2020 to September 2020) as well as before the pandemic (2019, January 2020 and February 2020). Weekly data are no longer shown in the charts and tables but are available through the data download, and includes data for children eligible up to week beginning 19 October 2020. It should be noted the immunisation uptake data recorded for the most recent eligible cohorts will not be fully complete at this stage."),
+    p("In this update some uptake rates are slightly under-reported; this is due to an issue this month with the source data which has affected the accuracy of the eligible cohort data for all time-periods. At Scotland level the monthly and weekly uptake rates are thought to be under-reported by -0.1 to -1.0 %. The impact on some NHS Board and Health & Social Care Partnership rates will be greater. It is anticipated the data issue will have been corrected in the next planned update of the dashboard on 3 February 2020."),
+    p("Uptake of pre-school immunisations has remained high for children who became eligible during the Covid-19 pandemic. Information on final achieved uptake will continue to be provided through ",
+      tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
+             "official statistics publications", target="_blank"), "."),
     h2("Immunisations - 4th November 2020"),
     p("In this release of information on uptake of pre-school immunisations data have been updated to include children who became eligible until early September."),
     p("Uptake of pre-school immunisations has remained high for children who became eligible during the Covid-19 pandemic. Information on final achieved uptake will continue to be provided through ",

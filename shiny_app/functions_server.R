@@ -592,7 +592,7 @@ immune_table <- function(dataset, dose, age_week) {
   table_data <- table_data %>%
     filter(exclude_from_table !=1) #filter immunisation table to exclude weekly cohorts that should only be downloadable
   
-  no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "MAR"))
+  no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == c("AUG", "SEP")))
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
@@ -687,7 +687,7 @@ immune_table <- function(dataset, dose, age_week) {
                      uptake_tot_num=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")"),
                      uptake_tot_percent=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")")) %>% 
    footnote(i = 1, j = c(1,2,4), 
-            value = as_paragraph(c("W/B : Week beginning",
+            value = as_paragraph(c(
                                    "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
                                    paste0("Blue cells indicate cohorts that have not reached ", age_max," of age"))),
             part = "header") %>%
