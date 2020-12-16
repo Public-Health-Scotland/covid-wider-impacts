@@ -272,9 +272,9 @@ data_table <- reactive({
 
   } else if (input$data_select %in% "mod") {
     table_data <- table_data %>% 
-      select(-c(chart_type, chart_category, ext_csection_all, ext_csection_elec,
-                ext_csection_emer, indicator, median_csection_all, median_csection_elec,
-                median_csection_emer, perc_denominator)) %>% 
+      select(-c(chart_type, chart_category, dottedline_csection_all, dottedline_csection_elec,
+                dottedline_csection_emer, indicator, centreline_csection_all, centreline_csection_elec,
+                centreline_csection_emer, perc_denominator)) %>% 
        rename("Number of births - All births" = births_all, 
               "Number of births - Caesarean section" = csection_all,
               "Number of births - emergency Caesarean section" = csection_emer,
@@ -297,9 +297,9 @@ data_table <- reactive({
     
   } else if (input$data_select %in% "gestation") {
   table_data <- table_data %>% 
-    select(-c(chart_type, chart_category, ext_32_36, ext_42plus, ext_under32,
-              ext_under37, indicator, median_32_36, median_42plus, median_under32,
-              median_under37, perc_denominator)) %>% 
+    select(-c(chart_type, chart_category, dottedline_32_36, dottedline_42plus, dottedline_under32,
+              dottedline_under37, indicator, centreline_32_36, centreline_42plus, centreline_under32,
+              centreline_under37, perc_denominator)) %>% 
     rename("Number of births - All births (18-44 weeks gestation)" = births_18_44, 
            "Number of births - 32-36 weeks gestation" = births_32_36,
            "Number of births - 37-41 weeks gestation" = births_37_41,
