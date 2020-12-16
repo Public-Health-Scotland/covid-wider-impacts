@@ -155,11 +155,10 @@ output$cancer_explorer <- renderUI({
              ending 30th August 2020, which were available for inclusion in the analysis when the data were extracted 
              on 27th November; the dashboard may now reflect more recent information."),
       br(),
-      strong("First updated: - 04/11/2020 ;  date of extraction of data: - 16/9/2020, with pathological records to week ending 
-        21/06/2020.  "),
-      strong("Last updated: - 23/12/2020 ;  date of extraction of data: - 27/11/2020, with pathological records to week ending 
-        30/08/2020.  "),
-      br(),
+      p(strong("First updated: - 04/11/2020 ;  date of extraction of data: - 16/9/2020, with pathological records to week ending 
+        21/06/2020.  ")),
+      p(strong("Last updated: - 23/12/2020 ;  date of extraction of data: - 27/11/2020, with pathological records to week ending 
+        30/08/2020.  ")),
       br(),
       p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of 
         each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had 
