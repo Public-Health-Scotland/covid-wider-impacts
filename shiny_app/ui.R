@@ -88,8 +88,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
                           actionLink("mod_button", "Method of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
-                          actionLink("gestation_button", "Gestation at delivery", width="150px"),
-                          actionLink("mentalhealth_button", "Mental health", width="150px"),
+                          actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
+                          actionLink("mentalhealth_button", "Mental health", width="150px"), br(),
                           actionLink("cancer_button", "Cancer", width="150px")
 
                          ),
@@ -169,7 +169,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ###############################################.
 ## Immunisation Tab ----
 ###############################################.
-tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
+tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -187,7 +187,7 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
                   fluidRow(br()),
                   downloadButton('download_imm_data', 'Download data'),
                   fluidRow(br()),
-                  actionButton('jump_commentary_child','Go to commentary')
+                  actionButton('jump_commentary_imm','Go to commentary')
                   )
          ), #well panel
          mainPanel(width = 12,
@@ -341,57 +341,6 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
                    uiOutput("mh_explorer")
          )# mainPanel bracket
 ),#tabPanel bracket
-# ###############################################.
-# ## Cancer ----
-# ###############################################.
-# tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
-#          wellPanel(
-#            column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
-#                                  choices= c("Scotland", "Cancer Network", "Health Board"),
-#                                  selected = "Scotland"),
-#                   uiOutput("geoname_ui_cancer")),
-#
-#            column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
-#                                   selected = "All Malignant Neoplasms (Excl. C44)"),
-#                   div(radioButtons("gender", "Step 3. Select sex",
-#                                    list("All Persons","Male","Female"), inline = TRUE,
-#                                    selected = "All Persons"))),
-#            # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
-#
-#            column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
-#                   fluidRow(br()),
-#                   downloadButton('download_cancer_data', 'Download data'),
-#                   fluidRow(br()),
-#                   actionButton('jump_commentary_cancer','Go to commentary'),
-#                   fluidRow(br()))
-#            # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"),
-#            #                  inline = TRUE, selected = "Cumulative")))
-#          ), #well panel
-#          mainPanel(width = 12,
-#                    uiOutput("cancer_explorer")
-#          )# mainPanel bracket
-# ), # tabpanel bracket
-# ##############################################.
-# # Mental Health ----
-# ##############################################.
-# tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
-#          wellPanel(
-#            column(4, div(title="Select the data you want to explore.", # tooltip
-#                          radioGroupButtons("measure_mh_select",
-#                                            label= "Step 1 - Select the data you want to explore.",
-#                                            choices = mentalhealth_list, status = "primary",
-#                                            direction = "vertical", justified = T))),
-#            column(4, uiOutput("geotype_mh_ui"),
-#                   uiOutput("geoname_mh_ui")),
-#            column(4, downloadButton("download_mentalhealth_data", "Download data"),
-#
-#                   fluidRow(br()),
-#                   actionButton("jump_commentary_mod","Go to commentary"))
-#          ), #well panel
-#          mainPanel(width = 12,
-#                    uiOutput("mod_explorer")
-#          )# mainPanel bracket
-# ), # tabpanel bracket
 ###############################################.
 ## Pregnancy ----
 ##############################################.

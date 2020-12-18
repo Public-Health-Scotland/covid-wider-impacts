@@ -1,7 +1,14 @@
 # This script reads the latest version of each file and saves it in your local repository.
 ###############################################.
-## Functions ----
+## Functions and filepaths ----
 ###############################################.
+# Filepath changes depending on Desktop/Server
+if (sessionInfo()$platform %in% c("x86_64-redhat-linux-gnu (64-bit)", "x86_64-pc-linux-gnu (64-bit)")) {
+  data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
+} else {
+  data_folder <- "//Isdsf00d03/PHSCOVID19_Analysis/shiny_input_files/"
+}
+
 # Function to save final file from common folder to local app folder
 # Takes two arguments, the dataset filename and the date stamp on the name of the file
 # using a dd_mmm_yy format
@@ -50,17 +57,17 @@ save_final_file("sas_cardiac", "08_Dec_20")
 save_final_file("cardio_drugs", "30_Nov_20")
 ##########################################################.
 ## Immunisations - six in one ----
-save_final_file("six_alldose", "16_Nov_20")
-save_final_file("six_dose1_simdtable", "16_Nov_20")
-save_final_file("six_dose2_simdtable", "16_Nov_20")
-save_final_file("six_dose3_simdtable", "16_Nov_20")
-save_final_file("sixinone_datatable", "16_Nov_20")
+save_final_file("six_alldose", "15_Dec_20")
+save_final_file("six_dose1_simdtable", "15_Dec_20")
+save_final_file("six_dose2_simdtable", "15_Dec_20")
+save_final_file("six_dose3_simdtable", "15_Dec_20")
+save_final_file("sixinone_datatable", "15_Dec_20")
 ## Immunisations - MMR ----
-save_final_file("mmr_alldose", "16_Nov_20")
-save_final_file("mmr_dose1_simdtable", "16_Nov_20")
-save_final_file("mmr_dose2_simdtable", "16_Nov_20")
-save_final_file("mmr_datatable", "16_Nov_20")
-save_final_file("mmr_dose2_datatable_grampian", "16_Nov_20")
+save_final_file("mmr_alldose", "15_Dec_20")
+save_final_file("mmr_dose1_simdtable", "15_Dec_20")
+save_final_file("mmr_dose2_simdtable", "15_Dec_20")
+save_final_file("mmr_datatable", "15_Dec_20")
+save_final_file("mmr_dose2_datatable_grampian", "15_Dec_20")
 # Immunisations - definitions
 save_final_file("age_defs_imm_6inone", "16_Nov_20")
 save_final_file("age_defs_imm_mmr", "16_Nov_20")

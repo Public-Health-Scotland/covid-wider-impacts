@@ -15,6 +15,7 @@ library(readxl) # reading excel
 library(flextable)
 library(magrittr)
 library(haven)
+library(readxl)
 
 ###############################################.
 ## Filepaths ----
