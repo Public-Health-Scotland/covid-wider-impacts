@@ -76,7 +76,7 @@ function(input, output, session) {
   observeEvent(input$jump_to_summary, {updateTabsetPanel(session, "intabset", selected = "summary")})
   observeEvent(input$jump_to_cardio, {updateTabsetPanel(session, "intabset", selected = "cardio")})
   observeEvent(input$jump_to_table, {updateTabsetPanel(session, "intabset", selected = "table")})
-  observeEvent(input$jump_to_immunisation, {updateTabsetPanel(session, "intabset", selected = "child")})
+  observeEvent(input$jump_to_immunisation, {updateTabsetPanel(session, "intabset", selected = "imm")})
   observeEvent(input$jump_to_childreview, {updateTabsetPanel(session, "intabset", selected = "child_review")})
   observeEvent(input$jump_to_perinatal_mortality, {updateTabsetPanel(session, "intabset", selected = "perinatal")})
   observeEvent(input$jump_to_booking, {updateTabsetPanel(session, "intabset", selected = "booking")})
@@ -92,7 +92,7 @@ function(input, output, session) {
   observeEvent(input$jump_to_cancer, {updateTabsetPanel(session, "intabset", selected = "cancer")})
   
 # To jump to commentary tab and ensures correct panel is expanded - requires multiple lines becuase action buttons must have unique ID
-  observeEvent(input$jump_commentary_child, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$jump_commentary_imm, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Immunisation")})
 
   observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")
