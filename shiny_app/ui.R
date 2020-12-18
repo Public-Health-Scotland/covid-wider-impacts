@@ -197,7 +197,7 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
 ###############################################.
 ## Child Health Tab ----
 ##############################################.
-tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
+tabPanel(title = "Child Health Reviews", icon = icon("child"), value = "child_health",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
