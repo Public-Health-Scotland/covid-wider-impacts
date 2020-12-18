@@ -31,13 +31,13 @@ plot_box <- function(title_plot, plot_output) {
 
 plot_cut_box <- function(title_plot1, plot_output1,
                          title_plot2, plot_output2, extra_content = NULL) {
-  tagList( 
+  tagList(
     fluidRow(column(6, h4(title_plot1)),
              column(6, h4(title_plot2))),
     extra_content,
     fluidRow(column(6, withSpinner(plotlyOutput(plot_output1))),
              column(6, withSpinner(plotlyOutput(plot_output2))))
-  )
+    )
 }
 
 #Function to create boxes for intro sumamry
@@ -67,6 +67,8 @@ deaths <- readRDS("data/deaths.rds") # deaths data
 ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
 cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
+ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
+sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
@@ -129,6 +131,27 @@ top_extract_date <- "5th November 2020"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
+#mode of delivery (pregnanacy tab)
+mod_extract_date <- "26th November 2020"
+mod_runchart <- readRDS("data/mod_runchart_data.rds")
+mod_scot <- readRDS("data/mod_scot_data.rds")
+mod_linechart <- readRDS("data/mod_linechart_data.rds")
+mod_download <- readRDS("data/mod_download_data.rds")
+
+#inductions (pregnanacy tab)
+induct_extract_date <- "26th November 2020"
+induct_runchart <- readRDS("data/induct_runchart_data.rds")
+induct_scot <- readRDS("data/induct_scot_data.rds")
+induct_linechart <- readRDS("data/induct_linechart_data.rds")
+induct_download <- readRDS("data/induct_download_data.rds")
+
+#gestation at delivery (pregnanacy tab)
+gestation_extract_date <- "26th November 2020"
+gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
+gestation_scot <- readRDS("data/gestation_scot_data.rds")
+gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
+gestation_download <- readRDS("data/gestation_download_data.rds")
+
 # Breastfeeding data
 breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
@@ -156,10 +179,10 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
 
 # List of data items available in step 2 of child health tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
-                     "6-8 Week Review" = "six_eightwks",
-                     "13-15 Month Review" = "13_15mnth",
-                     "27-30 Month Review" = "27_30mnth",
-                     "4-5 Year Review" = "4_5yr")
+            "6-8 Week Review" = "six_eightwks",
+            "13-15 Month Review" = "13_15mnth",
+            "27-30 Month Review" = "27_30mnth",
+            "4-5 Year Review" = "4_5yr")
 
 ## Data lists for pregnancy tab
 # List of data items available in step 1 of antenatal booking
@@ -175,11 +198,11 @@ data_list_childdev <- c("13-15 month review" = "13_15mnth",
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
                         "Cardiac procedures" = "cath_lab",
+                        "Cardiovascular OOH cases" = "ooh_cardiac",
+                        "Cardiovascular SAS incidents" = "sas_cardiac",
                         "6-in-1 first dose"  = "sixin_8wks",
                         "6-in-1 second dose" = "sixin_8wks_second",
                         "6-in-1 third dose" = "sixin_8wks_third",
-                        "MMR first dose" = "mmr_1dose",
-                        "MMR second dose" = "mmr_2dose",
                         "Health Visitor first visit" = "first_visit",
                         "6-8 week child health review" = "sixtoeight_visit",
                         "13-15 month child health review" = "thirteen_visit",
@@ -190,6 +213,9 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Stillbirths and infant deaths" = "perinatal",
                         "Termination of pregnancy" = "top",
                         "Antenatal bookings" = "ante_booking",
+                        "Induction of labour" = "induct",
+                        "Method of delivery" = "mod",
+                        "Gestation at delivery" = "gestation",
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
@@ -225,8 +251,9 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Vagina - Females only" = "Vagina - Females only",
                       "Vulva - Females only" = "Vulva - Females only")
 
-cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
-                 "Cardiac procedures" = "cath")
+cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
+                 "Out of hours cases" = "ooh_cardiac",
+                 "Scottish Ambulance Service" = "sas_cardiac", "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Stillbirths"="stillbirths",
@@ -246,7 +273,7 @@ mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye", "Ou
 pal_depr <- c('#2c7fb8', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 #Palette for 9 series in a gradient
 pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
-             '#74add1', '#4575b4', '#313695')
+                    '#74add1', '#4575b4', '#313695')
 # '#abd9e9', '#dfc27d',
 #Palette for those with a single category per sex and overall
 pal_sex <- c('#000000', '#9ebcda','#8856a7')
@@ -283,7 +310,7 @@ yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4
 
 # Buttons to remove
 bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
-                     'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                     'hoverClosestCartesian')
+                       'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
+                        'hoverClosestCartesian')
 
 ## END

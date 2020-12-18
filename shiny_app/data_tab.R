@@ -16,6 +16,8 @@ data_table <- reactive({
          "deaths" = deaths %>% rename(average_2015_2019 = count_average),
          "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
          "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average),
+        "ooh_cardiac" = ooh_cardiac %>% rename(average_2018_2019 = count_average),
+        "sas_cardiac" = sas_cardiac %>% rename(average_2018_2019 = count_average),
          "sixin_8wks" = sixtable %>% filter(immunisation == "six-in-one dose 1"),
          "sixin_8wks_second" = sixtable %>% filter(immunisation == "six-in-one dose 2"),
          "sixin_8wks_third" = sixtable %>% filter(immunisation == "six-in-one dose 3"),
@@ -29,19 +31,23 @@ data_table <- reactive({
          "cancer" = cancer_data2,
          "childdev" = child_dev,
          "breastfeeding" = breastfeeding,
-         "perinatal" = perinatal,
-         "top" = top_download ,
-         "ante_booking" = booking_download, 
-         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
-         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
-         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
-        ) %>% 
+        "perinatal" = perinatal,
+        "top" = top_download ,
+        "ante_booking" = booking_download,
+        "induct" = induct_download,
+        "mod"= mod_download,
+        "gestation" = gestation_download,
+        "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+        "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+        "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
+  ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
     # This is because dropdown prompts on the table filters only appear for factors
     mutate_if(is.character, as.factor) 
   
-  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths")) {
+  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths",
+                               "ooh_cardiac", "sas_cardiac")) {
     table_data %<>%
     # Formatting to a "nicer" style
     select(-type) %>% 
@@ -183,7 +189,7 @@ data_table <- reactive({
                                       "<65" = "Aged under 65",
                                       "65+" = "Aged 65 and over"),
              week_ending = format(week_ending, "%d %b %y"))
-  } else if (input$data_select == "cardio_drugs") {
+  } else if (input$data_select %in% c("cardio_drugs")) {
     table_data %<>%
       select(-type) %>% 
       rename("Variation (%)" = variation) %>%
@@ -195,7 +201,6 @@ data_table <- reactive({
              "Intervention" = groups) %>%
       mutate(type = recode_factor(type, "age" = "Age Group", "sex" = "Sex"),
              week_ending = format(week_ending, "%d %b %y"))
-  
   } else if (input$data_select %in% "perinatal") {
     table_data %<>%
       select(area_name, month_of_year, number_of_deaths_in_month, sample_size, rate, type) %>%
@@ -248,7 +253,76 @@ data_table <- reactive({
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
                                                   "5 - least deprived") ~ paste0(category),
                                                   TRUE ~ "All"))
-  }
+  } else if (input$data_select %in% "induct") {
+    table_data <- table_data %>% 
+      select(area_name, area_type, month_of_discharge, subgroup, variable,
+             induced_37_42, not_induced_37_42, unknown_induced_37_42, births_37_42,
+             perc_induced_37_42, perc_not_induced_37_42, perc_unknown_induced_37_42) %>% 
+      rename("Total number of singleton live births at 37-42 weeks gestation" = births_37_42,
+             "Number of singleton live births at 37-42 weeks gestation that followed induction of labour" = induced_37_42,
+             "Number of singleton live births at 37-42 weeks gestation that were not induced" = not_induced_37_42,
+             "Number of singleton live births at 37-42 weeks gestation unknown" = unknown_induced_37_42,
+             "Percentage (%) of singleton live births at 37-42 weeks gestation that followed induction of labour" = perc_induced_37_42,
+             "Percentage (%) of singleton live births at 37-42 weeks gestation that were not induced" = perc_not_induced_37_42,
+             "Percentage (%) of singleton live births at 37-42 weeks gestation unknown" = perc_unknown_induced_37_42) %>% 
+      mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
+                                  TRUE ~ "All")) %>% 
+      mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                  TRUE ~ "All"))
+
+  } else if (input$data_select %in% "mod") {
+    table_data <- table_data %>% 
+      select(-c(chart_type, chart_category, dottedline_csection_all, dottedline_csection_elec,
+                dottedline_csection_emer, indicator, centreline_csection_all, centreline_csection_elec,
+                centreline_csection_emer, perc_denominator)) %>% 
+       rename("Number of births - All births" = births_all, 
+              "Number of births - Caesarean section" = csection_all,
+              "Number of births - emergency Caesarean section" = csection_emer,
+              "Number of births - elective Caesarean section" = csection_elec,
+              "Number of births - Other/Not Known" = other_not_known,
+              "Number of births - assisted vaginal delivery including breech" = assisted_vaginal, 
+              "Number of births - spontaneous_vaginal_delivery" = spontaneous,
+              "Percentage (%) of births - assisted vaginal delivery including breech" = perc_assisted_vaginal, 
+              "Percentage (%) of births - Caesarean section" = perc_csection_all,
+              "Percentage (%) of births - emergency Caesarean section" = perc_csection_emer,
+              "Percentage (%) of births - elective Caesarean section" = perc_csection_elec,
+              "Percentage (%) of births - spontaneous vaginal delivery" = perc_spontaneous,
+              "Percentage (%) of births - other/not known" = perc_other_not_known) %>% 
+      mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
+                                  TRUE ~ "All")) %>% 
+      mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                  TRUE ~ "All"))
+    
+  } else if (input$data_select %in% "gestation") {
+  table_data <- table_data %>% 
+    select(-c(chart_type, chart_category, dottedline_32_36, dottedline_42plus, dottedline_under32,
+              dottedline_under37, indicator, centreline_32_36, centreline_42plus, centreline_under32,
+              centreline_under37, perc_denominator)) %>% 
+    rename("Number of births - All births (18-44 weeks gestation)" = births_18_44, 
+           "Number of births - 32-36 weeks gestation" = births_32_36,
+           "Number of births - 37-41 weeks gestation" = births_37_41,
+           "Number of births - At or over 42 weeks gestation" = births_42plus,
+           "Number of births - Unknown gestation" = births_gest_unknown,
+           "Number of births - Under 32 weeks gestation" = births_under32, 
+           "Number of births - Under 37 weeks gestation" = births_under37,
+           "Number of births - All births" = births_all,
+           "Percentage (%) of births - 32-36 weeks gestation" = perc_32_36, 
+           "Percentage (%) of births - 37-41 weeks gestation" = perc_37_41,
+           "Percentage (%) of births - At or over 42 weeks gestation" = perc_42plus,
+           "Percentage (%) of births - Under 32 weeks gestation" = perc_under32,
+           "Percentage (%) of births - Under 37 weeks gestation" = perc_under37) %>% 
+    mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived", "Unknown") ~ paste0(variable),
+                              TRUE ~ "All")) %>% 
+    mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                TRUE ~ "All"))
+    
+}
   
   
   table_data %<>% 
@@ -295,3 +369,4 @@ output$download_table_csv <- downloadHandler(
     write_csv(data_table()[input[["table_filtered_rows_all"]], ], file) 
   } 
 )
+

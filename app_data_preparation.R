@@ -161,7 +161,7 @@ ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Da
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-ooh_may_onwards %<>% 
+ooh_may_onwards <- ooh_may_onwards %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
@@ -239,7 +239,6 @@ prepare_final_data(ae_data, "ae", last_week = "2020-11-22")
 
 # #Read in new nhs24 data as txt file, save as RDS and remove txt file version from directory.
 # #Each week this section of code can be uncommented run for the latest weeks data then recommented after txt file deleted
-
      # nhs24 <- (read_tsv(paste0(data_folder,"NHS24/NHS24_Extract 08062020 to 27092020.txt")))
      # saveRDS(nhs24, paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.rds"))
      # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt"))
@@ -517,6 +516,117 @@ rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-11-22")
 
 ###############################################.
+## OOH Cardiac  ----
+###############################################.
+
+ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/Weekly Diagnosis OOH CSV.csv")) %>% 
+  janitor::clean_names() %>% 
+  filter(age > 14) # Filter age > 14
+
+# Change file into correct format prior to getting final specification
+ooh_data_cardiac <- ooh_data_cardiac %>% 
+  rename(hb = reporting_health_board_name_as_at_date_of_episode,
+         dep = patient_prompt_dataset_deprivation_scot_quintile, 
+         sex = gender_description,
+         number_of_cases = gp_ooh_number_of_cases)
+
+ooh_data_cardiac = ooh_data_cardiac %>%
+  create_agegroups() %>% #age bands
+  create_depgroups() # deprivation groups format
+
+# remove diagnosis field as just showing total cardiac
+ooh_data_cardiac <- ooh_data_cardiac %>%
+  group_by(week_ending, hb, age_grp, sex, dep) %>%
+  summarise(count = sum(number_of_cases, na.rm = T)) %>% ungroup
+
+ooh_data_cardiac <- ooh_data_cardiac %>% 
+  mutate( sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "NOT SPEC" = NA_character_, "NOT KNOWN" = NA_character_),
+         week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
+         scot = "Scotland") %>% 
+  proper() # convert HB names to correct format
+
+ooh_data_cardiac <- ooh_data_cardiac %>% 
+  gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                            "scot" = "Scotland")) %>%
+  rename(age = age_grp) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() 
+
+# Creating totals for groups
+ooh_cd_all <- ooh_data_cardiac %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+ooh_cd_sex <- ooh_data_cardiac %>% agg_cut(grouper="sex") %>% rename(category = sex)
+ooh_cd_dep <- ooh_data_cardiac %>% agg_cut(grouper="dep") %>% rename(category = dep)
+ooh_cd_age <- ooh_data_cardiac %>% agg_cut(grouper="age") %>% rename(category = age)
+
+ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
+
+# Filter graphs that look odd due to small numbers
+ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles"))
+ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
+                                                        "NHS Lanarkshire") | type !="age")
+ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
+                                                        "NHS Fife", "NHS Highland") | type !="dep")
+
+# Formatting file for shiny app
+prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-11-08")
+
+###############################################.
+## SAS Cardiac ----
+###############################################.
+
+sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/Weekly Diagnosis SAS CSV.csv")) %>%
+  janitor::clean_names() %>% 
+  filter(age > 14) # Filter age > 14
+
+# Change file into correct format prior to getting final specification
+sas_data_cardiac <-  sas_data_cardiac %>%
+  rename(hb = reporting_health_board_name_current,
+         sex = gender_description,
+         dep = patient_prompt_dataset_deprivation_scot_quintile,
+         number_of_cases = number_of_incidents) %>% 
+  create_agegroups() %>% # Age Bands
+  create_depgroups() %>% 
+  mutate(week_ending = dmy(week_ending))
+ 
+# remove diagnosis field as just showing total cardiac
+sas_data_cardiac <- sas_data_cardiac %>%
+  group_by(week_ending, hb, age_grp, sex, dep) %>%
+  summarise(count = sum(number_of_cases, na.rm = T)) %>% 
+  ungroup()
+
+sas_data_cardiac <- sas_data_cardiac %>%
+  mutate(sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "0" = NA_character_, "NOT KNOWN" = NA_character_),
+         week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
+         scot = "Scotland") %>% 
+  proper() # convert HB names to correct format
+
+sas_data_cardiac <- sas_data_cardiac %>% 
+  gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>% 
+  rename(age = age_grp) %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", "scot" = "Scotland")) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() 
+
+# Creating totals for groups
+sas_cd_all <- sas_data_cardiac %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+sas_cd_sex <- sas_data_cardiac %>% agg_cut(grouper="sex") %>% rename(category = sex)
+sas_cd_dep <- sas_data_cardiac %>% agg_cut(grouper="dep") %>% rename(category = dep)
+sas_cd_age <- sas_data_cardiac %>% agg_cut(grouper="age") %>% rename(category = age)
+
+sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
+
+# Filter graphs that look odd due to small numbers
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland"))
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | type !="dep")
+sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | type !="age")
+
+# Formatting file for shiny app
+prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-11-22")
+
+###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
 cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/2020-11-26-covid emessage AMS only.xlsx")) %>% 
@@ -555,7 +665,7 @@ rm(cardio_drugs_all)
 prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-11-22")
 
 ###############################################.
-## 6-in-1 s-curve data ----
+## 6-in-1 data ----
 ###############################################.
 
 #field with date all immunisation data files prepared
@@ -588,6 +698,7 @@ imms_datatable <- format_immchild_table(paste0("immunisations/dashboardtable_",i
 six_datatable <- imms_datatable %>%
   filter(str_detect(immunisation,"six-in-one")) %>%
   select(-uptake_13m_num:-uptake_3y8m_percent) #remove uptake columns that related to mmr 
+
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
 saveRDS(six_datatable, paste0(data_folder,"final_app_files/sixinone_datatable_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
@@ -678,7 +789,7 @@ saveRDS(month_defs_imm, paste0(data_folder,"final_app_files/month_eligibility_im
                                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
-## MMR s-curve data ----
+## MMR data ----
 ###############################################.
 #field with date all immunisation data files prepared
 imms_date <- "20201026"
@@ -720,7 +831,6 @@ saveRDS(mmr_dose2_simdtable, paste0(data_folder,"final_app_files/mmr_dose2_simdt
 ## Child health review: first visit ----
 ###############################################.
 ## First visit - scurve data
-
 first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20201026.csv"), 
                 col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_character())) %>%
@@ -738,7 +848,9 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          week_no= isoweek(week_2_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
+  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
 
 saveRDS(first, paste0("shiny_app/data/","first_visit.rds"))
 saveRDS(first, paste0(data_folder,"final_app_files/first_visit_", 
@@ -756,7 +868,6 @@ saveRDS(first_datatable, paste0(data_folder,"final_app_files/first_visit_datatab
 ###############################################.
 
 ## 6 to 8 weeks visit - scurve data
-
 sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20201026.csv"), 
                   col_types =list(week_6_start=col_date(format="%m/%d/%Y"),
                                   time_period_eligible=col_character())) %>%
@@ -775,7 +886,11 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_6_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv<168)
+  filter(interv<168) %>%
+  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
 
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight.rds"))
 saveRDS(sixtoeight, paste0(data_folder,"final_app_files/six_to_eight_", 
@@ -793,7 +908,6 @@ saveRDS(sixtoeight_datatable, paste0(data_folder,"final_app_files/six_to_eight_d
 ###############################################.
 
 ## 13 to 15 month visit - scurve data
-
 thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20201026.csv"), 
                        col_types =list(week_57_start=col_date(format="%m/%d/%Y"),
                                        time_period_eligible=col_character())) %>%
@@ -812,7 +926,11 @@ thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=371 & interv<=518) 
+  filter(interv>=371 & interv<=518) %>% 
+  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
 
 saveRDS(thirteen, paste0("shiny_app/data/","thirteen.rds"))
 saveRDS(thirteen, paste0(data_folder,"final_app_files/thirteen_", 
@@ -830,7 +948,6 @@ saveRDS(thirteen_datatable, paste0(data_folder,"final_app_files/thirteen_datatab
 ###############################################.
 
 ## 27 to 30 month visit - scurve data
-
 twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20201026.csv"), 
                      col_types =list(week_117_start=col_date(format="%m/%d/%Y"),
                                      time_period_eligible=col_character())) %>%
@@ -849,7 +966,11 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_117_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=791 & interv<=945) 
+  filter(interv>=791 & interv<=945) %>% 
+  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
 
 saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven.rds"))
 saveRDS(twentyseven, paste0(data_folder,"final_app_files/twentyseven_", 
@@ -869,7 +990,6 @@ saveRDS(twentyseven_datatable, paste0(data_folder,"final_app_files/twentyseven_d
 ###############################################.
 
 ## 4 to 5 year visit - scurve data
-
 fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard20201026.csv"), 
                         col_types =list(week_209_start=col_date(format="%m/%d/%Y"),
                                         time_period_eligible=col_character())) %>%
@@ -888,7 +1008,12 @@ fourtofive %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_209_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=1428 & interv<=1582)
+  filter(interv>=1428 & interv<=1582) %>% 
+# the filters below shouldn't be needed as of the next update (end of July/beginning of Aug)  
+  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
+  filter(substr(time_period_eligible,5,10) != "23-MAR")
 
 saveRDS(fourtofive, paste0("shiny_app/data/","fourtofive.rds"))
 saveRDS(fourtofive, paste0(data_folder,"final_app_files/fourtofive_", 
@@ -1281,6 +1406,304 @@ top_download <- bind_rows(top_download_board, top_download_scot)
 saveRDS(top_download, "shiny_app/data/top_download.rds")
 saveRDS(top_download, paste0(data_folder,"final_app_files/top_download_", 
                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+###############################################.
+## Pregnancy (mode of delivery) ----
+###############################################.
+#field with date data files prepared
+mod_folder <- "20201126"
+mod_date <- "2020-11-26"
+
+##mode of delivery data supplied in 4 files: runchart data, line charts for scotland (age and dep split), line charts for NHS board and data download
+
+## 1-RUNCHART DATA
+## mod data for run chart (scotland and nhs board) - monthly
+mod_runchart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_RUNCHART_mode_",mod_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name = hbres, month = date) %>%
+  mutate(month = as.Date(month),
+         type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland"),
+         area_type = type, 
+         category = "All") %>%
+# the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
+# ext_ columns are extended median which are blank before projection time period
+mutate(ext_csection_all = case_when(is.na(ext_csection_all) ~ median_csection_all,
+                                   TRUE ~ ext_csection_all),
+       ext_csection_elec = case_when(is.na(ext_csection_elec) ~ median_csection_elec,
+                                    TRUE ~ ext_csection_elec),
+       ext_csection_emer = case_when(is.na(ext_csection_emer) ~ median_csection_emer,
+                                    TRUE ~ ext_csection_emer)) %>% 
+  group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
+  #call function to add flags for runchart shifts and trends
+  #shift: name for new field where shift is flagged
+  #trend: name for new field where trend is flagged
+  #value: which column in dataset contains value being evaluated
+  #median: which column in dataset contains the median against which value is tested
+  runchart_flags(shift="csection_all_shift", trend="csection_all_trend", 
+                 value=perc_csection_all, median=ext_csection_all) %>%
+  runchart_flags(shift="csection_emer_shift", trend="csection_emer_trend", 
+                 value=perc_csection_emer, median=ext_csection_emer) %>%
+  runchart_flags(shift="csection_elec_shift", trend="csection_elec_trend", 
+                 value=perc_csection_elec, median=ext_csection_elec) %>%
+  ungroup()
+
+saveRDS(mod_runchart, "shiny_app/data/mod_runchart_data.rds")
+saveRDS(mod_runchart, paste0(data_folder,"final_app_files/mod_runchart_data_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+## 2- LINECHART DATA mode of delivery for Scotland only by age and dep
+mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_SCOT_CHARTS_mode_",mod_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date, category=variable) %>%
+  mutate(month=as.Date(month),
+         area_type="Scotland",
+         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
+         category=as.character(category))
+
+saveRDS(mod_scot, "shiny_app/data/mod_scot_data.rds")
+saveRDS(mod_scot, paste0(data_folder,"final_app_files/mod_scot_data_", 
+                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+## 3- LINECHART DATA mode of delivery for Scotland & NHS board
+mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_LINECHART_mode_",mod_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date) %>%
+  mutate(month=as.Date(month, format="%Y-%m-%d "),
+         #month=format(month,"%b %Y"),
+         type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         area_type = type, 
+         category="All") %>%
+  group_by(area_name, month) %>% 
+  mutate(tot_births=sum(births/2), # divide by two because total births already a row in the dataset
+         percent_births=(births/tot_births)*100) %>% 
+  ungroup()
+
+mod_linechart <- mod_linechart %>%
+  mutate(mode = recode(mode, "Spontaneous" = "Spontaneous vaginal", "Assisted" = "Assisted vaginal", "Caesarean - Emergency" = "Emergency caesarean",
+                       "Caesarean - Elective" = "Elective caesarean"))
+
+saveRDS(mod_linechart, "shiny_app/data/mod_linechart_data.rds") 
+saveRDS(mod_linechart, paste0(data_folder,"final_app_files/mod_linechart_data_", 
+                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+
+## 4- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
+mod_download <- read_csv(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_DOWNLOAD_mode_",mod_date,".csv"))%>%  
+  janitor::clean_names() %>%
+  mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
+         month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
+  rename(area_name=nhs_board_of_residence,
+         centreline_csection_all = median_csection_all,
+         centreline_csection_emer = median_csection_emer,
+         centreline_csection_elec = median_csection_elec,
+         dottedline_csection_all = ext_csection_all,
+         dottedline_csection_emer = ext_csection_emer,
+         dottedline_csection_elec = ext_csection_elec) %>% 
+  mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                             area_name=="Scotland" ~ "Scotland"),
+         chart_category="All",
+         chart_type= area_type)
+
+saveRDS(mod_download, "shiny_app/data/mod_download_data.rds")  
+saveRDS(mod_download, paste0(data_folder,"final_app_files/mod_download_data_", 
+                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+###############################################.
+## Pregnancy (inductions) ----
+###############################################.
+induct_folder <- "20201126"
+induct_date <- "2020-11-26"
+
+## 1-RUNCHART DATA
+## mod data for run chart (scotland and nhs board) - monthly
+induct_runchart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_RUNCHART_induced_",induct_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name = hbres, month = date) %>%
+  mutate(month = as.Date(month),
+         type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                          area_name=="Scotland" ~ "Scotland"),
+         area_type = type, 
+         category = "All") %>%
+  # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
+  # ext_ columns are extended median which are blank before projection time period
+  mutate(ext_ind_37_42 = case_when(is.na(ext_ind_37_42) ~ median_ind_37_42,
+                                      TRUE ~ ext_ind_37_42)) %>%
+  group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
+  #call function to add flags for runchart shifts and trends
+  #shift: name for new field where shift is flagged
+  #trend: name for new field where trend is flagged
+  #value: which column in dataset contains value being evaluated
+  #median: which column in dataset contains the median against which value is tested
+  runchart_flags(shift="induction_shift", trend="induction_trend", 
+                 value=perc_ind_37_42, median=ext_ind_37_42) %>%
+  ungroup()
+
+saveRDS(induct_runchart, "shiny_app/data/induct_runchart_data.rds")
+saveRDS(induct_runchart, paste0(data_folder,"final_app_files/induct_runchart_data_", 
+                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+## 2- LINECHART DATA inductions for Scotland only by age and dep
+induct_scot <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_SCOT_CHARTS_induced_",induct_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date, category=variable) %>%
+  mutate(month=as.Date(month),
+         area_type="Scotland",
+         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
+         category=as.character(category))
+
+saveRDS(induct_scot, "shiny_app/data/induct_scot_data.rds")
+saveRDS(induct_scot, paste0(data_folder,"final_app_files/induct_scot_data_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+## 3- LINECHART DATA inductions for Scotland & NHS board
+induct_linechart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_LINECHART_induced_",induct_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  mutate(tot_births_37_42=births_37_42) %>%
+  #reshape data file for ease of creation of line chart with percentages
+  pivot_longer(cols = ind_37_42:births_37_42, names_to = "ind",values_to = "births") %>%
+  rename(area_name=hbres, month=date) %>%
+  mutate(month=as.Date(month, format="%Y-%m-%d "),
+         type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         area_type = type, 
+         category="All",
+         percent_births=((births/tot_births_37_42)*100),
+         #NOTE the gestation categories are not mutually exclusive - <37 contains <32
+         ind=case_when(ind=="ind_37_42" ~ "Births that followed induction",
+                       ind=="births_37_42" ~ "All births",
+                       TRUE~as.character(ind))) 
+
+saveRDS(induct_linechart, "shiny_app/data/induct_linechart_data.rds") 
+saveRDS(induct_linechart, paste0(data_folder,"final_app_files/induct_linechart_data_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+## 4- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
+induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_DOWNLOAD_induced_",induct_date,".csv"))%>%  
+  janitor::clean_names() %>%
+  mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
+         month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
+  rename(area_name=nhs_board_of_residence,
+         centreline_induced_37_42 = median_induced_37_42,
+         dottedline_induced_37_42 = ext_induced_37_42) %>% 
+  mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                             area_name=="Scotland" ~ "Scotland"),
+         chart_category="All",
+         chart_type= area_type) 
+
+saveRDS(induct_download, "shiny_app/data/induct_download_data.rds")  
+saveRDS(induct_download, paste0(data_folder,"final_app_files/induct_download_data_", 
+                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+###############################################.
+## Pregnancy (gestation at delivery) ----
+###############################################.
+
+gestation_folder <- "20201126"
+gestation_date <- "2020-11-26"
+
+## 1-RUNCHART DATA
+gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_RUNCHART_gestation_",gestation_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name = hbres, month = date) %>%
+  mutate(month = as.Date(month),
+         type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                          area_name=="Scotland" ~ "Scotland"),
+         area_type = type, 
+         category = "All") %>%
+  # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
+  # ext_ columns are extended median which are blank before projection time period
+  mutate(ext_under32 = case_when(is.na(ext_under32) ~ median_under32,
+                                   TRUE ~ ext_under32),
+         ext_under37 = case_when(is.na(ext_under37) ~ median_under37,
+                                 TRUE ~ ext_under37),
+         ext_32_36 = case_when(is.na(ext_32_36) ~ median_32_36,
+                                 TRUE ~ ext_32_36),
+         ext_42plus = case_when(is.na(ext_42plus) ~ median_42plus,
+                                 TRUE ~ ext_42plus)) %>%
+  group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
+  #call function to add flags for runchart shifts and trends
+  #shift: name for new field where shift is flagged
+  #trend: name for new field where trend is flagged
+  #value: which column in dataset contains value being evaluated
+  #median: which column in dataset contains the median against which value is tested
+  runchart_flags(shift="gest_under32_shift", trend="gest_under32_trend", 
+                 value=perc_under32, median=ext_under32) %>%
+  runchart_flags(shift="gest_under37_shift", trend="gest_under37_trend", 
+                 value=perc_under37, median=ext_under37) %>%
+  runchart_flags(shift="gest_32_36_shift", trend="gest_32_36_trend", 
+                 value=perc_32_36, median=ext_32_36) %>%
+  runchart_flags(shift="gest_42plus_shift", trend="gest_42plus_trend", 
+                 value=perc_42plus, median=ext_42plus) %>%
+  ungroup()
+
+saveRDS(gestation_runchart, "shiny_app/data/gestation_runchart_data.rds")
+saveRDS(gestation_runchart, paste0(data_folder,"final_app_files/gestation_runchart_data_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+## 2- LINECHART DATA inductions for Scotland only by age and dep
+gestation_scot <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_SCOT_CHARTS_gestation_",gestation_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  rename(area_name=hbres, month=date, category=variable) %>%
+  mutate(month=as.Date(month),
+         area_type="Scotland",
+         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
+         category=as.character(category))
+
+saveRDS(gestation_scot, "shiny_app/data/gestation_scot_data.rds")
+saveRDS(gestation_scot, paste0(data_folder,"final_app_files/gestation_scot_data_", 
+                                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+## 3- LINECHART DATA gestation for Scotland & NHS board
+gestation_linechart <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_LINECHART_gestation_",gestation_date,".rds")) %>%  
+  janitor::clean_names() %>%
+  mutate(tot_births_18_44=births_18_44) %>%
+  #reshape data file for ease of creation of line chart with percentages
+  pivot_longer(cols = births_under32:births_18_44, names_to = "gest",values_to = "births") %>%
+  rename(area_name=hbres, month=date) %>%
+  mutate(month=as.Date(month, format="%Y-%m-%d "),
+         type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                        area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+         area_type = type, 
+         category="All",
+         percent_births=format(((births/tot_births_18_44)*100),digits=1, nsmall=1),
+         #NOTE the gestation categories are not mutually exclusive - <37 contains <32
+         gest=case_when(gest=="births_under32" ~ "Under 32 weeks",
+                        gest=="births_under37" ~ "Under 37 weeks",
+                        gest=="births_32_36" ~ "32 to 36 weeks",
+                        gest=="births_37_41" ~ "37 to 41 weeks",
+                        gest=="births_18_44" ~ "All gestations (18-44 weeks)",
+                        gest=="births_42plus" ~ "42 weeks plus",
+                        TRUE~as.character(gest))) 
+
+saveRDS(gestation_linechart, "shiny_app/data/gestation_linechart_data.rds")  
+saveRDS(gestation_linechart, paste0(data_folder,"final_app_files/gestation_linechart_data_", 
+                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+## 4- DATA DOWNLOAD FILE FOR SHINY APP
+gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_DOWNLOAD_gestation_",gestation_date,".csv"))%>%  
+  janitor::clean_names() %>%
+  mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
+         month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
+  rename(area_name=nhs_board_of_residence,
+         centreline_under32 = median_under32,
+         centreline_32_36 = median_32_36,
+         centreline_under37 = median_under37,
+         centreline_42plus = median_42plus,
+         dottedline_under32 = ext_under32,
+         dottedline_32_36 = ext_32_36,
+         dottedline_under37 = ext_under37,
+         dottedline_42plus = ext_42plus) %>% 
+  mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                             area_name=="Scotland" ~ "Scotland"),
+         chart_category="All",
+         chart_type= area_type) 
+
+saveRDS(gestation_download, "shiny_app/data/gestation_download_data.rds") 
+saveRDS(gestation_download, paste0(data_folder,"final_app_files/gestation_download_data_", 
+                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
 
 ###############################################.
 ## Child development ----
