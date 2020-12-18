@@ -831,7 +831,7 @@ saveRDS(mmr_dose2_simdtable, paste0(data_folder,"final_app_files/mmr_dose2_simdt
 ## Child health review: first visit ----
 ###############################################.
 ## First visit - scurve data
-first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20201026.csv"), 
+first <- read_csv(paste0(data_folder,"child_health/firstvisit_dashboard20201207.csv"), 
                 col_types =list(week_2_start=col_date(format="%m/%d/%Y"),
                                 time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -848,16 +848,14 @@ first %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          week_no= isoweek(week_2_start),
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
-  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  select (extract_date, review, week_2_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) 
 
 saveRDS(first, paste0("shiny_app/data/","first_visit.rds"))
 saveRDS(first, paste0(data_folder,"final_app_files/first_visit_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # First visit - summary table data
-first_datatable <- format_immchild_table("child_health/firstvisit_dashboardtab_20201026") 
+first_datatable <- format_immchild_table("child_health/firstvisit_dashboardtab_20201207") 
 
 saveRDS(first_datatable, paste0("shiny_app/data/","first_visit_datatable.rds"))
 saveRDS(first_datatable, paste0(data_folder,"final_app_files/first_visit_datatable_", 
@@ -868,7 +866,7 @@ saveRDS(first_datatable, paste0(data_folder,"final_app_files/first_visit_datatab
 ###############################################.
 
 ## 6 to 8 weeks visit - scurve data
-sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20201026.csv"), 
+sixtoeight <- read_csv(paste0(data_folder,"child_health/sixtoeight_dashboard20201207.csv"), 
                   col_types =list(week_6_start=col_date(format="%m/%d/%Y"),
                                   time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -886,18 +884,15 @@ sixtoeight %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_6_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv<168) %>%
-  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  filter(interv<168) 
+
 
 saveRDS(sixtoeight, paste0("shiny_app/data/","six_to_eight.rds"))
 saveRDS(sixtoeight, paste0(data_folder,"final_app_files/six_to_eight_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # 6-8 weeks visit - summary table data
-sixtoeight_datatable <- format_immchild_table("child_health/sixtoeight_dashboardtab_20201026") 
+sixtoeight_datatable <- format_immchild_table("child_health/sixtoeight_dashboardtab_20201207") 
 
 saveRDS(sixtoeight_datatable, paste0("shiny_app/data/","six_to_eight_datatable.rds"))
 saveRDS(sixtoeight_datatable, paste0(data_folder,"final_app_files/six_to_eight_datatable_", 
@@ -908,7 +903,7 @@ saveRDS(sixtoeight_datatable, paste0(data_folder,"final_app_files/six_to_eight_d
 ###############################################.
 
 ## 13 to 15 month visit - scurve data
-thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20201026.csv"), 
+thirteen <- read_csv(paste0(data_folder,"child_health/thirteen_dashboard20201207.csv"), 
                        col_types =list(week_57_start=col_date(format="%m/%d/%Y"),
                                        time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -926,18 +921,14 @@ thirteen %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_57_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=371 & interv<=518) %>% 
-  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  filter(interv>=371 & interv<=518) 
 
 saveRDS(thirteen, paste0("shiny_app/data/","thirteen.rds"))
 saveRDS(thirteen, paste0(data_folder,"final_app_files/thirteen_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # 13 to 15 month visit - summary table data
-thirteen_datatable <- format_immchild_table("child_health/thirteen_dashboardtab_20201026") 
+thirteen_datatable <- format_immchild_table("child_health/thirteen_dashboardtab_20201207") 
 
 saveRDS(thirteen_datatable, paste0("shiny_app/data/","thirteen_datatable.rds"))
 saveRDS(thirteen_datatable, paste0(data_folder,"final_app_files/thirteen_datatable_", 
@@ -948,7 +939,7 @@ saveRDS(thirteen_datatable, paste0(data_folder,"final_app_files/thirteen_datatab
 ###############################################.
 
 ## 27 to 30 month visit - scurve data
-twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20201026.csv"), 
+twentyseven <- read_csv(paste0(data_folder,"child_health/twentyseven_dashboard20201207.csv"), 
                      col_types =list(week_117_start=col_date(format="%m/%d/%Y"),
                                      time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -966,11 +957,7 @@ twentyseven %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_117_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=791 & interv<=945) %>% 
-  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  filter(interv>=791 & interv<=945) 
 
 saveRDS(twentyseven, paste0("shiny_app/data/","twentyseven.rds"))
 saveRDS(twentyseven, paste0(data_folder,"final_app_files/twentyseven_", 
@@ -979,7 +966,7 @@ saveRDS(twentyseven, paste0(data_folder,"final_app_files/twentyseven_",
 
 # 27 to 30 month visit - summary table data
 # Data for data download should include complete months and all weeks
-twentyseven_datatable <- format_immchild_table("child_health/twentyseven_dashboardtab_20201026") 
+twentyseven_datatable <- format_immchild_table("child_health/twentyseven_dashboardtab_20201207") 
 
 saveRDS(twentyseven_datatable, paste0("shiny_app/data/","twentyseven_datatable.rds"))
 saveRDS(twentyseven_datatable, paste0(data_folder,"final_app_files/twentyseven_datatable_", 
@@ -990,7 +977,7 @@ saveRDS(twentyseven_datatable, paste0(data_folder,"final_app_files/twentyseven_d
 ###############################################.
 
 ## 4 to 5 year visit - scurve data
-fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard20201026.csv"), 
+fourtofive <- read_csv(paste0(data_folder,"child_health/fourtofive_dashboard20201207.csv"), 
                         col_types =list(week_209_start=col_date(format="%m/%d/%Y"),
                                         time_period_eligible=col_character())) %>%
   janitor::clean_names() 
@@ -1008,21 +995,14 @@ fourtofive %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
          cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
   arrange(cohort) %>%
   select (extract_date, review, week_209_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
-  filter(interv>=1428 & interv<=1582) %>% 
-# the filters below shouldn't be needed as of the next update (end of July/beginning of Aug)  
-  filter(substr(time_period_eligible,5,10) != "02-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "09-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "16-MAR") %>% 
-  filter(substr(time_period_eligible,5,10) != "23-MAR")
+  filter(interv>=1428 & interv<=1582) 
 
 saveRDS(fourtofive, paste0("shiny_app/data/","fourtofive.rds"))
 saveRDS(fourtofive, paste0(data_folder,"final_app_files/fourtofive_", 
                                      format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 # 4 to 5 year review - summary table data
 # Data for data download should include complete months and all weeks
-fourtofive_datatable <- format_immchild_table("child_health/fourtofive_dashboardtab_20201026") %>% 
-  filter(area_name != "NHS Dumfries & Galloway") %>%  
-  filter(area_name != "NHS Highland")
+fourtofive_datatable <- format_immchild_table("child_health/fourtofive_dashboardtab_20201207")
 
 saveRDS(fourtofive_datatable, paste0("shiny_app/data/","fourtofive_datatable.rds"))
 saveRDS(fourtofive_datatable, paste0(data_folder,"final_app_files/fourtofive_datatable_", 
@@ -1494,7 +1474,13 @@ mod_download <- read_csv(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_f
   janitor::clean_names() %>%
   mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
          month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
-  rename(area_name=nhs_board_of_residence) %>% 
+  rename(area_name=nhs_board_of_residence,
+         centreline_csection_all = median_csection_all,
+         centreline_csection_emer = median_csection_emer,
+         centreline_csection_elec = median_csection_elec,
+         dottedline_csection_all = ext_csection_all,
+         dottedline_csection_emer = ext_csection_emer,
+         dottedline_csection_elec = ext_csection_elec) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
@@ -1578,7 +1564,9 @@ induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_f
   janitor::clean_names() %>%
   mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
          month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
-  rename(area_name=nhs_board_of_residence) %>% 
+  rename(area_name=nhs_board_of_residence,
+         centreline_induced_37_42 = median_induced_37_42,
+         dottedline_induced_37_42 = ext_induced_37_42) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
@@ -1678,7 +1666,15 @@ gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_deliv
   janitor::clean_names() %>%
   mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
          month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
-  rename(area_name=nhs_board_of_residence) %>% 
+  rename(area_name=nhs_board_of_residence,
+         centreline_under32 = median_under32,
+         centreline_32_36 = median_32_36,
+         centreline_under37 = median_under37,
+         centreline_42plus = median_42plus,
+         dottedline_under32 = ext_under32,
+         dottedline_32_36 = ext_32_36,
+         dottedline_under37 = ext_under37,
+         dottedline_42plus = ext_42plus) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
@@ -1693,9 +1689,9 @@ saveRDS(gestation_download, paste0(data_folder,"final_app_files/gestation_downlo
 ## Child development ----
 ###############################################.
 # Do we need any sort of supression - look at island values.
-child_dev <- rbind(read_excel(paste0(data_folder, "child_development/13-15m dashboard_26thOct.xlsx")) %>% 
+child_dev <- rbind(read_excel(paste0(data_folder, "child_development/7thDecDashboard - 13-15m.xlsx")) %>% 
                      mutate(review = "13-15 month"),
-                   read_excel(paste0(data_folder, "child_development/27_30m dashboard_26thOct.xlsx")) %>% 
+                   read_excel(paste0(data_folder, "child_development/7thDecDashboard - 27-30m.xlsx")) %>% 
                      mutate(review = "27-30 month")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 
@@ -1779,9 +1775,9 @@ saveRDS(child_dev, paste0(data_folder,"final_app_files/child_dev_",
 ###############################################.
 ## Breastfeeding ----
 ###############################################.
-breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/Breastfeeding_FV_26thOct.xlsx")) %>% 
+breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/7thDecDashboard - firstvisit.xlsx")) %>% 
                          mutate(review = "First visit"),
-                       read_xlsx(paste0(data_folder, "/breastfeeding/breastfeeding_6_8_26thOct.xlsx")) %>% 
+                       read_xlsx(paste0(data_folder, "/breastfeeding/7thDecDashboard - 6-8 week.xlsx")) %>% 
                          mutate(review = "6-8 week")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 

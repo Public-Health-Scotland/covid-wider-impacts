@@ -16,6 +16,8 @@ data_table <- reactive({
          "deaths" = deaths %>% rename(average_2015_2019 = count_average),
          "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
          "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average),
+        "ooh_cardiac" = ooh_cardiac %>% rename(average_2018_2019 = count_average),
+        "sas_cardiac" = sas_cardiac %>% rename(average_2018_2019 = count_average),
          "sixin_8wks" = sixtable %>% filter(immunisation == "six-in-one dose 1"),
          "sixin_8wks_second" = sixtable %>% filter(immunisation == "six-in-one dose 2"),
          "sixin_8wks_third" = sixtable %>% filter(immunisation == "six-in-one dose 3"),
@@ -44,7 +46,8 @@ data_table <- reactive({
     # This is because dropdown prompts on the table filters only appear for factors
     mutate_if(is.character, as.factor) 
   
-  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths")) {
+  if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths",
+                               "ooh_cardiac", "sas_cardiac")) {
     table_data %<>%
     # Formatting to a "nicer" style
     select(-type) %>% 
@@ -186,7 +189,7 @@ data_table <- reactive({
                                       "<65" = "Aged under 65",
                                       "65+" = "Aged 65 and over"),
              week_ending = format(week_ending, "%d %b %y"))
-  } else if (input$data_select == "cardio_drugs") {
+  } else if (input$data_select %in% c("cardio_drugs")) {
     table_data %<>%
       select(-type) %>% 
       rename("Variation (%)" = variation) %>%
@@ -198,7 +201,6 @@ data_table <- reactive({
              "Intervention" = groups) %>%
       mutate(type = recode_factor(type, "age" = "Age Group", "sex" = "Sex"),
              week_ending = format(week_ending, "%d %b %y"))
-  
   } else if (input$data_select %in% "perinatal") {
     table_data %<>%
       select(area_name, month_of_year, number_of_deaths_in_month, sample_size, rate, type) %>%
@@ -265,16 +267,16 @@ data_table <- reactive({
              "Percentage (%) of singleton live births at 37-42 weeks gestation unknown" = perc_unknown_induced_37_42) %>% 
       mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
-                                                  "5 - least deprived") ~ paste0(variable),
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
                                   TRUE ~ "All")) %>% 
       mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                   TRUE ~ "All"))
 
   } else if (input$data_select %in% "mod") {
     table_data <- table_data %>% 
-      select(-c(chart_type, chart_category, ext_csection_all, ext_csection_elec,
-                ext_csection_emer, indicator, median_csection_all, median_csection_elec,
-                median_csection_emer, perc_denominator)) %>% 
+      select(-c(chart_type, chart_category, dottedline_csection_all, dottedline_csection_elec,
+                dottedline_csection_emer, indicator, centreline_csection_all, centreline_csection_elec,
+                centreline_csection_emer, perc_denominator)) %>% 
        rename("Number of births - All births" = births_all, 
               "Number of births - Caesarean section" = csection_all,
               "Number of births - emergency Caesarean section" = csection_emer,
@@ -290,16 +292,16 @@ data_table <- reactive({
               "Percentage (%) of births - other/not known" = perc_other_not_known) %>% 
       mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
-                                                  "5 - least deprived") ~ paste0(variable),
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
                                   TRUE ~ "All")) %>% 
       mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                   TRUE ~ "All"))
     
   } else if (input$data_select %in% "gestation") {
   table_data <- table_data %>% 
-    select(-c(chart_type, chart_category, ext_32_36, ext_42plus, ext_under32,
-              ext_under37, indicator, median_32_36, median_42plus, median_under32,
-              median_under37, perc_denominator)) %>% 
+    select(-c(chart_type, chart_category, dottedline_32_36, dottedline_42plus, dottedline_under32,
+              dottedline_under37, indicator, centreline_32_36, centreline_42plus, centreline_under32,
+              centreline_under37, perc_denominator)) %>% 
     rename("Number of births - All births (18-44 weeks gestation)" = births_18_44, 
            "Number of births - 32-36 weeks gestation" = births_32_36,
            "Number of births - 37-41 weeks gestation" = births_37_41,
@@ -315,7 +317,7 @@ data_table <- reactive({
            "Percentage (%) of births - Under 37 weeks gestation" = perc_under37) %>% 
     mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
                                               "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
-                                              "5 - least deprived") ~ paste0(variable),
+                                              "5 - least deprived", "Unknown") ~ paste0(variable),
                               TRUE ~ "All")) %>% 
     mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                 TRUE ~ "All"))
