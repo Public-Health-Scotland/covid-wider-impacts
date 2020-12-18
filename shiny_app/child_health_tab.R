@@ -143,7 +143,7 @@ output$child_health_explorer <- renderUI({
  output$child_comments <- renderUI({
      tagList(
        bsButton("jump_to_childreview",label = "Go to data"),
-       h2("Child Health reviews - 23rd September 2020"),
+       h2("Child Health reviews - 23rd December 2020"),
        h4("What is reported?"),
        p("Information on uptake of pre-school child health reviews was updated in this tool on 23 December. Information is provided on children becoming eligible for a review during the Covid-19 pandemic (in March 2020 to September 2020) as well as before the pandemic (2019, January 2020, and February 2020). Weekly data are no longer shown in the charts and tables but are available through the data download, and includes data for children eligible up to week beginning 19 October 2020. It should be noted that the coverage data recorded for the most recent eligible cohorts will not be fully complete at this stage."),
        h4("Data quality"),
