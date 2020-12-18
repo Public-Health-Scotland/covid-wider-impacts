@@ -365,6 +365,7 @@ cancer_cum <- diff_data %>%
   mutate(cum_count19 = cumsum(count19),
          cum_count20 = cumsum(count20))
 
-saveRDS(cancer_cum, "/conf/PHSCOVID19_Analysis/shiny_input_files/cancer/cancer_data_2.rds")
+saveRDS(cancer_cum, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_2_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(cancer_cum, "shiny_app/data/cancer_data_2.rds")
 

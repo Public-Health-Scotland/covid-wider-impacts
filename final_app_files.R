@@ -22,8 +22,7 @@ saveRDS(deaths, "shiny_app/data/deaths.rds")
 saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 ##########################################################.
 ## Cancer ----
-cancer <- readRDS(paste0(data_folder,"cancer/cancer_data_2.rds"))
-saveRDS(cancer, "shiny_app/data/cancer_data_2.rds")
+save_final_file("cancer_data_2", "18_Dec_20")
 ##########################################################.
 ## RAPID ----
 save_final_file("rapid", "30_Nov_20")
