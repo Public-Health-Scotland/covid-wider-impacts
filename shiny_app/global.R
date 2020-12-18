@@ -296,11 +296,10 @@ pal_immun2 <- c("2019" = '#000000',
                 "MAR 2020" = "#abd9e9", "APR 2020" = "#74add1", "MAY 2020" = "#7477d1", "JUN 2020" ="#045a8d","JUL 2020" ="#022b43",
                 "AUG 2020" ="#022b43")
 
-pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
-               "MAR 2020" = "#7477d1", "APR 2020" = "#045a8d", 
-               "MAY 2020" = "#022b43", "JUN 2020" = "#71d9c4",
-               "JUL 2020" = "#85BEC6", "AUG 2020" = "#0570b0",
-               "SEP 2020" = "#3b77d9")
+pal_child <- c("2019" = '#000000',
+               "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
+               "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
+               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
