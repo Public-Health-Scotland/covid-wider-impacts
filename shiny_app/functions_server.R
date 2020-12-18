@@ -686,7 +686,7 @@ immune_table <- function(dataset, dose, age_week) {
                      denominator="Total number of children",
                      uptake_tot_num=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")"),
                      uptake_tot_percent=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")")) %>% 
-   footnote(i = 1, j = c(2,4),
+   footnote(i = 1, j = c(2,5),
             value = as_paragraph(c(
                                    "Cohort sizes are dependent on time periods, whether annual or monthly (4 or 5 weeks)",
                                    paste0("Blue cells indicate cohorts that have not reached ", age_max," of age"))),

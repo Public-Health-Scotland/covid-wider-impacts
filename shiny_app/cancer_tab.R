@@ -124,28 +124,41 @@ output$cancer_explorer <- renderUI({
         numbers of individuals from whom a pathology sample found cancer in 2020 and compares them to 2019."), 
        p(strong("Note - this does not include all patients who have been newly diagnosed with cancer, and also will include some patients 
         who are being followed-up from an earlier diagnosis of cancer. ")),
-      p("In 2020, the number of individuals was similar to 2019 until the end of March.  Weekly numbers then 
-        fell by about 40% of those in 2019.  By the week ending 21st June 2020, numbers had not increased again 
-        to 2019 levels for most cancers."),
-      p("By week ending 21st June 2020, the total number of individuals in Scotland with a pathologically confirmed 
-        cancer (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference 
-        of 4,063 individuals (and an overall cumulative difference of 19%).  Thus, around 4,000 fewer 
-        patients in Scotland had a pathologically confirmed cancer diagnosis by the end of June 2020 than would have 
+      # p("In 2020, the number of individuals was similar to 2019 until the end of March.  Weekly numbers then 
+      #   fell by about 40% of those in 2019.  By the week ending 30th August 2020, numbers had not increased again 
+      #   to 2019 levels for most cancers."),
+      # p("In 2020, the number of individuals was similar to 2019 until the end of March.  Weekly numbers then 
+      #   fell by about 40% of those in 2019.  By the week ending 21st June 2020, numbers had not increased again 
+      #   to 2019 levels for most cancers."),
+      p("By the week ending 30th August 2020, the total number of individuals in Scotland with a pathologically confirmed 
+        cancer (excluding non-melanoma skin cancers) in Scotland was 23,375 in 2020 and 29,364 in 2019, an absolute difference 
+        of 5,989 individuals (and an overall cumulative difference of 26%).  That is to say, just under 6,000 fewer 
+        patients in Scotland had a pathologically confirmed cancer diagnosis by the end of August 2020 than would have 
         been expected."),
-      p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and bowel.  By the week 
-        ending 21st June 2020, compared to the same week in 2019, there were 376 fewer lung cancers (a total fall of 23%); 
-        799 fewer breast cancers (a total fall of 20%); 279 prostate cancers (a total fall of 17%); and 677 fewer bowel 
+      # p("By week ending 21st June 2020, the total number of individuals in Scotland with a pathologically confirmed 
+      #   cancer (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference 
+      #   of 4,063 individuals (and an overall cumulative difference of 19%).  Thus, around 4,000 fewer 
+      #   patients in Scotland had a pathologically confirmed cancer diagnosis by the end of June 2020 than would have 
+      #   been expected."),
+      p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and colorectal.  By the week 
+        ending 30th August 2020, compared to the same week in 2019, there were 577 fewer lung cancers (a total fall of 25%); 
+        1320 fewer breast cancers (a total fall of 27%); 482 fewer prostate cancers (a total fall of 39%); and 950 fewer colorectal 
         cancers (a total fall of 27%)."),
+      # p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and bowel.  By the week 
+      #   ending 21st June 2020, compared to the same week in 2019, there were 376 fewer lung cancers (a total fall of 23%); 
+      #   799 fewer breast cancers (a total fall of 20%); 279 prostate cancers (a total fall of 17%); and 677 fewer bowel 
+      #   cancers (a total fall of 27%)."),
       p("While these numbers are only proxy measures of new cancer diagnoses in Scotland, the size of the changes 
         corresponds with those reported by cancer clinicians. "),
       strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and 
              may also change historical data. This commentary refers to pathological specimens reported to the week 
-             ending 21st June 2020, which were available for inclusion in the analysis when the data were extracted 
-             on 28th October; the dashboard may now reflect more recent information."),
+             ending 30th August 2020, which were available for inclusion in the analysis when the data were extracted 
+             on 27th November; the dashboard may now reflect more recent information."),
       br(),
-      strong("Last updated: - 04/11/2020 ;  date of extraction of data: - 16/09/2020, with pathological records to week ending 
-        21/06/2020.  "),
-      br(),
+      p(strong("First updated: - 04/11/2020 ;  date of extraction of data: - 16/9/2020, with pathological records to week ending 
+        21/06/2020.  ")),
+      p(strong("Last updated: - 23/12/2020 ;  date of extraction of data: - 27/11/2020, with pathological records to week ending 
+        30/08/2020.  ")),
       br(),
       p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of 
         each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had 
@@ -159,15 +172,15 @@ output$cancer_explorer <- renderUI({
       br(),
       plot_box(paste0("Total count of individuals having a cancer of type:  ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_overall"),
-      p("Data extract date: 16th September 2020"),
+      p("Data extract date: 27th November 2020"),
       br(),
       plot_box(paste0("Weekly count of individuals having a cancer of type: ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"),
-      p("Data extract date: 16th September 2020"),
+      p("Data extract date: 27th November 2020"),
       br(),
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"),
-      p("Data extract date: 16th September 2020"),
+      p("Data extract date: 27th November 2020"),
       br(),
       p("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
         than for other cancer sites. Such cancers are relatively common and usually non-fatal. There is a propensity 
@@ -217,12 +230,12 @@ output$download_cancer_data <- downloadHandler(
 output$cancer_commentary <- renderUI({
   tagList(
     bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
-    h3("Cancer in Scotland in 2020 - 18th November 2020"),
-    h5("Note: as the information provided in this dashboard is updated, it will both add more recent 
+    h3(strong("Cancer in Scotland in 2020 - 23rd December 2020")),
+    p(strong("Note: as the information provided in this dashboard is updated, it will both add more recent 
        data and may also change historical data.  This commentary refers to pathological specimens 
-       reported to the week ending 21st June 2020, which were available for inclusion in the analysis 
-       when the data were extracted on 28th October 2020; the dashboard may now reflect more recent information."),
-    h4("Background"),
+       reported to the week ending 30th August 2020, which were available for inclusion in the analysis 
+       when the data were extracted on 27th November 2020; the dashboard may now reflect more recent information.")),
+    h4(strong("Background")),
     p("COVID-19 has had a wide impact on cancer in Scotland since it led to widespread social disruption 
       at the end of March 2020. Some parts of this are better understood than others. For example, cancer 
       screening programmes were paused and urgent referrals for suspected cancer fell substantially. The 
@@ -232,7 +245,7 @@ output$cancer_commentary <- renderUI({
       many there were in 2019, as a proxy measure for cancer incidence.  However, final high-quality cancer 
       incidence data will not be published until 2022, when all potential information sources for cancer 
       have been considered by the Scottish Cancer Registry. "),
-    h4("What these data do and do not show"),
+    h4(strong("What these data do and do not show")),
     p("The numbers in this dashboard are individuals from whom a pathology sample found cancer in 2019 and 2020 
       in Scotland.  Each individual was counted once the first time they appeared from 1st January; any subsequent 
       samples for the same individual were not counted (except when reporting cancer type-specific numbers, where 
@@ -245,8 +258,8 @@ output$cancer_commentary <- renderUI({
       have pathological confirmation, though this varies by the type of cancer."),
     p("There is generally a 2-3 month time lag between the pathology sample being reported on by the laboratory and 
       the complete data to have been received and processed by the Scottish Cancer Registry; as such the data shown 
-      in the initial release of the dashboard are for pathological samples taken for patients to the week ending 21st 
-      June."),
+      in the initial release of the dashboard are for pathological samples taken for patients to the week ending 30th 
+      August."),
     p("Any observed differences in numbers of pathologically confirmed cancers in 2020 compared to 2019 could be due to changes in:"),
     tags$ul(
       tags$li("patients seeking or obtaining an initial medical consultation"),
@@ -256,17 +269,45 @@ output$cancer_commentary <- renderUI({
       tags$li("or indeed could be artefacts because of missing pathology data")),
     p("However, a quality assurance consultation with Scottish cancer clinicians and cancer network managers 
       suggests that the differences between 2020 and 2019 correspond to their clinical experience."),
-    h4("Overall trends in pathologically confirmed cancers"),
+    
+    h4(strong("Overall trends in pathologically confirmed cancers")),
     p("In 2020, numbers were similar to 2019 until towards the end of March.  Since the 1st national “lockdown”, 
       the numbers fell by about 40% of those seen in comparable weeks in 2019. The numbers of patients with 
-      pathologically confirmed cancers each week had not fully returned to 2019 levels by the week ending 21st 
-      June 2020, when the latest data were available."),
-    p("By week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer 
+      pathologically confirmed cancers each week had not fully returned to 2019 levels by the week ending 30th 
+      August 2020, when the latest data were available."),
+    
+    h4(strong("Update 23/12/2020: For pathology data to 30/8/2020 (extracted 27/11/2020)")),
+    p("By the week ending 30th August 2020, the total number of individuals in Scotland with a pathologically confirmed 
+      cancer (excluding non-melanoma skin cancers) in Scotland was 23,375 in 2020 and 29,364 in 2019, an absolute difference 
+      of 5,989 individuals (and an overall cumulative difference of 26%).  That is to say, just under 6,000 fewer 
+      patients in Scotland had a pathologically confirmed cancer diagnosis by the end of August 2020 than would have 
+      been expected."),
+    p("After the initial fall by 40% of 2019 figures in late March, weekly numbers increased to just under 20% of the previous 
+      year’s numbers by 30th August 2020.  While the total (cumulative) difference in cancer diagnoses between 2020 and 2019 
+      was therefore not increasing as much as at the beginning of the pandemic, it was still increasing, and there continued 
+      to be 20% fewer confirmed cases of cancer in 2020 than in 2019. "),
+    p("Among the most common cancer types, by 30th August:"),
+    tags$ul(
+      tags$li(" Lung cancers: weekly numbers were down a quarter of the previous year’s (-25%) taking the cumulative difference 
+              from the start of the year to 577 individuals."),
+      tags$li(" Breast cancer (female only): weekly numbers were down over a quarter of the previous year’s (-27%) taking the 
+              cumulative difference from the start of the year to 1320 individuals."),
+      tags$li("	Prostate caners (male only): weekly numbers were down nearly 40% of the previous year’s (-39%) taking the 
+              cumulative difference from the start of the year to 482 individuals."),
+      tags$li(" Colorectal cancer: weekly numbers were down over a quarter of the previous year’s (-27%) taking the cumulative 
+              difference from the start of the year to 950 individuals."),
+      tags$li(" Non-melanoma skin cancer. from late March 2020, weekly numbers fell more steeply initially (to -80% of the 2019 figures) 
+              than other cancers but by the end of August, they were down by 18% of the previous year’s.  The cumulative difference 
+              from the start of the year was 4,312 individuals.")),
+    br(),
+    
+    h4(strong("Update 18/11/2020: For pathology data to 21/6/2020 (extracted 16/9/2020)")),
+    p("By the week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer 
       (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference of 
       4,063 individuals (and an overall cumulative difference of 19%).  That is to say, around 4,000 fewer 
       patients in Scotland had a pathologically confirmed cancer diagnosis by the end of June 2020 than would 
       have been expected."),
-    h4("Cancer sites – note individuals can be counted in more than one cancer site for those who happen to have more than one type of cancer"),
+    p("Cancer sites: (note individuals can be counted in more than one cancer site for those who happen to have more than one type of cancer)"),
     tags$ul(
       tags$li("	Lung cancer numbers fell sharply by about 40% of 2019 levels after lockdown, with no evidence 
               of return to expected numbers by the end of June 2020.  There was a total of 376 fewer individuals 
@@ -301,13 +342,15 @@ output$cancer_commentary <- renderUI({
               a cumulative fall of 29%.  However, it is important to note that a pathological sample is often not the basis 
               of making a diagnosis of a brain tumour and therefore other sources of information are needed to better 
               understand their incidence.")),
-    p("Additionally, although not generally reported in the totals for all cancers, there was a fall in the numbers of 
-      patients with pathologically confirmed non-melanoma skin cancer. Immediately after lockdown the numbers fell by 
-      about 80% of 2019 numbers, and although there was  some return to expected numbers by the end of June 2020, there 
-      were still about 40% fewer cases each week. In total, there had been 3508 fewer patients by w/e 21/6/2020, a cumulative 
-      drop of 35%."),
-    p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "(Data Source)"))
+      p("Additionally, although not generally reported in the totals for all cancers, there was a fall in the numbers of 
+        patients with pathologically confirmed non-melanoma skin cancer. Immediately after lockdown the numbers fell by 
+        about 80% of 2019 numbers, and although there was  some return to expected numbers by the end of June 2020, there 
+        were still about 40% fewer cases each week. In total, there had been 3508 fewer patients by w/e 21/6/2020, a cumulative 
+        drop of 35%."),
     
+      
+    p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "(Data Source)"))
+  
   ) 
 
 })

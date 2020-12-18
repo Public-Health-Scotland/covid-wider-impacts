@@ -20,28 +20,27 @@ output$geoname_cardio_ui <- renderUI({
 # Adding 'observeEvent' to allow reactive 'area of interest' selction on cardio tab
 observeEvent(input$measure_cardio_select, {
   x <- input$measure_cardio_select
-  
+
   if (x == "cath") {
     cardio_label = "Step 2 - Select a cardiac catheterisation lab"
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
   }
-  
+
   if (x == "aye") {
     cardio_label = "Step 2 - Select geography level for cardiovascular A&E attendances"
     cardio_choices = c("Scotland")
     hide("geoname_cardio_ui")
     disable("area_cardio_select")
   }
-  
+
   if (x == "drug_presc") {
     cardio_label = "Step 2 - Select geography level for cardiovascular medicine prescriptions"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
-  
   if (x == "ooh_cardiac") {
     cardio_label = "Step 2 - Select geography level for cardiovascular OOH cases"
     cardio_choices = c("Scotland", "Health board")
@@ -61,7 +60,7 @@ observeEvent(input$measure_cardio_select, {
                     choices = cardio_choices,
                     selected = cardio_choices[1]
   )
-}, ignoreNULL= F)
+})
 
 ###############################################.
 ## Modals ----
