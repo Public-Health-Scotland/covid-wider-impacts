@@ -1,8 +1,14 @@
 # This script reads the latest version of each file and saves it in your local repository.
 ###############################################.
-## Functions and packages ----
+## Functions and filepaths ----
 ###############################################.
-source("functions_packages_data_prep.R")
+# Filepath changes depending on Desktop/Server
+if (sessionInfo()$platform %in% c("x86_64-redhat-linux-gnu (64-bit)", "x86_64-pc-linux-gnu (64-bit)")) {
+  data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
+} else {
+  data_folder <- "//Isdsf00d03/PHSCOVID19_Analysis/shiny_input_files/"
+}
+
 # Function to save final file from common folder to local app folder
 # Takes two arguments, the dataset filename and the date stamp on the name of the file
 # using a dd_mmm_yy format
