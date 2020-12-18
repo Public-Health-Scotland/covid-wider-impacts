@@ -24,9 +24,9 @@ function(input, output, session) {
   # Summary trends tab
   source(file.path("summary_tab.R"),  local = TRUE)$value
   
-  # ##############################################.
-  # # Cardiovascular tab
-  # source(file.path("cardio_tab.R"),  local = TRUE)$value
+  ##############################################.
+  # Cardiovascular tab
+  source(file.path("cardio_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Immunisation tab
@@ -77,7 +77,7 @@ function(input, output, session) {
   observeEvent(input$jump_to_cardio, {updateTabsetPanel(session, "intabset", selected = "cardio")})
   observeEvent(input$jump_to_table, {updateTabsetPanel(session, "intabset", selected = "table")})
   observeEvent(input$jump_to_immunisation, {updateTabsetPanel(session, "intabset", selected = "imm")})
-  observeEvent(input$jump_to_childreview, {updateTabsetPanel(session, "intabset", selected = "child_review")})
+  observeEvent(input$jump_to_childreview, {updateTabsetPanel(session, "intabset", selected = "child_health")})
   observeEvent(input$jump_to_perinatal_mortality, {updateTabsetPanel(session, "intabset", selected = "perinatal")})
   observeEvent(input$jump_to_booking, {updateTabsetPanel(session, "intabset", selected = "booking")})
   observeEvent(input$jump_to_top, {updateTabsetPanel(session, "intabset", selected = "terminations")})
