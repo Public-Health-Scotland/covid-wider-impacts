@@ -1,5 +1,5 @@
 #UI
- secure_app( #uncomment if needing password protection
+ # secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -390,5 +390,5 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
       ) # tabpanel bracket
     )# page bracket
  )# taglist bracket
- )#secure app
+ # )#secure app
 #END
