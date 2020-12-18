@@ -427,10 +427,6 @@ plot_scurve <- function(dataset, age_week, dose) {
                                     str_detect(immunisation,dose),
                                     exclude !=1) #filter immunisation scurve data on dose
 
-  # if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
-  #  { plot_nodata(height = 50)
-  #  } else {
-  
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian"  && dataset == mmr_alldose && dose== "dose 2")
   { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age. 
                 Data is available from the data download option.")
@@ -548,7 +544,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
   simd_plot <- plot_ly(data=imm_simd_data, x = ~simdq) %>% 
     add_trace(type = 'bar', y = ~get(var_plot), split = ~time_period_eligible,
               color=~time_period_eligible,
-              colors = pal_immun2,
+              colors = pal_immun,
               text= tooltip_scurve, hoverinfo="text")
 
   if (base_var != F) {
@@ -596,7 +592,7 @@ immune_table <- function(dataset, dose, age_week) {
   table_data <- table_data %>%
     filter(exclude_from_table !=1) #filter immunisation table to exclude weekly cohorts that should only be downloadable
   
-  no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == "MAR"))
+  no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == c("AUG", "SEP")))
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
@@ -690,9 +686,9 @@ immune_table <- function(dataset, dose, age_week) {
                      denominator="Total number of children",
                      uptake_tot_num=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")"),
                      uptake_tot_percent=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")")) %>% 
-   footnote(i = 1, j = c(1,2,4), 
-            value = as_paragraph(c("W/B : Week beginning",
-                                   "Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
+   footnote(i = 1, j = c(2,4),
+            value = as_paragraph(c(
+                                   "Cohort sizes are dependent on time periods, whether annual or monthly (4 or 5 weeks)",
                                    paste0("Blue cells indicate cohorts that have not reached ", age_max," of age"))),
             part = "header") %>%
    merge_at(i = 1, j = 3:4, part = "header") %>%
@@ -716,9 +712,7 @@ plot_scurve_child <- function(dataset, age_week) {
   # %>%
   # droplevels() # might be needed if sort order in legend is to change
   
-  if (is.data.frame(scurve_data) && age_week == "4 years" && input$geoname_child == "NHS Highland")
-  { plot_nodata(height = 50, text_nodata = "No data shown as review has not been implemented yet. Implementation scheduled for 3/8/20.")
-  } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {
     
@@ -814,7 +808,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   if (age_week == "2 weeks") {
     format_col <- c("denominator","coverage_6weeks_num","coverage_18weeks_num","coverage_tot_num")
     
-    no_complete_row <- with(table_data, (time_period_eligible == "AUG 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "SEP 2020"))
 
     child_table <- table_data %>%
     select (time_period_eligible, denominator, coverage_6weeks_num, 
@@ -832,7 +826,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "6 weeks") {
     format_col <- c("denominator","coverage_10weeks_num","coverage_22weeks_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "AUG 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "SEP 2020"))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_10weeks_num, 
@@ -850,7 +844,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "13 months") {
     format_col <- c("denominator","coverage_14months_num","coverage_17months_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "AUG 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "SEP 2020"))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_14months_num, 
@@ -868,7 +862,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "27 months") {
     format_col <- c("denominator","coverage_28months_num","coverage_31months_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "AUG 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "SEP 2020"))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_28months_num, 
@@ -886,7 +880,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "4 years") {
     format_col <- c("denominator","coverage_49months_num","coverage_52months_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "AUG 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "SEP 2020"))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_49months_num, 
@@ -905,9 +899,9 @@ child_table <- function(dataset, age_week, age_not_reached) {
   child_table %>% 
     set_header_labels(time_period_eligible=paste0("Children turning ", age_week, " in:"),
                       denominator="Total number of children",
-                      coverage_tot_num="Children recorded as receiving their review by the date information was extracted for analysis (22-June-2020)",
-                      coverage_tot_percent="Children recorded as receiving their review by the date information was extracted for analysis (22-June-2020)") %>%
-    footnote(i = 1, j = c(1:2, 4),
+                      coverage_tot_num=paste0("Children recorded as receiving their review by the date information was extracted for analysis (", child_extract_date,")"),
+                      coverage_tot_percent=paste0("Children recorded as receiving their review by the date information was extracted for analysis (", child_extract_date,")")) %>%
+    footnote(i = 1, j = c(2, 5),
              value = as_paragraph(c("Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
                                     paste0("Blue cells indicate cohorts that have not reached ", age_not_reached, " of age"))),
              part = "header") %>%

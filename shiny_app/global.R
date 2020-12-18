@@ -80,7 +80,7 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "26th October 2020"
+child_extract_date <- "7th December 2020"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 sixtoeight <- readRDS("data/six_to_eight.rds")
@@ -93,7 +93,7 @@ fourtofive <- readRDS("data/fourtofive.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "26th October 2020"
+immunisation_extract_date <- "7th December 2020"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -283,23 +283,14 @@ pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
 pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine groupings
 
 pal_immun <- c("2019" = '#000000',
-               "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1", "MAR 2020" = "#7477d1",
-               "APR 2020" = "#045a8d", "MAY 2020" = "#022b43", "JUN 2020" = "#71d9c4",
-               "JUL 2020" = "#85BEC6",
-               "W/B 27-JUL-2020" = "#fee391", "W/B 03-AUG-2020" = "#fec44f",
-               "W/B 10-AUG-2020" = "#e49901", "W/B 17-AUG-2020" = "#ec7014",
-               "W/B 24-AUG-2020" = "#cc4c02", "W/B 31-AUG-2020" = "#8c2d04",
-               "W/B 07-SEP-2020" = "#662506")
+               "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
+               "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
+               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58")
 
-# second colour palette for SIMD immunisation chart - ideally they could use same colour palette but during build dfferent time frame available
-pal_immun2 <- c("2019" = '#000000',
-                "MAR 2020" = "#abd9e9", "APR 2020" = "#74add1", "MAY 2020" = "#7477d1", "JUN 2020" ="#045a8d","JUL 2020" ="#022b43",
-                "AUG 2020" ="#022b43")
-
-pal_child <- c("2019" = '#000000', "JAN 2020" = "#abd9e9", "FEB 2020" = "#74add1",
-               "MAR 2020" = "#7477d1", "APR 2020" = "#045a8d", 
-               "MAY 2020" = "#022b43", "JUN 2020" = "#71d9c4",
-               "JUL 2020" = "#0570b0", "AUG 2020" = "#000000")
+pal_child <- c("2019" = '#000000',
+               "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
+               "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
+               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),

@@ -1,7 +1,14 @@
 # This script reads the latest version of each file and saves it in your local repository.
 ###############################################.
-## Functions ----
+## Functions and filepaths ----
 ###############################################.
+# Filepath changes depending on Desktop/Server
+if (sessionInfo()$platform %in% c("x86_64-redhat-linux-gnu (64-bit)", "x86_64-pc-linux-gnu (64-bit)")) {
+  data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
+} else {
+  data_folder <- "//Isdsf00d03/PHSCOVID19_Analysis/shiny_input_files/"
+}
+
 # Function to save final file from common folder to local app folder
 # Takes two arguments, the dataset filename and the date stamp on the name of the file
 # using a dd_mmm_yy format
@@ -49,41 +56,41 @@ save_final_file("sas_cardiac", "08_Dec_20")
 save_final_file("cardio_drugs", "30_Nov_20")
 ##########################################################.
 ## Immunisations - six in one ----
-save_final_file("six_alldose", "16_Nov_20")
-save_final_file("six_dose1_simdtable", "16_Nov_20")
-save_final_file("six_dose2_simdtable", "16_Nov_20")
-save_final_file("six_dose3_simdtable", "16_Nov_20")
-save_final_file("sixinone_datatable", "16_Nov_20")
+save_final_file("six_alldose", "15_Dec_20")
+save_final_file("six_dose1_simdtable", "15_Dec_20")
+save_final_file("six_dose2_simdtable", "15_Dec_20")
+save_final_file("six_dose3_simdtable", "15_Dec_20")
+save_final_file("sixinone_datatable", "15_Dec_20")
 ## Immunisations - MMR ----
-save_final_file("mmr_alldose", "16_Nov_20")
-save_final_file("mmr_dose1_simdtable", "16_Nov_20")
-save_final_file("mmr_dose2_simdtable", "16_Nov_20")
-save_final_file("mmr_datatable", "16_Nov_20")
-save_final_file("mmr_dose2_datatable_grampian", "16_Nov_20")
+save_final_file("mmr_alldose", "15_Dec_20")
+save_final_file("mmr_dose1_simdtable", "15_Dec_20")
+save_final_file("mmr_dose2_simdtable", "15_Dec_20")
+save_final_file("mmr_datatable", "15_Dec_20")
+save_final_file("mmr_dose2_datatable_grampian", "15_Dec_20")
 # Immunisations - definitions
 save_final_file("age_defs_imm_6inone", "16_Nov_20")
 save_final_file("age_defs_imm_mmr", "16_Nov_20")
 save_final_file("month_eligibility_immun", "16_Nov_20")
 ##########################################################.
 ## Child health reviews - first visit ----
-save_final_file("first_visit", "16_Nov_20")
-save_final_file("first_visit_datatable", "16_Nov_20")
+save_final_file("first_visit", "15_Dec_20")
+save_final_file("first_visit_datatable", "15_Dec_20")
 ## Child health reviews - 6-8 weeks ----
-save_final_file("six_to_eight", "16_Nov_20")
-save_final_file("six_to_eight_datatable", "16_Nov_20")
+save_final_file("six_to_eight", "15_Dec_20")
+save_final_file("six_to_eight_datatable", "15_Dec_20")
 ## Child health reviews - 13-15 months ----
-save_final_file("thirteen", "16_Nov_20")
-save_final_file("thirteen_datatable", "16_Nov_20")
+save_final_file("thirteen", "15_Dec_20")
+save_final_file("thirteen_datatable", "15_Dec_20")
 ## Child health reviews - 27-30 months ----
-save_final_file("twentyseven", "16_Nov_20")
-save_final_file("twentyseven_datatable", "16_Nov_20")
+save_final_file("twentyseven", "15_Dec_20")
+save_final_file("twentyseven_datatable", "15_Dec_20")
 ## Child health reviews - 4-5 years ----
-save_final_file("fourtofive", "16_Nov_20")
-save_final_file("fourtofive_datatable", "16_Nov_20")
+save_final_file("fourtofive", "15_Dec_20")
+save_final_file("fourtofive_datatable", "15_Dec_20")
 ## Child development ----
-save_final_file("child_dev", "16_Nov_20")
+save_final_file("child_dev", "15_Dec_20")
 ## Breastfeeding ----
-save_final_file("breastfeeding", "16_Nov_20")
+save_final_file("breastfeeding", "15_Dec_20")
 ##########################################################.
 ## Stillbirths and perinatal mortality ----
 save_final_file("perinatal", "18_Nov_20")
