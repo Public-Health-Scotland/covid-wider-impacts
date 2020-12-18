@@ -1,6 +1,6 @@
 #UI
 
- #secure_app( #uncomment if needing password protection
+# secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -197,7 +197,7 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
 ###############################################.
 ## Child Health Tab ----
 ##############################################.
-tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
+tabPanel(title = "Child Health Reviews", icon = icon("child"), value = "child_health",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -350,14 +350,14 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
 #                                  choices= c("Scotland", "Cancer Network", "Health Board"),
 #                                  selected = "Scotland"),
 #                   uiOutput("geoname_ui_cancer")),
-#            
+#
 #            column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
 #                                   selected = "All Malignant Neoplasms (Excl. C44)"),
 #                   div(radioButtons("gender", "Step 3. Select sex",
 #                                    list("All Persons","Male","Female"), inline = TRUE,
 #                                    selected = "All Persons"))),
 #            # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
-#            
+#
 #            column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
 #                   fluidRow(br()),
 #                   downloadButton('download_cancer_data', 'Download data'),
@@ -384,7 +384,7 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
 #            column(4, uiOutput("geotype_mh_ui"),
 #                   uiOutput("geoname_mh_ui")),
 #            column(4, downloadButton("download_mentalhealth_data", "Download data"),
-#                   
+#
 #                   fluidRow(br()),
 #                   actionButton("jump_commentary_mod","Go to commentary"))
 #          ), #well panel
@@ -525,5 +525,5 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
- # )#secure app
+#  )#secure app
 #END
