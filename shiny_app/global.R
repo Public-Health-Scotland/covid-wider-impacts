@@ -107,7 +107,7 @@ sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table (all d
 mmrtable <- readRDS("data/mmr_datatable.rds") # mmr summary table (all dose)
 
 #data quality issues require additional data file for NHS grampian
-mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_datatable_grampian.rds") # mmr immunisation data table summary for just grampian mmr dose 2
+mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_grampian_datatable.rds") # mmr immunisation data table summary for just grampian mmr dose 2
 
 #Immunisations SIMD data
 six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
