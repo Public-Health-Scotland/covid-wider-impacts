@@ -66,7 +66,7 @@ save_final_file("mmr_alldose", "15_Dec_20")
 save_final_file("mmr_dose1_simdtable", "15_Dec_20")
 save_final_file("mmr_dose2_simdtable", "15_Dec_20")
 save_final_file("mmr_datatable", "15_Dec_20")
-save_final_file("mmr_dose2_grampian_datatable", "15_Dec_20")
+save_final_file("mmr_dose2_grampian_datatable", "21_Dec_20")
 # Immunisations - definitions
 save_final_file("age_defs_imm_6inone", "16_Nov_20")
 save_final_file("age_defs_imm_mmr", "16_Nov_20")
