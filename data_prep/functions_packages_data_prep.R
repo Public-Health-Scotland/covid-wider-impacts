@@ -223,25 +223,23 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
 }
 
 #Function to format the immunisations and child health review tables
-format_immchild_table <- function(filename) {
-  read_csv(paste0(data_folder, filename, ".csv")) %>%
+format_immchild_table <- function(filename, save_as, save_file = T) {
+  imm_ch_dt <- read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
     rename(area_name=geography_name) %>%
     select (-geography) %>%
     arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
     mutate(time_period_eligible=as.factor(time_period_eligible))
   
-}
-
-#Function to format the immunisations hscp data - probably not needed if we can get data supplied by salomi differntly
-format_immhscp_table <- function(filename) {
-  read_csv(paste0(data_folder, filename, ".csv")) %>%
-    janitor::clean_names() %>%
-    select (-geography) %>%
-    rename(area_name=geography_name) %>%
-    arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
-    mutate(time_period_eligible = as.factor(time_period_eligible),
-           area_name=paste0("HSCP ", area_name))
+  if (save_file == T) {
+  
+  imm_ch_dt <<- imm_ch_dt
+  
+  saveRDS(imm_ch_dt, paste0("shiny_app/data/", save_as, "_datatable.rds"))
+  saveRDS(imm_ch_dt, paste0(data_folder,"final_app_files/", save_as, "_datatable_", 
+                                  format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  }
+  
 }
 
 # Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
@@ -267,8 +265,42 @@ format_immsimd_data <- function(filename) {
                                           levels=unique(data_simd$time_period_eligible[order(data_simd$eligible_start, decreasing = T)]), 
                                           ordered=TRUE)
   return(data_simd)
+  saveRDS(data_simd, paste0("shiny_app/data/", save_as, "_simdtable.rds"))
+  saveRDS(data_simd, paste0(data_folder,"final_app_files/", save_as, "_simdtable_", 
+                                      format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
     }
 
+#function to format child health data
+format_childhealth <- function(filename, week_var, week_var2, save_as, 
+                               intmin = 0, intmax = 10000) {
+  
+  ch_data <- read_csv(paste0(data_folder,"child_health/", filename, ".csv"), 
+                      col_types =list(time_period_eligible=col_character())) %>%
+    janitor::clean_names() %>% 
+    mutate_at(week_var, ~as.Date(., format="%m/%d/%Y"))
+  
+  # Creating levels for factor in chronological order
+  ch_data$time_period_eligible <- factor(ch_data$time_period_eligible,
+                                         levels=unique(ch_data$time_period_eligible[order(ch_data[[week_var]], decreasing = T)]),
+                                         ordered=TRUE)
+  
+  ch_data %<>% left_join(hb_lookup, by = c("geography" = "hb_cypher")) %>%
+    mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
+           area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
+           weeks=interv/7,
+           week_no= isoweek({{week_var2}}),
+           cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+    arrange(cohort) %>%
+    select (extract_date, review, {{week_var2}}, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
+    filter(between(interv, intmin, intmax))
+  
+  function_output <<- ch_data
+  
+  saveRDS(ch_data, paste0("shiny_app/data/", save_as, ".rds"))
+  saveRDS(ch_data, paste0(data_folder,"final_app_files/", save_as, "_",
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+}
 
 # Function to flag shifts and trends on run chart data
 # Parameters:
