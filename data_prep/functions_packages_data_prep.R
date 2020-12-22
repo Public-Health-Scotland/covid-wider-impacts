@@ -242,17 +242,6 @@ format_immchild_table <- function(filename, save_as, save_file = T) {
   
 }
 
-#Function to format the immunisations hscp data - probably not needed if we can get data supplied by salomi differntly
-format_immhscp_table <- function(filename) {
-  read_csv(paste0(data_folder, filename, ".csv")) %>%
-    janitor::clean_names() %>%
-    select (-geography) %>%
-    rename(area_name=geography_name) %>%
-    arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
-    mutate(time_period_eligible = as.factor(time_period_eligible),
-           area_name=paste0("HSCP ", area_name))
-}
-
 # Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
 format_immsimd_data <- function(filename) {
   data_simd <-  read_csv(paste0(data_folder, filename, ".csv")) %>%
