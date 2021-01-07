@@ -186,9 +186,16 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
     # Not using mean to avoid issues with missing data for some weeks
     summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
   
-  # Joining with 2020 data
+  # Create average for week 53 using average for week 52
+  week_53 <- historic_data %>% filter(week_no == 52) %>% 
+    tidylog::mutate(week_no = 53)
+  
+  # Add rows to historic data
+  historic_data %<>% rbind(week_53)
+  
+  # Joining with 2020 and 2021 data
   # Filtering weeks with incomplete week too!! Temporary
-  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020")), 
+  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020", "2021")), 
                          historic_data, 
                          by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
