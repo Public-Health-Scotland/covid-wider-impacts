@@ -134,6 +134,13 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
     # Not using mean to avoid issues with missing data for some weeks
     summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
   
+  # Create average for week 53 using average for week 52
+  week_53 <- historic_data %>% filter(week_no == 52) %>% 
+    tidylog::mutate(week_no = 53)
+  
+  # Add rows to historic data
+  historic_data %<>% rbind(week_53)
+  
   # Joining with 2020 data
   # Filtering weeks with incomplete week too!! Temporary
   data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020")), 
