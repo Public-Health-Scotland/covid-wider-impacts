@@ -66,7 +66,7 @@ observeEvent(input$measure_cardio_select, {
 ## Modals ----
 ###############################################.
 week_standard <- " are allocated to weeks based on the ISO8601 standard. Following this standard
-The year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use 
+the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use 
 the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.”"
 
 # Link action button click to modal launch 
@@ -386,6 +386,9 @@ cath_lab_type <- reactive({
 ###############################################.
 # The charts and text shown on the app will depend on what the user wants to see
 output$cardio_explorer <- renderUI({
+  
+  data_last_updated <- tagList(p("Last updated: 13th January 2021"))
+  
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
     lab_chosen <- case_when(input$area_cardio_select == "All" ~ "Royal Infirmary of Edinburgh and Golden Jubilee National Hospital",
@@ -421,7 +424,10 @@ output$cardio_explorer <- renderUI({
                  even prior to the introduction of lockdown measures, appear somewhat lower when compared to 
                  previous years."),
         h3("Weekly cardiovascular A&E attendances in Scotland"),
-        actionButton("btn_cardio_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
+        fluidRow(column(6,
+                        actionButton("btn_cardio_modal", "Data source and definitions", 
+                                     icon = icon('question-circle'))),
+        column(6,data_last_updated)),
         plot_box("2020 and 2021 compared with 2018-2019 average", "ae_cardio_overall"),
         plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by age group", "ae_cardio_age_var",
@@ -435,7 +441,10 @@ output$cardio_explorer <- renderUI({
     } else if (input$measure_cardio_select == "drug_presc") {
       tagList(# Prescribing - items dispensed
         h3(paste0("Weekly number of cardiovascular medicines prescribed in ", input$geoname_cardio)),
-        actionButton("btn_cardio_modal", "Data source: ePrescribed Messages", icon = icon('question-circle')),
+        fluidRow(column(6,
+                        actionButton("btn_cardio_modal", "Data source and definitions", 
+                                     icon = icon('question-circle'))),
+                 column(6,data_last_updated)),
         plot_box("2020 and 2021 compared with 2018-2019 average", "prescribing_all"),
         plot_cut_box(paste0("Percentage change in cardiovascular medicines prescribed in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by medicine groupings"), "cardio_drugs_var",
@@ -446,7 +455,10 @@ output$cardio_explorer <- renderUI({
      } else if (input$measure_cardio_select == "ooh_cardiac") {
         tagList(# OOH Attendances
           h3(paste0("Weekly cardiovascular cases in out of hours services in ", input$geoname_cardio)),
-          actionButton("btn_cardio_modal", "Data source: PHS GP OOH Datamart", icon = icon('question-circle')),
+          fluidRow(column(6,
+                          actionButton("btn_cardio_modal", "Data source and definitions", 
+                                       icon = icon('question-circle'))),
+                   column(6,data_last_updated)),
           plot_box("2020 and 2021 compared with 2018-2019 average", "ooh_cardio_all"),
           plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "ooh_cardio_sex_var",
@@ -463,7 +475,10 @@ output$cardio_explorer <- renderUI({
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# OOH Attendances
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$geoname_cardio)),
-         actionButton("btn_cardio_modal", "Data source: PHS Unscheduled Care Datamart", icon = icon('question-circle')),
+         fluidRow(column(6,
+                         actionButton("btn_cardio_modal", "Data source and definitions", 
+                                      icon = icon('question-circle'))),
+                  column(6,data_last_updated)),
          plot_box("2020 and 2021 compared with 2018-2019 average", "sas_cardio_all"),
          plot_cut_box(paste0("Percentage change in cardiovascular incidents in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "sas_cardio_sex_var",
