@@ -244,7 +244,7 @@ prepare_final_data(ae_data, "ae", last_week = "2021-01-03")
 # file.remove(paste0(data_folder,"NHS24/NHS24 Extract 17082020 to 23082020.txt"))
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")),
-                read_tsv(paste0(data_folder, "NHS24/2021-01-11-NHS24 report v6 covid Extract PC (For Wider Impact work).txt"))) %>%
+                read_tsv(paste0(data_folder, "NHS24/2021_01_11-NHS24_report_v6_covid_Extract_PC_(For_Wider_Impact_work).txt"))) %>%
   janitor::clean_names() %>% 
   rename(hb = patient_nhs_board_description_current,
          hscp = nhs_24_patient_hscp_name_current,
