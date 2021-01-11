@@ -317,9 +317,9 @@ output$data_explorer <- renderUI({
           Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the 
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
-        plot_box(paste0("2020 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
+        plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else {
-          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+          plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
       plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
