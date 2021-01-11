@@ -33,6 +33,10 @@ output$geoname_mh_ui <- renderUI({
 ## Modal ----
 ###############################################.
 
+week_standard <- " are allocated to weeks based on the ISO8601 standard. Following this standard
+The year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use 
+the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."
+
 # Pop-up modal explaining source of data
 observeEvent(input$btn_mentalhealth_modal,
              if (input$measure_mh_select == "aye") { 
@@ -58,6 +62,7 @@ observeEvent(input$btn_mentalhealth_modal,
                    "The A&E2 dataset is managed by ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                           "Public Health Scotland (PHS).", class="externallink")),
+                 p("Attendances", week_standard),
                  p(tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
                            incomplete for a number of NHS Boards. Thus, the figures reported for mental health related 
                            attendances offer only a very approximate indication of attendances. 
@@ -115,6 +120,7 @@ observeEvent(input$btn_mentalhealth_modal,
                  may therefore not be a full seven days and will that week, or the following week, encompass public holidays.  
                  Consequently, the number of prescribing days and measures of activity at the start of each year can be markedly reduced 
                  compared to subsequent weeks.  A similar effect also occurs in the last two weeks of the year."),
+               p("Prescriptions", week_standard),
                p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
           
                 actionButton("toggle_mh_drug_codes", "Show / Hide Medicine Groups"),
@@ -214,6 +220,7 @@ observeEvent(input$btn_mentalhealth_modal,
                   "The OOH dataset is managed by ", 
                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/", 
                          "Public Health Scotland (PHS).", class="externallink")),
+                p("Cases", week_standard),
                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                 p("Mental health related out of hours cases were identified using codes associated to the cases related to:"),
                 tags$ul(
@@ -314,6 +321,8 @@ output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_depr,
 # The charts and text shown on the app will depend on what the user wants to see
 output$mh_explorer <- renderUI({
   
+  data_last_updated <- tagList(p("Last updated: 13th January 2021"))
+  
   note_average <- p("Please note that to ease interpretation of these charts ",
                     "we are presenting 3-week rolling average figures.",
                     "Single-week figures can be obtained from the download button at the top of the page.")
@@ -321,9 +330,11 @@ output$mh_explorer <- renderUI({
   if (input$measure_mh_select == "mhdrugs") { 
     tagList(# Prescribing - items dispensed
       h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh)),
-      actionButton("btn_mentalhealth_modal", "Data source and definitions",
-                   icon = icon('question-circle')),
-      plot_box("2020 compared with 2018-2019 average", "mh_prescribing_all"),
+      fluidRow(column(6,
+                      actionButton("btn_mentalhealth_modal", "Data source and definitions",
+                                   icon = icon('question-circle'))),
+               column(6,data_last_updated)),
+      plot_box("2020 and 2021 compared with 2018-2019 average", "mh_prescribing_all"),
       plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, 
                           " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
                    paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
@@ -335,8 +346,11 @@ output$mh_explorer <- renderUI({
                  Additionally, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet."),
       h3(paste0("Weekly mental health A&E attendances in ", input$geoname_mh)),
-      actionButton("btn_mentalhealth_modal", "Data source and definitions", icon = icon('question-circle')),
-      plot_box("2020 compared with 2018-2019 average", "ae_mh_overall"),
+      fluidRow(column(6,
+                      actionButton("btn_mentalhealth_modal", "Data source and definitions",
+                                   icon = icon('question-circle'))),
+               column(6,data_last_updated)),
+      plot_box("2020 and 2021 compared with 2018-2019 average", "ae_mh_overall"),
     if (input$geoname_mh == "Scotland") {
       tagList(
         plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
@@ -362,8 +376,11 @@ output$mh_explorer <- renderUI({
     } else if (input$measure_mh_select == "ooh") {
       tagList(#OOH attendances
         h3(paste0("Weekly mental health out of hours cases in ", input$geoname_mh)),
-        actionButton("btn_mentalhealth_modal", "Data source and definitions", icon = icon('question-circle')),
-        plot_box("2020 compared with 2018-2019 average", "mh_ooh_overall"),
+        fluidRow(column(6,
+                        actionButton("btn_mentalhealth_modal", "Data source and definitions",
+                                     icon = icon('question-circle'))),
+                 column(6,data_last_updated)),
+        plot_box("2020 and 2021 compared with 2018-2019 average", "mh_ooh_overall"),
         if (input$geoname_mh == "Scotland") {
           tagList(
             plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
