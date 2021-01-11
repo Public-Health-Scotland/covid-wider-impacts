@@ -14,8 +14,11 @@ tagList( #needed for shinyjs
 ## Introduction ----
 ###############################################.
 tabPanel("Home", icon = icon("info-circle"), value = "intro",
-                  h3("COVID-19 wider impacts on the health care system"),
-                p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
+                  
+         fluidRow(column(9, h3("COVID-19 wider impacts on the health care system")),
+                  column(3, actionButton("new_next", tags$b("New content and future updates"),
+                                         icon = icon('calendar-alt')))),
+         p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
                     than those that occur as the direct result of infection"),
                   p("Reasons for this may include:"),
                   tags$ul(
