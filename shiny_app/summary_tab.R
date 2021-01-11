@@ -302,14 +302,17 @@ output$data_explorer <- renderUI({
       h3(title),
       actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
       if (input$measure_select == "nhs24"){
+        tagList(
         p("The data used in this chart are taken from the Unscheduled Care Datamart.  
           As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
                                                                                                                    "COVID-19 weekly report for Scotland",  target="_blank"), 
           "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 
           does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. 
           Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that 
-          can be shown in this publication.")
-      },
+          can be shown in this publication."),
+        p("The year 2020 had 53 weeks based on the ISO8601 standard while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.")
+        )
+        },
       if (input$measure_select == "deaths"){
         tagList(
         p("The analyses below are derived from the National Records of Scotland (NRS) weekly deaths dataset (provisional numbers). 
@@ -317,6 +320,13 @@ output$data_explorer <- renderUI({
           Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the 
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
+        p("Data for the last two weeks of 2020 are affected by public holidays. There were fewer registrations than usual in these weeks. 
+          Death registrations are therefore likely to be lower than the actual numbers of deaths that occurred in these weeks and do not 
+          provide a reliable indication of the trend. We expect to see an increase in registrations in the coming weeks as registrars deal 
+          with any backlogs."),
+        p("Deaths are allocated to weeks . The last week of 2020 is week 53 according to this standard. 
+          Between 2015 and 2019 only 2015 also had a week 53, so the ‘historic average’ figure that the 2020 deaths are compared with in 
+          this week is the 2015 count, rather than the 2015-19 average."),
         plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else {
           plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
@@ -338,6 +348,9 @@ output$data_explorer <- renderUI({
   # Charts and rest of UI
   if (input$measure_select == "rapid") {
     tagList(#Hospital admissions
+      tagList(
+        p("The year 2020 had 53 weeks based on the ISO8601 standard while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.")
+      ),
       cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
                  data_name = "adm"),
       fluidRow(column(6, h4(paste0(variation_title, "specialty group - (admission type: ", tolower(input$adm_type), ")"))), # Adding adm_type here to make clear what is selected
