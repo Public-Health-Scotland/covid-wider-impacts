@@ -32,16 +32,16 @@ saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 save_final_file("cancer_data_2", "18_Dec_20")
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "30_Nov_20")
-save_final_file("spec_lookup", "30_Nov_20")
+save_final_file("rapid", "11_Jan_21")
+save_final_file("spec_lookup", "11_Jan_21")
 ## OOH ----
-save_final_file("ooh", "30_Nov_20")
+save_final_file("ooh", "11_Jan_21")
 ## A&E ----
-save_final_file("ae", "30_Nov_20")
+save_final_file("ae", "11_Jan_21")
 ## NHS24 ----
-save_final_file("nhs24", "30_Nov_20")
+save_final_file("nhs24", "11_Jan_21")
 ## SAS ----
-save_final_file("sas", "30_Nov_20")
+save_final_file("sas", "11_Jan_21")
 ##########################################################.
 ## Cardio - cath labs ----
 save_final_file("cath_lab", "16_Nov_20")

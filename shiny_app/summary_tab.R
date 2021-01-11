@@ -72,6 +72,7 @@ observeEvent(input$btn_dataset_modal,
                    numbers of admissions."),
                  p("Please, note that for NHS Forth Valley data is largely incomplete for the period presented and therefore
                    the trends for this board need to be interpreted carefully."),
+                  p("Hospital admissions are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("The RAPID dataset is managed by ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/", 
                           "Public Health Scotland (PHS).",  target="_blank")),
@@ -95,6 +96,7 @@ observeEvent(input$btn_dataset_modal,
                           "NHS Performs - weekly update of emergency department activity and waiting time statistics.", 
                            target="_blank")),
                  p("Numbers of A&E attendances will include both COVID-19 and non-COVID-19 related activity." ),                   
+                 p("Attendances are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("Attendances to A&E departments data sourced from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3", 
                           "Accident and Emergency Datamart (A&E2).", target="_blank"), 
@@ -122,6 +124,7 @@ observeEvent(input$btn_dataset_modal,
                    trends for comparison purposes. The recent trend data is shown by age group, sex and broad 
                    deprivation category (SIMD)." ),
                  p("Figures by NHS health board include those calls made by residents of each health board area."),
+                 p("Contacts are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of NHS24 activity may be available on request to ",
                    tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                            target="_blank"), "."),
@@ -150,6 +153,7 @@ observeEvent(input$btn_dataset_modal,
                  p("The figures presented in this tool exclude cases within any of the COVID-19 
                    hubs or assessment centres and relate only to cases concerning non-COVID 
                    issues. "),
+                 p("Cases are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may 
                    be available on request to ",
                    tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
@@ -172,6 +176,7 @@ observeEvent(input$btn_dataset_modal,
                    relate to incidents concerning both COVID-19 and non-COVID issues. Please note that the source of this data is the Unscheduled Care 
                    Datamart and represents a sub-set of the total Scottish Ambulance service activity. Figures include emergencies, where a vehicle arrived 
                    at the scene of the incident, and excludes both data from resources which were cleared as ‘dealt with by another vehicle’ and air ambulance data."),
+                 p("Calls are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of SAS activity may be available on request to ",
                    tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                            target="_blank"), "."),
@@ -212,6 +217,9 @@ observeEvent(input$btn_dataset_modal,
                    published weeks and in the corresponding weeks in previous years."), 
                  p("Figures include non-residents.  Deaths are allocated to area based on the usual residence of the deceased. 
                    If the deceased was not a Scottish resident, the death is allocated to the area where the death occurred."), 
+                 p("Deaths are allocated to weeks . The last week of 2020 is week 53 according to this standard. 
+          Between 2015 and 2019 only 2015 also had a week 53, so the ‘historic average’ figure that the 2020 deaths are compared with in 
+          this week is the 2015 count, rather than the 2015-19 average."),
                  p("The weekly deaths dataset is managed by ", 
                    tags$a(href= "https://www.nrscotland.gov.uk/", 
                           "National Records of Scotland (NRS).",  target="_blank")), 
@@ -302,14 +310,13 @@ output$data_explorer <- renderUI({
       h3(title),
       actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
       if (input$measure_select == "nhs24"){
+        tagList(
         p("The data used in this chart are taken from the Unscheduled Care Datamart.  
           As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/", 
                                                                                                                    "COVID-19 weekly report for Scotland",  target="_blank"), 
           "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020 
-          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. 
-          Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that 
-          can be shown in this publication.")
-      },
+          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time."))
+        },
       if (input$measure_select == "deaths"){
         tagList(
         p("The analyses below are derived from the National Records of Scotland (NRS) weekly deaths dataset (provisional numbers). 
@@ -317,9 +324,13 @@ output$data_explorer <- renderUI({
           Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the 
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
-        plot_box(paste0("2020 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
+        p("Data for the last two weeks of 2020 are affected by public holidays. There were fewer registrations than usual in these weeks. 
+          Death registrations are therefore likely to be lower than the actual numbers of deaths that occurred in these weeks and do not 
+          provide a reliable indication of the trend. We expect to see an increase in registrations in the coming weeks as registrars deal 
+          with any backlogs."),
+        plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else {
-          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+          plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
       plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
@@ -349,24 +360,27 @@ output$data_explorer <- renderUI({
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
     )
-  } else if (input$measure_select == "aye") { #A&E Attendances
+  } else if (input$measure_select == "aye") { 
+    tagList(#A&E Attendances
     cut_charts(title= "Weekly attendances to A&E departments", 
-               source = "PHS AE2 Datamart", data_name = "aye")
+               source = "PHS AE2 Datamart", data_name = "aye"))
     
   } else if (input$measure_select == "nhs24") {# NHS 24 calls
     cut_charts(title= "Weekly completed contacts with NHS 24", 
                source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
     
   } else if (input$measure_select == "ooh") { #Out of hours cases
-    tagList(tags$b(span("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) 
+    tagList(
+    tags$b(span("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) 
            data was identified and was corrected on 23/09/2020– for more details please see ", 
                 actionLink("jump_commentary_oohissue_sum", "commentary"), ".", style="color:red")),
     cut_charts(title= "Weekly cases in out of hours services", 
                source = "PHS GP OOH Datamart", data_name ="ooh"))
     
-  } else if (input$measure_select == "sas") { # SAS data
+  } else if (input$measure_select == "sas") { 
+    tagList(# SAS data
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service", 
-               source = "PHS Unscheduled Care Datamart", data_name ="sas")
+               source = "PHS Unscheduled Care Datamart", data_name ="sas"))
     
   } else if (input$measure_select == "deaths") { # Deaths data
     cut_charts(title= "Weekly number of deaths", 
