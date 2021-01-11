@@ -314,6 +314,8 @@ output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_depr,
 # The charts and text shown on the app will depend on what the user wants to see
 output$mh_explorer <- renderUI({
   
+  data_last_updated <- tagList(p("Last updated: 13th January 2021"))
+  
   note_average <- p("Please note that to ease interpretation of these charts ",
                     "we are presenting 3-week rolling average figures.",
                     "Single-week figures can be obtained from the download button at the top of the page.")
@@ -321,8 +323,10 @@ output$mh_explorer <- renderUI({
   if (input$measure_mh_select == "mhdrugs") { 
     tagList(# Prescribing - items dispensed
       h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh)),
-      actionButton("btn_mentalhealth_modal", "Data source and definitions",
-                   icon = icon('question-circle')),
+      fluidRow(column(6,
+                      actionButton("btn_mentalhealth_modal", "Data source and definitions",
+                                   icon = icon('question-circle'))),
+               column(6,data_last_updated)),
       plot_box("2020 compared with 2018-2019 average", "mh_prescribing_all"),
       plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, 
                           " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
@@ -335,7 +339,10 @@ output$mh_explorer <- renderUI({
                  Additionally, some NHS Boards have moved to a new recording standard which 
                  has not been fully consolidated in the A&E datamart as yet."),
       h3(paste0("Weekly mental health A&E attendances in ", input$geoname_mh)),
-      actionButton("btn_mentalhealth_modal", "Data source and definitions", icon = icon('question-circle')),
+      fluidRow(column(6,
+                      actionButton("btn_mentalhealth_modal", "Data source and definitions",
+                                   icon = icon('question-circle'))),
+               column(6,data_last_updated)),
       plot_box("2020 compared with 2018-2019 average", "ae_mh_overall"),
     if (input$geoname_mh == "Scotland") {
       tagList(
@@ -362,7 +369,10 @@ output$mh_explorer <- renderUI({
     } else if (input$measure_mh_select == "ooh") {
       tagList(#OOH attendances
         h3(paste0("Weekly mental health out of hours cases in ", input$geoname_mh)),
-        actionButton("btn_mentalhealth_modal", "Data source and definitions", icon = icon('question-circle')),
+        fluidRow(column(6,
+                        actionButton("btn_mentalhealth_modal", "Data source and definitions",
+                                     icon = icon('question-circle'))),
+                 column(6,data_last_updated)),
         plot_box("2020 compared with 2018-2019 average", "mh_ooh_overall"),
         if (input$geoname_mh == "Scotland") {
           tagList(
