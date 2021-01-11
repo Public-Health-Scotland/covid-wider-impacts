@@ -310,7 +310,7 @@ output$data_explorer <- renderUI({
           does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time. 
           Over the coming weeks PHS and NHS 24 are working to further enhance the data and intelligence that 
           can be shown in this publication."),
-        p("The year 2020 had 53 weeks based on the ISO8601 standard while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.")
+        p("Contacts are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.")
         )
         },
       if (input$measure_select == "deaths"){
@@ -349,7 +349,7 @@ output$data_explorer <- renderUI({
   if (input$measure_select == "rapid") {
     tagList(#Hospital admissions
       tagList(
-        p("The year 2020 had 53 weeks based on the ISO8601 standard while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.")
+        p("Hospital admissions are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.")
       ),
       cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
                  data_name = "adm"),
@@ -362,24 +362,34 @@ output$data_explorer <- renderUI({
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
     )
-  } else if (input$measure_select == "aye") { #A&E Attendances
+  } else if (input$measure_select == "aye") { 
+    tagList(#A&E Attendances
+      tagList(
+        p("Attendances are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.")
+      ),
     cut_charts(title= "Weekly attendances to A&E departments", 
-               source = "PHS AE2 Datamart", data_name = "aye")
+               source = "PHS AE2 Datamart", data_name = "aye"))
     
   } else if (input$measure_select == "nhs24") {# NHS 24 calls
     cut_charts(title= "Weekly completed contacts with NHS 24", 
                source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
     
   } else if (input$measure_select == "ooh") { #Out of hours cases
-    tagList(tags$b(span("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) 
+    tagList(
+    p("Cases are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
+    tags$b(span("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) 
            data was identified and was corrected on 23/09/2020– for more details please see ", 
                 actionLink("jump_commentary_oohissue_sum", "commentary"), ".", style="color:red")),
     cut_charts(title= "Weekly cases in out of hours services", 
                source = "PHS GP OOH Datamart", data_name ="ooh"))
     
-  } else if (input$measure_select == "sas") { # SAS data
+  } else if (input$measure_select == "sas") { 
+    tagList(# SAS data
+      tagList(
+        p("Calls are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.")
+      ),
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service", 
-               source = "PHS Unscheduled Care Datamart", data_name ="sas")
+               source = "PHS Unscheduled Care Datamart", data_name ="sas"))
     
   } else if (input$measure_select == "deaths") { # Deaths data
     cut_charts(title= "Weekly number of deaths", 
