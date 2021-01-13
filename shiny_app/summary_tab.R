@@ -303,12 +303,15 @@ output$data_explorer <- renderUI({
   # a bit of a hacky shortcut:
   diff_chars <- nchar(variation_title) - nchar(total_title) +10
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
-
+  
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
     tagList(
       h3(title),
-      actionButton("btn_dataset_modal", paste0("Data source: ", source), icon = icon('question-circle')),
+      fluidRow(column(6,
+                      actionButton("btn_dataset_modal", paste0("Data source: ", source), 
+                                   icon = icon('question-circle'))),
+               column(6, p("Last updated: 13th January 2021"))),
       if (input$measure_select == "nhs24"){
         tagList(
         p("The data used in this chart are taken from the Unscheduled Care Datamart.  
