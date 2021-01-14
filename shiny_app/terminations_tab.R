@@ -102,6 +102,8 @@ output$top_dep_g <- renderPlotly({plot_top_split(dataset=top_filter_split("dep")
 # The charts and text shown on the app will depend on what the user wants to see
 output$top_explorer <- renderUI({
 
+  data_last_updated <- tagList(p("Last updated: 3rd February 2021"))
+  
   # text for titles of cut charts
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
   top_trend_title <- paste0("Termination of pregnancy: ",input$geoname_top)
@@ -307,6 +309,8 @@ observeEvent(input$switch_to_anb,{
 output$top_commentary <- renderUI({
   tagList(
     bsButton("jump_to_top",label = "Go to data"), #this button can only be used once
+    h2("Termination of pregnancy - 3rd February 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Termination of pregnancy - 2nd December 2020"),
     p("In this second release of information on terminations of pregnancy, the provisional numbers of terminations reported in Scotland in August 2020 fell to the lowest level reported since January 2018. This continues the trend of a fall in numbers from May 2020 onwards and is consistent across some but not all Board areas. The decrease in the average gestation at termination (6.6 weeks in the last month) has also continued in Scotland as a whole and any variation between Boards probably reflects minor variation in service provision between Boards."),
     p("The impact of reductions in numbers of terminations in younger women continues to be evident. The observation of an increase in the average gestation reported in women aged over 40 (to 7.5 weeks in August) may simply represent the impact of variation within small numbers of terminations in this age group. Overall, there remains no substantial variation in average gestation at termination by maternal age group or deprivation level."),
