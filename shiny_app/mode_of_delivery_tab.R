@@ -388,6 +388,8 @@ observeEvent(input$switch_to_mod,{
 output$mod_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mod",label = "Go to data"), #this button can only be used once
+    h2("Method of delivery - 3rd February 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Method of delivery - 16th December 2020"),
     p("Information on method of delivery was included in this tool for the first time on 16 December 2020."),
     p("The ‘",

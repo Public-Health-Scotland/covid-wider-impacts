@@ -467,6 +467,8 @@ observeEvent(input$switch_to_gestation,{
 output$gestation_commentary <- renderUI({
   tagList(
     bsButton("jump_to_gestation",label = "Go to data"), #this button can only be used once
+    h2("Gestation at delivery - 3rd February 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Gestation at delivery - 16th December 2020"),
     p("Information on gestation at delivery was included in this tool for the first time on 16 December 2020."),
     p("‘Gestation at delivery’ refers to the number of completed weeks pregnant a woman is when she delivers her baby. Babies are ‘due’ at 40 completed weeks gestation. Those born between 37 and 41 weeks inclusive are considered to be born ‘at term’. Babies born at under 37 weeks (more than three weeks before their due date) are considered ",

@@ -356,6 +356,8 @@ observeEvent(input$switch_to_induction,{
 output$induction_commentary <- renderUI({
   tagList(
     bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
+    h2("Induction of labour - 3rd February 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Induction of labour - 16th December 2020"),
     p("Information on induction of labour was included in this tool for the first time on 16 December 2020."),
     p("'",
