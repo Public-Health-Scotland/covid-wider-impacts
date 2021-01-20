@@ -32,8 +32,8 @@ observeEvent(input$btn_perinatal_rules,
                        tags$li("Outer One – Third: Two out of three consecutive data points which sit between the control and warning limits."),
                        tags$li("Inner One -Third: 15 or more consecutive data points that lie close to the centreline.")),
                p("Different control charts are used depending on the type of data involved.
-                 For the stillbirth, neonatal, post-neonatal and extended perinatal death rates P 
-                 charts are presented. For the infant death rates a U chart is presented. The type of chart used depends on the type of 
+                 For the stillbirth, neonatal, and extended perinatal death rates P 
+                 charts are presented. For the post-neonatal and infant death rates a U chart is presented. The type of chart used depends on the type of 
                  data involved (which statistical distribution we think it follows)."),
                p("Further information on these methods of presenting data can be found at the ",                      
                  tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
