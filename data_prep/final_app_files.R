@@ -118,7 +118,7 @@ save_final_file("gestation_linechart_data", "15_Dec_20")
 save_final_file("gestation_download_data", "15_Dec_20")
 ##########################################################.
 ## Mental health - Prescribing ----
-save_final_file("mentalhealth_drugs", "11_Jan_21")
+save_final_file("mentalhealth_drugs", "20_Jan_21")
 ## Mental health - A&E ----
 save_final_file("mh_A&E", "11_Jan_21")
 ## Mental health - OOH ----
