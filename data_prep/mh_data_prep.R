@@ -39,8 +39,8 @@ mentalhealth_drugs_hist_all <- mentalhealth_drugs_historic %>%
 
 mentalhealth_drugs_historic <- rbind(mentalhealth_drugs_historic, mentalhealth_drugs_hist_all)
 
-### Newer MH drugs data ##
-mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-07-Weekly new incident emessage - Multi-condition.xlsx")) %>% 
+### july-oct data ##
+mentalhealth_drugs_julyoct <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_57_4899318935991767937.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -61,6 +61,37 @@ mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-07-W
   select(week_ending, area_name, area_type, type, category, count) %>%
   filter(week_ending >= as.Date("2020-07-05"))
 
+mentalhealth_drugs_julyoct_all <- mentalhealth_drugs_julyoct %>% 
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count),
+            category = "All") %>% 
+  ungroup() %>% 
+  select(week_ending, area_name, area_type, type, category, count)
+
+mentalhealth_drugs_julyoct <- rbind(mentalhealth_drugs_julyoct, mentalhealth_drugs_julyoct_all)
+
+### july-oct data ##
+mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-07-Weekly new incident emessage - Multi-condition.xlsx")) %>% 
+  select(1:5) %>% 
+  clean_names() %>% 
+  filter(condition %in% c("Anxiolytic",
+                          "Hypnotic",
+                          "SSRI SNRI")) %>% 
+  mutate(week_ending = as.Date(week_ending),
+         area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
+                               substr(area_code,1,3) == "S08" ~ "Health board",
+                               substr(area_code,1,3) == "S00" ~ "Scotland"),
+         area_name = case_when(area_type == "Health board" ~ stringr::str_to_title(area_name),
+                               area_type == "Scotland" ~ stringr::str_to_title(area_name),
+                               TRUE ~ area_name),
+         area_name = case_when(area_type == "Health board" ~ gsub("Nhs", "NHS", area_name),
+                               TRUE ~ area_name),
+         type = "condition") %>% 
+  rename(category = condition,
+         count = incident_cases_week_01) %>% 
+  select(week_ending, area_name, area_type, type, category, count) %>%
+  filter(week_ending >= as.Date("2020-10-11"))
+
 mentalhealth_drugs_all <- mentalhealth_drugs %>% 
   group_by(week_ending, area_name, area_type, type) %>% 
   summarise(count = sum(count),
@@ -70,7 +101,7 @@ mentalhealth_drugs_all <- mentalhealth_drugs %>%
 
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all)
 
-mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_historic)
+mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_julyoct, mentalhealth_drugs_historic)
 
 prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-01-03")
 
