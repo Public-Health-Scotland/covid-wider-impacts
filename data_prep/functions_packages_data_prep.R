@@ -237,7 +237,11 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
 }
 
 #Function to format the immunisations and child health review tables
+<<<<<<< HEAD
 format_immchild_table <- function(filename, save_as=NULL, save_file = T) {
+=======
+format_immchild_table <- function(filename, save_as = NULL, save_file = T) {
+>>>>>>> 67e8791b297391880b928523e1b62349a9786f0d
   imm_ch_dt <- read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
     rename(area_name=geography_name) %>%
@@ -253,6 +257,7 @@ format_immchild_table <- function(filename, save_as=NULL, save_file = T) {
   saveRDS(imm_ch_dt, paste0(data_folder,"final_app_files/", save_as, "_datatable_", 
                                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   }
+<<<<<<< HEAD
   else { 
     imm_ch_dt
     }
@@ -260,6 +265,15 @@ format_immchild_table <- function(filename, save_as=NULL, save_file = T) {
 
 # Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
 format_immsimd_data <- function(filename, save_as) {
+=======
+  else {
+    imm_ch_dt
+  }
+}
+
+# Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
+format_immsimd_data <- function(filename, save_as, save_file = T) {
+>>>>>>> 67e8791b297391880b928523e1b62349a9786f0d
   data_simd <-  read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
     mutate(eligible_start = case_when((str_length(eligible_start)<10) ~ paste0("0", eligible_start), 
@@ -280,11 +294,20 @@ format_immsimd_data <- function(filename, save_as) {
   data_simd$time_period_eligible <- factor(data_simd$time_period_eligible, 
                                           levels=unique(data_simd$time_period_eligible[order(data_simd$eligible_start, decreasing = T)]), 
                                           ordered=TRUE)
-  return(data_simd)
-  saveRDS(data_simd, paste0("shiny_app/data/", save_as, "_simdtable.rds"))
-  saveRDS(data_simd, paste0(data_folder,"final_app_files/", save_as, "_simdtable_", 
-                                      format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-    }
+  
+  if (save_file == T) {
+    
+    data_simd <<- data_simd
+    
+    saveRDS(data_simd, paste0("shiny_app/data/", save_as, "_simdtable.rds"))
+    saveRDS(data_simd, paste0(data_folder,"final_app_files/", save_as, "_simdtable_", 
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  }
+  else {
+    data_simd
+  }
+}
+  
 
 #function to format child health data
 format_childhealth <- function(filename, week_var, week_var2, save_as, 
