@@ -237,7 +237,7 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
 }
 
 #Function to format the immunisations and child health review tables
-format_immchild_table <- function(filename, save_as = NULL, save_file = T) {
+format_immchild_table <- function(filename, save_as, save_file = T) {
   imm_ch_dt <- read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
     rename(area_name=geography_name) %>%
@@ -246,16 +246,14 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T) {
     mutate(time_period_eligible=as.factor(time_period_eligible))
   
   if (save_file == T) {
-  
-  imm_ch_dt <<- imm_ch_dt
-  
-  saveRDS(imm_ch_dt, paste0("shiny_app/data/", save_as, "_datatable.rds"))
-  saveRDS(imm_ch_dt, paste0(data_folder,"final_app_files/", save_as, "_datatable_", 
-                                  format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+    
+    imm_ch_dt <<- imm_ch_dt
+    
+    saveRDS(imm_ch_dt, paste0("shiny_app/data/", save_as, "_datatable.rds"))
+    saveRDS(imm_ch_dt, paste0(data_folder,"final_app_files/", save_as, "_datatable_", 
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   }
-  else {
-    imm_ch_dt
-  }
+  
 }
 
 # Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
