@@ -237,15 +237,9 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
 }
 
 #Function to format the immunisations and child health review tables
-<<<<<<< HEAD
-<<<<<<< HEAD
-format_immchild_table <- function(filename, save_as=NULL, save_file = T) {
-=======
+
 format_immchild_table <- function(filename, save_as = NULL, save_file = T) {
->>>>>>> 67e8791b297391880b928523e1b62349a9786f0d
-=======
-format_immchild_table <- function(filename, save_as, save_file = T) {
->>>>>>> b5ff4b6af31784dd9cea12d8a5637f71c9bf6b33
+
   imm_ch_dt <- read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
     rename(area_name=geography_name) %>%
@@ -254,7 +248,6 @@ format_immchild_table <- function(filename, save_as, save_file = T) {
     mutate(time_period_eligible=as.factor(time_period_eligible))
   
   if (save_file == T) {
-<<<<<<< HEAD
   
   imm_ch_dt <<- imm_ch_dt
   
@@ -262,32 +255,15 @@ format_immchild_table <- function(filename, save_as, save_file = T) {
   saveRDS(imm_ch_dt, paste0(data_folder,"final_app_files/", save_as, "_datatable_", 
                                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   }
-<<<<<<< HEAD
+
   else { 
     imm_ch_dt
     }
 }
 
-# Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
-format_immsimd_data <- function(filename, save_as) {
-=======
-  else {
-    imm_ch_dt
-=======
-    
-    imm_ch_dt <<- imm_ch_dt
-    
-    saveRDS(imm_ch_dt, paste0("shiny_app/data/", save_as, "_datatable.rds"))
-    saveRDS(imm_ch_dt, paste0(data_folder,"final_app_files/", save_as, "_datatable_", 
-                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
->>>>>>> b5ff4b6af31784dd9cea12d8a5637f71c9bf6b33
-  }
-  
-}
 
 # Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
 format_immsimd_data <- function(filename, save_as, save_file = T) {
->>>>>>> 67e8791b297391880b928523e1b62349a9786f0d
   data_simd <-  read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
     mutate(eligible_start = case_when((str_length(eligible_start)<10) ~ paste0("0", eligible_start), 
