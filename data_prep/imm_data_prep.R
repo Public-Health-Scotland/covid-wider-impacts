@@ -17,6 +17,13 @@ six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/", imms_date, "/s
                                         time_period_eligible=col_factor())) %>%
   janitor::clean_names()
 
+week_var <- "eligible_start"
+
+# Creating levels for factor in chronological order
+six_alldose$time_period_eligible <- factor(six_alldose$time_period_eligible,
+                                           levels=unique(six_alldose$time_period_eligible[order(six_alldose[[week_var]], decreasing = T)]),
+                                           ordered=TRUE)
+
 six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
          area_type=case_when(geography=="M" ~ "Scotland",TRUE~area_type),
@@ -131,6 +138,13 @@ mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/", imms_date, "/mm
                         col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
                                         time_period_eligible=col_factor())) %>%
   janitor::clean_names()
+
+week_var <- "eligible_start"
+
+# Creating levels for factor in chronological order
+mmr_alldose$time_period_eligible <- factor(mmr_alldose$time_period_eligible,
+                                           levels=unique(mmr_alldose$time_period_eligible[order(mmr_alldose[[week_var]], decreasing = T)]),
+                                           ordered=TRUE)
 
 mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
