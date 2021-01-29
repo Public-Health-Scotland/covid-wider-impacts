@@ -264,10 +264,9 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T) {
 
 # Function for reading in immunisation SIMD data - could be improved once exactly what information is to be displayed is agreed
 format_immsimd_data <- function(filename, save_as, save_file = T) {
-  data_simd <-  read_csv(paste0(data_folder, filename, ".csv")) %>%
+  data_simd <-  read_csv(paste0(data_folder, filename, ".csv"),
+    col_types =list(eligible_start=col_date(format="%m/%d/%Y"))) %>% 
     janitor::clean_names() %>%
-    mutate(eligible_start = case_when((str_length(eligible_start)<10) ~ paste0("0", eligible_start), 
-                                      TRUE ~ eligible_start)) %>%
     arrange (cohort,as.Date(eligible_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
     mutate(time_period_eligible = as.factor(case_when(cohort == "monthly" ~ paste0(toupper(substr(time_period_eligible, 1, 3)),
                                                           " 20",substring(time_period_eligible,5,6)), 
