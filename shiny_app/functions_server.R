@@ -592,7 +592,7 @@ immune_table <- function(dataset, dose, age_week) {
   table_data <- table_data %>%
     filter(exclude_from_table !=1) #filter immunisation table to exclude weekly cohorts that should only be downloadable
   
-  no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == c("AUG", "SEP")))
+  no_complete_row <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == c("OCT", "NOV")))
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
