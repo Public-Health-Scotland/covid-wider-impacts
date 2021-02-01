@@ -10,7 +10,15 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 ### historic file for MH drugs ##
-mentalhealth_drugs_historic <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition Jan 18-Jun 20.xlsx")) %>% 
+# Files contain rolling weeks so attention needs to be paid to not miss or 
+# duplicate any week. This is not an ideal method, to get the most recent data
+# for each week we would need to select the first week from each file, apart
+# from for the historic one, the last one and those covered by the last one = tricky
+mentalhealth_drugs <- rbind(read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition Jan 18-Jun 20.xlsx")),
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_57_05-07-2020 to 04-10-2020.xlsx")),
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-14-Weekly new incident emessage - Multi-condition_11-10-2020 to 10-01-2021.xlsx")) %>% 
+                                       filter(between(as.Date(`Week Ending`), as.Date("2020-10-11"), as.Date("2020-10-18"))), 
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-28-Weekly new incident emessage - Multi-condition_25-10-2020 to 24-01-2021.xlsx"))) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -29,68 +37,6 @@ mentalhealth_drugs_historic <- read_xlsx(paste0(data_folder, "prescribing_mh/Wee
   rename(category = condition,
          count = incident_cases_week_01) %>% 
   select(week_ending, area_name, area_type, type, category, count)
-
-mentalhealth_drugs_hist_all <- mentalhealth_drugs_historic %>% 
-  group_by(week_ending, area_name, area_type, type) %>% 
-  summarise(count = sum(count),
-            category = "All") %>% 
-  ungroup() %>% 
-  select(week_ending, area_name, area_type, type, category, count)
-
-mentalhealth_drugs_historic <- rbind(mentalhealth_drugs_historic, mentalhealth_drugs_hist_all)
-
-### july-oct data ##
-mentalhealth_drugs_julyoct <- read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_57_4899318935991767937.xlsx")) %>% 
-  select(1:5) %>% 
-  clean_names() %>% 
-  filter(condition %in% c("Anxiolytic",
-                          "Hypnotic",
-                          "SSRI SNRI")) %>% 
-  mutate(week_ending = as.Date(week_ending),
-         area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
-                               substr(area_code,1,3) == "S08" ~ "Health board",
-                               substr(area_code,1,3) == "S00" ~ "Scotland"),
-         area_name = case_when(area_type == "Health board" ~ stringr::str_to_title(area_name),
-                               area_type == "Scotland" ~ stringr::str_to_title(area_name),
-                               TRUE ~ area_name),
-         area_name = case_when(area_type == "Health board" ~ gsub("Nhs", "NHS", area_name),
-                               TRUE ~ area_name),
-         type = "condition") %>% 
-  rename(category = condition,
-         count = incident_cases_week_01) %>% 
-  select(week_ending, area_name, area_type, type, category, count) %>%
-  filter(week_ending >= as.Date("2020-07-05"))
-
-mentalhealth_drugs_julyoct_all <- mentalhealth_drugs_julyoct %>% 
-  group_by(week_ending, area_name, area_type, type) %>% 
-  summarise(count = sum(count),
-            category = "All") %>% 
-  ungroup() %>% 
-  select(week_ending, area_name, area_type, type, category, count)
-
-mentalhealth_drugs_julyoct <- rbind(mentalhealth_drugs_julyoct, mentalhealth_drugs_julyoct_all)
-
-### july-oct data ##
-mentalhealth_drugs <- read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-07-Weekly new incident emessage - Multi-condition.xlsx")) %>% 
-  select(1:5) %>% 
-  clean_names() %>% 
-  filter(condition %in% c("Anxiolytic",
-                          "Hypnotic",
-                          "SSRI SNRI")) %>% 
-  mutate(week_ending = as.Date(week_ending),
-         area_type = case_when(substr(area_code,1,3) == "S37" ~ "HSC partnership",
-                               substr(area_code,1,3) == "S08" ~ "Health board",
-                               substr(area_code,1,3) == "S00" ~ "Scotland"),
-         area_name = case_when(area_type == "Health board" ~ stringr::str_to_title(area_name),
-                               area_type == "Scotland" ~ stringr::str_to_title(area_name),
-                               TRUE ~ area_name),
-         area_name = case_when(area_type == "Health board" ~ gsub("Nhs", "NHS", area_name),
-                               TRUE ~ area_name),
-         type = "condition") %>% 
-  rename(category = condition,
-         count = incident_cases_week_01) %>% 
-  select(week_ending, area_name, area_type, type, category, count) %>%
-  filter(week_ending >= as.Date("2020-10-11"))
 
 mentalhealth_drugs_all <- mentalhealth_drugs %>% 
   group_by(week_ending, area_name, area_type, type) %>% 
@@ -99,11 +45,10 @@ mentalhealth_drugs_all <- mentalhealth_drugs %>%
   ungroup() %>% 
   select(week_ending, area_name, area_type, type, category, count)
 
-mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all)
+mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all) %>% 
+  arrange(area_name, area_type, category, week_ending) # so plotly works correctly
 
-mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_julyoct, mentalhealth_drugs_historic)
-
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-01-03")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-01-24")
 
 ###############################################.
 ## A&E - mental health ----
@@ -113,7 +58,7 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-0
 mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
-                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to03012021.csv"))) %>%
+                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to24012021.csv"))) %>%
   clean_names() 
 
 # List of terms used to identify mh cases
@@ -225,13 +170,13 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-01-03")
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-01-24")
 
 ###############################################.
 ## OOH - mental health ----
 ###############################################.
 
-mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-01-11-GP OOH MH WIDER IMPACT.txt")) %>%
+mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-02-01-GP OOH MH WIDER IMPACT.txt")) %>%
   janitor::clean_names() %>%
   rename(hb=patient_nhs_board_description_current, 
          dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
@@ -257,8 +202,7 @@ mh_ooh %<>% gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>%
                             "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
-  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
-  filter(between(week_ending, as.Date("2018-01-01"), as.Date("2021-01-03")))
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() 
 
 mh_ooh_all <- mh_ooh %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
 mh_ooh_sex <- mh_ooh %>% agg_cut(grouper="sex") %>% rename(category = sex)
@@ -271,4 +215,4 @@ mh_ooh %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-01-03")
+prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-01-24")
