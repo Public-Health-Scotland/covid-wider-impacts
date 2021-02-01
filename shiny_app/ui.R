@@ -14,7 +14,7 @@ tagList( #needed for shinyjs
 ## Introduction ----
 ###############################################.
 tabPanel("Home", icon = icon("info-circle"), value = "intro",
-                  
+
          fluidRow(column(9, h3("COVID-19 wider impacts on the health care system")),
                   column(3, actionButton("new_next", tags$b("New content and future updates"),
                                          icon = icon('calendar-alt')))),
@@ -63,7 +63,7 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                    tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard",  target="_blank"),
                    " on the economic impacts of the pandemic in Scotland."),
            tags$li("Public Health Scotland publishes ",
-                   tags$a(href="https://publichealthscotland.scot/our-areas-of-work/covid-19/covid-19-data-and-intelligence/covid-19-and-children-research/", 
+                   tags$a(href="https://publichealthscotland.scot/our-areas-of-work/covid-19/covid-19-data-and-intelligence/covid-19-and-children-research/",
                           "a series of reports",  target="_blank"),
                    " on the direct and wider impacts of the pandemic on children and young people."),
            tags$li("Transport Scotland publishes ",

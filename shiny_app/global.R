@@ -80,7 +80,7 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "7th December 2020"
+child_extract_date <- "25th January 2020"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 sixtoeight <- readRDS("data/six_to_eight.rds")
@@ -290,8 +290,9 @@ pal_immun <- c("2019" = '#000000',
 
 pal_child <- c("2019" = '#000000',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
-               "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
-               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58")
+               "APR 2020" = "#7fcdbb", "MAY 2020" = "#3CB371", "JUN 2020" = "#32CD32",
+               "JUL 2020" = "#41b6c4", "AUG 2020" = "#1d91c0", "SEP 2020" = "#225ea8",
+               "OCT 2020" = "#253494", "NOV 2020" = "#081d58")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
