@@ -10,21 +10,23 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all antenatal booking data files prepared
-antenatal_booking_date <- "12112020_cut"
+antenatal_booking_date <- "13012021"
 
 # Excel workbook containing number of women booking for antenatal care - weekly file (Scotland and NHS board except small islands)
 ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
                               sheet = "Data for Dashboard Charts") %>%
   janitor::clean_names() %>%
   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked) %>%
-  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) 
+  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>% 
+  filter(week_book_starting < "2021-01-11")
 
 # Excel workbook containing avergage gestation of women booking for antenatal care  - weekly file (Scotland and NHS board except small islands)
 ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
                                 sheet = "Data for Dashboard Charts") %>%
   janitor::clean_names() %>%
   rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked) %>%
-  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) 
+  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>% 
+  filter(week_book_starting < "2021-01-11")
 
 # join two (numbers and average gestation) booking sheets to form single file for shiny app
 ante_booking <- left_join(ante_booking_no, ante_booking_gest, by = c("week_book_starting","area"))
@@ -122,7 +124,9 @@ gest_booking_download <- left_join(gest_booking_download, hb_lookup, by = c("are
 # Weekly scotland level booking numbers and gestation
 ante_booking_download1 <- ante_booking %>%
   mutate(time_period="weekly") %>%
+  filter(week_book_starting < "2021-01-11") %>% 
   rename(booking_week_beginning=week_book_starting, number_of_bookings=booked_g, average_gestation_at_booking=ave_gest)
+  
 
 # Add weekly and month files into one file
 ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download) %>%
@@ -148,7 +152,7 @@ saveRDS(ante_booking_download, paste0(data_folder,"final_app_files/ante_booking_
 ## Pregnancy (terminations) ----
 ###############################################.
 #field with date all antenatal booking data files prepared
-top_date <- "2020-11-05"
+top_date <- "2021-01-12"
 
 ## Termination data for run chart (scotland and nhs board) - monthly
 top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/",top_date,
@@ -291,8 +295,8 @@ saveRDS(top_download, paste0(data_folder,"final_app_files/top_download_",
 ## Pregnancy (mode of delivery) ----
 ###############################################.
 #field with date data files prepared
-mod_folder <- "20201126"
-mod_date <- "2020-11-26"
+mod_folder <- "20210112"
+mod_date <- "2021-01-12"
 
 ##mode of delivery data supplied in 4 files: runchart data, line charts for scotland (age and dep split), line charts for NHS board and data download
 
@@ -393,8 +397,8 @@ saveRDS(mod_download, paste0(data_folder,"final_app_files/mod_download_data_",
 ###############################################.
 ## Pregnancy (inductions) ----
 ###############################################.
-induct_folder <- "20201126"
-induct_date <- "2020-11-26"
+induct_folder <- "20210112"
+induct_date <- "2021-01-12"
 
 ## 1-RUNCHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
@@ -480,8 +484,8 @@ saveRDS(induct_download, paste0(data_folder,"final_app_files/induct_download_dat
 ## Pregnancy (gestation at delivery) ----
 ###############################################.
 
-gestation_folder <- "20201126"
-gestation_date <- "2020-11-26"
+gestation_folder <- "20210112"
+gestation_date <- "2021-01-12"
 
 ## 1-RUNCHART DATA
 gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_RUNCHART_gestation_",gestation_date,".rds")) %>%  
