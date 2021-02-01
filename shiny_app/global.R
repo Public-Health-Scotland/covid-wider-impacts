@@ -6,20 +6,20 @@
 
 library(shiny)
 library(plotly) # for charts
-library(shinyWidgets) # for dropdowns
-library(dplyr) # for data manipulation
-library(DT) # for data table
-library(shinycssloaders) #for loading icons, see line below
+library(shinyWidgets) # for dropdowns  
+library(dplyr) # for data manipulation 
+library(DT) # for data table  
+library(shinycssloaders) #for loading icons, see line below 
 # it uses github version devtools::install_github("andrewsali/shinycssloaders")
 # This is to avoid issues with loading symbols behind charts and perhaps with bouncing of app
-library(shinyjs) # for enable/disable functions
+library(shinyjs) # for enable/disable functions  
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
 library(flextable)
-library(shinyBS) #for collapsible panels in commentary
+library(shinyBS) #for collapsible panels in commentary 
 library(zoo)
 library(magrittr)
-library(shinymanager)
+library(shinymanager) 
 
 ###############################################.
 ## Functions ----
@@ -93,7 +93,7 @@ fourtofive <- readRDS("data/fourtofive.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "7th December 2020"
+immunisation_extract_date <- "25th January 2021"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -285,7 +285,8 @@ pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine
 pal_immun <- c("2019" = '#000000',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
-               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58")
+               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
+               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859")
 
 pal_child <- c("2019" = '#000000',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",

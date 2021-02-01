@@ -10,12 +10,19 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all immunisation data files prepared
-imms_date <- "20201207"
+imms_date <- "20210125"
 
-six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/20201207/six_in_one_dashboard_",imms_date,".csv"), 
+six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/", imms_date, "/six_in_one_dashboard_",imms_date,".csv"), 
                         col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
                                         time_period_eligible=col_factor())) %>%
   janitor::clean_names()
+
+week_var <- "eligible_start"
+
+# Creating levels for factor in chronological order
+six_alldose$time_period_eligible <- factor(six_alldose$time_period_eligible,
+                                           levels=unique(six_alldose$time_period_eligible[order(six_alldose[[week_var]], decreasing = T)]),
+                                           ordered=TRUE)
 
 six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -52,16 +59,16 @@ saveRDS(mmr_datatable, paste0(data_folder,"final_app_files/mmr_datatable_",
                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # Grampian data
-mmr_dose2_datatable_grampian <- format_immchild_table(paste0("immunisations/mmr/20201207/dashboardtable_grampian_",imms_date),
+mmr_dose2_datatable_grampian <- format_immchild_table(paste0("immunisations/mmr/", imms_date, "/dashboardtable_grampian_",imms_date),
                                                       "mmr_dose2_grampian") 
 
 ###############################################.
 ## 6-in-1 simd data ---- 
-six_dose1_simdtable <- format_immsimd_data(paste0("immunisations/6in1/20201207/six-in-one dose 1_simd_", imms_date),
+six_dose1_simdtable <- format_immsimd_data(paste0("immunisations/6in1/", imms_date, "/six-in-one dose 1_simd_", imms_date),
                                            "six_dose1")
-six_dose2_simdtable <- format_immsimd_data(paste0("immunisations/6in1/20201207/six-in-one dose 2_simd_", imms_date),
+six_dose2_simdtable <- format_immsimd_data(paste0("immunisations/6in1/", imms_date, "/six-in-one dose 2_simd_", imms_date),
                                            "six_dose2")
-six_dose3_simdtable <- format_immsimd_data(paste0("immunisations/6in1/20201207/six-in-one dose 3_simd_", imms_date),
+six_dose3_simdtable <- format_immsimd_data(paste0("immunisations/6in1/", imms_date, "/six-in-one dose 3_simd_", imms_date),
                                            "six_dose3")
 
 ###############################################.
@@ -124,13 +131,20 @@ saveRDS(month_defs_imm, paste0(data_folder,"final_app_files/month_eligibility_im
 ## MMR data ----
 ###############################################.
 #field with date all immunisation data files prepared
-imms_date <- "20201207"
+imms_date <- "20210125"
 
 # mmr dose 1 & 2 - scurve data
-mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/20201207/mmr_dashboard_",imms_date,".csv"),
+mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/", imms_date, "/mmr_dashboard_",imms_date,".csv"),
                         col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
                                         time_period_eligible=col_factor())) %>%
   janitor::clean_names()
+
+week_var <- "eligible_start"
+
+# Creating levels for factor in chronological order
+mmr_alldose$time_period_eligible <- factor(mmr_alldose$time_period_eligible,
+                                           levels=unique(mmr_alldose$time_period_eligible[order(mmr_alldose[[week_var]], decreasing = T)]),
+                                           ordered=TRUE)
 
 mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher")) %>%
   mutate(area_name=case_when(geography=="M" ~ "Scotland",TRUE~ area_name), #Scotland not in lookup but present in data
@@ -148,9 +162,9 @@ saveRDS(mmr_alldose, paste0(data_folder,"final_app_files/mmr_alldose_",
 ###############################################.
 ## MMR simd data ----
 ###############################################.
-mmr_dose1_simdtable <- format_immsimd_data(paste0("immunisations/mmr/20201207/mmr dose 1_simd_", imms_date),
+mmr_dose1_simdtable <- format_immsimd_data(paste0("immunisations/mmr/", imms_date,"/mmr dose 1_simd_", imms_date),
                                            "mmr_dose1")
-mmr_dose2_simdtable <- format_immsimd_data(paste0("immunisations/mmr/20201207/mmr dose 2_simd_", imms_date),
+mmr_dose2_simdtable <- format_immsimd_data(paste0("immunisations/mmr/", imms_date, "/mmr dose 2_simd_", imms_date),
                                            "mmr_dose2")
 
 ##END
