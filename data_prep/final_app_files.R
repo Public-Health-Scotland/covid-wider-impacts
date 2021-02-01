@@ -5,8 +5,10 @@
 # Filepath changes depending on Desktop/Server
 if (sessionInfo()$platform %in% c("x86_64-redhat-linux-gnu (64-bit)", "x86_64-pc-linux-gnu (64-bit)")) {
   data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/"
+  open_data <- "/conf/PHSCOVID19_Analysis/Publication outputs/open_data/"
 } else {
   data_folder <- "//Isdsf00d03/PHSCOVID19_Analysis/shiny_input_files/"
+  open_data <- "//Isdsf00d03/PHSCOVID19_Analysis/Publication outputs/open_data/"
 }
 
 # Function to save final file from common folder to local app folder
