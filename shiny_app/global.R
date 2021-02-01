@@ -6,20 +6,20 @@
 
 library(shiny)
 library(plotly) # for charts
-library(shinyWidgets) # for dropdowns
-library(dplyr) # for data manipulation
-library(DT) # for data table
-library(shinycssloaders) #for loading icons, see line below
+library(shinyWidgets) # for dropdowns  
+library(dplyr) # for data manipulation 
+library(DT) # for data table  
+library(shinycssloaders) #for loading icons, see line below 
 # it uses github version devtools::install_github("andrewsali/shinycssloaders")
 # This is to avoid issues with loading symbols behind charts and perhaps with bouncing of app
-library(shinyjs) # for enable/disable functions
+library(shinyjs) # for enable/disable functions  
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
 library(flextable)
-library(shinyBS) #for collapsible panels in commentary
+library(shinyBS) #for collapsible panels in commentary 
 library(zoo)
 library(magrittr)
-library(shinymanager)
+library(shinymanager) 
 
 ###############################################.
 ## Functions ----
