@@ -1,5 +1,6 @@
 ##Server script for antenatal booking tab
 
+
 # Pop-up modal explaining source of data
 observeEvent(input$btn_booking_modal, 
              showModal(modalDialog(
@@ -314,6 +315,16 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Antenatal bookings - 3rd February 2021"),
+    p("In this third release of information on antenatal booking data (3rd February 2021) data have been updated to include women booking for antenatal care up to the week beginning 4th January 2021. Previous releases of data have shown that from mid-May to end September the number of women booking for antenatal care had been 
+      consistently lower than expected based on pre-pandemic average levels. At the end of September numbers started to rise and have been increasing throughout October, November and most of December.  Although this increase may be partly explained by some women planning their pregnancies during these months, having previously 
+      delayed their pregnancy during the first Coronavirus lockdown, the increase is also consistent with a seasonal pattern of increasing numbers of bookings that we usually see each year during the Autumn months."),
+    p("The sudden drop in numbers of women booking for antenatal care during the weeks starting 21st December and 28th December 2020 is thought to be as a result of the Christmas and new year public holidays. A similar decrease can be seen during the previous year’s Christmas and new year period and the extent of the decrease 
+      is likely to depend on whether the four public holidays fall across a two or three week period. All NHS Boards showed some level of reduction in their numbers of women booked over this period. "),
+    p("The updated (all-Scotland) data in this release (for November and December 2020) show that the average gestation at which women booked for antenatal care continues to be just below the average based on the pre-pandemic period. The recent data on average gestation by NHS Board are more varied, most notably NHS Tayside have 
+      shown higher average gestations of women booking compared to their pre-pandemic average since August 2020. This change reflects a number of factors: transition of local care pathways to accommodate changes resulting from the impact of the Covid-19 pandemic; contemporaneous local transition to the Badgernet Maternity information 
+      system, and reinforced compliance with local care pathways to ensure booking of women between 8 to 10 weeks gestation. Data for more recent months for NHS Tayside, which show average gestations of between 8 to 10 weeks, are thought to more accurately represent the timing of when women book for antenatal care in NHS Tayside 
+      than the earlier (pre-August 2020) data sourced from the Protos information system."),
     h2("Antenatal bookings - 2nd December 2020"),
     p("In this second release of information on antenatal booking data (2 Dec 2020) data have been updated to include women booking for antenatal care up to the week beginning 26th October 2020.  The initial release of data on 28th October 2020 showed that from mid-May to end September the number of women booking for antenatal 
       care had been consistently lower than expected based on previous average levels. During October numbers have increased and the most recent data show numbers are at a similar level to the pre-pandemic period. The average gestation at which women booked for antenatal care fell slightly from the end of March 2020, 

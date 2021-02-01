@@ -65,6 +65,9 @@ observeEvent(input$measure_cardio_select, {
 ###############################################.
 ## Modals ----
 ###############################################.
+week_standard <- " are allocated to weeks based on the ISO8601 standard. Following this standard
+the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use 
+the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.”"
 
 # Link action button click to modal launch 
 observeEvent(input$btn_cardio_modal, 
@@ -91,6 +94,7 @@ observeEvent(input$btn_cardio_modal,
                    "The A&E2 dataset is managed by ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/", 
                           "Public Health Scotland (PHS).",  target="_blank")),
+                 p("Attendances", week_standard),
                  p(tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
                             incomplete for a number of NHS Boards. Thus, the figures reported for cardiovascular-related 
                             attendances offer only a very approximate indication of attendances. 
@@ -109,7 +113,7 @@ observeEvent(input$btn_cardio_modal,
              } else if (input$measure_cardio_select == "drug_presc") {
                showModal(modalDialog(#Prescribing - Cardio Drugs
                  title = "What is the data source?",
-                 p("This section of the PHS Covid-19 - Wider Impacts dashboard provides weekly information on the 
+                 p("This section of the PHS Covid-19 wider impacts tool provides weekly information on the 
                    number of prescriptions for cardiovascular drugs issued. The data ranges from the start of 2020 
                    to the latest available week and is shown alongside historical activity (average from 2018 and 2019) 
                    for comparison purposes. Additional breakdowns by drug grouping are provided also."),
@@ -139,9 +143,10 @@ observeEvent(input$btn_cardio_modal,
                    by both geographic and therapeutic areas."),
                  p("Data for 1 January to 31 December each year is presented as weekly data ending on Sundays. 
                    The week from 1st January may therefore not be a full seven days and will that week, 
-                   or the following week, encompass public holidays.  Consequently, the number of prescribing 
+                   or the following week, encompass public holidays. Consequently, the number of prescribing 
                    days and measures of activity at the start of each year can be markedly reduced compared 
-                   to subsequent weeks.  A similar effect also occurs in the last two weeks of the year."),
+                   to subsequent weeks. A similar effect also occurs in the last two weeks of the year."),
+                 p("Prescriptions", week_standard),
                  p("The ePrescribed messaging dataset is managed by Public Health Scotland (PHS)."),
                  tags$hr(),
                  actionButton("toggleBNFCodes", "Show / Hide BNF Codes"),
@@ -272,6 +277,7 @@ observeEvent(input$btn_cardio_modal,
                  p("The figures presented in this tool exclude cases within any of the COVID-19 
                    hubs or assessment centres and relate only to cases concerning non-COVID 
                    issues. "),
+                p("Cases", week_standard),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may 
                    be available on request to ",
                    tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
@@ -302,6 +308,7 @@ observeEvent(input$btn_cardio_modal,
                    Heart Problems with Chest Pain/discomfort (age > 35 years), Heart Problems with Cardiac History, 
                    Heart Problems/Difficulty Speaking between Breaths, Heart Problems and Changing Colour, 
                    Heart Problems and Clammy or Cold Sweats, Just Resuscitated and/or Defibrillated"),
+                 p("Activity", week_standard),
                  p("If required, more detailed analysis of SAS activity may be available on request to ",
                    tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net", 
                           class="externallink"), "."),
@@ -379,6 +386,9 @@ cath_lab_type <- reactive({
 ###############################################.
 # The charts and text shown on the app will depend on what the user wants to see
 output$cardio_explorer <- renderUI({
+  
+  data_last_updated <- tagList(p("Last updated: 3rd February 2021"))
+  
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
     lab_chosen <- case_when(input$area_cardio_select == "All" ~ "Royal Infirmary of Edinburgh and Golden Jubilee National Hospital",
@@ -389,7 +399,7 @@ output$cardio_explorer <- renderUI({
           Data from the remaining two centres will be added as it becomes available."),
         h3(paste0("Weekly visits to the cardiac catheterisation labs at the ", lab_chosen)),
         actionButton("btn_cardio_modal", paste0("Data source: ", lab_chosen), icon = icon('question-circle')),
-        plot_box("2020 compared with 2018-2019 average", "cath_overall"),
+        plot_box("2020 and 2021 compared with 2018-2019 average", "cath_overall"),
         plot_cut_box("Percentage change in cases compared with the
                    corresponding time in 2018-2019 by type of intervention", "cath_type_var",
                      "Weekly number of cases by type of intervention", "cath_type_tot",
@@ -414,8 +424,11 @@ output$cardio_explorer <- renderUI({
                  even prior to the introduction of lockdown measures, appear somewhat lower when compared to 
                  previous years."),
         h3("Weekly cardiovascular A&E attendances in Scotland"),
-        actionButton("btn_cardio_modal", "Data source: PHS AE2 Datamart", icon = icon('question-circle')),
-        plot_box("2020 compared with 2018-2019 average", "ae_cardio_overall"),
+        fluidRow(column(6,
+                        actionButton("btn_cardio_modal", "Data source and definitions", 
+                                     icon = icon('question-circle'))),
+        column(6,data_last_updated)),
+        plot_box("2020 and 2021 compared with 2018-2019 average", "ae_cardio_overall"),
         plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by age group", "ae_cardio_age_var",
                      "Weekly number of cardiovascular A&E attendances in Scotland by age group", "ae_cardio_age_tot"),
@@ -428,8 +441,11 @@ output$cardio_explorer <- renderUI({
     } else if (input$measure_cardio_select == "drug_presc") {
       tagList(# Prescribing - items dispensed
         h3(paste0("Weekly number of cardiovascular medicines prescribed in ", input$geoname_cardio)),
-        actionButton("btn_cardio_modal", "Data source: ePrescribed Messages", icon = icon('question-circle')),
-        plot_box("2020 compared with 2018-2019 average", "prescribing_all"),
+        fluidRow(column(6,
+                        actionButton("btn_cardio_modal", "Data source and definitions", 
+                                     icon = icon('question-circle'))),
+                 column(6,data_last_updated)),
+        plot_box("2020 and 2021 compared with 2018-2019 average", "prescribing_all"),
         plot_cut_box(paste0("Percentage change in cardiovascular medicines prescribed in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by medicine groupings"), "cardio_drugs_var",
                      paste0("Weekly number of cardiovascular medicines prescribed in ", input$geoname_cardio, " by medicine groupings"), "cardio_drugs_tot")
@@ -439,8 +455,11 @@ output$cardio_explorer <- renderUI({
      } else if (input$measure_cardio_select == "ooh_cardiac") {
         tagList(# OOH Attendances
           h3(paste0("Weekly cardiovascular cases in out of hours services in ", input$geoname_cardio)),
-          actionButton("btn_cardio_modal", "Data source: PHS GP OOH Datamart", icon = icon('question-circle')),
-          plot_box("2020 compared with 2018-2019 average", "ooh_cardio_all"),
+          fluidRow(column(6,
+                          actionButton("btn_cardio_modal", "Data source and definitions", 
+                                       icon = icon('question-circle'))),
+                   column(6,data_last_updated)),
+          plot_box("2020 and 2021 compared with 2018-2019 average", "ooh_cardio_all"),
           plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "ooh_cardio_sex_var",
                        paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by sex"), "ooh_cardio_sex_tot"),
@@ -456,8 +475,11 @@ output$cardio_explorer <- renderUI({
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# OOH Attendances
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$geoname_cardio)),
-         actionButton("btn_cardio_modal", "Data source: PHS Unscheduled Care Datamart", icon = icon('question-circle')),
-         plot_box("2020 compared with 2018-2019 average", "sas_cardio_all"),
+         fluidRow(column(6,
+                         actionButton("btn_cardio_modal", "Data source and definitions", 
+                                      icon = icon('question-circle'))),
+                  column(6,data_last_updated)),
+         plot_box("2020 and 2021 compared with 2018-2019 average", "sas_cardio_all"),
          plot_cut_box(paste0("Percentage change in cardiovascular incidents in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "sas_cardio_sex_var",
                       paste0("Weekly number of cardiovascular incidents in ", input$geoname_cardio, " by sex"), "sas_cardio_sex_tot"),

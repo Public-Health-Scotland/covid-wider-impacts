@@ -132,7 +132,9 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
   historic_data <- dataset %>% filter(year(week_ending) %in% c("2018", "2019")) %>% 
     group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
     # Not using mean to avoid issues with missing data for some weeks
-    summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
+    summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% 
+    ungroup()
+  
   
   # Create average for week 53 using average for week 52
   week_53 <- historic_data %>% filter(week_no == 52) %>% 

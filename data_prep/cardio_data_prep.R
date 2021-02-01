@@ -110,7 +110,7 @@ saveRDS(ae_cardio_codes, paste0(data_folder,"final_app_files/ae_cardio_codes_",
 rm(ae_cardio_codes)
 
 # Read in data, clean names + some simple mutations
-ae_cardio <- read_xlsx(paste0(ae_folder, "2020-11-26-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
+ae_cardio <- read_xlsx(paste0(ae_folder, "2021-01-28-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
   clean_names() %>% 
   rename(diag_cat = diagnosis_catagory,
          dep = prompt_dataset_deprivation_scot_quintile) %>% 
@@ -154,39 +154,35 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2020-11-22")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2021-01-24")
 
 ###############################################.
 ## OOH Cardiac  ----
 ###############################################.
 
-ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/Weekly Diagnosis OOH CSV.csv")) %>% 
+ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/2021-02-01-Weekly Cardio Diagnosis OOH extract.csv")) %>% 
   janitor::clean_names() %>% 
-  filter(age > 14) # Filter age > 14
-
-# Change file into correct format prior to getting final specification
-ooh_data_cardiac <- ooh_data_cardiac %>% 
+  filter(age > 14) %>%  # Filter age > 14
+  mutate(week_ending = as.Date(gp_ooh_sc_end_date), # Formatting dates
+         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F)) %>% 
   rename(hb = reporting_health_board_name_as_at_date_of_episode,
          dep = patient_prompt_dataset_deprivation_scot_quintile, 
          sex = gender_description,
-         number_of_cases = gp_ooh_number_of_cases)
-
-ooh_data_cardiac = ooh_data_cardiac %>%
+         number_of_cases = gp_ooh_number_of_cases) %>% 
   create_agegroups() %>% #age bands
   create_depgroups() # deprivation groups format
 
 # remove diagnosis field as just showing total cardiac
-ooh_data_cardiac <- ooh_data_cardiac %>%
+ooh_data_cardiac %<>%
   group_by(week_ending, hb, age_grp, sex, dep) %>%
   summarise(count = sum(number_of_cases, na.rm = T)) %>% ungroup
 
-ooh_data_cardiac <- ooh_data_cardiac %>% 
+ooh_data_cardiac %<>% 
   mutate( sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "NOT SPEC" = NA_character_, "NOT KNOWN" = NA_character_),
-          week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
           scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-ooh_data_cardiac <- ooh_data_cardiac %>% 
+ooh_data_cardiac %<>% 
   gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
                             "scot" = "Scotland")) %>%
@@ -203,47 +199,42 @@ ooh_cd_age <- ooh_data_cardiac %>% agg_cut(grouper="age") %>% rename(category = 
 
 ooh_cardiac <- rbind(ooh_cd_all, ooh_cd_sex, ooh_cd_dep, ooh_cd_age)
 
-# Filter graphs that look odd due to small numbers
-ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles"))
-ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
-                                                        "NHS Lanarkshire") | type !="age")
-ooh_cardiac <- ooh_cardiac %>% filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
-                                                        "NHS Fife", "NHS Highland") | type !="dep")
+ooh_cardiac %<>% # Filter graphs that look odd due to small numbers
+  filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles")) %>% 
+  filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
+                           "NHS Lanarkshire") | type !="age") %>% 
+  filter(!area_name %in% c("NHS Borders", "NHS Dumfries & Galloway", 
+                           "NHS Fife", "NHS Highland") | type !="dep")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2020-11-08")
+prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2021-01-24")
 
 ###############################################.
 ## SAS Cardiac ----
 ###############################################.
 
-sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/Weekly Diagnosis SAS CSV.csv")) %>%
+sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/2021-02-01-Weekly Cardio Diagnosis SAS extract.csv")) %>%
   janitor::clean_names() %>% 
-  filter(age > 14) # Filter age > 14
-
-# Change file into correct format prior to getting final specification
-sas_data_cardiac <-  sas_data_cardiac %>%
+  filter(age > 14) %>% # Filter age > 14
+  mutate(week_ending = as.Date(sas_call_start_date), # Formatting dates
+         week_ending = ceiling_date(week_ending, "week", change_on_boundary = F)) %>% 
   rename(hb = reporting_health_board_name_current,
          sex = gender_description,
          dep = patient_prompt_dataset_deprivation_scot_quintile,
          number_of_cases = number_of_incidents) %>% 
   create_agegroups() %>% # Age Bands
-  create_depgroups() %>% 
-  mutate(week_ending = dmy(week_ending))
+  create_depgroups()   #deprivation groups
 
 # remove diagnosis field as just showing total cardiac
-sas_data_cardiac <- sas_data_cardiac %>%
+sas_data_cardiac %<>%
   group_by(week_ending, hb, age_grp, sex, dep) %>%
   summarise(count = sum(number_of_cases, na.rm = T)) %>% 
-  ungroup()
-
-sas_data_cardiac <- sas_data_cardiac %>%
+  ungroup() %>%
   mutate(sex = recode(sex, "MALE" = "Male", "FEMALE" = "Female", "0" = NA_character_, "NOT KNOWN" = NA_character_),
-         week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
          scot = "Scotland") %>% 
   proper() # convert HB names to correct format
 
-sas_data_cardiac <- sas_data_cardiac %>% 
+sas_data_cardiac %<>% 
   gather(area_type, area_name, c(area_name, scot)) %>% ungroup() %>% 
   rename(age = age_grp) %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", "scot" = "Scotland")) %>% 
@@ -260,17 +251,17 @@ sas_cd_age <- sas_data_cardiac %>% agg_cut(grouper="age") %>% rename(category = 
 sas_cardiac <- rbind(sas_cd_all, sas_cd_sex, sas_cd_dep, sas_cd_age)
 
 # Filter graphs that look odd due to small numbers
-sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland"))
-sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | type !="dep")
-sas_cardiac <- sas_cardiac %>% filter(!area_name %in% c("NHS Western Isles") | type !="age")
+sas_cardiac %<>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland")) %>% 
+  filter(!area_name %in% c("NHS Western Isles") | type !="dep")%>%
+  filter(!area_name %in% c("NHS Western Isles") | type !="age")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2020-11-22")
+prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2021-01-24")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/2020-11-26-covid emessage AMS only.xlsx")) %>% 
+cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/2021-01-28-covid emessage AMS only.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -303,6 +294,6 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2020-11-22")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2021-01-24")
 
 ##END

@@ -223,10 +223,15 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
-  hist_legend <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
+  hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
                                             "ooh_cardiac", "sas_cardiac",
                                             "cath", "mentalhealth_drugs", "mh_ooh") ~ "Average 2018-2019",
                           data_name == "deaths" ~ "Average 2015-2019")
+  
+  hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
+                                                     "ooh_cardiac", "sas_cardiac",
+                                                      "mentalhealth_drugs", "mh_ooh", "deaths") ~ "2020 & 2021",
+                                    data_name %in% c("cath")  ~ "2020")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                             data_name == "aye" ~ "Attendances: ",
@@ -248,14 +253,14 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
   #Creating time trend plot
   plot_ly(data=trend_data, x=~get(xvar)) %>%
-    # 2020 line
+    # 2020/21 line
     add_lines(y = ~get(var2020), line = list(color = pal_overall[1]),
               text=tooltip_trend, hoverinfo="text",
-              name = "2020") %>%
+              name = hist_legend_covid) %>%
     # Average of previous years line
     add_lines(y = ~get(var_aver), line = list(color = pal_overall[2], dash = 'dash'),
               text=tooltip_trend, hoverinfo="text",
-              name = hist_legend) %>%
+              name = hist_legend_previous) %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
            yaxis = yaxis_plots, xaxis = xaxis_plots,

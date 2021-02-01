@@ -1,5 +1,5 @@
 #UI
- secure_app( #uncomment if needing password protection
+# secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -14,8 +14,11 @@ tagList( #needed for shinyjs
 ## Introduction ----
 ###############################################.
 tabPanel("Home", icon = icon("info-circle"), value = "intro",
-                  h3("COVID-19 wider impacts on the health care system"),
-                p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
+                  
+         fluidRow(column(9, h3("COVID-19 wider impacts on the health care system")),
+                  column(3, actionButton("new_next", tags$b("New content and future updates"),
+                                         icon = icon('calendar-alt')))),
+         p("The COVID-19 pandemic has wider impacts on individuals’ health, and their use of healthcare services,
                     than those that occur as the direct result of infection"),
                   p("Reasons for this may include:"),
                   tags$ul(
@@ -45,7 +48,7 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                 p("If you have any questions relating to the data presented please contact us at: ",
                   tags$b(tags$a(href="mailto:phs.statsgov@phs.scot", "phs.statsgov@phs.scot",  target="_blank")), "."),
                 p("You can access the code used to produce this tool in this ",
-                  tags$a(href="https://github.com/Health-SocialCare-Scotland/covid-wider-impact", "GitHub repository",  target="_blank"), "."),
+                  tags$a(href="https://github.com/Public-Health-Scotland/covid-wider-impacts", "GitHub repository",  target="_blank"), "."),
          h3("Other sources of information: "),
          tags$ul(
            tags$li("Public Health Scotland publishes ",
@@ -59,6 +62,10 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
            tags$li("The Improvement Service publishes a ",
                    tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard",  target="_blank"),
                    " on the economic impacts of the pandemic in Scotland."),
+           tags$li("Public Health Scotland publishes ",
+                   tags$a(href="https://publichealthscotland.scot/our-areas-of-work/covid-19/covid-19-data-and-intelligence/covid-19-and-children-research/", 
+                          "a series of reports",  target="_blank"),
+                   " on the direct and wider impacts of the pandemic on children and young people."),
            tags$li("Transport Scotland publishes ",
                    tags$a(href="https://www.transport.gov.scot/publications/", "information",  target="_blank"),
             " on transport trends and public attitudes towards
@@ -472,5 +479,5 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
 #      ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-  )#secure app
+  #)#secure app
 #END

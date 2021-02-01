@@ -32,28 +32,28 @@ saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 save_final_file("cancer_data_2", "18_Dec_20")
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "30_Nov_20")
-save_final_file("spec_lookup", "30_Nov_20")
+save_final_file("rapid", "01_Feb_21")
+save_final_file("spec_lookup", "01_Feb_21")
 ## OOH ----
-save_final_file("ooh", "30_Nov_20")
+save_final_file("ooh", "01_Feb_21")
 ## A&E ----
-save_final_file("ae", "30_Nov_20")
+save_final_file("ae", "01_Feb_21")
 ## NHS24 ----
-save_final_file("nhs24", "30_Nov_20")
+save_final_file("nhs24", "01_Feb_21")
 ## SAS ----
-save_final_file("sas", "30_Nov_20")
+save_final_file("sas", "01_Feb_21")
 ##########################################################.
 ## Cardio - cath labs ----
 save_final_file("cath_lab", "16_Nov_20")
 ## Cardio - A&E ----
-save_final_file("ae_cardio", "30_Nov_20")
+save_final_file("ae_cardio", "01_Feb_21")
 save_final_file("ae_cardio_codes", "30_Nov_20")
 ## Cardio - OOH ----
-save_final_file("ooh_cardiac", "09_Dec_20")
+save_final_file("ooh_cardiac", "01_Feb_21")
 ## Cardio - SAS ----
-save_final_file("sas_cardiac", "08_Dec_20")
+save_final_file("sas_cardiac", "01_Feb_21")
 ## Cardio - Prescribing ----
-save_final_file("cardio_drugs", "30_Nov_20")
+save_final_file("cardio_drugs", "01_Feb_21")
 ##########################################################.
 ## Immunisations - six in one ----
 save_final_file("six_alldose", "29_Jan_21")
@@ -93,35 +93,35 @@ save_final_file("child_dev", "15_Dec_20")
 save_final_file("breastfeeding", "15_Dec_20")
 ##########################################################.
 ## Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "18_Nov_20")
+save_final_file("perinatal", "29_Jan_21")
 ##########################################################.
 ## Pregnancy - Antenatal bookings ----
-save_final_file("ante_booking", "24_Nov_20")
-save_final_file("ante_booking_download", "24_Nov_20")
+save_final_file("ante_booking", "14_Jan_21")
+save_final_file("ante_booking_download", "14_Jan_21")
 ## Pregnancy - Terminations ----
-save_final_file("top", "20_Nov_20")
-save_final_file("top_download", "20_Nov_20")
+save_final_file("top", "29_Jan_21")
+save_final_file("top_download", "29_Jan_21")
 ## Pregnancy - Mode/Method of Delivery ----
-save_final_file("mod_runchart_data", "15_Dec_20")
-save_final_file("mod_scot_data", "15_Dec_20")
-save_final_file("mod_linechart_data", "15_Dec_20")
-save_final_file("mod_download_data", "15_Dec_20")
+save_final_file("mod_runchart_data", "29_Jan_21")
+save_final_file("mod_scot_data", "29_Jan_21")
+save_final_file("mod_linechart_data", "29_Jan_21")
+save_final_file("mod_download_data", "29_Jan_21")
 ## Pregnancy - Inductions ----
-save_final_file("induct_runchart_data", "15_Dec_20")
-save_final_file("induct_scot_data", "15_Dec_20")
-save_final_file("induct_linechart_data", "15_Dec_20")
-save_final_file("induct_download_data", "15_Dec_20")
+save_final_file("induct_runchart_data", "29_Jan_21")
+save_final_file("induct_scot_data", "29_Jan_21")
+save_final_file("induct_linechart_data", "29_Jan_21")
+save_final_file("induct_download_data", "29_Jan_21")
 ## Pregnancy - Gestation at Delivery ----
-save_final_file("gestation_runchart_data", "15_Dec_20")
-save_final_file("gestation_scot_data", "15_Dec_20")
-save_final_file("gestation_linechart_data", "15_Dec_20")
-save_final_file("gestation_download_data", "15_Dec_20")
+save_final_file("gestation_runchart_data", "29_Jan_21")
+save_final_file("gestation_scot_data", "29_Jan_21")
+save_final_file("gestation_linechart_data", "29_Jan_21")
+save_final_file("gestation_download_data", "29_Jan_21")
 ##########################################################.
 ## Mental health - Prescribing ----
-save_final_file("mentalhealth_drugs", "30_Nov_20")
+save_final_file("mentalhealth_drugs", "01_Feb_21")
 ## Mental health - A&E ----
-save_final_file("mh_A&E", "30_Nov_20")
+save_final_file("mh_A&E", "01_Feb_21")
 ## Mental health - OOH ----
-save_final_file("mh_ooh", "30_Nov_20")
+save_final_file("mh_ooh", "01_Feb_21")
 
 ##END
