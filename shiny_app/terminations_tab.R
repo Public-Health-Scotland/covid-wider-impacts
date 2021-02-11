@@ -102,7 +102,7 @@ output$top_dep_g <- renderPlotly({plot_top_split(dataset=top_filter_split("dep")
 # The charts and text shown on the app will depend on what the user wants to see
 output$top_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 3rd February 2021"))
+  data_last_updated <- tagList(p("Last updated: 3rd March 2021"))
   
   # text for titles of cut charts
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
@@ -309,6 +309,8 @@ observeEvent(input$switch_to_anb,{
 output$top_commentary <- renderUI({
   tagList(
     bsButton("jump_to_top",label = "Go to data"), #this button can only be used once
+    h2("Termination of pregnancy - 3rd March 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Termination of pregnancy - 3rd February 2021"),
     p("In this latest release of information on terminations of pregnancy up to September 2020, the provisional numbers reported in Scotland showed numbers of terminations rising gradually over the last four months. With numbers of terminations at 1072 in September 2020, since May 2020 the number of terminations in Scotland has remained below the Scotland average from January 2018. The majority of Boards recorded an increase in terminations between August and September 2020."),
     p("Average gestation at termination in Scotland decreased in the period February to August 2020 from 8 weeks to 6.6 weeks. This probably reflects changes in the configuration of termination care services in response to COVID-19 across Scotland. For Scotland as a whole, average gestation of terminations in Scotland has remained below 7 weeks since May 2020.  This is most clearly seen in Health Board returns from NHS Greater Glasgow and Clyde and NHS Tayside. Overall, the variation in gestation at termination between Board areas in September was minor (range 7.7 to 6.4 weeks)."),
