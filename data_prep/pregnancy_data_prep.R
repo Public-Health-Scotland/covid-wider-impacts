@@ -10,7 +10,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all antenatal booking data files prepared
-antenatal_booking_date <- "13012021"
+antenatal_booking_date <- "15022021"
 
 # Excel workbook containing number of women booking for antenatal care - weekly file (Scotland and NHS board except small islands)
 ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
@@ -18,15 +18,16 @@ ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/We
   janitor::clean_names() %>%
   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>% 
-  filter(week_book_starting < "2021-01-11")
+  filter(week_book_starting < "2021-02-08")
 
 # Excel workbook containing avergage gestation of women booking for antenatal care  - weekly file (Scotland and NHS board except small islands)
 ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
                                 sheet = "Data for Dashboard Charts") %>%
   janitor::clean_names() %>%
-  rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked) %>%
+  rename(centreline_g=centreline, dottedline_g=dottedline, 
+         centreline_g_t=tcentreline, dottedline_g_t=tdottedline, booked_g=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>% 
-  filter(week_book_starting < "2021-01-11")
+  filter(week_book_starting < "2021-02-08")
 
 # join two (numbers and average gestation) booking sheets to form single file for shiny app
 ante_booking <- left_join(ante_booking_no, ante_booking_gest, by = c("week_book_starting","area"))
@@ -75,7 +76,15 @@ ante_booking <- ante_booking %>%
                                      & lag(ave_gest, 4) > dottedline_g & lag(ave_gest, 5) > dottedline_g) |
                                       (ave_gest < dottedline_g & lag(ave_gest, 1) < dottedline_g 
                                        & lag(ave_gest, 2) < dottedline_g & lag(ave_gest, 3) < dottedline_g 
-                                       & lag(ave_gest, 4) < dottedline_g & lag(ave_gest, 5) < dottedline_g) ~ T , T ~ F),
+                                       & lag(ave_gest, 4) < dottedline_g & lag(ave_gest, 5) < dottedline_g) ~ T , 
+                                    area_name == "NHS Tayside" & week_book_starting < "2020-08-03" & 
+                                      ((ave_gest > dottedline_g_t & lag(ave_gest, 1) > dottedline_g_t 
+                                        & lag(ave_gest, 2) > dottedline_g_t & lag(ave_gest, 3) > dottedline_g_t 
+                                        & lag(ave_gest, 4) > dottedline_g_t & lag(ave_gest, 5) > dottedline_g_t) |
+                                         (ave_gest < dottedline_g_t & lag(ave_gest, 1) < dottedline_g_t 
+                                          & lag(ave_gest, 2) < dottedline_g_t & lag(ave_gest, 3) < dottedline_g_t 
+                                          & lag(ave_gest, 4) < dottedline_g_t & lag(ave_gest, 5) < dottedline_g_t)) ~ T,
+                                    T ~ F),
     shift_booked_gest = case_when(shift_i_booked_gest == T | lead(shift_i_booked_gest, 1) == T | lead(shift_i_booked_gest, 2) == T
                                   | lead(shift_i_booked_gest, 3) == T | lead(shift_i_booked_gest, 4) == T
                                   | lead(shift_i_booked_gest, 5) == T  ~ T, T ~ F),
@@ -138,7 +147,9 @@ ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download
          number_of_women_booking_gest_10to12wks=g_10to12wks,
          number_of_women_booking_gest_over_12wks=g_13pluswks,
          centreline_gestation=centreline_g,
-         dottedline_gestation=dottedline_g) %>%
+         dottedline_gestation=dottedline_g,
+         centreline_gestation_tayside=centreline_g_t,
+         dottedline_gestation_tayside=dottedline_g_t) %>%
   select(time_period, booking_week_beginning, booking_month, area_name, area_type, chart_type, chart_category,
          number_of_women_booking, centreline_number, dottedline_number,
          number_of_women_booking_gest_under_10wks,number_of_women_booking_gest_10to12wks,number_of_women_booking_gest_over_12wks,
