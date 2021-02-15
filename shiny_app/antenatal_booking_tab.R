@@ -40,6 +40,14 @@ observeEvent(input$btn_modal_simd_booking, { showModal(
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   ))}) 
 
+# Pop-up modal explaining source of data
+observeEvent(input$btn_tayside_modal, 
+             showModal(modalDialog(
+               title = "Why is there a second centreline?",
+               p("Insert text explaining second centre line here."),br(),
+               size = "m",
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
 ###############################################.
 ## Pregnancy Reactive controls  ----
 ###############################################.
@@ -116,9 +124,13 @@ output$booking_explorer <- renderUI({
   
   # Function to create common layout to all immunisation charts
   booking_layout <- function(plot_trend_n,plot_trend_g, plot_age_n, plot_age_g, plot_dep_n, plot_dep_g){
-    tagList(fluidRow(column(12,
-                            h4(booking_trend_title),
+    tagList(if (input$geoname_booking == "NHS Tayside"){
+            fluidRow(column(12,
+                            h4(booking_trend_title)),
+                     column(6,
                             actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
+                     column(6,
+                            actionButton("btn_tayside_modal", "Why is there a second centreline?")),
                      column(6,
                             h4(paste0(booking_title_n)), br(), p(" "),
                             #actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
@@ -129,7 +141,23 @@ output$booking_explorer <- renderUI({
                             withSpinner(plotlyOutput("booking_trend_g"))),
                      column(12,
                             p(booking_subtitle),
-                            p(chart_explanation))),
+                            p(chart_explanation)))
+    } else {
+      fluidRow(column(12,
+                      h4(booking_trend_title),
+                      actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
+               column(6,
+                      h4(paste0(booking_title_n)), br(), p(" "),
+                      #actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
+                      withSpinner(plotlyOutput("booking_trend_n"))),
+               column(6,
+                      h4(paste0(booking_title_g)),
+                      p(paste0(booking_title_g2)),
+                      withSpinner(plotlyOutput("booking_trend_g"))),
+               column(12,
+                      p(booking_subtitle),
+                      p(chart_explanation)))
+      },
             #only if scotland selected display age and deprivation breakdowns
             if (input$geotype_booking == "Scotland"){
               tagList(

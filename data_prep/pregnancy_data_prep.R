@@ -153,7 +153,7 @@ ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download
   select(time_period, booking_week_beginning, booking_month, area_name, area_type, chart_type, chart_category,
          number_of_women_booking, centreline_number, dottedline_number,
          number_of_women_booking_gest_under_10wks,number_of_women_booking_gest_10to12wks,number_of_women_booking_gest_over_12wks,
-         average_gestation_at_booking, centreline_gestation, dottedline_gestation)
+         average_gestation_at_booking, centreline_gestation, dottedline_gestation, centreline_gestation_tayside, dottedline_gestation_tayside)
 
 saveRDS(ante_booking_download, "shiny_app/data/ante_booking_download.rds")
 saveRDS(ante_booking_download, paste0(data_folder,"final_app_files/ante_booking_download_", 
