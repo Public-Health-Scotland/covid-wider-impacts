@@ -362,9 +362,9 @@ if (is.data.frame(plot_data) && nrow(plot_data) == 0)
 
 mod_download_data <- reactive({
   mod_download %>%  
-    rename(assisted_vaginal_inc_breech = assisted_vaginal, spontaneous_vaginal = spontaneous,
-          perc_assisted_vaginal_inc_breech = perc_assisted_vaginal,
-          perc_spontaneous_vaginal = perc_spontaneous)
+    rename(assisted_vaginal = assisted_vaginal_inc_breech, spontaneous = spontaneous_vaginal,
+           perc_assisted_vaginal = perc_assisted_vaginal_inc_breech,
+           perc_spontaneous = perc_spontaneous_vaginal)
 })
 
 output$download_mod_data <- downloadHandler(
