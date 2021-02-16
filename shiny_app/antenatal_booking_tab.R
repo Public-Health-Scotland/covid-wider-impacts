@@ -126,11 +126,8 @@ output$booking_explorer <- renderUI({
   booking_layout <- function(plot_trend_n,plot_trend_g, plot_age_n, plot_age_g, plot_dep_n, plot_dep_g){
     tagList(if (input$geoname_booking == "NHS Tayside"){
             fluidRow(column(12,
-                            h4(booking_trend_title)),
-                     column(6,
+                            h4(booking_trend_title),
                             actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
-                     column(6,
-                            actionButton("btn_tayside_modal", "Why is there a second centreline?")),
                      column(6,
                             h4(paste0(booking_title_n)), br(), p(" "),
                             #actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
@@ -232,7 +229,7 @@ plot_booking_trend <- function(measure, shift, trend){
         add_lines(y = ~centre_line, name = centreline_name,
                   line = list(color = "blue"), hoverinfo="none") %>%        
         add_lines(y = ~dotted_line,
-                  line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
                   name = dottedline_name) %>%
         # adding trends
         add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
@@ -266,12 +263,12 @@ plot_booking_trend <- function(measure, shift, trend){
         add_lines(y = ~centre_line, name = centreline_name,
                   line = list(color = "blue"), hoverinfo="none") %>%        
         add_lines(y = ~dotted_line,
-                  line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
                   name = dottedline_name) %>%
         add_lines(y = ~centre_line_t, name = centreline_name_T,
                   line = list(color = "limegreen"), hoverinfo="none") %>%
         add_lines(y = ~dotted_line_t,
-                  line = list(color = "limegreen", dash = "longdash"), hoverinfo="none",
+                  line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
                   name = dottedline_name_T) %>%
         # adding trends
         add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
@@ -321,10 +318,8 @@ plot_booking_trend <- function(measure, shift, trend){
             add_lines(y = ~centre_line, name = centreline_name,
                 line = list(color = "blue"), hoverinfo="none") %>%
       add_lines(y = ~dotted_line,
-                line = list(color = "blue", dash = "longdash"), hoverinfo="none",
+                line = list(color = "blue", dash = "dash"), hoverinfo="none",
                 name = dottedline_name) %>%
-
-                #name = "Centreline") %>%
       # adding trends
       add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
                   marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
@@ -427,6 +422,14 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Antenatal bookings - 3rd March 2021"),
+    p("In this release of information on antenatal booking data (3rd March 2021) data have been updated to include women booking for antenatal care up to the week beginning 1st February 2021. Since the previous release, which showed data up until the week beginning 4th January 2021, numbers of women booking for antenatal care in 
+      Scotland reached a peak during the week beginning 11th January 2021 and have since decreased but still remained high, well above the average numbers seen pre-pandemic.  Much of this increase in numbers is likely to be due to women delaying booking until after the Christmas and new year holidays. A similar increase can be seen 
+      over the same period last year.  The extent of the Christmas and new year reduction on numbers and subsequent increase in January is more prominent in the larger NHS Boards such as NHS Greater Glasgow & Clyde, NHS Lothian and NHS Lanarkshire."),
+    p("The updated (all-Scotland) data in this release show that the average gestation at which women booked for antenatal care remains just below the average based on the pre-pandemic period. The recent data on average gestation by NHS Board are more varied.  Lower than average gestation at booking is observed in recent weeks in NHS
+      Ayrshire & Arran, NHS Dumfries and Galloway, NHS Forth Valley and NHS Lanarkshire."),
+    p("A new average line has been included for NHS Tayside because the data sourced from their Badgernet Maternity information system (introduced in August 2020) are thought to more accurately represent the timing of when women book for antenatal care in NHS Tayside than the earlier (pre-August 2020) data sourced from their Protos 
+      information system. Further detail on this is included in the commentary dated 3rd February 2021."),
     h2("Antenatal bookings - 3rd February 2021"),
     p("In this third release of information on antenatal booking data (3rd February 2021) data have been updated to include women booking for antenatal care up to the week beginning 4th January 2021. Previous releases of data have shown that from mid-May to end September the number of women booking for antenatal care had been 
       consistently lower than expected based on pre-pandemic average levels. At the end of September numbers started to rise and have been increasing throughout October, November and most of December.  Although this increase may be partly explained by some women planning their pregnancies during these months, having previously 
