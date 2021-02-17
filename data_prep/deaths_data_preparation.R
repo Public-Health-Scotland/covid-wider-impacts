@@ -313,4 +313,29 @@ write_rds(combined_wide, "Q:/Team-NRSData/NRS data/Projects/Weekly COVID deaths/
 #   group_by(group) %>%
 #   summarise(allcause = sum(allcause))
 
+
+###############################################.
+## Cancer deaths ----
+###############################################.
+library(odbc)
+channel <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
+                                      uid=.rs.askForPassword("SMRA Username:"), 
+                                      pwd=.rs.askForPassword("SMRA Password:")))
+
+data_deaths <- tbl_df(dbGetQuery(channel, statement=
+"SELECT date_of_registration, age, sex, UNDERLYING_CAUSE_OF_DEATH diag, POSTCODE pc7
+    FROM ANALYSIS.GRO_DEATHS_C
+    WHERE date_of_registration >= '29 December 2014'
+  UNION ALL
+    SELECT date_of_registration, age, sex, UNDERLYING_CAUSE_OF_DEATH diag, POSTCODE pc7
+    FROM ANALYSIS.GRO_DEATHS_WEEKLY_C")) %>%
+  setNames(tolower(names(.))) %>% 
+  mutate(week_ending = ceiling_date(as.Date(date_of_registration), "week", change_on_boundary = F)) %>% 
+  filter(substr(diag,1,1) == "C") %>% 
+  mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
+         age = case_when(between(age, 0,64) ~ "Under 65", T ~ "65 and over"))
+
+#simd, hscp, hb missing need to bring
+#function prepare final data probably won't work without tweaks
+
 ### END
