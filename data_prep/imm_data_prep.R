@@ -113,7 +113,9 @@ saveRDS(age_defs_imm_6inone, paste0(data_folder,"final_app_files/age_defs_imm_6i
 # month eligibility table
 month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
                              sheet = "for_dash") %>% 
-  mutate("Month eligible" = format(as.Date(`Month eligible`), "%b-%Y")) %>% 
+  mutate("Month eligible" = format(as.Date(`Month eligible`), "%b-%Y")) %>%
+  mutate("Start date \r\n(Monday)" = ymd(`Start date \r\n(Monday)`)) %>%
+  mutate("End date\r\n(Sunday)" = ymd(`End date\r\n(Sunday)`)) %>% 
   flextable() %>%
   add_header_row(values = c("Month eligible", "Defined as children reaching relevant age in period:", "", "Number of weeks")) %>% 
   merge_at(i = 1, j = 2:3, part = "header") %>% 
