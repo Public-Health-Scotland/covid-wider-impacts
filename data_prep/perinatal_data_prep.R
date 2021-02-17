@@ -9,19 +9,19 @@ source("data_prep/functions_packages_data_prep.R")
 ## Perinatal mortality ----
 ###############################################.
 # P CHART PERINATAL DATA
-p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_febupdate.xlsx"),
+p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_marupdate.xlsx"),
                                     sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
-                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_febupdate.xlsx"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_marupdate.xlsx"),
                                     sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
-                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_febupdate.xlsx"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_marupdate.xlsx"),
                                     sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi")) %>%
   janitor::clean_names() %>%
   select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type)
 
-u_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_febupdate.xlsx"),
+u_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_marupdate.xlsx"),
                           sheet = "ID", skip = 2) %>% mutate(type = "infantdeaths"),
-                         read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_febupdate.xlsx"),
+                         read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_marupdate.xlsx"),
                           sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>%  
   janitor::clean_names() %>%
   select(month_of_year=sample,  number_of_deaths_in_month=observation, sample_size=ao_o_size, rate, centreline, stdev = poisson_st_dev_16, 
