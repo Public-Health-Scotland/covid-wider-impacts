@@ -114,9 +114,11 @@ breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/25thJan
   clean_names() %>% 
   rename(area_name = geography) %>% 
   mutate(area_type = case_when(area_name == "Scotland" ~ "Scotland",
-                               stringr::str_sub(area_name, start = -4) == "HSCP" ~ "HSCP",
+                               stringr::str_sub(area_name, start = -4) == "HSCP" |
+                                 area_name == "Clackmannanshire and Stirling" ~ "HSCP",
                                T ~ "Health board"),
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
+                               area_name == "Clackmannanshire and Stirling" ~ "Clackmannanshire and Stirling HSCP",
                                TRUE ~ area_name),
          month_review = as.Date(month_review)) %>% 
   filter((year(month_review) %in% c("2019", "2020")))
