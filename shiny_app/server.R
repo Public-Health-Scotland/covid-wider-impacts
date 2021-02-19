@@ -33,7 +33,8 @@ function(input, output, session) {
                    tags$ul(
                      tags$li("3rd March - Update of all data, except cancer section."),
                      tags$li("10th March - Update of cancer section data."),
-                     tags$li("7th April - Update of all data, except cancer section.")
+                     tags$li("7th April - Update of all data, except cancer section."),
+                     tags$li("14th April - New data on Apgar scores and location of birth for extremely preterm infants.")
                    ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
