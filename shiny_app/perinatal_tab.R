@@ -250,7 +250,7 @@ output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
     h2("Stillbirths and infant deaths - 3rd March 2021"),
-    p("placeholder"),
+    p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in January 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in January 2021 was 4.9 per 1,000 total births, and infant mortality rate was 3.6 per 1,000 live births. "),
     h2("Stillbirths and infant deaths - 3rd February 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in December 2020. In the intervening months since previous reporting on deaths up to October 2020, the rate of stillbirths and infant deaths remained within the warning threshold limits. The stillbirth rate in December 2020 was 3.5 per 1,000 total births, the lowest rate since August 2020 (2.4 per 1,000 total births)."),
     p("Presenting rates for post-neonatal deaths (PNND) has been changed from a P chart to a U chart. Both types of chart are a means of identifying any important changes in the data (see the ‘How do we identify patterns in the data?’ box for more information). Changing to a U chart brings the reporting of the PNNDs into line with that for infant deaths. Neither the rates nor the confidence and warning limits are materially affected by this change."),
