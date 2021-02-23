@@ -26,7 +26,7 @@ input_folder <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Pr
 cl_out <- "/conf/linkage/output/lookups/Unicode/"
 
 # import pathology data
-cancer <- read_csv(paste0(input_folder,"Pathology_Data_Nov20.csv"), col_names = T) %>%  
+cancer <- read_csv(paste0(input_folder,"Pathology_Data_Feb21.csv"), col_names = T) %>%  
   clean_names() 
 
 # import deprivation lookup
@@ -42,13 +42,8 @@ depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2020_2_simd2020v2.rds"
 
 # temporarily needed 
 
-cancer <- cancer %>% 
-  mutate(sex = case_when(person_id == 24654927 ~ 2,
-               person_id == 24936892 ~ 2,
-               person_id == 24942426 ~ 2,
-               person_id == 24942658 ~ 1,
-               person_id == 25068183 ~ 1,
-      TRUE ~ sex ))
+cancer <- cancer %>%
+  mutate(sex = case_when(person_id == 25002739 ~ 2, TRUE ~ sex ))
 
 # creates age column
 cancer <- cancer %>% 
@@ -339,7 +334,7 @@ diff_data <-  diff_data %>%
 ##########################################
 
 diff_data <-  diff_data %>% 
-  filter(week_number <= 35) %>%
+  filter(week_number <= 48) %>%
   ungroup()
 
 

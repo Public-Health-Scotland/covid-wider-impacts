@@ -325,7 +325,7 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
          mainPanel(width = 12,
                    uiOutput("cancer_explorer")
          )# mainPanel bracket
-), # tabpanel bracket
+) , # tabpanel bracket
 ##############################################
 # Mental Health ----
 ##############################################.

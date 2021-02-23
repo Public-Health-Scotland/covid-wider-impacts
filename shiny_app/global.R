@@ -72,9 +72,9 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
-cancer_extract_date <- "16th September 2020"  
+cancer_extract_date <- "22nd February 2021"  
 
-## mental health data
+# mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
 ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
@@ -251,7 +251,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Vagina - Females only" = "Vagina - Females only",
                       "Vulva - Females only" = "Vulva - Females only")
 
-cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye", 
+cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
                  "Out of hours cases" = "ooh_cardiac",
                  "Scottish Ambulance Service" = "sas_cardiac", "Cardiac procedures" = "cath")
 
