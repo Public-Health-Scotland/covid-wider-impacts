@@ -10,9 +10,9 @@ tagList( #needed for shinyjs
                      tags$link(rel="shortcut icon", href="favicon_phs.ico"), #Icon for browser tab
                      #Including Google analytics
                      includeScript("google-analytics.js")), 
-###############################################.
-## Introduction ----
-###############################################.
+##############################################.
+# Introduction ----
+##############################################.
 tabPanel("Home", icon = icon("info-circle"), value = "intro",
 
          fluidRow(column(9, h3("COVID-19 wider impacts on the health care system")),

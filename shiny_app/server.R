@@ -3,7 +3,7 @@ credentials <- readRDS("admin/credentials.rds")
 
 function(input, output, session) {
   
-  # Shinymanager Auth
+  Shinymanager Auth
   res_auth <- secure_server(
     check_credentials = check_credentials(credentials)
   )
@@ -92,7 +92,7 @@ function(input, output, session) {
   ###############################################.
   # Data tab
   source(file.path("data_tab.R"),  local = TRUE)$value
-  
+
 ##############################################.
 # jump to data pages from commentary ----
 ##############################################.
