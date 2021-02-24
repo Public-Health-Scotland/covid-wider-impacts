@@ -598,8 +598,11 @@ immune_table <- function(dataset, dose, age_week) {
     filter(exclude_from_table !=1) #filter immunisation table to exclude weekly cohorts that should only be downloadable
   
   #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
-  no_complete_row_six1 <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == c("NOV", "DEC")))
-  no_complete_row_mmr <- with(table_data, (substr(time_period_eligible,1,3) == "W/B"|substr(time_period_eligible,1,3) == c("OCT", "NOV", "DEC")))
+  no_complete_row_six1 <- with(table_data, substr(time_period_eligible,1,3) == "NOV" |
+                                            substr(time_period_eligible,1,3) == "DEC")
+  no_complete_row_mmr <- with(table_data, substr(time_period_eligible,1,3) == "OCT" |
+                                            substr(time_period_eligible,1,3) == "NOV" |
+                                            substr(time_period_eligible,1,3) == "DEC")
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
