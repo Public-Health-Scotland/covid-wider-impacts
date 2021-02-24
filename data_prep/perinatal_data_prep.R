@@ -102,4 +102,13 @@ saveRDS(perinatal, "shiny_app/data/perinatal.rds")
 saveRDS(perinatal, paste0(data_folder,"final_app_files/perinatal_", 
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+# saving perinatal open data files
+perinatal %<>% 
+  select(area_name, month_of_year, type, number_of_deaths_in_month, rate, 
+         relevant_births = sample_size) %>% 
+  mutate(type = recode_factor(type, "extperi" = "Extended perinatal deaths", "infantdeaths" = "Infant deaths", "nnd" = "Neonatal deaths", 
+                              "pnnd" = "Post-neonatal deaths", "stillbirths" = "Stillbirths")) 
+
+saveRDS(perinatal, paste0(open_data, "perinatal_data.rds"))
+
 ##END
