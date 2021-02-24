@@ -104,6 +104,15 @@ saveRDS(child_dev, "shiny_app/data/child_dev.rds")
 saveRDS(child_dev, paste0(data_folder,"final_app_files/child_dev_", 
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+child_dev %<>% 
+  select(area_name, month_review, review, number_reviews = no_reviews, 
+         meaningful_reviews = no_meaningful_reviews,
+         "% meaningful reviews" = pc_meaningful,
+         "One or more concerns" = concerns_1_plus,
+         "% one or more concerns" = pc_1_plus)
+
+saveRDS(child_dev, paste0(open_data, "child_dev_data.rds"))
+
 ###############################################.
 ## Breastfeeding ----
 ###############################################.
