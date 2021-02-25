@@ -18,7 +18,12 @@ mentalhealth_drugs <- rbind(read_xlsx(paste0(data_folder, "prescribing_mh/Weekly
                                      read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_57_05-07-2020 to 04-10-2020.xlsx")),
                                      read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-14-Weekly new incident emessage - Multi-condition_11-10-2020 to 10-01-2021.xlsx")) %>% 
                                        filter(between(as.Date(`Week Ending`), as.Date("2020-10-11"), as.Date("2020-10-18"))), 
-                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-28-Weekly new incident emessage - Multi-condition_25-10-2020 to 24-01-2021.xlsx"))) %>% 
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-28-Weekly new incident emessage - Multi-condition_25-10-2020 to 24-01-2021.xlsx")) %>%
+                                       filter(between(as.Date(`Week Ending`), as.Date("2020-10-25"), as.Date("2020-11-01"))), 
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-11-Weekly new incident emessage - Multi-condition.xlsx")) %>%
+                                      filter(between(as.Date(`Week Ending`), as.Date("2020-11-08"), as.Date("2020-11-15"))), 
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-25-Weekly new incident emessage - Multi-condition.xlsx"))) %>%
+  
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -48,7 +53,7 @@ mentalhealth_drugs_all <- mentalhealth_drugs %>%
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all) %>% 
   arrange(area_name, area_type, category, week_ending) # so plotly works correctly
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-01-24")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-02-21")
 
 ###############################################.
 ## A&E - mental health ----
