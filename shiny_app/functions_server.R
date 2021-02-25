@@ -489,16 +489,13 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
             color = ~time_period_eligible, colors = pal_immun,
             text= tooltip_scurve, hoverinfo="text") %>%
 
-    # Adding legend title
-    add_annotations( text= paste0("Children turning ", age_unit), xref="paper", yref="paper",
-                     x=1.02, xanchor="left",
-                     y=0.8, yanchor="bottom", # Same y as legend below
-                     legendtitle=TRUE, showarrow=FALSE ) %>%
 
     #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+    layout(margin = list(b = 80, t=5, l=80), #to avoid labels getting cut out
            yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.8, yanchor="top")) %>% #position of legend
+           legend = list(title=list(text=paste0("Children turning ", age_unit)),
+                         x = 100, y = 0.8, yanchor="top")) %>% #position of legend
+    
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 }
