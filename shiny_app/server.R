@@ -3,7 +3,7 @@ credentials <- readRDS("admin/credentials.rds")
 
 function(input, output, session) {
   
-  Shinymanager Auth
+ # Shinymanager Auth
   res_auth <- secure_server(
     check_credentials = check_credentials(credentials)
   )
