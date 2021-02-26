@@ -17,10 +17,11 @@
 
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
     color: #ffffff;
-    background-color: #7c6ec4;
+    background-color: #312760;
 }
 
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-    color: #ffffff;     background-color: #5c4ab5;}
+    color: #ffffff;     background-color: #5343a3;}
+
 
                   
