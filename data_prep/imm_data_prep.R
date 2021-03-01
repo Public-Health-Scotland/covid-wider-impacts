@@ -10,7 +10,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all immunisation data files prepared
-imms_date <- "20210125"
+imms_date <- "20210222"
 
 six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/", imms_date, "/six_in_one_dashboard_",imms_date,".csv"), 
                         col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
@@ -113,7 +113,9 @@ saveRDS(age_defs_imm_6inone, paste0(data_folder,"final_app_files/age_defs_imm_6i
 # month eligibility table
 month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
                              sheet = "for_dash") %>% 
-  mutate("Month eligible" = format(as.Date(`Month eligible`), "%b-%Y")) %>% 
+  mutate("Month eligible" = format(as.Date(`Month eligible`), "%b-%Y")) %>%
+  mutate("Start date \r\n(Monday)" = ymd(`Start date \r\n(Monday)`)) %>%
+  mutate("End date\r\n(Sunday)" = ymd(`End date\r\n(Sunday)`)) %>% 
   flextable() %>%
   add_header_row(values = c("Month eligible", "Defined as children reaching relevant age in period:", "", "Number of weeks")) %>% 
   merge_at(i = 1, j = 2:3, part = "header") %>% 
@@ -131,7 +133,7 @@ saveRDS(month_defs_imm, paste0(data_folder,"final_app_files/month_eligibility_im
 ## MMR data ----
 ###############################################.
 #field with date all immunisation data files prepared
-imms_date <- "20210125"
+imms_date <- "20210222"
 
 # mmr dose 1 & 2 - scurve data
 mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/", imms_date, "/mmr_dashboard_",imms_date,".csv"),
