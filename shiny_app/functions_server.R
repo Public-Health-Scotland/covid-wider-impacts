@@ -458,7 +458,7 @@ if( any(c(six_alldose) %in% dataset)){ # this doesn't seem like very efficient l
   xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
   xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) # To adjust x-axis min and max depending on which dose selected
 
-  age_unit <- paste0(age_week, " weeks:") #string for legend label
+  age_unit <- paste0(age_week, " weeks") #string for legend label
 }
 ##chart axis for MMR dose 1 scurve
 else if(dataset == mmr_alldose && dose== "dose 1" ){ #set chart parameters for mmr dose 1
@@ -468,7 +468,7 @@ else if(dataset == mmr_alldose && dose== "dose 1" ){ #set chart parameters for m
   xaxis_plots[["ticktext"]] <- c(0, seq(11, 16, by = 1))  # xaxis labels 11 months (49 weeks) to 16 months (70 weeks)
   xaxis_plots[["range"]] <- c((7*49),(7*70))  # To adjust x-axis min and max depending on which dose selected
 
-  age_unit <- paste0("12 months:") #string for legend label
+  age_unit <- paste0("12 months") #string for legend label
 }
 
 ##chart axis for MMR dose 2 scurve
@@ -479,7 +479,7 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
   xaxis_plots[["ticktext"]] <- c(0, seq(3.3,3.8 , by = 0.1))  # xaxis labels in years and months (works even though months are not decimals because we only show part of a year?)
   xaxis_plots[["range"]] <- c((7*170),(7*191))  # To adjust x-axis min and max depending on which dose selected
   
-  age_unit <- paste0("3y 4months:") #string for legend label
+  age_unit <- paste0("3y 4months") #string for legend label
 }
 
 
@@ -490,12 +490,17 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
             text= tooltip_scurve, hoverinfo="text") %>%
 
 
+    # # Adding legend title
+    # add_annotations( text= paste0("Children turning ", age_unit), xref="paper", yref="paper",
+    #                  x=1.02, xanchor="left",
+    #                  y=0.8, yanchor="bottom",    # Same y as legend below
+    #                  legendtitle=TRUE, showarrow=FALSE ) %>%
+
     #Layout
-    layout(margin = list(b = 80, t=5, l=80), #to avoid labels getting cut out
+    layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
            yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(title=list(text=paste0("Children turning ", age_unit)),
+           legend = list(title=list(text=paste0("Children turning ", age_unit, " in:")),
                          x = 100, y = 0.8, yanchor="top")) %>% #position of legend
-    
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 }
@@ -788,15 +793,11 @@ plot_scurve_child <- function(dataset, age_week) {
       add_trace(type = 'scatter', mode = 'lines',
                 color = ~time_period_eligible, colors = pal_child,
                 text= tooltip_scurve, hoverinfo="text") %>%
-      # Adding legend title
-      add_annotations( text=paste0("Children turning ", age_week, " in:"), xref="paper", yref="paper",
-                       x=1.02, xanchor="left",
-                       y=0.8, yanchor="bottom",    # Same y as legend below
-                       legendtitle=TRUE, showarrow=FALSE ) %>% 
       #Layout
       layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.8, yanchor="top")) %>% #position of legend
+             legend = list(title=list(text=paste0("Children turning ", age_week, " in:")),
+                           x = 100, y = 0.8, yanchor="top")) %>% #position of legend
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
   }}
@@ -815,7 +816,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   if (age_week == "2 weeks") {
     format_col <- c("denominator","coverage_6weeks_num","coverage_18weeks_num","coverage_tot_num")
     
-    no_complete_row <- with(table_data, (time_period_eligible == "NOV 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
 
     child_table <- table_data %>%
     select (time_period_eligible, denominator, coverage_6weeks_num, 
@@ -833,7 +834,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "6 weeks") {
     format_col <- c("denominator","coverage_10weeks_num","coverage_22weeks_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "NOV 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_10weeks_num, 
@@ -851,7 +852,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "13 months") {
     format_col <- c("denominator","coverage_14months_num","coverage_17months_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "NOV 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_14months_num, 
@@ -869,7 +870,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "27 months") {
     format_col <- c("denominator","coverage_28months_num","coverage_31months_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "NOV 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_28months_num, 
@@ -887,7 +888,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "4 years") {
     format_col <- c("denominator","coverage_49months_num","coverage_52months_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "NOV 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_49months_num, 

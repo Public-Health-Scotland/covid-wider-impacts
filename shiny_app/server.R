@@ -41,7 +41,7 @@ function(input, output, session) {
 
   ##############################################.
   # Sourcing server files for each tab ----
-  ###############################################
+  ###############################################.
   # Sourcing file with functions code
   source(file.path("functions_server.R"),  local = TRUE)$value
 
