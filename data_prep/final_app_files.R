@@ -34,28 +34,28 @@ saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 save_final_file("cancer_data_2", "18_Dec_20")
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "01_Feb_21")
-save_final_file("spec_lookup", "01_Feb_21")
+save_final_file("rapid", "01_Mar_21")
+save_final_file("spec_lookup", "01_Mar_21")
 ## OOH ----
-save_final_file("ooh", "01_Feb_21")
+save_final_file("ooh", "01_Mar_21")
 ## A&E ----
-save_final_file("ae", "01_Feb_21")
+save_final_file("ae", "01_Mar_21")
 ## NHS24 ----
-save_final_file("nhs24", "01_Feb_21")
+save_final_file("nhs24", "01_Mar_21")
 ## SAS ----
-save_final_file("sas", "01_Feb_21")
+save_final_file("sas", "01_Mar_21")
 ##########################################################.
 ## Cardio - cath labs ----
 save_final_file("cath_lab", "16_Nov_20")
 ## Cardio - A&E ----
-save_final_file("ae_cardio", "01_Feb_21")
+save_final_file("ae_cardio", "01_Mar_21")
 save_final_file("ae_cardio_codes", "30_Nov_20")
 ## Cardio - OOH ----
-save_final_file("ooh_cardiac", "01_Feb_21")
+save_final_file("ooh_cardiac", "01_Mar_21")
 ## Cardio - SAS ----
-save_final_file("sas_cardiac", "01_Feb_21")
+save_final_file("sas_cardiac", "01_Mar_21")
 ## Cardio - Prescribing ----
-save_final_file("cardio_drugs", "01_Feb_21")
+save_final_file("cardio_drugs", "01_Mar_21")
 ##########################################################.
 ## Immunisations - six in one ----
 save_final_file("six_alldose", "24_Feb_21")
