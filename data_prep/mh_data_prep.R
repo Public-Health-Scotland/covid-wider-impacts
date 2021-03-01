@@ -63,7 +63,7 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-0
 mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
-                read_tsv(paste0(data_folder, "A&E_mh/2021-03-01-A&E Extract - Mental Health Wider impacts.txt"))) %>%
+                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to21022021.csv"))) %>%
   clean_names() 
 
 # List of terms used to identify mh cases
