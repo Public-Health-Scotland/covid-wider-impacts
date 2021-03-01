@@ -34,75 +34,75 @@ saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 save_final_file("cancer_data_2", "18_Dec_20")
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "01_Feb_21")
-save_final_file("spec_lookup", "01_Feb_21")
+save_final_file("rapid", "01_Mar_21")
+save_final_file("spec_lookup", "01_Mar_21")
 ## OOH ----
-save_final_file("ooh", "01_Feb_21")
+save_final_file("ooh", "01_Mar_21")
 ## A&E ----
-save_final_file("ae", "01_Feb_21")
+save_final_file("ae", "01_Mar_21")
 ## NHS24 ----
-save_final_file("nhs24", "01_Feb_21")
+save_final_file("nhs24", "01_Mar_21")
 ## SAS ----
-save_final_file("sas", "01_Feb_21")
+save_final_file("sas", "01_Mar_21")
 ##########################################################.
 ## Cardio - cath labs ----
 save_final_file("cath_lab", "16_Nov_20")
 ## Cardio - A&E ----
-save_final_file("ae_cardio", "01_Feb_21")
+save_final_file("ae_cardio", "01_Mar_21")
 save_final_file("ae_cardio_codes", "30_Nov_20")
 ## Cardio - OOH ----
-save_final_file("ooh_cardiac", "01_Feb_21")
+save_final_file("ooh_cardiac", "01_Mar_21")
 ## Cardio - SAS ----
-save_final_file("sas_cardiac", "01_Feb_21")
+save_final_file("sas_cardiac", "01_Mar_21")
 ## Cardio - Prescribing ----
-save_final_file("cardio_drugs", "01_Feb_21")
+save_final_file("cardio_drugs", "01_Mar_21")
 ##########################################################.
 ## Immunisations - six in one ----
-save_final_file("six_alldose", "29_Jan_21")
-save_final_file("six_dose1_simdtable", "29_Jan_21")
-save_final_file("six_dose2_simdtable", "29_Jan_21")
-save_final_file("six_dose3_simdtable", "29_Jan_21")
-save_final_file("sixinone_datatable", "29_Jan_21")
+save_final_file("six_alldose", "24_Feb_21")
+save_final_file("six_dose1_simdtable", "24_Feb_21")
+save_final_file("six_dose2_simdtable", "24_Feb_21")
+save_final_file("six_dose3_simdtable", "24_Feb_21")
+save_final_file("sixinone_datatable", "24_Feb_21")
 ## Immunisations - MMR ----
-save_final_file("mmr_alldose", "29_Jan_21")
-save_final_file("mmr_dose1_simdtable", "29_Jan_21")
-save_final_file("mmr_dose2_simdtable", "29_Jan_21")
-save_final_file("mmr_datatable", "29_Jan_21")
-save_final_file("mmr_dose2_grampian_datatable", "29_Jan_21")
+save_final_file("mmr_alldose", "24_Feb_21")
+save_final_file("mmr_dose1_simdtable", "24_Feb_21")
+save_final_file("mmr_dose2_simdtable", "24_Feb_21")
+save_final_file("mmr_datatable", "24_Feb_21")
+save_final_file("mmr_dose2_grampian_datatable", "24_Feb_21")
 # Immunisations - definitions
-save_final_file("age_defs_imm_6inone", "29_Jan_21")
-save_final_file("age_defs_imm_mmr", "29_Jan_21")
-save_final_file("month_eligibility_immun", "29_Jan_21")
+save_final_file("age_defs_imm_6inone", "24_Feb_21")
+save_final_file("age_defs_imm_mmr", "24_Feb_21")
+save_final_file("month_eligibility_immun", "24_Feb_21")
 ##########################################################.
 ## Child health reviews - first visit ----
-save_final_file("first_visit", "28_Jan_21")
-save_final_file("first_visit_datatable", "28_Jan_21")
+save_final_file("first_visit", "01_Mar_21")
+save_final_file("first_visit_datatable", "01_Mar_21")
 ## Child health reviews - 6-8 weeks ----
-save_final_file("six_to_eight", "28_Jan_21")
-save_final_file("six_to_eight_datatable", "28_Jan_21")
+save_final_file("six_to_eight", "01_Mar_21")
+save_final_file("six_to_eight_datatable", "01_Mar_21")
 ## Child health reviews - 13-15 months ----
-save_final_file("thirteen", "28_Jan_21")
-save_final_file("thirteen_datatable", "28_Jan_21")
+save_final_file("thirteen", "01_Mar_21")
+save_final_file("thirteen_datatable", "01_Mar_21")
 ## Child health reviews - 27-30 months ----
-save_final_file("twentyseven", "28_Jan_21")
-save_final_file("twentyseven_datatable", "28_Jan_21")
+save_final_file("twentyseven", "01_Mar_21")
+save_final_file("twentyseven_datatable", "01_Mar_21")
 ## Child health reviews - 4-5 years ----
-save_final_file("fourtofive", "28_Jan_21")
-save_final_file("fourtofive_datatable", "28_Jan_21")
+save_final_file("fourtofive", "01_Mar_21")
+save_final_file("fourtofive_datatable", "01_Mar_21")
 ## Child development ----
-save_final_file("child_dev", "28_Jan_21")
+save_final_file("child_dev", "01_Mar_21")
 ## Breastfeeding ----
-save_final_file("breastfeeding", "28_Jan_21")
+save_final_file("breastfeeding", "01_Mar_21")
 ##########################################################.
 ## Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "29_Jan_21")
+save_final_file("perinatal", "17_Feb_21")
 ##########################################################.
 ## Pregnancy - Antenatal bookings ----
-save_final_file("ante_booking", "14_Jan_21")
-save_final_file("ante_booking_download", "14_Jan_21")
+save_final_file("ante_booking", "15_Feb_21")
+save_final_file("ante_booking_download", "15_Feb_21")
 ## Pregnancy - Terminations ----
-save_final_file("top", "29_Jan_21")
-save_final_file("top_download", "29_Jan_21")
+save_final_file("top", "24_Feb_21")
+save_final_file("top_download", "24_Feb_21")
 ## Pregnancy - Mode/Method of Delivery ----
 save_final_file("mod_runchart_data", "24_Feb_21")
 save_final_file("mod_scot_data", "24_Feb_21")

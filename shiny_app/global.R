@@ -80,7 +80,7 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "25th January 2021"
+child_extract_date <- "22nd February 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 sixtoeight <- readRDS("data/six_to_eight.rds")
@@ -93,7 +93,7 @@ fourtofive <- readRDS("data/fourtofive.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "25th January 2021"
+immunisation_extract_date <- "22nd February 2021"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -122,12 +122,12 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "13th January 2021"
+booking_extract_date <- "11th February 2021"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "12th January 2021"
+top_extract_date <- "9th February 2021"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
@@ -286,13 +286,13 @@ pal_immun <- c("2019" = '#000000',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
-               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859")
+               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#990099")
 
 pal_child <- c("2019" = '#000000',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#3CB371", "JUN 2020" = "#32CD32",
                "JUL 2020" = "#41b6c4", "AUG 2020" = "#1d91c0", "SEP 2020" = "#225ea8",
-               "OCT 2020" = "#253494", "NOV 2020" = "#081d58")
+               "OCT 2020" = "#253494", "NOV 2020" = "#081d58", "DEC 2020" = "#00004d")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
