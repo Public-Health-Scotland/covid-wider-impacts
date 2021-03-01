@@ -256,6 +256,14 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T) {
   saveRDS(imm_ch_dt, paste0("shiny_app/data/", save_as, "_datatable.rds"))
   saveRDS(imm_ch_dt, paste0(data_folder,"final_app_files/", save_as, "_datatable_", 
                                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  imm_ch_dt <- imm_ch_dt %>%       
+    select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+    mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+    arrange(desc(cohort)) %>% 
+    select(-cohort) 
+  
+  saveRDS(imm_ch_dt, paste0(open_data, save_as,"_data.rds"))
   }
 
   else { 
