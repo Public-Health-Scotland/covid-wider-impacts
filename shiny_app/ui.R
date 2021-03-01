@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+#secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -149,7 +149,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   )# mainPanel bracket
 ), # tabpanel bracket
 ##############################################.
-# Cardiovascular ----
+## Cardiovascular ----
 ##############################################.
 tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          wellPanel(
@@ -298,10 +298,10 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
   ) # tabpanel bracket
- ), #navbarMenu bracket
-##############################################.
-# Cancer ----
-##############################################.
+  ), #navbarMenu bracket
+###############################################.
+## Cancer ----
+###############################################.
 tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
   wellPanel(
            column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
@@ -482,5 +482,5 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
      ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-  # )#secure app
+#  )#secure app
 #END
