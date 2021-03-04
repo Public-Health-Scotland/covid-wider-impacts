@@ -415,7 +415,7 @@ apgar_folder <- "20210218"
 apgar_date <- "2021_02_18"
 
 ## 1-RUNCHART DATA
-## mod data for run chart (scotland and nhs board) - monthly
+## apgar data for run chart (scotland and nhs board) - monthly
 apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Apgar5_",apgar_date,".rds")) %>%  
   rename(area_name = HBRES, quarter = DATE) %>%  
   janitor::clean_names() %>%
@@ -441,60 +441,61 @@ apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folde
                  value=perc_low_apgar5_37plus, median=ext_apgar5_37plus) %>%
   ungroup()
 
-saveRDS(induct_runchart, "shiny_app/data/apgar_runchart_data.rds")
-saveRDS(induct_runchart, paste0(data_folder,"final_app_files/apgar_runchart_data_", 
+saveRDS(apgar_runchart, "shiny_app/data/apgar_runchart_data.rds")
+saveRDS(apgar_runchart, paste0(data_folder,"final_app_files/apgar_runchart_data_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
-## 2- LINECHART DATA inductions for Scotland only by age and dep
-apgar_scot <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_SCOT_CHARTS_induced_",induct_date,".rds")) %>%  
+## 2- LINECHART DATA apgar for Scotland only by age and dep
+apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_SCOT_CHARTS_Apgar5_",apgar_date,".rds")) %>%  
   janitor::clean_names() %>%
-  rename(area_name=hbres, month=date, category=variable) %>%
-  mutate(month=as.Date(month),
-         area_type="Scotland",
-         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
+  rename(area_name=hbres, quarter=date, category=variable) %>%
+  mutate(quarter=as.Date(quarter),
+         area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                          area_name=="Scotland" ~ "Scotland"),
+         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD5" ~ "dep"),
          category=as.character(category))
 
-saveRDS(induct_scot, "shiny_app/data/induct_scot_data.rds")
-saveRDS(induct_scot, paste0(data_folder,"final_app_files/induct_scot_data_", 
+saveRDS(apgar_scot, "shiny_app/data/apgar_scot_data.rds")
+saveRDS(apgar_scot, paste0(data_folder,"final_app_files/apgar_scot_data_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
-## 3- LINECHART DATA inductions for Scotland & NHS board
-induct_linechart <- readRDS(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_LINECHART_induced_",induct_date,".rds")) %>%  
+## 3- LINECHART DATA apgar for Scotland & NHS board
+apgar_linechart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Apgar5_",apgar_date,".rds")) %>%  
+  rename(area_name=HBRES, quarter=DATE) %>%
   janitor::clean_names() %>%
-  mutate(tot_births_37_42=births_37_42) %>%
+  mutate(tot_apgar5_37plus=apgar5_37plus) %>%
   #reshape data file for ease of creation of line chart with percentages
-  pivot_longer(cols = ind_37_42:births_37_42, names_to = "ind",values_to = "births") %>%
-  rename(area_name=hbres, month=date) %>%
-  mutate(month=as.Date(month, format="%Y-%m-%d "),
+  pivot_longer(cols = low_apgar5_37plus:apgar5_37plus, names_to = "ind",values_to = "apgar5") %>%
+  mutate(quarter=as.Date(quarter, format="%Y-%m-%d "),
          type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type = type, 
          category="All",
-         percent_births=((births/tot_births_37_42)*100),
-         #NOTE the gestation categories are not mutually exclusive - <37 contains <32
-         ind=case_when(ind=="ind_37_42" ~ "Births that followed induction",
-                       ind=="births_37_42" ~ "All births",
+         percent_apgar=((apgar5/tot_apgar5_37plus)*100),
+         ind=case_when(ind=="low_apgar5_37plus" ~ "Babies with a low Apgar 5",
+                       ind=="apgar5_37plus" ~ "Babies with an Apgar 5",
                        TRUE~as.character(ind))) 
 
-saveRDS(induct_linechart, "shiny_app/data/induct_linechart_data.rds") 
-saveRDS(induct_linechart, paste0(data_folder,"final_app_files/induct_linechart_data_", 
+saveRDS(apgar_linechart, "shiny_app/data/apgar_linechart_data.rds") 
+saveRDS(apgar_linechart, paste0(data_folder,"final_app_files/apgar_linechart_data_", 
                                  format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
-## 4- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
-induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_folder,"/WI_DELIVERIES_DOWNLOAD_induced_",induct_date,".csv"))%>%  
+## 4- Apgar DATA DOWNLOAD FILE FOR SHINY APP
+apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_Apgar5_DOWNLOAD_",apgar_date,".rds"))%>%  
   janitor::clean_names() %>%
-  mutate(month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
-         month_of_discharge=format(month_of_discharge,"%b %Y")) %>%
+  mutate(quarter_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
+         quarter_of_discharge=format(quarter_of_discharge,"%b %Y")
+         ) %>%
   rename(area_name=nhs_board_of_residence,
-         centreline_induced_37_42 = median_induced_37_42,
-         dottedline_induced_37_42 = ext_induced_37_42) %>% 
+         centreline_apgar5_37plus = median_apgar5_37plus,
+         dottedline_apgar5_37plus = ext_median_apgar5_37plus) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
          chart_type= area_type) 
 
-saveRDS(induct_download, "shiny_app/data/induct_download_data.rds")  
-saveRDS(induct_download, paste0(data_folder,"final_app_files/induct_download_data_", 
+saveRDS(apgar_download, "shiny_app/data/apgar_download_data.rds")  
+saveRDS(apgar_download, paste0(data_folder,"final_app_files/apgar_download_data_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ##END
