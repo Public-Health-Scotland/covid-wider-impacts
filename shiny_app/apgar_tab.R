@@ -101,13 +101,13 @@ output$apgar_explorer <- renderUI({
   
   # text for titles of cut charts
   apgar_data_timeperiod <-  paste0("Figures based on data extracted ",apgar_extract_date)
-  apgar_title <- paste0("of babies at 37 and over weeks gestation with an apgar 5 score < 7: ",input$geoname_induct)
+  apgar_title <- paste0("of singleton live births at 37-42 weeks gestation that have a 5 minute Apgar score of <7: ",input$geoname_apgar)
   
   chart_explanation <- 
     tagList(p("We have used ",                      
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Percentage of babies apgar 5 < 7’ chart above, the dots joined by a solid black line show the percentage of babies with low apgar 5 score out of all babies with an apgar 5 score in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of with low apgar 5 score out of all babies with an apgar 5 score over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of babies with low apgar 5 score."))
+            p("On the ‘Percentage of singleton live births at 37-42 weeks gestation that have a 5 minute Apgar score of <7’ chart above, the dots joined by a solid black line show the percentage of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7 out of all singleton live births at 37-42 weeks gestation with known 5 minute Apgar score in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7 out of all singleton live births at 37-42 weeks gestation with known 5 minute Apgar score over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of live births with a 5 minute Apgar score of <7."))
   
   # Function to create common layout to all immunisation charts
   apgar_layout <- function(apgar_trend,apgar_linechart_number,apgar_linechart_age_n,apgar_linechart_age_p,apgar_linechart_dep_n,apgar_linechart_dep_p){
@@ -120,30 +120,30 @@ output$apgar_explorer <- renderUI({
                             p(chart_explanation)),
                      column(12,
                             br(), #spacing
-                            h4(paste0("Number of babies with low apgar 5 score: ",input$geoname_apgar))),
+                            h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$geoname_apgar))),
                      column(12,
                             withSpinner(plotlyOutput("apgar_linechart_number"))),
                      #only if scotland selected display age and deprivation breakdowns
                      if (input$geotype_apgar == "Scotland"){
                        tagList(
                          fluidRow(column(12,
-                                         h4("Babies with low apgar 5 score by maternal age group: Scotland"))),
+                                         h4("Singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7 by maternal age group: Scotland"))),
                          fluidRow(column(6,
-                                         h4("Number of babies with low apgar 5 score"),
+                                         h4("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7"),
                                          withSpinner(plotlyOutput("apgar_linechart_age_n"))),
                                   column(6,
-                                         h4("Percentage of babies with low apgar 5 score out of all babies with an apgar 5 score"),
+                                         h4("Percentage of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7"),
                                          withSpinner(plotlyOutput("apgar_linechart_age_p")))),
                          fluidRow(column(12,
                                          br(), # spacing
-                                         h4("Babies with low apgar 5 score by maternal deprivation level: Scotland"),
+                                         h4("Singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7 by maternal deprivation level: Scotland"),
                                          actionButton("btn_modal_simd_apgar", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          fluidRow(column(6,
-                                         h4("Number of babies with low apgar 5 score "),
+                                         h4("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7"),
                                          withSpinner(plotlyOutput("apgar_linechart_dep_n"))),
                                   column(6,
-                                         h4("Percentage of babies with low apgar 5 score"),
+                                         h4("Percentage of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7"),
                                          withSpinner(plotlyOutput("apgar_linechart_dep_p"))))
                        )#tagList from if statement
                      }
@@ -181,9 +181,9 @@ plot_apgar_trend <- function(measure, shift, trend){
     centreline_name <- paste0(input$geoname_apgar," average up to end Feb 2020") 
     
     # format y axis
-    yname <- "Percentage of babies with low apgar 5 score (%)"
+    yname <- "Percentage of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7 (%)"
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10%
-    yaxis_plots[["title"]] <- "Percentage of babies (%)"
+    yaxis_plots[["title"]] <- "Percentage of births (%)"
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$quarter)-20, max(plot_data$quarter)+20)
@@ -231,7 +231,7 @@ plot_apgar_linechart <- function(measure){
   
   # adjust chart y axis according to what is being displayed
   if(measure == "percent_apgar"){
-    yaxis_plots[["title"]] <- "Percentage of babies (%)" 
+    yaxis_plots[["title"]] <- "Percentage of births (%)" 
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10%
     
     plot_data <- plot_data %>%  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
@@ -240,7 +240,7 @@ plot_apgar_linechart <- function(measure){
   }
   
   if(measure == "apgar5"){
-    yaxis_plots[["title"]] <- "Number of babies"
+    yaxis_plots[["title"]] <- "Number of births"
     # plot_data <- plot_data %>% #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
     #   filter(ind!="37 to 42 weeks")
   }
@@ -248,8 +248,8 @@ plot_apgar_linechart <- function(measure){
   tooltip <- c(paste0( plot_data$ind,"<br>",
                        "Area: ",plot_data$area_name,"<br>",
                        "Quarter: ",  format(plot_data$quarter, "%B %Y"),"<br>",
-                       "Number of babies: ", plot_data$apgar5,"<br>",
-                       "Percentage of babies: ", format(plot_data$percent_apgar,digits = 1,nsmall=1),"%"))
+                       "Number of births: ", plot_data$apgar5,"<br>",
+                       "Percentage of births: ", format(plot_data$percent_apgar,digits = 1,nsmall=1),"%"))
   
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
@@ -287,14 +287,14 @@ plot_apgar_split <- function(dataset, split, measure){
   
   # adjust chart y axis according to what is being displayed
   if(measure == "perc_low_apgar5_37plus"){
-    yaxis_plots[["title"]] <- "Percentage of babies (%)"
+    yaxis_plots[["title"]] <- "Percentage of births (%)"
     if(split == "age"){
       yaxis_plots[["range"]] <- c(0, 10)}  # forcing range from 0 to 10% for age group
     if(split == "dep"){
       yaxis_plots[["range"]] <- c(0, 10)}  # forcing range from 0 to 10% for dep
   }
   if(measure == "apgar5_37plus"){
-    yaxis_plots[["title"]] <- "Number of babies"
+    yaxis_plots[["title"]] <- "Number of births"
   }
   
   #adjust datasets according to which data split to be displayed
