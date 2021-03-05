@@ -97,6 +97,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("mod_button", "Method of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
                           actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
+                          actionLink("apgar_button", "Apgar 5", width="150px"),br(),
                           actionLink("mentalhealth_button", "Mental health", width="150px"), br(),
                           actionLink("cancer_button", "Cancer", width="150px")
 
@@ -116,6 +117,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
                                      bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
+                                     bsCollapsePanel("Apgar 5", uiOutput("apgar_commentary")),
                                      bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
 
                           )))
@@ -395,72 +397,98 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
          mainPanel(width = 12,
                    uiOutput("top_explorer")
          )# mainPanel bracket
-), # tabPanel bracket
+) # tabPanel bracket
+), # navbar menu bracket
+###############################################.
+## Births and Babies ----
+##############################################.
+navbarMenu("Births and Babies", icon = icon("venus"),
 ###############################################.
 ## Inductions Tab ----
 ###############################################.
 tabPanel(title = "Induction of labour", icon = icon("hand-holding-medical"), value = "inductions",
-         wellPanel(
-           column(4, div(title="Select a breakdown",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_induct", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
+        wellPanel(
+          column(4, div(title="Select a breakdown",
+                        p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                        selectInput("geotype_induct", label = NULL, choices= c("Scotland", "Health board"),
+                                    selected = "Scotland")),
                   uiOutput("geoname_ui_induct")),
-           column(4,offset=4,
+          column(4,offset=4,
                   actionButton("btn_induct_modal", "Data source: SMR02", icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton("download_induct_data", "Download data"),
                   fluidRow(br()),
                   actionButton("jump_commentary_induction","Go to commentary"))
-           ), #well panel
-           mainPanel(width = 12,
-                     uiOutput("induct_explorer")
-           )# mainPanel bracket
-         ), # tabPanel bracket
+        ), #well panel
+        mainPanel(width = 12,
+                   uiOutput("induct_explorer")
+        )# mainPanel bracket
+), # tabPanel bracket
 ###############################################.
 ## Mode of delivery Tab ----
 ###############################################.
 tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mod",
-         wellPanel(
+        wellPanel(
            column(4, div(title="Select a breakdown",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_mod", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
+                        p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                        selectInput("geotype_mod", label = NULL, choices= c("Scotland", "Health board"),
+                                    selected = "Scotland")),
                   uiOutput("geoname_ui_mod")),
-           column(4,offset=4,
+          column(4,offset=4,
                   actionButton("btn_mod_modal", "Data source: SMR02", icon = icon('question-circle')),
                   fluidRow(br()),
-
+                             
                   downloadButton("download_mod_data", "Download data"),
                   fluidRow(br()),
-
+                             
                   actionButton('jump_commentary_mod','Go to commentary'))
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("mod_explorer")
-         )# mainPanel bracket
-  ), # tabPanel bracket
+        ), #well panel
+        mainPanel(width = 12,
+                  uiOutput("mod_explorer")
+        )# mainPanel bracket
+), # tabPanel bracket
 ###############################################.
 ## Gestation at delivery Tab ----
 ###############################################.
 tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "gestation",
-         wellPanel(
-           column(4, div(title="Select a breakdown",
+        wellPanel(
+          column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
                          selectInput("geotype_gest", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
+                                    selected = "Scotland")),
                   uiOutput("geoname_ui_gest")),
-           column(4,offset=4,
+          column(4,offset=4,
                   actionButton("btn_gest_modal", "Data source: SMR02", icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton("download_gest_data", "Download data"),
                   fluidRow(br()),
                   actionButton("jump_commentary_gestation","Go to commentary"))
+        ), #well panel
+        mainPanel(width = 12,
+                  uiOutput("gestation_explorer")
+        )# mainPanel bracket
+ ), # tabPanel bracket  
+###############################################.
+## Apgar Tab ----
+###############################################.
+tabPanel(title = "Apgar 5", icon = icon("hand-holding-medical"), value = "apgar",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_apgar", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_apgar")),
+           column(4,offset=4,
+                  actionButton("btn_apgar_modal", "Data source: ???", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_apgar_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_apgar","Go to commentary"))
          ), #well panel
          mainPanel(width = 12,
-                   uiOutput("gestation_explorer")
+                   uiOutput("apgar_explorer")
          )# mainPanel bracket
-  ) # tabPanel bracket
+) # tabPanel bracket
 ), # navbar menu bracket
 ##############################################.
 # Data ----
