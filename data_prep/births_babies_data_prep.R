@@ -453,7 +453,12 @@ apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/
          area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                           area_name=="Scotland" ~ "Scotland"),
          type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD5" ~ "dep"),
-         category=as.character(category))
+         category=as.character(category),
+         category = case_when(category == "-under 20" ~ "Under 20",
+                              category == "40+" ~ "40 and over",
+                              category == "1" ~ "1 - most deprived",
+                              category == "5" ~ "5 - least deprived",
+                                     TRUE ~ as.character(category)))
 
 saveRDS(apgar_scot, "shiny_app/data/apgar_scot_data.rds")
 saveRDS(apgar_scot, paste0(data_folder,"final_app_files/apgar_scot_data_", 
