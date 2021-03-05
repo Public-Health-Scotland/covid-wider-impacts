@@ -157,6 +157,13 @@ breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
 child_dev <- readRDS("data/child_dev.rds")
 
+# Apgar (births and babies tab)
+apgar_extract_date <- "18th February 2021"
+apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
+apgar_scot <- readRDS("data/apgar_scot_data.rds")
+apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
+apgar_download <- readRDS("data/apgar_download_data.rds")
+
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
@@ -210,12 +217,13 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "4-5 year child health review" = "fourtofive_visit",
                         "Child development" = "childdev",
                         "Breastfeeding" = "breastfeeding",
-                        "Stillbirths and infant deaths" = "perinatal",
                         "Termination of pregnancy" = "top",
                         "Antenatal bookings" = "ante_booking",
+                        "Stillbirths and infant deaths" = "perinatal",                        
                         "Induction of labour" = "induct",
                         "Method of delivery" = "mod",
                         "Gestation at delivery" = "gestation",
+                        "Apgar 5" = "apgar",
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
