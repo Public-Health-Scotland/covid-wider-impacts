@@ -118,6 +118,11 @@ save_final_file("gestation_linechart_data", "24_Feb_21")
 save_final_file("gestation_download_data", "24_Feb_21")
 ## B&B - Stillbirths and perinatal mortality ----
 save_final_file("perinatal", "17_Feb_21")
+## B&B - Apgar ----
+save_final_file("apgar_runchart_data", "04_Mar_21")
+save_final_file("apgar_scot_data", "05_Mar_21")
+save_final_file("apgar_linechart_data", "04_Mar_21")
+save_final_file("apgar_download_data", "04_Mar_21")
 ##########################################################.
 ## Mental health - Prescribing ----
 save_final_file("mentalhealth_drugs", "01_Mar_21")
