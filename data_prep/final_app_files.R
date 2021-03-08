@@ -31,7 +31,7 @@ saveRDS(deaths, "shiny_app/data/deaths.rds")
 saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
 ##########################################################.
 ## Cancer ----
-save_final_file("cancer_data_2", "18_Dec_20")
+save_final_file("cancer_data_2", "24_Feb_21")
 ##########################################################.
 ## RAPID ----
 save_final_file("rapid", "01_Mar_21")

@@ -3,11 +3,11 @@ credentials <- readRDS("admin/credentials.rds")
 
 function(input, output, session) {
   
-  # Shinymanager Auth
+ # Shinymanager Auth
   res_auth <- secure_server(
     check_credentials = check_credentials(credentials)
   )
-  
+
   output$auth_output <- renderPrint({
     reactiveValuesToList(res_auth)
   })
@@ -15,29 +15,30 @@ function(input, output, session) {
   # For debugging
    # observeEvent(input$browser, browser())
   
-  ###############################################.
-  ## New content and future updates ----
-  ###############################################.
-  observeEvent(input$new_next, 
+  ##############################################.
+  # New content and future updates ----
+  ##############################################.
+  observeEvent(input$new_next,
                  showModal(modalDialog(# Cardio A&E MODAL
                    title = "New content added and future updates",
                    h4("New content and updates"),
                    tags$ul(
+                     tags$li("10th March - Update of cancer section data."),
                      tags$li("3rd March - Update of all data, except cancer section."),
                      tags$li("3rd February - Update of all data, except cancer section."),
                      tags$li("13th January - Summary, cardiovascular and mental health tabs data updated."),
                      tags$li("23rd December - Child health and cancer tabs data updated."),
-                     tags$li("16th December - New sections added for pregnancy data: 
+                     tags$li("16th December - New sections added for pregnancy data:
                               induction of labour, method of delivery and gestation at delivery.")                   ),
                    h4("Future updates"),
                    p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                    tags$ul(
-                     tags$li("10th March - Update of cancer section data."),
-                     tags$li("17th March - New data on outpatient appointments."),
-                     tags$li("7th April - Update of all data, except cancer section."),
+                     tags$li("31st March - New data on outpatient appointments."),
+                     tags$li("7th April - Monthly update of data (most sections)."),
                      tags$li("14th April - New data on Apgar scores and location of birth for extremely preterm infants."),
                      tags$li("28th April - New data on self-harm hospital admissions."),
-                     tags$li("5th May - Update of all data, except cancer section.")
+                     tags$li("5th May - Monthly update of data (most sections)."),
+                     tags$li("2nd June - New data on injury hospital admissions.")
                    ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -52,7 +53,7 @@ function(input, output, session) {
   ###############################################.
   # Summary trends tab
   source(file.path("summary_tab.R"),  local = TRUE)$value
-  
+
   ##############################################.
   # Cardiovascular tab
   source(file.path("cardio_tab.R"),  local = TRUE)$value
@@ -60,11 +61,11 @@ function(input, output, session) {
   ###############################################.
   # Immunisation tab
   source(file.path("immunisation_tab.R"),  local = TRUE)$value
-  
+
   ###############################################.
   # Child health reviews tab
   source(file.path("child_health_tab.R"),  local = TRUE)$value
- 
+
   ###############################################.
   # Pregnancy tabs
   source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
@@ -72,11 +73,11 @@ function(input, output, session) {
   source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
   source(file.path("inductions_tab.R"),  local = TRUE)$value
   source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
-  
+
   ###############################################.
   # Perinatal tab
   source(file.path("perinatal_tab.R"),  local = TRUE)$value
-  
+
   ###############################################.
   # Child development tab
   source(file.path("child_dev_tab.R"),  local = TRUE)$value
@@ -84,7 +85,7 @@ function(input, output, session) {
   ###############################################.
   # Breastfeeding tab
   source(file.path("breastfeeding_tab.R"),  local = TRUE)$value
-  
+
   ###############################################.
   # Mental health tab
   source(file.path("mental_health_tab.R"),  local = TRUE)$value
@@ -96,10 +97,10 @@ function(input, output, session) {
   ###############################################.
   # Data tab
   source(file.path("data_tab.R"),  local = TRUE)$value
-  
-###############################################.
-## jump to data pages from commentary ----
-###############################################.
+
+##############################################.
+# jump to data pages from commentary ----
+##############################################.
   observeEvent(input$jump_to_summary, {updateTabsetPanel(session, "intabset", selected = "summary")})
   observeEvent(input$jump_to_cardio, {updateTabsetPanel(session, "intabset", selected = "cardio")})
   observeEvent(input$jump_to_table, {updateTabsetPanel(session, "intabset", selected = "table")})
@@ -117,7 +118,7 @@ function(input, output, session) {
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
   observeEvent(input$jump_to_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "mentalhealth")})
   observeEvent(input$jump_to_cancer, {updateTabsetPanel(session, "intabset", selected = "cancer")})
-  
+
   ###############################################.
   ## jump to commentary tab from data tabs ----
   ###############################################.
