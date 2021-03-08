@@ -18,7 +18,12 @@ mentalhealth_drugs <- rbind(read_xlsx(paste0(data_folder, "prescribing_mh/Weekly
                                      read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_57_05-07-2020 to 04-10-2020.xlsx")),
                                      read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-14-Weekly new incident emessage - Multi-condition_11-10-2020 to 10-01-2021.xlsx")) %>% 
                                        filter(between(as.Date(`Week Ending`), as.Date("2020-10-11"), as.Date("2020-10-18"))), 
-                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-28-Weekly new incident emessage - Multi-condition_25-10-2020 to 24-01-2021.xlsx"))) %>% 
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-28-Weekly new incident emessage - Multi-condition_25-10-2020 to 24-01-2021.xlsx")) %>%
+                                       filter(between(as.Date(`Week Ending`), as.Date("2020-10-25"), as.Date("2020-11-01"))), 
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-11-Weekly new incident emessage - Multi-condition.xlsx")) %>%
+                                      filter(between(as.Date(`Week Ending`), as.Date("2020-11-08"), as.Date("2020-11-15"))), 
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-25-Weekly new incident emessage - Multi-condition.xlsx"))) %>%
+  
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -48,7 +53,7 @@ mentalhealth_drugs_all <- mentalhealth_drugs %>%
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all) %>% 
   arrange(area_name, area_type, category, week_ending) # so plotly works correctly
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-01-24")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-02-21")
 
 ###############################################.
 ## A&E - mental health ----
@@ -58,7 +63,7 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-0
 mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
-                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to24012021.csv"))) %>%
+                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to21022021.csv"))) %>%
   clean_names() 
 
 # List of terms used to identify mh cases
@@ -170,13 +175,13 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-01-24")
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-02-21")
 
 ###############################################.
 ## OOH - mental health ----
 ###############################################.
 
-mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-02-01-GP OOH MH WIDER IMPACT.txt")) %>%
+mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-03-01-GP OOH MH WIDER IMPACT.txt")) %>%
   janitor::clean_names() %>%
   rename(hb=patient_nhs_board_description_current, 
          dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
@@ -215,4 +220,4 @@ mh_ooh %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-01-24")
+prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-02-21")

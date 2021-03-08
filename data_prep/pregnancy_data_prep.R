@@ -10,7 +10,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all antenatal booking data files prepared
-antenatal_booking_date <- "13012021"
+antenatal_booking_date <- "15022021"
 
 # Excel workbook containing number of women booking for antenatal care - weekly file (Scotland and NHS board except small islands)
 ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
@@ -18,15 +18,16 @@ ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/We
   janitor::clean_names() %>%
   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>% 
-  filter(week_book_starting < "2021-01-11")
+  filter(week_book_starting < "2021-02-08")
 
 # Excel workbook containing avergage gestation of women booking for antenatal care  - weekly file (Scotland and NHS board except small islands)
 ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
                                 sheet = "Data for Dashboard Charts") %>%
   janitor::clean_names() %>%
-  rename(centreline_g=centreline, dottedline_g=dottedline, booked_g=booked) %>%
+  rename(centreline_g=centreline, dottedline_g=dottedline, 
+         centreline_g_t=tcentreline, dottedline_g_t=tdottedline, booked_g=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>% 
-  filter(week_book_starting < "2021-01-11")
+  filter(week_book_starting < "2021-02-08")
 
 # join two (numbers and average gestation) booking sheets to form single file for shiny app
 ante_booking <- left_join(ante_booking_no, ante_booking_gest, by = c("week_book_starting","area"))
@@ -75,7 +76,15 @@ ante_booking <- ante_booking %>%
                                      & lag(ave_gest, 4) > dottedline_g & lag(ave_gest, 5) > dottedline_g) |
                                       (ave_gest < dottedline_g & lag(ave_gest, 1) < dottedline_g 
                                        & lag(ave_gest, 2) < dottedline_g & lag(ave_gest, 3) < dottedline_g 
-                                       & lag(ave_gest, 4) < dottedline_g & lag(ave_gest, 5) < dottedline_g) ~ T , T ~ F),
+                                       & lag(ave_gest, 4) < dottedline_g & lag(ave_gest, 5) < dottedline_g) ~ T , 
+                                    area_name == "NHS Tayside" & week_book_starting < "2020-08-03" & 
+                                      ((ave_gest > dottedline_g_t & lag(ave_gest, 1) > dottedline_g_t 
+                                        & lag(ave_gest, 2) > dottedline_g_t & lag(ave_gest, 3) > dottedline_g_t 
+                                        & lag(ave_gest, 4) > dottedline_g_t & lag(ave_gest, 5) > dottedline_g_t) |
+                                         (ave_gest < dottedline_g_t & lag(ave_gest, 1) < dottedline_g_t 
+                                          & lag(ave_gest, 2) < dottedline_g_t & lag(ave_gest, 3) < dottedline_g_t 
+                                          & lag(ave_gest, 4) < dottedline_g_t & lag(ave_gest, 5) < dottedline_g_t)) ~ T,
+                                    T ~ F),
     shift_booked_gest = case_when(shift_i_booked_gest == T | lead(shift_i_booked_gest, 1) == T | lead(shift_i_booked_gest, 2) == T
                                   | lead(shift_i_booked_gest, 3) == T | lead(shift_i_booked_gest, 4) == T
                                   | lead(shift_i_booked_gest, 5) == T  ~ T, T ~ F),
@@ -138,21 +147,35 @@ ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download
          number_of_women_booking_gest_10to12wks=g_10to12wks,
          number_of_women_booking_gest_over_12wks=g_13pluswks,
          centreline_gestation=centreline_g,
-         dottedline_gestation=dottedline_g) %>%
+         dottedline_gestation=dottedline_g,
+         centreline_gestation_tayside=centreline_g_t,
+         dottedline_gestation_tayside=dottedline_g_t) %>%
   select(time_period, booking_week_beginning, booking_month, area_name, area_type, chart_type, chart_category,
          number_of_women_booking, centreline_number, dottedline_number,
          number_of_women_booking_gest_under_10wks,number_of_women_booking_gest_10to12wks,number_of_women_booking_gest_over_12wks,
-         average_gestation_at_booking, centreline_gestation, dottedline_gestation)
+         average_gestation_at_booking, centreline_gestation, dottedline_gestation, centreline_gestation_tayside, dottedline_gestation_tayside)
 
 saveRDS(ante_booking_download, "shiny_app/data/ante_booking_download.rds")
 saveRDS(ante_booking_download, paste0(data_folder,"final_app_files/ante_booking_download_", 
                                       format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# Saving data for open data platform
+ante_booking_download <- ante_booking_download %>% 
+  select(area_name, area_type, booking_month, booking_week_beginning, category = chart_category,
+         number_of_women_booking, number_of_women_booking_gest_under_10wks,
+         number_of_women_booking_gest_10to12wks, number_of_women_booking_gest_over_12wks,
+         average_gestation_at_booking) %>% 
+  mutate(category = case_when(category %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived") ~ paste0(category),
+                              TRUE ~ "All"))
+
+saveRDS(ante_booking_download, paste0(open_data,"ante_booking.rds"))
 
 ###############################################.
 ## Pregnancy (terminations) ----
 ###############################################.
 #field with date all antenatal booking data files prepared
-top_date <- "2021-01-12"
+top_date <- "2021-02-09"
 
 ## Termination data for run chart (scotland and nhs board) - monthly
 top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/",top_date,
@@ -291,12 +314,21 @@ saveRDS(top_download, "shiny_app/data/top_download.rds")
 saveRDS(top_download, paste0(data_folder,"final_app_files/top_download_", 
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+# Saving data for open data platform
+top_download <- top_download %>% 
+  select(area_name, area_type, termination_month, category = chart_category,
+         number_of_terminations, number_of_terminations_gest_under_10wks,
+         number_of_terminations_gest_10to12wks, number_of_terminations_gest_over_12wks,
+         average_gestation_at_termination)
+
+saveRDS(top_download, paste0(open_data,"terminations_preg.rds"))
+
 ###############################################.
 ## Pregnancy (mode of delivery) ----
 ###############################################.
 #field with date data files prepared
-mod_folder <- "20210112"
-mod_date <- "2021-01-12"
+mod_folder <- "20210215"
+mod_date <- "2021-02-15"
 
 ##mode of delivery data supplied in 4 files: runchart data, line charts for scotland (age and dep split), line charts for NHS board and data download
 
@@ -394,11 +426,39 @@ saveRDS(mod_download, "shiny_app/data/mod_download_data.rds")
 saveRDS(mod_download, paste0(data_folder,"final_app_files/mod_download_data_", 
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+# Saving data for open data platform
+mod_download <- mod_download %>% 
+  select(-c(chart_type, chart_category, dottedline_csection_all, dottedline_csection_elec,
+            dottedline_csection_emer, indicator, centreline_csection_all, centreline_csection_elec,
+            centreline_csection_emer, perc_denominator)) %>% 
+  rename("Number of births - All births" = births_all, 
+         "Number of births - Caesarean section" = csection_all,
+         "Number of births - emergency Caesarean section" = csection_emer,
+         "Number of births - elective Caesarean section" = csection_elec,
+         "Number of births - Other/Not Known" = other_not_known,
+         "Number of births - assisted vaginal delivery including breech" = assisted_vaginal_inc_breech, 
+         "Number of births - spontaneous_vaginal_delivery" = spontaneous_vaginal,
+         "Percentage (%) of births - assisted vaginal delivery including breech" = perc_assisted_vaginal_inc_breech, 
+         "Percentage (%) of births - Caesarean section" = perc_csection_all,
+         "Percentage (%) of births - emergency Caesarean section" = perc_csection_emer,
+         "Percentage (%) of births - elective Caesarean section" = perc_csection_elec,
+         "Percentage (%) of births - spontaneous vaginal delivery" = perc_spontaneous_vaginal,
+         "Percentage (%) of births - other/not known" = perc_other_not_known) %>% 
+  mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived", "Unknown") ~ paste0(variable),
+                              TRUE ~ "All")) %>% 
+  mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                              TRUE ~ "All"))
+
+
+saveRDS(mod_download, paste0(open_data,"method_delivery.rds"))
+
 ###############################################.
 ## Pregnancy (inductions) ----
 ###############################################.
-induct_folder <- "20210112"
-induct_date <- "2021-01-12"
+induct_folder <- "20210215"
+induct_date <- "2021-02-15"
 
 ## 1-RUNCHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
@@ -480,12 +540,34 @@ saveRDS(induct_download, "shiny_app/data/induct_download_data.rds")
 saveRDS(induct_download, paste0(data_folder,"final_app_files/induct_download_data_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+# Saving data for open data platform
+induct_download <- induct_download %>% 
+  select(area_name, area_type, month_of_discharge, subgroup, variable,
+         induced_37_42, not_induced_37_42, unknown_induced_37_42, births_37_42,
+         perc_induced_37_42, perc_not_induced_37_42, perc_unknown_induced_37_42) %>% 
+  rename("Total number of singleton live births at 37-42 weeks gestation" = births_37_42,
+         "Number of singleton live births at 37-42 weeks gestation that followed induction of labour" = induced_37_42,
+         "Number of singleton live births at 37-42 weeks gestation that were not induced" = not_induced_37_42,
+         "Number of singleton live births at 37-42 weeks gestation unknown" = unknown_induced_37_42,
+         "Percentage (%) of singleton live births at 37-42 weeks gestation that followed induction of labour" = perc_induced_37_42,
+         "Percentage (%) of singleton live births at 37-42 weeks gestation that were not induced" = perc_not_induced_37_42,
+         "Percentage (%) of singleton live births at 37-42 weeks gestation unknown" = perc_unknown_induced_37_42) %>% 
+  mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived", "Unknown") ~ paste0(variable),
+                              TRUE ~ "All")) %>% 
+  mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                              TRUE ~ "All"))
+
+
+saveRDS(induct_download, paste0(open_data,"induction_labour.rds"))
+
 ###############################################.
 ## Pregnancy (gestation at delivery) ----
 ###############################################.
 
-gestation_folder <- "20210112"
-gestation_date <- "2021-01-12"
+gestation_folder <- "20210215"
+gestation_date <- "2021-02-15"
 
 ## 1-RUNCHART DATA
 gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_RUNCHART_gestation_",gestation_date,".rds")) %>%  
@@ -587,3 +669,32 @@ gestation_download <- read_csv(paste0(data_folder, "pregnancy/gestation_at_deliv
 saveRDS(gestation_download, "shiny_app/data/gestation_download_data.rds") 
 saveRDS(gestation_download, paste0(data_folder,"final_app_files/gestation_download_data_", 
                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+# Saving data for open data platform
+gestation_download %<>% 
+  select(-c(chart_type, chart_category, dottedline_32_36, dottedline_42plus, dottedline_under32,
+            dottedline_under37, indicator, centreline_32_36, centreline_42plus, centreline_under32,
+            centreline_under37, perc_denominator)) %>% 
+  rename("Number of births - All births (18-44 weeks gestation)" = births_18_44, 
+         "Number of births - 32-36 weeks gestation" = births_32_36,
+         "Number of births - 37-41 weeks gestation" = births_37_41,
+         "Number of births - At or over 42 weeks gestation" = births_42plus,
+         "Number of births - Unknown gestation" = births_gest_unknown,
+         "Number of births - Under 32 weeks gestation" = births_under32, 
+         "Number of births - Under 37 weeks gestation" = births_under37,
+         "Number of births - All births" = births_all,
+         "Percentage (%) of births - 32-36 weeks gestation" = perc_32_36, 
+         "Percentage (%) of births - 37-41 weeks gestation" = perc_37_41,
+         "Percentage (%) of births - At or over 42 weeks gestation" = perc_42plus,
+         "Percentage (%) of births - Under 32 weeks gestation" = perc_under32,
+         "Percentage (%) of births - Under 37 weeks gestation" = perc_under37) %>% 
+  mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived", "Unknown") ~ paste0(variable),
+                              TRUE ~ "All")) %>% 
+  mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                              TRUE ~ "All"))
+
+saveRDS(gestation_download, paste0(open_data,"gestation.rds"))
+
+##END

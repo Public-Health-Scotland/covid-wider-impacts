@@ -362,9 +362,9 @@ if (is.data.frame(plot_data) && nrow(plot_data) == 0)
 
 mod_download_data <- reactive({
   mod_download %>%  
-    rename(assisted_vaginal_inc_breech = assisted_vaginal, spontaneous_vaginal = spontaneous,
-          perc_assisted_vaginal_inc_breech = perc_assisted_vaginal,
-          perc_spontaneous_vaginal = perc_spontaneous)
+    rename(assisted_vaginal = assisted_vaginal_inc_breech, spontaneous = spontaneous_vaginal,
+           perc_assisted_vaginal = perc_assisted_vaginal_inc_breech,
+           perc_spontaneous = perc_spontaneous_vaginal)
 })
 
 output$download_mod_data <- downloadHandler(
@@ -388,6 +388,8 @@ observeEvent(input$switch_to_mod,{
 output$mod_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mod",label = "Go to data"), #this button can only be used once
+    h2("Method of delivery - 3rd March 2021"),
+    p("In this third release of information on method of delivery (3rd March 2021) data have been updated to include women discharged after delivery up to and including November 2020.  The data for all Scotland show that both the proportion of emergency caesarean sections and elective caesarean sections have remained higher than the pre-pandemic average for a number of consecutive months.  However, the shift in the proportion of elective caesarean sections predates the COVID-19 pandemic.  In November 2020, NHS Ayrshire & Arran and NHS Grampian continue their run of consecutive months showing a higher proportion of elective sections than their pre-pandemic average. NHS Dumfries & Galloway, NHS Greater Glasgow & Clyde and NHS Fife have continued to show consecutive months with a higher proportion of emergency sections than their pre-pandemic average.  However, data are thought to be incomplete for NHS Fife for November 2020 so this proportion could change in future releases of the dashboard."),
     h2("Method of delivery - 3rd February 2021"),
     p("In this second release of information on method of delivery (3rd February 2021) data have been updated to include women discharged after delivery up to and including October 2020.  Both the proportion of emergency caesarean sections and elective caesarean sections in Scotland as a whole have increased over this time. The rise appears to be driven by the increase in elective caesarean proportions with a notable increase in deliveries by elective caesarean from 16.4% to 18.4% between August and October 2020. The data by NHS Board of residence show more varied patterns. An increase in the proportion of elective caesareans is evident in some, but not all, NHS Board areas. For example NHS Greater Glasgow & Clyde (GGC), NHS Tayside and NHS Ayrshire and Arran, have a higher proportion of elective sections, although the shift precedes the pandemic period in GGC and the proportion of emergency sections in GGC is also elevated from April to October 2020. NHS Lothian and NHS Grampian also show an increase in both categories of caesarean section during 2020. The percentage of emergency and all caesarean sections are up in NHS Dumfries & Galloway from May to October 2020.  The percentage of emergency caesarean sections is down in NHS Lanarkshire from February to September 2020.  NHS Fife shows a sharper increase in emergency caesarean section proportions than elective caesareans, however, data are thought to be incomplete for NHS Fife for October 2020 so this proportion is likely to change in future releases of the dashboard."),
     h2("Method of delivery - 16th December 2020"),

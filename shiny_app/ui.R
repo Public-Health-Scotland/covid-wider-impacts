@@ -1,12 +1,15 @@
 #UI
-# secure_app( #uncomment if needing password protection
+#secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
-  title = div(tags$a(img(src="phs-logo.png", height=40), href= "https://www.publichealthscotland.scot/"),
-              style = "position: relative; top: -5px;"), 
+  title = div(tags$a(img(src="phs-logo.png", width=120, alt = "Public Health Scotland logo"), 
+                     href= "https://www.publichealthscotland.scot/",
+                     target = "_blank"),
+              style = "position: relative; top: -10px;"), 
   windowTitle = "COVID-19 wider impacts", #title for browser tab
   header = tags$head(includeCSS("www/styles.css"), # CSS styles
+                     HTML("<html lang='en'>"),
                      tags$link(rel="shortcut icon", href="favicon_phs.ico"), #Icon for browser tab
                      #Including Google analytics
                      includeScript("google-analytics.js")), 
@@ -146,7 +149,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   )# mainPanel bracket
 ), # tabpanel bracket
 ##############################################.
-# Cardiovascular ----
+## Cardiovascular ----
 ##############################################.
 tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          wellPanel(
@@ -171,9 +174,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ## Child health navbarmenu ----
 ###############################################.
  navbarMenu("Child health", icon = icon("child"),
-###############################################.
-## Immunisation Tab ----
-###############################################.
+##############################################.
+# Immunisation Tab ----
+##############################################.
 tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -200,9 +203,9 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
          )# mainPanel bracket
 ), # tabpanel bracket
 ###############################################.
-## Child Health Tab ----
+## Child Health reviews ----
 ##############################################.
-tabPanel(title = "Child Health Reviews", icon = icon("child"), value = "child_health",
+tabPanel(title = "Child health reviews", icon = icon("child"), value = "child_health",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -274,7 +277,7 @@ tabPanel(title = "Child development", icon = icon("seedling"), value = "child_de
                    uiOutput("childdev_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-###############################################.
+##############################################.
 ## Perinatal ----
 ###############################################.
 tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal_mortality",
@@ -295,7 +298,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
   ) # tabpanel bracket
- ), #navbarMenu bracket
+  ), #navbarMenu bracket
 ###############################################.
 ## Cancer ----
 ###############################################.
@@ -325,8 +328,8 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
          mainPanel(width = 12,
                    uiOutput("cancer_explorer")
          )# mainPanel bracket
-) , # tabpanel bracket
-##############################################
+), # tabpanel bracket
+##############################################.
 # Mental Health ----
 ##############################################.
 tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
@@ -459,14 +462,14 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
          )# mainPanel bracket
   ) # tabPanel bracket
 ), # navbar menu bracket
-###############################################.
-## Data ----
-###############################################.
+##############################################.
+# Data ----
+##############################################.
 tabPanel(title = "Data", icon = icon("table"), value = "table",
          p("This section allows you to view the data in table format.
         You can use the filters to select the data you are interested in.
         You can also download the data as a csv using the download button.
-        The data is also hosted in the",
+        Some of the data is also hosted in the",
 
            tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
                   "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
@@ -479,5 +482,5 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
      ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-  # )#secure app
+#  )#secure app
 #END
