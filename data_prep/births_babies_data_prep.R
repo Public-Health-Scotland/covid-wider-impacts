@@ -503,4 +503,117 @@ saveRDS(apgar_download, "shiny_app/data/apgar_download_data.rds")
 saveRDS(apgar_download, paste0(data_folder,"final_app_files/apgar_download_data_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+###############################################.
+## Preterm babies in NICU ----
+###############################################.
+
+preterm_date <- "2021_02_18" 
+
+# P CHART PRETERM DATA
+preterm <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_marupdate.xlsx"),
+                                    sheet = "Stillbirth", skip = 2)) %>% 
+  mutate(type = "stillbirths")%>%
+  janitor::clean_names() %>%
+  select(quarter_of_year=sample_2, number_of_deaths_in_quarter=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
+         upper_cl_3_std_dev:type) %>% 
+  mutate(area_name="Scotland", #creating geo variables
+         area_type="Scotland",
+         quarter_of_year = gsub(" ", "0", quarter_of_year), #formatting date
+         quarter_of_year = as.Date(paste0(quarter_of_year,"1"), format="%Y%m%d")) 
+
+# Creating rules for spc charts
+preterm %<>% 
+  arrange(type, area_name, quarter_of_year) %>% 
+  mutate(upper_sigma1 = rate + stdev,
+         lower_sigma1 = rate + stdev) %>% 
+  group_by(type, area_name) %>% 
+  # for rules: outliers when over or under 3 sigma limit
+  mutate(outlier = case_when(rate>upper_cl_3_std_dev | rate< lower_cl_3_std_dev ~ T, T ~ F),
+         # Shift: run of 8or more consecutive data points above or below the centreline
+         # First id when this run is happening and then iding all points part of it
+         shift_i = case_when((rate > centreline & lag(rate, 1) > centreline 
+                              & lag(rate, 2) > centreline & lag(rate, 3) > centreline 
+                              & lag(rate, 4) > centreline & lag(rate, 5) > centreline
+                              & lag(rate, 6) > centreline & lag(rate, 7) > centreline) |
+                               (rate < centreline & lag(rate, 1) < centreline 
+                                & lag(rate, 2) < centreline & lag(rate, 3) < centreline 
+                                & lag(rate, 4) < centreline & lag(rate, 5) < centreline
+                                & lag(rate, 6) < centreline & lag(rate, 7) < centreline) ~ T , T ~ F),
+         shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
+                           | lead(shift_i, 3) == T | lead(shift_i, 4) == T
+                           | lead(shift_i, 5) == T | lead(shift_i, 6) == T
+                           | lead(shift_i, 7) == T ~ T, T ~ F),
+         # Trend: A run of 6 or more consecutive data points
+         trend_i = case_when((rate > lag(rate ,1) & lag(rate, 1) > lag(rate, 2) 
+                              & lag(rate, 2) > lag(rate, 3)  & lag(rate, 3) > lag(rate, 4) 
+                              & lag(rate, 4) > lag(rate, 5) ) |
+                               (rate < lag(rate ,1) & lag(rate, 1) < lag(rate, 2) 
+                                & lag(rate, 2) < lag(rate, 3)  & lag(rate, 3) < lag(rate, 4) 
+                                & lag(rate, 4) < lag(rate, 5) ) 
+                             ~ T , T ~ F),
+         trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
+                           | lead(trend_i, 3) == T | lead(trend_i, 4) == T
+                           | lead(trend_i, 5) == T  ~ T, T ~ F),
+         #Outer One –Third: Two out of three consecutive data points which sit close to one of the control limits(within 2 and 3 sigma)
+         outer_i = case_when((rate > upper_wl_2_std_dev & rate < upper_cl_3_std_dev) & 
+                               ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) | 
+                                  (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
+         outer = case_when(outer_i == T | lead(outer_i, 1) == T | lead(outer_i, 2) == T ~ T, T ~ F),
+         # Inner One -Third: 15 or more consecutive data points that lie close to the centreline(within 1 sigma).
+         inner_i = case_when(rate < upper_sigma1 & rate > lower_sigma1 &
+                               lag(rate, 1) < upper_sigma1 & lag(rate, 1) > lower_sigma1 &
+                               lag(rate, 2) < upper_sigma1 & lag(rate, 2) > lower_sigma1 &
+                               lag(rate, 3) < upper_sigma1 & lag(rate, 3) > lower_sigma1 &
+                               lag(rate, 4) < upper_sigma1 & lag(rate, 4) > lower_sigma1 &
+                               lag(rate, 5) < upper_sigma1 & lag(rate, 5) > lower_sigma1 &
+                               lag(rate, 6) < upper_sigma1 & lag(rate, 6) > lower_sigma1 &
+                               lag(rate, 7) < upper_sigma1 & lag(rate, 7) > lower_sigma1 &
+                               lag(rate, 8) < upper_sigma1 & lag(rate, 8) > lower_sigma1 &
+                               lag(rate, 9) < upper_sigma1 & lag(rate, 9) > lower_sigma1 &
+                               lag(rate, 10) < upper_sigma1 & lag(rate, 10) > lower_sigma1 &
+                               lag(rate, 11) < upper_sigma1 & lag(rate, 11) > lower_sigma1 &
+                               lag(rate, 12) < upper_sigma1 & lag(rate, 12) > lower_sigma1 &
+                               lag(rate, 13) < upper_sigma1 & lag(rate, 13) > lower_sigma1 &
+                               lag(rate, 14) < upper_sigma1 & lag(rate, 14) > lower_sigma1 ~ T, T ~F),
+         inner = case_when(inner_i == T | lead(inner_i, 1) == T | lead(inner_i, 2) == T
+                           | lead(inner_i, 3) == T | lead(inner_i, 4) == T
+                           | lead(inner_i, 5) == T | lead(inner_i, 6) == T
+                           | lead(inner_i, 7) == T | lead(inner_i, 8) == T
+                           | lead(inner_i, 9) == T | lead(inner_i, 10) == T
+                           | lead(inner_i, 11) == T | lead(inner_i, 12) == T
+                           | lead(inner_i, 13) == T | lead(inner_i, 14) == T ~T, T ~ F)) %>%
+  ungroup %>% 
+  select(-shift_i, -trend_i, -outer_i, -inner_i) 
+
+saveRDS(preterm, "shiny_app/data/preterm.rds")
+saveRDS(preterm, paste0(data_folder,"final_app_files/preterm_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+# # saving perinatal open data files
+# preterm %<>% 
+#   select(area_name, quarter_of_year, type, number_of_deaths_in_quarter, rate, 
+#          relevant_births = sample_size)
+# 
+# saveRDS(preterm, paste0(open_data, "preterm_data.rds"))
+
+## 2- LINECHART DATA preterm for Scotland
+preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/WI_DELIVERIES_LINECHART_Neonate_",preterm_date,".rds")) %>%  
+  rename(area_name=HBRES, quarter=DATE) %>%
+  janitor::clean_names() %>%
+  mutate(tot_neonate_23_26=neonate_23_26) %>%
+  #reshape data file for ease of creation of line chart with percentages
+  pivot_longer(cols = nicu_23_26:neonate_23_26, names_to = "ind",values_to = "mats") %>%
+  mutate(quarter=as.Date(quarter, format="%Y-%m-%d "),
+         type="Scotland",
+         area_type = type, 
+         category="All",
+         percent_nicu=((mats/tot_neonate_23_26)*100),
+         ind=case_when(ind=="nicu_23_26" ~ "Neonate deliveries in NICU",
+                       ind=="neonate_23_26" ~ "All neonate deliveries",
+                       TRUE~as.character(ind))) 
+
+saveRDS(preterm_linechart, "shiny_app/data/preterm_linechart_data.rds") 
+saveRDS(preterm_linechart, paste0(data_folder,"final_app_files/preterm_linechart_data_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
 ##END
