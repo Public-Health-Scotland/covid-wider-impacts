@@ -74,6 +74,7 @@ function(input, output, session) {
   # Births and Babies tabs
   source(file.path("perinatal_tab.R"),  local = TRUE)$value
   source(file.path("apgar_tab.R"),  local = TRUE)$value
+  source(file.path("preterm_tab.R"),  local = TRUE)$value
   source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
   source(file.path("inductions_tab.R"),  local = TRUE)$value
   source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
@@ -114,6 +115,7 @@ function(input, output, session) {
   observeEvent(input$jump_to_induction, {updateTabsetPanel(session, "intabset", selected = "inductions")})
   observeEvent(input$jump_to_gestation, {updateTabsetPanel(session, "intabset", selected = "gestation")})
   observeEvent(input$jump_to_apgar, {updateTabsetPanel(session, "intabset", selected = "apgar")})
+  observeEvent(input$jump_to_preterm, {updateTabsetPanel(session, "intabset", selected = "preterm")})
 
   observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
@@ -152,7 +154,10 @@ function(input, output, session) {
     updateCollapse(session, "collapse_commentary", open = "Induction of labour")})
   
   observeEvent(input$jump_commentary_apgar, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Apgar 5")})
+    updateCollapse(session, "collapse_commentary", open = "Apgar scores of term babies")})
+  
+  observeEvent(input$jump_commentary_preterm, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Extremely preterm deliveries in a hospital with a NICU")})
 
   observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
@@ -217,7 +222,10 @@ observeEvent(input$summary_button, ({
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")}))
   
   observeEvent(input$apgar_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Apgar 5")}))
+    updateCollapse(session, "collapse_commentary", open = "Apgar scores of term babies")}))
+  
+  observeEvent(input$preterm_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Extremely preterm deliveries in a hospital with a NICU")}))
 
   observeEvent(input$cancer_button, ({
     updateCollapse(session, "collapse_commentary", open = "Cancer")}))
