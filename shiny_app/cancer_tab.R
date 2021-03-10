@@ -158,7 +158,7 @@ output$cancer_explorer <- renderUI({
       strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and 
              may also change historical data. This commentary refers to pathological specimens reported to the week 
              ending 29th November 2020, which were available for inclusion in the analysis when the data were extracted 
-             on 22th February 2021; the dashboard may now reflect more recent information."),
+             on 22nd February 2021; the dashboard may now reflect more recent information."),
       br(),
       p(strong("First updated: - 04/11/2020 ;  date of extraction of data: - 16/9/2020, with pathological records to week ending 
         21/06/2020.  ")),
@@ -177,15 +177,15 @@ output$cancer_explorer <- renderUI({
       br(),
       plot_box(paste0("Total count of individuals having a cancer of type:  ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_overall"),
-      p("Data extract date: 22th February 2021"),
+      p("Data extract date: 22nd February 2021"),
       br(),
       plot_box(paste0("Weekly count of individuals having a cancer of type: ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"),
-      p("Data extract date: 22th February 2021"),
+      p("Data extract date: 22nd February 2021"),
       br(),
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"),
-      p("Data extract date: 22th February 2021"),
+      p("Data extract date: 22nd February 2021"),
       br(),
       p("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
         than for other cancer sites. Such cancers are relatively common and usually non-fatal. There is a propensity 
