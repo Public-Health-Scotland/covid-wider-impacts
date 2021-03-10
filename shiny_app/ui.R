@@ -471,7 +471,7 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
 ###############################################.
 ## Apgar Tab ----
 ###############################################.
-tabPanel(title = "Apgar 5", icon = icon("hand-holding-medical"), value = "apgar",
+tabPanel(title = "Apgar 5", icon = icon("notes-medical"), value = "apgar",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -479,7 +479,7 @@ tabPanel(title = "Apgar 5", icon = icon("hand-holding-medical"), value = "apgar"
                                      selected = "Scotland")),
                   uiOutput("geoname_ui_apgar")),
            column(4,offset=4,
-                  actionButton("btn_apgar_modal", "Data source: ???", icon = icon('question-circle')),
+                  actionButton("btn_apgar_modal", "Data source: SMR02", icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton("download_apgar_data", "Download data"),
                   fluidRow(br()),
