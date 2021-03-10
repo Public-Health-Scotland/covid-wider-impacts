@@ -404,7 +404,7 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
 ###############################################.
 ## Births and Babies ----
 ##############################################.
-navbarMenu("Births and Babies", icon = icon("venus"),
+navbarMenu("Births and Babies", icon = icon("baby"),
 ###############################################.
 ## Inductions Tab ----
 ###############################################.
