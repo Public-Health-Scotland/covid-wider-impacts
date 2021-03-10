@@ -295,8 +295,8 @@ output$cancer_commentary <- renderUI({
         
     h4(strong("Update 10/3/2021: For pathology data to 29/11/2020 (extracted 22/2/2021)")),
     p("By the week ending 29th November 2020, the total number of individuals in Scotland with a pathological confirmation of 
-      cancer (excluding non-melanoma skin cancers) in Scotland was 40,343 in 2020 and 33,341 in 2019, an absolute difference 
-      of 7002 individuals (-17%).  That is to say, just over 7,000 fewer 
+      cancer (excluding non-melanoma skin cancers) in Scotland was 40,343 in 2019 and 33,341 in 2020, an absolute difference 
+      of 7,002 individuals (-17%).  That is to say, just over 7,000 fewer 
       patients in Scotland had a pathologically confirmed cancer diagnosis by the end of November 2020 than would have 
       been expected."),
 
