@@ -86,7 +86,7 @@ output$preterm_explorer <- renderUI({
 
 ## run chart function to generate spc charts
 output$preterm_chart <- renderPlotly({
-  trend_data <- preterm
+  trend_data <- preterm_chart
   
   yaxis_plots[["title"]] <- "Proportion of deliveries at 23-26 weeks gestation resulting in a live born baby that occur in a hospital with a neonatal intensive care unit on site" 
                                       
@@ -137,7 +137,7 @@ output$preterm_chart <- renderPlotly({
 ## LINECHART SCOTLAND
 output$preterm_linechart <- renderPlotly({  
   
-  plot_data <- preterm_linechart_data
+  plot_data <- preterm_linechart
   
   #arrange sort order for gestation categories
   plot_data <- plot_data %>%
