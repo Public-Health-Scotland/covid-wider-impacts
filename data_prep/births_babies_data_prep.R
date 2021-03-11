@@ -419,7 +419,8 @@ apgar_date <- "2021_02_18"
 apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Apgar5_",apgar_date,".rds")) %>%  
   rename(area_name = HBRES, quarter = DATE) %>%  
   janitor::clean_names() %>%
-  mutate(quarter = as.Date(quarter),
+  mutate(quarter=as.Date(quarter),
+         quarter_label=phsmethods::qtr(quarter, format="short"),
          type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                           area_name=="Scotland" ~ "Scotland"),
          area_type = type, 
@@ -450,6 +451,7 @@ apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/
   janitor::clean_names() %>%
   rename(area_name=hbres, quarter=date, category=variable) %>%
   mutate(quarter=as.Date(quarter),
+         quarter_label=phsmethods::qtr(quarter, format="short"),
          area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                           area_name=="Scotland" ~ "Scotland"),
          type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD5" ~ "dep"),
@@ -472,6 +474,7 @@ apgar_linechart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_fold
   #reshape data file for ease of creation of line chart with percentages
   pivot_longer(cols = low_apgar5_37plus:apgar5_37plus, names_to = "ind",values_to = "apgar5") %>%
   mutate(quarter=as.Date(quarter, format="%Y-%m-%d "),
+         quarter_label=phsmethods::qtr(quarter, format="short"),
          type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type = type, 
@@ -489,7 +492,7 @@ saveRDS(apgar_linechart, paste0(data_folder,"final_app_files/apgar_linechart_dat
 apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_Apgar5_DOWNLOAD_",apgar_date,".rds"))%>%  
   janitor::clean_names() %>%
   mutate(quarter_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
-         quarter_of_discharge=format(quarter_of_discharge,"%b %Y")
+         quarter_of_discharge=phsmethods::qtr(quarter_of_discharge, format="short")
          ) %>%
   rename(area_name=nhs_board_of_residence,
          centreline_apgar5_37plus = median_apgar5_37plus,
@@ -497,7 +500,8 @@ apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folde
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
-         chart_type= area_type) 
+         chart_type= area_type) %>% 
+  select(-month_of_discharge)
 
 saveRDS(apgar_download, "shiny_app/data/apgar_download_data.rds")  
 saveRDS(apgar_download, paste0(data_folder,"final_app_files/apgar_download_data_", 
@@ -519,7 +523,8 @@ preterm <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EX
   mutate(area_name="Scotland", #creating geo variables
          area_type="Scotland",
          quarter_of_year = gsub(" ", "0", quarter_of_year), #formatting date
-         quarter_of_year = as.Date(paste0(quarter_of_year,"1"), format="%Y%m%d")) 
+         quarter_of_year = as.Date(paste0(quarter_of_year,"1"), format="%Y%m%d"),
+         quarter_label=phsmethods::qtr(quarter_of_year, format="short")) 
 
 # Creating rules for spc charts
 preterm %<>% 
@@ -604,6 +609,7 @@ preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/WI_DELIV
   #reshape data file for ease of creation of line chart with percentages
   pivot_longer(cols = nicu_23_26:neonate_23_26, names_to = "ind",values_to = "mats") %>%
   mutate(quarter=as.Date(quarter, format="%Y-%m-%d "),
+         quarter_label=phsmethods::qtr(quarter, format="short"),
          type="Scotland",
          area_type = type, 
          category="All",
