@@ -190,7 +190,7 @@ output$preterm_linechart <- renderPlotly({
 ###############################################.
 
 preterm_download_data <- reactive({
-  preterm_download
+  preterm_chart
 })
 
 output$download_preterm_data <- downloadHandler(
