@@ -351,7 +351,7 @@ observeEvent(input$switch_to_apgar,{
 output$apgar_commentary <- renderUI({
   tagList(
     bsButton("jump_to_apgar",label = "Go to data"), #this button can only be used once
-    h2("Apgar 5 - April 2021"))
+    h2("Apgar scores of term babies - April 2021"))
 
 })
 
