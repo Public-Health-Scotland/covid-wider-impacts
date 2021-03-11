@@ -93,7 +93,7 @@ output$preterm_chart <- renderPlotly({
   xaxis_plots[["title"]] <- "Quarter"
   
   # Tooltip
-  tooltip_trend <- c(paste0(format(trend_data$quarter_of_year, "%B %y"), "<br>", 
+  tooltip_trend <- c(paste0(format(trend_data$quarter_label), "<br>", 
                             "Proportion: ", round(trend_data$rate, 1)))
   
   plot_ly(data = trend_data, x = ~quarter_of_year) %>%
@@ -163,7 +163,7 @@ output$preterm_linechart <- renderPlotly({
   # Create tooltip for line chart
   tooltip <- c(paste0( plot_data$ind,"<br>",
                        "Area: ",plot_data$area_name,"<br>",
-                       "Quarter: ",  format(plot_data$quarter, "%B %Y"),"<br>",
+                       "Quarter: ",  format(plot_data$quarter_label),"<br>",
                        "Number of births: ", plot_data$mats,"<br>",
                        "Percentage of births: ", format(plot_data$percent_nicu,digits = 1,nsmall=1),"%"))
   
@@ -173,13 +173,14 @@ output$preterm_linechart <- renderPlotly({
   # } else {
     
     #Creating trend plot
-    plot_ly(data=plot_data, x=~quarter,  y = ~mats) %>%
+    plot_ly(data=plot_data, x=~quarter_label,  y = ~mats) %>%
       add_trace(type = 'scatter', mode = 'lines',
                 color = ~ind, colors = pallette,
                 text= tooltip, hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             yaxis = yaxis_plots,  
+             xaxis = list(title = "", categoryorder = "array", categoryarray = ~quarter),
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)

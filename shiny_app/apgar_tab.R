@@ -189,7 +189,7 @@ plot_apgar_trend <- function(measure, shift, trend){
     xaxis_plots[["range"]] <- c(min(plot_data$quarter)-20, max(plot_data$quarter)+20)
     
     #specify tool tip
-    tooltip_top <- c(paste0("Quarter: ",format(plot_data$quarter, "%B %Y"),"<br>",
+    tooltip_top <- c(paste0("Quarter: ",format(plot_data$quarter_label),"<br>",
                             "Percentage: ",format(plot_data$perc_low_apgar5_37plus, digits = 1,nsmall=1),"%", "<br>"))
     
     #Creating time trend plot
@@ -211,7 +211,8 @@ plot_apgar_trend <- function(measure, shift, trend){
                   marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>% 
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             yaxis = yaxis_plots,
+             xaxis = xaxis_plots,
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
@@ -247,7 +248,7 @@ plot_apgar_linechart <- function(measure){
   # Create tooltip for line chart
   tooltip <- c(paste0( plot_data$ind,"<br>",
                        "Area: ",plot_data$area_name,"<br>",
-                       "Quarter: ",  format(plot_data$quarter, "%B %Y"),"<br>",
+                       "Quarter: ",  format(plot_data$quarter_label),"<br>",
                        "Number of births: ", plot_data$apgar5,"<br>",
                        "Percentage of births: ", format(plot_data$percent_apgar,digits = 1,nsmall=1),"%"))
   
@@ -257,13 +258,14 @@ plot_apgar_linechart <- function(measure){
   } else {
     
     #Creating trend plot
-    plot_ly(data=plot_data, x=~quarter,  y = ~get(measure)) %>%
+    plot_ly(data=plot_data, x=~quarter_label,  y = ~get(measure)) %>%
       add_trace(type = 'scatter', mode = 'lines',
                 color = ~ind, colors = pallette,
                 text= tooltip, hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             yaxis = yaxis_plots,  
+             xaxis = list(title = "", categoryorder = "array", categoryarray = ~quarter),
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
@@ -281,7 +283,7 @@ plot_apgar_split <- function(dataset, split, measure){
   
   # Create tooltip for line chart
   tooltip <- c(paste0(tool_tip_split,dataset$category,"<br>",
-                      "Quarter: ", format(plot_data$quarter, "%B %Y"),"<br>",
+                      "Quarter: ", format(plot_data$quarter_label),"<br>",
                       "Number: ", plot_data$apgar5_37plus, "<br>",
                       "Percentage: ", format(plot_data$perc_low_apgar5_37plus,digits=1,nsmall = 1),"%"))
   
@@ -309,14 +311,15 @@ plot_apgar_split <- function(dataset, split, measure){
     pallette <- pal_depr}
   
   #Creating trend plot
-  plot_ly(data=plot_data, x=~quarter,  y = ~get(measure)) %>%
+  plot_ly(data=plot_data, x=~quarter_label,  y=~get(measure)) %>%
     add_trace(type = 'scatter', mode = 'lines',
               color = ~category, colors = pallette,
               text= tooltip, hoverinfo="text") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots,  xaxis = xaxis_plots,
-           legend = list(orientation = 'h')) %>% #position of legend underneath plot
+           yaxis = yaxis_plots,  
+           xaxis = list(title = "", categoryorder = "array", categoryarray = ~quarter),
+           legend = list(orientation = 'v')) %>% #position of legend underneath plot
     #leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   
