@@ -37,6 +37,8 @@ data_table <- reactive({
         "induct" = induct_download,
         "mod"= mod_download,
         "gestation" = gestation_download,
+        "apgar" = apgar_download,
+        "preterm" = preterm_chart,
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
@@ -321,6 +323,34 @@ data_table <- reactive({
                               TRUE ~ "All")) %>% 
     mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                 TRUE ~ "All"))
+  } else if (input$data_select %in% "apgar") {
+    table_data <- table_data %>% 
+      select(area_name, area_type, quarter_of_discharge, subgroup, variable,
+             low_apgar5_37plus, high_apgar5_37plus, unknown_apgar5_37plus, apgar5_37plus,
+             perc_low_apgar5_37plus, perc_high_apgar5_37plus, perc_unknown_apgar5_37plus) %>% 
+      rename("Total number of singleton live births at 37-42 weeks gestation with known 5 minute Apgar score" = apgar5_37plus,
+             "Number of singleton live births at 37-42 weeks gestation with a low 5 minute Apgar score" = low_apgar5_37plus,
+             "Number of singleton live births at 37-42 weeks gestation with a high 5 minute Apgar score" = high_apgar5_37plus,
+             "Number of singleton live births at 37-42 weeks gestation where 5 minute Apgar scor is unknown" = unknown_apgar5_37plus,
+             "Percentage (%) of singleton live births at 37-42 weeks gestation with a low 5 minute Apgar score" = perc_low_apgar5_37plus,
+             "Percentage (%) of singleton live births at 37-42 weeks gestation with a high 5 minute Apgar score" = perc_high_apgar5_37plus,
+             "Percentage (%) of singleton live births at 37-42 weeks gestation where 5 minute Apgar scor is unknown" = perc_unknown_apgar5_37plus) %>% 
+      mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
+                                  TRUE ~ "All")) %>% 
+      mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                  TRUE ~ "All"))
+  } else if (input$data_select %in% "preterm") {
+    table_data %<>%
+      select(area_name, quarter_of_year, number_of_deaths_in_quarter, sample_size, rate, type) %>%
+      mutate(type = recode_factor(type, "extperi" = "Extended perinatal deaths", "infantdeaths" = "Infant deaths", "nnd" = "Neonatal deaths", 
+                                  "pnnd" = "Post-neonatal deaths", "stillbirths" = "Stillbirths")) %>%
+      rename("Area name" = area_name, "Relevant births" = sample_size,
+             "Quarter of year" = quarter_of_year,
+             "Number of deaths" = number_of_deaths_in_quarter,
+             "Rate" = rate,
+             "Type" = type)
     
 }
   
