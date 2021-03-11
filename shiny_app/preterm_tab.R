@@ -88,7 +88,7 @@ output$preterm_explorer <- renderUI({
 output$preterm_chart <- renderPlotly({
   trend_data <- preterm_chart
   
-  yaxis_plots[["title"]] <- "Proportion of deliveries at 23-26 weeks gestation resulting in a live born baby that occur in a hospital with a neonatal intensive care unit on site" 
+  yaxis_plots[["title"]] <- "Proportion of deliveries" 
                                       
   xaxis_plots[["title"]] <- "Quarter"
   
