@@ -53,7 +53,7 @@ intro_box <- function(title_box, button_name, description) {
 ## Data ----
 ###############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
-area_type_op <- readRDS("data/area_type_op.rds")
+# area_type_op <- readRDS("data/area_type_op.rds")
 spec_lookup_rapid <- readRDS("data/spec_lookup.rds")
 spec_lookup_op <- readRDS("data/spec_lookup_op.rds")
 ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")

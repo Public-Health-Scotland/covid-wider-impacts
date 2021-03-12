@@ -340,7 +340,8 @@ rapid_spec <- reactive({
 op_filt <- reactive({
   outpats %>% 
     filter(admission_type == input$adm_type &
-             spec == "All")
+             spec == "All" &
+             area_type != "Health board of residence") #temporal
 })
 
 # # Outpatients dataset used for specialty charts
@@ -350,7 +351,8 @@ op_spec <- reactive({
     filter(area_name == input$geoname &
              admission_type == input$adm_type &
              category == "All" &
-             spec %in% input$op_specialty)
+             spec %in% input$op_specialty &
+             area_type != "Health board of residence") #temporal  
 })
 
 ###############################################.
@@ -693,16 +695,16 @@ output$summary_comment <- renderUI({
     h4("Initial findings: outpatient appointments"),
     tags$ul(
       tags$li("Outpatient appointments fell from the second week of March, dropping by 
-a third (34%) below the average of the same weeks in 2018-19."),
+close to 70% below the average of the same weeks in 2018-19 by mid-April."),
       tags$li("There has been some recovery since late April, but numbers of appointments remain 
-around 35% below the 2018-19 average."),
-      tags$li("Similar patterns are seen by sex and by deprivation; falls in late March were 
-largest for those aged 85 years and over."),
+around 26% below the 2018-19 average by the end of September 2020."),
+      tags$li("Similar patterns are seen by sex, age groups and by deprivation groups."),
       tags$li("There were larger relative falls for surgical than medical specialties."),
-      tags$li("There were larger decreases in new outpatient appointments (37%) 
-than in return outpatient appointments (32%)."),
-      tags$li("The pattern was quite different across NHS Boards and ranged from 
-a decrease of 5% in NHS Forth Valley to a decrease of 69% in National Waiting Times Centre (Golden Jubilee National Hospital).")),
+      tags$li("There were larger decreases and slower recovery in new outpatient appointments
+than in return outpatient appointments."),
+      tags$li("There has been a very large increase in the number of appointments carried out remotely through 
+              telephone and videolink.")
+      ),
     h4("Interpreting these figures"),
     p("Please exercise caution when interpreting these figures, as these data are for management information only. 
       For more information on methodology and data quality please see the ",
