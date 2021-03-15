@@ -481,7 +481,7 @@ output$data_explorer <- renderUI({
                         "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
                         tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
                                "Acute Activity and NHS Beds quarterly publication",  
-                               target="_blank"), ". Did Not Attend appointments (DNAs) are not shown here due to small numbers.",
+                               target="_blank"), ". Did Not Attend appointments (DNAs) are not included in the figures shown here.",
                         style="color:red")),
             cut_charts(title= "Weekly outpatient appointments",
                        source = "SMR00", data_name = "op"),
@@ -599,8 +599,8 @@ output$op_age_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", "
 output$op_depr_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", "total", "op")})
 output$op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", "total", "op")})
 # output$op_hosp_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_hosp, "hosp", "total", "op")})
-output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec())})
-output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec())})
+output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80)})
+output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80)})
 
 
 # Palette for specialty

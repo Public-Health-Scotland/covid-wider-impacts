@@ -41,7 +41,7 @@ data_table <- reactive({
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "outpats" = outpats %>% 
-          rename(specialty = spec, average_2018_2019 = count_average) 
+          rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average) 
   ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table

@@ -368,7 +368,7 @@ if(data_name != "dif") {
 ## # Function that creates specialty charts.   ----
 ###############################################.
 # Potentially could be merge with trend one
-plot_spec <- function(type, dataset) {
+plot_spec <- function(type, dataset, marg = 160) {
   trend_data <- dataset
   
   if (type == "variation") {
@@ -411,7 +411,7 @@ plot_spec <- function(type, dataset) {
               symbol = ~spec, symbols = symbol_spec(),
               text=tooltip_trend, hoverinfo="text") %>%
     #Layout
-    layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+    layout(margin = list(b = marg, t=5), #to avoid labels getting cut out
            showlegend = TRUE, # always show legen
            yaxis = yaxis_plots, xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% # position of legend
