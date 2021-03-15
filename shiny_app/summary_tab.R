@@ -4,19 +4,21 @@
 
 # Show list of area names depending on areatype selected
 output$geoname_ui <- renderUI({
-  
-  # if(input$measure_select != "outpats") {
     areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype])
     selectizeInput("geoname", label = NULL,  
                    choices = areas_summary, selected = "")
-    
-  # } else if (input$measure_select == "outpats") {
-  #   areas_summary <- area_type_op
-  #   selectizeInput("geoname", label = NULL,  
-  #                  choices = areas_summary, selected = "")
-  # }
   
 })
+
+output$geoname_op_ui <- renderUI({
+  
+  areas_summary <- sort(area_type_op$area_name[area_type_op$area_type == input$geotype_op])
+  selectizeInput("geoname_op", label = NULL,  
+                 choices = areas_summary, selected = "")
+
+  
+})
+
 
 # Disabling  admissions type if no admissions to hospital selected and
 # updating labels to say it's not available
@@ -341,18 +343,18 @@ op_filt <- reactive({
   outpats %>% 
     filter(admission_type == input$adm_type &
              spec == "All" &
-             area_type != "Health board of residence") #temporal
+             area_type == input$geotype_op)
 })
 
 # # Outpatients dataset used for specialty charts
 op_spec <- reactive({
   outpats %>%
     filter(type == "sex") %>%
-    filter(area_name == input$geoname &
+    filter(area_name == input$geoname_op &
              admission_type == input$adm_type &
              category == "All" &
              spec %in% input$op_specialty &
-             area_type != "Health board of residence") #temporal  
+             area_type == input$geotype_op)   
 })
 
 ###############################################.
@@ -588,7 +590,7 @@ output$deaths_age_tot <- renderPlotly({plot_trend_chart(deaths, pal_age, "age", 
 output$deaths_depr_tot <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep", "total", "deaths")})
 
 # Outpatients charts
-output$op_overall <- renderPlotly({plot_overall_chart(op_filt(), "op")})
+output$op_overall <- renderPlotly({plot_overall_chart(op_filt(), "op", op = T)})
 output$op_sex_var <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", data_name = "op")})
 output$op_age_var <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", data_name = "op")})
 output$op_depr_var <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", data_name = "op")})
@@ -619,35 +621,40 @@ pal_spec <- reactive({
   trend_palette <- c("#000000", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99",
                      "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#b15928")
   
-  trend_scale_rapid <- c(setNames(trend_palette, 
-                                  unique(rapid_spec()$spec)[1:trend_length]))
-  trend_scale_op <- c(setNames(trend_palette, 
-                                  unique(op_spec()$spec)[1:trend_length]))
-  trend_col_rapid <- trend_scale_rapid[1:trend_length]
-  trend_col_op <- trend_scale_op[1:trend_length]
+  if (input$measure_select == "outpats") {
+    trend_scale <- c(setNames(trend_palette, 
+                                 unique(op_spec()$spec)[1:trend_length]))
+  } else {
+    trend_scale <- c(setNames(trend_palette, 
+                                    unique(rapid_spec()$spec)[1:trend_length]))
+  }
+
+  trend_col <- trend_scale[1:trend_length]
   
 })
 
 symbol_spec <- reactive({
+  # First define the palette of sybols used, then set a named vector, so each color
+  # gets assigned to an area. I think is based on the order in the dataset.
+  symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
+                        'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
+  
   if (input$measure_select == "outpats") {
   #Creating palette of colors: colorblind proof
   #First obtaining length of each geography type, if more than 6, then 6,
   # this avoids issues. Extra selections will not be plotted
     trend_length <- length(input$op_specialty)
-  } else {
+    
+    symbols_scale <- c(setNames(symbols_palette, 
+                                unique(op_spec()$spec)[1:trend_length]))
+  } else { #rapid
     trend_length <- length(input$adm_specialty)
+    
+    symbols_scale <- c(setNames(symbols_palette, 
+                                   unique(rapid_spec()$spec)[1:trend_length]))
   }
-  # First define the palette of sybols used, then set a named vector, so each color
-  # gets assigned to an area. I think is based on the order in the dataset.
-  
-  symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
-                        'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
-  symbols_scale_rapid <- c(setNames(symbols_palette, 
-                                    unique(rapid_spec()$spec)[1:trend_length]))
-  symbols_scale_op <- c(setNames(symbols_palette, 
-                                 unique(op_spec()$spec)[1:trend_length]))
-  symbols_trend_rapid <- symbols_scale_rapid[1:trend_length]
-  symbols_trend_op <- symbols_scale_op[1:trend_length]
+
+  symbols_trend <- symbols_scale[1:trend_length]
   
 })
 

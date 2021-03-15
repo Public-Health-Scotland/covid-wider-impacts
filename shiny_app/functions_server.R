@@ -18,8 +18,14 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   
   if (split != FALSE) {
     if (tab == "summary") {
-      trend_data <- dataset %>% # filtering data by cut and area name
-        filter(type == split & area_name == input$geoname)
+      if (input$measure_select != "outpats") {
+        trend_data <- dataset %>% # filtering data by cut and area name
+          filter(type == split & area_name == input$geoname)
+      } else { #for outpatients data
+        trend_data <- dataset %>% # filtering data by cut and area name
+          filter(type == split & area_name == input$geoname_op)
+      }
+
     } else if (tab %in% c("cardio", "mh")) {
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type %in% split)
@@ -199,11 +205,11 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
 plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                                var2020 = "count", var_aver = "count_average",
-                               xvar = "week_ending", filtering = T) {
+                               xvar = "week_ending", filtering = T, op = F) {
   
   if (filtering == T) {
     # Filtering dataset to include only overall figures
-    trend_data <- filter_data(dataset, area = area)
+    trend_data <- filter_data(dataset, area = area, op = op)
   } else {
     trend_data <- dataset
   }
@@ -423,11 +429,15 @@ plot_spec <- function(type, dataset, marg = 160) {
 ## Function for filtering ----
 ###############################################.
 # Function to filter the datasets for the overall charts and download data based on user input
-filter_data <- function(dataset, area = T) {
-  if (area == T) {
+filter_data <- function(dataset, area = T, op = F) {
+  if (area == T & op == T) {
     dataset %>% filter(type == "sex") %>%
-      filter(area_name == input$geoname &
+      filter(area_name == input$geoname_op &
                category == "All")
+  } else if (area == T & op == F) {
+      dataset %>% filter(type == "sex") %>%
+        filter(area_name == input$geoname &
+                 category == "All")
   } else { #this works for cath data
     dataset %>% 
       filter(category == "All")
