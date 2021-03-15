@@ -265,7 +265,7 @@ plot_apgar_linechart <- function(measure){
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots,  
-             xaxis = list(title = "", categoryorder = "array", categoryarray = ~quarter),
+             xaxis = list(title = "", categoryorder = "array", categoryarray = ~date),
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
