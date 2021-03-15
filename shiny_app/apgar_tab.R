@@ -186,14 +186,14 @@ plot_apgar_trend <- function(measure, shift, trend){
     yaxis_plots[["title"]] <- "Percentage of births (%)"
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
-    xaxis_plots[["range"]] <- c(min(plot_data$quarter)-20, max(plot_data$quarter)+20)
+    xaxis_plots[["range"]] <- c(min(plot_data$date)-20, max(plot_data$date)+20)
     
     #specify tool tip
-    tooltip_top <- c(paste0("Quarter: ",format(plot_data$quarter_label),"<br>",
+    tooltip_top <- c(paste0("Date: ",format(plot_data$date_label),"<br>",
                             "Percentage: ",format(plot_data$perc_low_apgar5_37plus, digits = 1,nsmall=1),"%", "<br>"))
     
     #Creating time trend plot
-    plot_ly(data=plot_data, x=~quarter) %>%
+    plot_ly(data=plot_data, x=~date) %>%
       add_lines(y = ~perc_low_apgar5_37plus,  
                 line = list(color = "black"), text=tooltip_top, hoverinfo="text",
                 marker = list(color = "black"), name = yname ) %>% 
@@ -248,7 +248,7 @@ plot_apgar_linechart <- function(measure){
   # Create tooltip for line chart
   tooltip <- c(paste0( plot_data$ind,"<br>",
                        "Area: ",plot_data$area_name,"<br>",
-                       "Quarter: ",  format(plot_data$quarter_label),"<br>",
+                       "Date: ",  format(plot_data$date_label),"<br>",
                        "Number of births: ", plot_data$apgar5,"<br>",
                        "Percentage of births: ", format(plot_data$percent_apgar,digits = 1,nsmall=1),"%"))
   
@@ -258,7 +258,7 @@ plot_apgar_linechart <- function(measure){
   } else {
     
     #Creating trend plot
-    plot_ly(data=plot_data, x=~quarter_label,  y = ~get(measure)) %>%
+    plot_ly(data=plot_data, x=~date,  y = ~get(measure)) %>%
       add_trace(type = 'scatter', mode = 'lines',
                 color = ~ind, colors = pallette,
                 text= tooltip, hoverinfo="text") %>%
