@@ -414,17 +414,34 @@ saveRDS(perinatal, paste0(open_data, "perinatal_data.rds"))
 apgar_folder <- "20210218"
 apgar_date <- "2021_02_18"
 
+
 ## 1-RUNCHART DATA
 ## apgar data for run chart (scotland and nhs board) - monthly
+apgar_runchart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Scotland_Apgar5_",apgar_date,".rds")) %>% 
+  rename(area = HBRES) %>%
+  janitor::clean_names() %>% 
+  mutate(date = gsub("-", "", date), #formatting date
+         date = as.Date(paste0(date,"1"), format="%Y%m%d"),
+         date_label = as.Date(date, format="%b %Y"),
+         date_label = as.character(date_label),
+         area_name = area)
+
+
 apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Apgar5_",apgar_date,".rds")) %>%  
-  rename(area_name = HBRES, quarter = DATE) %>%  
-  janitor::clean_names() %>%
-  mutate(quarter=as.Date(quarter),
-         quarter_label=phsmethods::qtr(quarter, format="short"),
-         type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+  rename(area = HBRES) %>%
+  mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
+                               area == "NHS Highlands" ~ "NHS Highland",
+                               TRUE ~ as.character(area))) %>%   
+  janitor::clean_names() %>% 
+  mutate(date=as.Date(date),
+         date_label=phsmethods::qtr(date, format="short")) %>% 
+  bind_rows(apgar_runchart_scot) %>% 
+  mutate(type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                           area_name=="Scotland" ~ "Scotland"),
-         area_type = type, 
+         area_type = type,
          category = "All") %>%
+  
+ 
   # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
   # ext_ columns (don't exist in data file) are extended median which are blank before projection time period
   group_by(area_name) %>% 
@@ -440,7 +457,10 @@ apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folde
   #median: which column in dataset contains the median against which value is tested
   runchart_flags(shift="apgar_shift", trend="apgar_trend", 
                  value=perc_low_apgar5_37plus, median=ext_apgar5_37plus) %>%
-  ungroup()
+  ungroup() %>% 
+  filter(area_name != "NHS Orkney", 
+         area_name != "NHS Shetland",
+         area_name != "NHS Western Isles")
 
 saveRDS(apgar_runchart, "shiny_app/data/apgar_runchart_data.rds")
 saveRDS(apgar_runchart, paste0(data_folder,"final_app_files/apgar_runchart_data_", 
@@ -467,22 +487,43 @@ saveRDS(apgar_scot, paste0(data_folder,"final_app_files/apgar_scot_data_",
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 3- LINECHART DATA apgar for Scotland & NHS board
+apgar_linechart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Scotland_Apgar5_",apgar_date,".rds")) %>% 
+  rename(area = HBRES) %>%
+  janitor::clean_names() %>% 
+  mutate(tot_apgar5_37plus=apgar5_37plus) %>%
+  #reshape data file for ease of creation of line chart with percentages
+  pivot_longer(cols = low_apgar5_37plus:apgar5_37plus, names_to = "ind",values_to = "apgar5") %>%
+  mutate(date = gsub("-", "", date), #formatting date
+         date = as.Date(paste0(date,"1"), format="%Y%m%d"),
+         date_label = as.Date(date, format="%b %Y"),
+         date_label = as.character(date_label),
+         area_name = area) 
+
+
 apgar_linechart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Apgar5_",apgar_date,".rds")) %>%  
-  rename(area_name=HBRES, quarter=DATE) %>%
+  rename(area=HBRES) %>%
+  mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
+                               area == "NHS Highlands" ~ "NHS Highland",
+                               TRUE ~ as.character(area))) %>%  
   janitor::clean_names() %>%
   mutate(tot_apgar5_37plus=apgar5_37plus) %>%
   #reshape data file for ease of creation of line chart with percentages
   pivot_longer(cols = low_apgar5_37plus:apgar5_37plus, names_to = "ind",values_to = "apgar5") %>%
-  mutate(quarter=as.Date(quarter, format="%Y-%m-%d "),
-         quarter_label=phsmethods::qtr(quarter, format="short"),
-         type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+  mutate(date=as.Date(date, format="%Y-%m-%d "),
+         date_label=phsmethods::qtr(date, format="short")) %>% 
+  bind_rows(apgar_linechart_scot) %>% 
+  mutate(type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type = type, 
          category="All",
          percent_apgar=((apgar5/tot_apgar5_37plus)*100),
          ind=case_when(ind=="low_apgar5_37plus" ~ "Babies with a low Apgar 5",
                        ind=="apgar5_37plus" ~ "Babies with an Apgar 5",
-                       TRUE~as.character(ind))) 
+                       TRUE~as.character(ind))) %>% 
+  filter(area_name != "NHS Orkney", 
+         area_name != "NHS Shetland",
+         area_name != "NHS Western Isles")
+  
 
 saveRDS(apgar_linechart, "shiny_app/data/apgar_linechart_data.rds") 
 saveRDS(apgar_linechart, paste0(data_folder,"final_app_files/apgar_linechart_data_", 
@@ -514,17 +555,22 @@ saveRDS(apgar_download, paste0(data_folder,"final_app_files/apgar_download_data_
 preterm_date <- "2021_02_18" 
 
 # P CHART PRETERM DATA
-preterm <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_marupdate.xlsx"),
-                                    sheet = "Stillbirth", skip = 2)) %>% 
-  mutate(type = "stillbirths")%>%
+preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_NeonatalAdmit_Charts_2021_02_01.xlsx"),
+                                    sheet = "P_Chart", skip = 102) %>% 
+  mutate(type = "neonate")%>%
   janitor::clean_names() %>%
   select(quarter_of_year=sample_2, number_of_deaths_in_quarter=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type) %>% 
   mutate(area_name="Scotland", #creating geo variables
          area_type="Scotland",
-         quarter_of_year = gsub(" ", "0", quarter_of_year), #formatting date
+         quarter_of_year = gsub("-", "", quarter_of_year), #formatting date
+         quarter_of_year = gsub("Q1", "01", quarter_of_year), #formatting date
+         quarter_of_year = gsub("Q2", "04", quarter_of_year), #formatting date
+         quarter_of_year = gsub("Q3", "07", quarter_of_year), #formatting date
+         quarter_of_year = gsub("Q4", "10", quarter_of_year), #formatting date
          quarter_of_year = as.Date(paste0(quarter_of_year,"1"), format="%Y%m%d"),
-         quarter_label=phsmethods::qtr(quarter_of_year, format="short")) 
+         quarter_label=phsmethods::qtr(quarter_of_year, format="short")) %>% 
+  filter(!is.na(quarter_of_year))
 
 # Creating rules for spc charts
 preterm %<>% 
