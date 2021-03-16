@@ -175,7 +175,7 @@ saveRDS(ante_booking_download, paste0(open_data,"ante_booking.rds"))
 ## Pregnancy (terminations) ----
 ###############################################.
 #field with date all antenatal booking data files prepared
-top_date <- "2021-02-09"
+top_date <- "2021-03-11"
 
 ## Termination data for run chart (scotland and nhs board) - monthly
 top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/",top_date,
