@@ -2,7 +2,6 @@
 cookie-control.js
 deploying_app.R
 create_credentials.R
-
 #Not needed
 rsconnect
 .Rproj.user
@@ -16,7 +15,6 @@ packrat/lib*/
 data/
 archive/
 shiny app admin/
-
 # Common text files that may contain data #
 *.[cC][sS][vV]
 *.[tT][xX][tT]
@@ -32,3 +30,4 @@ shiny app admin/
 john
 ad_hoc_requests.R
 colin
+outpatient_functions.R

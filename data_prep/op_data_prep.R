@@ -45,12 +45,12 @@ saveRDS(spec_lookup, paste0(WID_folder,"final_app_files/spec_lookup_op_",
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(spec_lookup, paste0(data_folder, "spec_lookup_op.rds"))
 
-s# Aggregating to weekly data
+# Aggregating to weekly data
 outpats_agg = outpats_full %>% 
   filter(year >= 2018) %>%
   mutate(count = 1) %>%
   mutate(week_ending = ceiling_date(clinic_date, "week", change_on_boundary = F)) %>% #end of week
-  group_by(hscp2019name, hbtreat_name, appt_type, attendance_status, simd, 
+  group_by(hscp2019name, hbtreat_name, hbres_new_name, appt_type, attendance_status, simd, 
            age_grp, sex_name, mode_contact_new, week_ending, Grouping) %>% 
   summarise(count = sum(count, na.rm = T)) %>% 
   ungroup() %>%
@@ -60,29 +60,20 @@ outpats_agg = outpats_full %>%
 outpats_agg %<>% mutate(hscp2019name = case_when(is.na(hscp2019name) ~ "Other",
                                                  TRUE ~ hscp2019name),
                         hbtreat_name = case_when(is.na(hbtreat_name) ~ "Other",
-                                                 TRUE ~ hbtreat_name))
+                                                 TRUE ~ hbtreat_name),
+                        hbres_new_name = case_when(is.na(hbres_new_name) ~ "Other",
+                                                   TRUE ~ hbres_new_name))
 
 # Aggregating for each geo level
 outpats_agg %<>% mutate(scot = "Scotland") %>% 
   gather(area_type, area_name, 
-         c(hbtreat_name, hscp2019name, scot)) %>% 
+         c(hbtreat_name, hbres_new_name, hscp2019name, scot)) %>% 
   ungroup() %>% 
   mutate(area_type = recode(area_type, 
-                            "hbtreat_name" = "Health board", 
-                            # "hbres_new_name" = "Health board of residence",
+                            "hbtreat_name" = "Health board of treatment", 
+                            "hbres_new_name" = "Health board of residence",
                             "hscp2019name" = "HSC partnership", 
                             "scot" = "Scotland"))
-
-area_type_op <- outpats_agg %>%
-  group_by(area_name, area_type) %>%
-  summarise(count = n()) %>%
-  ungroup() %>%
-  select(-count) %>%
-  arrange(area_type)
-
-saveRDS(area_type_op, paste0(WID_folder, "final_app_files/area_type_op_",
-                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-saveRDS(area_type_op, paste0(data_folder, "area_type_op.rds"))
 
 agg_op <- function(grouper = NULL, split, specialty = F) {
   
@@ -166,7 +157,7 @@ dataset = op_adm
   data_2020 <- left_join(dataset %>% 
                            filter(year(week_ending) %in% c("2020")), 
                          historic_data) %>%
-    filter(count != 0 & count_average != 0) %>%
+    # filter(count != 0 & count_average != 0) %>%
     # Creating %variation from precovid to covid period 
     mutate(count_average = ifelse(is.na(count_average), 0, count_average),
            variation = round(-1 * ((count_average - count)/count_average * 100), 1),
@@ -177,7 +168,9 @@ dataset = op_adm
                                  is.infinite(variation) ~ 0,
                                  TRUE ~ variation)) %>%
     rename("admission_type" = "appt_type") %>% 
-    filter(week_ending <= dmy("27-09-2020"))
+    filter(week_ending <= dmy("27-09-2020")) %>%
+    mutate(variation_new = case_when(count_average == 0 & variation == 0 ~ 100,
+                                 TRUE ~ variation))
   
   final_data <<- data_2020
   saveRDS(data_2020, "shiny_app/data/outpats.rds")
@@ -186,7 +179,18 @@ dataset = op_adm
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(data_2020, paste0(WID_folder, "outpats.rds"))
 # }
-
+  
+  area_type_op <- dataset %>%
+    group_by(area_name, area_type) %>%
+    summarise(count = n()) %>%
+    ungroup() %>%
+    select(-count) %>%
+    arrange(area_type)
+  
+  saveRDS(area_type_op, paste0(WID_folder, "final_app_files/area_type_op_",
+                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  saveRDS(area_type_op, paste0(data_folder, "area_type_op.rds"))
+  
 # prepare_final_data(op_adm, "outpats", last_week = "2020-09-27",
 #                    extra_vars = c("admission_type", "spec"))
   
