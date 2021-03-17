@@ -62,6 +62,12 @@ outpats_agg %<>% mutate(hscp2019name = case_when(is.na(hscp2019name) ~ "Other",
                         hbtreat_name = case_when(is.na(hbtreat_name) ~ "Other",
                                                  TRUE ~ hbtreat_name),
                         hbres_new_name = case_when(is.na(hbres_new_name) ~ "Other",
+                                                   TRUE ~ hbres_new_name),
+                        hbtreat_name = case_when(hbtreat_name == "NHS Louisa Jordan (Covid-19)" ~ 
+                                                   "NHS Louisa Jordan",
+                                                 TRUE ~ hbtreat_name),
+                        hbres_new_name = case_when(substr(hbres_new_name, 1, 3) != "NHS" ~
+                                                     "Other",
                                                    TRUE ~ hbres_new_name))
 
 # Aggregating for each geo level
