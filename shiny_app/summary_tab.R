@@ -16,7 +16,6 @@ output$geoname_op_ui <- renderUI({
   selectizeInput("geoname_op", label = NULL,  
                  choices = areas_summary, selected = "")
 
-  
 })
 
 
@@ -261,16 +260,22 @@ observeEvent(input$btn_dataset_modal,
                      "for comparison. The recent trend data is shown by age group,",
                      " sex, Scottish Index of Multiple Deprivation (SIMD), ",
                      "mode of clinical interaction, and specialty groups. Data are given at ",
-                     "Scotland, NHS Board of Treatment, and",
-                     "Health and Social Care Partnership level."), 
+                     "Scotland, Health board of treatment, Health board of residence, and",
+                     "HSC partnership of residence level. ",
+                     "'Other' Health board of treatment refers to cases where the NHS Board is unknown or invalid.",
+                     " 'Other' Health board of residence and HSC partnership of residence 
+                     refers to Other Residential Categories as defined ",
+                     "on our ",
+                     tags$a(href="https://www.opendata.nhs.scot/dataset/non-standard-geography-codes-and-labels/resource/32164b83-c9ec-495a-ac9f-dbeeb6ed5e59",
+                            "Open Data portal", target = "_blank"), "."), 
                    p("The outpatient analyses are derived from the ", 
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=4", 
                             "Scottish Morbidity Record (SMR00) dataset", 
                             target="_blank"),". This dataset is submitted monthly ",
                      "to Public Health Scotland (PHS), and relates to outpatient ",
-                     "care. All records (i.e. new, return, and did not attend ",
-                     "(DNA) records) from consultant-led clinics are included; ",
-                     "A&E and Genitourinary specialties are excluded. For more ",
+                     "care. All new and return appointments from consultant-led clinics are included; ",
+                     "A&E and Genitourinary specialties are excluded, as well as ",
+                     "Did Not Attend (DNA) appointments. For more ",
                      "information on outpatient attendances, please see our ",
                      tags$a(href= "https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=O&ID=374&Title=Outpatient%20Attendance", 
                             "Data Dictionary",  target="_blank"), 
@@ -317,6 +322,24 @@ simd_modal <- modalDialog(
   )
 # Link action button click to modal launch 
 observeEvent(input$btn_modal_simd, { showModal(simd_modal) }) 
+
+
+###############################################.
+# Modal to explain mode of clinical interaction graphs
+moc_modal <- modalDialog(
+  h5("Interpretation of this graph"),
+  p("Please note that the majority of outpatient appointments in previous years were 
+    conducted face to face, and there were very few appointments held by other means. 
+    This means that numbers in previous years are very small or zero, and the graph shows 
+    very high percentage changes as a result. Please treat these data with caution."),
+  p("Where there were no cases for non-face to face appointments in previous years, 
+    variation is shown as 100%. This is not accurate but is an attempt to 
+    show that there has been a significant change. The way this is displayed may change in future releases."),
+  size = "l", 
+  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+  )
+# Link action button click to modal launch 
+observeEvent(input$btn_modal_moc, { showModal(moc_modal) }) 
 
 
 ###############################################.
@@ -511,19 +534,12 @@ output$data_explorer <- renderUI({
                      # Adding adm_type here to make clear what is selected
                      column(6,
                             h4(paste0(total_title, "mode of clinical interaction")))),
+            fluidRow(actionButton("btn_modal_moc", "Interpreting this chart", 
+                                  icon = icon('fas fa-exclamation-circle'))),
             fluidRow(column(6,
                             withSpinner(plotlyOutput("op_moc_var"))),
                      column(6,
-                            withSpinner(plotlyOutput("op_moc_tot"))))#,
-            # fluidRow(column(6,
-            #                 h4(paste0(variation_title, "hospital"))),
-            #          # Adding adm_type here to make clear what is selected
-            #          column(6,
-            #                 h4(paste0(total_title, "hospital")))),
-            # fluidRow(column(6,
-            #                 withSpinner(plotlyOutput("op_hosp_var"))),
-            #          column(6,
-            #                 withSpinner(plotlyOutput("op_hosp_tot"))))
+                            withSpinner(plotlyOutput("op_moc_tot"))))
     )
   }
 }) 
@@ -595,12 +611,10 @@ output$op_sex_var <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", d
 output$op_age_var <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", data_name = "op")})
 output$op_depr_var <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", data_name = "op")})
 output$op_moc_var <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", data_name = "op")})
-# output$hosp_var <- renderPlotly({plot_trend_chart(op_filt(), pal_hosp, "hosp", data_name = "op")})
 output$op_sex_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", "total", "op")})
 output$op_age_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", "total", "op")})
 output$op_depr_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", "total", "op")})
 output$op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", "total", "op")})
-# output$op_hosp_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_hosp, "hosp", "total", "op")})
 output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80)})
 output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80)})
 
@@ -674,7 +688,8 @@ overall_data_download <- reactive({
     "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average),
     "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average),
     "deaths" = filter_data(deaths) %>% rename(average_2015_2019 = count_average),
-    "outpats" = filter_data(op_filt() %>% rename(average_2018_2019 = count_average))
+    "outpats" = filter_data(op_filt() %>% rename(average_2018_2019 = count_average), 
+                            op = T)
   ) %>% 
     select(area_name, week_ending, count, starts_with("average")) %>% 
     mutate(week_ending = format(week_ending, "%d %b %y"))

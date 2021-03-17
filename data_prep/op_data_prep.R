@@ -11,7 +11,7 @@
 ## Description - analysis of outpatients for COVID wider   ##
 ##                  impacts dashboard                      ##
 ##                                                         ##
-## Approximate run time: <2 minutes                        ##
+## Approximate run time: 4 minutes                        ##
 
 start <- Sys.time()
 
@@ -32,6 +32,8 @@ source("outpatient_functions.R")
 ### 1 - Read in data ----
 outpats_full = read_fst(paste0(SCT_folder, "Outpatients_basefile.fst"))
 
+##create specialty lookup, including which specialties are in each group ----
+##this is used in the dashboard
 spec_lookup = outpats_full %>%
   group_by(Description, Grouping) %>%
   summarise(count = n()) %>%
@@ -45,36 +47,45 @@ saveRDS(spec_lookup, paste0(WID_folder,"final_app_files/spec_lookup_op_",
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(spec_lookup, paste0(data_folder, "spec_lookup_op.rds"))
 
-# Aggregating to weekly data
+# Aggregating to weekly data ----
 outpats_agg = outpats_full %>% 
   filter(year >= 2018) %>%
   mutate(count = 1) %>%
   mutate(week_ending = ceiling_date(clinic_date, "week", change_on_boundary = F)) %>% #end of week
-  group_by(hscp2019name, hbtreat_name, hbres_new_name, appt_type, attendance_status, simd, 
+  group_by(hscp_new_name, hbtreat_new_name, hbres_new_name, appt_type, attendance_status, simd, 
            age_grp, sex_name, mode_contact_new, week_ending, Grouping) %>% 
   summarise(count = sum(count, na.rm = T)) %>% 
   ungroup() %>%
   rename(spec = Grouping) %>%
+  ##remove DNAs ***TEMPORARY***
   filter(attendance_status == "Attended")
 
-outpats_agg %<>% mutate(hscp2019name = case_when(is.na(hscp2019name) ~ "Other",
-                                                 TRUE ~ hscp2019name),
-                        hbtreat_name = case_when(is.na(hbtreat_name) ~ "Other",
-                                                 TRUE ~ hbtreat_name),
+### recode locations ----
+outpats_agg %<>% mutate(hscp_new_name = case_when(is.na(hscp_new_name) ~ "Other",
+                                                 TRUE ~ hscp_new_name),
+                        hbtreat_new_name = case_when(is.na(hbtreat_new_name) ~ "Other",
+                                                 TRUE ~ hbtreat_new_name),
                         hbres_new_name = case_when(is.na(hbres_new_name) ~ "Other",
+                                                   TRUE ~ hbres_new_name),
+                        hbtreat_new_name = case_when(hbtreat_new_name == "NHS Louisa Jordan (Covid-19)" ~ 
+                                                   "NHS Louisa Jordan",
+                                                 TRUE ~ hbtreat_new_name),
+                        hbres_new_name = case_when(substr(hbres_new_name, 1, 3) != "NHS" ~
+                                                     "Other",
                                                    TRUE ~ hbres_new_name))
 
-# Aggregating for each geo level
+# Aggregating for each geo level ----
 outpats_agg %<>% mutate(scot = "Scotland") %>% 
   gather(area_type, area_name, 
-         c(hbtreat_name, hbres_new_name, hscp2019name, scot)) %>% 
+         c(hbtreat_new_name, hbres_new_name, hscp_new_name, scot)) %>% 
   ungroup() %>% 
   mutate(area_type = recode(area_type, 
-                            "hbtreat_name" = "Health board of treatment", 
+                            "hbtreat_new_name" = "Health board of treatment", 
                             "hbres_new_name" = "Health board of residence",
-                            "hscp2019name" = "HSC partnership", 
+                            "hscp_new_name" = "HSC partnership of residence", 
                             "scot" = "Scotland"))
 
+### function that creates totals for each split
 agg_op <- function(grouper = NULL, split, specialty = F) {
   
   agg_helper <- function(more_vars, type_chosen = split) {
@@ -104,15 +115,16 @@ agg_op <- function(grouper = NULL, split, specialty = F) {
 }
 
 # Aggregating to obtain totals for each split type and then putting all back together
-# Totals for overalls for all pop including totals by specialty too
 op_adm_all <- agg_op(NULL, split = "sex", specialty = T) %>% 
-  mutate(category = "All")
+  mutate(category = "All") # Totals for all pop and specialty
+
 op_adm_sex <- agg_op(c("sex_name"), split = "sex") %>% 
-  rename(category = sex_name) %>% # Totals for overalls for all sexes
-  filter(category %in% c("Male", "Female"))
+  rename(category = sex_name) %>%
+  filter(category %in% c("Male", "Female")) # Totals for all sexes
+
 op_adm_age <- agg_op(c("age_grp"), split = "age") %>% 
-  rename(category = age_grp) # Totals for overalls for all age groups
-# Totals for overalls for deprivation quintiles
+  rename(category = age_grp) # Totals for all age groups
+
 op_adm_depr <- agg_op(c("simd"), split = "dep")  %>% 
   mutate(simd=case_when(is.na(simd)~"Missing", 
                         simd==1 ~ "1 - most deprived",
@@ -120,44 +132,40 @@ op_adm_depr <- agg_op(c("simd"), split = "dep")  %>%
                         TRUE~as.character(simd))) %>% 
   rename(category = simd) %>%
   filter(!is.na(category),
-         category != "Missing")
-# Totals for overalls for mode of contact
+         category != "Missing") # Totals for all SIMD quintiles
+
 op_adm_moc <- agg_op(c("mode_contact_new"), split = "moc") %>% 
   rename(category = mode_contact_new) %>%
-  filter(!is.na(category))
+  filter(!is.na(category)) # Totals for all modes of clinical interaction
 
-### apply disclosure flag to cases
+### apply disclosure flag to cases ----
 op_adm = disc_flag_adm() %>%
+  ## remove specialties with low numbers
   filter(!(spec %in% c("Dental", "Other")))
 
+### creating new object for final data ----
 dataset = op_adm
-
-# Function to format data in the right format for the Shiny app
-# prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) {
   
-  # Creating week number to be able to compare pre-covid to covid period
+  # Creating week number to be able to compare pre-covid to covid period ----
   dataset <- dataset %>% 
     mutate(week_no = isoweek(week_ending),
-           # Fixing HSCP names
+           # Fixing area names
            area_name = gsub(" and ", " & ", area_name)) 
-  ## apply disclosure flag to cases 
+  ## apply disclosure flag to cases ----
   dataset <- disc_flag_all()
   
-  # Apply disclosure control
+  # Apply disclosure control ----
   dataset = disclosure()
   
-  # Creating average appts of pre-covid data (2018-2019) by day of the year
+  # Creating average appts of pre-covid data (2018-2019) by week of the year ----
   historic_data <- dataset %>% filter(year(week_ending) %in% c("2018", "2019")) %>% 
     group_by(category, type, area_name, area_type, week_no, appt_type, spec) %>%
-    # Not using mean to avoid issues with missing data for some weeks
     summarise(count_average = round((sum(count, na.rm = T))/2, 1)) 
   
   # Joining with 2020 data
-  # Filtering weeks with incomplete week too!! Temporary
   data_2020 <- left_join(dataset %>% 
                            filter(year(week_ending) %in% c("2020")), 
                          historic_data) %>%
-    # filter(count != 0 & count_average != 0) %>%
     # Creating %variation from precovid to covid period 
     mutate(count_average = ifelse(is.na(count_average), 0, count_average),
            variation = round(-1 * ((count_average - count)/count_average * 100), 1),
@@ -167,19 +175,22 @@ dataset = op_adm
                                  is.nan(variation) ~ 0,
                                  is.infinite(variation) ~ 0,
                                  TRUE ~ variation)) %>%
+    ## renaming for ease in dashboard 
     rename("admission_type" = "appt_type") %>% 
+    ## data goes to week ending October 4th but October data haven't been published
     filter(week_ending <= dmy("27-09-2020")) %>%
+    # changing values where there is no activity in 2018/19 to 100% variation
+    #   to avoid weird trends
     mutate(variation_new = case_when(count_average == 0 & variation == 0 ~ 100,
                                  TRUE ~ variation))
   
-  final_data <<- data_2020
   saveRDS(data_2020, "shiny_app/data/outpats.rds")
   saveRDS(data_2020, paste0(WID_folder,"outpats.rds"))
   saveRDS(data_2020, paste0(WID_folder,"final_app_files/outpats_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(data_2020, paste0(WID_folder, "outpats.rds"))
-# }
   
+  ### Creating area type lookup for dashboard ----
   area_type_op <- dataset %>%
     group_by(area_name, area_type) %>%
     summarise(count = n()) %>%
@@ -191,6 +202,11 @@ dataset = op_adm
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(area_type_op, paste0(data_folder, "area_type_op.rds"))
   
-# prepare_final_data(op_adm, "outpats", last_week = "2020-09-27",
-#                    extra_vars = c("admission_type", "spec"))
+  # time taken.
+  end <- Sys.time()
+  end - start
+  
+  ### END OF SCRIPT ###
+  
+  
   
