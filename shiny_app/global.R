@@ -128,7 +128,7 @@ booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "9th February 2021"
+top_extract_date <- "11th March 2021"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
