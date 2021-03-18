@@ -22,7 +22,8 @@ ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/We
 
 # Excel workbook containing avergage gestation of women booking for antenatal care  - weekly file (Scotland and NHS board except small islands)
 ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
-                                sheet = "Data for Dashboard Charts") %>%
+                                sheet = "Data for Dashboard Charts",
+                                col_types = c("text", "date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric")) %>%
   janitor::clean_names() %>%
   rename(centreline_g=centreline, dottedline_g=dottedline, 
          centreline_g_t=tcentreline, dottedline_g_t=tdottedline, booked_g=booked) %>%
