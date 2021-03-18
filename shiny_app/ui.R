@@ -280,29 +280,8 @@ tabPanel(title = "Child development", icon = icon("seedling"), value = "child_de
          mainPanel(width = 12,
                    uiOutput("childdev_explorer")
          )# mainPanel bracket
-), # tabpanel bracket
-##############################################.
-## Perinatal ----
-###############################################.
-tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal_mortality",
-         wellPanel(
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_perinatal",
-                                           label= "Step 1 - Select the data you want to explore.",
-                                           choices = data_list_perinatal, status = "primary",
-                                           direction = "vertical", justified = T))),
-           column(4,actionButton("btn_perinatal_modal", "Data source: NRS vital event registrations",
-                                 icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton("download_perinatal_data", "Download data"),
-                  fluidRow(br()),
-                  actionButton('jump_commentary_perinatal','Go to commentary'))
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("perinatal_explorer")
-         )# mainPanel bracket
-  ) # tabpanel bracket
-  ), #navbarMenu bracket
+) # tabpanel bracket
+), #navbarMenu bracket
 ###############################################.
 ## Cancer ----
 ###############################################.
@@ -511,7 +490,28 @@ tabPanel(title = "Extremely preterm deliveries in a hospital with a NICU", icon 
          mainPanel(width = 12,
                    uiOutput("preterm_explorer")
          )# mainPanel bracket
-) # tabPanel bracket
+), # tabPanel bracket
+##############################################.
+## Perinatal ----
+###############################################.
+tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal_mortality",
+         wellPanel(
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_select_perinatal",
+                                           label= "Step 1 - Select the data you want to explore.",
+                                           choices = data_list_perinatal, status = "primary",
+                                           direction = "vertical", justified = T))),
+           column(4,actionButton("btn_perinatal_modal", "Data source: NRS vital event registrations",
+                                 icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_perinatal_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_perinatal','Go to commentary'))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("perinatal_explorer")
+         )# mainPanel bracket
+) # tabpanel bracket
 ), # navbar menu bracket
 ##############################################.
 # Data ----
