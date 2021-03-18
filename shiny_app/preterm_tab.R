@@ -56,9 +56,9 @@ output$preterm_explorer <- renderUI({
   intro_text <- p("Preterm intro ...")
   
   
-  control_chart_commentary <- p("As extremely preterm deliveries are relatively rare events in Scotland rates tend to fluctuate over time just by chance.
+  control_chart_commentary <- p("As extremely preterm deliveries are relatively rare events in Scotland proportions tend to fluctuate over time just by chance.
                       We have therefore used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
-                                                      "‘control charts’", target="_blank"), "to present the rates above.", br(),
+                                                      "‘control charts’", target="_blank"), "to present the proportions above.", br(),
                                 "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
                       Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
                                 "The dots joined by a solid line in the chart above show the quarterly proportion of deliveries at 23-26 weeks gestation that occur in a hospital with a neonatal intensive care unit on site from January 2018 onwards.", br(),  
