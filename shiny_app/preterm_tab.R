@@ -100,7 +100,7 @@ output$preterm_chart <- renderPlotly({
     add_lines(y = ~rate, line = list(color = "black"),
               text=tooltip_trend, hoverinfo="text",
               marker = list(color = "black"),
-              name = "Rate") %>%
+              name = "Proportion") %>%
     add_lines(y = ~centreline, line = list(color = "blue", dash = "longdash"),
               hoverinfo= "none", name = "Centreline") %>%
     add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dash"),
