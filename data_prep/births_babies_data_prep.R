@@ -662,7 +662,8 @@ preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/WI_DELIV
          percent_nicu=((mats/tot_neonate_23_26)*100),
          ind=case_when(ind=="nicu_23_26" ~ "Neonate deliveries in NICU",
                        ind=="neonate_23_26" ~ "All neonate deliveries",
-                       TRUE~as.character(ind))) 
+                       TRUE~as.character(ind))) %>% 
+  filter(quarter < "2021-01-01")
 
 saveRDS(preterm_linechart, "shiny_app/data/preterm_linechart_data.rds") 
 saveRDS(preterm_linechart, paste0(data_folder,"final_app_files/preterm_linechart_data_", 
