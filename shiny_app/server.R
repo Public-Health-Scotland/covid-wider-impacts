@@ -36,8 +36,8 @@ function(input, output, session) {
                      tags$li("31st March - New data on outpatient appointments."),
                      tags$li("7th April - Monthly update of data (most sections)."),
                      tags$li("14th April - New data on Apgar scores and location of birth for extremely preterm infants."),
-                     tags$li("28th April - New data on self-harm hospital admissions."),
                      tags$li("5th May - Monthly update of data (most sections)."),
+                     tags$li("12th May - New data on self-harm hospital admissions and neonatal health."),
                      tags$li("2nd June - New data on injury hospital admissions.")
                    ),
                    size = "m",
