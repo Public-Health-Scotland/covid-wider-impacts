@@ -356,6 +356,8 @@ observeEvent(input$switch_to_induction,{
 output$induction_commentary <- renderUI({
   tagList(
     bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
+    h2("Induction of labour - 7th April 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Induction of labour - 3rd March 2021"),
     p("In this third release of information on induction of labour (3rd March 2021) data have been updated to include women discharged after delivery up to and including November 2020. The data at all Scotland level show that the proportion induced (the percentage of singleton live births at 37-42 weeks gestation that followed induction of labour) has continued to show little change across the period presented (January 2018 to November 2020). The data by NHS Board of residence are more varied. In November 2020, NHS Dumfries & Galloway and NHS Forth Valley have continued the pattern of a number of consecutive months showing a lower proportion of inductions compared to their pre-pandemic average (although both showed periods of lower proportions of inductions in 2019). After a period where the proportion of births following induction was below the pre-pandemic average, the proportion in NHS Highland is noted to have increased in November 2020 to a level higher than the Health Board average (42%). NHS Ayrshire & Arran and NHS Fife have continued the pattern of a number of consecutive months showing a higher proportion of inductions compared to their pre-pandemic average. However, data are thought to be incomplete for NHS Fife for November 2020 so this proportion could change in future releases of the dashboard."),
     h2("Induction of labour - 3rd February 2021"),
