@@ -411,8 +411,8 @@ saveRDS(perinatal, paste0(open_data, "perinatal_data.rds"))
 ###############################################.
 ## Apgar ----
 ###############################################.
-apgar_folder <- "20210218"
-apgar_date <- "2021_02_18"
+apgar_folder <- "20210318"
+apgar_date <- "2021_03_18"
 
 
 ## 1-RUNCHART DATA
@@ -552,7 +552,7 @@ saveRDS(apgar_download, paste0(data_folder,"final_app_files/apgar_download_data_
 ## Preterm babies in NICU ----
 ###############################################.
 
-preterm_date <- "2021_02_18" 
+preterm_date <- "2021_03_18" 
 
 # P CHART PRETERM DATA
 preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_NeonatalAdmit_Charts_2021_02_01.xlsx"),
