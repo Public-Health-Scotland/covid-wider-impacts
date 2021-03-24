@@ -52,7 +52,7 @@ outpats_agg = outpats_full %>%
   filter(year >= 2018) %>%
   mutate(count = 1) %>%
   mutate(week_ending = ceiling_date(clinic_date, "week", change_on_boundary = F)) %>% #end of week
-  group_by(hscp_new_name, hbtreat_new_name, hbres_new_name, appt_type, attendance_status, simd, 
+  group_by(HSCPName, hbtreat_name, hbres_new_name, appt_type, attendance_status, simd, 
            age_grp, sex_name, mode_contact_new, week_ending, Grouping) %>% 
   summarise(count = sum(count, na.rm = T)) %>% 
   ungroup() %>%
@@ -61,28 +61,35 @@ outpats_agg = outpats_full %>%
   filter(attendance_status == "Attended")
 
 ### recode locations ----
-outpats_agg %<>% mutate(hscp_new_name = case_when(is.na(hscp_new_name) ~ "Other",
-                                                 TRUE ~ hscp_new_name),
-                        hbtreat_new_name = case_when(is.na(hbtreat_new_name) ~ "Other",
-                                                 TRUE ~ hbtreat_new_name),
+outpats_agg %<>% mutate(HSCPName = case_when(is.na(HSCPName) ~ "Other",
+                                                 TRUE ~ HSCPName),
+                        hbtreat_name = case_when(is.na(hbtreat_name) ~ "Other",
+                                                 TRUE ~ hbtreat_name),
                         hbres_new_name = case_when(is.na(hbres_new_name) ~ "Other",
                                                    TRUE ~ hbres_new_name),
-                        hbtreat_new_name = case_when(hbtreat_new_name == "NHS Louisa Jordan (Covid-19)" ~ 
+                        hbtreat_name = case_when(hbtreat_name == "NHS Louisa Jordan (Covid-19)" ~ 
                                                    "NHS Louisa Jordan",
-                                                 TRUE ~ hbtreat_new_name),
+                                                 TRUE ~ hbtreat_name),
                         hbres_new_name = case_when(substr(hbres_new_name, 1, 3) != "NHS" ~
                                                      "Other",
-                                                   TRUE ~ hbres_new_name))
+                                                   TRUE ~ hbres_new_name),
+                        hbtreat_name = case_when(substr(hbtreat_name, 1, 4) != "NHS "
+                                                     & hbtreat_name != "National Waiting Times Centre" ~
+                                                     "Other",
+                                                   TRUE ~ hbtreat_name),
+                        HSCPName = case_when(hbres_new_name == "Other" ~
+                                                     "Other",
+                                                   TRUE ~ HSCPName))
 
 # Aggregating for each geo level ----
 outpats_agg %<>% mutate(scot = "Scotland") %>% 
   gather(area_type, area_name, 
-         c(hbtreat_new_name, hbres_new_name, hscp_new_name, scot)) %>% 
+         c(hbtreat_name, hbres_new_name, HSCPName, scot)) %>% 
   ungroup() %>% 
   mutate(area_type = recode(area_type, 
-                            "hbtreat_new_name" = "Health board of treatment", 
+                            "hbtreat_name" = "Health board of treatment", 
                             "hbres_new_name" = "Health board of residence",
-                            "hscp_new_name" = "HSC partnership of residence", 
+                            "HSCPName" = "HSC partnership of residence", 
                             "scot" = "Scotland"))
 
 ### function that creates totals for each split
@@ -181,7 +188,8 @@ dataset = op_adm
     filter(week_ending <= dmy("27-09-2020")) %>%
     # changing values where there is no activity in 2018/19 to 100% variation
     #   to avoid weird trends
-    mutate(variation_new = case_when(count_average == 0 & variation == 0 ~ 100,
+    mutate(variation = case_when(count_average == 0 & variation == 0 &
+                                       count != 0 ~ 100,
                                  TRUE ~ variation))
   
   saveRDS(data_2020, "shiny_app/data/outpats.rds")

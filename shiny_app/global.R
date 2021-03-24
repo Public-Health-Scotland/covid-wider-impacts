@@ -67,99 +67,99 @@ deaths <- readRDS("data/deaths.rds") # deaths data
 outpats <- readRDS("data/outpats.rds") # outpatients data
 
 #Cardiovascular data
-# ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
-# cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
-# cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
-# ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
-# sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
+ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
+cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
+cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
+ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
+sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 
 #Cancer data
-# cancer_data2 <- readRDS("data/cancer_data_2.rds")
-# cancer_data3 <- readRDS("data/cancer_data_dep.rds")
-# cancer_extract_date <- "22nd February 2021"  
+cancer_data2 <- readRDS("data/cancer_data_2.rds")
+cancer_data3 <- readRDS("data/cancer_data_dep.rds")
+cancer_extract_date <- "22nd February 2021"
 
 # mental health data
-# mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
-# ae_mh <- readRDS("data/mh_A&E.rds")
-# mh_ooh <- readRDS("data/mh_ooh.rds")
+mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
+ae_mh <- readRDS("data/mh_A&E.rds")
+mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-# child_extract_date <- "22nd February 2021"
-# first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
-# firsttable <- readRDS("data/first_visit_datatable.rds")
-# sixtoeight <- readRDS("data/six_to_eight.rds")
-# sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
-# thirteen <- readRDS("data/thirteen.rds")
-# thirteentable <- readRDS("data/thirteen_datatable.rds")
-# twentyseven <- readRDS("data/twentyseven.rds")
-# twentyseventable <- readRDS("data/twentyseven_datatable.rds")
-# fourtofive <- readRDS("data/fourtofive.rds")
-# fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
+child_extract_date <- "22nd February 2021"
+first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
+firsttable <- readRDS("data/first_visit_datatable.rds")
+sixtoeight <- readRDS("data/six_to_eight.rds")
+sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
+thirteen <- readRDS("data/thirteen.rds")
+thirteentable <- readRDS("data/thirteen_datatable.rds")
+twentyseven <- readRDS("data/twentyseven.rds")
+twentyseventable <- readRDS("data/twentyseven_datatable.rds")
+fourtofive <- readRDS("data/fourtofive.rds")
+fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 
 ## Immunisation Data
-# immunisation_extract_date <- "22nd February 2021"
-# month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
-# age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
-# age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
+immunisation_extract_date <- "22nd February 2021"
+month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
+age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
+age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
 
 #Immunisations s-curve data
-# six_alldose <- readRDS("data/six_alldose.rds")
-# mmr_alldose <- readRDS("data/mmr_alldose.rds") # mmr immunisation scurve data for all doses
+six_alldose <- readRDS("data/six_alldose.rds")
+mmr_alldose <- readRDS("data/mmr_alldose.rds") # mmr immunisation scurve data for all doses
 
 #Immunisations data table data
-# sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table (all dose)
-# mmrtable <- readRDS("data/mmr_datatable.rds") # mmr summary table (all dose)
+sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table (all dose)
+mmrtable <- readRDS("data/mmr_datatable.rds") # mmr summary table (all dose)
 
 #data quality issues require additional data file for NHS grampian
-# mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_grampian_datatable.rds") # mmr immunisation data table summary for just grampian mmr dose 2
+mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_grampian_datatable.rds") # mmr immunisation data table summary for just grampian mmr dose 2
 
 #Immunisations SIMD data
-# six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
-# six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
-# six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
-# mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
-# mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
+six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
+six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
+six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
+mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
+mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
 # perinatal mortality data
-# perinatal <- readRDS("data/perinatal.rds")
+perinatal <- readRDS("data/perinatal.rds")
 
 #Pregnancy tab
 #antenatal booking
 
-# booking_extract_date <- "11th February 2021"
-# booking <- readRDS("data/ante_booking.rds")
-# booking_download <- readRDS("data/ante_booking_download.rds")
+booking_extract_date <- "11th February 2021"
+booking <- readRDS("data/ante_booking.rds")
+booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-# top_extract_date <- "9th February 2021"
-# top <- readRDS("data/top.rds")
-# top_download <- readRDS("data/top_download.rds")
+top_extract_date <- "9th February 2021"
+top <- readRDS("data/top.rds")
+top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-# mod_extract_date <- "15th February 2021"
-# mod_runchart <- readRDS("data/mod_runchart_data.rds")
-# mod_scot <- readRDS("data/mod_scot_data.rds")
-# mod_linechart <- readRDS("data/mod_linechart_data.rds")
-# mod_download <- readRDS("data/mod_download_data.rds")
+mod_extract_date <- "15th February 2021"
+mod_runchart <- readRDS("data/mod_runchart_data.rds")
+mod_scot <- readRDS("data/mod_scot_data.rds")
+mod_linechart <- readRDS("data/mod_linechart_data.rds")
+mod_download <- readRDS("data/mod_download_data.rds")
 
 #inductions (pregnanacy tab)
-# induct_extract_date <- "15th February 2021"
-# induct_runchart <- readRDS("data/induct_runchart_data.rds")
-# induct_scot <- readRDS("data/induct_scot_data.rds")
-# induct_linechart <- readRDS("data/induct_linechart_data.rds")
-# induct_download <- readRDS("data/induct_download_data.rds")
+induct_extract_date <- "15th February 2021"
+induct_runchart <- readRDS("data/induct_runchart_data.rds")
+induct_scot <- readRDS("data/induct_scot_data.rds")
+induct_linechart <- readRDS("data/induct_linechart_data.rds")
+induct_download <- readRDS("data/induct_download_data.rds")
 
 #gestation at delivery (pregnanacy tab)
-# gestation_extract_date <- "15th February 2021"
-# gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
-# gestation_scot <- readRDS("data/gestation_scot_data.rds")
-# gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
-# gestation_download <- readRDS("data/gestation_download_data.rds")
+gestation_extract_date <- "15th February 2021"
+gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
+gestation_scot <- readRDS("data/gestation_scot_data.rds")
+gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
+gestation_download <- readRDS("data/gestation_download_data.rds")
 
 # Breastfeeding data
-# breastfeeding <- readRDS("data/breastfeeding.rds")
+breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
-# child_dev <- readRDS("data/child_dev.rds")
+child_dev <- readRDS("data/child_dev.rds")
 
 ###############################################.
 ## Objects, names, lists ----
@@ -171,10 +171,10 @@ spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
 spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
 
 data_list <- c(
-  # "Hospital admissions" = "rapid", "A&E attendances" = "aye",
-  #              "NHS 24 completed contacts" = "nhs24",
-  #              "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
-  #              "Excess mortality" = "deaths",
+  "Hospital admissions" = "rapid", "A&E attendances" = "aye",
+               "NHS 24 completed contacts" = "nhs24",
+               "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
+               "Excess mortality" = "deaths",
                "Outpatient appointments" = "outpats")
 
 #List of data items available in step 2 of immunisation tab

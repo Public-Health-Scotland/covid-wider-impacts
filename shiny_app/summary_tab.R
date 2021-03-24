@@ -262,7 +262,8 @@ observeEvent(input$btn_dataset_modal,
                      "mode of clinical interaction, and specialty groups. Data are given at ",
                      "Scotland, Health board of treatment, Health board of residence, and",
                      "HSC partnership of residence level. ",
-                     "'Other' Health board of treatment refers to cases where the NHS Board is unknown or invalid.",
+                     "'Other' Health board of treatment refers to cases where the 
+                     health board is NHS24 (due to small numbers), unknown or invalid.",
                      " 'Other' Health board of residence and HSC partnership of residence 
                      refers to Other Residential Categories as defined ",
                      "on our ",
@@ -327,7 +328,7 @@ observeEvent(input$btn_modal_simd, { showModal(simd_modal) })
 ###############################################.
 # Modal to explain mode of clinical interaction graphs
 moc_modal <- modalDialog(
-  h5("Interpretation of this graph"),
+  h5(tags$b("Interpretation of this chart")),
   p("Please note that the majority of outpatient appointments in previous years were 
     conducted face to face, and there were very few appointments held by other means. 
     This means that numbers in previous years are very small or zero, and the graph shows 
@@ -335,7 +336,7 @@ moc_modal <- modalDialog(
   p("Where there were no cases for non-face to face appointments in previous years, 
     variation is shown as 100%. This is not accurate but is an attempt to 
     show that there has been a significant change. The way this is displayed may change in future releases."),
-  size = "l", 
+  size = "l",
   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   )
 # Link action button click to modal launch 
@@ -534,7 +535,7 @@ output$data_explorer <- renderUI({
                      # Adding adm_type here to make clear what is selected
                      column(6,
                             h4(paste0(total_title, "mode of clinical interaction")))),
-            fluidRow(actionButton("btn_modal_moc", "Interpreting this chart", 
+            fluidRow(actionButton("btn_modal_moc", "Interpretation of this chart", 
                                   icon = icon('fas fa-exclamation-circle'))),
             fluidRow(column(6,
                             withSpinner(plotlyOutput("op_moc_var"))),
@@ -713,19 +714,30 @@ output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
     h2("Summary - Outpatient appointments - 31st March 2021"),
-    p("Data are taken from Scottish Morbidity Record (SMR00)."),
+    p("Data are taken from Scottish Morbidity Record (SMR00), and show outpatient appointments
+      to week ending 27th September 2020. 
+      Further information is available by following the 'Data source: SMR00' links on the dashboard."),
     h4("Initial findings: outpatient appointments"),
     tags$ul(
-      tags$li("Outpatient appointments fell from the second week of March, dropping by 
-close to 70% below the average of the same weeks in 2018-19 by mid-April."),
-      tags$li("There has been some recovery since late April, but numbers of appointments remain 
+      tags$li("Outpatient appointments fell from the second week of March; by week ending 19th April 2020,
+outpatient appointments had fallen by over two-thirds (69%) compared to the average of the same week in 2018-19 
+              (from an average of 87,083 in 2018-19 to 27,163 in 2020)."),
+      tags$li("There has been some recovery after 19th April, but numbers of appointments remain 
 around 26% below the 2018-19 average by the end of September 2020."),
-      tags$li("Similar patterns are seen by sex, age groups and by deprivation groups."),
-      tags$li("There were larger relative falls for surgical than medical specialties."),
+      tags$li("This impact was similar across sexes, age groups and deprivation groups. 
+              However, between April and July 2020, the fall in appointments was 
+              greatest in patients aged 85 and over, dropping by almost three-quarters (-73%) 
+              while patients aged 15-44 dropped by two-thirds (-66%)"),
+      tags$li("There were larger relative falls for surgical (-76%) than medical (-65%) specialties. 
+              By week ending 27th September 2020, medical specialties showed a reduction of almost a quarter 
+              (-24%) while surgical specialties decreased by a third (-32%)."),
       tags$li("There were larger decreases and slower recovery in new outpatient appointments
 than in return outpatient appointments."),
       tags$li("There has been a very large increase in the number of appointments carried out remotely through 
-              telephone and videolink.")
+              telephone and videolink. In week ending 27th September 2020, almost a fifth (19%) of appointments 
+              were conducted via telephone, and over 1 in 20 (6%) were by videolink. These types of appointments
+              were uncommon prior to March 2020; therefore the percentage increases compared to previous
+              years are extremely large.")
       ),
     h4("Interpreting these figures"),
     p("Please exercise caution when interpreting these figures, as these data are for management information only. 
