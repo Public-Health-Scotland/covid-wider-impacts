@@ -4,7 +4,14 @@
 observeEvent(input$btn_apgar_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("The data used for the apgar page comes from ... "),
+               p("The data used for the Apgar scores page comes from the Scottish Morbidity Record 02 (SMR02) database. An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care. From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended home births."),
+               p("For the Apgar scores page, SMR02 records for episodes of care involving the delivery of a singleton live birth (i.e. one baby, not twins or more) at 37-42 weeks gestation inclusive have been used. The charts presented show the total number of singleton live births at 37-42 weeks with known Apgar score at 5 minutes following delivery, and the number and percentage of babies that had a score of <7.  Data is presented for January 2018 onwards, based on the date the woman was discharged from hospital after delivery."),
+               p("Apgar scores range from 0 to 10, with higher scores indicating that the baby is in a healthy condition following delivery."),
+               p("Data is presented for individual months at Scotland level, and for sequential quarters (Jan-Mar 2018, Apr-Jun 2018, etc) for individual NHS Boards.  Due to small numbers, the charts for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles) are unstable so these have not been shown. However, the Island Boards are included in the Scotland total, and data for the Island Boards is available in the spreadsheet provided through the ‘Download data’ button."),
+               p("Data is shown for up to and including the most recent month for which SMR02 records are considered near complete. Data for the most recent months should be viewed as provisional. Data for all months will be refreshed every time the dashboard page is updated, and data for the most recent months is likely to change slightly as additional SMR02 records are submitted to PHS."),
+               p("Although there is no legal requirement to submit SMR02 records to PHS, data completeness is very high. For example, for the period 1 April 2019 to 31 March 2020, live births recorded on SMR02 represented 98.8% of the live births registered by law with National Records of Scotland. In addition, the recording of specific data items allowing identification of singleton live births at 37-42 weeks gestation, and of babies’ 5 minute Apgar score, is very complete.  For the period 1 April 2019 to 31 March 2020, a 5 minute Apgar score was recorded on 99% of SMR02 records relating to singleton live births at 37-42 weeks gestation."),
+               p("Further information based on SMR02 data is also available from the annual ",
+                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/births-in-scottish-hospitals/", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
                size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
@@ -27,11 +34,16 @@ observeEvent(input$btn_apgar_rules,
 observeEvent(input$btn_modal_simd_apgar, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
-    p("Women/babies have been allocated to different levels of deprivation based on the small area (data zone) in which they live and the",
-      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
-             class="externallink"), "SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: income; employment; health; education, skills and training; housing; geographic access; and crime.
-    In this tool we have presented results for women living in different SIMD ‘quintiles’. To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) of the overall population of Scotland are identified.
-    Women/babies? living in the most and least deprived areas that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
+    p("Babies have been allocated to different levels of deprivation based on the 
+      small area (data zone) in which their mothers live and the Scottish Index of 
+      Multiple Deprivation (SIMD). SIMD scores are based on data for local areas 
+      reflecting 38 indicators across 7 domains: income; employment; health; education, 
+      skills and training; housing; geographic access; and crime. In this tool we have 
+      presented results for babies living in different SIMD ‘quintiles’. To produce 
+      quintiles, data zones are ranked by their SIMD score then the areas each containing 
+      a fifth (20%) of the overall population of Scotland are identified. Babies living 
+      in the most and least deprived areas that each contain a fifth of the population are 
+      assigned to SIMD quintile 1 and 5 respectively."),
     size = "l",
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   ))})
@@ -104,10 +116,10 @@ output$apgar_explorer <- renderUI({
   apgar_title <- paste0("of singleton live births at 37-42 weeks gestation that have a 5 minute Apgar score of <7: ",input$geoname_apgar)
   
   chart_explanation <- 
-    tagList(p("We have used ",                      
-              tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                     'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Percentage of singleton live births at 37-42 weeks gestation that have a 5 minute Apgar score of <7’ chart above, the dots joined by a solid black line show the percentage of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7 out of all singleton live births at 37-42 weeks gestation with known 5 minute Apgar score in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7 out of all singleton live births at 37-42 weeks gestation with known 5 minute Apgar score over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of live births with a 5 minute Apgar score of <7."))
+    tagList(#p("We have used ",                      
+              # tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
+              #        'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
+            p("On the ‘Percentage of births that have a 5 minute Apgar score of <7’ chart above, the dots joined by a solid black line show the percentage of singleton live births at 37-42 weeks gestation with known 5 minute Apgar score that had a score of <7, in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of births with 5 minute Apgar score of <7 over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of births with a 5 minute Apgar score of <7."))
   
   # Function to create common layout to all immunisation charts
   apgar_layout <- function(apgar_trend,apgar_linechart_number,apgar_linechart_age_n,apgar_linechart_age_p,apgar_linechart_dep_n,apgar_linechart_dep_p){

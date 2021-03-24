@@ -49,17 +49,12 @@ observeEvent(input$btn_preterm_rules,
 output$preterm_explorer <- renderUI({
   
   # text for titles of cut charts
-  preterm_title <- paste0("Proportion of deliveries at 23-26 weeks gestation resulting in a live born baby that occur in a hospital with a neonatal intensive care unit on site: Scotland")
+  preterm_title <- paste0("Percentage of deliveries at 23-26 weeks gestation resulting in a live born baby that occur in a hospital with a neonatal intensive care unit on site: Scotland")
 
-  control_chart_commentary <- p("As extremely preterm deliveries are relatively rare events in Scotland proportions tend to fluctuate over time just by chance.
-                      We have therefore used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
-                                                      "‘control charts’", target="_blank"), "to present the proportions above.", br(),
-                                "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
-                      Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
-                                "The dots joined by a solid line in the chart above show the quarterly proportion of deliveries at 23-26 weeks gestation that occur in a hospital with a neonatal intensive care unit on site from January 2018 onwards.", br(),  
-                                "The other lines - centreline, and control and warning limits - are there to help show how unexpected any observed changes are. 
-                      The centreline is an average (mean) over the time period. Control and warning limits take into consideration the random variation 
-                      that would be expected by chance, and help us decide when values are unexpectedly low or high and require further investigation.")
+  control_chart_commentary <- p("As extremely preterm deliveries are relatively rare events in Scotland percentages tend to fluctuate over time just by chance.", br(),
+                      "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?'", br(),
+                                "The dots joined by a solid black line in the chart above show the percentage of deliveries at 23-26 weeks gestation inclusive that occurred in a hospital with a neonatal intensive care unit on site, for sequential quarters from January-March 2018 onwards.", br(),  
+                                "The other lines - centreline, and control and warning limits - are there to help show how unexpected any observed changes are. The centreline is an average (mean) over the time period. Control and warning limits take into consideration the random variation that would be expected by chance, and help us decide when values are unexpectedly low or high and require further investigation.")
   
   # Specify items to display in preterm ui 
   tagList(
@@ -82,19 +77,19 @@ output$preterm_explorer <- renderUI({
 output$preterm_chart <- renderPlotly({
   trend_data <- preterm_chart
   
-  yaxis_plots[["title"]] <- "Proportion of deliveries" 
+  yaxis_plots[["title"]] <- "Percentage of deliveries" 
                                       
   xaxis_plots[["title"]] <- "Quarter"
   
   # Tooltip
   tooltip_trend <- c(paste0(format(trend_data$quarter), "<br>", 
-                            "Proportion: ", round(trend_data$percentage_NICU_site, 1)))
+                            "Percentage: ", round(trend_data$percentage_NICU_site, 1)))
   
   plot_ly(data = trend_data, x = ~quarter_of_year) %>%
     add_lines(y = ~percentage_NICU_site, line = list(color = "black"),
               text=tooltip_trend, hoverinfo="text",
               marker = list(color = "black"),
-              name = "Proportion") %>%
+              name = "Percentage") %>%
     add_lines(y = ~centreline, line = list(color = "blue", dash = "longdash"),
               hoverinfo= "none", name = "Centreline") %>%
     add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dash"),
@@ -135,7 +130,7 @@ output$preterm_linechart <- renderPlotly({
   
   #arrange sort order for gestation categories
   plot_data <- plot_data %>%
-    mutate(ind = factor(ind, levels = c("Neonate deliveries in NICU", "All neonate deliveries")))
+    mutate(ind = factor(ind, levels = c("Deliveries 23-26w in hosp with NICU", "All deliveries 23-26w")))
   #pick a colour palette to apply
   pallette <- pal_age
   
@@ -185,7 +180,7 @@ output$preterm_linechart <- renderPlotly({
 ###############################################.
 
 preterm_download_data <- reactive({
-  preterm_chart
+  preterm_download
 })
 
 output$download_preterm_data <- downloadHandler(

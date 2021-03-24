@@ -689,8 +689,8 @@ preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/WI_DELIV
          area_type = type, 
          category="All",
          percent_nicu=((mats/tot_neonate_23_26)*100),
-         ind=case_when(ind=="nicu_23_26" ~ "Neonate deliveries in NICU",
-                       ind=="neonate_23_26" ~ "All neonate deliveries",
+         ind=case_when(ind=="nicu_23_26" ~ "Deliveries 23-26w in hosp with NICU",
+                       ind=="neonate_23_26" ~ "All deliveries 23-26w",
                        TRUE~as.character(ind))) %>% 
   filter(quarter < "2021-01-01")
 

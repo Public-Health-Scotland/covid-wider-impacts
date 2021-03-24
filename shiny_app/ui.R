@@ -97,8 +97,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("mod_button", "Method of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
                           actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
-                          actionLink("apgar_button", "Apgar scores of term babies", width="150px"),br(),
-                          actionLink("preterm_button", "Extremely preterm deliveries in a hospital with a NICU", width="150px"),br(),
+                          actionLink("apgar_button", "Apgar scores", width="150px"),br(),
+                          actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
                           actionLink("mentalhealth_button", "Mental health", width="150px"), br(),
                           actionLink("cancer_button", "Cancer", width="150px")
 
@@ -118,8 +118,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
                                      bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
-                                     bsCollapsePanel("Apgar scores of term babies", uiOutput("apgar_commentary")),
-                                     bsCollapsePanel("Extremely preterm deliveries in a hospital with a NICU", uiOutput("preterm_commentary")),
+                                     bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
+                                     bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
                                      bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
 
                           )))
@@ -473,7 +473,7 @@ tabPanel(title = "Apgar scores", icon = icon("notes-medical"), value = "apgar",
 ###############################################.
 ## Preterm Tab ----
 ###############################################.
-tabPanel(title = "Extremely preterm deliveries in a hospital with a NICU", icon = icon("hospital-alt"), value = "preterm",
+tabPanel(title = "Location of extremely preterm deliveries", icon = icon("hospital-alt"), value = "preterm",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
