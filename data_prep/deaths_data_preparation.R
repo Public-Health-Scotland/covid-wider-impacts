@@ -314,14 +314,20 @@ write_rds(combined_wide, "Q:/Team-NRSData/NRS data/Projects/Weekly COVID deaths/
 #   summarise(allcause = sum(allcause))
 
 
+
 ###############################################.
-## Cancer deaths ----
+## Functions/Packages/filepaths/lookups ----
 ###############################################.
+source("data_prep/functions_packages_data_prep.R")
+
 library(odbc)
 channel <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
                                       uid=.rs.askForPassword("SMRA Username:"), 
                                       pwd=.rs.askForPassword("SMRA Password:")))
 
+###############################################.
+## Cancer deaths ----
+###############################################.
 data_deaths <- tbl_df(dbGetQuery(channel, statement=
 "SELECT date_of_registration, age, sex, UNDERLYING_CAUSE_OF_DEATH diag, POSTCODE pc7
     FROM ANALYSIS.GRO_DEATHS_C
