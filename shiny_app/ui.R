@@ -452,7 +452,7 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
 ###############################################.
 ## Apgar Tab ----
 ###############################################.
-tabPanel(title = "Apgar scores of term babies", icon = icon("notes-medical"), value = "apgar",
+tabPanel(title = "Apgar scores", icon = icon("notes-medical"), value = "apgar",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),

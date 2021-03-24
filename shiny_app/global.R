@@ -168,7 +168,7 @@ apgar_download <- readRDS("data/apgar_download_data.rds")
 preterm_extract_date <- "18th March 2021"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
-#preterm_download <- readRDS("data/preterm_download_data.rds")
+preterm_download <- readRDS("data/preterm.rds")
 
 ###############################################.
 ## Objects, names, lists ----
@@ -319,6 +319,6 @@ yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4
 # Buttons to remove
 bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
                        'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                        'hoverClosestCartesian')
+                        'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
 
 ## END

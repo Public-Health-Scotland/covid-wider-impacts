@@ -187,9 +187,12 @@ plot_apgar_trend <- function(measure, shift, trend){
     
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$date)-20, max(plot_data$date)+20)
+    xaxis_plots[["title"]] <- c("")
+    xaxis_plots[["categoryorder"]] <- c("array")
+    xaxis_plots[["categoryarray"]] = c(plot_data$date)
     
     #specify tool tip
-    tooltip_top <- c(paste0("Date: ",format(plot_data$date_label),"<br>",
+    tooltip_top <- c(paste0(format(plot_data$date_type),": ",format(plot_data$date_label),"<br>",
                             "Percentage: ",format(plot_data$perc_low_apgar5_37plus, digits = 1,nsmall=1),"%", "<br>"))
     
     #Creating time trend plot
@@ -197,7 +200,7 @@ plot_apgar_trend <- function(measure, shift, trend){
       add_lines(y = ~perc_low_apgar5_37plus,  
                 line = list(color = "black"), text=tooltip_top, hoverinfo="text",
                 marker = list(color = "black"), name = yname ) %>% 
-      add_lines(y = ~ext_apgar5_37plus, name = FALSE,
+      add_lines(y = ~ext_median_apgar5_37plus, name = FALSE,
                 line = list(color = "blue", dash = "longdash"), hoverinfo="none",
                 name = "Centreline", showlegend = FALSE) %>%
       add_lines(y = ~median_apgar5_37plus, name = centreline_name,
@@ -226,7 +229,7 @@ plot_apgar_linechart <- function(measure){
   
   #arrange sort order for gestation categories
   plot_data <- plot_data %>%
-    mutate(ind = factor(ind, levels = c("Babies with a low Apgar 5", "Babies with an Apgar 5")))
+    mutate(ind = factor(ind, levels = c("Babies with Apgar 5 < 7", "Babies with known Apgar 5")))
   #pick a colour palette to apply
   pallette <- pal_age
   
@@ -236,7 +239,7 @@ plot_apgar_linechart <- function(measure){
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10%
     
     plot_data <- plot_data %>%  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
-      filter(ind!="Babies with an Apgar 5")
+      filter(ind!="Babies with known Apgar 5")
     
   }
   
@@ -248,7 +251,7 @@ plot_apgar_linechart <- function(measure){
   # Create tooltip for line chart
   tooltip <- c(paste0( plot_data$ind,"<br>",
                        "Area: ",plot_data$area_name,"<br>",
-                       "Date: ",  format(plot_data$date_label),"<br>",
+                       format(plot_data$date_type),": ",  format(plot_data$date_label),"<br>",
                        "Number of births: ", plot_data$apgar5,"<br>",
                        "Percentage of births: ", format(plot_data$percent_apgar,digits = 1,nsmall=1),"%"))
   
@@ -268,7 +271,9 @@ plot_apgar_linechart <- function(measure){
              xaxis = list(title = "", categoryorder = "array", categoryarray = ~date),
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
+                                                                                   'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
+                                                                                   'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d'))}
 }
 
 
@@ -319,9 +324,12 @@ plot_apgar_split <- function(dataset, split, measure){
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
            yaxis = yaxis_plots,  
            xaxis = list(title = "", categoryorder = "array", categoryarray = ~quarter),
-           legend = list(orientation = 'v')) %>% #position of legend underneath plot
+           legend = list(orientation = 'h')) %>% #position of legend underneath plot
     #leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    config(displaylogo = F, displayModeBar = TRUE, 
+           modeBarButtonsToRemove = list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
+                                                                                 'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
+                                                                                 'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d'))
   
 }
 

@@ -50,12 +50,7 @@ output$preterm_explorer <- renderUI({
   
   # text for titles of cut charts
   preterm_title <- paste0("Proportion of deliveries at 23-26 weeks gestation resulting in a live born baby that occur in a hospital with a neonatal intensive care unit on site: Scotland")
-  
-  
-  # Intro paragraph within preterm tab
-  intro_text <- p("Preterm intro ...")
-  
-  
+
   control_chart_commentary <- p("As extremely preterm deliveries are relatively rare events in Scotland proportions tend to fluctuate over time just by chance.
                       We have therefore used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
                                                       "‘control charts’", target="_blank"), "to present the proportions above.", br(),
@@ -69,7 +64,6 @@ output$preterm_explorer <- renderUI({
   # Specify items to display in preterm ui 
   tagList(
     fluidRow(column(12, 
-                    intro_text,
                     h4(paste0(preterm_title)))),
     actionButton("btn_preterm_rules", "How do we identify patterns in the data?", 
                  icon = icon('question-circle')),
@@ -93,11 +87,11 @@ output$preterm_chart <- renderPlotly({
   xaxis_plots[["title"]] <- "Quarter"
   
   # Tooltip
-  tooltip_trend <- c(paste0(format(trend_data$quarter_label), "<br>", 
-                            "Proportion: ", round(trend_data$rate, 1)))
+  tooltip_trend <- c(paste0(format(trend_data$quarter), "<br>", 
+                            "Proportion: ", round(trend_data$percentage_NICU_site, 1)))
   
   plot_ly(data = trend_data, x = ~quarter_of_year) %>%
-    add_lines(y = ~rate, line = list(color = "black"),
+    add_lines(y = ~percentage_NICU_site, line = list(color = "black"),
               text=tooltip_trend, hoverinfo="text",
               marker = list(color = "black"),
               name = "Proportion") %>%
@@ -112,19 +106,19 @@ output$preterm_chart <- renderPlotly({
     add_lines(y = ~lower_wl_2_std_dev, line = list(color = "#33ccff", dash = "dot"),
               hoverinfo= "none", showlegend = FALSE) %>%
     # adding outliers
-    add_markers(data = trend_data %>% filter(outlier == T), y = ~ rate,
+    add_markers(data = trend_data %>% filter(outlier == T), y = ~ percentage_NICU_site,
                 marker = list(color = "red", size = 10, symbol = "diamond"), name = "Outliers") %>% 
     # adding shifts
-    add_markers(data = trend_data %>% filter(shift == T), y = ~ rate,
+    add_markers(data = trend_data %>% filter(shift == T), y = ~ percentage_NICU_site,
                 marker = list(color = "blue", size = 10, symbol = "circle"), name = "Shifts") %>% 
     # adding shifts
-    add_markers(data = trend_data %>% filter(trend == T), y = ~ rate,
+    add_markers(data = trend_data %>% filter(trend == T), y = ~ percentage_NICU_site,
                 marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>% 
     # adding inner third
-    add_markers(data = trend_data %>% filter(inner == T), y = ~ rate,
+    add_markers(data = trend_data %>% filter(inner == T), y = ~ percentage_NICU_site,
                 marker = list(color = "gray", size = 10, symbol = "x"), name = "Inner one-third") %>% 
     # adding outer third
-    add_markers(data = trend_data %>% filter(outer == T), y = ~ rate,
+    add_markers(data = trend_data %>% filter(outer == T), y = ~ percentage_NICU_site,
                 marker = list(color = "orange", size = 10, symbol = "star"), name = "Outer one-third") %>% 
     layout( #to avoid labels getting cut out
       yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
