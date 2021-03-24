@@ -444,11 +444,11 @@ apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folde
  
   # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
   # ext_ columns (don't exist in data file) are extended median which are blank before projection time period
-  group_by(area_name) %>% 
-  mutate(ext_apgar5_37plus = max(median_apgar5_37plus, na.rm = T)) %>% 
-  ungroup() %>% 
-  # mutate(ext_ind_37_42 = case_when(is.na(ext_ind_37_42) ~ median_ind_37_42,
-  #                                  TRUE ~ ext_ind_37_42)) %>%
+  # group_by(area_name) %>% 
+  # mutate(ext_apgar5_37plus = max(median_apgar5_37plus, na.rm = T)) %>% 
+  # ungroup() %>% 
+  mutate(ext_median_apgar5_37plus = case_when(is.na(ext_median_apgar5_37plus) ~ median_apgar5_37plus,
+                                   TRUE ~ ext_median_apgar5_37plus)) %>%
   group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
   #call function to add flags for runchart shifts and trends
   #shift: name for new field where shift is flagged
@@ -555,12 +555,11 @@ saveRDS(apgar_download, paste0(data_folder,"final_app_files/apgar_download_data_
 preterm_date <- "2021_03_18" 
 
 # P CHART PRETERM DATA
-preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_NeonatalAdmit_Charts_2021_02_01.xlsx"),
+preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_NeonatalAdmit_p-chart_",preterm_date,".xlsx"),
                                     sheet = "P_Chart", skip = 102) %>% 
-  mutate(type = "neonate")%>%
   janitor::clean_names() %>%
-  select(quarter_of_year=sample_2, number_of_deaths_in_quarter=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
-         upper_cl_3_std_dev:type) %>% 
+  select(quarter_of_year=sample_2, N_deliveries_23_26_NICU_site=observation, N_deliveries_23_26=sample_size, rate, centreline, stdev = binomial_st_dev_16, 
+         upper_cl_3_std_dev:lower_wl_2_std_dev) %>% 
   mutate(area_name="Scotland", #creating geo variables
          area_type="Scotland",
          quarter_of_year = gsub("-", "", quarter_of_year), #formatting date
@@ -574,10 +573,10 @@ preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI
 
 # Creating rules for spc charts
 preterm %<>% 
-  arrange(type, area_name, quarter_of_year) %>% 
+  arrange(area_name, quarter_of_year) %>% 
   mutate(upper_sigma1 = rate + stdev,
          lower_sigma1 = rate + stdev) %>% 
-  group_by(type, area_name) %>% 
+  group_by(area_name) %>% 
   # for rules: outliers when over or under 3 sigma limit
   mutate(outlier = case_when(rate>upper_cl_3_std_dev | rate< lower_cl_3_std_dev ~ T, T ~ F),
          # Shift: run of 8or more consecutive data points above or below the centreline
@@ -634,7 +633,8 @@ preterm %<>%
                            | lead(inner_i, 11) == T | lead(inner_i, 12) == T
                            | lead(inner_i, 13) == T | lead(inner_i, 14) == T ~T, T ~ F)) %>%
   ungroup %>% 
-  select(-shift_i, -trend_i, -outer_i, -inner_i) 
+  select(-shift_i, -trend_i, -outer_i, -inner_i) %>% 
+  rename(percentage_NICU_site=rate, quarter=quarter_label)
 
 saveRDS(preterm, "shiny_app/data/preterm.rds")
 saveRDS(preterm, paste0(data_folder,"final_app_files/preterm_", 
@@ -668,5 +668,22 @@ preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/WI_DELIV
 saveRDS(preterm_linechart, "shiny_app/data/preterm_linechart_data.rds") 
 saveRDS(preterm_linechart, paste0(data_folder,"final_app_files/preterm_linechart_data_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+# ## 3- Preterm DATA DOWNLOAD FILE FOR SHINY APP
+# preterm_download <- readRDS(paste0(data_folder, "births_babies/preterm/WI_Neonate_DOWNLOAD_",preterm_date,".rds"))%>%  
+#   janitor::clean_names() %>%
+#   mutate(quarter_of_discharge=as.Date(quarter_of_discharge,format="%Y-%m-%d"),
+#          quarter_of_discharge=phsmethods::qtr(quarter_of_discharge, format="short")
+#   ) %>%
+#   rename(area_name=nhs_board_of_residence) %>% 
+#   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+#                              area_name=="Scotland" ~ "Scotland"),
+#          chart_category="All",
+#          chart_type= area_type) %>% 
+#   select(-month_of_discharge)
+# 
+# saveRDS(apgar_download, "shiny_app/data/preterm_download_data.rds")  
+# saveRDS(apgar_download, paste0(data_folder,"final_app_files/preterm_download_data_", 
+#                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ##END
