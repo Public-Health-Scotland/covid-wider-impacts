@@ -42,6 +42,15 @@ observeEvent(input$btn_perinatal_rules,
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 ###############################################.
+## Reactive dataset ----
+###############################################.
+# Reactive dataset used 
+peri_filt <- reactive({
+  perinatal %>% filter(type == input$measure_select_perinatal & area_name == "Scotland") %>% 
+    filter(month_of_year == max(month_of_year)) 
+})
+
+###############################################.
 ##  Reactive layout  ----
 ###############################################.
 # The charts and text shown on the app will depend on what the user wants to see
@@ -69,12 +78,15 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
   
   # Text to be updated every month with updated dates
-  last_month_peri <- "January 2021"
-  cutdate_peri <- "14 February 2021"
-  extractdate_peri <- "17 February 2021"
-  nextup_peri <- "April 2021"
-  nextdata_peri <- "February 2021"
+  last_month_peri <- "February 2021"
+  cutdate_peri <- "21 March 2021"
+  extractdate_peri <- "24 March 2021"
+  nextup_peri <- "May 2021"
+  nextdata_peri <- "March 2021"
   
+  # Number of deaths and of births used in the text
+  no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
+  no_births <- peri_filt() %>% pull(sample_size) %>% format(big.mark=",")
   
   # Intro paragraph within perinatal tab
   if (input$measure_select_perinatal == "stillbirths") {
@@ -83,7 +95,7 @@ output$perinatal_explorer <- renderUI({
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-                    Whilst each stillbirth is clearly a tragedy for the family involved, stillbirths are uncommon events in Scotland: 18 stillbirths (and 3,662 total 
+                    Whilst each stillbirth is clearly a tragedy for the family involved, stillbirths are uncommon events in Scotland: ", no_stillperi ," stillbirths (and ", no_births ," total 
                     [live and still] births) occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
   } else if (input$measure_select_perinatal == "pnnd") {
     intro_text <- p("Post-neonatal deaths refer to", tags$a(href=link_perinatal, 
@@ -91,15 +103,15 @@ output$perinatal_explorer <- renderUI({
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-                    Whilst each post-neonatal death is clearly a tragedy for the family involved, post-neonatal deaths are uncommon events in Scotland: 3 post-neonatal deaths 
-                    (and 3,644 live births) occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
+                    Whilst each post-neonatal death is clearly a tragedy for the family involved, post-neonatal deaths are uncommon events in Scotland: ", no_stillperi ," post-neonatal deaths 
+                    (and ", no_births ," live births) occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
   } else if (input$measure_select_perinatal == "nnd") {
     intro_text <- p("Neonatal deaths refer to", tags$a(href=link_perinatal, 
                   "deaths in the first four weeks", target="_blank"), "of life.",
                   peri_common_intro,
                   tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                          "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-                  Whilst each neonatal death is clearly a tragedy for the family involved, neonatal deaths are uncommon events in Scotland: 10 neonatal deaths (and 3,644 live births) 
+                  Whilst each neonatal death is clearly a tragedy for the family involved, neonatal deaths are uncommon events in Scotland: ", no_stillperi ," neonatal deaths (and ", no_births ," live births) 
                   occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
   } else if (input$measure_select_perinatal == "extperi") {
     intro_text <- p("Extended perinatal deaths refer to", tags$a(href=link_perinatal, 
@@ -107,7 +119,7 @@ output$perinatal_explorer <- renderUI({
 peri_common_intro,
 tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
        "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-Whilst each extended perinatal death is clearly a tragedy for the family involved, extended perinatal deaths are uncommon events in Scotland: 28 extended perinatal deaths (and 3,662 total 
+Whilst each extended perinatal death is clearly a tragedy for the family involved, extended perinatal deaths are uncommon events in Scotland: ", no_stillperi ," extended perinatal deaths (and ", no_births ," total 
 [live and still] births) occurring in Scotland ", last_month_peri, " had been registered by ", cutdate_peri, ".")
   } else if (input$measure_select_perinatal == "infantdeaths") {
     intro_text <- p("Infant deaths refer to", tags$a(href=link_perinatal, 
@@ -116,7 +128,7 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                     peri_common_intro,
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
-                    Whilst each infant death is clearly a tragedy for the family involved, infant deaths are uncommon events in Scotland: 13 infant deaths (and 3,644 live births) 
+                    Whilst each infant death is clearly a tragedy for the family involved, infant deaths are uncommon events in Scotland: ", no_stillperi ," infant deaths (and ", no_births ," live births) 
                     occurring in Scotland ", last_month_peri, " had been registered by ", cutdate_peri, ".")
   }
 
