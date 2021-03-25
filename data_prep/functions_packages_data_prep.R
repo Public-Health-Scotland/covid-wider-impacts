@@ -281,6 +281,9 @@ format_immsimd_data <- function(filename, save_as, save_file = T) {
     mutate(time_period_eligible = as.factor(case_when(cohort == "monthly" ~ paste0(toupper(substr(time_period_eligible, 1, 3)),
                                                           " 20",substring(time_period_eligible,5,6)), 
                                                       TRUE ~ time_period_eligible))) %>%
+    mutate(time_period_eligible = as.factor(case_when(eligible_start > "2020-12-27" ~ paste0(toupper(substr(time_period_eligible, 1, 3)),
+                                                                                   " 21",substring(time_period_eligible,5,6)),
+                                                      TRUE ~ time_period_eligible))) %>%
     rename(area_name = geography, simdq = simd2020v2_sc_quintile) %>%
     mutate(simdq=case_when(simdq == 6 ~"Scotland", simdq == 1 ~ "1 - most deprived",
                            simdq == 5 ~ "5 - least deprived", TRUE ~ as.character(simdq))) %>%
