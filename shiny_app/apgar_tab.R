@@ -38,7 +38,7 @@ observeEvent(input$btn_modal_simd_apgar, { showModal(
 
 
 ###############################################.
-## Induction Reactive controls  ----
+## Reactive controls  ----
 ###############################################.
 
 # deliveries reactive drop-down control showing list of area names depending on areatype selected
@@ -88,9 +88,9 @@ output$apgar_linechart_number <- renderPlotly({plot_apgar_linechart(measure="apg
 output$apgar_linechart_percent <- renderPlotly({plot_apgar_linechart(measure="percent_apgar")})
 
 #chart outputs for line charts for Scotland only age and deprivation line charts
-output$apgar_linechart_age_n <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="age"),split="age", measure="apgar5_37plus")})
+output$apgar_linechart_age_n <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="age"),split="age", measure="tot_apgar5_37plus")})
 output$apgar_linechart_age_p <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="age"),split="age", measure="perc_low_apgar5_37plus")})
-output$apgar_linechart_dep_n <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="dep"),split="dep", measure="apgar5_37plus")})
+output$apgar_linechart_dep_n <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="dep"),split="dep", measure="tot_apgar5_37plus")})
 output$apgar_linechart_dep_p <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="dep"),split="dep", measure="perc_low_apgar5_37plus")})
 
 ###############################################.
@@ -284,7 +284,7 @@ plot_apgar_split <- function(dataset, split, measure){
   # Create tooltip for line chart
   tooltip <- c(paste0(tool_tip_split,dataset$category,"<br>",
                       "Quarter: ", format(plot_data$quarter_label),"<br>",
-                      "Number: ", plot_data$apgar5_37plus, "<br>",
+                      "Number: ", plot_data$tot_apgar5_37plus, "<br>",
                       "Percentage: ", format(plot_data$perc_low_apgar5_37plus,digits=1,nsmall = 1),"%"))
   
   # adjust chart y axis according to what is being displayed
@@ -295,7 +295,7 @@ plot_apgar_split <- function(dataset, split, measure){
     if(split == "dep"){
       yaxis_plots[["range"]] <- c(0, 10)}  # forcing range from 0 to 10% for dep
   }
-  if(measure == "apgar5_37plus"){
+  if(measure == "tot_apgar5_37plus"){
     yaxis_plots[["title"]] <- "Number of births"
   }
   
@@ -344,7 +344,8 @@ output$download_apgar_data <- downloadHandler(
 ## Commentary tab content  ----
 ###############################################.
 
-#action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
+#action associated with action links within commentary text - this observe event linked 
+# to an actionLink within the commentary which will take the user to commentary easily.
 observeEvent(input$switch_to_apgar,{
   updateTabsetPanel(session, "intabset", selected = "comment")
   updateCollapse(session, "collapse_commentary", open = "Apgar 5")
@@ -354,7 +355,8 @@ observeEvent(input$switch_to_apgar,{
 output$apgar_commentary <- renderUI({
   tagList(
     bsButton("jump_to_apgar",label = "Go to data"), #this button can only be used once
-    h2("Apgar scores of term babies - April 2021"))
+    h2("Apgar scores of term babies - April 2021"),
+    p("Placeholder"))
 
 })
 

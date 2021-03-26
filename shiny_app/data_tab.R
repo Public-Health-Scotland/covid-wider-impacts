@@ -326,9 +326,10 @@ data_table <- reactive({
   } else if (input$data_select %in% "apgar") {
     table_data <- table_data %>% 
       select(area_name, area_type, quarter_of_discharge, subgroup, variable,
-             low_apgar5_37plus, high_apgar5_37plus, unknown_apgar5_37plus, apgar5_37plus,
+             low_apgar5_37plus, high_apgar5_37plus, unknown_apgar5_37plus, total_exc_unknown, total_inc_unknown,
              perc_low_apgar5_37plus, perc_high_apgar5_37plus, perc_unknown_apgar5_37plus) %>% 
-      rename("Total number of singleton live births at 37-42 weeks gestation with known 5 minute Apgar score" = apgar5_37plus,
+      rename("Total number of singleton live births at 37-42 weeks gestation with known 5 minute Apgar score" = total_exc_unknown,
+             "Total number of singleton live births at 37-42 weeks gestation" = total_inc_unknown,
              "Number of singleton live births at 37-42 weeks gestation with a low 5 minute Apgar score" = low_apgar5_37plus,
              "Number of singleton live births at 37-42 weeks gestation with a high 5 minute Apgar score" = high_apgar5_37plus,
              "Number of singleton live births at 37-42 weeks gestation where 5 minute Apgar scor is unknown" = unknown_apgar5_37plus,
