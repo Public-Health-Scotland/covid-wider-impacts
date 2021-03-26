@@ -53,7 +53,9 @@ intro_box <- function(title_box, button_name, description) {
 ## Data ----
 ###############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
-spec_lookup <- readRDS("data/spec_lookup.rds")
+area_type_op <- readRDS("data/area_type_op.rds")
+spec_lookup_rapid <- readRDS("data/spec_lookup.rds")
+spec_lookup_op <- readRDS("data/spec_lookup_op.rds")
 ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 
 rapid <- readRDS("data/rapid.rds") #RAPID data
@@ -62,6 +64,7 @@ ooh <- readRDS("data/ooh.rds") # OOH data
 nhs24 <- readRDS("data/nhs24.rds") # OOH data
 sas <- readRDS("data/sas.rds") # OOH data
 deaths <- readRDS("data/deaths.rds") # deaths data
+outpats <- readRDS("data/outpats.rds") # outpatients data
 
 #Cardiovascular data
 ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
@@ -73,7 +76,7 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
 # cancer_data3 <- readRDS("data/cancer_data_dep.rds")
-cancer_extract_date <- "22nd February 2021"  
+cancer_extract_date <- "22nd February 2021"
 
 # mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
@@ -162,14 +165,17 @@ child_dev <- readRDS("data/child_dev.rds")
 ## Objects, names, lists ----
 ###############################################.
 
-spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
-                    "Medical (incl. Cardiology & Cancer)",
-                    "Paediatrics (medical & surgical)")) # specialty list
+spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
+                          "Medical (incl. Cardiology & Cancer)",
+                          "Paediatrics (medical & surgical)")) # specialty list
+spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
 
-data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
+data_list <- c(
+  "Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "NHS 24 completed contacts" = "nhs24",
                "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
-               "Excess mortality" = "deaths")
+               "Excess mortality" = "deaths",
+               "Outpatient appointments" = "outpats")
 
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
@@ -275,7 +281,7 @@ pal_depr <- c('#2c7fb8', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 #Palette for 9 series in a gradient
 pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
                     '#74add1', '#4575b4', '#313695')
-# '#abd9e9', '#dfc27d',
+pal_moc <- c('#543005', '#8c510a', '#bf812d', '#d0d1e6')
 #Palette for those with a single category per sex and overall
 pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')

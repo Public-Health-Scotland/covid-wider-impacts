@@ -35,7 +35,7 @@ save_final_file("cancer_data_2", "24_Feb_21")
 ##########################################################.
 ## RAPID ----
 save_final_file("rapid", "01_Mar_21")
-save_final_file("spec_lookup", "01_Mar_21")
+save_final_file("spec_lookup_rapid", "01_Mar_21")
 ## OOH ----
 save_final_file("ooh", "01_Mar_21")
 ## A&E ----
@@ -44,6 +44,10 @@ save_final_file("ae", "01_Mar_21")
 save_final_file("nhs24", "01_Mar_21")
 ## SAS ----
 save_final_file("sas", "01_Mar_21")
+### Outpatients ----
+save_final_file("outpats", "24_Mar_21")
+save_final_file("spec_lookup_op", "24_Mar_21")
+save_final_file("area_type_op", "24_Mar_21")
 ##########################################################.
 ## Cardio - cath labs ----
 save_final_file("cath_lab", "16_Nov_20")
