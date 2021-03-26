@@ -35,7 +35,7 @@ save_final_file("cancer_data_2", "24_Feb_21")
 ##########################################################.
 ## RAPID ----
 save_final_file("rapid", "01_Mar_21")
-save_final_file("spec_lookup_rapid", "01_Mar_21")
+save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
 save_final_file("ooh", "01_Mar_21")
 ## A&E ----
