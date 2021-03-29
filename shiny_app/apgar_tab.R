@@ -1,10 +1,22 @@
 ##Server script for births and babies - apgar tab
 
+###############################################.
+## Modals ----
+###############################################.
+
 # Pop-up modal explaining source of data
 observeEvent(input$btn_apgar_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("The data used for the apgar page comes from ... "),
+               p("The data used for the Apgar scores page comes from the Scottish Morbidity Record 02 (SMR02) database. An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care. From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended home births."),
+               p("For the Apgar scores page, SMR02 records for episodes of care involving the delivery of a singleton live birth (i.e. one baby, not twins or more) at 37-42 weeks gestation inclusive have been used. The charts presented show the total number of singleton live births at 37-42 weeks with known Apgar score at 5 minutes following delivery, and the number and percentage of babies that had a score of <7. Data is presented for January 2018 onwards, based on the date the woman was discharged from hospital after delivery."),
+               p("Apgar scores range from 0 to 10, with higher scores indicating that the baby is in a healthy condition following delivery."),
+               p("Data is presented for individual months at Scotland level, and for sequential quarters (Jan-Mar 2018, Apr-Jun 2018, etc) for individual NHS Boards. Due to small numbers, the charts for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles) are unstable so these have not been shown. However, the Island Boards are included in the Scotland total, and data for the Island Boards is available in the spreadsheet provided through the ‘Download data’ button."),
+               p("Data is shown for up to and including the most recent month for which SMR02 records are considered near complete. Data for the most recent months should be viewed as provisional. Data for all months will be refreshed every time the dashboard page is updated, and data for the most recent months is likely to change slightly as additional SMR02 records are submitted to PHS."),
+               p("Although there is no legal requirement to submit SMR02 records to PHS, data completeness is very high. For example, for the period 1 April 2019 to 31 March 2020, live births recorded on SMR02 represented 98.8% of the live births registered by law with National Records of Scotland. In addition, the recording of specific data items allowing identification of singleton live births at 37-42 weeks gestation, and of babies’ 5 minute Apgar score, is very complete. For the period 1 April 2019 to 31 March 2020, a 5 minute Apgar score was recorded on 99% of SMR02 records relating to singleton live births at 37-42 weeks gestation."),
+               p("Further information based on SMR02 data is also available from the annual ",
+                 tags$a(href= "https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/births-in-scottish-hospitals/",
+                        "Births in Scottish Hospitals report." , target="_blank")),
                size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
@@ -113,7 +125,8 @@ output$apgar_explorer <- renderUI({
   apgar_layout <- function(apgar_trend,apgar_linechart_number,apgar_linechart_age_n,apgar_linechart_age_p,apgar_linechart_dep_n,apgar_linechart_dep_p){
     tagList(fluidRow(column(12,
                             h4(paste0("Percentage ", apgar_title)),
-                            actionButton("btn_apgar_rules", "How do we identify patterns in the data?"),
+                            actionButton("btn_apgar_rules", "How do we identify patterns in the data?",
+                                         icon = icon('question-circle')),
                             withSpinner(plotlyOutput("apgar_trend"))),
                      column(12,
                             p(apgar_data_timeperiod),
@@ -218,7 +231,7 @@ plot_apgar_trend <- function(measure, shift, trend){
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }}
 
-#####################################################################################################################
+#####################################################################################################################.
 ## LINECHART SCOTLAND & NHS BOARD: births (37-42 weeks gestation) where delivery induced, numbers and percentages - Scotland level only
 plot_apgar_linechart <- function(measure){  
   
@@ -272,7 +285,7 @@ plot_apgar_linechart <- function(measure){
 }
 
 
-#####################################################################################################################
+#####################################################################################################################.
 ## LINECHART SCOTLAND: inductced deliveries by age group and deprivation, numbers and percentages - Scotland level only
 plot_apgar_split <- function(dataset, split, measure){  
   
