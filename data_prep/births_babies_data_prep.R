@@ -469,7 +469,7 @@ saveRDS(apgar_runchart, paste0(data_folder,"final_app_files/apgar_runchart_data_
 ## 2- LINECHART DATA apgar for Scotland only by age and dep
 apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_SCOT_CHARTS_Apgar5_",apgar_date,".rds")) %>%  
   janitor::clean_names() %>%
-  rename(area_name=hbres, quarter=date, category=variable) %>%
+  rename(area_name=hbres, quarter=date, category=variable, tot_apgar5_37plus = total_exc_unknown) %>%
   mutate(quarter=as.Date(quarter),
          quarter_label=phsmethods::qtr(quarter, format="short"),
          area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
@@ -478,8 +478,8 @@ apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/
          category=as.character(category),
          category = case_when(category == "-under 20" ~ "Under 20",
                               category == "40+" ~ "40 and over",
-                              category == "1" ~ "1 - most deprived",
-                              category == "5" ~ "5 - least deprived",
+                              category == "1 - Most deprived" ~ "1 - most deprived",
+                              category == "5 - Least deprived" ~ "5 - least deprived",
                                      TRUE ~ as.character(category)))
 
 saveRDS(apgar_scot, "shiny_app/data/apgar_scot_data.rds")
