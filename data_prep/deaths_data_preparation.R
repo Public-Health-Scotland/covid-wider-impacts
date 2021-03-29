@@ -316,19 +316,41 @@ write_rds(combined_wide, "Q:/Team-NRSData/NRS data/Projects/Weekly COVID deaths/
 
 
 ###############################################.
-## Functions/Packages/filepaths/lookups ----
+## Functions/Packages/filepaths ----
 ###############################################.
 source("data_prep/functions_packages_data_prep.R")
 
 library(odbc)
+# SMR login details
 channel <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
                                       uid=.rs.askForPassword("SMRA Username:"), 
                                       pwd=.rs.askForPassword("SMRA Password:")))
 
 ###############################################.
-## Cancer deaths ----
+## Lookups ----
 ###############################################.
-data_deaths <- tbl_df(dbGetQuery(channel, statement=
+# Bringing  LA and datazone info.
+postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2020_2.rds') %>% 
+  setNames(tolower(names(.))) %>%   #variables to lower case
+  select(pc7, datazone2011, hb2019, hscp2019)
+
+# SIMD quintile to datazone lookup
+dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
+  rename(datazone2011 = datazone) %>%
+  select(datazone2011, year, sc_quin) %>% 
+  filter(year>2015)
+
+dep_lookup20 <- dep_lookup %>%  filter(year == 2019) %>% 
+  mutate(year = 2020)
+
+dep_lookup <- rbind(dep_lookup, dep_lookup20)
+
+geo_lookup <- left_join(dep_lookup, postcode_lookup)
+
+###############################################.
+## Extrac deaths data from SMRA ----
+###############################################.
+data_deaths <- as_tibble(dbGetQuery(channel, statement=
 "SELECT date_of_registration, age, sex, UNDERLYING_CAUSE_OF_DEATH diag, POSTCODE pc7
     FROM ANALYSIS.GRO_DEATHS_C
     WHERE date_of_registration >= '29 December 2014'
@@ -336,12 +358,24 @@ data_deaths <- tbl_df(dbGetQuery(channel, statement=
     SELECT date_of_registration, age, sex, UNDERLYING_CAUSE_OF_DEATH diag, POSTCODE pc7
     FROM ANALYSIS.GRO_DEATHS_WEEKLY_C")) %>%
   setNames(tolower(names(.))) %>% 
+# Formatting variables
   mutate(week_ending = ceiling_date(as.Date(date_of_registration), "week", change_on_boundary = F)) %>% 
-  filter(substr(diag,1,1) == "C") %>% 
   mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          age = case_when(between(age, 0,64) ~ "Under 65", T ~ "65 and over"))
 
-#simd, hscp, hb missing need to bring
+### check that last week is a complete week 
+#complete weeks have 6 or 7 days of data in them. 
+# There could be more recent data available in SMR than what we want
+as.integer(data_deaths %>% 
+    filter( week_ending==max(week_ending)) %>%
+    group_by(date_of_registration) %>%
+    summarise() %>% ungroup() %>%
+    count())
+
+#Merging with deprivation and geography lookup
+data_deaths %<>% left_join(geo_lookup) 
+
+# Need to aggregate for each split, how to factor diagnosis there?
 #function prepare final data probably won't work without tweaks
 
 ### END
