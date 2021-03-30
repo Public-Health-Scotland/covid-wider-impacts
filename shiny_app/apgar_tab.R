@@ -273,14 +273,14 @@ plot_apgar_linechart <- function(measure){
   } else {
     
     #Creating trend plot
-    plot_ly(data=plot_data, x=~date,  y = ~get(measure)) %>%
+    plot_ly(data=plot_data, x=~date_label,  y = ~get(measure)) %>%
       add_trace(type = 'scatter', mode = 'lines',
                 color = ~ind, colors = pallette,
                 text= tooltip, hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots,  
-             xaxis = list(title = "", categoryorder = "array", categoryarray = ~date),
+             xaxis = list(title = "", categoryorder = "array", categoryarray = ~date, dtick = 3),
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
@@ -335,7 +335,7 @@ plot_apgar_split <- function(dataset, split, measure){
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
            yaxis = yaxis_plots,  
-           xaxis = list(title = "", categoryorder = "array", categoryarray = ~quarter),
+           xaxis = list(title = "", categoryorder = "array", categoryarray = ~quarter, dtick=2),
            legend = list(orientation = 'h')) %>% #position of legend underneath plot
     #leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, 
@@ -374,7 +374,7 @@ observeEvent(input$switch_to_apgar,{
 output$apgar_commentary <- renderUI({
   tagList(
     bsButton("jump_to_apgar",label = "Go to data"), #this button can only be used once
-    h2("Apgar scores of term babies - April 2021"))
+    h2("Apgar scores - April 2021"))
 
 })
 
