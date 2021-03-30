@@ -722,15 +722,16 @@ output$summary_comment <- renderUI({
       tags$li("Outpatient appointments fell from the second week of March; by week ending 19th April 2020,
 outpatient appointments had fallen by over two-thirds (69%) compared to the average of the same week in 2018-19 
               (from an average of 87,083 in 2018-19 to 27,163 in 2020)."),
-      tags$li("There has been some recovery after 19th April, but numbers of appointments remain 
-around 26% below the 2018-19 average by the end of September 2020."),
+      tags$li("There has been some recovery after 19th April, but by the end of September 2020 
+numbers of appointments remain around 26% below the average of the same week in 2018-19."),
       tags$li("This impact was similar across sexes, age groups and deprivation groups. 
               However, between April and July 2020, the fall in appointments was 
               greatest in patients aged 85 and over, dropping by almost three-quarters (-73%) 
               while patients aged 15-44 dropped by two-thirds (-66%)"),
       tags$li("There were larger relative falls for surgical (-76%) than medical (-65%) specialties. 
               By week ending 27th September 2020, medical specialties showed a reduction of almost a quarter 
-              (-24%) while surgical specialties decreased by a third (-32%)."),
+              (-24%) while surgical specialties decreased by a third (-32%) 
+              compared to the same time period in 2018-19."),
       tags$li("There were larger decreases and slower recovery in new outpatient appointments
 than in return outpatient appointments."),
       tags$li("There has been a very large increase in the number of appointments carried out remotely through 
