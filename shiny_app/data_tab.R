@@ -342,14 +342,11 @@ data_table <- reactive({
                                   TRUE ~ "All"))
   } else if (input$data_select %in% "preterm") {
     table_data %<>%
-      select(area_name, quarter_of_year, number_of_deaths_in_quarter, sample_size, rate, type) %>%
-      mutate(type = recode_factor(type, "extperi" = "Extended perinatal deaths", "infantdeaths" = "Infant deaths", "nnd" = "Neonatal deaths", 
-                                  "pnnd" = "Post-neonatal deaths", "stillbirths" = "Stillbirths")) %>%
-      rename("Area name" = area_name, "Relevant births" = sample_size,
-             "Quarter of year" = quarter_of_year,
-             "Number of deaths" = number_of_deaths_in_quarter,
-             "Rate" = rate,
-             "Type" = type)
+      select(area_name, quarter, N_deliveries_23_26_NICU_site, N_deliveries_23_26, percentage_NICU_site) %>%
+      rename("Area name" = area_name, "Total number of deliveries at 23-26w" = N_deliveries_23_26,
+             "Quarter" = quarter,
+             "Number of deliveries at 23-26w that occurred in a hospital with a NICU on site" = N_deliveries_23_26_NICU_site,
+             "Percentage" = percentage_NICU_site)
     
 }
   
