@@ -204,7 +204,7 @@ observeEvent(input$switch_to_preterm,{
 output$preterm_commentary <- renderUI({
   tagList(
     bsButton("jump_to_preterm",label = "Go to data"), #this button can only be used once
-    h2("Extremely preterm deliveries in a hospital with a NICU - April 2021"))
+    h2("Location of extremely preterm deliveries - April 2021"))
   
 })
 
