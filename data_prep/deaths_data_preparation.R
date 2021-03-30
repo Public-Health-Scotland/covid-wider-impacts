@@ -373,7 +373,35 @@ as.integer(data_deaths %>%
     count())
 
 #Merging with deprivation and geography lookup
-data_deaths %<>% left_join(geo_lookup) 
+data_deaths %<>% left_join(geo_lookup) %>% select(-datazone2011) 
+
+#Pivoting so one row per area
+data_deaths2 <- data_deaths %>% 
+  mutate(scot = "Scotland") %>% 
+  pivot_longer(cols = c(hb2019, hscp2019, scot)) %>% 
+  #filtering out NA duplicates (which are counted in Scotland totals, but not elsewhere)
+  filter(!is.na(value)) %>% 
+  # More formatting
+  mutate(area_name = case_when(value == "Scotland" ~ "Scotland", 
+                               T ~ match_area(value)),
+         dep = recode(sc_quin, 
+                      "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
+                      "4" = "4", "5" = "5 - least deprived"),
+         area_type = recode(name, "hb2019" = "Health board", 
+                            "hscp2019" = "HSC partnership", "scot" = "Scotland")) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
+  summarise(count = n())  %>% ungroup()
+
+
+# Need to deal with sc_quin missing cases (Am I creating duplicated ones?)
+# Also missing ones for sex
+
+# Create aggregations for each split
+deaths_all <- data_deaths %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
+deaths_sex <- data_deaths %>% agg_cut(grouper="sex") %>% rename(category = sex)
+deaths_dep <- data_deaths %>% agg_cut(grouper="dep") %>% rename(category = dep)
+deaths_age <- data_deaths %>% agg_cut(grouper="age") %>% rename(category = age)
 
 # Need to aggregate for each split, how to factor diagnosis there?
 #function prepare final data probably won't work without tweaks
