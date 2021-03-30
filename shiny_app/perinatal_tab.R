@@ -262,7 +262,8 @@ output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
     h2("Stillbirths and infant deaths - 7th April 2020"),
-    p("Placeholder"),
+    p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in February 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in February 2021 was 4.3 per 1,000 total births, and infant mortality rate was 3.2 per 1,000 live births."),
+    p("Further background information is available within the commentary for July 2020. "),
     h2("Stillbirths and infant deaths - 3rd March 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in January 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in January 2021 was 4.9 per 1,000 total births, and infant mortality rate was 3.6 per 1,000 live births. "),
     p("Last month we reported an issue involving a small number of infant deaths which were not included in the data files sent from NRS to PHS (affecting less than 3% of infant deaths). We now believe that this discrepancy has been resolved and any data affected have been retrospectively updated on the dashboard. "),
