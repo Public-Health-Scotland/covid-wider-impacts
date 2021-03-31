@@ -17,28 +17,32 @@ format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "fir
                       review_var = "HV First Visit") 
 
 # 6-8 weeks visit data and table
-format_childhealth(filename = paste0("sixtoeight_dashboard", ch_date_file), week_var = "eligible_start",
+format_childhealth(filename = paste0("sixtoeight_dashboard_", ch_date_file), week_var = "eligible_start",
                    week_var2 = eligible_start, save_as = "six_to_eight", intmax = 168)
 
-format_immchild_table(paste0("child_health/sixtoeight_dashboardtab_", ch_date_file), "six_to_eight") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "six_to_eight",
+                      review_var = "6-8 Week Review") 
 
 # 13-15 month visit data and table
-format_childhealth(filename = paste0("thirteen_dashboard", ch_date_file), week_var = "eligible_start",
+format_childhealth(filename = paste0("thirteen_dashboard_", ch_date_file), week_var = "eligible_start",
                    week_var2 = eligible_start, save_as = "thirteen", intmin = 370, intmax = 519)
 
-format_immchild_table(paste0("child_health/thirteen_dashboardtab_", ch_date_file), "thirteen") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "thirteen",
+                      review_var = "13-15 Month Review") 
 
 ## 27 to 30 month visit data and table
-format_childhealth(filename = paste0("twentyseven_dashboard", ch_date_file), week_var = "eligible_start",
+format_childhealth(filename = paste0("twentyseven_dashboard_", ch_date_file), week_var = "eligible_start",
                    week_var2 = eligible_start, save_as = "twentyseven", intmin = 790, intmax = 946)
 
-format_immchild_table(paste0("child_health/twentyseven_dashboardtab_", ch_date_file), "twentyseven") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "twentyseven",
+                      review_var = "27-30 Month Review") 
 
 ## 4 to 5 year visit data and table
-format_childhealth(filename = paste0("fourtofive_dashboard", ch_date_file), week_var = "eligible_start",
+format_childhealth(filename = paste0("fourtofive_dashboard_", ch_date_file), week_var = "eligible_start",
                    week_var2 = eligible_start, save_as = "fourtofive", intmin = 1427, intmax = 1583)
 
-format_immchild_table(paste0("child_health/fourtofive_dashboardtab_", ch_date_file), "fourtofive") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "fourtofive",
+                      review_var = "4-5 Year Review") 
 
 ###############################################.
 ## Child development ----
