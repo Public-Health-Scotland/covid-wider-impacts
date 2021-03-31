@@ -48,9 +48,9 @@ format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "fou
 ## Child development ----
 ###############################################.
 # Do we need any sort of supression - look at island values.
-child_dev <- rbind(read_excel(paste0(data_folder, "child_development/22ndFebDashboard - 13-15m.xlsx")) %>% 
+child_dev <- rbind(read_excel(paste0(data_folder, "child_development/29thMarDashboard - 13-15m.xlsx")) %>% 
                      mutate(review = "13-15 month"),
-                   read_excel(paste0(data_folder, "child_development/22ndFebDashboard - 27-30m.xlsx")) %>% 
+                   read_excel(paste0(data_folder, "child_development/29thMarDashboard - 27-30m.xlsx")) %>% 
                      mutate(review = "27-30 month")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 
@@ -60,7 +60,7 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/22ndFebDash
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
                                TRUE ~ area_name),
          month_review = as.Date(month_review)) %>% 
-  filter((year(month_review) %in% c("2019", "2020"))) 
+  filter((year(month_review) %in% c("2019", "2020", "2021"))) 
 
 child_dev %<>% # Dealing with NAs, which are 0s
   mutate_at(c("pc_1_plus", "concerns_1_plus"), ~replace_na(., 0)) %>% 
@@ -122,9 +122,9 @@ saveRDS(child_dev, paste0(open_data, "child_dev_data.rds"))
 ###############################################.
 ## Breastfeeding ----
 ###############################################.
-breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/22ndFebDashboard - firstvisit.xlsx")) %>% 
+breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/29thMarDashboard - firstvisit.xlsx")) %>% 
                          mutate(review = "First visit"),
-                       read_xlsx(paste0(data_folder, "/breastfeeding/22ndFebDashboard - 6-8 week.xlsx")) %>% 
+                       read_xlsx(paste0(data_folder, "/breastfeeding/29thMarDashboard - 6-8 week.xlsx")) %>% 
                          mutate(review = "6-8 week")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 
@@ -136,7 +136,7 @@ breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/22ndFeb
                                area_name == "Clackmannanshire and Stirling" ~ "Clackmannanshire and Stirling HSCP",
                                TRUE ~ area_name),
          month_review = as.Date(month_review)) %>% 
-  filter((year(month_review) %in% c("2019", "2020")))
+  filter((year(month_review) %in% c("2019", "2020", "2021")))
 
 # Calculating centre lines and adding them to breastfeeding
 breastfeeding_centreline <- breastfeeding %>% 
