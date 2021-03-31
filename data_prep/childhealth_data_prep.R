@@ -8,34 +8,35 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 ## Child health reviews ----
 ###############################################.
-ch_date_file <- "20210222" #date included in filepath name
+ch_date_file <- "20210329" #date included in filepath name
 #First visit data and table
-format_childhealth(filename = paste0("firstvisit_dashboard", ch_date_file), week_var = "week_2_start",
-                   week_var2 = week_2_start, save_as = "first_visit")
+format_childhealth(filename = paste0("firstvisit_dashboard_", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "first_visit")
 
-format_immchild_table(paste0("child_health/firstvisit_dashboardtab_", ch_date_file), "first_visit") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "first_visit", 
+                      review_var = "HV First Visit") 
 
 # 6-8 weeks visit data and table
-format_childhealth(filename = paste0("sixtoeight_dashboard", ch_date_file), week_var = "week_6_start",
-                   week_var2 = week_6_start, save_as = "six_to_eight", intmax = 168)
+format_childhealth(filename = paste0("sixtoeight_dashboard", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "six_to_eight", intmax = 168)
 
 format_immchild_table(paste0("child_health/sixtoeight_dashboardtab_", ch_date_file), "six_to_eight") 
 
 # 13-15 month visit data and table
-format_childhealth(filename = paste0("thirteen_dashboard", ch_date_file), week_var = "week_57_start",
-                   week_var2 = week_57_start, save_as = "thirteen", intmin = 370, intmax = 519)
+format_childhealth(filename = paste0("thirteen_dashboard", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "thirteen", intmin = 370, intmax = 519)
 
 format_immchild_table(paste0("child_health/thirteen_dashboardtab_", ch_date_file), "thirteen") 
 
 ## 27 to 30 month visit data and table
-format_childhealth(filename = paste0("twentyseven_dashboard", ch_date_file), week_var = "week_117_start",
-                   week_var2 = week_117_start, save_as = "twentyseven", intmin = 790, intmax = 946)
+format_childhealth(filename = paste0("twentyseven_dashboard", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "twentyseven", intmin = 790, intmax = 946)
 
 format_immchild_table(paste0("child_health/twentyseven_dashboardtab_", ch_date_file), "twentyseven") 
 
 ## 4 to 5 year visit data and table
-format_childhealth(filename = paste0("fourtofive_dashboard", ch_date_file), week_var = "week_209_start",
-                   week_var2 = week_209_start, save_as = "fourtofive", intmin = 1427, intmax = 1583)
+format_childhealth(filename = paste0("fourtofive_dashboard", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "fourtofive", intmin = 1427, intmax = 1583)
 
 format_immchild_table(paste0("child_health/fourtofive_dashboardtab_", ch_date_file), "fourtofive") 
 
