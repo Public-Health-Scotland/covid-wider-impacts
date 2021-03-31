@@ -4,13 +4,20 @@
 
 # Show list of area names depending on areatype selected
 output$geoname_ui <- renderUI({
-  
-  areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype])
-  
-  selectizeInput("geoname", label = NULL,  
-                 choices = areas_summary, selected = "")
+    areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype])
+    selectizeInput("geoname", label = NULL,  
+                   choices = areas_summary, selected = "")
   
 })
+
+output$geoname_op_ui <- renderUI({
+  
+  areas_summary <- sort(area_type_op$area_name[area_type_op$area_type == input$geotype_op])
+  selectizeInput("geoname_op", label = NULL,  
+                 choices = areas_summary, selected = "")
+
+})
+
 
 # Disabling  admissions type if no admissions to hospital selected and
 # updating labels to say it's not available
@@ -19,14 +26,22 @@ observeEvent({input$measure_select}, {
     enable("adm_type")
     
     updateSelectInput(session, "adm_type",
-                      label = "Step 3. Select type of admission.")
+                      label = "Step 3. Select type of admission.",
+                      choices = c("All", "Emergency", "Planned"), 
+                      selected = "All")
+  } else if (input$measure_select == "outpats") {
+    disable("adm_type")
+    enable("adm_type")
     
-  } else if (input$measure_select != "rapid") {
+    updateSelectInput(session, "adm_type",
+                      label = "Step 3. Select type of appointment.",
+                      choices = c("All", "New", "Return"), 
+                      selected = "All")
+  } else {
     disable("adm_type")
     
     updateSelectInput(session, "adm_type",
                       label = "Step 3. Select type of admission (not available).")
-    
   }
   
 })
@@ -35,14 +50,21 @@ observeEvent({input$measure_select}, {
 ## Modals ----
 ###############################################.
 #modal to provide information on what specialties are included in each group
-spec_modal <- modalDialog(
+spec_modal_rapid <- modalDialog(
   h5("List of specialties and what group they correspond to"),
-  renderTable(spec_lookup), # creating table based on specialty lookup
+  renderTable(spec_lookup_rapid), # creating table based on specialty lookup
+  size = "l", align= "center",
+  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+)
+spec_modal_op <- modalDialog(
+  h5("List of specialties and what group they correspond to"),
+  renderTable(spec_lookup_op), # creating table based on specialty lookup
   size = "l", align= "center",
   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
 )
 # Link action button click to modal launch 
-observeEvent(input$btn_spec_groups, { showModal(spec_modal) }) 
+observeEvent(input$btn_spec_groups_rapid, { showModal(spec_modal_rapid) }) 
+observeEvent(input$btn_spec_groups_op, { showModal(spec_modal_op) }) 
 
 ###############################################.
 #modal to describe dataset
@@ -228,7 +250,54 @@ observeEvent(input$btn_dataset_modal,
                           "this report.",  target="_blank")),
                  size = "m", 
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-             }
+                 
+               } else if (input$measure_select == "outpats"){
+                 showModal(modalDialog( # OUTPATIENTS MODAL
+                   title = "What is the data source?", 
+                   p("The analyses shown here are derived from person level",
+                     " outpatient data and show recent trends in attendances, ",
+                     "whether COVID or non-COVID related, and historic trends ",
+                     "for comparison. The recent trend data is shown by age group,",
+                     " sex, Scottish Index of Multiple Deprivation (SIMD), ",
+                     "mode of clinical interaction, and specialty groups. Data are given at ",
+                     "Scotland, Health board of treatment, Health board of residence, and",
+                     "HSC partnership of residence level. ",
+                     "'Other' Health board of treatment refers to cases where the 
+                     health board is NHS24 (due to small numbers), unknown or invalid.",
+                     " 'Other' Health board of residence and HSC partnership of residence 
+                     refers to Other Residential Categories as defined ",
+                     "on our ",
+                     tags$a(href="https://www.opendata.nhs.scot/dataset/non-standard-geography-codes-and-labels/resource/32164b83-c9ec-495a-ac9f-dbeeb6ed5e59",
+                            "Open Data portal", target = "_blank"), "."), 
+                   p("The outpatient analyses are derived from the ", 
+                     tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=4", 
+                            "Scottish Morbidity Record (SMR00) dataset", 
+                            target="_blank"),". This dataset is submitted monthly ",
+                     "to Public Health Scotland (PHS), and relates to outpatient ",
+                     "care. All new and return appointments from consultant-led clinics are included; ",
+                     "A&E and Genitourinary specialties are excluded, as well as ",
+                     "Did Not Attend (DNA) appointments. For more ",
+                     "information on outpatient attendances, please see our ",
+                     tags$a(href= "https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=O&ID=374&Title=Outpatient%20Attendance", 
+                            "Data Dictionary",  target="_blank"), 
+                     ". Please note that there is a time lag between the submission of ",
+                     "SMR00 to PHS, and the data being validated and ready for release. ",
+                     "Therefore, data up to September 27th are given. For data quality issues, please see the ", 
+                     tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+                            "Acute Activity and NHS Beds quarterly publication",  
+                            target="_blank"), ". All information presented has been ",
+                     "taken from SMR00; this is different from the Acute Activity ",
+                     "and NHS Beds publication, so the figures are not comparable."),
+                   p("The SMR00 dataset is managed by Public Health Scotland (PHS). ",
+                     "For current completeness estimates, please see ",
+                     tags$a(href = "https://www.isdscotland.org/products-and-Services/Data-Support-and-Monitoring/SMR-Completeness/",
+                            "the PHS website", target = "_blank"), "."),
+                   p(tags$a(href = "https://beta.isdscotland.org/media/4191/public-health-scotland-statistical-disclosure-control-protocol.pdf",
+                            "Statistical disclosure control", target = "_blank"), 
+                     "has been applied to this analysis."),
+                   size = "m", 
+                   easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+               }
              )
 
 ###############################################.
@@ -257,6 +326,24 @@ observeEvent(input$btn_modal_simd, { showModal(simd_modal) })
 
 
 ###############################################.
+# Modal to explain mode of clinical interaction graphs
+moc_modal <- modalDialog(
+  h5(tags$b("Interpretation of this chart")),
+  p("Please note that the majority of outpatient appointments in previous years were 
+    conducted face to face, and there were very few appointments held by other means. 
+    This means that numbers in previous years are very small or zero, and the graph shows 
+    very high percentage changes as a result. Please treat these data with caution."),
+  p("Where there were no cases for non-face to face appointments in previous years, 
+    variation is shown as 100%. This is not accurate but is an attempt to 
+    show that there has been a significant change. The way this is displayed may change in future releases."),
+  size = "l",
+  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+  )
+# Link action button click to modal launch 
+observeEvent(input$btn_modal_moc, { showModal(moc_modal) }) 
+
+
+###############################################.
 ## Reactive datasets ----
 ###############################################.
 # Rapid dataset filtered for admission_type, then used to create the admissions charts
@@ -275,6 +362,25 @@ rapid_spec <- reactive({
   
 })
 
+# Outpatients dataset filtered for admission_type, then used to create the admissions charts
+op_filt <- reactive({
+  outpats %>% 
+    filter(admission_type == input$adm_type &
+             spec == "All" &
+             area_type == input$geotype_op)
+})
+
+# # Outpatients dataset used for specialty charts
+op_spec <- reactive({
+  outpats %>%
+    filter(type == "sex") %>%
+    filter(area_name == input$geoname_op &
+             admission_type == input$adm_type &
+             category == "All" &
+             spec %in% input$op_specialty &
+             area_type == input$geotype_op)   
+})
+
 ###############################################.
 ## Reactive layout  ----
 ###############################################.
@@ -287,7 +393,8 @@ output$data_explorer <- renderUI({
                        input$measure_select == "nhs24" ~ "completed contacts",
                        input$measure_select == "ooh" ~ "cases",
                        input$measure_select == "sas" ~ "incidents",
-                       input$measure_select == "deaths" ~ "deaths")
+                       input$measure_select == "deaths" ~ "deaths",
+                       input$measure_select == "outpats" ~ "appointments")
   
   if (input$measure_select == "deaths"){
     variation_title <- paste0("Percentage change in ", dataset, 
@@ -311,7 +418,7 @@ output$data_explorer <- renderUI({
       fluidRow(column(6,
                       actionButton("btn_dataset_modal", paste0("Data source: ", source), 
                                    icon = icon('question-circle'))),
-               column(6, p("Last updated: 3rd March 2021"))),
+               column(6, p("Last updated: 31st March 2021"))),
       if (input$measure_select == "nhs24"){
         tagList(
         p("The data used in this chart are taken from the Unscheduled Care Datamart.  
@@ -332,6 +439,8 @@ output$data_explorer <- renderUI({
           provide a reliable indication of the trend. We expect to see an increase in registrations in the coming weeks as registrars deal 
           with any backlogs."),
         plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
+        } else if (input$measure_select == "outpats") {
+          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         } else {
           plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
@@ -357,9 +466,13 @@ output$data_explorer <- renderUI({
       fluidRow(column(6, h4(paste0(variation_title, "specialty group - (admission type: ", tolower(input$adm_type), ")"))), # Adding adm_type here to make clear what is selected
                column(6, h4(paste0(total_title, "specialty group - (admission type: ", tolower(input$adm_type), ")")))), # Adding adm_type here to make clear what is selected
       fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
-                                     choices = if (input$geotype == "Scotland") {spec_list} else {spec_list[c(1:8,11)]}, multiple = TRUE,
+                                     choices = if (input$geotype == "Scotland") {
+                                       spec_list_rapid} else {
+                                         spec_list_rapid[c(1:8,11)]}, multiple = TRUE,
                                      selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics (medical & surgical)"))),
-               column(6, actionButton("btn_spec_groups", "Specialties and their groups", icon = icon('question-circle')))),
+               column(6, actionButton("btn_spec_groups_rapid", 
+                                      "Specialties and their groups", 
+                                      icon = icon('question-circle')))),
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
     )
@@ -388,6 +501,47 @@ output$data_explorer <- renderUI({
   } else if (input$measure_select == "deaths") { # Deaths data
     cut_charts(title= "Weekly number of deaths", 
                source = "NRS Death Registrations", data_name ="deaths")
+    
+  } else if (input$measure_select == "outpats") { # Outpatients data
+    tagList(tags$b(span("Please note that these data are for management information only, and care should",
+                        "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
+                        tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+                               "Acute Activity and NHS Beds quarterly publication",  
+                               target="_blank"), ". Did Not Attend appointments (DNAs) are not included in the figures shown here.",
+                        style="color:red")),
+            cut_charts(title= "Weekly outpatient appointments",
+                       source = "SMR00", data_name = "op"),
+            fluidRow(column(6,
+                            h4(paste0(variation_title, "specialty group"))),
+                     # Adding adm_type here to make clear what is selected
+                     column(6,
+                            h4(paste0(total_title, "specialty group")))),
+            ###Adding adm_type here to make clear what is selected
+            fluidRow(column(6,
+                            pickerInput("op_specialty", "Select one or more specialty groups",
+                                        choices = spec_list_op, 
+                                        multiple = TRUE,
+                                        selected = c("Medical", "Surgery"))),
+                     column(6,
+                            actionButton("btn_spec_groups_op", 
+                                         "Specialties and their groups",
+                                         icon = icon('question-circle')))),
+            fluidRow(column(6,
+                            withSpinner(plotlyOutput("op_spec_var"))),
+                     column(6,
+                            withSpinner(plotlyOutput("op_spec_tot")))),
+            fluidRow(column(6,
+                            h4(paste0(variation_title, "mode of clinical interaction"))),
+                     # Adding adm_type here to make clear what is selected
+                     column(6,
+                            h4(paste0(total_title, "mode of clinical interaction")))),
+            fluidRow(actionButton("btn_modal_moc", "Interpretation of this chart", 
+                                  icon = icon('fas fa-exclamation-circle'))),
+            fluidRow(column(6,
+                            withSpinner(plotlyOutput("op_moc_var"))),
+                     column(6,
+                            withSpinner(plotlyOutput("op_moc_tot"))))
+    )
   }
 }) 
 
@@ -440,8 +594,8 @@ output$adm_depr_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "d
 output$adm_sex_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", "total", "adm")})
 output$adm_age_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", "total", "adm")})
 output$adm_depr_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", "total", "adm")})
-output$adm_spec_var <- renderPlotly({plot_spec("variation")})
-output$adm_spec_tot <- renderPlotly({plot_spec("total")})
+output$adm_spec_var <- renderPlotly({plot_spec("variation", rapid_spec())})
+output$adm_spec_tot <- renderPlotly({plot_spec("total", rapid_spec())})
 
 # Deaths charts
 output$deaths_overall <- renderPlotly({plot_overall_chart(deaths, "deaths")})
@@ -452,36 +606,69 @@ output$deaths_sex_tot <- renderPlotly({plot_trend_chart(deaths, pal_sex, "sex", 
 output$deaths_age_tot <- renderPlotly({plot_trend_chart(deaths, pal_age, "age", "total", "deaths")})
 output$deaths_depr_tot <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep", "total", "deaths")})
 
+# Outpatients charts
+output$op_overall <- renderPlotly({plot_overall_chart(op_filt(), "op", op = T)})
+output$op_sex_var <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", data_name = "op")})
+output$op_age_var <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", data_name = "op")})
+output$op_depr_var <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", data_name = "op")})
+output$op_moc_var <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", data_name = "op")})
+output$op_sex_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", "total", "op")})
+output$op_age_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", "total", "op")})
+output$op_depr_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", "total", "op")})
+output$op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", "total", "op")})
+output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80)})
+output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80)})
+
 
 # Palette for specialty
 pal_spec <- reactive({
   #Creating palette of colors: colorblind proof
   #First obtaining length of each geography type, if more than 6, then 6,
   # this avoids issues. Extra selections will not be plotted
-  trend_length <- length(input$adm_specialty)
+  if (input$measure_select == "outpats") {
+    trend_length <- length(input$op_specialty)
+  } else {
+    trend_length <- length(input$adm_specialty)
+  }
   
   # First define the palette of colours used, then set a named vector, so each color
   # gets assigned to an area. I think is based on the order in the dataset.
   trend_palette <- c("#000000", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99",
                      "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#b15928")
   
-  trend_scale <- c(setNames(trend_palette, unique(rapid_spec()$spec)[1:trend_length]))
+  if (input$measure_select == "outpats") {
+    trend_scale <- c(setNames(trend_palette, 
+                                 unique(op_spec()$spec)[1:trend_length]))
+  } else {
+    trend_scale <- c(setNames(trend_palette, 
+                                    unique(rapid_spec()$spec)[1:trend_length]))
+  }
+
   trend_col <- trend_scale[1:trend_length]
   
 })
 
 symbol_spec <- reactive({
+  # First define the palette of sybols used, then set a named vector, so each color
+  # gets assigned to an area. I think is based on the order in the dataset.
+  symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
+                        'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
+  
+  if (input$measure_select == "outpats") {
   #Creating palette of colors: colorblind proof
   #First obtaining length of each geography type, if more than 6, then 6,
   # this avoids issues. Extra selections will not be plotted
-  trend_length <- length(input$adm_specialty)
-  
-  # First define the palette of sybols used, then set a named vector, so each color
-  # gets assigned to an area. I think is based on the order in the dataset.
-  
-  symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
-                        'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
-  symbols_scale <- c(setNames(symbols_palette, unique(rapid_spec()$spec)[1:trend_length]))
+    trend_length <- length(input$op_specialty)
+    
+    symbols_scale <- c(setNames(symbols_palette, 
+                                unique(op_spec()$spec)[1:trend_length]))
+  } else { #rapid
+    trend_length <- length(input$adm_specialty)
+    
+    symbols_scale <- c(setNames(symbols_palette, 
+                                   unique(rapid_spec()$spec)[1:trend_length]))
+  }
+
   symbols_trend <- symbols_scale[1:trend_length]
   
 })
@@ -501,14 +688,18 @@ overall_data_download <- reactive({
     "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average),
     "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average),
     "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average),
-    "deaths" = filter_data(deaths %>% rename(average_2015_2019 = count_average))
+    "deaths" = filter_data(deaths) %>% rename(average_2015_2019 = count_average),
+    "outpats" = filter_data(op_filt() %>% rename(average_2018_2019 = count_average), 
+                            op = T)
   ) %>% 
     select(area_name, week_ending, count, starts_with("average")) %>% 
     mutate(week_ending = format(week_ending, "%d %b %y"))
 })
 
 output$download_chart_data <- downloadHandler(
-  filename ="data_extract.csv",
+  filename = function() {
+    paste(input$measure_select, ".csv", sep = "")
+  },
   content = function(file) {
     write_csv(overall_data_download(),
               file) } 
@@ -522,6 +713,39 @@ output$download_chart_data <- downloadHandler(
 output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
+    h2("Summary - Outpatient appointments - 31st March 2021"),
+    p("Data are taken from Scottish Morbidity Record (SMR00), and show outpatient appointments
+      to week ending 27th September 2020. 
+      Further information is available by following the 'Data source: SMR00' links on the dashboard."),
+    h4("Initial findings: outpatient appointments"),
+    tags$ul(
+      tags$li("Outpatient appointments fell from the second week of March; by week ending 19th April 2020,
+outpatient appointments had fallen by over two-thirds (69%) compared to the average of the same week in 2018-19 
+              (from an average of 87,083 in 2018-19 to 27,163 in 2020)."),
+      tags$li("There has been some recovery after 19th April, but by the end of September 2020 
+numbers of appointments remain around 26% below the average of the same week in 2018-19."),
+      tags$li("This impact was similar across sexes, age groups and deprivation groups. 
+              However, between April and July 2020, the fall in appointments was 
+              greatest in patients aged 85 and over, dropping by almost three-quarters (-73%) 
+              while patients aged 15-44 dropped by two-thirds (-66%)"),
+      tags$li("There were larger relative falls for surgical (-76%) than medical (-65%) specialties. 
+              By week ending 27th September 2020, medical specialties showed a reduction of almost a quarter 
+              (-24%) while surgical specialties decreased by a third (-32%) 
+              compared to the same time period in 2018-19."),
+      tags$li("There were larger decreases and slower recovery in new outpatient appointments
+than in return outpatient appointments."),
+      tags$li("There has been a very large increase in the number of appointments carried out remotely through 
+              telephone and videolink. In week ending 27th September 2020, almost a fifth (19%) of appointments 
+              were conducted via telephone, and over 1 in 20 (6%) were by videolink. These types of appointments
+              were uncommon prior to March 2020; therefore the percentage increases compared to previous
+              years are extremely large.")
+      ),
+    h4("Interpreting these figures"),
+    p("Please exercise caution when interpreting these figures, as these data are for management information only. 
+      For more information on methodology and data quality please see the ",
+      tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+             "Acute Activity and NHS Beds quarterly publication",  
+             target="_blank"), ".",
     h2("Summary - Revision of baseline OOH - 23rd September 2020"),
     p("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) data was 
 identified and has now been corrected. OOH figures from January 2018 to 22nd March 2020 had previously 
@@ -608,7 +832,7 @@ services increased during this period."),
           p("Work is under way to broaden the range of data sources available – within the next few weeks 
 we expect to publish information on health visitor checks, perinatal mortality, 
 excess mortality (in collaboration with NRS), prescribing and cardiovascular presentations"
-          ))
+          )))
 })
 
 output$deaths_commentary <- renderUI({
