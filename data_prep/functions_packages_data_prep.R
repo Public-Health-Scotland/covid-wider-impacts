@@ -337,6 +337,7 @@ format_childhealth <- function(filename, week_var, week_var2, save_as,
            week_no= isoweek({{week_var2}}),
            cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
     arrange(cohort) %>%
+    filter(exclude == 0) %>% 
     select (extract_date, review, {{week_var2}}, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
     filter(between(interv, intmin, intmax))
   
