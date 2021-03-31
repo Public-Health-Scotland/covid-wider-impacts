@@ -240,12 +240,20 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
 
 #Function to format the immunisations and child health review tables
 
-format_immchild_table <- function(filename, save_as = NULL, save_file = T) {
+not_all_na <- function(x) {
+  any(!is.na(x))
+}
+
+format_immchild_table <- function(filename, save_as = NULL, save_file = T, 
+                                  review_var) {
 
   imm_ch_dt <- read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
+    filter(review == paste0(review_var),
+           exclude_from_table == 0) %>% 
     rename(area_name=geography_name) %>%
-    select (-geography) %>%
+    select(-geography, -shade_cells, -exclude_from_table) %>%
+    select_if(not_all_na) %>% 
     arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
     mutate(time_period_eligible=as.factor(time_period_eligible))
   
