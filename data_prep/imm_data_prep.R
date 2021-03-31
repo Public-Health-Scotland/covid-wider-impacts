@@ -10,7 +10,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all immunisation data files prepared
-imms_date <- "20210222"
+imms_date <- "20210329"
 
 six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/", imms_date, "/six_in_one_dashboard_",imms_date,".csv"), 
                         col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
@@ -133,7 +133,7 @@ saveRDS(month_defs_imm, paste0(data_folder,"final_app_files/month_eligibility_im
 ## MMR data ----
 ###############################################.
 #field with date all immunisation data files prepared
-imms_date <- "20210222"
+imms_date <- "20210329"
 
 # mmr dose 1 & 2 - scurve data
 mmr_alldose <- read_csv(paste0(data_folder,"immunisations/mmr/", imms_date, "/mmr_dashboard_",imms_date,".csv"),
