@@ -36,8 +36,8 @@ spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) 
   )) %>% 
   select("Specialty name" = spec_name, "Specialty group" = dash_groups)
 
-saveRDS(spec_lookup, "shiny_app/data/spec_lookup.rds")
-saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_", 
+saveRDS(spec_lookup, "shiny_app/data/spec_lookup_rapid.rds")
+saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_rapid", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # Formatting groups
