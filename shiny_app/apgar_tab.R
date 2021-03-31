@@ -75,7 +75,7 @@ apgar_filter <- function(){
   
   apgar_runchart %>% filter(area_name == input$geoname_apgar &
                                area_type == input$geotype_apgar &
-                               type %in% c("Scotland", "Health board")) 
+                               type %in% c("Scotland", "Health board"))
 }
 
 #Dataset 2: behind line charts for age and deprivation (available for scotland only)
@@ -207,15 +207,17 @@ plot_apgar_trend <- function(measure, shift, trend){
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$date)-20, max(plot_data$date)+20)
     xaxis_plots[["title"]] <- c("")
-    xaxis_plots[["categoryorder"]] <- c("array")
-    xaxis_plots[["categoryarray"]] = c(plot_data$date)
+    
+    # change x axis tick labels depending on whether Scotland or HB is selected
+    xaxis_plots[["categoryorder"]] <- "array"
+    xaxis_plots[["categoryarray"]] <- plot_data$date
     
     #specify tool tip
     tooltip_top <- c(paste0(format(plot_data$date_type),": ",format(plot_data$date_label),"<br>",
                             "Percentage: ",format(plot_data$perc_low_apgar5_37plus, digits = 1,nsmall=1),"%", "<br>"))
     
     #Creating time trend plot
-    plot_ly(data=plot_data, x=~date) %>%
+    plot_ly(data=plot_data, x=~date_label) %>%
       add_lines(y = ~perc_low_apgar5_37plus,  
                 line = list(color = "black"), text=tooltip_top, hoverinfo="text",
                 marker = list(color = "black"), name = yname ) %>% 
