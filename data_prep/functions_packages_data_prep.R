@@ -245,19 +245,16 @@ not_all_na <- function(x) {
 }
 
 format_immchild_table <- function(filename, save_as = NULL, save_file = T, 
-                                  review_var) {
+                                  review_var = NULL) {
 
   imm_ch_dt <- read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
-    filter(review == paste0(review_var),
-           exclude_from_table == 0) %>% 
     rename(area_name=geography_name) %>%
-    select(-geography, -shade_cells, -exclude_from_table) %>%
-    select_if(not_all_na) %>% 
+    select(-geography) %>%
     arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
     mutate(time_period_eligible=as.factor(time_period_eligible))
   
-  if (save_file == T) {
+  if (save_file == T & save_as == "mmr_dose2_grampian") {
   
   imm_ch_dt <<- imm_ch_dt
   
@@ -272,6 +269,24 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T,
     select(-cohort) 
   
   saveRDS(imm_ch_dt, paste0(open_data, save_as,"_data.rds"))
+  }
+  
+  if (save_file == T & !is.null(review_var)) {
+    imm_ch_dt <<- imm_ch_dt
+    
+    saveRDS(imm_ch_dt, paste0(open_data, save_as,"_data.rds"))
+    
+    imm_ch_dt <- imm_ch_dt %>%  
+      filter(review == paste0(review_var),
+             exclude_from_table == 0) %>% 
+      select_if(not_all_na) %>% 
+      select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+      mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+      arrange(desc(cohort)) 
+    
+    saveRDS(imm_ch_dt, paste0("shiny_app/data/", save_as, "_datatable.rds"))
+    saveRDS(imm_ch_dt, paste0(data_folder,"final_app_files/", save_as, "_datatable_", 
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   }
 
   else { 
