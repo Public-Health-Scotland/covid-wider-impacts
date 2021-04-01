@@ -556,7 +556,8 @@ apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folde
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
          chart_type= area_type,
-         births_37_42 = total_exc_unknown + unknown_apgar5_37plus) %>% 
+         births_37_42 = total_exc_unknown + unknown_apgar5_37plus,
+         perc_denominator = "births_37_42_apgar5_known") %>% 
   select(-month_of_discharge) %>% 
   select(indicator, subgroup, variable, area_name, date_of_discharge, 
          births_37_42_apgar5_0_6 = low_apgar5_37plus, 
