@@ -254,6 +254,7 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T,
     arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
     mutate(time_period_eligible=as.factor(time_period_eligible))
   
+  # specify mmr imms data table
   if (save_file == T & save_as == "mmr_dose2_grampian") {
   
   imm_ch_dt <<- imm_ch_dt
@@ -271,6 +272,7 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T,
   saveRDS(imm_ch_dt, paste0(open_data, save_as,"_data.rds"))
   }
   
+  # specify all child health data tables
   if (save_file == T & !is.null(review_var)) {
     imm_ch_dt <<- imm_ch_dt
     
@@ -289,6 +291,7 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T,
                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   }
 
+  # all other imms data tables
   else { 
     imm_ch_dt
     }
