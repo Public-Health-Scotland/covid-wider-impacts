@@ -340,15 +340,15 @@ dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/depriva
   select(datazone2011, year, sc_quin) %>% 
   filter(year>2015)
 
-dep_lookup20 <- dep_lookup %>%  filter(year == 2019) %>% 
-  mutate(year = 2020)
+dep_lookup20 <- dep_lookup %>%  filter(year == 2019) %>% mutate(year = 2020)
+dep_lookup21 <- dep_lookup %>%  filter(year == 2019) %>% mutate(year = 2021)
 
-dep_lookup <- rbind(dep_lookup, dep_lookup20)
+dep_lookup <- rbind(dep_lookup, dep_lookup20, dep_lookup21)
 
 geo_lookup <- left_join(dep_lookup, postcode_lookup)
 
 ###############################################.
-## Extrac deaths data from SMRA ----
+## Extract deaths data from SMRA ----
 ###############################################.
 data_deaths <- as_tibble(dbGetQuery(channel, statement=
 "SELECT date_of_registration, age, sex, UNDERLYING_CAUSE_OF_DEATH diag, POSTCODE pc7
@@ -361,22 +361,21 @@ data_deaths <- as_tibble(dbGetQuery(channel, statement=
 # Formatting variables
   mutate(week_ending = ceiling_date(as.Date(date_of_registration), "week", change_on_boundary = F)) %>% 
   mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
-         age = case_when(between(age, 0,64) ~ "Under 65", T ~ "65 and over"))
+         age = case_when(between(age, 0,64) ~ "Under 65", T ~ "65 and over"),
+         year = year(week_ending)) #to allow merging
 
-### check that last week is a complete week 
-#complete weeks have 6 or 7 days of data in them. 
+### check that last week is a complete week. complete weeks have 6 or 7 days of data in them. 
 # There could be more recent data available in SMR than what we want
 as.integer(data_deaths %>% 
     filter( week_ending==max(week_ending)) %>%
     group_by(date_of_registration) %>%
-    summarise() %>% ungroup() %>%
-    count())
+    summarise() %>% ungroup() %>% count())
 
 #Merging with deprivation and geography lookup
-data_deaths %<>% left_join(geo_lookup) %>% select(-datazone2011) 
+data_deaths <- left_join(data_deaths, geo_lookup) %>% select(-datazone2011) 
 
 #Pivoting so one row per area
-data_deaths2 <- data_deaths %>% 
+data_deaths %<>% 
   mutate(scot = "Scotland") %>% 
   pivot_longer(cols = c(hb2019, hscp2019, scot)) %>% 
   #filtering out NA duplicates (which are counted in Scotland totals, but not elsewhere)
@@ -393,17 +392,29 @@ data_deaths2 <- data_deaths %>%
   group_by(week_ending, sex, dep, age, area_name, area_type) %>% 
   summarise(count = n())  %>% ungroup()
 
-
-# Need to deal with sc_quin missing cases (Am I creating duplicated ones?)
-# Also missing ones for sex
-
 # Create aggregations for each split
 deaths_all <- data_deaths %>% agg_cut(grouper=NULL) %>% mutate(type = "sex", category = "All")
 deaths_sex <- data_deaths %>% agg_cut(grouper="sex") %>% rename(category = sex)
 deaths_dep <- data_deaths %>% agg_cut(grouper="dep") %>% rename(category = dep)
 deaths_age <- data_deaths %>% agg_cut(grouper="age") %>% rename(category = age)
 
-# Need to aggregate for each split, how to factor diagnosis there?
-#function prepare final data probably won't work without tweaks
+data_deaths <- rbind(deaths_all, deaths_age, deaths_sex, deaths_dep) %>% 
+  filter(!(area_type != "Scotland" & type == "dep")) %>% #SIMD only at Scotland level
+  mutate(area_id = paste(area_type, "-", area_name)) # this helps with the next step
+
+# This step is to make sure we have rows for all weeks for all areas/category
+# even those with zeroes. It's a bit convoluted but it works
+data_deaths %<>%
+  pivot_wider(id_cols = c(area_type, category, type, week_ending), 
+              names_from = area_name, values_from = count, values_fill = list(count = 0)) %>% 
+  pivot_longer(c(Scotland:`Western Isles`), values_to = "count", names_to = "area_name") %>% 
+  # This is to get rid of combinations that don't exist (e.g. Scotland - Fife)
+  mutate(area_id = paste(area_type, "-", area_name)) %>% 
+  filter(area_id %in% unique(data_deaths$area_id)) %>% 
+  select(-area_id)
+
+# Running final functions
+prepare_final_data(dataset = data_deaths, filename = "deaths", 
+                   last_week = "2021-02-21", aver = 5)
 
 ### END
