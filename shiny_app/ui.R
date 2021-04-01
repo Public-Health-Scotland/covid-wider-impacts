@@ -313,6 +313,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
          )# mainPanel bracket
   ) # tabpanel bracket
    ), #navbarMenu bracket
+
 ###############################################.
 ## Cancer ----
 ###############################################.
