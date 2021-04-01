@@ -73,8 +73,8 @@ output$preterm_explorer <- renderUI({
   # text for titles of cut charts
   preterm_title <- paste0("Percentage of deliveries at 23-26 weeks gestation resulting in a live born baby that occur in a hospital with a neonatal intensive care unit on site: Scotland")
 
-  control_chart_commentary <- p("As extremely preterm deliveries are relatively rare events in Scotland percentages tend to fluctuate over time just by chance.", br(),
-                      "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?'", br(),
+  control_chart_commentary <- p("As deliveries at 23-26 weeks gestation are relatively rare events in Scotland, the percentage of these deliveries that occurs in a hospital with a neonatal intensive care unit on site will fluctuate over time just by chance. We have therefore used ‘control charts’ to present the percentages above.", br(),
+                                "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
                                 "The dots joined by a solid black line in the chart above show the percentage of deliveries at 23-26 weeks gestation inclusive that occurred in a hospital with a neonatal intensive care unit on site, for sequential quarters from January-March 2018 onwards.", br(),  
                                 "The other lines - centreline, and control and warning limits - are there to help show how unexpected any observed changes are. The centreline is an average (mean) over the time period. Control and warning limits take into consideration the random variation that would be expected by chance, and help us decide when values are unexpectedly low or high and require further investigation.")
   
