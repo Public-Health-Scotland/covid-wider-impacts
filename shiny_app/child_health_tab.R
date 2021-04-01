@@ -222,11 +222,11 @@ tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/populatio
 visit_data_download <- reactive({
   switch(
     input$measure_select_child,
-    "first_visit" = firsttable,
-    "six_eightwks" = sixtoeighttable,
-    "13_15mnth" = thirteentable,
-    "27_30mnth" = twentyseventable,
-    "4_5yr" = fourtofivetable
+    "first_visit" = firstdata,
+    "six_eightwks" = sixtoeightdata,
+    "13_15mnth" = thirteendata,
+    "27_30mnth" = twentysevendata,
+    "4_5yr" = fourtofivedata
   ) %>% 
     select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
     mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%

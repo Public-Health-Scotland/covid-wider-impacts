@@ -87,14 +87,19 @@ mh_ooh <- readRDS("data/mh_ooh.rds")
 child_extract_date <- "29th March 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
+firstdata <- readRDS("data/first_visit_data.rds")
 sixtoeight <- readRDS("data/six_to_eight.rds")
 sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
+sixtoeightdata <- readRDS("data/six_to_eight_data.rds")
 thirteen <- readRDS("data/thirteen.rds")
 thirteentable <- readRDS("data/thirteen_datatable.rds")
+thirteendata <- readRDS("data/thirteen_data.rds")
 twentyseven <- readRDS("data/twentyseven.rds")
 twentyseventable <- readRDS("data/twentyseven_datatable.rds")
+twentysevendata <- readRDS("data/twentyseven_data.rds")
 fourtofive <- readRDS("data/fourtofive.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
+fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
 immunisation_extract_date <- "22nd February 2021"
@@ -202,31 +207,32 @@ data_list_top <- c("Number" = "top_number",
 data_list_childdev <- c("13-15 month review" = "13_15mnth",
                      "27-30 month review" = "27_30mnth")
 
-data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
-                        "A&E cardiovascular attendances" = "ae_cardio",
-                        "Cardiac procedures" = "cath_lab",
-                        "Cardiovascular OOH cases" = "ooh_cardiac",
-                        "Cardiovascular SAS incidents" = "sas_cardiac",
-                        "6-in-1 first dose"  = "sixin_8wks",
-                        "6-in-1 second dose" = "sixin_8wks_second",
-                        "6-in-1 third dose" = "sixin_8wks_third",
+data_list_data_tab <- c(#data_list, "Cardiovascular prescribing" = "cardio_drugs",
+                        # "A&E cardiovascular attendances" = "ae_cardio",
+                        # "Cardiac procedures" = "cath_lab",
+                        # "Cardiovascular OOH cases" = "ooh_cardiac",
+                        # "Cardiovascular SAS incidents" = "sas_cardiac",
+                        # "6-in-1 first dose"  = "sixin_8wks",
+                        # "6-in-1 second dose" = "sixin_8wks_second",
+                        # "6-in-1 third dose" = "sixin_8wks_third",
                         "Health Visitor first visit" = "first_visit",
                         "6-8 week child health review" = "sixtoeight_visit",
                         "13-15 month child health review" = "thirteen_visit",
                         "27-30 month child health review" = "twentyseven_visit",
                         "4-5 year child health review" = "fourtofive_visit",
                         "Child development" = "childdev",
-                        "Breastfeeding" = "breastfeeding",
-                        "Stillbirths and infant deaths" = "perinatal",
-                        "Termination of pregnancy" = "top",
-                        "Antenatal bookings" = "ante_booking",
-                        "Induction of labour" = "induct",
-                        "Method of delivery" = "mod",
-                        "Gestation at delivery" = "gestation",
-                        "Mental health prescribing" = "mhdrugs",
-                        "A&E mental health attendances" = "ae_mh",
-                        "Out of hours mental health cases" = "ooh_mh",
-                        "Cancer" = "cancer")
+                        "Breastfeeding" = "breastfeeding"#,
+                        # "Stillbirths and infant deaths" = "perinatal",
+                        # "Termination of pregnancy" = "top",
+                        # "Antenatal bookings" = "ante_booking",
+                        # "Induction of labour" = "induct",
+                        # "Method of delivery" = "mod",
+                        # "Gestation at delivery" = "gestation",
+                        # "Mental health prescribing" = "mhdrugs",
+                        # "A&E mental health attendances" = "ae_mh",
+                        # "Out of hours mental health cases" = "ooh_mh",
+                        # "Cancer" = "cancer"
+                        )
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",

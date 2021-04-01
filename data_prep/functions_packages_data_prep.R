@@ -278,6 +278,13 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T,
     
     saveRDS(imm_ch_dt, paste0(open_data, save_as,"_data.rds"))
     
+    imm_ch_dt_data <<- imm_ch_dt %>% 
+      filter(review == paste0(review_var)) %>% 
+      select_if(not_all_na)
+    
+    saveRDS(imm_ch_dt_data, paste0(data_folder,"final_app_files/", save_as, "_data_", 
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))    
+    
     imm_ch_dt <- imm_ch_dt %>%  
       filter(review == paste0(review_var),
              exclude_from_table == 0) %>% 
