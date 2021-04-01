@@ -216,9 +216,9 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
                    uiOutput("immunisation_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-###############################################.
-## Child Health reviews ----
 ##############################################.
+# Child Health reviews ----
+#############################################.
 tabPanel(title = "Child health reviews", icon = icon("child"), value = "child_health",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -313,6 +313,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
          )# mainPanel bracket
   ) # tabpanel bracket
    ), #navbarMenu bracket
+
 ###############################################.
 ## Cancer ----
 ###############################################.
@@ -454,9 +455,9 @@ tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mo
                    uiOutput("mod_explorer")
          )# mainPanel bracket
   ), # tabPanel bracket
-###############################################.
-## Gestation at delivery Tab ----
-###############################################.
+##############################################.
+# Gestation at delivery Tab ----
+##############################################.
 tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "gestation",
          wellPanel(
            column(4, div(title="Select a breakdown",
