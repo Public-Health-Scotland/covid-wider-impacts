@@ -418,7 +418,9 @@ output$data_explorer <- renderUI({
       fluidRow(column(6,
                       actionButton("btn_dataset_modal", paste0("Data source: ", source), 
                                    icon = icon('question-circle'))),
-               column(6, p("Last updated: 6th April 2021"))),
+
+               column(6, p("Last updated: 7th April 2021"))),
+      
       if (input$measure_select == "nhs24"){
         tagList(
         p("The data used in this chart are taken from the Unscheduled Care Datamart.  

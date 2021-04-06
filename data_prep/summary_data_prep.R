@@ -187,11 +187,11 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2021-02-21")
 ## A&E data ----
 ###############################################.
 # Read A&E data both at HSCP and HB level
-ae_data <- rbind(read_csv(unz(paste0(ae_folder,"2021-02-25-HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
+ae_data <- rbind(read_csv(unz(paste0(ae_folder,"2021-04-01-HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
                               "HSCP.csv")) %>% 
                    janitor::clean_names() %>% 
                    rename(area=hscp_of_residence_code_as_at_arrival_date),
-                 read_csv(unz(paste0(ae_folder,"2021-02-25-NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), 
+                 read_csv(unz(paste0(ae_folder,"2021-04-01-NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), 
                               "NHS Boards.csv")) %>% 
                    janitor::clean_names() %>% 
                    rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode))
@@ -231,7 +231,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2021-02-21")
+prepare_final_data(ae_data, "ae", last_week = "2021-03-28")
 
 ###############################################.
 ## NHS24 data ----
