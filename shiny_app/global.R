@@ -84,17 +84,22 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "22nd February 2021"
+child_extract_date <- "29th March 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
+firstdata <- readRDS("data/first_visit_data.rds")
 sixtoeight <- readRDS("data/six_to_eight.rds")
 sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
+sixtoeightdata <- readRDS("data/six_to_eight_data.rds")
 thirteen <- readRDS("data/thirteen.rds")
 thirteentable <- readRDS("data/thirteen_datatable.rds")
+thirteendata <- readRDS("data/thirteen_data.rds")
 twentyseven <- readRDS("data/twentyseven.rds")
 twentyseventable <- readRDS("data/twentyseven_datatable.rds")
+twentysevendata <- readRDS("data/twentyseven_data.rds")
 fourtofive <- readRDS("data/fourtofive.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
+fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
 immunisation_extract_date <- "29th March 2021"
@@ -226,7 +231,8 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
-                        "Cancer" = "cancer")
+                        "Cancer" = "cancer"
+                        )
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",
@@ -296,11 +302,9 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099") 
 
-pal_child <- c("2019" = '#000000',
-               "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
-               "APR 2020" = "#7fcdbb", "MAY 2020" = "#3CB371", "JUN 2020" = "#32CD32",
-               "JUL 2020" = "#41b6c4", "AUG 2020" = "#1d91c0", "SEP 2020" = "#225ea8",
-               "OCT 2020" = "#253494", "NOV 2020" = "#081d58", "DEC 2020" = "#00004d")
+pal_child <- c("2019" = "#000000", "2020" = "#41b6c4", 
+               "AUG 2020" = "#edf8b1", "SEP 2020" = "#7fcdbb", "OCT 2020" = "#32CD32", 
+               "NOV 2020" = "#1d91c0", "DEC 2020" = "#253494", "JAN 2021" = "#990099")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
