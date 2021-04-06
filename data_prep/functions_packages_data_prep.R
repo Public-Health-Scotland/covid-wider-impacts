@@ -120,28 +120,39 @@ proper <- function(dataset) {
 }
 
 # Function to format data in the right format for the Shiny app
-prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) {
+prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, aver = 3) {
   
   # Creating week number to be able to compare pre-covid to covid period
   dataset <- dataset %>% mutate(week_no = isoweek(week_ending),
                                 # Fixing HSCP names
                                 area_name = gsub(" and ", " & ", area_name))
   
-  
-  # Creating average admissions of pre-covid data (2018-2019) by day of the year
-  historic_data <- dataset %>% filter(year(week_ending) %in% c("2018", "2019")) %>% 
-    group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
-    # Not using mean to avoid issues with missing data for some weeks
-    summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% 
-    ungroup()
-  
-  
-  # Create average for week 53 using average for week 52
-  week_53 <- historic_data %>% filter(week_no == 52) %>% 
-    tidylog::mutate(week_no = 53)
-  
-  # Add rows to historic data
-  historic_data %<>% rbind(week_53)
+  if (aver == 3) {
+    # Creating average admissions of pre-covid data (2018-2019) by day of the year
+    historic_data <- dataset %>% filter(year(week_ending) %in% c("2018", "2019")) %>% 
+      group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
+      # Not using mean to avoid issues with missing data for some weeks
+      summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% 
+      ungroup()
+    
+    
+    # Create average for week 53 using average for week 52
+    week_53 <- historic_data %>% filter(week_no == 52) %>% 
+      tidylog::mutate(week_no = 53)
+    
+    # Add rows to historic data
+    historic_data %<>% rbind(week_53)
+  } else if (aver == 5) {
+    # Creating average admissions of pre-covid data (2015-2019) by day of the year
+    historic_data <- dataset %>% filter(!(year(week_ending) %in% c("2020", "2021"))) %>% 
+      group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
+      # Not using mean to avoid issues with missing data for some weeks
+      summarise(count_average = round((sum(count, na.rm = T))/5, 1)) %>% 
+      ungroup() %>% 
+      mutate(count_average = case_when (week_no == 53 ~ count_average *5, T ~ count_average))
+
+  }
+
   
   # Joining with 2020 and 2021 data
   # Filtering weeks with incomplete week too!! Temporary
@@ -160,8 +171,12 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
            variation =  ifelse(is.infinite(variation), 8000, variation)) %>% 
     select(-week_no) 
   
-  # Supressing numbers under 5
-  data_2020 <- data_2020 %>% filter(count>=5) %>% 
+  if (aver == 3) {
+    # Supressing numbers under 5
+    data_2020 <- data_2020 %>% filter(count>=5) 
+  } 
+  
+  data_2020 <- data_2020 %>%
     filter(week_ending <= as.Date(last_week))
   
   final_data <<- data_2020
