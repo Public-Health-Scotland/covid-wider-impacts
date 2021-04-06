@@ -245,7 +245,7 @@ prepare_final_data(ae_data, "ae", last_week = "2021-03-28")
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")) %>% clean_names() %>% 
                   mutate(week_ending = as.Date(nhs_24_call_rcvd_date, format="%d-%b-%y")),
-                read_tsv(paste0(data_folder, "NHS24/2021-03-01-NHS24 report v6 covid Extract PC (For Wider Impact work).txt")) %>% 
+                read_tsv(paste0(data_folder, "NHS24/2021-04-05-NHS24 report v6 covid Extract PC (For Wider Impact work).txt")) %>% 
                   clean_names() %>% 
                   mutate(week_ending = as.Date(nhs_24_call_rcvd_date, format="%d-%b-%Y"))) %>%
   rename(hb = patient_nhs_board_description_current,
@@ -288,7 +288,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2021-02-21")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2021-03-28")
 
 ###############################################.
 ## SAS data ----
@@ -323,7 +323,7 @@ sas %<>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
 #NEW WEEKLY DATA UPDATE
-sas_new <- read_tsv(paste0(data_folder,"SAS/2021-03-01-COVID WIDER IMPACT SAS_Prompt report.txt")) %>% 
+sas_new <- read_tsv(paste0(data_folder,"SAS/2021-04-05-COVID WIDER IMPACT SAS_Prompt report.txt")) %>% 
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -362,7 +362,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas <- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2021-02-21")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2021-03-28")
 
 
 ### END ###.
