@@ -8,44 +8,49 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 ## Child health reviews ----
 ###############################################.
-ch_date_file <- "20210222" #date included in filepath name
+ch_date_file <- "20210329" #date included in filepath name
 #First visit data and table
-format_childhealth(filename = paste0("firstvisit_dashboard", ch_date_file), week_var = "week_2_start",
-                   week_var2 = week_2_start, save_as = "first_visit")
+format_childhealth(filename = paste0("firstvisit_dashboard_", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "first_visit")
 
-format_immchild_table(paste0("child_health/firstvisit_dashboardtab_", ch_date_file), "first_visit") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "first_visit", 
+                      review_var = "HV First Visit") 
 
 # 6-8 weeks visit data and table
-format_childhealth(filename = paste0("sixtoeight_dashboard", ch_date_file), week_var = "week_6_start",
-                   week_var2 = week_6_start, save_as = "six_to_eight", intmax = 168)
+format_childhealth(filename = paste0("sixtoeight_dashboard_", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "six_to_eight", intmax = 168)
 
-format_immchild_table(paste0("child_health/sixtoeight_dashboardtab_", ch_date_file), "six_to_eight") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "six_to_eight",
+                      review_var = "6-8 Week Review") 
 
 # 13-15 month visit data and table
-format_childhealth(filename = paste0("thirteen_dashboard", ch_date_file), week_var = "week_57_start",
-                   week_var2 = week_57_start, save_as = "thirteen", intmin = 370, intmax = 519)
+format_childhealth(filename = paste0("thirteen_dashboard_", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "thirteen", intmin = 370, intmax = 519)
 
-format_immchild_table(paste0("child_health/thirteen_dashboardtab_", ch_date_file), "thirteen") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "thirteen",
+                      review_var = "13-15 Month Review") 
 
 ## 27 to 30 month visit data and table
-format_childhealth(filename = paste0("twentyseven_dashboard", ch_date_file), week_var = "week_117_start",
-                   week_var2 = week_117_start, save_as = "twentyseven", intmin = 790, intmax = 946)
+format_childhealth(filename = paste0("twentyseven_dashboard_", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "twentyseven", intmin = 790, intmax = 946)
 
-format_immchild_table(paste0("child_health/twentyseven_dashboardtab_", ch_date_file), "twentyseven") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "twentyseven",
+                      review_var = "27-30 Month Review") 
 
 ## 4 to 5 year visit data and table
-format_childhealth(filename = paste0("fourtofive_dashboard", ch_date_file), week_var = "week_209_start",
-                   week_var2 = week_209_start, save_as = "fourtofive", intmin = 1427, intmax = 1583)
+format_childhealth(filename = paste0("fourtofive_dashboard_", ch_date_file), week_var = "eligible_start",
+                   week_var2 = eligible_start, save_as = "fourtofive", intmin = 1427, intmax = 1583)
 
-format_immchild_table(paste0("child_health/fourtofive_dashboardtab_", ch_date_file), "fourtofive") 
+format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "fourtofive",
+                      review_var = "4-5 Year Review") 
 
 ###############################################.
 ## Child development ----
 ###############################################.
 # Do we need any sort of supression - look at island values.
-child_dev <- rbind(read_excel(paste0(data_folder, "child_development/22ndFebDashboard - 13-15m.xlsx")) %>% 
+child_dev <- rbind(read_excel(paste0(data_folder, "child_development/29thMarDashboard - 13-15m.xlsx")) %>% 
                      mutate(review = "13-15 month"),
-                   read_excel(paste0(data_folder, "child_development/22ndFebDashboard - 27-30m.xlsx")) %>% 
+                   read_excel(paste0(data_folder, "child_development/29thMarDashboard - 27-30m.xlsx")) %>% 
                      mutate(review = "27-30 month")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 
@@ -55,7 +60,7 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/22ndFebDash
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),  
                                TRUE ~ area_name),
          month_review = as.Date(month_review)) %>% 
-  filter((year(month_review) %in% c("2019", "2020"))) 
+  filter((year(month_review) %in% c("2019", "2020", "2021"))) 
 
 child_dev %<>% # Dealing with NAs, which are 0s
   mutate_at(c("pc_1_plus", "concerns_1_plus"), ~replace_na(., 0)) %>% 
@@ -117,9 +122,9 @@ saveRDS(child_dev, paste0(open_data, "child_dev_data.rds"))
 ###############################################.
 ## Breastfeeding ----
 ###############################################.
-breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/22ndFebDashboard - firstvisit.xlsx")) %>% 
+breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/29thMarDashboard - firstvisit.xlsx")) %>% 
                          mutate(review = "First visit"),
-                       read_xlsx(paste0(data_folder, "/breastfeeding/22ndFebDashboard - 6-8 week.xlsx")) %>% 
+                       read_xlsx(paste0(data_folder, "/breastfeeding/29thMarDashboard - 6-8 week.xlsx")) %>% 
                          mutate(review = "6-8 week")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 
@@ -131,7 +136,7 @@ breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/22ndFeb
                                area_name == "Clackmannanshire and Stirling" ~ "Clackmannanshire and Stirling HSCP",
                                TRUE ~ area_name),
          month_review = as.Date(month_review)) %>% 
-  filter((year(month_review) %in% c("2019", "2020")))
+  filter((year(month_review) %in% c("2019", "2020", "2021")))
 
 # Calculating centre lines and adding them to breastfeeding
 breastfeeding_centreline <- breastfeeding %>% 

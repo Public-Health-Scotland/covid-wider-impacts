@@ -75,8 +75,8 @@ data_table <- reactive({
       arrange(desc(cohort)) %>% 
       select(-cohort) %>%
       rename(Cohort = time_period_eligible, "Total number of children" = denominator,
-             "Coverage of review at 6 weeks of age (N)" = coverage_6weeks_num,
-             "Coverage of review at 6 weeks of age (%)" = coverage_6weeks_percent,
+             "Coverage of review at 06 weeks of age (N)" = coverage_6weeks_num,
+             "Coverage of review at 06 weeks of age (%)" = coverage_6weeks_percent,
              "Coverage of review at 18 weeks of age (N)" = coverage_18weeks_num,
              "Coverage of review at 18 weeks of age (%)" = coverage_18weeks_percent,
              "Total coverage of review (N)" = coverage_tot_num,

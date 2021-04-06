@@ -47,7 +47,7 @@ output$child_first_scurve <- renderPlotly({plot_scurve_child(first, "2 weeks")})
 output$child_first_table <- renderUI({child_table(firsttable, "2 weeks", "18 weeks")})
 
 output$child_sixtoeight_scurve <- renderPlotly({plot_scurve_child(sixtoeight, "6 weeks")})
-output$child_sixtoeight_table <- renderUI({child_table(sixtoeighttable, "6 weeks", "24 weeks")})
+output$child_sixtoeight_table <- renderUI({child_table(sixtoeighttable, "6 weeks", "22 weeks")})
 
 output$child_thirteen_scurve <- renderPlotly({plot_scurve_child(thirteen, "13 months")})
 output$child_thirteen_table <- renderUI({child_table(thirteentable, "13 months", "17 months")})
@@ -56,7 +56,7 @@ output$child_twentyseven_scurve <- renderPlotly({plot_scurve_child(twentyseven, 
 output$child_twentyseven_table <- renderUI({child_table(twentyseventable, "27 months", "31 months")})
 
 output$child_fourtofive_scurve <- renderPlotly({plot_scurve_child(fourtofive, "4 years")})
-output$child_fourtofive_table <- renderUI({child_table(fourtofivetable, "4 years", "4 years 4 months")})
+output$child_fourtofive_table <- renderUI({child_table(fourtofivetable, "4 years", "52 months")})
 
 # The charts and text shown on the app will depend on what the user wants to see
 output$child_health_explorer <- renderUI({
@@ -143,6 +143,15 @@ output$child_health_explorer <- renderUI({
  output$child_comments <- renderUI({
      tagList(
        bsButton("jump_to_childreview",label = "Go to data"),
+       h2("Child Health reviews - 7th April 2021"),
+       h4("What is reported?"),
+       p("Information on uptake of pre-school child health reviews was updated in this tool on 7 April. Information is provided on children becoming eligible for a review during the Covid-19 pandemic (in March 2020 to January 2021) as well as before the pandemic (2019, January 2020, and February 2020). Due to the volume of data available, the charts and table now show annual data for children who became eligible for review in 2019 and 2020, and monthly data for children who became eligible for review in the most recent 6 months for which data are available. The data downloads include more detailed information, including by Health and Social Care Partnership, and weekly cohorts (note that due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland and NHS Western Isles are presented for monthly and yearly cohorts only)."),
+       p("Data for a small number children are not included in the eligible cohort and coverage figures due to an issue in the source data. The impact on the reported rates at Scotland level will be minor."),
+       h4("Findings"),
+       p("Coverage of the Health Visitor first visit has remained high for children becoming eligible during the pandemic, with more than 95% of babies receiving their review by 6 weeks of age. Coverage of all other reviews was lower for children who became eligible in the early months of the pandemic, than in 2019. However, data from summer 2020 onwards shows that coverage appears to be recovering, with reviews happening in a more timely manner."),
+       p("For the later child health reviews, which have a much longer timeframe for reviews to be delivered, particularly the 4-5 year review, it will take some time for final achieved coverage to be known. Information on final achieved coverage will continue to be provided through PHS ",
+         tags$a(href = "https://beta.isdscotland.org/", "official statistics publications",  target="_blank"), "."),
+       p("Further background information on interpreting the data is provided in the commentary for 8 and 15 July 2020 below."),
        h2("Child Health reviews - 3rd March 2021"),
        h4("What is reported?"),
        p("Information on uptake of pre-school child health reviews was updated in this tool on 3 March. Information is provided on children becoming eligible for a review during the Covid-19 pandemic (in March 2020 to December 2020) as well as before the pandemic (2019, January 2020, and February 2020). Weekly data are no longer shown in the charts and tables but are available through the data download, and includes data for children eligible up to week beginning 4 January 2021. It should be noted that the coverage data recorded for the most recent eligible cohorts will not be fully complete at this stage. Data for a few children are not included in the eligible cohort and coverage figures due to an issue in the source data. The impact on the reported rates at Scotland level will be minor."),
@@ -222,11 +231,11 @@ tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/populatio
 visit_data_download <- reactive({
   switch(
     input$measure_select_child,
-    "first_visit" = firsttable,
-    "six_eightwks" = sixtoeighttable,
-    "13_15mnth" = thirteentable,
-    "27_30mnth" = twentyseventable,
-    "4_5yr" = fourtofivetable
+    "first_visit" = firstdata,
+    "six_eightwks" = sixtoeightdata,
+    "13_15mnth" = thirteendata,
+    "27_30mnth" = twentysevendata,
+    "4_5yr" = fourtofivedata
   ) %>% 
     select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
     mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
