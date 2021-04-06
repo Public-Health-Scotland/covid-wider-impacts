@@ -26,9 +26,7 @@ save_final_file <- function(dataset, date_saved) {
 ###############################################.
 ###############################################.
 ## Deaths ----
-deaths <- readRDS(paste0(data_folder, "deaths/deaths_data.rds"))
-saveRDS(deaths, "shiny_app/data/deaths.rds")
-saveRDS(deaths, paste0(open_data, "deaths_data.rds"))
+save_final_file("deaths", "04_Apr_2021")
 ##########################################################.
 ## Cancer ----
 save_final_file("cancer_data_2", "24_Feb_21")

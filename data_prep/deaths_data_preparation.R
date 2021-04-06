@@ -422,4 +422,16 @@ data_deaths %<>%
 prepare_final_data(dataset = data_deaths, filename = "deaths", 
                    last_week = "2021-03-28", aver = 5)
 
+# Dealing with variation to replicate previous output. This might not be needed in future.
+final_deaths <- final_data %>% 
+  mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1),
+        # Dealing with infinite values from historic average = 0
+        variation =  case_when(count_average == 0 & count == 0 ~ 0, T ~ variation),
+        variation =  ifelse(is.infinite(variation), NA_integer_, variation)) 
+
+saveRDS(final_deaths, paste0("shiny_app/data/deaths.rds"))
+saveRDS(final_deaths, paste0(data_folder,"final_app_files/deaths_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+saveRDS(final_deaths, paste0(open_data, "deaths_data.rds"))
+
 ### END
