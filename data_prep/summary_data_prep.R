@@ -141,7 +141,7 @@ ooh %<>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-04-26")))
 
 #new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_57_3895841067560607097.xlsx")) %>% 
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH Data_51_2032005111570143530.xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -181,7 +181,7 @@ ooh_age <- ooh %>% agg_cut(grouper="age") %>% rename(category = age)
 ooh <- rbind(ooh_all, ooh_sex, ooh_dep, ooh_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2021-02-21")
+prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2021-03-28")
 
 ###############################################.
 ## A&E data ----
