@@ -36,8 +36,8 @@ spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) 
   )) %>% 
   select("Specialty name" = spec_name, "Specialty group" = dash_groups)
 
-saveRDS(spec_lookup, "shiny_app/data/spec_lookup.rds")
-saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_", 
+saveRDS(spec_lookup, "shiny_app/data/spec_lookup_rapid.rds")
+saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_rapid", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # Formatting groups
@@ -187,11 +187,11 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = "2021-02-21")
 ## A&E data ----
 ###############################################.
 # Read A&E data both at HSCP and HB level
-ae_data <- rbind(read_csv(unz(paste0(ae_folder,"2021-02-25-HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
+ae_data <- rbind(read_csv(unz(paste0(ae_folder,"2021-04-01-HSCP-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"),
                               "HSCP.csv")) %>% 
                    janitor::clean_names() %>% 
                    rename(area=hscp_of_residence_code_as_at_arrival_date),
-                 read_csv(unz(paste0(ae_folder,"2021-02-25-NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), 
+                 read_csv(unz(paste0(ae_folder,"2021-04-01-NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), 
                               "NHS Boards.csv")) %>% 
                    janitor::clean_names() %>% 
                    rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode))
@@ -231,7 +231,7 @@ ae_age <- agg_cut(dataset=ae_data, grouper="age") %>% rename(category=age)
 # Add final aggregation files to one master file
 ae_data <- rbind(ae_all, ae_sex, ae_dep, ae_age) 
 
-prepare_final_data(ae_data, "ae", last_week = "2021-02-21")
+prepare_final_data(ae_data, "ae", last_week = "2021-03-28")
 
 ###############################################.
 ## NHS24 data ----
@@ -245,7 +245,7 @@ prepare_final_data(ae_data, "ae", last_week = "2021-02-21")
 
 nhs24 <-  rbind(readRDS(paste0(data_folder, "NHS24/NHS24 01Jan2018 to 07Jun2020.rds")) %>% clean_names() %>% 
                   mutate(week_ending = as.Date(nhs_24_call_rcvd_date, format="%d-%b-%y")),
-                read_tsv(paste0(data_folder, "NHS24/2021-03-01-NHS24 report v6 covid Extract PC (For Wider Impact work).txt")) %>% 
+                read_tsv(paste0(data_folder, "NHS24/2021-04-05-NHS24 report v6 covid Extract PC (For Wider Impact work).txt")) %>% 
                   clean_names() %>% 
                   mutate(week_ending = as.Date(nhs_24_call_rcvd_date, format="%d-%b-%Y"))) %>%
   rename(hb = patient_nhs_board_description_current,
@@ -288,7 +288,7 @@ nhs24_age <- agg_cut(dataset= nhs24, grouper="age") %>% rename(category=age)
 nhs24 <- rbind(nhs24_allsex, nhs24_sex, nhs24_dep, nhs24_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2021-02-21")
+prepare_final_data(dataset = nhs24, filename = "nhs24", last_week = "2021-03-28")
 
 ###############################################.
 ## SAS data ----
@@ -323,7 +323,7 @@ sas %<>% mutate(scot = "Scotland") %>%
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% rename(age = age_grp)
 
 #NEW WEEKLY DATA UPDATE
-sas_new <- read_tsv(paste0(data_folder,"SAS/2021-03-01-COVID WIDER IMPACT SAS_Prompt report.txt")) %>% 
+sas_new <- read_tsv(paste0(data_folder,"SAS/2021-04-05-COVID WIDER IMPACT SAS_Prompt report.txt")) %>% 
   janitor::clean_names() %>%
   rename(hb=reporting_health_board_name_current, hscp=patient_hscp_name_current,
          dep=patient_prompt_dataset_deprivation_scot_quintile,
@@ -362,7 +362,7 @@ sas_age <- agg_cut(dataset= sas, grouper="age") %>% rename(category=age)
 sas <- rbind(sas_allsex, sas_sex, sas_dep, sas_age)
 
 # Formatting file for shiny app
-prepare_final_data(dataset = sas, filename = "sas", last_week = "2021-02-21")
+prepare_final_data(dataset = sas, filename = "sas", last_week = "2021-03-28")
 
 
 ### END ###.

@@ -18,8 +18,14 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   
   if (split != FALSE) {
     if (tab == "summary") {
-      trend_data <- dataset %>% # filtering data by cut and area name
-        filter(type == split & area_name == input$geoname)
+      if (input$measure_select != "outpats") {
+        trend_data <- dataset %>% # filtering data by cut and area name
+          filter(type == split & area_name == input$geoname)
+      } else { #for outpatients data
+        trend_data <- dataset %>% # filtering data by cut and area name
+          filter(type == split & area_name == input$geoname_op)
+      }
+
     } else if (tab %in% c("cardio", "mh")) {
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type %in% split)
@@ -88,21 +94,26 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", 
                                                      "sas", "drug_presc", "cath", 
                                                      "mentalhealth_drugs", "mh_ooh",
-                                                     "ooh_cardiac", "sas_cardiac") ~ "2018-2019",
+                                                     "ooh_cardiac", "sas_cardiac",
+                                                     "op") ~ "2018-2019",
                              data_name == "deaths" ~ "2015-2019"))
     
     if (aver_week == T) {
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                                "Average of weeks ending on ", format(trend_data$week_ending - 7, "%d %b %y"), ", ",
-                                format(trend_data$week_ending, "%d %b %y"), " and ", format(trend_data$week_ending + 7, "%d %b %y"),
-                                "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
+                                "Average of weeks ending on ", 
+                                format(trend_data$week_ending - 7, "%d %b %y"), ", ",
+                                format(trend_data$week_ending, "%d %b %y"), " and ", 
+                                format(trend_data$week_ending + 7, "%d %b %y"),
+                                "<br>", "Change from ", aver_period, " average: ", 
+                                round(trend_data$variation, 1), "%"))
       
     } else {
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$category, "<br>", 
                                 "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                                "<br>", "Change from ", aver_period, " average: ", round(trend_data$variation, 1), "%"))
+                                "<br>", "Change from ", aver_period, " average: ", 
+                                round(trend_data$variation, 1), "%"))
       
     }
 
@@ -127,7 +138,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name == "sas_cardiac" ~ "Number of incidents",
                              data_name == "deaths" ~ "Number of deaths",
                              data_name == "mentalhealth_drugs" ~ "Number of patients",
-                             data_name == "mh_ooh" ~ "Number of consultations")
+                             data_name == "mh_ooh" ~ "Number of consultations",
+                             data_name == "op" ~ "Number of appointments")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
@@ -144,16 +156,20 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                               data_name == "cancer" ~ "Referrals: ",
                               data_name == "deaths" ~ "Deaths: ",
                               data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
-                              data_name == "mh_ooh" ~ "Consultations: ")
+                              data_name == "mh_ooh" ~ "Consultations: ",
+                              data_name == "op" ~ "Appointments: ")
 
     #Text for tooltip
     if (aver_week == T) {
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                                "Average of weeks ending on ", format(trend_data$week_ending - 7, "%d %b %y"), ", ",
-                                format(trend_data$week_ending, "%d %b %y"), " and ", format(trend_data$week_ending + 7, "%d %b %y"),
+                                "Average of weeks ending on ", 
+                                format(trend_data$week_ending - 7, "%d %b %y"), ", ",
+                                format(trend_data$week_ending, "%d %b %y"), " and ", 
+                                format(trend_data$week_ending + 7, "%d %b %y"),
                                 "<br>", measure_name, trend_data$count,
-                                "<br>", "Historic average: ", trend_data$count_average))
+                                "<br>", "Historic average: ", 
+                                trend_data$count_average))
       
     } else {
       tooltip_trend <- c(paste0(trend_data$category, "<br>",
@@ -189,11 +205,11 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
 plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                                var2020 = "count", var_aver = "count_average",
-                               xvar = "week_ending", filtering = T) {
+                               xvar = "week_ending", filtering = T, op = F) {
   
   if (filtering == T) {
     # Filtering dataset to include only overall figures
-    trend_data <- filter_data(dataset, area = area)
+    trend_data <- filter_data(dataset, area = area, op = op)
   } else {
     trend_data <- dataset
   }
@@ -218,20 +234,22 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                            data_name == "deaths" ~ "Number of deaths",
                            data_name == "cancer" ~ "Number of referrals",
                            data_name == "mentalhealth_drugs" ~ "Number of patients",
-                           data_name == "mh_ooh" ~ "Number of consultations")
+                           data_name == "mh_ooh" ~ "Number of consultations",
+                           data_name == "op" ~ "Number of appointments")
 
   #Modifying standard layout
   yaxis_plots[["title"]] <- yaxis_title
   
   hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
                                             "ooh_cardiac", "sas_cardiac",
-                                            "cath", "mentalhealth_drugs", "mh_ooh") ~ "Average 2018-2019",
+                                            "cath", "mentalhealth_drugs", "mh_ooh",
+                                            "op") ~ "Average 2018-2019",
                           data_name == "deaths" ~ "Average 2015-2019")
   
   hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
                                                      "ooh_cardiac", "sas_cardiac",
                                                       "mentalhealth_drugs", "mh_ooh", "deaths") ~ "2020 & 2021",
-                                    data_name %in% c("cath")  ~ "2020")
+                                    data_name %in% c("cath", "op")  ~ "2020")
   
   measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                             data_name == "aye" ~ "Attendances: ",
@@ -244,7 +262,8 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                             data_name == "sas_cardiac" ~ "Incidents: ",
                             data_name == "deaths" ~ "Deaths: ",
                             data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
-                            data_name == "mh_ooh" ~ "Consultations: ")
+                            data_name == "mh_ooh" ~ "Consultations: ",
+                            data_name == "op" ~ "Appointments: ")
   
   #Text for tooltip
     tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
@@ -355,8 +374,8 @@ if(data_name != "dif") {
 ## # Function that creates specialty charts.   ----
 ###############################################.
 # Potentially could be merge with trend one
-plot_spec <- function(type) {
-  trend_data <- rapid_spec()
+plot_spec <- function(type, dataset, marg = 160) {
+  trend_data <- dataset
   
   if (type == "variation") {
     
@@ -373,7 +392,6 @@ plot_spec <- function(type) {
     
     
   } else if (type == "total") {
-    
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- "Number of admissions"
@@ -399,7 +417,7 @@ plot_spec <- function(type) {
               symbol = ~spec, symbols = symbol_spec(),
               text=tooltip_trend, hoverinfo="text") %>%
     #Layout
-    layout(margin = list(b = 160, t=5), #to avoid labels getting cut out
+    layout(margin = list(b = marg, t=5), #to avoid labels getting cut out
            showlegend = TRUE, # always show legen
            yaxis = yaxis_plots, xaxis = xaxis_plots,
            legend = list(x = 100, y = 0.5)) %>% # position of legend
@@ -411,11 +429,15 @@ plot_spec <- function(type) {
 ## Function for filtering ----
 ###############################################.
 # Function to filter the datasets for the overall charts and download data based on user input
-filter_data <- function(dataset, area = T) {
-  if (area == T) {
+filter_data <- function(dataset, area = T, op = F) {
+  if (area == T & op == T) {
     dataset %>% filter(type == "sex") %>%
-      filter(area_name == input$geoname &
+      filter(area_name == input$geoname_op &
                category == "All")
+  } else if (area == T & op == F) {
+      dataset %>% filter(type == "sex") %>%
+        filter(area_name == input$geoname &
+                 category == "All")
   } else { #this works for cath data
     dataset %>% 
       filter(category == "All")
@@ -600,11 +622,13 @@ immune_table <- function(dataset, dose, age_week) {
     filter(exclude_from_table !=1) #filter immunisation table to exclude weekly cohorts that should only be downloadable
   
   #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
-  no_complete_row_six1 <- with(table_data, substr(time_period_eligible,1,3) == "NOV" |
-                                            substr(time_period_eligible,1,3) == "DEC")
-  no_complete_row_mmr <- with(table_data, substr(time_period_eligible,1,3) == "OCT" |
-                                            substr(time_period_eligible,1,3) == "NOV" |
-                                            substr(time_period_eligible,1,3) == "DEC")
+  no_complete_row_six1 <- with(table_data, substr(time_period_eligible,1,4) == "2020" |
+                                            time_period_eligible == "DEC 2020" |
+                                            time_period_eligible == "JAN 2021")
+  no_complete_row_mmr <- with(table_data, substr(time_period_eligible,1,4) == "2020" |
+                                            time_period_eligible == "NOV 2020" |
+                                            time_period_eligible == "DEC 2020" |
+                                            time_period_eligible == "JAN 2021")
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
@@ -816,7 +840,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   if (age_week == "2 weeks") {
     format_col <- c("denominator","coverage_6weeks_num","coverage_18weeks_num","coverage_tot_num")
     
-    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible %in% c("JAN 2021", "2020")))
 
     child_table <- table_data %>%
     select (time_period_eligible, denominator, coverage_6weeks_num, 
@@ -834,7 +858,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "6 weeks") {
     format_col <- c("denominator","coverage_10weeks_num","coverage_22weeks_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible %in% c("JAN 2021", "2020")))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_10weeks_num, 
@@ -852,7 +876,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "13 months") {
     format_col <- c("denominator","coverage_14months_num","coverage_17months_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible %in% c("JAN 2021", "2020")))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_14months_num, 
@@ -870,7 +894,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "27 months") {
     format_col <- c("denominator","coverage_28months_num","coverage_31months_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible %in% c("JAN 2021", "2020")))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_28months_num, 
@@ -888,7 +912,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   else if (age_week == "4 years") {
     format_col <- c("denominator","coverage_49months_num","coverage_52months_num","coverage_tot_num")
 
-    no_complete_row <- with(table_data, (time_period_eligible == "DEC 2020"))
+    no_complete_row <- with(table_data, (time_period_eligible %in% c("JAN 2021", "2020")))
 
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_49months_num, 

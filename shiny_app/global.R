@@ -53,7 +53,9 @@ intro_box <- function(title_box, button_name, description) {
 ## Data ----
 ###############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
-spec_lookup <- readRDS("data/spec_lookup.rds")
+area_type_op <- readRDS("data/area_type_op.rds")
+spec_lookup_rapid <- readRDS("data/spec_lookup_rapid.rds")
+spec_lookup_op <- readRDS("data/spec_lookup_op.rds")
 ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 
 rapid <- readRDS("data/rapid.rds") #RAPID data
@@ -62,6 +64,7 @@ ooh <- readRDS("data/ooh.rds") # OOH data
 nhs24 <- readRDS("data/nhs24.rds") # OOH data
 sas <- readRDS("data/sas.rds") # OOH data
 deaths <- readRDS("data/deaths.rds") # deaths data
+outpats <- readRDS("data/outpats.rds") # outpatients data
 
 #Cardiovascular data
 ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
@@ -73,7 +76,7 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
 # cancer_data3 <- readRDS("data/cancer_data_dep.rds")
-cancer_extract_date <- "22nd February 2021"  
+cancer_extract_date <- "22nd February 2021"
 
 # mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
@@ -81,20 +84,25 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "22nd February 2021"
+child_extract_date <- "29th March 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
+firstdata <- readRDS("data/first_visit_data.rds")
 sixtoeight <- readRDS("data/six_to_eight.rds")
 sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
+sixtoeightdata <- readRDS("data/six_to_eight_data.rds")
 thirteen <- readRDS("data/thirteen.rds")
 thirteentable <- readRDS("data/thirteen_datatable.rds")
+thirteendata <- readRDS("data/thirteen_data.rds")
 twentyseven <- readRDS("data/twentyseven.rds")
 twentyseventable <- readRDS("data/twentyseven_datatable.rds")
+twentysevendata <- readRDS("data/twentyseven_data.rds")
 fourtofive <- readRDS("data/fourtofive.rds")
 fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
+fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "22nd February 2021"
+immunisation_extract_date <- "29th March 2021"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -123,31 +131,31 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "11th February 2021"
+booking_extract_date <- "17th March 2021"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "9th February 2021"
+top_extract_date <- "11th March 2021"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "15th February 2021"
+mod_extract_date <- "17th March 2021"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
 mod_download <- readRDS("data/mod_download_data.rds")
 
 #inductions (pregnanacy tab)
-induct_extract_date <- "15th February 2021"
+induct_extract_date <- "17th March 2021"
 induct_runchart <- readRDS("data/induct_runchart_data.rds")
 induct_scot <- readRDS("data/induct_scot_data.rds")
 induct_linechart <- readRDS("data/induct_linechart_data.rds")
 induct_download <- readRDS("data/induct_download_data.rds")
 
 #gestation at delivery (pregnanacy tab)
-gestation_extract_date <- "15th February 2021"
+gestation_extract_date <- "17th March 2021"
 gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
 gestation_scot <- readRDS("data/gestation_scot_data.rds")
 gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
@@ -162,14 +170,17 @@ child_dev <- readRDS("data/child_dev.rds")
 ## Objects, names, lists ----
 ###############################################.
 
-spec_list <- sort(c(unique(spec_lookup$'Specialty group'),
-                    "Medical (incl. Cardiology & Cancer)",
-                    "Paediatrics (medical & surgical)")) # specialty list
+spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
+                          "Medical (incl. Cardiology & Cancer)",
+                          "Paediatrics (medical & surgical)")) # specialty list
+spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
 
-data_list <- c("Hospital admissions" = "rapid", "A&E attendances" = "aye",
+data_list <- c(
+  "Hospital admissions" = "rapid", "A&E attendances" = "aye",
                "NHS 24 completed contacts" = "nhs24",
                "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
-               "Excess mortality" = "deaths")
+               "Excess mortality" = "deaths",
+               "Outpatient appointments" = "outpats")
 
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
@@ -220,7 +231,8 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
-                        "Cancer" = "cancer")
+                        "Cancer" = "cancer"
+                        )
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",
@@ -275,7 +287,7 @@ pal_depr <- c('#2c7fb8', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 #Palette for 9 series in a gradient
 pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
                     '#74add1', '#4575b4', '#313695')
-# '#abd9e9', '#dfc27d',
+pal_moc <- c('#543005', '#8c510a', '#bf812d', '#d0d1e6')
 #Palette for those with a single category per sex and overall
 pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
@@ -283,17 +295,16 @@ pal_overall <- c('#000000', '#009900')
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
 pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine groupings
 
-pal_immun <- c("2019" = '#000000',
+pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
-               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#990099")
+               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
+               "JAN 2021" = "#990099") 
 
-pal_child <- c("2019" = '#000000',
-               "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
-               "APR 2020" = "#7fcdbb", "MAY 2020" = "#3CB371", "JUN 2020" = "#32CD32",
-               "JUL 2020" = "#41b6c4", "AUG 2020" = "#1d91c0", "SEP 2020" = "#225ea8",
-               "OCT 2020" = "#253494", "NOV 2020" = "#081d58", "DEC 2020" = "#00004d")
+pal_child <- c("2019" = "#000000", "2020" = "#41b6c4", 
+               "AUG 2020" = "#edf8b1", "SEP 2020" = "#7fcdbb", "OCT 2020" = "#32CD32", 
+               "NOV 2020" = "#1d91c0", "DEC 2020" = "#253494", "JAN 2021" = "#990099")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
