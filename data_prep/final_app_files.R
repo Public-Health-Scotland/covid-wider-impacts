@@ -26,14 +26,14 @@ save_final_file <- function(dataset, date_saved) {
 ###############################################.
 ###############################################.
 ## Deaths ----
-save_final_file("deaths", "06_Apr_2021")
+save_final_file("deaths", "06_Apr_21")
 ##########################################################.
 ## Cancer ----
 save_final_file("cancer_data_2", "24_Feb_21")
 ##########################################################.
 ## RAPID ----
 save_final_file("rapid", "06_Apr_21")
-save_final_file("spec_lookup", "06_Apr_21")
+save_final_file("spec_lookup_rapid", "09_Mar_21")
 
 ## OOH ----
 save_final_file("ooh", "01_Mar_21")
