@@ -73,15 +73,12 @@ output$geoname_ui_apgar <- renderUI({
 #Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 apgar_filter <- function(){
   
-  apgar_runchart <- apgar_runchart %>% filter(area_name == input$geoname_apgar &
+apgar_filt <- apgar_runchart %>% filter(area_name == input$geoname_apgar &
                                area_type == input$geotype_apgar &
-                               type %in% c("Scotland", "Health board")) %>% 
-    mutate(date_label = as.factor(date_label)) # to allow sorting in x axis later on
-  
-  # Sorting levels based on date
-  levels(apgar_runchart$date_label) <- as.character(unique(apgar_runchart[order(apgar_runchart$date),]$date_label))
-  
-  apgar_runchart # so it nows what is bringing back as part of the reactive
+                               type %in% c("Scotland", "Health board")) 
+apgar_filt %>% 
+    # Sorting levels based on date
+    mutate(date_label = factor(date_label, levels = as.character(apgar_filt[order(apgar_filt$date),]$date_label))) # to allow sorting in x axis later on
 }
 
 #Dataset 2: behind line charts for age and deprivation (available for scotland only)
