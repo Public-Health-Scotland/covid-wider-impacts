@@ -197,6 +197,7 @@ plot_apgar_trend <- function(measure, shift, trend){
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$date)-20, max(plot_data$date)+20)
     xaxis_plots[["title"]] <- c("")
+    xaxis_plots[["dtick"]] <- c(3)
     
     #specify tool tip
     tooltip_top <- c(paste0(format(plot_data$date_type),": ",format(plot_data$date_label),"<br>",
