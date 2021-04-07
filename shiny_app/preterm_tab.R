@@ -95,9 +95,21 @@ output$preterm_explorer <- renderUI({
 ## Charts ----
 ###############################################.
 
+#Dataset 1: behind trend run chart  (available at scotland and NHS board level)
+preterm_filter <- function(){
+
+  preterm_chart %>%
+  # Sorting levels based on date
+    mutate(quarter =
+             factor(quarter,
+                    levels = as.character(preterm_chart[order(preterm_chart$quarter_of_year),]$quarter))) # to allow sorting in x axis later on
+}
+
 ## run chart function to generate spc charts
 output$preterm_chart <- renderPlotly({
-  trend_data <- preterm_chart
+  trend_data <- preterm_filter()
+  # %>%
+  #   mutate(quarter_of_year = factor(quarter_of_year, levels = as.character(preterm_chart[order(preterm_chart$quarter),]$quarter_of_year))) # to allow sorting in x axis later on
   
   yaxis_plots[["title"]] <- "Percentage of deliveries" 
                                       
@@ -107,7 +119,7 @@ output$preterm_chart <- renderPlotly({
   tooltip_trend <- c(paste0(format(trend_data$quarter), "<br>", 
                             "Percentage: ", round(trend_data$percentage_NICU_site, 1)))
   
-  plot_ly(data = trend_data, x = ~quarter_of_year) %>%
+  plot_ly(data = trend_data, x = ~quarter) %>%
     add_lines(y = ~percentage_NICU_site, line = list(color = "black"),
               text=tooltip_trend, hoverinfo="text",
               marker = list(color = "black"),
