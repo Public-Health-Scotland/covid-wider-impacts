@@ -226,7 +226,24 @@ observeEvent(input$switch_to_preterm,{
 output$preterm_commentary <- renderUI({
   tagList(
     bsButton("jump_to_preterm",label = "Go to data"), #this button can only be used once
-    h2("Location of extremely preterm deliveries - April 2021"))
+    h2("Location of extremely preterm deliveries - April 2021"),
+    p("Information on the location of extremely preterm deliveries was included in this tool for the first time on 14 April 2021."),
+    p("Babies born preterm (at least 3 weeks before their due date) are at increased risk of neonatal death, neonatal morbidity, and longer term developmental problems compared to babies born at term (around their due date).  The earlier in pregnancy a baby is born, the higher the risks."),
+    p("There is evidence that the outcomes of extremely preterm babies (here defined as those born between 23 and 26 weeks gestation inclusive) are influenced by where they are born.  Extremely preterm babies are more likely to survive and be healthy if they are born in a hospital that has an on-site neonatal intensive care unit.  In addition, extremely preterm babies cared for in larger neonatal intensive care units (those caring for high numbers of very unwell babies) have better outcomes than babies cared for in smaller units."),
+    p("Reflecting this evidence, the British Association of Perinatal Medicine ", 
+      tags$a(href = "https://www.bapm.org/resources/80-perinatal-management-of-extreme-preterm-birth-before-27-weeks-of-gestation-2019", "recommends",  target="_blank"), 
+      " that when a woman is thought to be at imminent risk of extremely preterm delivery she should be transferred to a maternity unit in a hospital with an on-site neonatal intensive care unit to allow her baby (or babies in the case of a multiple pregnancy of twins or more) to be born in the safest place.  In addition, whilst the overall number of neonatal units is not changing in Scotland, the number of units that are ",
+      tags$a(href = "https://www.bapm.org/resources/296-draft-optimal-arrangements-for-neonatal-intensive-care-units-in-the-uk", "classed as neonatal intensive care units",  target="_blank"),
+      " (also known as level III units, those able to provide the most complex, specialist care) is reducing over time in line with ",
+      tags$a(href = "https://www.gov.scot/publications/best-start-five-year-forward-plan-maternity-neonatal-care-scotland/", "national policy",  target="_blank"),
+      " to concentrate expertise and improve babies’ outcomes."
+      ),
+    p("The information on location of extremely preterm deliveries presented through this tool is taken from hospital discharge records relating to the care of women delivering one or more live born babies at 23-26 weeks gestation inclusive.  The charts presented show the number and percentage of these deliveries that occurred in a hospital that had a neonatal intensive care unit on site at the time of the delivery.  Information on which hospitals have had a neonatal intensive care unit on site over the time period of interest (from January 2018), and associated dates, has been provided by the ",
+      tags$a(href = "https://www.perinatalnetwork.scot/", "Scottish Perinatal Network",  target="_blank"), 
+      ". Due to the small number of deliveries at this very early gestation, data is only shown at all Scotland level, and no breakdown is provided by maternal age group or deprivation level.  Further technical information is available through the ‘Data source’ button on the dashboard page."),
+    p("The data shows that, at all Scotland level over the whole time period examined (January 2018 to, currently, December 2020), just under 9 in every 10 (87%) extremely preterm deliveries occurred in a hospital with a neonatal intensive care unit on site at the time of the delivery.  The percentage has been consistently within both the warning and control limits over the whole time period examined, suggesting that any fluctuation seen has been due to chance, with no unexpected changes evident.  In particular, no decline in the percentage of extremely preterm deliveries that occurred in a hospital with a neonatal intensive care unit on site has been seen during the COVID-19 pandemic."),
+    p("In general, it is inevitable that some extremely preterm deliveries occur in locations other than hospitals with a neonatal intensive care unit on site.  For example, a woman presenting to her local maternity unit may be considered too far advanced in labour to safely transfer to a different hospital before her baby is born.")
+    )
   
 })
 
