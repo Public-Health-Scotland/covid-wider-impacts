@@ -73,9 +73,15 @@ output$geoname_ui_apgar <- renderUI({
 #Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 apgar_filter <- function(){
   
-  apgar_runchart %>% filter(area_name == input$geoname_apgar &
+  apgar_runchart <- apgar_runchart %>% filter(area_name == input$geoname_apgar &
                                area_type == input$geotype_apgar &
-                               type %in% c("Scotland", "Health board"))
+                               type %in% c("Scotland", "Health board")) %>% 
+    mutate(date_label = as.factor(date_label)) # to allow sorting in x axis later on
+  
+  # Sorting levels based on date
+  levels(apgar_runchart$date_label) <- as.character(unique(apgar_runchart[order(apgar_runchart$date),]$date_label))
+  
+  apgar_runchart # so it nows what is bringing back as part of the reactive
 }
 
 #Dataset 2: behind line charts for age and deprivation (available for scotland only)
@@ -127,8 +133,7 @@ output$apgar_explorer <- renderUI({
               #        'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
             p("On the ‘Percentage of births that have a 5 minute Apgar score of <7’ chart above, the dots joined by a solid black line show the percentage of singleton live births at 37-42 weeks gestation with known 5 minute Apgar score that had a score of <7, in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of births with 5 minute Apgar score of <7 over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of births with a 5 minute Apgar score of <7."))
   
-  # Function to create common layout to all immunisation charts
-  apgar_layout <- function(apgar_trend,apgar_linechart_number,apgar_linechart_age_n,apgar_linechart_age_p,apgar_linechart_dep_n,apgar_linechart_dep_p){
+  # Layout depending if Scotland or HB selected
     tagList(fluidRow(column(12,
                             h4(paste0("Percentage ", apgar_title)),
                             actionButton("btn_apgar_rules", "How do we identify patterns in the data?",
@@ -166,20 +171,8 @@ output$apgar_explorer <- renderUI({
                                          withSpinner(plotlyOutput("apgar_linechart_dep_p"))))
                        )#tagList from if statement
                      }
-                     
-    ))}
-  
-  
-  
-  # #link plot functions to layouts
-  apgar_layout(apgar_trend="apgar_trend",
-                apgar_linechart_number="apgar_linechart_number",  
-                apgar_linechart_age_n="apgar_linechart_age_n",
-                apgar_linechart_age_p="apgar_linechart_age_p",
-                apgar_linechart_dep_n="apgar_linechart_dep_n",
-                apgar_linechart_dep_p="apgar_linechart_dep_p")
+    ))
 })
-
 
 #############################################.
 ## apgar chart functions ----
@@ -207,10 +200,6 @@ plot_apgar_trend <- function(measure, shift, trend){
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$date)-20, max(plot_data$date)+20)
     xaxis_plots[["title"]] <- c("")
-    
-    # change x axis tick labels depending on whether Scotland or HB is selected
-    xaxis_plots[["categoryorder"]] <- "array"
-    xaxis_plots[["categoryarray"]] <- plot_data$date
     
     #specify tool tip
     tooltip_top <- c(paste0(format(plot_data$date_type),": ",format(plot_data$date_label),"<br>",
