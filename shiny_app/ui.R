@@ -99,7 +99,6 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
                           actionLink("apgar_button", "Apgar scores", width="150px"),br(),
                           actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
-                          actionLink("mentalhealth_button", "Mental health", width="150px"), br(),
                           actionLink("cancer_button", "Cancer", width="150px")
 
                          ),
@@ -188,114 +187,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          )# mainPanel bracket
 ), # tabpanel bracket
 
-###############################################.
-## Child health navbarmenu ----
-###############################################.
- navbarMenu("Child health", icon = icon("child"),
-##############################################.
-# Immunisation Tab ----
-##############################################.
-tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
-         wellPanel(
-           column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_immun")),
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_immun",
-                                           label= "Step 2 – Select the data you want to explore.",
-                                           choices = data_list_immun, status = "primary",
-                                           direction = "vertical", justified = T))),
-           column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
-                  fluidRow(br()),
-                  actionButton("imm_elig_defs", "Eligibility definitions",  icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton('download_imm_data', 'Download data'),
-                  fluidRow(br()),
-                  actionButton('jump_commentary_imm','Go to commentary')
-                  )
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("immunisation_explorer")
-         )# mainPanel bracket
-), # tabpanel bracket
-##############################################.
-# Child Health reviews ----
-#############################################.
-tabPanel(title = "Child health reviews", icon = icon("child"), value = "child_health",
-         wellPanel(
-           column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_child", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_child")),
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_child",
-                                           label= "Step 2. Select the data you want to explore.",
-                                           choices = data_list_child, status = "primary",
-                                           direction = "vertical", justified = T))),
-           column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton("download_visit_data", "Download data"),
-                  fluidRow(br()),
-                  actionButton("jump_commentary_hv","Go to commentary"))
-           #actionButton("browser", "Browser")
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("child_health_explorer")
-         )# mainPanel bracket
-   ), # tabpanel bracket
-###############################################.
-## Breastfeeding tab ----
-##############################################.
-tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
-         wellPanel(
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_bf",
-                                           label= "Step 1. Select the data you want to explore.",
-                                           choices = data_list_bf, status = "primary",
-                                           direction = "vertical", justified = T))),
-           column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                         p(tags$b("Step 2. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_bf", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_bf")),
-           column(4,actionButton("btn_breastfed_modal", "Data source and definitions", icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton("download_bf_data", "Download data"),
-                  fluidRow(br()),
-                  actionButton("jump_commentary_breastfed","Go to commentary"))
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("breastfeeding_explorer")
-         )# mainPanel bracket
-), # tabpanel bracket
-###############################################.
-## Child development ----
-###############################################.
-tabPanel(title = "Child development", icon = icon("seedling"), value = "child_dev",
-         wellPanel(
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_childdev",
-                                           label= "Step 1 - Select the data you want to explore.",
-                                           choices = data_list_childdev, status = "primary",
-                                           direction = "vertical", justified = T))),
-                      column(4, selectizeInput("geotype_childdev", "Step 2 - Select a geography level and then an area of interest.",
-                                               choices = c("Scotland", "Health board"), selected = "Scotland"),
-                             uiOutput("geoname_childdev_ui")),
-           column(4,actionButton("btn_childdev_modal", "Data source and definitions",
-                                 icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton("download_childdev_data", "Download data"),
-                  fluidRow(br()),
-                  actionButton('jump_commentary_childdev','Go to commentary'))
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("childdev_explorer")
-         )# mainPanel bracket
-) # tabpanel bracket
-), #navbarMenu bracket
+
 ###############################################.
 ## Cancer ----
 ###############################################.
@@ -528,6 +420,114 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
          )# mainPanel bracket
 ) # tabpanel bracket
 ), # navbar menu bracket
+###############################################.
+## Child health navbarmenu ----
+###############################################.
+navbarMenu("Child health", icon = icon("child"),
+           ##############################################.
+           # Immunisation Tab ----
+           ##############################################.
+           tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
+                    wellPanel(
+                      column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                                    p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                                    selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
+                                                selected = "Scotland")),
+                             uiOutput("geoname_ui_immun")),
+                      column(4, div(title="Select the data you want to explore.", # tooltip
+                                    radioGroupButtons("measure_select_immun",
+                                                      label= "Step 2 – Select the data you want to explore.",
+                                                      choices = data_list_immun, status = "primary",
+                                                      direction = "vertical", justified = T))),
+                      column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
+                             fluidRow(br()),
+                             actionButton("imm_elig_defs", "Eligibility definitions",  icon = icon('question-circle')),
+                             fluidRow(br()),
+                             downloadButton('download_imm_data', 'Download data'),
+                             fluidRow(br()),
+                             actionButton('jump_commentary_imm','Go to commentary')
+                      )
+                    ), #well panel
+                    mainPanel(width = 12,
+                              uiOutput("immunisation_explorer")
+                    )# mainPanel bracket
+           ), # tabpanel bracket
+           ##############################################.
+           # Child Health reviews ----
+           #############################################.
+           tabPanel(title = "Child health reviews", icon = icon("child"), value = "child_health",
+                    wellPanel(
+                      column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                                    p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                                    selectInput("geotype_child", label = NULL, choices= c("Scotland", "Health board"),
+                                                selected = "Scotland")),
+                             uiOutput("geoname_ui_child")),
+                      column(4, div(title="Select the data you want to explore.", # tooltip
+                                    radioGroupButtons("measure_select_child",
+                                                      label= "Step 2. Select the data you want to explore.",
+                                                      choices = data_list_child, status = "primary",
+                                                      direction = "vertical", justified = T))),
+                      column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')),
+                             fluidRow(br()),
+                             downloadButton("download_visit_data", "Download data"),
+                             fluidRow(br()),
+                             actionButton("jump_commentary_hv","Go to commentary"))
+                      #actionButton("browser", "Browser")
+                    ), #well panel
+                    mainPanel(width = 12,
+                              uiOutput("child_health_explorer")
+                    )# mainPanel bracket
+           ), # tabpanel bracket
+           ###############################################.
+           ## Breastfeeding tab ----
+           ##############################################.
+           tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
+                    wellPanel(
+                      column(4, div(title="Select the data you want to explore.", # tooltip
+                                    radioGroupButtons("measure_select_bf",
+                                                      label= "Step 1. Select the data you want to explore.",
+                                                      choices = data_list_bf, status = "primary",
+                                                      direction = "vertical", justified = T))),
+                      column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                                    p(tags$b("Step 2. Select a geography level and then an area of interest.")),
+                                    selectInput("geotype_bf", label = NULL, choices= c("Scotland", "Health board"),
+                                                selected = "Scotland")),
+                             uiOutput("geoname_ui_bf")),
+                      column(4,actionButton("btn_breastfed_modal", "Data source and definitions", icon = icon('question-circle')),
+                             fluidRow(br()),
+                             downloadButton("download_bf_data", "Download data"),
+                             fluidRow(br()),
+                             actionButton("jump_commentary_breastfed","Go to commentary"))
+                    ), #well panel
+                    mainPanel(width = 12,
+                              uiOutput("breastfeeding_explorer")
+                    )# mainPanel bracket
+           ), # tabpanel bracket
+           ###############################################.
+           ## Child development ----
+           ###############################################.
+           tabPanel(title = "Child development", icon = icon("seedling"), value = "child_dev",
+                    wellPanel(
+                      column(4, div(title="Select the data you want to explore.", # tooltip
+                                    radioGroupButtons("measure_select_childdev",
+                                                      label= "Step 1 - Select the data you want to explore.",
+                                                      choices = data_list_childdev, status = "primary",
+                                                      direction = "vertical", justified = T))),
+                      column(4, selectizeInput("geotype_childdev", "Step 2 - Select a geography level and then an area of interest.",
+                                               choices = c("Scotland", "Health board"), selected = "Scotland"),
+                             uiOutput("geoname_childdev_ui")),
+                      column(4,actionButton("btn_childdev_modal", "Data source and definitions",
+                                            icon = icon('question-circle')),
+                             fluidRow(br()),
+                             downloadButton("download_childdev_data", "Download data"),
+                             fluidRow(br()),
+                             actionButton('jump_commentary_childdev','Go to commentary'))
+                    ), #well panel
+                    mainPanel(width = 12,
+                              uiOutput("childdev_explorer")
+                    )# mainPanel bracket
+           ) # tabpanel bracket
+), #navbarMenu bracket
 ##############################################.
 # Data ----
 ##############################################.
