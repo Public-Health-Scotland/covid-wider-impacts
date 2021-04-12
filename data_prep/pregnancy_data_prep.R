@@ -10,7 +10,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all antenatal booking data files prepared
-antenatal_booking_date <- "15022021"
+antenatal_booking_date <- "17032021"
 
 # Excel workbook containing number of women booking for antenatal care - weekly file (Scotland and NHS board except small islands)
 ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
@@ -18,16 +18,17 @@ ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/We
   janitor::clean_names() %>%
   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>% 
-  filter(week_book_starting < "2021-02-08")
+  filter(week_book_starting < "2021-03-15")
 
 # Excel workbook containing avergage gestation of women booking for antenatal care  - weekly file (Scotland and NHS board except small islands)
 ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
-                                sheet = "Data for Dashboard Charts") %>%
+                                sheet = "Data for Dashboard Charts",
+                                col_types = c("text", "date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric")) %>%
   janitor::clean_names() %>%
   rename(centreline_g=centreline, dottedline_g=dottedline, 
          centreline_g_t=tcentreline, dottedline_g_t=tdottedline, booked_g=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>% 
-  filter(week_book_starting < "2021-02-08")
+  filter(week_book_starting < "2021-03-15")
 
 # join two (numbers and average gestation) booking sheets to form single file for shiny app
 ante_booking <- left_join(ante_booking_no, ante_booking_gest, by = c("week_book_starting","area"))
@@ -130,10 +131,10 @@ gest_booking_download <- left_join(gest_booking_download, hb_lookup, by = c("are
   rename(booking_month=month_booking, number_of_bookings=booked, average_gestation_at_booking=ave_gest) %>%
   arrange(area_type, booking_month)
 
-# Weekly scotland level booking numbers and gestation
+# Weekly scotland level booking numbers and gestation - ASK WHAT TIME PERIOD SHOULD BE AVAILABLE HERE
 ante_booking_download1 <- ante_booking %>%
   mutate(time_period="weekly") %>%
-  filter(week_book_starting < "2021-01-11") %>% 
+  filter(week_book_starting < "2021-03-15") %>% 
   rename(booking_week_beginning=week_book_starting, number_of_bookings=booked_g, average_gestation_at_booking=ave_gest)
   
 
@@ -158,12 +159,24 @@ ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download
 saveRDS(ante_booking_download, "shiny_app/data/ante_booking_download.rds")
 saveRDS(ante_booking_download, paste0(data_folder,"final_app_files/ante_booking_download_", 
                                       format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# Saving data for open data platform
+ante_booking_download <- ante_booking_download %>% 
+  select(area_name, area_type, booking_month, booking_week_beginning, category = chart_category,
+         number_of_women_booking, number_of_women_booking_gest_under_10wks,
+         number_of_women_booking_gest_10to12wks, number_of_women_booking_gest_over_12wks,
+         average_gestation_at_booking) %>% 
+  mutate(category = case_when(category %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived") ~ paste0(category),
+                              TRUE ~ "All"))
+
+saveRDS(ante_booking_download, paste0(open_data,"ante_booking.rds"))
 
 ###############################################.
 ## Pregnancy (terminations) ----
 ###############################################.
 #field with date all antenatal booking data files prepared
-top_date <- "2021-02-09"
+top_date <- "2021-03-11"
 
 ## Termination data for run chart (scotland and nhs board) - monthly
 top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/",top_date,
@@ -301,3 +314,14 @@ top_download <- bind_rows(top_download_board, top_download_scot)
 saveRDS(top_download, "shiny_app/data/top_download.rds")
 saveRDS(top_download, paste0(data_folder,"final_app_files/top_download_", 
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+# Saving data for open data platform
+top_download <- top_download %>% 
+  select(area_name, area_type, termination_month, category = chart_category,
+         number_of_terminations, number_of_terminations_gest_under_10wks,
+         number_of_terminations_gest_10to12wks, number_of_terminations_gest_over_12wks,
+         average_gestation_at_termination)
+
+saveRDS(top_download, paste0(open_data,"terminations_preg.rds"))
+
+##END

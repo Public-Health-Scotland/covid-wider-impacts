@@ -41,7 +41,9 @@ data_table <- reactive({
         "preterm" = preterm_chart,
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
-        "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation) 
+        "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+        "outpats" = outpats %>% 
+          rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average) 
   ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -49,10 +51,10 @@ data_table <- reactive({
     mutate_if(is.character, as.factor) 
   
   if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths",
-                               "ooh_cardiac", "sas_cardiac")) {
+                               "ooh_cardiac", "sas_cardiac", "outpats")) {
     table_data %<>%
     # Formatting to a "nicer" style
-    select(-type) %>% 
+    # select(-type) %>% 
     rename("Variation (%)" = variation) %>% 
     mutate(category = recode_factor(category, "All" = "All", "Female" = "Female", "Male" = "Male",
                                     "1 - most deprived" = "Quintile 1 - most deprived",
@@ -64,6 +66,9 @@ data_table <- reactive({
                                     "85 and over" = "Aged 85 and over",
                                     "Under 65" = "Aged under 65",
                                     "65 and over" = "Aged 65 and over"),
+           type = recode_factor(type, "sex" = "Sex", "age" = "Age Group", 
+                                "dep" = "Deprivation",
+                                "moc" = "Mode of Clinical Interaction"),
            week_ending = format(week_ending, "%d %b %y"))
   } else if (input$data_select %in% "first_visit") { 
     table_data %<>%
@@ -72,8 +77,8 @@ data_table <- reactive({
       arrange(desc(cohort)) %>% 
       select(-cohort) %>%
       rename(Cohort = time_period_eligible, "Total number of children" = denominator,
-             "Coverage of review at 6 weeks of age (N)" = coverage_6weeks_num,
-             "Coverage of review at 6 weeks of age (%)" = coverage_6weeks_percent,
+             "Coverage of review at 06 weeks of age (N)" = coverage_6weeks_num,
+             "Coverage of review at 06 weeks of age (%)" = coverage_6weeks_percent,
              "Coverage of review at 18 weeks of age (N)" = coverage_18weeks_num,
              "Coverage of review at 18 weeks of age (%)" = coverage_18weeks_percent,
              "Total coverage of review (N)" = coverage_tot_num,
@@ -284,13 +289,13 @@ data_table <- reactive({
               "Number of births - emergency Caesarean section" = csection_emer,
               "Number of births - elective Caesarean section" = csection_elec,
               "Number of births - Other/Not Known" = other_not_known,
-              "Number of births - assisted vaginal delivery including breech" = assisted_vaginal, 
-              "Number of births - spontaneous_vaginal_delivery" = spontaneous,
-              "Percentage (%) of births - assisted vaginal delivery including breech" = perc_assisted_vaginal, 
+              "Number of births - assisted vaginal delivery including breech" = assisted_vaginal_inc_breech, 
+              "Number of births - spontaneous_vaginal_delivery" = spontaneous_vaginal,
+              "Percentage (%) of births - assisted vaginal delivery including breech" = perc_assisted_vaginal_inc_breech, 
               "Percentage (%) of births - Caesarean section" = perc_csection_all,
               "Percentage (%) of births - emergency Caesarean section" = perc_csection_emer,
               "Percentage (%) of births - elective Caesarean section" = perc_csection_elec,
-              "Percentage (%) of births - spontaneous vaginal delivery" = perc_spontaneous,
+              "Percentage (%) of births - spontaneous vaginal delivery" = perc_spontaneous_vaginal,
               "Percentage (%) of births - other/not known" = perc_other_not_known) %>% 
       mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
@@ -389,7 +394,9 @@ output$table_filtered <- DT::renderDataTable({
 ###############################################.
 # Data download of data table. 
 output$download_table_csv <- downloadHandler(
-  filename ="data_extract.csv",
+  filename = function() {
+    paste(input$data_select, "_data.csv", sep = "")
+  },
   content = function(file) {
     # This downloads only the data the user has selected using the table filters
     write_csv(data_table()[input[["table_filtered_rows_all"]], ], file) 

@@ -1,5 +1,5 @@
 #UI
-#secure_app( #uncomment if needing password protection
+# secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -130,11 +130,25 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 ##############################################.
 tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   wellPanel(
-    column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+    column(4,
+           conditionalPanel(condition = "input.measure_select != 'outpats' ",
+           div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                   p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                  selectInput("geotype", label = NULL, choices= c("Scotland", "Health board", "HSC partnership"),
+                  selectInput("geotype", label = NULL,
+                              choices= c("Scotland", "Health board", "HSC partnership"),
                               selected = "Scotland")),
            uiOutput("geoname_ui")),
+           # If outpatients selected bring other set of choices
+           conditionalPanel(condition = "input.measure_select == 'outpats' ",
+                            div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                                p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                                selectInput("geotype_op", label = NULL,
+                                            choices= c("Scotland", "Health board of treatment",
+                                                       "Health board of residence",
+                                                       "HSC partnership of residence"),
+                                            selected = "Scotland")),
+                            uiOutput("geoname_op_ui"))
+           ),
     column(4, div(title="Select the data you want to explore.", # tooltip
         radioGroupButtons("measure_select",
                           label= "Step 2 – Select the data you want to explore.",
@@ -206,9 +220,9 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
                    uiOutput("immunisation_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-###############################################.
-## Child Health reviews ----
 ##############################################.
+# Child Health reviews ----
+#############################################.
 tabPanel(title = "Child health reviews", icon = icon("child"), value = "child_health",
          wellPanel(
            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -517,22 +531,22 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
 ##############################################.
 # Data ----
 ##############################################.
-tabPanel(title = "Data", icon = icon("table"), value = "table",
-         p("This section allows you to view the data in table format.
-        You can use the filters to select the data you are interested in.
-        You can also download the data as a csv using the download button.
-        Some of the data is also hosted in the",
-
-           tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
-                  "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
-         column(6, selectInput("data_select", "Select the data you want to explore.",
-                               choices = data_list_data_tab)),
-         column(6, downloadButton('download_table_csv', 'Download data')),
-         mainPanel(width = 12,
-                   DT::dataTableOutput("table_filtered"))
-
-     ) # tabpanel bracket
+ tabPanel(title = "Data", icon = icon("table"), value = "table",
+          p("This section allows you to view the data in table format.
+         You can use the filters to select the data you are interested in.
+         You can also download the data as a csv using the download button.
+         Some of the data is also hosted in the",
+ 
+            tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
+                   "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
+          column(6, selectInput("data_select", "Select the data you want to explore.",
+                                choices = data_list_data_tab)),
+          column(6, downloadButton('download_table_csv', 'Download data')),
+          mainPanel(width = 12,
+                    DT::dataTableOutput("table_filtered"))
+ 
+      ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-#  )#secure app
+# )#secure app
 #END
