@@ -37,6 +37,8 @@ data_table <- reactive({
         "induct" = induct_download,
         "mod"= mod_download,
         "gestation" = gestation_download,
+        "apgar" = apgar_download,
+        "preterm" = preterm_chart,
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
@@ -326,6 +328,24 @@ data_table <- reactive({
                               TRUE ~ "All")) %>% 
     mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                 TRUE ~ "All"))
+  } else if (input$data_select %in% "apgar") {
+    table_data <- table_data %>% 
+      select(area_name, area_type, date_of_discharge, subgroup, variable,
+             births_37_42_apgar5_0_6, births_37_42_apgar5_7_10, births_37_42_apgar5_unknown, births_37_42_apgar5_known,
+             perc_births_37_42_apgar5_0_6, perc_births_37_42_apgar5_7_10) %>% 
+      mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
+                                  TRUE ~ "All")) %>% 
+      mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                  TRUE ~ "All"))
+  } else if (input$data_select %in% "preterm") {
+    table_data %<>%
+      select(area_name, quarter, N_deliveries_23_26_NICU_site, N_deliveries_23_26, percentage_NICU_site) %>%
+      rename("Area name" = area_name, "Total number of deliveries at 23-26w" = N_deliveries_23_26,
+             "Quarter" = quarter,
+             "Number of deliveries at 23-26w that occurred in a hospital with a NICU on site" = N_deliveries_23_26_NICU_site,
+             "Percentage" = percentage_NICU_site)
     
 }
   

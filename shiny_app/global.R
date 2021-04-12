@@ -166,6 +166,24 @@ breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
 child_dev <- readRDS("data/child_dev.rds")
 
+# Apgar (births and babies tab)
+apgar_extract_date <- "18th March 2021"
+apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
+apgar_scot <- readRDS("data/apgar_scot_data.rds")
+apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
+apgar_download <- readRDS("data/apgar_download_data.rds")
+
+# Preterm
+preterm_extract_date <- "18th March 2021"
+preterm_chart <- readRDS("data/preterm.rds")
+preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
+preterm_download <- readRDS("data/preterm.rds") %>% 
+  select(quarter, N_deliveries_23_26_NICU_site, N_deliveries_23_26,
+         percentage_NICU_site, centreline, stdev,
+         upper_cl_3_std_dev, lower_cl_3_std_dev,
+         upper_wl_2_std_dev, lower_wl_2_std_dev,
+         area_name, outlier, shift, trend, outer, inner)
+
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
@@ -222,12 +240,14 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "4-5 year child health review" = "fourtofive_visit",
                         "Child development" = "childdev",
                         "Breastfeeding" = "breastfeeding",
-                        "Stillbirths and infant deaths" = "perinatal",
                         "Termination of pregnancy" = "top",
                         "Antenatal bookings" = "ante_booking",
+                        "Stillbirths and infant deaths" = "perinatal",
                         "Induction of labour" = "induct",
                         "Method of delivery" = "mod",
                         "Gestation at delivery" = "gestation",
+                        "Apgar scores" = "apgar",
+                        "Location of extremely preterm deliveries" = "preterm",
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
@@ -316,6 +336,6 @@ yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4
 # Buttons to remove
 bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
                        'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                        'hoverClosestCartesian')
+                        'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
 
 ## END
