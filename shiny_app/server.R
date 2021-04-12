@@ -23,6 +23,8 @@ function(input, output, session) {
                    title = "New content added and future updates",
                    h4("New content and updates"),
                    tags$ul(
+                     tags$li("14th April - New sections added for births and babies data:
+                             Apgar scores and location of birth for extremely preterm infants."),
                      tags$li("3rd March - Update of all data, except cancer section."),
                      tags$li("3rd February - Update of all data, except cancer section."),
                      tags$li("13th January - Summary, cardiovascular and mental health tabs data updated."),
