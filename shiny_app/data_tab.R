@@ -333,12 +333,6 @@ data_table <- reactive({
       select(area_name, area_type, date_of_discharge, subgroup, variable,
              births_37_42_apgar5_0_6, births_37_42_apgar5_7_10, births_37_42_apgar5_unknown, births_37_42_apgar5_known,
              perc_births_37_42_apgar5_0_6, perc_births_37_42_apgar5_7_10) %>% 
-      # rename("Total number of singleton live births at 37-42 weeks gestation with known 5 minute Apgar score" = apgar5_37plus,
-      #        "Number of singleton live births at 37-42 weeks gestation with a low 5 minute Apgar score" = low_apgar5_37plus,
-      #        "Number of singleton live births at 37-42 weeks gestation with a high 5 minute Apgar score" = high_apgar5_37plus,
-      #        "Number of singleton live births at 37-42 weeks gestation where 5 minute Apgar scor is unknown" = unknown_apgar5_37plus,
-      #        "Percentage (%) of singleton live births at 37-42 weeks gestation with a low 5 minute Apgar score" = perc_low_apgar5_37plus,
-      #        "Percentage (%) of singleton live births at 37-42 weeks gestation with a high 5 minute Apgar score" = perc_high_apgar5_37plus) %>% 
       mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
                                                   "5 - least deprived", "Unknown") ~ paste0(variable),

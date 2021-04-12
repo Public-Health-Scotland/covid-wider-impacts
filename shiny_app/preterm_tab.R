@@ -10,8 +10,8 @@ observeEvent(input$btn_preterm_modal,
                title = "What is the data source?",
                p("Data source: SMR02"),
                p("The data used for the Location of extremely preterm deliveries page comes from the Scottish Morbidity Record 02 (SMR02) database. An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care. From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended home births."),
-               p("For the Location of extremely preterm deliveries page, SMR02 records for deliveries at 23-26 weeks gestation that resulted in the birth of one or more live born babies have been used. The charts presented show the total number of deliveries at 23-26 weeks inclusive that resulted in the birth of one or more live born babies, and the number and percentage of these deliveries that occurred in a hospital that had a neonatal intensive care unit on site at the time of the delivery.  Data is presented for sequential quarters from January to March 2018 onwards, based on the date the woman was discharged from hospital after delivery.  Due to the small number of deliveries at this very early gestation, data is only shown at all Scotland level."),
-               p("Since January 2018, the following hospitals in Scotland have had a neonatal intensive care unit on site for the period specified:"),
+               p("For the Location of extremely preterm deliveries page, SMR02 records for deliveries at 23-26 weeks gestation that resulted in the birth of one or more live born babies have been used. The charts presented show the total number of deliveries at 23-26 weeks inclusive that resulted in the birth of one or more live born babies, and the number and percentage of these deliveries that occurred in a hospital that had a neonatal intensive care unit (NICU) on site at the time of the delivery.  Data is presented for sequential quarters from January-March 2018 onwards, based on the date the woman was discharged from hospital after delivery.  Due to the small number of deliveries at this very early gestation, data is only shown at all Scotland level."),
+               p("Since January 2018, the following hospitals in Scotland have had a NICU on site for the period specified:"),
                tags$ul(tags$li("A111H University Hospital Crosshouse (up until end September 2019 only)"),
                        tags$li("F704H Victoria Hospital, Kirkcaldy (up until end September 2019 only)"),
                        tags$li("F705H Victoria Maternity Unit, Kirkcaldy (up until end September 2019 only)"),
@@ -55,14 +55,6 @@ observeEvent(input$btn_preterm_rules,
                         'PHS guide to statistical process control charts.')),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
-# ###############################################.
-# ## Induction Chart calls to chart function ----
-# ###############################################.
-# 
-# #chart outputs for line charts for NHS board and Scot
-# output$preterm_linechart <- renderPlotly({plot_preterm_linechart(measure="nicu")})
-# output$apgar_linechart_percent <- renderPlotly({plot_apgar_linechart(measure="percent_nicu")})
 
 ###############################################.
 ##  Reactive layout  ----
@@ -168,32 +160,14 @@ output$preterm_linechart <- renderPlotly({
   #pick a colour palette to apply
   pallette <- pal_age
   
-  # # adjust chart y axis according to what is being displayed
-  # if(measure == "percent_nicu"){
-  #   yaxis_plots[["title"]] <- "Percentage of deliveries (%)" 
-  #   yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 10%
-  #   
-  #   plot_data <- plot_data %>%  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
-  #     filter(ind!="All neonate deliveries")
-  #   
-  # }
-  # 
-  # if(measure == "nicu"){
-    yaxis_plots[["title"]] <- "Number of deliveries"
-    # plot_data <- plot_data %>% #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
-    #   filter(ind!="37 to 42 weeks")
-  # }
+  yaxis_plots[["title"]] <- "Number of deliveries"
+
   # Create tooltip for line chart
   tooltip <- c(paste0( plot_data$ind,"<br>",
                        "Area: ",plot_data$area_name,"<br>",
                        "Quarter: ",  format(plot_data$quarter_label),"<br>",
                        "Number of births: ", plot_data$mats,"<br>",
                        "Percentage of births: ", format(plot_data$percent_nicu,digits = 1,nsmall=1),"%"))
-  
-  # if (is.data.frame(plot_data) && nrow(plot_data) == 0)
-  # { plot_nodata(height = 50, 
-  #               text_nodata = "Chart not shown as unstable due to small numbers. Data for the Island Boards is included in the data download.")
-  # } else {
     
     #Creating trend plot
     plot_ly(data=plot_data, x=~quarter_label,  y = ~mats) %>%
@@ -231,7 +205,7 @@ output$download_preterm_data <- downloadHandler(
 #action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
 observeEvent(input$switch_to_preterm,{
   updateTabsetPanel(session, "intabset", selected = "comment")
-  updateCollapse(session, "collapse_commentary", open = "Extremely preterm deliveries in a hospital with a NICU")
+  updateCollapse(session, "collapse_commentary", open = "Location of extremely preterm deliveries")
 })
 
 

@@ -156,10 +156,10 @@ function(input, output, session) {
     updateCollapse(session, "collapse_commentary", open = "Induction of labour")})
   
   observeEvent(input$jump_commentary_apgar, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Apgar scores of term babies")})
+    updateCollapse(session, "collapse_commentary", open = "Apgar scores")})
   
   observeEvent(input$jump_commentary_preterm, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Extremely preterm deliveries in a hospital with a NICU")})
+    updateCollapse(session, "collapse_commentary", open = "Location of extremely preterm deliveries")})
 
   observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
@@ -224,10 +224,10 @@ observeEvent(input$summary_button, ({
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")}))
   
   observeEvent(input$apgar_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Apgar scores of term babies")}))
+    updateCollapse(session, "collapse_commentary", open = "Apgar scores")}))
   
   observeEvent(input$preterm_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Extremely preterm deliveries in a hospital with a NICU")}))
+    updateCollapse(session, "collapse_commentary", open = "Location of extremely preterm deliveries")}))
 
   observeEvent(input$cancer_button, ({
   updateCollapse(session, "collapse_commentary", open = "Cancer")}))
