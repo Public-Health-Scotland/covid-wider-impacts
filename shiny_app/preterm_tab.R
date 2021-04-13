@@ -100,9 +100,7 @@ preterm_filter <- function(){
 ## run chart function to generate spc charts
 output$preterm_chart <- renderPlotly({
   trend_data <- preterm_filter()
-  # %>%
-  #   mutate(quarter_of_year = factor(quarter_of_year, levels = as.character(preterm_chart[order(preterm_chart$quarter),]$quarter_of_year))) # to allow sorting in x axis later on
-  
+
   yaxis_plots[["title"]] <- "Percentage of deliveries" 
                                       
   xaxis_plots[["title"]] <- "Quarter"
@@ -110,6 +108,8 @@ output$preterm_chart <- renderPlotly({
   # Tooltip
   tooltip_trend <- c(paste0(format(trend_data$quarter), "<br>", 
                             "Percentage: ", round(trend_data$percentage_NICU_site, 1)))
+  
+  xaxis_plots <- c(xaxis_plots, dtick = 2, tickangle = 0) #adding parameters to axis layout
   
   plot_ly(data = trend_data, x = ~quarter) %>%
     add_lines(y = ~percentage_NICU_site, line = list(color = "black"),
@@ -168,6 +168,10 @@ output$preterm_linechart <- renderPlotly({
                        "Quarter: ",  format(plot_data$quarter_label),"<br>",
                        "Number of births: ", plot_data$mats,"<br>",
                        "Percentage of births: ", format(plot_data$percent_nicu,digits = 1,nsmall=1),"%"))
+  
+  xaxis_plots <- c(xaxis_plots,
+                   dtick = 2, tickangle = 0,
+                   categoryorder = "array", categoryarray = ~quarter)
     
     #Creating trend plot
     plot_ly(data=plot_data, x=~quarter_label,  y = ~mats) %>%
@@ -177,7 +181,7 @@ output$preterm_linechart <- renderPlotly({
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots,  
-             xaxis = list(title = "", categoryorder = "array", categoryarray = ~quarter),
+             xaxis = xaxis_plots,
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
