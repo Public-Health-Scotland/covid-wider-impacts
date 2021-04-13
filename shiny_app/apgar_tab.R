@@ -197,7 +197,9 @@ plot_apgar_trend <- function(measure, shift, trend){
     # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
     xaxis_plots[["range"]] <- c(min(plot_data$date)-20, max(plot_data$date)+20)
     xaxis_plots[["title"]] <- c("")
-    xaxis_plots[["dtick"]] <- c(3)
+    tick_freq <- case_when(input$geotype_apgar == "Scotland" ~ 6, T ~ 2)
+    xaxis_plots[["dtick"]] <- tick_freq
+    xaxis_plots[["tickangle"]] <- 0
     
     #specify tool tip
     tooltip_top <- c(paste0(format(plot_data$date_type),": ",format(plot_data$date_label),"<br>",
@@ -245,7 +247,7 @@ plot_apgar_linechart <- function(measure){
   if(measure == "percent_apgar"){
     yaxis_plots[["title"]] <- "Percentage of births (%)" 
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10%
-    
+
     plot_data <- plot_data %>%  #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
       filter(ind!="Babies with known Apgar 5")
     
@@ -253,8 +255,7 @@ plot_apgar_linechart <- function(measure){
   
   if(measure == "apgar5"){
     yaxis_plots[["title"]] <- "Number of births"
-    # plot_data <- plot_data %>% #exclude the "all" category - definitely don't want in % chart but maybe want in numbers chart?
-    #   filter(ind!="37 to 42 weeks")
+
   }
   # Create tooltip for line chart
   tooltip <- c(paste0( plot_data$ind,"<br>",
@@ -268,6 +269,12 @@ plot_apgar_linechart <- function(measure){
                 text_nodata = "Chart not shown as unstable due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
     
+    tick_freq <- case_when(input$geotype_apgar == "Scotland" ~ 6, T ~ 2)
+    
+    xaxis_plots <- c(xaxis_plots,
+                     dtick =tick_freq, tickangle = 0,
+                     categoryorder = "array", categoryarray = ~date)
+    
     #Creating trend plot
     plot_ly(data=plot_data, x=~date_label,  y = ~get(measure)) %>%
       add_trace(type = 'scatter', mode = 'lines',
@@ -275,13 +282,10 @@ plot_apgar_linechart <- function(measure){
                 text= tooltip, hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  
-             xaxis = list(title = "", categoryorder = "array", categoryarray = ~date, dtick = 3),
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
-                                                                                   'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                                                                                   'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d'))}
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
 }
 
 
@@ -323,6 +327,10 @@ plot_apgar_split <- function(dataset, split, measure){
       mutate(category = factor(category, levels = c("1 - most deprived", "2", "3","4", "5 - least deprived")))
     pallette <- pal_depr}
   
+  xaxis_plots <- c(xaxis_plots,
+                   dtick = 3, tickangle = 0,
+                   categoryorder = "array", categoryarray = ~quarter)
+  
   #Creating trend plot
   plot_ly(data=plot_data, x=~quarter_label,  y=~get(measure)) %>%
     add_trace(type = 'scatter', mode = 'lines',
@@ -330,14 +338,10 @@ plot_apgar_split <- function(dataset, split, measure){
               text= tooltip, hoverinfo="text") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots,  
-           xaxis = list(title = "", categoryorder = "array", categoryarray = ~quarter, dtick=2),
+           yaxis = yaxis_plots,  xaxis = xaxis_plots,
            legend = list(orientation = 'h')) %>% #position of legend underneath plot
     #leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, 
-           modeBarButtonsToRemove = list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
-                                                                                 'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                                                                                 'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d'))
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   
 }
 
