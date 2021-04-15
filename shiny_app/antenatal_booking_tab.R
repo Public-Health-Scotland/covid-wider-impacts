@@ -422,6 +422,8 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Antenatal bookings - 5th May 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Antenatal bookings - 7th April 2021"),
     p("In this release of information on antenatal booking data (7th April 2021) data have been updated to include women booking for antenatal care up to the week beginning 8th March 2021. Since the previous release, which showed data up until the week beginning 1st February 2021, numbers of women booking for antenatal care in Scotland 
       have returned to a level which is very similar to the average numbers seen pre-pandemic at just over 1,000 women per week. Numbers of bookings in different NHS Boards vary. NHS Fife, NHS Greater Glasgow & Clyde, NHS Highland and NHS Lanarkshire are all showing runs of at least six consecutive data points above their average number 
