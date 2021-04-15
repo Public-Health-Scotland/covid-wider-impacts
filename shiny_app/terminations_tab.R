@@ -309,6 +309,8 @@ observeEvent(input$switch_to_anb,{
 output$top_commentary <- renderUI({
   tagList(
     bsButton("jump_to_top",label = "Go to data"), #this button can only be used once
+    h2("Termination of pregnancy - 5th May 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Termination of pregnancy - 7th April 2021"),
     p("This latest release reports on the number of terminations of pregnancy in Scotland up to December 2020. In this latest month 1,053 terminations were provisionally notified, which is comparable with the same months in 2019 and 2018 (1,076 and 1,092 respectively)."),
     p("We reported in last month’s release that terminations in Lothian had been steadily rising, reaching a 7-month high in November 2020 (248 terminations). This trend reversed in December 2020 with notifications dropping to 193. This is close to the number of terminations notified in December 2019 (192). We also reported that Forth Valley recorded their lowest number of terminations (44) since January 2018. This increased to 76 in December 2020 and was the highest number of terminations recorded by Forth Valley since October 2019. We note a downward trend in numbers of terminations reported by Tayside from 107 in August 2020 to 79 in December 2020."),
