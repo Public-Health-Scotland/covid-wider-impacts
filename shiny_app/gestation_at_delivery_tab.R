@@ -467,6 +467,8 @@ observeEvent(input$switch_to_gestation,{
 output$gestation_commentary <- renderUI({
   tagList(
     bsButton("jump_to_gestation",label = "Go to data"), #this button can only be used once
+    h2("Gestation at delivery - 5th May 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Gestation at delivery - 7th April 2021"),
     p("In this third release of information on gestation at delivery (7th April 2021) data have been updated to include women discharged after delivery up to and including December 2020. The data at all Scotland level show that the preterm proportion (the percentage of singleton live births delivered at under 37 weeks gestation) in December 2020 is at a level very similar to the pre-pandemic average at 7.0%. The data by NHS Board vary.  In December 2020, NHS Borders has recorded a preterm proportion lower than their pre-pandemic average for the sixth consecutive month albeit based on very small numbers. NHS Fife has recorded an unusually high preterm proportion in December 2020. However, data are thought to be incomplete for NHS Fife for December 2020 so this proportion could change in future releases of the dashboard."),
     p("In December 2020, the percentage of singleton live births in Scotland delivered at or over 42 weeks (‘post-term’) has continued to be below its usual historical level (for a 14th consecutive month). In December 2020, NHS Greater Glasgow & Clyde recorded a lower than average post-term proportion for the 15th consecutive month."),
