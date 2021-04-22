@@ -47,7 +47,7 @@ observeEvent(input$btn_perinatal_rules,
 # Reactive dataset used 
 peri_filt <- reactive({
   perinatal %>% filter(type == input$measure_select_perinatal & area_name == "Scotland") %>% 
-    filter(month_of_year == max(month_of_year)) 
+    filter(month_of_year == max(month_of_year, na.rm = T))
 })
 
 ###############################################.
@@ -78,11 +78,11 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
   
   # Text to be updated every month with updated dates
-  last_month_peri <- "February 2021"
-  cutdate_peri <- "21 March 2021"
-  extractdate_peri <- "24 March 2021"
-  nextup_peri <- "May 2021"
-  nextdata_peri <- "March 2021"
+  last_month_peri <- "March 2021"
+  cutdate_peri <- "18 April 2021"
+  extractdate_peri <- "21 April 2021"
+  nextup_peri <- "June 2021"
+  nextdata_peri <- "May 2021"
   
   # Number of deaths and of births used in the text
   no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
@@ -193,9 +193,13 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                 text=tooltip_trend, hoverinfo="text",
                 marker = list(color = "black"),
                 name = "Rate") %>%
-      add_lines(y = ~centreline, line = list(color = "blue", dash = "longdash"),
+      add_lines(data= trend_data %>% filter(month_of_year < as.Date("2020-02-01")),
+                y = ~centreline, line = list(color = "blue"),
                  hoverinfo= "none", name = "Centreline") %>%
-      add_lines(y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dash"),
+      add_lines(data= trend_data %>% filter(month_of_year >= as.Date("2020-01-01")),
+                y = ~centreline, line = list(color = "blue", dash = "longdash"),
+                hoverinfo= "none", showlegend = F) %>%
+      add_lines(data = trend_data, y = ~upper_cl_3_std_dev, line = list(color = "red", dash = "dash"),
                 hoverinfo= "none", name = "Control limits") %>%
       add_lines(y = ~lower_cl_3_std_dev, line = list(color = "red", dash = "dash"),
                 hoverinfo= "none", showlegend = FALSE) %>%
