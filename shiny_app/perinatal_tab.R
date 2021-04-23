@@ -140,10 +140,11 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                       "‘control charts’", target="_blank"), "to present the rates above.", br(),
                       "Control charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation.  
                       Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
-                      "The dots joined by a solid line in the chart above show the monthly mortality rate for the measure selected from January 2017 onwards.", br(),  
+                      "The dots joined by a solid black line in the chart above show the monthly mortality rate for the measure selected from July 2017 onwards.", br(),  
                       "The other lines - centreline, and control and warning limits - are there to help show how unexpected any observed changes are. 
-                      The centreline is an average (mean) over the time period. Control and warning limits take into consideration the random variation 
-                      that would be expected by chance, and help us decide when values are unexpectedly low or high and require further investigation.")
+                      The solid blue centreline is an average (mean) over the period July 2017 to December 2019. The dotted blue centreline continues that average through more recent time periods. Control and warning limits take into consideration the random variation 
+                      that would be expected by chance, and help us decide when values are unexpectedly low or high and require further investigation.
+                      The use of a fixed centreline increases sensitivity of detection of signals in more recent data, since recent data does not contribute to the centre line used as a reference.")
   
   may_data_commentary <- p("By law, all stillbirths must be registered within 21 days of the baby being delivered, and all infant deaths must be registered within 8 days of the baby dying.  
                            The data extract used to produce the mortality numbers and rates for up to and including ", last_month_peri," presented here was taken on ", extractdate_peri, ", and included stillbirths and infant deaths registered up to and including ", cutdate_peri, ".", br(), 
