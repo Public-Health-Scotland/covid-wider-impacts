@@ -430,10 +430,11 @@ navbarMenu("Child health", icon = icon("child"),
            tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
                     wellPanel(
                       column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                                    p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                                    p(tags$b("Step 1. Select a geography level, then an area of interest and time periods of interest.")),
                                     selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
                                                 selected = "Scotland")),
-                             uiOutput("geoname_ui_immun")),
+                             uiOutput("geoname_ui_immun"),
+                             uiOutput("dates_ui_immun")),
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_immun",
                                                       label= "Step 2 – Select the data you want to explore.",

@@ -82,9 +82,31 @@ output$geoname_ui_immun <- renderUI({
   selectizeInput("geoname_immun", label = NULL, choices = areas_summary_immun, selected = "")
 })
 
-# Reactive dataset for flextable filter on geographical area and dose
+# Get list of available time periods for plotting
+# Assumes that the time periods available are the same for all data
+available_time_periods = 
+  six_alldose %>%
+  filter(exclude==0) %>%
+  # using pull to get a vector rather than select because the selectizeInput didn't work otherwise
+  pull(time_period_eligible) %>%
+  unique()
+
+# Set the default time periods for plotting
+# Assumes that the months are listed in ascending order in available_time_periods, followed by the years
+default_time_periods = tail(available_time_periods, 6)
+
+# Immunisation reactive drop-down control showing list of time periods
+output$dates_ui_immun <- renderUI({
+  selectizeInput("dates_immun", label = NULL, choices = available_time_periods, 
+                 selected = default_time_periods, multiple = TRUE,
+                 options = list(placeholder = 'Select time periods'))
+})
+
+# Reactive dataset for flextable filter on geographical area, dose, and time period
 filter_table_data_immun <- function(dataset, dose){
-  dataset %>% filter(area_name == input$geoname_immun & str_detect(immunisation,dose))
+  dataset %>% filter(area_name == input$geoname_immun & 
+                       str_detect(immunisation,dose) &
+                       time_period_eligible %in% input$dates_immun)
 }
 
 ###############################################.
