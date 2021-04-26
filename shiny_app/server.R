@@ -25,6 +25,7 @@ function(input, output, session) {
                    title = "New content added and future updates",
                    h4("New content and updates"),
                    tags$ul(
+                     tags$li("5th May - Monthly update of data (most sections)."),
                      tags$li("14th April - New sections added for births and babies data:
                              Apgar scores and location of birth for extremely preterm infants."),
                      tags$li("7th April - Monthly update of data (most sections)."),
@@ -36,10 +37,16 @@ function(input, output, session) {
                    h4("Future updates"),
                    p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                    tags$ul(
-                     tags$li("14th April - New data on Apgar scores and location of birth for extremely preterm infants."),
-                     tags$li("5th May - Monthly update of data (most sections)."),
-                     tags$li("2nd June - New data on injury hospital admissions."),
-                     tags$li("June 2021 - New data on self-harm hospital admissions.")
+                     tags$li("2nd June - Monthly update of data (most sections)."),
+                     tags$li("16 June 2021 - Outpatients data update."),
+                     tags$li("16 June 2021 - New data on neonatal admissions and vaginal tears."),
+                     tags$li("7th July- Monthly update of data (most sections)."),
+                     tags$li("June/July 2021 - New data on injury hospital admissions."),
+                     tags$li("June/July 2021 - New data on self-harm hospital admissions."),
+                     tags$li("4th August - Monthly update of data (most sections)."),
+                     tags$li("1st September - Monthly update of data (most sections).")
+                     
+                     
                    ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
