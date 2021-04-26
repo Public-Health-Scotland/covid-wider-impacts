@@ -142,9 +142,9 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                       Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
                       "The dots joined by a solid black line in the chart above show the monthly mortality rate for the measure selected from July 2017 onwards.", br(),  
                       "The other lines - centreline, and control and warning limits - are there to help show how unexpected any observed changes are. 
-                      The solid blue centreline is an average (mean) over the period July 2017 to December 2019. The dotted blue centreline continues that average through more recent time periods. Control and warning limits take into consideration the random variation 
-                      that would be expected by chance, and help us decide when values are unexpectedly low or high and require further investigation.
-                      The use of a fixed centreline increases sensitivity of detection of signals in more recent data, since recent data does not contribute to the centre line used as a reference.")
+                      The solid blue centreline is an average (mean) rate over the period July 2017 to December 2019. The dotted blue centreline continues that average through more recent time periods. Control and warning limits take into consideration the random variation 
+                      between months that would be expected by chance, and help us decide when values are unexpectedly low or high and require further investigation.
+                      The use of a fixed centreline increases sensitivity of detection of signals in more recent data, since recent observations within the pandemic period do not contribute to this reference centreline.")
   
   may_data_commentary <- p("By law, all stillbirths must be registered within 21 days of the baby being delivered, and all infant deaths must be registered within 8 days of the baby dying.  
                            The data extract used to produce the mortality numbers and rates for up to and including ", last_month_peri," presented here was taken on ", extractdate_peri, ", and included stillbirths and infant deaths registered up to and including ", cutdate_peri, ".", br(), 
@@ -266,6 +266,9 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
+    h2("Stillbirths and infant deaths – 5 May 2021"),
+    p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in March 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in March 2021 was 4.5 per 1,000 total births (average 3.8 per 1,000 total births), and the infant mortality rate was 3.3 per 1,000 live births (average 3.3 per 1,000 live births). "),
+    p("All the stillbirth and infant death data have been revised in this latest release. Originally we reported these events from January 2017, and this has now been changed to July 2017. Also, a fixed centreline (average) has been recalculated for every chart using the data for the months July 2017 to December 2019.  The dotted centreline continues that average through the more recent time period to allow determination of whether the values seen in these months are unexpectedly low or high. The use of a fixed centreline increases sensitivity of detection of signals in more recent data, since recent observations within the pandemic period do not contribute to this reference centreline."),
     h2("Stillbirths and infant deaths - 7th April 2020"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in February 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in February 2021 was 4.3 per 1,000 total births, and infant mortality rate was 3.2 per 1,000 live births."),
     p("Further background information is available within the commentary for July 2020. "),
