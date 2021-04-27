@@ -625,7 +625,6 @@ immune_table <- function(dataset, dose, age_week) {
   no_complete_row_six1 <- with(table_data, time_period_eligible == "JAN 2021" |
                                             time_period_eligible == "FEB 2021")
   no_complete_row_mmr <- with(table_data, substr(time_period_eligible,1,4) == "2020" |
-                                            time_period_eligible == "DEC 2020" |
                                             time_period_eligible == "JAN 2021" |
                                             time_period_eligible == "FEB 2021")
   
