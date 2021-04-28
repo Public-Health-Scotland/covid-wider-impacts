@@ -304,7 +304,7 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T,
       filter(review == paste0(review_var),
              exclude_from_table == 0) %>% 
       select_if(not_all_na) %>% 
-      select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+      select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort, shade_cells) %>% 
       mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
       arrange(desc(cohort)) 
     
