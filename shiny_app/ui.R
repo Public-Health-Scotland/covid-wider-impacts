@@ -187,7 +187,6 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          )# mainPanel bracket
 ), # tabpanel bracket
 
-
 ###############################################.
 ## Cancer ----
 ###############################################.
