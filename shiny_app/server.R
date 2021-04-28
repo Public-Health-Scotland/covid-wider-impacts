@@ -1,5 +1,5 @@
 #Server side
- credentials <- readRDS("admin/credentials.rds")
+ credentials <- readRDS("admin/credentials_ch.rds")
 
 function(input, output, session) {
   
