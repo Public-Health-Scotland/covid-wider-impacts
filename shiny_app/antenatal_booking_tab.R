@@ -422,6 +422,14 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Antenatal bookings - 7th April 2021"),
+    p("In this release of information on antenatal booking data (7th April 2021) data have been updated to include women booking for antenatal care up to the week beginning 8th March 2021. Since the previous release, which showed data up until the week beginning 1st February 2021, numbers of women booking for antenatal care in Scotland 
+      have returned to a level which is very similar to the average numbers seen pre-pandemic at just over 1,000 women per week. Numbers of bookings in different NHS Boards vary. NHS Fife, NHS Greater Glasgow & Clyde, NHS Highland and NHS Lanarkshire are all showing runs of at least six consecutive data points above their average number 
+      of bookings per week, that continue into March. NHS Forth Valley have shown a marked decrease over the last five weeks in their recorded data for the number of women booking for antenatal care. This is thought to be as a result of a data recording issue and does not represent the true number of women booking in NHS Forth Valley.  
+      We are working with NHS Forth Valley to rectify this."),
+    p("The updated (all-Scotland) data in this release show that the average gestation at which women booked for antenatal care is at a very similar level to the average based on the pre-pandemic period: at 9.3 weeks. Recent data on average gestation by NHS Board are more varied. Lower than average gestation at booking has been observed 
+      over at least six consecutive data points in the most recent NHS Ayrshire & Arran, NHS Dumfries & Galloway, NHS Highland, NHS Lanarkshire and NHS Lothian data.  NHS Forth Valley has shown a sharp rise in average gestation at booking in recent weeks, but as noted above, this is thought to be as a result of a data recording issue 
+      which we are working to rectify with the Health Board."),
     h2("Antenatal bookings - 3rd March 2021"),
     p("In this release of information on antenatal booking data (3rd March 2021) data have been updated to include women booking for antenatal care up to the week beginning 1st February 2021. Since the previous release, which showed data up until the week beginning 4th January 2021, numbers of women booking for antenatal care in 
       Scotland reached a peak during the week beginning 11th January 2021 and have since decreased but still remained high, well above the average numbers seen pre-pandemic.  Much of this increase in numbers is likely to be due to women delaying booking until after the Christmas and new year holidays. A similar increase can be seen 

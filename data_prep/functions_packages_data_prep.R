@@ -120,28 +120,39 @@ proper <- function(dataset) {
 }
 
 # Function to format data in the right format for the Shiny app
-prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) {
+prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, aver = 3) {
   
   # Creating week number to be able to compare pre-covid to covid period
   dataset <- dataset %>% mutate(week_no = isoweek(week_ending),
                                 # Fixing HSCP names
                                 area_name = gsub(" and ", " & ", area_name))
   
-  
-  # Creating average admissions of pre-covid data (2018-2019) by day of the year
-  historic_data <- dataset %>% filter(year(week_ending) %in% c("2018", "2019")) %>% 
-    group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
-    # Not using mean to avoid issues with missing data for some weeks
-    summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% 
-    ungroup()
-  
-  
-  # Create average for week 53 using average for week 52
-  week_53 <- historic_data %>% filter(week_no == 52) %>% 
-    tidylog::mutate(week_no = 53)
-  
-  # Add rows to historic data
-  historic_data %<>% rbind(week_53)
+  if (aver == 3) {
+    # Creating average admissions of pre-covid data (2018-2019) by day of the year
+    historic_data <- dataset %>% filter(year(week_ending) %in% c("2018", "2019")) %>% 
+      group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
+      # Not using mean to avoid issues with missing data for some weeks
+      summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% 
+      ungroup()
+    
+    
+    # Create average for week 53 using average for week 52
+    week_53 <- historic_data %>% filter(week_no == 52) %>% 
+      tidylog::mutate(week_no = 53)
+    
+    # Add rows to historic data
+    historic_data %<>% rbind(week_53)
+  } else if (aver == 5) {
+    # Creating average admissions of pre-covid data (2015-2019) by day of the year
+    historic_data <- dataset %>% filter(!(year(week_ending) %in% c("2020", "2021"))) %>% 
+      group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
+      # Not using mean to avoid issues with missing data for some weeks
+      summarise(count_average = round((sum(count, na.rm = T))/5, 1)) %>% 
+      ungroup() %>% 
+      mutate(count_average = case_when (week_no == 53 ~ count_average *5, T ~ count_average))
+
+  }
+
   
   # Joining with 2020 and 2021 data
   # Filtering weeks with incomplete week too!! Temporary
@@ -160,8 +171,12 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
            variation =  ifelse(is.infinite(variation), 8000, variation)) %>% 
     select(-week_no) 
   
-  # Supressing numbers under 5
-  data_2020 <- data_2020 %>% filter(count>=5) %>% 
+  if (aver == 3) {
+    # Supressing numbers under 5
+    data_2020 <- data_2020 %>% filter(count>=5) 
+  } 
+  
+  data_2020 <- data_2020 %>%
     filter(week_ending <= as.Date(last_week))
   
   final_data <<- data_2020
@@ -240,16 +255,22 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
 
 #Function to format the immunisations and child health review tables
 
-format_immchild_table <- function(filename, save_as = NULL, save_file = T) {
+not_all_na <- function(x) {
+  any(!is.na(x))
+}
+
+format_immchild_table <- function(filename, save_as = NULL, save_file = T, 
+                                  review_var = NULL) {
 
   imm_ch_dt <- read_csv(paste0(data_folder, filename, ".csv")) %>%
     janitor::clean_names() %>%
     rename(area_name=geography_name) %>%
-    select (-geography) %>%
+    select(-geography) %>%
     arrange (as.Date(eligible_date_start, format="%m/%d/%Y")) %>% #ensure cohorts sort correctly in shiny flextable
     mutate(time_period_eligible=as.factor(time_period_eligible))
   
-  if (save_file == T) {
+  # specify mmr imms data table
+  if (save_file == T & save_as == "mmr_dose2_grampian") {
   
   imm_ch_dt <<- imm_ch_dt
   
@@ -265,7 +286,34 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T) {
   
   saveRDS(imm_ch_dt, paste0(open_data, save_as,"_data.rds"))
   }
+  
+  # specify all child health data tables
+  if (save_file == T & !is.null(review_var)) {
+    imm_ch_dt <<- imm_ch_dt
+    
+    saveRDS(imm_ch_dt, paste0(open_data, save_as,"_data.rds"))
+    
+    imm_ch_dt_data <<- imm_ch_dt %>% 
+      filter(review == paste0(review_var)) %>% 
+      select_if(not_all_na)
+    
+    saveRDS(imm_ch_dt_data, paste0(data_folder,"final_app_files/", save_as, "_data_", 
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))    
+    
+    imm_ch_dt <- imm_ch_dt %>%  
+      filter(review == paste0(review_var),
+             exclude_from_table == 0) %>% 
+      select_if(not_all_na) %>% 
+      select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
+      mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
+      arrange(desc(cohort)) 
+    
+    saveRDS(imm_ch_dt, paste0("shiny_app/data/", save_as, "_datatable.rds"))
+    saveRDS(imm_ch_dt, paste0(data_folder,"final_app_files/", save_as, "_datatable_", 
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  }
 
+  # all other imms data tables
   else { 
     imm_ch_dt
     }
@@ -329,6 +377,7 @@ format_childhealth <- function(filename, week_var, week_var2, save_as,
            week_no= isoweek({{week_var2}}),
            cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
     arrange(cohort) %>%
+    filter(exclude == 0) %>% 
     select (extract_date, review, {{week_var2}}, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
     filter(between(interv, intmin, intmax))
   

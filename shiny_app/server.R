@@ -4,13 +4,15 @@
 function(input, output, session) {
   
  # Shinymanager Auth
-   res_auth <- secure_server(
-     check_credentials = check_credentials(credentials)
-   )
-  # 
-  # output$auth_output <- renderPrint({
-  #   reactiveValuesToList(res_auth)
-  # })
+
+  res_auth <- secure_server(
+    check_credentials = check_credentials(credentials)
+  )
+
+  output$auth_output <- renderPrint({
+    reactiveValuesToList(res_auth)
+  })
+
   
   # For debugging
    # observeEvent(input$browser, browser())
@@ -23,18 +25,17 @@ function(input, output, session) {
                    title = "New content added and future updates",
                    h4("New content and updates"),
                    tags$ul(
+                     tags$li("14th April - New sections added for births and babies data:
+                             Apgar scores and location of birth for extremely preterm infants."),
+                     tags$li("7th April - Monthly update of data (most sections)."),
                      tags$li("31st March - New data on outpatient appointments."),
                      tags$li("10th March - Update of cancer section data."),
                      tags$li("3rd March - Update of all data, except cancer section."),
-                     tags$li("3rd February - Update of all data, except cancer section."),
-                     tags$li("13th January - Summary, cardiovascular and mental health tabs data updated."),
-                     tags$li("23rd December - Child health and cancer tabs data updated."),
-                     tags$li("16th December - New sections added for pregnancy data:
-                              induction of labour, method of delivery and gestation at delivery.")                   ),
+                     tags$li("3rd February - Update of all data, except cancer section.")
+                 ),
                    h4("Future updates"),
                    p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                    tags$ul(
-                     tags$li("7th April - Monthly update of data (most sections)."),
                      tags$li("14th April - New data on Apgar scores and location of birth for extremely preterm infants."),
                      tags$li("5th May - Monthly update of data (most sections)."),
                      tags$li("2nd June - New data on injury hospital admissions."),
@@ -70,13 +71,15 @@ function(input, output, session) {
   # Pregnancy tabs
   source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
   source(file.path("terminations_tab.R"),  local = TRUE)$value
+
+  ###############################################.
+  # Births and Babies tabs
+  source(file.path("perinatal_tab.R"),  local = TRUE)$value
+  source(file.path("apgar_tab.R"),  local = TRUE)$value
+  source(file.path("preterm_tab.R"),  local = TRUE)$value
   source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
   source(file.path("inductions_tab.R"),  local = TRUE)$value
   source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
-
-  ###############################################.
-  # Perinatal tab
-  source(file.path("perinatal_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Child development tab
@@ -113,6 +116,8 @@ function(input, output, session) {
   observeEvent(input$jump_to_mod, {updateTabsetPanel(session, "intabset", selected = "mod")})
   observeEvent(input$jump_to_induction, {updateTabsetPanel(session, "intabset", selected = "inductions")})
   observeEvent(input$jump_to_gestation, {updateTabsetPanel(session, "intabset", selected = "gestation")})
+  observeEvent(input$jump_to_apgar, {updateTabsetPanel(session, "intabset", selected = "apgar")})
+  observeEvent(input$jump_to_preterm, {updateTabsetPanel(session, "intabset", selected = "preterm")})
 
   observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
@@ -149,6 +154,12 @@ function(input, output, session) {
 
   observeEvent(input$jump_commentary_induction, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Induction of labour")})
+  
+  observeEvent(input$jump_commentary_apgar, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Apgar scores")})
+  
+  observeEvent(input$jump_commentary_preterm, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Location of extremely preterm deliveries")})
 
   observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
@@ -211,6 +222,12 @@ observeEvent(input$summary_button, ({
 
   observeEvent(input$gestation_button, ({
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")}))
+  
+  observeEvent(input$apgar_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Apgar scores")}))
+  
+  observeEvent(input$preterm_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Location of extremely preterm deliveries")}))
 
   observeEvent(input$cancer_button, ({
   updateCollapse(session, "collapse_commentary", open = "Cancer")}))
