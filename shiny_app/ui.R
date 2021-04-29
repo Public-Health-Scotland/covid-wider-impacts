@@ -187,7 +187,6 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          )# mainPanel bracket
 ), # tabpanel bracket
 
-
 ###############################################.
 ## Cancer ----
 ###############################################.
@@ -285,7 +284,7 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
                    uiOutput("top_explorer")
          )# mainPanel bracket
 ) # tabPanel bracket
-), # navbar menu bracket
+ ), # navbar menu bracket
 ###############################################.
 ## Births and Babies ----
 ##############################################.
@@ -544,7 +543,6 @@ navbarMenu("Child health", icon = icon("child"),
           column(6, downloadButton('download_table_csv', 'Download data')),
           mainPanel(width = 12,
                     DT::dataTableOutput("table_filtered"))
-
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
