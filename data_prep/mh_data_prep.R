@@ -23,8 +23,8 @@ mentalhealth_drugs <- rbind(read_xlsx(paste0(data_folder, "prescribing_mh/Weekly
                                      read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-11-Weekly new incident emessage - Multi-condition.xlsx")) %>%
                                       filter(between(as.Date(`Week Ending`), as.Date("2020-11-08"), as.Date("2020-11-15"))), 
                                      read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-11-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                                      filter(between(as.Date(`Week Ending`), as.Date("2020-11-22"), as.Date("2020-12-20"))),
-                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-04-01-Weekly new incident emessage - Multi-condition.xlsx"))) %>%
+                                      filter(between(as.Date(`Week Ending`), as.Date("2020-11-22"), as.Date("2021-01-17"))),
+                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-04-29-Weekly new incident emessage - Multi-condition.xlsx"))) %>%
   
   select(1:5) %>% 
   clean_names() %>% 
@@ -55,7 +55,7 @@ mentalhealth_drugs_all <- mentalhealth_drugs %>%
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all) %>% 
   arrange(area_name, area_type, category, week_ending) # so plotly works correctly
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-03-28")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-04-25")
 
 ###############################################.
 ## A&E - mental health ----
