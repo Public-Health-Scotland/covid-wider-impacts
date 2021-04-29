@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+ #secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -284,7 +284,7 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
                    uiOutput("top_explorer")
          )# mainPanel bracket
 ) # tabPanel bracket
-), # navbar menu bracket
+ ), # navbar menu bracket
 ###############################################.
 ## Births and Babies ----
 ##############################################.
@@ -535,7 +535,7 @@ navbarMenu("Child health", icon = icon("child"),
          You can use the filters to select the data you are interested in.
          You can also download the data as a csv using the download button.
          Some of the data is also hosted in the",
- 
+
             tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
                    "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
           column(6, selectInput("data_select", "Select the data you want to explore.",
@@ -543,9 +543,9 @@ navbarMenu("Child health", icon = icon("child"),
           column(6, downloadButton('download_table_csv', 'Download data')),
           mainPanel(width = 12,
                     DT::dataTableOutput("table_filtered"))
- 
-      ) # tabpanel bracket
+
+       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-# )#secure app
+ #)#secure app
 #END
