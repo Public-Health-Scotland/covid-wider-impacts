@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+ #secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -187,7 +187,6 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          )# mainPanel bracket
 ), # tabpanel bracket
 
-
 ###############################################.
 ## Cancer ----
 ###############################################.
@@ -285,7 +284,7 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
                    uiOutput("top_explorer")
          )# mainPanel bracket
 ) # tabPanel bracket
-), # navbar menu bracket
+ ), # navbar menu bracket
 ###############################################.
 ## Births and Babies ----
 ##############################################.
@@ -419,7 +418,7 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ) # tabpanel bracket
-), # navbar menu bracket
+ ), # navbar menu bracket
 ###############################################.
 ## Child health navbarmenu ----
 ###############################################.
@@ -548,5 +547,5 @@ navbarMenu("Child health", icon = icon("child"),
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-# )#secure app
+ #)#secure app
 #END

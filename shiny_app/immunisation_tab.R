@@ -391,6 +391,12 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 5th May 2021"),
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 5 May. Information is provided on children becoming eligible for immunisation during the Covid-19 pandemic (in March 2020 to February 2021) as well as before the pandemic (2019, January 2020, and February 2020). The data downloads include more detailed information, including by Health and Social Care Partnership, and weekly cohorts (note that due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland and NHS Western Isles are presented for monthly and yearly cohorts only)."),
+    p("It should be noted that the data recorded for the most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake is likely to be under-reported and will be updated as the data becomes more complete."),
+    p("Uptake of pre-school immunisations has remained high for children who became eligible during the Covid-19 pandemic. Information on final achieved uptake will continue to be provided through ",
+      tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
+             "official statistics publications", target="_blank"), "."),
     h2("Immunisations - 7th April 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 7 April. The charts and table show annual data for children who became eligible for immunisation in 2019 (before the pandemic) and in this update we have added annual data for children who became eligible in 2020. To ensure the display is not over-crowded we have also reduced the number of monthly cohorts shown in the charts and table to the latest available 6 months (August 2020 to January 2021)."),
     p("The full data including monthly data for children eligible from January 2020 and weekly data for children eligible up to week beginning 8 February 2021 are available through the data download. In future updates we plan to add drop-down functionality so that users have the option to choose the time-periods to show in the charts and table."),
