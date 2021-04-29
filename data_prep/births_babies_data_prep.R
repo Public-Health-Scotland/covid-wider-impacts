@@ -9,8 +9,8 @@ source("data_prep/functions_packages_data_prep.R")
 ## Mode of delivery ----
 ###############################################.
 #field with date data files prepared
-mod_folder <- "20210215"
-mod_date <- "2021-02-15"
+mod_folder <- "20210413"
+mod_date <- "2021-04-13"
 
 ##mode of delivery data supplied in 4 files: runchart data, line charts for scotland (age and dep split), line charts for NHS board and data download
 
@@ -111,8 +111,8 @@ saveRDS(mod_download, paste0(data_folder,"final_app_files/mod_download_data_",
 ###############################################.
 ## Inductions ----
 ###############################################.
-induct_folder <- "20210215"
-induct_date <- "2021-02-15"
+induct_folder <- "20210413"
+induct_date <- "2021-04-13"
 
 ## 1-RUNCHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
@@ -198,8 +198,8 @@ saveRDS(induct_download, paste0(data_folder,"final_app_files/induct_download_dat
 ## Gestation at delivery ----
 ###############################################.
 
-gestation_folder <- "20210215"
-gestation_date <- "2021-02-15"
+gestation_folder <- "20210413"
+gestation_date <- "2021-04-13"
 
 ## 1-RUNCHART DATA
 gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_RUNCHART_gestation_",gestation_date,".rds")) %>%  
@@ -306,19 +306,19 @@ saveRDS(gestation_download, paste0(data_folder,"final_app_files/gestation_downlo
 ## Perinatal mortality ----
 ###############################################.
 # P CHART PERINATAL DATA
-p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_marupdate.xlsx"),
+p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_mayupdate.xlsx"),
                                     sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
-                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_marupdate.xlsx"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_mayupdate.xlsx"),
                                     sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
-                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_marupdate.xlsx"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_mayupdate.xlsx"),
                                     sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi")) %>%
   janitor::clean_names() %>%
   select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type)
 
-u_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_marupdate.xlsx"),
+u_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_mayupdate.xlsx"),
                                     sheet = "ID", skip = 2) %>% mutate(type = "infantdeaths"),
-                         read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_marupdate.xlsx"),
+                         read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_mayupdate.xlsx"),
                                     sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>%  
   janitor::clean_names() %>%
   select(month_of_year=sample,  number_of_deaths_in_month=observation, sample_size=ao_o_size, rate, centreline, stdev = poisson_st_dev_16, 
