@@ -419,7 +419,7 @@ output$data_explorer <- renderUI({
                       actionButton("btn_dataset_modal", paste0("Data source: ", source), 
                                    icon = icon('question-circle'))),
 
-               column(6, p("Last updated: 7th April 2021"))),
+               column(6, p("Last updated: 5th May 2021"))),
 
       if (input$measure_select == "nhs24"){
         tagList(
