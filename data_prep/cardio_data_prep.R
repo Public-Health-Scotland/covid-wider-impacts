@@ -110,7 +110,7 @@ saveRDS(ae_cardio_codes, paste0(data_folder,"final_app_files/ae_cardio_codes_",
 rm(ae_cardio_codes)
 
 # Read in data, clean names + some simple mutations
-ae_cardio <- read_xlsx(paste0(ae_folder, "2021-04-01-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
+ae_cardio <- read_xlsx(paste0(ae_folder, "2021-04-29-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
   clean_names() %>% 
   rename(diag_cat = diagnosis_catagory,
          dep = prompt_dataset_deprivation_scot_quintile) %>% 
@@ -154,7 +154,7 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2021-03-28")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2021-04-25")
 
 ###############################################.
 ## OOH Cardiac  ----
@@ -261,7 +261,7 @@ prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/2021-04-01-covid emessage AMS only.xlsx")) %>% 
+cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/2021-04-29-covid emessage AMS only.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -294,6 +294,6 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2021-03-28")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2021-04-25")
 
 ##END
