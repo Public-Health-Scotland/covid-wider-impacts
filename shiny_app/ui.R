@@ -543,7 +543,6 @@ navbarMenu("Child health", icon = icon("child"),
           column(6, downloadButton('download_table_csv', 'Download data')),
           mainPanel(width = 12,
                     DT::dataTableOutput("table_filtered"))
-
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
