@@ -136,7 +136,7 @@ save_final_file("preterm_linechart_data", "01_Apr_21")
 save_final_file("preterm", "01_Apr_21")
 ##########################################################.
 ## Mental health - Prescribing ----
-save_final_file("mentalhealth_drugs", "01_Apr_21")
+save_final_file("mentalhealth_drugs", "29_Apr_21")
 ## Mental health - A&E ----
 save_final_file("mh_A&E", "01_Apr_21")
 ## Mental health - OOH ----
