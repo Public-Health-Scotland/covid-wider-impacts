@@ -482,6 +482,14 @@ navbarMenu("Child health", icon = icon("child"),
                              actionButton("jump_commentary_hv","Go to commentary"))
                       #actionButton("browser", "Browser")
                     ), #well panel
+                    wellPanel(
+                      fluidRow(br()),
+                      fluidRow(column(4, div(p(tags$b("Step 3. Select time periods of interest")))),
+                               column(8)),
+                      fluidRow(column(4, uiOutput("dates_ui_child")),
+                               column(2, actionButton("btn_update_time_child", "Update Time Periods")),
+                               column(6))
+                    ), # date selection well panel
                     mainPanel(width = 12,
                               uiOutput("child_health_explorer")
                     )# mainPanel bracket

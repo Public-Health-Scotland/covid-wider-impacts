@@ -754,7 +754,12 @@ immune_table <- function(dataset, dose, age_week) {
 
 plot_scurve_child <- function(dataset, age_week) {
   
-  scurve_data <- dataset %>% filter(area_name == input$geoname_child) 
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_child
+  
+  scurve_data <- dataset %>% filter(area_name == input$geoname_child,
+                                    # filter to selected time periods, but don't re-execute each time input changes
+                                    time_period_eligible %in% isolate(input$dates_child)) 
   # %>%
   # droplevels() # might be needed if sort order in legend is to change
   

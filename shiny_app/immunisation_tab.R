@@ -84,7 +84,7 @@ output$geoname_ui_immun <- renderUI({
 
 # Get list of available time periods for plotting
 # Assumes that the time periods available are the same for all data
-available_time_periods = 
+available_time_periods_immun = 
   six_alldose %>%
   filter(exclude==0) %>%
   # using pull to get a vector rather than select because the selectizeInput didn't work otherwise
@@ -92,13 +92,13 @@ available_time_periods =
   unique()
 
 # Set the default time periods for plotting
-# Assumes that the months are listed in ascending order in available_time_periods, followed by the years
-default_time_periods = tail(available_time_periods, 6)
+# Assumes that the months are listed in ascending order in available_time_periods_immun, followed by the years
+default_time_periods_immun = tail(available_time_periods_immun, 6)
 
 # Immunisation reactive drop-down control showing list of time periods
 output$dates_ui_immun <- renderUI({
-  selectizeInput("dates_immun", label = NULL, choices = available_time_periods, 
-                 selected = default_time_periods, multiple = TRUE,
+  selectizeInput("dates_immun", label = NULL, choices = available_time_periods_immun, 
+                 selected = default_time_periods_immun, multiple = TRUE,
                  options = list(placeholder = 'Select time periods'))
 })
 

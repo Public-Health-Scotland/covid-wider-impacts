@@ -33,9 +33,34 @@ output$geoname_ui_child <- renderUI({
   selectizeInput("geoname_child", label = NULL, choices = areas_summary_child, selected = "")
 })
 
+# Get list of available time periods for plotting
+# Assumes that the time periods available are the same for all data
+available_time_periods_child = 
+  first %>%
+  # using pull to get a vector rather than select because the selectizeInput didn't work otherwise
+  pull(time_period_eligible) %>%
+  unique()
+
+# Set the default time periods for plotting
+# Assumes that the months are listed in ascending order in available_time_periods_immun, followed by the years
+default_time_periods_child = tail(available_time_periods_child, 6)
+
+# Child reactive drop-down control showing list of time periods
+output$dates_ui_child <- renderUI({
+  selectizeInput("dates_child", label = NULL, choices = available_time_periods_child, 
+                 selected = default_time_periods_child, multiple = TRUE,
+                 options = list(placeholder = 'Select time periods'))
+})
+
 # Reactive dataset for flextable filter on geographical area
 filter_table_data_child <- function(dataset){
-  dataset %>% filter(area_name == input$geoname_child)
+  
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_child
+  
+  dataset %>% filter(area_name == input$geoname_child &
+                       # we don't want this function to re-execute every time dates_immun changes, so isolate()
+                       time_period_eligible %in% isolate(input$dates_child))
 }
 
 ###############################################.
