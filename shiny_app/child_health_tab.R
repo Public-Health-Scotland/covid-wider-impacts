@@ -42,7 +42,7 @@ available_time_periods_child =
   unique()
 
 # Set the default time periods for plotting
-# Assumes that the months are listed in ascending order in available_time_periods_immun, followed by the years
+# Assumes that the months are listed in ascending order in first, followed by the years
 default_time_periods_child = tail(available_time_periods_child, 6)
 
 # Child reactive drop-down control showing list of time periods
