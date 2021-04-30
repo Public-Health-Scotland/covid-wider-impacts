@@ -436,7 +436,7 @@ navbarMenu("Child health", icon = icon("child"),
                              uiOutput("geoname_ui_immun")),
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_immun",
-                                                      label= "Step 2 – Select the data you want to explore.",
+                                                      label= "Step 2. Select the data you want to explore.",
                                                       choices = data_list_immun, status = "primary",
                                                       direction = "vertical", justified = T))),
                       column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
@@ -450,7 +450,7 @@ navbarMenu("Child health", icon = icon("child"),
                     ), #well panel
                     wellPanel(
                       fluidRow(br()),
-                      fluidRow(column(4, div(p(tags$b("Step 3. Select time periods of interest")))),
+                      fluidRow(column(4, div(p(tags$b("Step 3. Select time periods of interest.")))),
                                column(8)),
                       fluidRow(column(4, uiOutput("dates_ui_immun")),
                                column(2, actionButton("btn_update_time_immun", "Update Time Periods")),
@@ -484,7 +484,7 @@ navbarMenu("Child health", icon = icon("child"),
                     ), #well panel
                     wellPanel(
                       fluidRow(br()),
-                      fluidRow(column(4, div(p(tags$b("Step 3. Select time periods of interest")))),
+                      fluidRow(column(4, div(p(tags$b("Step 3. Select time periods of interest.")))),
                                column(8)),
                       fluidRow(column(4, uiOutput("dates_ui_child")),
                                column(2, actionButton("btn_update_time_child", "Update Time Periods")),
