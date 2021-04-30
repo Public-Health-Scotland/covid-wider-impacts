@@ -430,11 +430,10 @@ navbarMenu("Child health", icon = icon("child"),
            tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
                     wellPanel(
                       column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                                    p(tags$b("Step 1. Select a geography level, then an area of interest and time periods of interest.")),
+                                    p(tags$b("Step 1. Select a geography level and then an area of interest.")),
                                     selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
                                                 selected = "Scotland")),
-                             uiOutput("geoname_ui_immun"),
-                             uiOutput("dates_ui_immun")),
+                             uiOutput("geoname_ui_immun")),
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_immun",
                                                       label= "Step 2 – Select the data you want to explore.",
@@ -449,6 +448,14 @@ navbarMenu("Child health", icon = icon("child"),
                              actionButton('jump_commentary_imm','Go to commentary')
                       )
                     ), #well panel
+                    wellPanel(
+                      fluidRow(br()),
+                      fluidRow(column(4, div(p(tags$b("Step 3. Select time periods of interest")))),
+                               column(8)),
+                      fluidRow(column(4, uiOutput("dates_ui_immun")),
+                               column(2, actionButton("btn_update_time_immun", "Update Time Periods")),
+                               column(6))
+                    ), # date selection well panel
                     mainPanel(width = 12,
                               uiOutput("immunisation_explorer")
                     )# mainPanel bracket

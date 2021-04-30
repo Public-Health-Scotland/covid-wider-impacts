@@ -450,10 +450,14 @@ filter_data <- function(dataset, area = T, op = F) {
 
 plot_scurve <- function(dataset, age_week, dose) {
  
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun & #filter to correct geography
                                     str_detect(immunisation,dose), #filter immunisation scurve data on dose
                                     exclude !=1,
-                                    time_period_eligible %in% input$dates_immun) # filter to selected time periods
+                                    # filter to selected time periods, but don't re-execute each time input changes
+                                    time_period_eligible %in% isolate(input$dates_immun))
 
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian"  && dataset == mmr_alldose && dose== "dose 2")
   { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age. 
@@ -534,8 +538,12 @@ else if(dataset == mmr_alldose && dose== "dose 2" ){ #set chart parameters for m
 plot_imm_simd <- function(dataset, age_week, dose, 
                           var_plot, base_var = F) {
   
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
   imm_simd_data <- dataset %>% filter(exclude == 0,
-                                      time_period_eligible %in% input$dates_immun) # filter to selected time periods) 
+                                      # filter to selected time periods, but don't re-execute each time input changes
+                                      time_period_eligible %in% isolate(input$dates_immun)) 
   
   #count the number of distinct months in the dataset - used later to correctly adjust chart
   month_count <- length(unique(imm_simd_data$time_period_eligible))

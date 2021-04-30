@@ -104,9 +104,14 @@ output$dates_ui_immun <- renderUI({
 
 # Reactive dataset for flextable filter on geographical area, dose, and time period
 filter_table_data_immun <- function(dataset, dose){
+  
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
   dataset %>% filter(area_name == input$geoname_immun & 
                        str_detect(immunisation,dose) &
-                       time_period_eligible %in% input$dates_immun)
+                       # we don't want this function to re-execute every time dates_immun changes, so isolate()
+                       time_period_eligible %in% isolate(input$dates_immun))
 }
 
 ###############################################.
