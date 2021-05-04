@@ -49,7 +49,8 @@ default_time_periods_child = tail(available_time_periods_child, 6)
 output$dates_ui_child <- renderUI({
   selectizeInput("dates_child", label = NULL, choices = available_time_periods_child, 
                  selected = default_time_periods_child, multiple = TRUE,
-                 options = list(placeholder = 'Select time periods'))
+                 options = list(placeholder = 'Select time periods',
+                                plugins = c('remove_button')))
 })
 
 # Reactive dataset for flextable filter on geographical area

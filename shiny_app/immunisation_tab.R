@@ -99,7 +99,8 @@ default_time_periods_immun = tail(available_time_periods_immun, 6)
 output$dates_ui_immun <- renderUI({
   selectizeInput("dates_immun", label = NULL, choices = available_time_periods_immun, 
                  selected = default_time_periods_immun, multiple = TRUE,
-                 options = list(placeholder = 'Select time periods'))
+                 options = list(placeholder = 'Select time periods',
+                                plugins = c('remove_button')))
 })
 
 # Reactive dataset for flextable filter on geographical area, dose, and time period

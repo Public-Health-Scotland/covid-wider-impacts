@@ -429,16 +429,22 @@ navbarMenu("Child health", icon = icon("child"),
            ##############################################.
            tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
                     wellPanel(
-                      column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                                    p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                                    selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
-                                                selected = "Scotland")),
-                             uiOutput("geoname_ui_immun")),
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_immun",
-                                                      label= "Step 2. Select the data you want to explore.",
+                                                      label= "Step 1. Select the data you want to explore.",
                                                       choices = data_list_immun, status = "primary",
                                                       direction = "vertical", justified = T))),
+                      column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                                    p(tags$b("Step 2. Select a geography level and then an area of interest.")),
+                                    selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
+                                                selected = "Scotland")),
+                             uiOutput("geoname_ui_immun"),
+                             div(title="Select the time periods you want to explore. You can click in the box then click on time periods in the dropdown to add them, or click on the x to remove a time period.",
+                                 p(tags$b("Step 3. Select time periods of interest.")),
+                                 uiOutput("dates_ui_immun"),
+                                 actionButton("btn_update_time_immun", "Update Time Periods")
+                             )
+                      ),
                       column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
                              fluidRow(br()),
                              actionButton("imm_elig_defs", "Eligibility definitions",  icon = icon('question-circle')),
@@ -448,14 +454,6 @@ navbarMenu("Child health", icon = icon("child"),
                              actionButton('jump_commentary_imm','Go to commentary')
                       )
                     ), #well panel
-                    wellPanel(
-                      fluidRow(br()),
-                      fluidRow(column(4, div(p(tags$b("Step 3. Select time periods of interest.")))),
-                               column(8)),
-                      fluidRow(column(4, uiOutput("dates_ui_immun")),
-                               column(2, actionButton("btn_update_time_immun", "Update Time Periods")),
-                               column(6))
-                    ), # date selection well panel
                     mainPanel(width = 12,
                               uiOutput("immunisation_explorer")
                     )# mainPanel bracket
@@ -465,16 +463,20 @@ navbarMenu("Child health", icon = icon("child"),
            #############################################.
            tabPanel(title = "Child health reviews", icon = icon("child"), value = "child_health",
                     wellPanel(
-                      column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                                    p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                                    selectInput("geotype_child", label = NULL, choices= c("Scotland", "Health board"),
-                                                selected = "Scotland")),
-                             uiOutput("geoname_ui_child")),
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_child",
-                                                      label= "Step 2. Select the data you want to explore.",
+                                                      label= "Step 1. Select the data you want to explore.",
                                                       choices = data_list_child, status = "primary",
                                                       direction = "vertical", justified = T))),
+                      column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
+                                    p(tags$b("Step 2. Select a geography level and then an area of interest.")),
+                                    selectInput("geotype_child", label = NULL, choices= c("Scotland", "Health board"),
+                                                selected = "Scotland")),
+                             uiOutput("geoname_ui_child"),
+                             div(title="Select the time periods you want to explore. You can click in the box then click on time periods in the dropdown to add them, or click on the x to remove a time period.",
+                                 p(tags$b("Step 3. Select time periods of interest.")),
+                                 uiOutput("dates_ui_child"),
+                                 actionButton("btn_update_time_child", "Update Time Periods"))),
                       column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')),
                              fluidRow(br()),
                              downloadButton("download_visit_data", "Download data"),
@@ -482,14 +484,6 @@ navbarMenu("Child health", icon = icon("child"),
                              actionButton("jump_commentary_hv","Go to commentary"))
                       #actionButton("browser", "Browser")
                     ), #well panel
-                    wellPanel(
-                      fluidRow(br()),
-                      fluidRow(column(4, div(p(tags$b("Step 3. Select time periods of interest.")))),
-                               column(8)),
-                      fluidRow(column(4, uiOutput("dates_ui_child")),
-                               column(2, actionButton("btn_update_time_child", "Update Time Periods")),
-                               column(6))
-                    ), # date selection well panel
                     mainPanel(width = 12,
                               uiOutput("child_health_explorer")
                     )# mainPanel bracket
