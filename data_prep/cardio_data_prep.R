@@ -110,7 +110,7 @@ saveRDS(ae_cardio_codes, paste0(data_folder,"final_app_files/ae_cardio_codes_",
 rm(ae_cardio_codes)
 
 # Read in data, clean names + some simple mutations
-ae_cardio <- read_xlsx(paste0(ae_folder, "2021-04-01-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
+ae_cardio <- read_xlsx(paste0(ae_folder, "2021-04-29-CardioVascular-AttendancesDuringCovid-19.xlsx")) %>% 
   clean_names() %>% 
   rename(diag_cat = diagnosis_catagory,
          dep = prompt_dataset_deprivation_scot_quintile) %>% 
@@ -154,13 +154,13 @@ ae_cardio <- rbind(ae_cardio_all, ae_cardio_dep, ae_cardio_age)
 # Remove temporary object from environment to reduce session size
 rm(ae_cardio_all, ae_cardio_age, ae_cardio_dep)
 
-prepare_final_data(ae_cardio, "ae_cardio", last_week = "2021-03-28")
+prepare_final_data(ae_cardio, "ae_cardio", last_week = "2021-04-25")
 
 ###############################################.
 ## OOH Cardiac  ----
 ###############################################.
 
-ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/2021-04-05-Weekly Cardio Diagnosis OOH extract.csv")) %>% 
+ooh_data_cardiac <- read_csv(paste0(data_folder, "GP_OOH_Cardio/2021-05-03-Weekly Cardio Diagnosis OOH extract.csv")) %>% 
   janitor::clean_names() %>% 
   filter(age > 14) %>%  # Filter age > 14
   mutate(week_ending = as.Date(gp_ooh_sc_end_date), # Formatting dates
@@ -207,13 +207,13 @@ ooh_cardiac %<>% # Filter graphs that look odd due to small numbers
                            "NHS Fife", "NHS Highland") | type !="dep")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2021-03-28")
+prepare_final_data_cardiac(dataset = ooh_cardiac, filename = "ooh_cardiac", last_week = "2021-04-25")
 
 ###############################################.
 ## SAS Cardiac ----
 ###############################################.
 
-sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/2021-04-05-Weekly Cardio Diagnosis SAS extract.csv")) %>%
+sas_data_cardiac <- read_csv(paste0(data_folder,"SAS_Cardio/2021-05-03-Weekly Cardio Diagnosis SAS extract.csv")) %>%
   janitor::clean_names() %>% 
   filter(age > 14) %>% # Filter age > 14
   mutate(week_ending = as.Date(sas_call_start_date), # Formatting dates
@@ -256,12 +256,12 @@ sas_cardiac %<>% filter(!area_name %in% c("NHS Orkney", "NHS Shetland")) %>%
   filter(!area_name %in% c("NHS Western Isles") | type !="age")
 
 # Formatting file for shiny app
-prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2021-03-28")
+prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = "2021-04-25")
 
 ###############################################.
 ## Prescribing - Cardiovascular Drugs ----
 ###############################################.
-cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/2021-04-01-covid emessage AMS only.xlsx")) %>% 
+cardio_drugs <- read_xlsx(paste0(data_folder, "prescribing_cardio/2021-04-29-covid emessage AMS only.xlsx")) %>% 
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Antihypertensive, anti-anginal, anti-arrhythmic and heart failure drugs",
@@ -294,6 +294,6 @@ cardio_drugs <- rbind(cardio_drugs, cardio_drugs_all)
 # Remove temporary object from environment to reduce session size
 rm(cardio_drugs_all)
 
-prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2021-03-28")
+prepare_final_data(cardio_drugs, "cardio_drugs", last_week = "2021-04-25")
 
 ##END
