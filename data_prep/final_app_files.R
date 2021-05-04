@@ -32,11 +32,11 @@ save_final_file("deaths", "06_Apr_21")
 save_final_file("cancer_data_2", "24_Feb_21")
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "06_Apr_21")
+save_final_file("rapid", "04_May_21")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 
 ## OOH ----
-save_final_file("ooh", "06_Apr_21")
+save_final_file("ooh", "04_May_21")
 ## A&E ----
 save_final_file("ae", "29_Apr_21")
 ## NHS24 ----
