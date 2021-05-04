@@ -69,16 +69,6 @@ mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%d/%m/%Y"))) %>%
   clean_names() 
 
-# mh_test1 <- readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
-#   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
-#   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")) %>%
-#   clean_names()
-# 
-# mh_test2 <- read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to18042021.csv")) %>%
-#   filter(as.Date(`Arrival Date`) < as.Date("19-04-2021")) %>%
-#   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%d/%m/%Y")) %>%
-#   clean_names()
-
 # List of terms used to identify mh cases
 mh_aye_freetext <- toupper(paste0("overdose|'OD|O/D|drug od|drugs od|drug overdose|", 
                                   "self harm|self-harm|selfharm|depress|psych|", 
