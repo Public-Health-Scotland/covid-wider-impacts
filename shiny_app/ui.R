@@ -442,7 +442,7 @@ navbarMenu("Child health", icon = icon("child"),
                              div(title="Select the time periods you want to explore. You can click in the box then click on time periods in the dropdown to add them, or click on the x to remove a time period.",
                                  p(tags$b("Step 3. Select time periods of interest.")),
                                  uiOutput("dates_ui_immun"),
-                                 actionButton("btn_update_time_immun", "Update Time Periods")
+                                 actionButton("btn_update_time_immun", "Update time periods")
                              )
                       ),
                       column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
@@ -476,7 +476,7 @@ navbarMenu("Child health", icon = icon("child"),
                              div(title="Select the time periods you want to explore. You can click in the box then click on time periods in the dropdown to add them, or click on the x to remove a time period.",
                                  p(tags$b("Step 3. Select time periods of interest.")),
                                  uiOutput("dates_ui_child"),
-                                 actionButton("btn_update_time_child", "Update Time Periods"))),
+                                 actionButton("btn_update_time_child", "Update time periods"))),
                       column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')),
                              fluidRow(br()),
                              downloadButton("download_visit_data", "Download data"),
