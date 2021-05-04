@@ -86,7 +86,7 @@ output$geoname_ui_immun <- renderUI({
 # Assumes that the time periods available are the same for all data
 available_time_periods_immun = 
   six_alldose %>%
-  filter(exclude==0) %>%
+  filter(substr(time_period_eligible,1,3)!="W/B") %>%
   # using pull to get a vector rather than select because the selectizeInput didn't work otherwise
   pull(time_period_eligible) %>%
   unique()

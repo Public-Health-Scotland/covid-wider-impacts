@@ -301,8 +301,7 @@ format_immchild_table <- function(filename, save_as = NULL, save_file = T,
                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))    
     
     imm_ch_dt <- imm_ch_dt %>%  
-      filter(review == paste0(review_var),
-             exclude_from_table == 0) %>% 
+      filter(review == paste0(review_var)) %>% 
       select_if(not_all_na) %>% 
       select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort, shade_cells) %>% 
       mutate(cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
@@ -377,7 +376,6 @@ format_childhealth <- function(filename, week_var, week_var2, save_as,
            week_no= isoweek({{week_var2}}),
            cohort=factor(cohort,levels=c("weekly","monthly","yearly"))) %>%
     arrange(cohort) %>%
-    filter(exclude == 0) %>% 
     select (extract_date, review, {{week_var2}}, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no) %>% 
     filter(between(interv, intmin, intmax))
   
