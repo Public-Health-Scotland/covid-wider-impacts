@@ -105,7 +105,7 @@ data_deaths %<>%
 
 # Running final functions
 prepare_final_data(dataset = data_deaths, filename = "deaths", 
-                   last_week = "2021-03-28", aver = 5)
+                   last_week = "2021-04-25", aver = 5)
 
 # Dealing with variation to replicate previous output. 
 # This might not be needed in future if we set a standard way of dealing with this.
