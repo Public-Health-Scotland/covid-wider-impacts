@@ -86,6 +86,7 @@ saveRDS(mod_linechart, "shiny_app/data/mod_linechart_data.rds")
 saveRDS(mod_linechart, paste0(data_folder,"final_app_files/mod_linechart_data_", 
                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+saveRDS(top_download, paste0(open_data,"terminations_preg.rds"))
 
 ## 4- Mode of delivery DATA DOWNLOAD FILE FOR SHINY APP
 mod_download <- read_csv(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_folder,"/WI_DELIVERIES_DOWNLOAD_mode_",mod_date,".csv"))%>%  
@@ -107,6 +108,33 @@ mod_download <- read_csv(paste0(data_folder, "pregnancy/mode_of_delivery/",mod_f
 saveRDS(mod_download, "shiny_app/data/mod_download_data.rds")  
 saveRDS(mod_download, paste0(data_folder,"final_app_files/mod_download_data_", 
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+# Saving data for open data platform
+mod_download <- mod_download %>% 
+  select(-c(chart_type, chart_category, dottedline_csection_all, dottedline_csection_elec,
+            dottedline_csection_emer, indicator, centreline_csection_all, centreline_csection_elec,
+            centreline_csection_emer, perc_denominator)) %>% 
+  rename("Number of births - All births" = births_all, 
+         "Number of births - Caesarean section" = csection_all,
+         "Number of births - emergency Caesarean section" = csection_emer,
+         "Number of births - elective Caesarean section" = csection_elec,
+         "Number of births - Other/Not Known" = other_not_known,
+         "Number of births - assisted vaginal delivery including breech" = assisted_vaginal_inc_breech, 
+         "Number of births - spontaneous_vaginal_delivery" = spontaneous_vaginal,
+         "Percentage (%) of births - assisted vaginal delivery including breech" = perc_assisted_vaginal_inc_breech, 
+         "Percentage (%) of births - Caesarean section" = perc_csection_all,
+         "Percentage (%) of births - emergency Caesarean section" = perc_csection_emer,
+         "Percentage (%) of births - elective Caesarean section" = perc_csection_elec,
+         "Percentage (%) of births - spontaneous vaginal delivery" = perc_spontaneous_vaginal,
+         "Percentage (%) of births - other/not known" = perc_other_not_known) %>% 
+  mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived", "Unknown") ~ paste0(variable),
+                              TRUE ~ "All")) %>% 
+  mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                              TRUE ~ "All"))
+
+saveRDS(mod_download, paste0(open_data,"method_delivery.rds"))
 
 ###############################################.
 ## Inductions ----
@@ -193,6 +221,28 @@ induct_download <- read_csv(paste0(data_folder, "pregnancy/inductions/",induct_f
 saveRDS(induct_download, "shiny_app/data/induct_download_data.rds")  
 saveRDS(induct_download, paste0(data_folder,"final_app_files/induct_download_data_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+# Saving data for open data platform
+induct_download <- induct_download %>% 
+  select(area_name, area_type, month_of_discharge, subgroup, variable,
+         induced_37_42, not_induced_37_42, unknown_induced_37_42, births_37_42,
+         perc_induced_37_42, perc_not_induced_37_42, perc_unknown_induced_37_42) %>% 
+  rename("Total number of singleton live births at 37-42 weeks gestation" = births_37_42,
+         "Number of singleton live births at 37-42 weeks gestation that followed induction of labour" = induced_37_42,
+         "Number of singleton live births at 37-42 weeks gestation that were not induced" = not_induced_37_42,
+         "Number of singleton live births at 37-42 weeks gestation unknown" = unknown_induced_37_42,
+         "Percentage (%) of singleton live births at 37-42 weeks gestation that followed induction of labour" = perc_induced_37_42,
+         "Percentage (%) of singleton live births at 37-42 weeks gestation that were not induced" = perc_not_induced_37_42,
+         "Percentage (%) of singleton live births at 37-42 weeks gestation unknown" = perc_unknown_induced_37_42) %>% 
+  mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived", "Unknown") ~ paste0(variable),
+                              TRUE ~ "All")) %>% 
+  mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                              TRUE ~ "All"))
+
+
+saveRDS(induct_download, paste0(open_data,"induction_labour.rds"))
 
 ###############################################.
 ## Gestation at delivery ----
