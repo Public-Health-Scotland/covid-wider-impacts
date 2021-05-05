@@ -352,6 +352,33 @@ saveRDS(gestation_download, "shiny_app/data/gestation_download_data.rds")
 saveRDS(gestation_download, paste0(data_folder,"final_app_files/gestation_download_data_", 
                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+# Saving data for open data platform
+gestation_download %<>% 
+  select(-c(chart_type, chart_category, dottedline_32_36, dottedline_42plus, dottedline_under32,
+            dottedline_under37, indicator, centreline_32_36, centreline_42plus, centreline_under32,
+            centreline_under37, perc_denominator)) %>% 
+  rename("Number of births - All births (18-44 weeks gestation)" = births_18_44, 
+         "Number of births - 32-36 weeks gestation" = births_32_36,
+         "Number of births - 37-41 weeks gestation" = births_37_41,
+         "Number of births - At or over 42 weeks gestation" = births_42plus,
+         "Number of births - Unknown gestation" = births_gest_unknown,
+         "Number of births - Under 32 weeks gestation" = births_under32, 
+         "Number of births - Under 37 weeks gestation" = births_under37,
+         "Number of births - All births" = births_all,
+         "Percentage (%) of births - 32-36 weeks gestation" = perc_32_36, 
+         "Percentage (%) of births - 37-41 weeks gestation" = perc_37_41,
+         "Percentage (%) of births - At or over 42 weeks gestation" = perc_42plus,
+         "Percentage (%) of births - Under 32 weeks gestation" = perc_under32,
+         "Percentage (%) of births - Under 37 weeks gestation" = perc_under37) %>% 
+  mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                              "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                              "5 - least deprived", "Unknown") ~ paste0(variable),
+                              TRUE ~ "All")) %>% 
+  mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                              TRUE ~ "All"))
+
+saveRDS(gestation_download, paste0(open_data,"gestation.rds"))
+
 ###############################################.
 ## Perinatal mortality ----
 ###############################################.
