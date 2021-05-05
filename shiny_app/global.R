@@ -322,9 +322,16 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050") 
 
-pal_child <- c("2019" = "#000000", "2020" = "#41b6c4", 
-                "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
-                "DEC 2020" = "#1d91c0", "JAN 2021" = "#253494", "FEB 2021" = "#990099")
+pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
+               "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
+               "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
+               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
+               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
+               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050") 
+# more distinctive colour palette (save for later)
+              # c("2019" = "#000000", "2020" = "#41b6c4", 
+              #   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
+              #   "DEC 2020" = "#1d91c0", "JAN 2021" = "#253494", "FEB 2021" = "#990099")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),

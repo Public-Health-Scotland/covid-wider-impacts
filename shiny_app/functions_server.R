@@ -455,7 +455,6 @@ plot_scurve <- function(dataset, age_week, dose) {
   
   scurve_data <- dataset %>% filter(area_name == input$geoname_immun & #filter to correct geography
                                     str_detect(immunisation,dose), #filter immunisation scurve data on dose
-                                    exclude !=1,
                                     # filter to selected time periods, but don't re-execute each time input changes
                                     time_period_eligible %in% isolate(input$dates_immun))
 
@@ -628,9 +627,6 @@ immune_table <- function(dataset, dose, age_week) {
 
   table_data <- filter_table_data_immun(dataset, dose)
     
-  table_data <- table_data %>%
-    filter(exclude_from_table !=1) #filter immunisation table to exclude weekly cohorts that should only be downloadable
-  
   #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
   no_complete_row_six1 <- with(table_data, time_period_eligible == "JAN 2021" |
                                             time_period_eligible == "FEB 2021")
