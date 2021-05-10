@@ -39,6 +39,7 @@ data_table <- reactive({
         "gestation" = gestation_download,
         "apgar" = apgar_download,
         "preterm" = preterm_chart,
+        "tears" = tears_download,
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
@@ -347,7 +348,22 @@ data_table <- reactive({
              "Number of deliveries at 23-26w that occurred in a hospital with a NICU on site" = N_deliveries_23_26_NICU_site,
              "Percentage" = percentage_NICU_site)
     
-}
+  } else if (input$data_select %in% "tears") {
+    table_data <- table_data %>% 
+      select(area_name, area_type, date_of_discharge, subgroup, variable,
+             no_tear_37_plus, "1st_2nd_degree_tear_37plus", "3rd_4th_degree_tear_37plus", unspecified_tear_37plus, 
+             births_37plus_tear_known, unknown_tear_37plus,
+             perc_no_tears_37plus,
+             perc_1st2nd_tears_37plus, 
+             perc_3rd4th_tears_37plus, 
+             perc_unspecified_tears_37plus) %>% 
+      mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
+                                  TRUE ~ "All")) %>% 
+      mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                  TRUE ~ "All"))
+  }
   
   
   table_data %<>% 
