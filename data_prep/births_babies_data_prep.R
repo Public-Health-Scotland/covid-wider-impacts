@@ -777,15 +777,15 @@ saveRDS(preterm_linechart, paste0(data_folder,"final_app_files/preterm_linechart
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
-## Tears ----
+## Perineal Tears ----
 ###############################################.
-apgar_folder <- "20210318"
-apgar_date <- "2021_03_18"
+tears_folder <- "20210423"
+tears_date <- "2021_04_23"
 
 
 ## 1-RUNCHART DATA
 ## apgar data for run chart (scotland and nhs board) - monthly
-apgar_runchart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Scotland_Apgar5_",apgar_date,".rds")) %>% 
+tears_runchart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_RUNCHART_Scotland_Tears_",tears_date,".rds")) %>% 
   rename(area = HBRES) %>%
   janitor::clean_names() %>% 
   mutate(date = gsub("-", "", date), #formatting date
@@ -797,7 +797,7 @@ apgar_runchart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_
          date_type = "Month")
 
 
-apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Apgar5_",apgar_date,".rds")) %>%  
+tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_RUNCHART_Tears_",tears_date,".rds")) %>%  
   rename(area = HBRES) %>%
   mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
                                area == "NHS Highlands" ~ "NHS Highland",
@@ -806,7 +806,7 @@ apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folde
   janitor::clean_names() %>% 
   mutate(date=as.Date(date),
          date_label=phsmethods::qtr(date, format="short")) %>% 
-  bind_rows(apgar_runchart_scot) %>% 
+  bind_rows(tears_runchart_scot) %>% 
   mutate(type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                           area_name=="Scotland" ~ "Scotland"),
          area_type = type,
@@ -818,8 +818,8 @@ apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folde
   # group_by(area_name) %>% 
   # mutate(ext_apgar5_37plus = max(median_apgar5_37plus, na.rm = T)) %>% 
   # ungroup() %>% 
-  mutate(ext_median_apgar5_37plus = case_when(is.na(ext_median_apgar5_37plus) ~ median_apgar5_37plus,
-                                              TRUE ~ ext_median_apgar5_37plus)) %>%
+  mutate(ext_median_tears_37plus = case_when(is.na(ext_median_tears_37plus) ~ median_tears_37plus,
+                                              TRUE ~ ext_median_tears_37plus)) %>%
   group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
   #call function to add flags for runchart shifts and trends
   #shift: name for new field where shift is flagged
@@ -827,20 +827,20 @@ apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folde
   #value: which column in dataset contains value being evaluated
   #median: which column in dataset contains the median against which value is tested
   runchart_flags(shift="apgar_shift", trend="apgar_trend", 
-                 value=perc_low_apgar5_37plus, median=ext_median_apgar5_37plus) %>%
+                 value=perc_3rd4th_tears_37plus, median=ext_median_tears_37plus) %>%
   ungroup() %>% 
   filter(area_name != "NHS Orkney", 
          area_name != "NHS Shetland",
          area_name != "NHS Western Isles")
 
-saveRDS(apgar_runchart, "shiny_app/data/apgar_runchart_data.rds")
-saveRDS(apgar_runchart, paste0(data_folder,"final_app_files/apgar_runchart_data_", 
+saveRDS(tears_runchart, "shiny_app/data/tears_runchart_data.rds")
+saveRDS(tears_runchart, paste0(data_folder,"final_app_files/tears_runchart_data_", 
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 2- LINECHART DATA apgar for Scotland only by age and dep
-apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_SCOT_CHARTS_Apgar5_",apgar_date,".rds")) %>%  
+tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_SCOT_CHARTS_Tears_",tears_date,".rds")) %>%  
   janitor::clean_names() %>%
-  rename(area_name=hbres, quarter=date, category=variable, tot_apgar5_37plus = total_exc_unknown) %>%
+  rename(area_name=hbres, quarter=date, category=variable, tot_tears_37plus = total_exc_unknown) %>%
   mutate(quarter=as.Date(quarter),
          quarter_label=phsmethods::qtr(quarter, format="short"),
          area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
@@ -853,17 +853,17 @@ apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/
                               category == "5 - Least deprived" ~ "5 - least deprived",
                               TRUE ~ as.character(category)))
 
-saveRDS(apgar_scot, "shiny_app/data/apgar_scot_data.rds")
-saveRDS(apgar_scot, paste0(data_folder,"final_app_files/apgar_scot_data_", 
+saveRDS(tears_scot, "shiny_app/data/tears_scot_data.rds")
+saveRDS(tears_scot, paste0(data_folder,"final_app_files/tears_scot_data_", 
                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 3- LINECHART DATA apgar for Scotland & NHS board
-apgar_linechart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Scotland_Apgar5_",apgar_date,".rds")) %>% 
+tears_linechart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_LINECHART_Scotland_Tears_",tears_date,".rds")) %>% 
   rename(area = HBRES) %>%
   janitor::clean_names() %>% 
-  mutate(tot_apgar5_37plus=total_exc_unknown) %>%
+  mutate(tot_tears_37plus=total_exc_unknown) %>%
   #reshape data file for ease of creation of line chart with percentages
-  pivot_longer(cols = low_apgar5_37plus:total_exc_unknown, names_to = "ind",values_to = "apgar5") %>%
+  pivot_longer(cols = nbr_3_4_degree_tear_37plus:total_exc_unknown, names_to = "ind",values_to = "tears") %>%
   mutate(date = gsub("-", "", date), #formatting date
          date = as.Date(paste0(date,"1"), format="%Y%m%d"),
          date_label = format(strptime(date, format = "%Y-%m-%d"), "%B %Y"),
@@ -873,38 +873,38 @@ apgar_linechart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar
          date_type = "Month") 
 
 
-apgar_linechart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Apgar5_",apgar_date,".rds")) %>%  
+tears_linechart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_LINECHART_Tears_",tears_date,".rds")) %>%  
   rename(area=HBRES) %>%
   janitor::clean_names() %>% ungroup %>% 
-  mutate(tot_apgar5_37plus=total_exc_unknown) %>%
+  mutate(tot_tears_37plus=total_exc_unknown) %>%
   mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
                                area == "NHS Highlands" ~ "NHS Highland",
                                TRUE ~ as.character(area))) %>%  
   #reshape data file for ease of creation of line chart with percentages
-  pivot_longer(cols = low_apgar5_37plus:total_exc_unknown, names_to = "ind",values_to = "apgar5") %>%
+  pivot_longer(cols = nbr_3_4_degree_tear_37plus:total_exc_unknown, names_to = "ind",values_to = "tears") %>%
   mutate(date=as.Date(date, format="%Y-%m-%d "),
          date_label=phsmethods::qtr(date, format="short"),
          date_type="Quarter") %>% 
-  bind_rows(apgar_linechart_scot) %>% 
+  bind_rows(tears_linechart_scot) %>% 
   mutate(type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
          area_type = type, 
          category="All",
-         percent_apgar=((apgar5/tot_apgar5_37plus)*100),
-         ind=case_when(ind=="low_apgar5_37plus" ~ "Babies with Apgar 5 < 7",
-                       ind=="total_exc_unknown" ~ "Babies with known Apgar 5",
+         percent_tears=((tears/tot_tears_37plus)*100),
+         ind=case_when(ind=="nbr_3_4_degree_tear_37plus" ~ "Women who have a 3rd or 4th degree perineal tear",
+                       ind=="total_exc_unknown" ~ "Women with known perineal tear status",
                        TRUE~as.character(ind))) %>% 
   filter(area_name != "NHS Orkney", 
          area_name != "NHS Shetland",
          area_name != "NHS Western Isles") %>% 
-  select(-ext_median_apgar5_37plus)
+  select(-ext_median_tears_37plus)
 
-saveRDS(apgar_linechart, "shiny_app/data/apgar_linechart_data.rds") 
-saveRDS(apgar_linechart, paste0(data_folder,"final_app_files/apgar_linechart_data_", 
+saveRDS(tears_linechart, "shiny_app/data/tears_linechart_data.rds") 
+saveRDS(tears_linechart, paste0(data_folder,"final_app_files/tears_linechart_data_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 4- Apgar DATA DOWNLOAD FILE FOR SHINY APP
-apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_Apgar5_DOWNLOAD_",apgar_date,".rds")) %>%  
+tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_Tears_DOWNLOAD_Qtr_",tears_date,".rds")) %>%  
   janitor::clean_names() %>%
   mutate(subgroup = case_when(substr(nhs_board_of_residence,1,3) == "NHS" ~ "board",
                               substr(nhs_board_of_residence,1,3) == "Not" ~ "board",
@@ -918,32 +918,35 @@ apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folde
                                      T ~ phsmethods::qtr(month_of_discharge, format="short")
          )) %>%
   rename(area_name=nhs_board_of_residence,
-         centreline_apgar5_37plus = median_apgar5_37plus,
-         dottedline_apgar5_37plus = ext_median_apgar5_37plus) %>% 
+         centreline_tears_37plus = median_tears_37plus,
+         dottedline_tears_37plus = ext_median_tears_37plus) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
          chart_type= area_type,
-         births_37_42 = total_exc_unknown + unknown_apgar5_37plus,
-         perc_denominator = "births_37_42_apgar5_known") %>% 
+         perc_denominator = "births_37plus_tears_known") %>% 
   select(-month_of_discharge) %>% 
   select(indicator, subgroup, variable, area_name, date_of_discharge, 
-         births_37_42_apgar5_0_6 = low_apgar5_37plus, 
-         births_37_42_apgar5_7_10 = high_apgar5_37plus,
-         births_37_42_apgar5_known = total_exc_unknown, 
-         perc_births_37_42_apgar5_0_6 = perc_low_apgar5_37plus,
-         perc_births_37_42_apgar5_7_10 = perc_high_apgar5_37plus,
-         centreline_apgar5_0_6 = centreline_apgar5_37plus,
-         dottedline_apgar5_0_6 = dottedline_apgar5_37plus,
+         no_tear_37_plus = no_perineal_tear_37plus,
+         "1st_2nd_degree_tear_37plus" = nbr_1_2_degree_tear_37plus, 
+         "3rd_4th_degree_tear_37plus" = nbr_3_4_degree_tear_37plus, 
+         unspecified_tear_37plus,
+         births_37plus_tear_known = total_exc_unknown, 
+         perc_no_tears_37plus,
+         perc_1st2nd_tears_37plus, 
+         perc_3rd4th_tears_37plus, 
+         perc_unspecified_tears_37plus,
+         centreline_tears_37plus,
+         dottedline_tears_37plus,
          perc_denominator,
          area_type,
          chart_category,
          chart_type,
-         births_37_42_apgar5_unknown = unknown_apgar5_37plus,
-         births_37_42)
+         unknown_tear_37plus = not_known_if_tear_37plus,
+         births_37plus = total_inc_unknown)
 
-saveRDS(apgar_download, "shiny_app/data/apgar_download_data.rds")  
-saveRDS(apgar_download, paste0(data_folder,"final_app_files/apgar_download_data_", 
+saveRDS(tears_download, "shiny_app/data/tears_download_data.rds")  
+saveRDS(tears_download, paste0(data_folder,"final_app_files/tears_download_data_", 
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ##END
