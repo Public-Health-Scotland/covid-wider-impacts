@@ -811,13 +811,10 @@ tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
                           area_name=="Scotland" ~ "Scotland"),
          area_type = type,
          category = "All") %>%
+  filter(date <= "2021-03-01") %>% 
   
   
   # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
-  # ext_ columns (don't exist in data file) are extended median which are blank before projection time period
-  # group_by(area_name) %>% 
-  # mutate(ext_apgar5_37plus = max(median_apgar5_37plus, na.rm = T)) %>% 
-  # ungroup() %>% 
   mutate(ext_median_tears_37plus = case_when(is.na(ext_median_tears_37plus) ~ median_tears_37plus,
                                               TRUE ~ ext_median_tears_37plus)) %>%
   group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
@@ -851,7 +848,8 @@ tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/
                               category == "40+" ~ "40 and over",
                               category == "1 - Most deprived" ~ "1 - most deprived",
                               category == "5 - Least deprived" ~ "5 - least deprived",
-                              TRUE ~ as.character(category)))
+                              TRUE ~ as.character(category))) %>% 
+  filter(quarter <= "2021-03-01")
 
 saveRDS(tears_scot, "shiny_app/data/tears_scot_data.rds")
 saveRDS(tears_scot, paste0(data_folder,"final_app_files/tears_scot_data_", 
@@ -897,7 +895,8 @@ tears_linechart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_fold
   filter(area_name != "NHS Orkney", 
          area_name != "NHS Shetland",
          area_name != "NHS Western Isles") %>% 
-  select(-ext_median_tears_37plus)
+  select(-ext_median_tears_37plus) %>% 
+  filter(date <= "2021-03-01")
 
 saveRDS(tears_linechart, "shiny_app/data/tears_linechart_data.rds") 
 saveRDS(tears_linechart, paste0(data_folder,"final_app_files/tears_linechart_data_", 
@@ -925,6 +924,7 @@ tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
          chart_category="All",
          chart_type= area_type,
          perc_denominator = "births_37plus_tears_known") %>% 
+  filter(month_of_discharge <= "2021-03-01") %>% 
   select(-month_of_discharge) %>% 
   select(indicator, subgroup, variable, area_name, date_of_discharge, 
          no_tear_37_plus = no_perineal_tear_37plus,
