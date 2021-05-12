@@ -32,14 +32,14 @@ observeEvent(input$btn_tears_rules,
 observeEvent(input$btn_modal_simd_tears, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
-    p("Births have been allocated to different levels of deprivation based on the 
-      small area (data zone) in which the mothers live and the Scottish Index of 
+    p("Women have been allocated to different levels of deprivation based on the 
+      small area (data zone) in which they live and the Scottish Index of 
       Multiple Deprivation (SIMD). SIMD scores are based on data for local areas 
       reflecting 38 indicators across 7 domains: income; employment; health; education, 
       skills and training; housing; geographic access; and crime. In this tool we have 
-      presented results for babies living in different SIMD ‘quintiles’. To produce 
+      presented results for women living in different SIMD ‘quintiles’. To produce 
       quintiles, data zones are ranked by their SIMD score then the areas each containing 
-      a fifth (20%) of the overall population of Scotland are identified. Babies living 
+      a fifth (20%) of the overall population of Scotland are identified. Women living 
       in the most and least deprived areas that each contain a fifth of the population are 
       assigned to SIMD quintile 1 and 5 respectively."),
     size = "l",
@@ -120,7 +120,14 @@ output$tears_explorer <- renderUI({
     tagList(#p("We have used ",                      
               # tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
               #        'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear’ chart above, the dots joined by a solid black line show the percentage of women giving birth vaginally with a known perineal tear status who have a third or fourth degree perineal tear, in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of women giving birth vaginally who have a third or fourth degree perineal tear over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of women giving birth vaginally who have a third or fourth degree perineal tear."))
+            p("On the 
+              ‘Percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear’ 
+              chart above, the dots joined by a solid black line show the 
+              percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear, 
+              in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) 
+              percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear 
+              over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the 
+              percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear."))
   
   # Layout depending if Scotland or HB selected
     tagList(fluidRow(column(12,
@@ -140,7 +147,7 @@ output$tears_explorer <- renderUI({
                      if (input$geotype_tears == "Scotland"){
                        tagList(
                          fluidRow(column(12,
-                                         h4("Women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tearby maternal age group: Scotland"))),
+                                         h4("Women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear by maternal age group: Scotland"))),
                          fluidRow(column(6,
                                          h4("Number of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear"),
                                          withSpinner(plotlyOutput("tears_linechart_age_n"))),
