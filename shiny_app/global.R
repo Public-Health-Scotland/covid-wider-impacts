@@ -185,7 +185,7 @@ preterm_download <- readRDS("data/preterm.rds") %>%
          area_name, outlier, shift, trend, outer, inner)
 
 # Tears (births and babies tab)
-tears_extract_date <- "18th March 2021"
+tears_extract_date <- "23rd April 2021"
 tears_runchart <- readRDS("data/tears_runchart_data.rds")
 tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
