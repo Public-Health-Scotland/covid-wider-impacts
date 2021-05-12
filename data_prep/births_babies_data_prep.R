@@ -931,7 +931,7 @@ tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
          "1st_2nd_degree_tear_37plus" = nbr_1_2_degree_tear_37plus, 
          "3rd_4th_degree_tear_37plus" = nbr_3_4_degree_tear_37plus, 
          unspecified_tear_37plus,
-         births_37plus_tear_known = total_exc_unknown, 
+         known_tear_status_37plus_ = total_exc_unknown, 
          perc_no_tears_37plus,
          perc_1st2nd_tears_37plus, 
          perc_3rd4th_tears_37plus, 
@@ -942,8 +942,8 @@ tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
          area_type,
          chart_category,
          chart_type,
-         unknown_tear_37plus = not_known_if_tear_37plus,
-         births_37plus = total_inc_unknown)
+         unknown_tear_status_37plus = not_known_if_tear_37plus,
+         total_37plus = total_inc_unknown)
 
 saveRDS(tears_download, "shiny_app/data/tears_download_data.rds")  
 saveRDS(tears_download, paste0(data_folder,"final_app_files/tears_download_data_", 
