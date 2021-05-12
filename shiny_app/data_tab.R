@@ -352,7 +352,7 @@ data_table <- reactive({
     table_data <- table_data %>% 
       select(area_name, area_type, date_of_discharge, subgroup, variable,
              no_tear_37_plus, "1st_2nd_degree_tear_37plus", "3rd_4th_degree_tear_37plus", unspecified_tear_37plus, 
-             births_37plus_tear_known, unknown_tear_37plus,
+             known_tear_status_37plus, unknown_tear_status_37plus,
              perc_no_tears_37plus,
              perc_1st2nd_tears_37plus, 
              perc_3rd4th_tears_37plus, 
