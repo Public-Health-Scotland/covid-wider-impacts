@@ -102,7 +102,7 @@ output$top_dep_g <- renderPlotly({plot_top_split(dataset=top_filter_split("dep")
 # The charts and text shown on the app will depend on what the user wants to see
 output$top_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 7th April 2021"))
+  data_last_updated <- tagList(p("Last updated: 2nd June 2021"))
   
   # text for titles of cut charts
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
@@ -309,6 +309,8 @@ observeEvent(input$switch_to_anb,{
 output$top_commentary <- renderUI({
   tagList(
     bsButton("jump_to_top",label = "Go to data"), #this button can only be used once
+    h2("Termination of pregnancy - 2nd June 2021"),
+    p("COMMENTARY PLACEHOLDER"),
     h2("Termination of pregnancy - 5th May 2021"),
     p("This latest release reports on the number of terminations of pregnancy in Scotland up to January 2021. In this latest month 1,108 terminations were provisionally notified, which is comparable with the January average for 2018, 2019 and 2020 of 1,191."),
     p("Observing these figures are provisional and may be updated in subsequent reports, we note that Dumfries and Galloway’s terminations for January 2021 are not shown this month as their total numbers fell below the threshold that we can safely report numbers of terminations without potentially compromising patient confidentiality. Ayrshire and Arran notified their lowest number of terminations (42) since January 2018. We noted in the last release a downward trend in Tayside, which reversed in January 2021."),
