@@ -102,9 +102,9 @@ output$tears_linechart_percent <- renderPlotly({plot_tears_linechart(measure="pe
 
 #chart outputs for line charts for Scotland only age and deprivation line charts
 output$tears_linechart_age_n <- renderPlotly({plot_tears_split(dataset=tears_linechart_split(split="age"),split="age", measure="tot_tears_37plus")})
-output$apgar_linechart_age_p <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="age"),split="age", measure="perc_tears_37plus")})
+output$apgar_linechart_age_p <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="age"),split="age", measure="perc_3rd4th_tears_37plus")})
 output$tears_linechart_dep_n <- renderPlotly({plot_tears_split(dataset=tears_linechart_split(split="dep"),split="dep", measure="tot_tears_37plus")})
-output$tears_linechart_dep_p <- renderPlotly({plot_tears_split(dataset=tears_linechart_split(split="dep"),split="dep", measure="perc_tears_37plus")})
+output$tears_linechart_dep_p <- renderPlotly({plot_tears_split(dataset=tears_linechart_split(split="dep"),split="dep", measure="perc_3rd4th_tears_37plus")})
 
 ###############################################.
 ##  Reactive layout  ----

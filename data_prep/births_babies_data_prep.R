@@ -826,7 +826,7 @@ tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
   #trend: name for new field where trend is flagged
   #value: which column in dataset contains value being evaluated
   #median: which column in dataset contains the median against which value is tested
-  runchart_flags(shift="apgar_shift", trend="apgar_trend", 
+  runchart_flags(shift="tears_shift", trend="tears_trend", 
                  value=perc_3rd4th_tears_37plus, median=ext_median_tears_37plus) %>%
   ungroup() %>% 
   filter(area_name != "NHS Orkney", 
