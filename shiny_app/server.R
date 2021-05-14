@@ -30,16 +30,15 @@ function(input, output, session) {
                              Apgar scores and location of birth for extremely preterm infants."),
                      tags$li("7th April - Monthly update of data (most sections)."),
                      tags$li("31st March - New data on outpatient appointments."),
-                     tags$li("10th March - Update of cancer section data."),
-                     tags$li("3rd March - Update of all data, except cancer section."),
-                     tags$li("3rd February - Update of all data, except cancer section.")
+                     tags$li("10th March - Update of cancer section data.")
                  ),
                    h4("Future updates"),
                    p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                    tags$ul(
                      tags$li("2nd June - Monthly update of data (most sections)."),
                      tags$li("16 June 2021 - Outpatients data update."),
-                     tags$li("16 June 2021 - New data on neonatal admissions and vaginal tears."),
+                     tags$li("16 June 2021 - Cancer pathology data update."),
+                     tags$li("16 June 2021 - New data on vaginal tears."),
                      tags$li("7th July- Monthly update of data (most sections)."),
                      tags$li("June/July 2021 - New data on injury hospital admissions."),
                      tags$li("June/July 2021 - New data on self-harm hospital admissions."),
