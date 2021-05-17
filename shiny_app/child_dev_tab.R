@@ -10,7 +10,7 @@ observeEvent(input$btn_childdev_modal,
                title = "What is the data source?",
                p("Data source: CHSP Pre-School"),
                tags$b("Meaningful data"),
-               p("TThis refers to records where a value of N (no concerns), C (concern newly suspected), or P (concern previously identified) 
+               p("This refers to records where a value of N (no concerns), C (concern newly suspected), or P (concern previously identified) 
                  has been recorded for all eight developmental domains assessed as part of the 13-15 month and 27-30 month child health reviews. See the ",
                tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/early-child-development/15-september-2020/dashboard/",
                       "Early Child Development", target="_blank"), " publication for further details."),
