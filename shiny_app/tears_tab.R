@@ -8,19 +8,87 @@
 observeEvent(input$btn_tears_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("text needed here"),
+      p("The data used for the perineal tears page comes from the Scottish 
+        Morbidity Record 02 (SMR02) database. An SMR02 record is submitted by 
+        maternity hospitals to Public Health Scotland (PHS) whenever a woman is 
+        discharged from an episode of day case or inpatient maternity care. From 
+        October 2019, maternity hospitals have also been asked to submit SMR02 
+        records following attended home births."),
+      p("For the perineal tears page, SMR02 records for episodes of care 
+        involving the delivery of a singleton live or stillborn baby (i.e. 
+        one baby, not twins or more) at 37-42 weeks gestation inclusive have
+        been used. The charts presented show the total number of singleton 
+        live births at 37-42 weeks with known perineal tear status, and the 
+        percentage of women giving birth vaginally to a singleton live or 
+        stillborn baby with a cephalic presentation between 37-42 weeks 
+        gestation who have a third or fourth degree perineal tear. Data is 
+        presented for January 2018 onwards, based on the date the woman was 
+        discharged from hospital after delivery."),
+      p("Perineal tear scores range from 0 to 4, with 0 indicating no perineal 
+        tear, and higher scores indicating the degree of tear. 8 indicates a 
+        tear with unspecified degree, and 9 indicates that it is not known if 
+        there was a tear."),
+      p("Data is presented for individual months at Scotland level, and for 
+        sequential quarters (Jan-Mar 2018, Apr-Jun 2018, etc) for individual NHS 
+        Boards. Due to small numbers, the charts for individual Island Boards of 
+        residence (NHS Orkney, NHS Shetland, and NHS Western Isles) are unstable 
+        so these have not been shown. However, the Island Boards are included in 
+        the Scotland total, and data for the Island Boards is available in the 
+        spreadsheet provided through the ‘Download data’ button."),
+      p("Data is shown for up to and including the most recent month for which 
+        SMR02 records are considered near complete. Data for the most recent 
+        months should be viewed as provisional. Data for all months will be 
+        refreshed every time the dashboard page is updated, and data for the 
+        most recent months is likely to change slightly as additional SMR02 
+        records are submitted to PHS."),
+      p("Although there is no legal requirement to submit SMR02 records to PHS, 
+        data completeness is very high. For example, for the period 1 April 2019 
+        to 31 March 2020, live births recorded on SMR02 represented 98.8% of the 
+        live births registered by law with National Records of Scotland (NRS) 
+        and stillbirths on SMR02 represented 91.1% of stillbirths registered 
+        with NRS. In addition, the recording of specific data items allowing 
+        identification of singleton live births at 37-42 weeks gestation is very 
+        complete. However, identification of babies with a cephalic presentation 
+        is less robust. The data included in this dashboard use the data item 
+        ‘Mode of Delivery’ to identify cephalic presentation, which is regarded 
+        as being more accurately captured than ‘Presentation at Delivery’. For 
+        the period 1 April 2018 to 31 December 2020 ‘Mode of Delivery’ was 
+        recorded on 99.9% of SMR02 records relating to a singleton live or 
+        stillbirth and information on perineal tears was recorded on 99.6% of 
+        records."),
+      p("Further information based on SMR02 data is also available from the annual ",
+        tags$a(href= "https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/births-in-scottish-hospitals/",
+              "Births in Scottish Hospitals report." , target="_blank")),
 
-               size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+      size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
 observeEvent(input$btn_tears_rules,
              showModal(modalDialog(
                title = "How do we identify patterns in the data?",
-               p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
+               p("Run charts use a series of rules to help identify important 
+                 changes in the data. These are the ones we used for these charts:"),
+               tags$ul(tags$li("Shifts: Six or more consecutive data points 
+                               above or below the centreline. Points on the 
+                               centreline neither break nor contribute to a 
+                               shift (marked on chart)."),
+                       tags$li("Trends: Five or more consecutive data points 
+                               which are increasing or decreasing. An 
+                               observation that is the same as the preceding 
+                               value does not count towards a trend (marked on 
+                               chart)."),
+                       tags$li("Too many or too few runs: A run is a sequence of
+                               one or more consecutive observations on the same 
+                               side of the centreline. Any observations falling 
+                               directly on the centreline can be ignored. If 
+                               there are too many or too few runs (i.e. the 
+                               median is crossed too many or too few times) 
+                               that’s a sign of something more than random chance."),
+                       tags$li("Astronomical data point: A data point which is 
+                               distinctly different from the rest. Different 
+                               people looking at the same graph would be 
+                               expected to recognise the same data point as 
+                               astronomical (or not).")),
                p("Further information on these methods of presenting data can be found in the ",                      
                  tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                         'PHS guide to statistical process control charts', target="_blank"),"."),
@@ -35,13 +103,14 @@ observeEvent(input$btn_modal_simd_tears, { showModal(
     p("Women have been allocated to different levels of deprivation based on the 
       small area (data zone) in which they live and the Scottish Index of 
       Multiple Deprivation (SIMD). SIMD scores are based on data for local areas 
-      reflecting 38 indicators across 7 domains: income; employment; health; education, 
-      skills and training; housing; geographic access; and crime. In this tool we have 
-      presented results for women living in different SIMD ‘quintiles’. To produce 
-      quintiles, data zones are ranked by their SIMD score then the areas each containing 
-      a fifth (20%) of the overall population of Scotland are identified. Women living 
-      in the most and least deprived areas that each contain a fifth of the population are 
-      assigned to SIMD quintile 1 and 5 respectively."),
+      reflecting 38 indicators across 7 domains: income; employment; health; 
+      education, skills and training; housing; geographic access; and crime. 
+      In this tool we have presented results for women living in different SIMD 
+      ‘quintiles’. To produce quintiles, data zones are ranked by their SIMD score 
+      then the areas each containing a fifth (20%) of the overall population of 
+      Scotland are identified. Women living in the most and least deprived areas 
+      that each contain a fifth of the population are assigned to SIMD quintile 
+      1 and 5 respectively."),
     size = "l",
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   ))})
@@ -114,20 +183,28 @@ output$tears_explorer <- renderUI({
   
   # text for titles of cut charts
   tears_data_timeperiod <-  paste0("Figures based on data extracted ",tears_extract_date)
-  tears_title <- paste0("of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear: ",input$geoname_tears)
+  tears_title <- paste0("of women giving birth vaginally to a singleton live or 
+                        stillborn baby with a cephalic presentation between 37-42 
+                        weeks gestation who have a third or fourth degree 
+                        perineal tear: ",input$geoname_tears)
   
   chart_explanation <- 
     tagList(#p("We have used ",                      
               # tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
               #        'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the 
-              ‘Percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear’ 
-              chart above, the dots joined by a solid black line show the 
-              percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear, 
-              in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) 
-              percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear 
-              over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the 
-              percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear."))
+            p("On the ‘Percentage of women who have a third or fourth degree 
+              perineal tear’ chart above, the dots joined by a solid black line 
+              show the percentage of women giving birth vaginally to a singleton 
+              live or stillborn baby with a cephalic presentation between 37-42 
+              weeks gestation who have a third or fourth degree perineal tear, 
+              in each month from January 2018 onwards. The solid blue centreline 
+              on the chart shows the average (median) percentage of women who 
+              have a third or fourth degree perineal tear over the period 
+              January 2018 to February 2020 inclusive (the period before the 
+              COVID-19 pandemic in Scotland). The dotted blue centreline 
+              continues that average to allow determination of whether there has 
+              subsequently been a change in the percentage of women who have a 
+              third or fourth degree perineal tear."))
   
   # Layout depending if Scotland or HB selected
     tagList(fluidRow(column(12,
