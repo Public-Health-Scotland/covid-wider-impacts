@@ -226,10 +226,10 @@ output$tears_explorer <- renderUI({
                          fluidRow(column(12,
                                          h4("Women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear by maternal age group: Scotland"))),
                          fluidRow(column(6,
-                                         h4("Number of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear"),
+                                         h4("Number of women who have a third or fourth degree perineal tear"),
                                          withSpinner(plotlyOutput("tears_linechart_age_n"))),
                                   column(6,
-                                         h4("Percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear"),
+                                         h4("Percentage of women who have a third or fourth degree perineal tear"),
                                          withSpinner(plotlyOutput("tears_linechart_age_p")))),
                          fluidRow(column(12,
                                          br(), # spacing
@@ -237,10 +237,10 @@ output$tears_explorer <- renderUI({
                                          actionButton("btn_modal_simd_tears", "What is SIMD and deprivation?",
                                                       icon = icon('question-circle')))),
                          fluidRow(column(6,
-                                         h4("Number of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear"),
+                                         h4("Number of women who have a third or fourth degree perineal tear"),
                                          withSpinner(plotlyOutput("tears_linechart_dep_n"))),
                                   column(6,
-                                         h4("Percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear"),
+                                         h4("Percentage of women who have a third or fourth degree perineal tear"),
                                          withSpinner(plotlyOutput("tears_linechart_dep_p"))))
                        )#tagList from if statement
                      }
@@ -266,7 +266,7 @@ plot_tears_trend <- function(measure, shift, trend){
     centreline_name <- paste0(input$geoname_tears," average up to end Feb 2020") 
     
     # format y axis
-    yname <- "Percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear (%)"
+    yname <- "Percentage of women who have a third or fourth degree perineal tear (%)"
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10%
     yaxis_plots[["title"]] <- "Percentage of women (%)"
     
