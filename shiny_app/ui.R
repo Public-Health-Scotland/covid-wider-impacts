@@ -1,5 +1,5 @@
 #UI
- #secure_app( #uncomment if needing password protection
+ secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -556,5 +556,5 @@ tabPanel(title = "Apgar scores", icon = icon("notes-medical"), value = "apgar",
 #       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
- #)#secure app
+ )#secure app
 #END
