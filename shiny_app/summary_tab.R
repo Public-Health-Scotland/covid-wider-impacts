@@ -411,6 +411,10 @@ output$data_explorer <- renderUI({
   diff_chars <- nchar(variation_title) - nchar(total_title) +10
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
   
+  #update date for outpatients and the rest is different
+  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "31st March 2021",
+                             TRUE ~ "5th May 2021")
+  
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
     tagList(
@@ -419,7 +423,7 @@ output$data_explorer <- renderUI({
                       actionButton("btn_dataset_modal", paste0("Data source: ", source), 
                                    icon = icon('question-circle'))),
 
-               column(6, p("Last updated: 5th May 2021"))),
+               column(6, p("Last updated: ", upd_date_summ))),
 
       if (input$measure_select == "nhs24"){
         tagList(
