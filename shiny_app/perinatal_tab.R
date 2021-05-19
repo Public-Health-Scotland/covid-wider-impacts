@@ -78,11 +78,12 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
   
   # Text to be updated every month with updated dates
-  last_month_peri <- "March 2021"
-  cutdate_peri <- "18 April 2021"
-  extractdate_peri <- "21 April 2021"
-  nextup_peri <- "June 2021"
+  last_month_peri <- "April 2021"
+  cutdate_peri <- "16 May 2021"
+  extractdate_peri <- "19 May 2021"
+  nextup_peri <- "July 2021"
   nextdata_peri <- "May 2021"
+  
   
   # Number of deaths and of births used in the text
   no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
@@ -120,7 +121,7 @@ peri_common_intro,
 tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
        "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
 Whilst each extended perinatal death is clearly a tragedy for the family involved, extended perinatal deaths are uncommon events in Scotland: ", no_stillperi ," extended perinatal deaths (and ", no_births ," total 
-[live and still] births) occurring in Scotland ", last_month_peri, " had been registered by ", cutdate_peri, ".")
+[live and still] births) occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
   } else if (input$measure_select_perinatal == "infantdeaths") {
     intro_text <- p("Infant deaths refer to", tags$a(href=link_perinatal, 
                     "all deaths in the first year", target="_blank"), "of life; 

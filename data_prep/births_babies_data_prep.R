@@ -383,19 +383,19 @@ saveRDS(gestation_download, paste0(open_data,"gestation.rds"))
 ## Perinatal mortality ----
 ###############################################.
 # P CHART PERINATAL DATA
-p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_mayupdate.xlsx"),
+p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_juneupdate.xlsx"),
                                     sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
-                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_mayupdate.xlsx"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_juneupdate.xlsx"),
                                     sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
-                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_mayupdate.xlsx"),
+                         read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_juneupdate.xlsx"),
                                     sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi")) %>%
   janitor::clean_names() %>%
   select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
          upper_cl_3_std_dev:type)
 
-u_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_mayupdate.xlsx"),
+u_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_juneupdate.xlsx"),
                                     sheet = "ID", skip = 2) %>% mutate(type = "infantdeaths"),
-                         read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_mayupdate.xlsx"),
+                         read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_juneupdate.xlsx"),
                                     sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>%  
   janitor::clean_names() %>%
   select(month_of_year=sample,  number_of_deaths_in_month=observation, sample_size=ao_o_size, rate, centreline, stdev = poisson_st_dev_16, 
