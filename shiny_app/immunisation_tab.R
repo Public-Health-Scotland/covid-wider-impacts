@@ -116,16 +116,47 @@ filter_table_data_immun <- function(dataset, dose){
 }
 
 ###############################################.
+## Reactive data ----
+###############################################.
+six_alldose_filt <- reactive({
+
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
+  six_alldose %>% filter(area_name == input$geoname_immun & #filter to correct geography
+                      str_detect(immunisation, #filter immunisation scurve data on dose
+                                 substr(input$measure_select_immun, 
+                                        nchar(input$measure_select_immun), 
+                                        nchar(input$measure_select_immun))), 
+                      # filter to selected time periods, but don't re-execute each time input changes
+                      time_period_eligible %in% isolate(input$dates_immun))
+})
+
+mmr_alldose_filt <- reactive({
+  
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
+  mmr_alldose %>% filter(area_name == input$geoname_immun & #filter to correct geography
+                           str_detect(immunisation, #filter immunisation scurve data on dose
+                                      substr(input$measure_select_immun, 
+                                             nchar(input$measure_select_immun), 
+                                             nchar(input$measure_select_immun))), 
+                         # filter to selected time periods, but don't re-execute each time input changes
+                         time_period_eligible %in% isolate(input$dates_immun))
+})
+
+###############################################.
 ## Charts ----
 ###############################################.
 
 # Creating plots for each dataset
 #run chart function to generate s curves  
-output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(dataset=six_alldose, age_week = "8", dose= "dose 1")})
-output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_alldose, age_week = "12", dose="dose 2")})
-output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_alldose, age_week = "16", dose= "dose 3" )})
-output$immun_mmr_scurve_dose1 <- renderPlotly({plot_scurve(mmr_alldose, age_week = "1", dose= "dose 1" )})
-output$immun_mmr_scurve_dose2 <- renderPlotly({plot_scurve(mmr_alldose, age_week = "3", dose= "dose 2" )})
+output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(dataset=six_alldose_filt(), age_week = "8", dose= "dose 1")})
+output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_alldose_filt(), age_week = "12", dose="dose 2")})
+output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_alldose_filt(), age_week = "16", dose= "dose 3" )})
+output$immun_mmr_scurve_dose1 <- renderPlotly({plot_scurve(mmr_alldose_filt(), age_week = "1", dose= "dose 1" )})
+output$immun_mmr_scurve_dose2 <- renderPlotly({plot_scurve(mmr_alldose_filt(), age_week = "3", dose= "dose 2" )})
 
 #run function to generate data tables linked to s-curves  
 output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable,dose="dose 1", age_week = 8)})
@@ -419,6 +450,13 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 2nd June 2021"),
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 2 June. It should be noted that the data recorded for the 
+      most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake 
+      is likely to be under-reported and will be updated as the data becomes more complete."),
+    p("Uptake of pre-school immunisations has remained high for children who became eligible during the Covid-19 pandemic. Information on final achieved uptake will continue to be provided through ",
+      tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
+             "official statistics publications", target="_blank"), "."),
     h2("Immunisations - 5th May 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 5 May. Information is provided on children becoming eligible for immunisation during the Covid-19 pandemic (in March 2020 to February 2021) as well as before the pandemic (2019, January 2020, and February 2020). The data downloads include more detailed information, including by Health and Social Care Partnership, and weekly cohorts (note that due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland and NHS Western Isles are presented for monthly and yearly cohorts only)."),
     p("It should be noted that the data recorded for the most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake is likely to be under-reported and will be updated as the data becomes more complete."),
