@@ -102,7 +102,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "26th April 2021"
+immunisation_extract_date <- "24 May 2021"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -320,14 +320,14 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
-               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050") 
+               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966") 
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
-               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050") 
+               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966") 
 # more distinctive colour palette (save for later)
               # c("2019" = "#000000", "2020" = "#41b6c4", 
               #   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
