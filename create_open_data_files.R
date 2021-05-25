@@ -1,3 +1,13 @@
+##########################################################
+# Create Wider Impacts of COVID Open Data
+# Original author: Csilla Scharle
+# Original date: 30/06/20
+# Type of script
+# Written/run on RStudio Desktop - needed for freddy folder access
+# Version of R that the script was most recently run on - 3.6.1
+# Description: create open data from Wider Impacts dashboard data
+# Approximate run time
+##########################################################
 
 #############################################################.
 ### Housekeeping ----
@@ -87,6 +97,7 @@ gestation_dat <- "gestation"
 induction_dat <- "induction_labour"
 delivery_dat <- "method_delivery"
 antenatal_dat <- "ante_booking"
+breast_data <- "breastfeeding_data"
 
 
 hospital_admissions <- read_rds(glue("{source_filepath}/{hospital_admissions_dat}.rds"))
@@ -109,6 +120,8 @@ gestation <- read_rds(glue("{source_filepath}/{gestation_dat}.rds"))
 induction <- read_rds(glue("{source_filepath}/{induction_dat}.rds"))
 delivery <- read_rds(glue("{source_filepath}/{delivery_dat}.rds"))
 antenatal <- read_rds(glue("{source_filepath}/{antenatal_dat}.rds"))
+breast_dat <- read_csv(glue("{breastfeeding_filepath}/{breast_data}.csv"))
+
 
 
 # remove HSCP tag from child_dev area_name
@@ -116,16 +129,6 @@ antenatal <- read_rds(glue("{source_filepath}/{antenatal_dat}.rds"))
 child_dev <- child_dev %>%
   mutate(area_name = if_else(substr(child_dev$area_name, (nchar(area_name)-3), nchar(area_name))== "HSCP",
                              substr(child_dev$area_name, 1, (nchar(area_name) -5)), area_name))
-
-
-# Set resources to use
-
-resource1 <- "hospital_admissions_hb_agesex"
-resource2 <- "hospital_admissions_hb_simd"
-resource3 <- "hospital_admissions_hb_specialty"
-resource4 <- "hospital_admissions_hscp_agesex"
-resource5 <- "hospital_admissions_hscp_simd"
-resource6 <- "hospital_admissions_hscp_specialty"
 
 #Geo codes
 
@@ -185,7 +188,7 @@ gestation <- left_join(gestation, geo_codes, by = "area_name")
 induction <- left_join(induction, geo_codes, by = "area_name")
 delivery <- left_join(delivery, geo_codes, by = "area_name")
 antenatal <- left_join(antenatal, geo_codes, by = "area_name")
-# Set resources to use
+
 
 ##############################################.
 ###FUNCTIONS ----
@@ -409,8 +412,10 @@ create_maternity_open_data <- function(dataset, colheaders, data_name) {
     mutate(Month = dmy(Month))%>%
     mutate(Month = strftime(Month, format = "%Y%m"))
   
-  if(data_name != "terminations_preg") open_data <- open_data %>%
-      rename("category" = "variable") 
+  if(data_name != "terminations_preg") {
+    open_data <- open_data %>%
+      rename("category" = "variable")
+    } 
   
   # HB file
   hb <- open_data %>%
@@ -418,10 +423,12 @@ create_maternity_open_data <- function(dataset, colheaders, data_name) {
     rename("HB" = "Code") %>%
     mutate(HBQF = if_else(HB == "S92000003", "d", "")) 
   
-  if(data_name == "terminations_preg") hb <- hb %>%
+  if(data_name == "terminations_preg") {
+    hb <- hb %>%
     mutate(NumberGestation10to12WksQF = if_else(NumberGestation10to12Wks == "*", "c", "")) %>%
     mutate(NumberGestationOver12WksQF = if_else(NumberGestationOver12Wks == "*", "c", "")) %>%
-    mutate(NumberGestationUnder10WksQF = if_else(NumberGestationUnder10Wks == "*", "c", "")) 
+    mutate(NumberGestationUnder10WksQF = if_else(NumberGestationUnder10Wks == "*", "c", ""))
+  }
   
   # remove *
   hb[hb == "*"] <- ""
@@ -441,13 +448,17 @@ create_maternity_open_data <- function(dataset, colheaders, data_name) {
     rename("Country" = "Code",
            "AgeGroup" = "category")
   
-  if(data_name != "terminations_preg") age <- age %>%
+  if(data_name != "terminations_preg") {
+    age <- age %>%
     select(Country, Month, AgeGroup, colheaders)%>%
     arrange(Month, AgeGroup)
+  }
   
-  if(data_name == "terminations_preg") age <- age %>%
+  if(data_name == "terminations_preg") {
+    age <- age %>%
     select(Country, Month, AgeGroup, AverageGestation, NumberTerminations)%>%
     arrange(Month, AgeGroup)
+  }
   
   #create OD csv file 2
   write_csv(age, glue("{pregnancy_filepath}/{data_name}_age_{date}.csv"), na = "")
@@ -462,16 +473,114 @@ create_maternity_open_data <- function(dataset, colheaders, data_name) {
                                  "1 - most deprived" = "1",
                                  "5 - least deprived" = "5"))
   
-  if(data_name != "terminations_preg") simd <- simd %>%
+  if(data_name != "terminations_preg") {
+    simd <- simd %>%
     select(Country, Month, SIMDQuintile, colheaders)%>%
     arrange(Month, SIMDQuintile)
+  }
   
-  if(data_name == "terminations_preg") simd <- simd %>%
+  if(data_name == "terminations_preg") {
+    simd <- simd %>%
     select(Country, Month, SIMDQuintile, AverageGestation, NumberTerminations)%>%
     arrange(Month, SIMDQuintile)
+  }
   
   #create OD csv file 3
   write_csv(simd, glue("{pregnancy_filepath}/{data_name}_simd_{date}.csv"), na = "")
+  
+}
+
+format_ch_review <- function(dataset, var_cov, review = T, filename, time_var, 
+                             time_name = PeriodEligible, weekly=T, 
+                             filepath = childhealth_filepath, review_var) {
+  
+  if(is.null(review)==F) {dataset <- dataset %>%
+    filter(dataset$review == {{ review }})}
+  
+  hb <- dataset %>%
+    #filter for hb and scotland
+    filter(area_name %in% c(hb_codes$area_name, "Scotland", "NHS Ayrshire & Arran",
+                            "NHS Dumfries & Galloway", "NHS Greater Glasgow & Clyde")) %>%
+    rename("HB" = "Code")%>%
+    mutate(HBQF = if_else(HB == "S92000003", "d", "")) 
+  
+  #Weekly HB
+  if(weekly==T){
+    weekly_hb <- hb %>%
+      rename("WeekBeginning" = all_of(time_var))
+    weekly_hb <- weekly_hb %>%
+      filter(substr(weekly_hb$WeekBeginning, 1, 3)=="W/B") %>%
+      select(c("WeekBeginning", "HB", "HBQF", all_of(var_cov), all_of(review_var))) %>%
+      mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
+      mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%y")) %>%
+      mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
+      arrange(WeekBeginning, HB)  
+    
+    write_csv(weekly_hb, glue("{filepath}/{filename}_hb_weekly_{date}.csv"), na = "")
+  }
+  
+  
+  #monthly
+  monthly_hb <- hb %>%
+    filter(substr(hb[[time_var]], 1, 3)!="W/B" & nchar(hb[[time_var]]) !=  4) %>%
+    data.table::setnames(old = time_var, new = time_name)%>%
+    select_(.dots = c(time_name, "HB", "HBQF", var_cov, review_var))
+  if(!(filename %in% c(child_dev_dat, breast_data))){monthly_hb <- monthly_hb %>%
+    mutate(!!time_name := paste("01", .[[time_name]]))%>%
+    mutate(!!time_name := dmy(.[[time_name]]))%>%
+    mutate(!!time_name := strftime(.[[time_name]], format = "%Y%m"))}
+  monthly_hb <- monthly_hb %>%
+    arrange(.[[time_name]], HB)
+  
+  #create OD csv file 2
+  write_csv(monthly_hb, glue("{filepath}/{filename}_hb_monthly_{date}.csv"), na = "")
+  
+  ###HSCP files
+  hscp <- dataset %>%
+    #filter for hscps
+    filter(area_name %in% hscp_codes$area_name) %>%
+    rename("HSCP" = "Code")%>%
+    mutate(HSCP = case_when(
+      area_name == "Argyll and Bute" ~"S37000004",
+      area_name == "Clackmannanshire and Stirling" ~ "S37000005",
+      area_name == "Dumfries and Galloway" ~ "S37000006",
+      area_name == "Perth and Kinross" ~ "S37000033",
+      TRUE ~ HSCP)
+    )
+  
+  #Weekly
+  if(weekly==T){
+    hscp_weekly <- hscp %>%
+      rename("WeekBeginning" = all_of(time_var))
+    hscp_weekly <- hscp_weekly %>%
+      filter(substr(hscp_weekly$WeekBeginning, 1, 3)=="W/B") %>%
+      #rename, add qualifiers
+      select(c("WeekBeginning", "HSCP", all_of(var_cov), all_of(review_var)))%>%
+      mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
+      mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%Y")) %>%
+      mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
+      arrange(WeekBeginning, HSCP)
+    
+    #create OD csv file 3
+    write_csv(hscp_weekly, glue("{filepath}/{filename}_hscp_weekly_{date}.csv"), na = "")
+    
+  }
+  
+  #monthly
+  hscp_monthly <- hscp %>%
+    filter(substr(hscp[[time_var]], 1, 3)!="W/B" & nchar(hscp[[time_var]]) !=  4) %>%
+    data.table::setnames(old = time_var, new = time_name)%>%
+    #rename, add qualifiers
+    select_(.dots = c(time_name, "HSCP", var_cov, review_var))
+  if(!(filename %in% c(child_dev_dat, breast_data))){hscp_monthly <- hscp_monthly %>%
+    mutate(!!time_name := paste("01", .[[time_name]]))%>%
+    mutate(!!time_name := dmy(.[[time_name]]))%>%
+    mutate(!!time_name := strftime(.[[time_name]], format = "%Y%m"))}
+  hscp_monthly <- hscp_monthly %>%
+    arrange(.[[time_name]], HSCP)
+  
+  #create OD csv file 4
+  write_csv(hscp_monthly, glue("{filepath}/{filename}_hscp_monthly_{date}.csv"), na = "")
   
 }
 
@@ -516,7 +625,7 @@ adm_hb_age_sex <- adm_hb_age_sex %>%
                                                                           "75 - 84", "85 and over")))
 
 #create OD csv file
-write_csv(adm_hb_age_sex, glue("{adm_filepath}/{resource1}_{date}.csv"))
+write_csv(adm_hb_age_sex, glue("{adm_filepath}/hospital_admissions_hb_agesex_{date}.csv"))
 
 ###1A-2##By HB and SIMD
 
@@ -532,7 +641,7 @@ adm_hb_simd <- adm_hb_simd %>%
   arrange(AdmissionType, WeekEnding, HB, SIMDQuintile)
 
 #create OD csv file
-write_csv(adm_hb_simd, glue("{adm_filepath}/{resource2}_{date}.csv"))
+write_csv(adm_hb_simd, glue("{adm_filepath}/hospital_admissions_hb_simd_{date}.csv"))
 
 ###1A-3##By HB and Specialty
 
@@ -546,7 +655,7 @@ adm_hb_spec <- adm_hb %>%
 
 #create OD csv file
 
-write_csv(adm_hb_spec, glue("{adm_filepath}/{resource3}_{date}.csv"))
+write_csv(adm_hb_spec, glue("{adm_filepath}/hospital_admissions_hb_specialty_{date}.csv"))
 
 ###1B-1##By HSCP +Age +sex
 
@@ -571,7 +680,7 @@ adm_hscp_age_sex <- adm_hscp_age_sex %>%
                                                                             "75 - 84", "85 and over")))
 
 #create OD csv file
-write_csv(adm_hscp_age_sex, glue("{adm_filepath}/{resource4}_{date}.csv"))
+write_csv(adm_hscp_age_sex, glue("{adm_filepath}/hospital_admissions_hscp_agesex_{date}.csv"))
 
 ###1B-2##By HSCP and SIMD
 
@@ -587,7 +696,7 @@ adm_hscp_simd <- adm_hscp_simd %>%
   arrange(AdmissionType, WeekEnding, HSCP, SIMDQuintile)
 
 #create OD csv file
-write_csv(adm_hscp_simd, glue("{adm_filepath}/{resource5}_{date}.csv"))
+write_csv(adm_hscp_simd, glue("{adm_filepath}/hospital_admissions_hscp_simd_{date}.csv"))
 
 ###1B-3##By HSCP and Specialty
 
@@ -601,7 +710,7 @@ adm_hscp_spec <- adm_hscp %>%
 
 #create OD csv file
 
-write_csv(adm_hscp_spec, glue("{adm_filepath}/{resource6}_{date}.csv"))
+write_csv(adm_hscp_spec, glue("{adm_filepath}/hospital_admissions_hscp_specialty_{date}.csv"))
 
 # Tidy Global Environment
 rm(adm_hb, adm_hb_age_sex, adm_hb_simd, adm_hb_spec, adm_hscp, adm_hscp_age_sex, 
@@ -791,12 +900,11 @@ write_csv(cardio_drugs_hscp, glue("{cardio_drugs_filepath}/{cardio_drugs_dat}_hs
 #10##Create Child Health Review OD Resources----
 ##############################################.
 
-
-### create 6-8 months review files (By week, By Month, By HB, By HSCP)
-
+### 6-8 weeks
 #general formatting
 
-rev_6_8 <- review_6_8 %>%
+review_6_8 <- review_6_8 %>%
+  filter(review == "6-8 Week Review") %>%
   rename("PercentCoverage10Weeks" = "coverage_10weeks_percent",
          "Coverage10Weeks" = "coverage_10weeks_num",
          "PercentCoverage22Weeks" = "coverage_22weeks_percent",
@@ -806,104 +914,16 @@ rev_6_8 <- review_6_8 %>%
          "TotalNumberChildren" = "denominator")%>%
   mutate_if(is.factor, as.character)
 
-###HB files
-
-rev_6_8_hb <- rev_6_8 %>%
-  #filter for hb and scotland
-  filter(area_name %in% c(hb_codes$area_name, "Scotland", "NHS Ayrshire & Arran",
-                          "NHS Dumfries & Galloway", "NHS Greater Glasgow & Clyde")) %>%
-  rename("HB" = "Code")
-
-#Weekly
-rev_6_8_hb_week <- rev_6_8_hb %>%
-  filter(substr(rev_6_8_hb$time_period_eligible, 1, 3)=="W/B") %>%
-  rename("WeekBeginning" = "time_period_eligible")%>%
-  #week_filter()%>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(WeekBeginning, HB, HBQF, PercentCoverage10Weeks, Coverage10Weeks,
-         PercentCoverage22Weeks, Coverage22Weeks, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
-  mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%Y")) %>%
-  mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
-  arrange(WeekBeginning, HB)
-
-#create OD csv file 1
-write_csv(rev_6_8_hb_week, glue("{childhealth_filepath}/{review_6_8_dat}_hb_weekly_{date}.csv"), na = "")
-
-#monthly
-rev_6_8_hb_monthly <- rev_6_8_hb %>%
-  filter(substr(rev_6_8_hb$time_period_eligible, 1, 3)!="W/B") %>%
-  filter(time_period_eligible != "2019")%>%
-  rename("PeriodEligible" = "time_period_eligible")%>%
-  #month_filter()%>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(PeriodEligible, HB, HBQF, PercentCoverage10Weeks, Coverage10Weeks,
-         PercentCoverage22Weeks, Coverage22Weeks, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(PeriodEligible = glue("01 ", "{PeriodEligible}"))%>%
-  mutate(PeriodEligible = dmy(PeriodEligible))%>%
-  mutate(PeriodEligible = strftime(PeriodEligible, format = "%Y%m"))%>%
-  arrange(PeriodEligible, HB)
-
-#create OD csv file 2
-write_csv(rev_6_8_hb_monthly, glue("{childhealth_filepath}/{review_6_8_dat}_hb_monthly_{date}.csv"), na = "")
-
-
-###HSCP files
-rev_6_8_hscp <- rev_6_8 %>%
-  #filter for hscps
-  filter(area_name %in% hscp_codes$area_name) %>%
-  rename("HSCP" = "Code")%>%
-  mutate(HSCP = if_else(
-    area_name == "Argyll and Bute", "S37000004",
-    if_else(area_name == "Clackmannanshire and Stirling", "S37000005",
-            if_else(area_name == "Dumfries and Galloway", "S37000006",
-                    if_else(area_name == "Perth and Kinross", "S37000033", HSCP)))
-  ))
-
-#Weekly
-rev_6_8_hscp_weekly <- rev_6_8_hscp %>%
-  filter(substr(rev_6_8_hscp$time_period_eligible, 1, 3)=="W/B") %>%
-  rename("WeekBeginning" = "time_period_eligible")%>%
-  #rename, add qualifiers
-  select(WeekBeginning, HSCP, PercentCoverage10Weeks, Coverage10Weeks,
-         PercentCoverage22Weeks, Coverage22Weeks, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
-  mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%Y")) %>%
-  mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
-  arrange(WeekBeginning, HSCP)
-
-#create OD csv file 3
-write_csv(rev_6_8_hscp_weekly, glue("{childhealth_filepath}/{review_6_8_dat}_hscp_weekly_{date}.csv"), na = "")
-
-#monthly
-rev_6_8_hscp_monthly <- rev_6_8_hscp %>%
-  filter(substr(rev_6_8_hscp$time_period_eligible, 1, 3)!="W/B") %>%
-  filter(time_period_eligible != "2019")%>%
-  rename("PeriodEligible" = "time_period_eligible")%>%
-  #month_filter()%>%
-  #rename, add qualifiers
-  select(PeriodEligible, HSCP, PercentCoverage10Weeks, Coverage10Weeks,
-         PercentCoverage22Weeks, Coverage22Weeks, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(PeriodEligible = glue("01 ", "{PeriodEligible}"))%>%
-  mutate(PeriodEligible = dmy(PeriodEligible))%>%
-  mutate(PeriodEligible = strftime(PeriodEligible, format = "%Y%m"))%>%
-  arrange(PeriodEligible, HSCP)
-
-#create OD csv file 4
-write_csv(rev_6_8_hscp_monthly, glue("{childhealth_filepath}/{review_6_8_dat}_hscp_monthly_{date}.csv"), na = "")
+format_ch_review(review_6_8, var_cov = c("PercentCoverage10Weeks", "Coverage10Weeks",
+                                                 "PercentCoverage22Weeks", "Coverage22Weeks"), 
+                         filename = review_6_8_dat, time_var = time_period_eligible)
 
 
 ### create 13-15 months review files (By week, By Month, By HB, By HSCP)
 
 #general formatting
 
-rev_13_15 <- review_13_15 %>%
+review_13_15 <- review_13_15 %>%
   rename("PercentCoverage14Months" = "coverage_14months_percent",
          "Coverage14Months" = "coverage_14months_num",
          "PercentCoverage17Months" = "coverage_17months_percent",
@@ -913,104 +933,16 @@ rev_13_15 <- review_13_15 %>%
          "TotalNumberChildren" = "denominator")%>%
   mutate_if(is.factor, as.character)
 
-###HB files
-
-rev_13_15_hb <- rev_13_15 %>%
-  #filter for hb and scotland
-  filter(area_name %in% c(hb_codes$area_name, "Scotland", "NHS Ayrshire & Arran",
-                          "NHS Dumfries & Galloway", "NHS Greater Glasgow & Clyde")) %>%
-  rename("HB" = "Code")
-
-#Weekly
-rev_13_15_hb_week <- rev_13_15_hb %>%
-  filter(substr(rev_13_15_hb$time_period_eligible, 1, 3)=="W/B") %>%
-  rename("WeekBeginning" = "time_period_eligible")%>%
-  #week_filter()%>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(WeekBeginning, HB, HBQF, PercentCoverage14Months, Coverage14Months,
-         PercentCoverage17Months, Coverage17Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
-  mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%Y")) %>%
-  mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
-  arrange(WeekBeginning, HB)
-
-#create OD csv file 1
-write_csv(rev_13_15_hb_week, glue("{childhealth_filepath}/{review_13_15_dat}_hb_weekly_{date}.csv"), na = "")
-
-#monthly
-rev_13_15_hb_monthly <- rev_13_15_hb %>%
-  filter(substr(rev_13_15_hb$time_period_eligible, 1, 3)!="W/B") %>%
-  filter(time_period_eligible != "2019")%>%
-  rename("PeriodEligible" = "time_period_eligible")%>%
-  #month_filter()%>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(PeriodEligible, HB, HBQF, PercentCoverage14Months, Coverage14Months,
-         PercentCoverage17Months, Coverage17Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(PeriodEligible = glue("01 ", "{PeriodEligible}"))%>%
-  mutate(PeriodEligible = dmy(PeriodEligible))%>%
-  mutate(PeriodEligible = strftime(PeriodEligible, format = "%Y%m"))%>%
-  arrange(PeriodEligible, HB)
-
-#create OD csv file 2
-write_csv(rev_13_15_hb_monthly, glue("{childhealth_filepath}/{review_13_15_dat}_hb_monthly_{date}.csv"), na = "")
-
-
-###HSCP files
-rev_13_15_hscp <- rev_13_15 %>%
-  #filter for hscps
-  filter(area_name %in% hscp_codes$area_name) %>%
-  rename("HSCP" = "Code")%>%
-  mutate(HSCP = if_else(
-    area_name == "Argyll and Bute", "S37000004",
-    if_else(area_name == "Clackmannanshire and Stirling", "S37000005",
-            if_else(area_name == "Dumfries and Galloway", "S37000006",
-                    if_else(area_name == "Perth and Kinross", "S37000033", HSCP)))
-  ))
-
-#Weekly
-rev_13_15_hscp_weekly <- rev_13_15_hscp %>%
-  filter(substr(rev_13_15_hscp$time_period_eligible, 1, 3)=="W/B") %>%
-  rename("WeekBeginning" = "time_period_eligible")%>%
-  #rename, add qualifiers
-  select(WeekBeginning, HSCP, PercentCoverage14Months, Coverage14Months,
-         PercentCoverage17Months, Coverage17Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
-  mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%Y")) %>%
-  mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
-  arrange(WeekBeginning, HSCP)
-
-#create OD csv file 3
-write_csv(rev_13_15_hscp_weekly, glue("{childhealth_filepath}/{review_13_15_dat}_hscp_weekly_{date}.csv"), na = "")
-
-#monthly
-rev_13_15_hscp_monthly <- rev_13_15_hscp %>%
-  filter(substr(rev_13_15_hscp$time_period_eligible, 1, 3)!="W/B") %>%
-  filter(time_period_eligible != "2019")%>%
-  rename("PeriodEligible" = "time_period_eligible")%>%
-  #month_filter()%>%
-  #rename, add qualifiers
-  select(PeriodEligible, HSCP, PercentCoverage14Months, Coverage14Months,
-         PercentCoverage17Months, Coverage17Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(PeriodEligible = glue("01 ", "{PeriodEligible}"))%>%
-  mutate(PeriodEligible = dmy(PeriodEligible))%>%
-  mutate(PeriodEligible = strftime(PeriodEligible, format = "%Y%m"))%>%
-  arrange(PeriodEligible, HSCP)
-
-#create OD csv file 4
-write_csv(rev_13_15_hscp_monthly, glue("{childhealth_filepath}/{review_13_15_dat}_hscp_monthly_{date}.csv"), na = "")
+format_ch_review(review_13_15, var_cov = c("PercentCoverage14Months", "Coverage14Months",
+                                                   "PercentCoverage17Months", "Coverage17Months"), 
+                         filename = review_13_15_dat, time_var = time_period_eligible)
 
 
 ### create 27-30 months review files (By week, By Month, By HB, By HSCP)
 
 #general formatting
 
-rev_27_30 <- review_27_30 %>%
+review_27_30 <- review_27_30 %>%
   rename("PercentCoverage28Months" = "coverage_28months_percent",
          "Coverage28Months" = "coverage_28months_num",
          "PercentCoverage31Months" = "coverage_31months_percent",
@@ -1020,104 +952,15 @@ rev_27_30 <- review_27_30 %>%
          "TotalNumberChildren" = "denominator") %>%
   mutate_if(is.factor, as.character)
 
-###HB files
-
-rev_27_30_hb <- rev_27_30 %>%
-  #filter for hb and scotland
-  filter(area_name %in% c(hb_codes$area_name, "Scotland", "NHS Ayrshire & Arran",
-                          "NHS Dumfries & Galloway", "NHS Greater Glasgow & Clyde")) %>%
-  rename("HB" = "Code")
-
-#Weekly
-rev_27_30_hb_week <- rev_27_30_hb %>%
-  filter(substr(rev_27_30_hb$time_period_eligible, 1, 3)=="W/B") %>%
-  rename("WeekBeginning" = "time_period_eligible")%>%
-  #week_filter()%>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(WeekBeginning, HB, HBQF, PercentCoverage28Months, Coverage28Months,
-         PercentCoverage31Months, Coverage31Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
-  mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%Y")) %>%
-  mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
-  arrange(WeekBeginning, HB)
-
-#create OD csv file 1
-write_csv(rev_27_30_hb_week, glue("{childhealth_filepath}/{review_27_30_dat}_hb_weekly_{date}.csv"), na = "")
-
-#monthly
-rev_27_30_hb_monthly <- rev_27_30_hb %>%
-  filter(substr(rev_27_30_hb$time_period_eligible, 1, 3)!="W/B") %>%
-  filter(time_period_eligible != "2019")%>%
-  rename("PeriodEligible" = "time_period_eligible")%>%
-  #month_filter()%>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(PeriodEligible, HB, HBQF, PercentCoverage28Months, Coverage28Months,
-         PercentCoverage31Months, Coverage31Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(PeriodEligible = glue("01 ", "{PeriodEligible}"))%>%
-  mutate(PeriodEligible = dmy(PeriodEligible))%>%
-  mutate(PeriodEligible = strftime(PeriodEligible, format = "%Y%m"))%>%
-  arrange(PeriodEligible, HB)
-
-#create OD csv file 2
-write_csv(rev_27_30_hb_monthly, glue("{childhealth_filepath}/{review_27_30_dat}_hb_monthly_{date}.csv"), na = "")
-
-
-###HSCP files
-rev_27_30_hscp <- rev_27_30 %>%
-  #filter for hscps
-  filter(area_name %in% hscp_codes$area_name) %>%
-  rename("HSCP" = "Code")%>%
-  mutate(HSCP = if_else(
-    area_name == "Argyll and Bute", "S37000004",
-    if_else(area_name == "Clackmannanshire and Stirling", "S37000005",
-            if_else(area_name == "Dumfries and Galloway", "S37000006",
-                    if_else(area_name == "Perth and Kinross", "S37000033", HSCP)))
-  ))
-
-#Weekly
-rev_27_30_hscp_weekly <- rev_27_30_hscp %>%
-  filter(substr(rev_27_30_hscp$time_period_eligible, 1, 3)=="W/B") %>%
-  rename("WeekBeginning" = "time_period_eligible")%>%
-  #rename, add qualifiers
-  select(WeekBeginning, HSCP, PercentCoverage28Months, Coverage28Months,
-         PercentCoverage31Months, Coverage31Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
-  mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%Y")) %>%
-  mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
-  arrange(WeekBeginning, HSCP)
-
-#create OD csv file 3
-write_csv(rev_27_30_hscp_weekly, glue("{childhealth_filepath}/{review_27_30_dat}_hscp_weekly_{date}.csv"), na = "")
-
-#monthly
-rev_27_30_hscp_monthly <- rev_27_30_hscp %>%
-  filter(substr(rev_27_30_hscp$time_period_eligible, 1, 3)!="W/B") %>%
-  filter(time_period_eligible != "2019")%>%
-  rename("PeriodEligible" = "time_period_eligible")%>%
-  #month_filter()%>%
-  #rename, add qualifiers
-  select(PeriodEligible, HSCP, PercentCoverage28Months, Coverage28Months,
-         PercentCoverage31Months, Coverage31Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(PeriodEligible = glue("01 ", "{PeriodEligible}"))%>%
-  mutate(PeriodEligible = dmy(PeriodEligible))%>%
-  mutate(PeriodEligible = strftime(PeriodEligible, format = "%Y%m"))%>%
-  arrange(PeriodEligible, HSCP)
-
-#create OD csv file 2
-write_csv(rev_27_30_hscp_monthly, glue("{childhealth_filepath}/{review_27_30_dat}_hscp_monthly_{date}.csv"), na = "")
-
+format_ch_review(review_27_30, var_cov = c("PercentCoverage28Months", "Coverage28Months",
+                                                   "PercentCoverage31Months", "Coverage31Months"), 
+                         filename = review_27_30_dat, time_var = time_period_eligible)
 
 ### create 4-5 year review files (By week, By Month, By HB, By HSCP)
 
 #general formatting
 
-rev_4_5 <- review_4_5 %>%
+review_4_5 <- review_4_5 %>%
   rename("PercentCoverage49Months" = "coverage_49months_percent",
          "Coverage49Months" = "coverage_49months_num",
          "PercentCoverage52Months" = "coverage_52months_percent",
@@ -1127,99 +970,9 @@ rev_4_5 <- review_4_5 %>%
          "TotalNumberChildren" = "denominator") %>%
   mutate_if(is.factor, as.character)
 
-###HB files
-
-rev_4_5_hb <- rev_4_5 %>%
-  #filter for hb and scotland
-  filter(area_name %in% c(hb_codes$area_name, "Scotland", "NHS Ayrshire & Arran",
-                          "NHS Dumfries & Galloway", "NHS Greater Glasgow & Clyde")) %>%
-  rename("HB" = "Code")
-
-#Weekly
-rev_4_5_hb_week <- rev_4_5_hb %>%
-  filter(substr(rev_4_5_hb$time_period_eligible, 1, 3)=="W/B") %>%
-  rename("WeekBeginning" = "time_period_eligible")%>%
-  #week_filter()%>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(WeekBeginning, HB, HBQF, PercentCoverage49Months, Coverage49Months,
-         PercentCoverage52Months, Coverage52Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
-  mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%Y")) %>%
-  mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
-  arrange(WeekBeginning, HB)
-
-#create OD csv file 1
-write_csv(rev_4_5_hb_week, glue("{childhealth_filepath}/{review_4_5_dat}_hb_weekly_{date}.csv"), na = "")
-
-#monthly
-rev_4_5_hb_monthly <- rev_4_5_hb %>%
-  filter(substr(rev_4_5_hb$time_period_eligible, 1, 3)!="W/B") %>%
-  filter(time_period_eligible != "2019")%>%
-  rename("PeriodEligible" = "time_period_eligible")%>%
-  #month_filter()%>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(PeriodEligible, HB, HBQF, PercentCoverage49Months, Coverage49Months,
-         PercentCoverage52Months, Coverage52Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(PeriodEligible = glue("01 ", "{PeriodEligible}"))%>%
-  mutate(PeriodEligible = dmy(PeriodEligible))%>%
-  mutate(PeriodEligible = strftime(PeriodEligible, format = "%Y%m"))%>%
-  arrange(PeriodEligible, HB)
-
-#create OD csv file 2
-write_csv(rev_4_5_hb_monthly, glue("{childhealth_filepath}/{review_4_5_dat}_hb_monthly_{date}.csv"), na = "")
-
-
-###HSCP files
-rev_4_5_hscp <- rev_4_5 %>%
-  #filter for hscps
-  filter(area_name %in% hscp_codes$area_name) %>%
-  rename("HSCP" = "Code")%>%
-  mutate(HSCP = if_else(
-    area_name == "Argyll and Bute", "S37000004",
-    if_else(area_name == "Clackmannanshire and Stirling", "S37000005",
-            if_else(area_name == "Dumfries and Galloway", "S37000006",
-                    if_else(area_name == "Perth and Kinross", "S37000033", HSCP)))
-  ))
-
-#Weekly
-rev_4_5_hscp_weekly <- rev_4_5_hscp %>%
-  filter(substr(rev_4_5_hscp$time_period_eligible, 1, 3)=="W/B") %>%
-  rename("WeekBeginning" = "time_period_eligible")%>%
-  #rename, add qualifiers
-  select(WeekBeginning, HSCP, PercentCoverage49Months, Coverage49Months,
-         PercentCoverage52Months, Coverage52Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(WeekBeginning = substr(WeekBeginning, 4, nchar(WeekBeginning)))%>%
-  mutate(WeekBeginning = as.Date(WeekBeginning, format = "%d-%b-%Y")) %>%
-  mutate(WeekBeginning = strftime(WeekBeginning, format = "%Y%m%d"))%>%
-  arrange(WeekBeginning, HSCP)
-
-#create OD csv file 3
-write_csv(rev_4_5_hscp_weekly, glue("{childhealth_filepath}/{review_4_5_dat}_hscp_weekly_{date}.csv"), na = "")
-
-#monthly
-rev_4_5_hscp_monthly <- rev_4_5_hscp %>%
-  filter(substr(rev_4_5_hscp$time_period_eligible, 1, 3)!="W/B") %>%
-  filter(time_period_eligible != "2019")%>%
-  rename("PeriodEligible" = "time_period_eligible")%>%
-  #month_filter()%>%
-  #rename, add qualifiers
-  select(PeriodEligible, HSCP, PercentCoverage49Months, Coverage49Months,
-         PercentCoverage52Months, Coverage52Months, PercentTotalCoverage,
-         TotalCoverage, TotalNumberChildren)%>%
-  mutate(PeriodEligible = glue("01 ", "{PeriodEligible}"))%>%
-  mutate(PeriodEligible = dmy(PeriodEligible))%>%
-  mutate(PeriodEligible = strftime(PeriodEligible, format = "%Y%m"))%>%
-  arrange(PeriodEligible, HSCP)
-
-#create OD csv file 4
-write_csv(rev_4_5_hscp_monthly, glue("{childhealth_filepath}/{review_4_5_dat}_hscp_monthly_{date}.csv"), na = "")
-
-
+format_ch_review(review_4_5, var_cov = c("PercentCoverage49Months", "Coverage49Months",
+                                                 "PercentCoverage52Months", "Coverage52Months"), 
+                         filename = review_4_5_dat, time_var = time_period_eligible)
 
 ### Create child development review resources
 
@@ -1233,43 +986,10 @@ child_dev <- child_dev %>%
          "Review" = "review")%>%
   mutate(Month = strftime(Month, format = "%Y%m"))
 
-###HB file
-
-child_dev_hb <- child_dev %>%
-  #filter for hb and scotland
-  filter(area_name %in% c(hb_codes$area_name, "Scotland", "NHS Ayrshire & Arran",
-                          "NHS Dumfries & Galloway", "NHS Greater Glasgow & Clyde")) %>%
-  rename("HB" = "Code")%>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(Month, HB, HBQF, Review, NumberReviews, MeaningfulReviews, PercentMeaningful,
-         Concerns, PercentConcerns)%>%
-  arrange(Month, HB, Review)
-
-#create OD csv file 1
-write_csv(child_dev_hb, glue("{childhealth_filepath}/{child_dev_dat}_hb_{date}.csv"), na = "")
-
-
-###HSCP file
-child_dev_hscp <- child_dev %>%
-  #filter for hscps
-  filter(area_name %in% hscp_codes$area_name) %>%
-  rename("HSCP" = "Code")%>%
-  mutate(HSCP = if_else(
-    area_name == "Argyll and Bute", "S37000004",
-    if_else(area_name == "Clackmannanshire and Stirling", "S37000005",
-            if_else(area_name == "Dumfries and Galloway", "S37000006",
-                    if_else(area_name == "Perth and Kinross", "S37000033", HSCP)))
-  ))%>%
-  #rename, add qualifiers
-  select(Month, HSCP, Review, NumberReviews, MeaningfulReviews, PercentMeaningful,
-         Concerns, PercentConcerns)%>%
-  arrange(Month, HSCP, Review)
-
-#create OD csv file 3
-write_csv(child_dev_hscp, glue("{childhealth_filepath}/{child_dev_dat}_hscp_{date}.csv"), na = "")
-
-
+format_ch_review(child_dev, var_cov = c("NumberReviews", "MeaningfulReviews",
+                                                "PercentMeaningful", "Concerns", "PercentConcerns",
+                                                "Review"), filename = child_dev_dat, review = NULL,
+                         weekly = F, time_var = Month, time_name = Month, review_var = NULL)
 
 ##############################################.
 #11##Create Cancer OD Resources----
@@ -1292,7 +1012,17 @@ cancer <- cancer %>%
          "PercentVariation" = "Variation (%)",
          "WeekEnding" = "Week ending",
          "Area_name" = "Area name")%>%
-  mutate(WeekEnding = strftime(WeekEnding, format = "%Y%m%d"))
+  mutate(WeekEnding = strftime(WeekEnding, format = "%Y%m%d"))%>%
+  #rename, add qualifiers
+  mutate(HBQF = if_else(Code == "S92000003", "d", "")) %>%
+  mutate(CancerTypeQF = if_else(CancerType == "All Cancers", "d", "")) %>%
+  mutate(SexQF = if_else(Sex == "All Persons", "d", "")) %>%
+  mutate(DifferenceQF = if_else(Difference == "", "z", "")) %>%
+  mutate(PercentVariationQF = if_else(PercentVariation == "", "z", "")) %>%
+  select(WeekEnding, Area_name, Code , HBQF, Sex, SexQF, CancerType, CancerTypeQF,
+         IndividualPathologies2019, IndividualPathologies2020, Difference, DifferenceQF, 
+         PercentVariation, PercentVariationQF)%>%
+  arrange(WeekEnding, Code, Sex, CancerType)
 
 #remove NA-s
 cancer[is.na(cancer)] <- ""
@@ -1304,16 +1034,7 @@ cancer_hb <- cancer %>%
   filter(Area_name %in% c(hb_codes$area_name, "Scotland", "NHS Ayrshire & Arran",
                           "NHS Dumfries & Galloway", "NHS Greater Glasgow & Clyde")) %>%
   rename("HB" = "Code") %>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  mutate(CancerTypeQF = if_else(CancerType == "All Cancers", "d", "")) %>%
-  mutate(SexQF = if_else(Sex == "All Persons", "d", "")) %>%
-  mutate(DifferenceQF = if_else(Difference == "", "z", "")) %>%
-  mutate(PercentVariationQF = if_else(PercentVariation == "", "z", "")) %>%
-  select(WeekEnding, HB, HBQF, Sex, SexQF, CancerType, CancerTypeQF,
-         IndividualPathologies2019, IndividualPathologies2020, Difference, DifferenceQF, 
-         PercentVariation, PercentVariationQF)%>%
-  arrange(WeekEnding, HB, Sex, CancerType)
+  select(-Area_name)
 
 #create OD csv file 1
 write_csv(cancer_hb, glue("{cancer_filepath}/{cancer_dat}_hb__{date}.csv"), na = "")
@@ -1325,14 +1046,7 @@ cancer_cnr <- cancer %>%
   #filter for cnr
   filter(Area_name %in% c("NCA", "SCAN", "WOSCAN")) %>%
   rename("Region" = "Area_name") %>%
-  #rename, add qualifiers
-  mutate(CancerTypeQF = if_else(CancerType == "All Cancers", "d", "")) %>%
-  mutate(SexQF = if_else(Sex == "All Persons", "d", "")) %>%
-  mutate(DifferenceQF = if_else(Difference == "", "z", "")) %>%
-  mutate(PercentVariationQF = if_else(PercentVariation == "", "z", "")) %>%
-  select(WeekEnding, Region, Sex, SexQF, CancerType, CancerTypeQF,
-         IndividualPathologies2019, IndividualPathologies2020, Difference, DifferenceQF, 
-         PercentVariation, PercentVariationQF)%>%
+  select(-HBQF, -Code) %>%
   arrange(WeekEnding, Region, Sex, CancerType)
 
 #create OD csv file 2
@@ -1344,15 +1058,7 @@ cancer_scot <- cancer %>%
   #filter for Scotland
   filter(Area_name == "Scotland") %>%
   rename("Country" = "Code") %>%
-  #rename, add qualifiers
-  mutate(CancerTypeQF = if_else(CancerType == "All Cancers", "d", "")) %>%
-  mutate(SexQF = if_else(Sex == "All Persons", "d", "")) %>%
-  mutate(DifferenceQF = if_else(Difference == "", "z", "")) %>%
-  mutate(PercentVariationQF = if_else(PercentVariation == "", "z", "")) %>%
-  select(WeekEnding, Country, Sex, SexQF, CancerType, CancerTypeQF,
-         IndividualPathologies2019, IndividualPathologies2020, Difference, DifferenceQF, 
-         PercentVariation, PercentVariationQF)%>%
-  arrange(WeekEnding, Sex, CancerType)
+  select(-HBQF, -Area_name)
 
 #create OD csv file 3
 write_csv(cancer_scot, glue("{cancer_filepath}/{cancer_dat}_scot__{date}.csv"), na = "")
@@ -1363,22 +1069,11 @@ write_csv(cancer_scot, glue("{cancer_filepath}/{cancer_dat}_scot__{date}.csv"), 
 #12##Create Breastfeeding OD Resources----
 ##############################################.
 
-breast_data <- "breastfeeding_data"
-
-#read in data
-breast_dat <- read_csv(glue("{breastfeeding_filepath}/{breast_data}.csv"))
-
 # remove HSCP tag from Area_name and fix geo names discrepancies
 
 breast_dat <- breast_dat %>%
   mutate(Area_name = if_else(substr(breast_dat$Area_name, (nchar(Area_name)-3), nchar(Area_name))== "HSCP",
-                             substr(breast_dat$Area_name, 1, (nchar(Area_name) -5)), Area_name)) %>%
-  mutate(Area_name = recode(Area_name, 
-                            "Perth and Kinross" = "Perth & Kinross",
-                            "Dumfries and Galloway" = "Dumfries & Galloway",
-                            "NHS Clackmannanshire and Stirling" = "Clackmannanshire & Stirling",
-                            "Argyll and Bute" = "Argyll & Bute"))
-
+                             substr(breast_dat$Area_name, 1, (nchar(Area_name) -5)), Area_name))
 
 #add geo codes to source data
 breast_dat <- left_join(breast_dat, geo_codes, by = c("Area_name" = "area_name"))
@@ -1394,47 +1089,16 @@ breast_dat <- breast_dat %>%
          "BreastfeedingOverall" = "Overall_breastfeeding",
          "PcBreastfeedingOverall" = "% Overall breastfeeding",
          "BreastfeedingEver" = "Ever_breastfeeding",
-         "PcrBreastfeedingEver" = "% Ever breastfeeding")%>%
+         "PcBreastfeedingEver" = "% Ever breastfeeding",
+         "area_name" = "Area_name")%>%
   mutate(Month = strftime(Month, format = "%Y%m"))
 
-#remove NA-s
-#cancer[is.na(cancer)] <- ""
+format_ch_review(breast_dat, var_cov = c("Review", "NumberReviews", "ValidReviews", 
+                                         "BreastfeedingExclusively", "PcBreastfeedingExclusively",
+                                         "BreastfeedingOverall", "PcBreastfeedingOverall", 
+                                         "BreastfeedingEver", "PcBreastfeedingEver"), filename = breast_data, review = NULL,
+                 weekly = F, time_var = Month, time_name = Month, filepath = breastfeeding_filepath, review_var = NULL)
 
-###HB file
-
-breast_hb <- breast_dat %>%
-  #filter for hb and scotland
-  filter(Area_name %in% c(hb_codes$area_name, "Scotland", "NHS Ayrshire & Arran",
-                          "NHS Dumfries & Galloway", "NHS Greater Glasgow & Clyde")) %>%
-  rename("HB" = "Code") %>%
-  #rename, add qualifiers
-  mutate(HBQF = if_else(HB == "S92000003", "d", "")) %>%
-  select(Month, HB, HBQF, Review, NumberReviews, ValidReviews, 
-         BreastfeedingExclusively, PcBreastfeedingExclusively,
-         BreastfeedingOverall, PcBreastfeedingOverall, 
-         BreastfeedingEver, PcBreastfeedingEver)%>%
-  arrange(Month, HB, Review)
-
-#create OD csv file 1
-write_csv(breast_hb, glue("{breastfeeding_filepath}/{breast_data}_hb__{date}.csv"), na = "")
-
-
-###hscp file
-
-breast_hscp <- breast_dat %>%
-  #filter for hscp
-  filter(Area_name %in% c(hscp_codes$area_name, "Argyll & Bute", "Perth & Kinross",
-                          "Dumfries & Galloway", "Clackmannanshire & Stirling")) %>%
-  rename("HSCP" = "Code") %>%
-  #rename, add qualifiers
-  select(Month, HSCP, Review, NumberReviews, ValidReviews, 
-         BreastfeedingExclusively, PcBreastfeedingExclusively,
-         BreastfeedingOverall, PcBreastfeedingOverall, 
-         BreastfeedingEver, PcBreastfeedingEver)%>%
-  arrange(Month, HSCP, Review)
-
-#create OD csv file 2
-write_csv(breast_hscp, glue("{breastfeeding_filepath}/{breast_data}_hscp__{date}.csv"), na = "")
 
 ##############################################.
 #13##Create Perinatal OD Resources----
