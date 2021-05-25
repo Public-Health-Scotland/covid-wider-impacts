@@ -104,13 +104,16 @@ output$dates_ui_immun <- renderUI({
 })
 
 # Reactive dataset for flextable filter on geographical area, dose, and time period
-filter_table_data_immun <- function(dataset, dose){
+filter_table_data_immun <- function(dataset){
   
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_immun
   
   dataset %>% filter(area_name == input$geoname_immun & 
-                       str_detect(immunisation,dose) &
+                       str_detect(immunisation, #filter immunisation scurve data on dose
+                                  substr(input$measure_select_immun, 
+                                         nchar(input$measure_select_immun), 
+                                         nchar(input$measure_select_immun))),
                        # we don't want this function to re-execute every time dates_immun changes, so isolate()
                        time_period_eligible %in% isolate(input$dates_immun))
 }
@@ -118,53 +121,12 @@ filter_table_data_immun <- function(dataset, dose){
 ###############################################.
 ## Reactive data ----
 ###############################################.
-alldose_filt <- reactive({
-
-  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
-  input$btn_update_time_immun
-  
-  if (substr(input$measure_select_immun, 1, 3) == "six") {
-    alldose <-  six_alldose
-  } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
-    alldose <-  mmr_alldose
-  }
-  
-  alldose %>% filter(area_name == input$geoname_immun & #filter to correct geography
-                      str_detect(immunisation, #filter immunisation scurve data on dose
-                                 substr(input$measure_select_immun, 
-                                        nchar(input$measure_select_immun), 
-                                        nchar(input$measure_select_immun))), 
-                      # filter to selected time periods, but don't re-execute each time input changes
-                      time_period_eligible %in% isolate(input$dates_immun))
-})
-
-
 six_alldose_filt <- reactive({
-  
-  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
-  input$btn_update_time_immun
-  
-  six_alldose %>% filter(area_name == input$geoname_immun & #filter to correct geography
-                           str_detect(immunisation, #filter immunisation scurve data on dose
-                                      substr(input$measure_select_immun, 
-                                             nchar(input$measure_select_immun), 
-                                             nchar(input$measure_select_immun))), 
-                         # filter to selected time periods, but don't re-execute each time input changes
-                         time_period_eligible %in% isolate(input$dates_immun))
+  filter_table_data_immun(six_alldose)
 })
 
 mmr_alldose_filt <- reactive({
-  
-  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
-  input$btn_update_time_immun
-  
-  mmr_alldose %>% filter(area_name == input$geoname_immun & #filter to correct geography
-                           str_detect(immunisation, #filter immunisation scurve data on dose
-                                      substr(input$measure_select_immun, 
-                                             nchar(input$measure_select_immun), 
-                                             nchar(input$measure_select_immun))), 
-                         # filter to selected time periods, but don't re-execute each time input changes
-                         time_period_eligible %in% isolate(input$dates_immun))
+   filter_table_data_immun(mmr_alldose)
 })
 
 ###############################################.
@@ -182,8 +144,7 @@ output$immun_scurve <- renderPlotly({
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
     scurve_data <-  mmr_alldose_filt()
   }
-  # scurve_data <- alldose_filt()
-  
+
   dose <- paste("dose", #extracting dose from input
                 substr(input$measure_select_immun, nchar(input$measure_select_immun),
                        nchar(input$measure_select_immun)))
@@ -261,11 +222,142 @@ output$immun_scurve <- renderPlotly({
 })
 
 #run function to generate data tables linked to s-curves  
-output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable,dose="dose 1", age_week = 8)})
-output$immun_6in1_table_dose2 <- renderUI({immune_table(sixtable, dose="dose 2", age_week = 12)})
-output$immun_6in1_table_dose3 <- renderUI({immune_table(sixtable, dose="dose 3", age_week = 16)})
-output$immun_mmr_table_dose1 <- renderUI({immune_table(mmrtable, dose="dose 1", age_week = 1)}) #age week 1 doesn't really make sense as given to children at 1 year
-output$immun_mmr_table_dose2 <- renderUI({immune_table(mmrtable, dose="dose 2", age_week = 3)}) #age week 3 doesn't really make sense as given to children at 3 years and 4 month
+output$immun_table <- renderUI({
+  if (substr(input$measure_select_immun, 1, 3) == "six") {
+    dataset <-  six_datatable
+  } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
+    dataset <-  mmr_datatable
+  }
+  
+  dose <- paste("dose", #extracting dose from input
+                substr(input$measure_select_immun, nchar(input$measure_select_immun),
+                       nchar(input$measure_select_immun)))
+  
+  table_data <- filter_table_data_immun(dataset)
+  
+  imm_type <- substr(unique(table_data$immunisation),1,3)
+  
+  # Age week starting for each dose
+  age_week <- case_when(imm_type == "six" & dose == "dose 1" ~ 8,
+                        imm_type == "six" & dose == "dose 2" ~ 12,
+                        imm_type == "six" & dose == "dose 3" ~ 16,
+                        imm_type == "mmr" & dose == "dose 1" ~ 1,
+                        imm_type == "mmr" & dose == "dose 2" ~ 3)
+  
+  #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
+  no_complete_row_six1 <- with(table_data, time_period_eligible == "JAN 2021" |
+                                 time_period_eligible == "FEB 2021")
+  no_complete_row_mmr <- with(table_data, substr(time_period_eligible,1,4) == "2020" |
+                                time_period_eligible == "JAN 2021" |
+                                time_period_eligible == "FEB 2021")
+  
+  if (age_week == 8) {
+    #Apply different column names and formatting according to which dataset selected
+    format_col <- c("denominator","uptake_12weeks_num","uptake_24weeks_num","uptake_tot_num")
+    
+    imm_table <- table_data %>%
+      select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_24weeks_num, 
+              uptake_24weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(uptake_12weeks_num="Children recorded as receiving their vaccine by 12 weeks of age",
+                        uptake_12weeks_percent="Children recorded as receiving their vaccine by 12 weeks of age",
+                        uptake_24weeks_num="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
+                        uptake_24weeks_percent="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)") %>%
+      # Italics and colour if not 24 weeks
+      color(i = no_complete_row_six1, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>% 
+      italic(i = no_complete_row_six1, j = c("uptake_24weeks_num", "uptake_24weeks_percent"))
+    age_unit <- "8 weeks" #text inserted into 
+    age_max <- "24 weeks" #test inserted into note #3 under summary table
+  } else if (age_week == 12) {
+    #Apply different column names and formatting according to which dataset selected
+    format_col <- c("denominator","uptake_16weeks_num","uptake_28weeks_num","uptake_tot_num")
+    
+    imm_table <- table_data %>%
+      select (time_period_eligible, denominator,uptake_16weeks_num,uptake_16weeks_percent,uptake_28weeks_num, 
+              uptake_28weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(uptake_16weeks_num="Children recorded as receiving their vaccine by 16 weeks of age",
+                        uptake_16weeks_percent="Children recorded as receiving their vaccine by 16 weeks of age ",
+                        uptake_28weeks_num="Children recorded as receiving their vaccine by 28 weeks of age (or younger if children have not reached 28 weeks of age by the date data was extracted for analysis)",
+                        uptake_28weeks_percent="Children recorded as receiving their vaccine by 28 weeks of age (or younger if children have not reached 28 weeks of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not 24 weeks
+      color(i = no_complete_row_six1, j = c("uptake_28weeks_num", "uptake_28weeks_percent"), color="#0033cc")  %>% 
+      italic(i = no_complete_row_six1, j = c("uptake_28weeks_num", "uptake_28weeks_percent")) 
+    age_unit <- "12 weeks"
+    age_max <- "28 weeks" #test inserted into note #3 under summary table
+  }else if (age_week == 16) {
+    #Apply different column names and formatting according to which dataset selected
+    format_col <- c("denominator","uptake_20weeks_num","uptake_32weeks_num","uptake_tot_num")
+    
+    imm_table <- table_data %>%
+      select (time_period_eligible, denominator,uptake_20weeks_num,uptake_20weeks_percent,uptake_32weeks_num, 
+              uptake_32weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(uptake_20weeks_num="Children recorded as receiving their vaccine by 20 weeks of age",
+                        uptake_20weeks_percent="Children recorded as receiving their vaccine by 20 weeks of age ",
+                        uptake_32weeks_num="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 32 weeks of age by the date data was extracted for analysis)",
+                        uptake_32weeks_percent="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 32 weeks of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not  weeks
+      color(i = no_complete_row_six1, j = c("uptake_32weeks_num", "uptake_32weeks_percent"), color="#0033cc")  %>% 
+      italic(i = no_complete_row_six1, j = c("uptake_32weeks_num", "uptake_32weeks_percent")) 
+    age_unit <- "16 weeks"
+    age_max <- "32 weeks" #test inserted into note #3 under summary table
+  }else if (age_week == 1) {
+    #Apply different column names and formatting according to which dataset selected
+    format_col <- c("denominator","uptake_13m_num","uptake_16m_num","uptake_tot_num")
+    
+    imm_table <- table_data %>%
+      select (time_period_eligible, denominator,uptake_13m_num,uptake_13m_percent,uptake_16m_num, 
+              uptake_16m_percent,uptake_tot_num,uptake_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(uptake_13m_num="Children recorded as receiving their vaccine by 13 months of age",
+                        uptake_13m_percent="Children recorded as receiving their vaccine by 13 months of age ",
+                        uptake_16m_num="Children recorded as receiving their vaccine by 16 months of age (or younger if children have not reached 16 months of age by the date data was extracted for analysis)",
+                        uptake_16m_percent="Children recorded as receiving their vaccine by 16 months of age (or younger if children have not reached 16 months of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not  weeks
+      color(i = no_complete_row_mmr, j = c("uptake_16m_num", "uptake_16m_percent"), color="#0033cc")  %>% 
+      italic(i = no_complete_row_mmr, j = c("uptake_16m_num", "uptake_16m_percent")) 
+    age_unit <- "12 months"
+    age_max <- "16 months" #test inserted into note #3 under summary table
+  }else if (age_week == 3) {
+    #Apply different column names and formatting according to which dataset selected
+    format_col <- c("denominator","uptake_3y5m_num","uptake_3y8m_num","uptake_tot_num")
+    
+    imm_table <- table_data %>%
+      select (time_period_eligible, denominator,uptake_3y5m_num,uptake_3y5m_percent,uptake_3y8m_num, 
+              uptake_3y8m_percent,uptake_tot_num,uptake_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(uptake_3y5m_num="Children recorded as receiving their vaccine by 3 years and 5 months of age",
+                        uptake_3y5m_percent="Children recorded as receiving their vaccine by 3 years and 5 months of age ",
+                        uptake_3y8m_num="Children recorded as receiving their vaccine by 3 years and 8 months of age (or younger if children have not reached 3 years and 8 months of age by the date data was extracted for analysis)",
+                        uptake_3y8m_percent="Children recorded as receiving their vaccine by 3 years and 8 months of age (or younger if children have not reached 3 years and 8 months of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not  weeks
+      color(i = no_complete_row_mmr, j = c("uptake_3y8m_num", "uptake_3y8m_percent"), color="#0033cc")  %>% 
+      italic(i = no_complete_row_mmr, j = c("uptake_3y8m_num", "uptake_3y8m_percent")) 
+    age_unit <- "3 years and 4 months"
+    age_max <- "3 years and 8 months" #test inserted into note #3 under summary tabl
+  }
+  
+  imm_table %>% 
+    set_header_labels(time_period_eligible= paste0("Children turning ", age_unit," in:"),
+                      denominator="Total number of children",
+                      uptake_tot_num=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")"),
+                      uptake_tot_percent=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")")) %>% 
+    footnote(i = 1, j = c(2,5),
+             value = as_paragraph(c(
+               "Cohort sizes are dependent on time periods, whether annual or monthly (4 or 5 weeks)",
+               paste0("Blue cells indicate cohorts that have not reached ", age_max," of age"))),
+             part = "header") %>%
+    merge_at(i = 1, j = 3:4, part = "header") %>%
+    merge_at(i = 1, j = 5:6, part = "header") %>%
+    merge_at(i = 1, j = 7:8, part = "header") %>%
+    add_header_row(values=c("","","N","%","N","%","N","%"), top = FALSE ) %>%
+    font(fontname="Helvetica", part = "all") %>%
+    colformat_num(j=format_col,big.mark = ",", digits=0) %>%
+    theme_box() %>%
+    autofit() %>%
+    htmltools_value()
+})
 
 #run function to generate SIMD bar charts relative changes (only available at scotland level)
 output$imm_6in1_simd_chan_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1",
@@ -350,7 +442,7 @@ output$immunisation_explorer <- renderUI({
             fluidRow(column(6,br(), br(),
                             withSpinner(plotlyOutput("immun_scurve")),
                             p(age_def)),
-                     column(6, uiOutput(s_table))),
+                     column(6, uiOutput("immun_table"))),
             fluidRow(column(12, renderUI(commentary_6in1))),
             if (input$geotype_immun == "Scotland"){
               tagList(fluidRow(column(6, h4(paste0(immune_simd_tot_title))),
@@ -371,21 +463,16 @@ output$immunisation_explorer <- renderUI({
   
   # Specify items to display in immunisation ui based on step 2 selection 
   if (input$measure_select_immun == "sixin_dose1") {
-    imm_layout(s_table = "immun_6in1_table_dose1", 
-               simd_tot_plot = "imm_6in1_simd_tot_dose1", simd_chan_plot = "imm_6in1_simd_chan_dose1")
+    imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose1", simd_chan_plot = "imm_6in1_simd_chan_dose1")
   }  else if (input$measure_select_immun == "sixin_dose2"){
-    imm_layout(s_table = "immun_6in1_table_dose2", 
-               simd_tot_plot = "imm_6in1_simd_tot_dose2", simd_chan_plot = "imm_6in1_simd_chan_dose2")
+    imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose2", simd_chan_plot = "imm_6in1_simd_chan_dose2")
   }  else if (input$measure_select_immun == "sixin_dose3"){
-    imm_layout(s_table = "immun_6in1_table_dose3", 
-               simd_tot_plot = "imm_6in1_simd_tot_dose3", simd_chan_plot = "imm_6in1_simd_chan_dose3")
+    imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose3", simd_chan_plot = "imm_6in1_simd_chan_dose3")
   }  else if (input$measure_select_immun == "mmr_dose1"){
-    imm_layout(s_table = "immun_mmr_table_dose1", 
-               simd_tot_plot = "imm_mmr_simd_tot_dose1", simd_chan_plot = "imm_mmr_simd_chan_dose1",
+    imm_layout(simd_tot_plot = "imm_mmr_simd_tot_dose1", simd_chan_plot = "imm_mmr_simd_chan_dose1",
                age_def = "12 months defined as 53 weeks")
   } else if (input$measure_select_immun == "mmr_dose2"){
-    imm_layout(s_table = "immun_mmr_table_dose2", 
-               simd_tot_plot = "imm_mmr_simd_tot_dose2", simd_chan_plot = "imm_mmr_simd_chan_dose2", 
+    imm_layout(simd_tot_plot = "imm_mmr_simd_tot_dose2", simd_chan_plot = "imm_mmr_simd_chan_dose2", 
                age_def = "3 year 4 months defined as 174 weeks")
   }
   
