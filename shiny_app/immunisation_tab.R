@@ -224,9 +224,9 @@ output$immun_scurve <- renderPlotly({
 #run function to generate data tables linked to s-curves  
 output$immun_table <- renderUI({
   if (substr(input$measure_select_immun, 1, 3) == "six") {
-    dataset <-  six_datatable
+    dataset <-  sixtable
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
-    dataset <-  mmr_datatable
+    dataset <-  mmrtable
   }
   
   dose <- paste("dose", #extracting dose from input
