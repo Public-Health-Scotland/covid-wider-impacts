@@ -118,18 +118,39 @@ filter_table_data_immun <- function(dataset, dose){
 ###############################################.
 ## Reactive data ----
 ###############################################.
-six_alldose_filt <- reactive({
+alldose_filt <- reactive({
 
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_immun
   
-  six_alldose %>% filter(area_name == input$geoname_immun & #filter to correct geography
+  if (substr(input$measure_select_immun, 1, 3) == "six") {
+    alldose <-  six_alldose
+  } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
+    alldose <-  mmr_alldose
+  }
+  
+  alldose %>% filter(area_name == input$geoname_immun & #filter to correct geography
                       str_detect(immunisation, #filter immunisation scurve data on dose
                                  substr(input$measure_select_immun, 
                                         nchar(input$measure_select_immun), 
                                         nchar(input$measure_select_immun))), 
                       # filter to selected time periods, but don't re-execute each time input changes
                       time_period_eligible %in% isolate(input$dates_immun))
+})
+
+
+six_alldose_filt <- reactive({
+  
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
+  six_alldose %>% filter(area_name == input$geoname_immun & #filter to correct geography
+                           str_detect(immunisation, #filter immunisation scurve data on dose
+                                      substr(input$measure_select_immun, 
+                                             nchar(input$measure_select_immun), 
+                                             nchar(input$measure_select_immun))), 
+                         # filter to selected time periods, but don't re-execute each time input changes
+                         time_period_eligible %in% isolate(input$dates_immun))
 })
 
 mmr_alldose_filt <- reactive({
@@ -152,8 +173,92 @@ mmr_alldose_filt <- reactive({
 
 # Creating plots for each dataset
 #run chart function to generate s curves  
-output$immun_6in1_scurve <- renderPlotly({plot_scurve(dataset=six_alldose_filt())})
-output$immun_mmr_scurve <- renderPlotly({plot_scurve(mmr_alldose_filt())})
+output$immun_scurve <- renderPlotly({
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
+  if (substr(input$measure_select_immun, 1, 3) == "six") {
+    scurve_data <-  six_alldose_filt()
+  } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
+    scurve_data <-  mmr_alldose_filt()
+  }
+  # scurve_data <- alldose_filt()
+  
+  dose <- paste("dose", #extracting dose from input
+                substr(input$measure_select_immun, nchar(input$measure_select_immun),
+                       nchar(input$measure_select_immun)))
+  
+  imm_type <- substr(unique(scurve_data$immunisation),1,3)
+  
+  # Age week starting for each dose
+  age_week <- case_when(imm_type == "six" & dose == "dose 1" ~ "8",
+                        imm_type == "six" & dose == "dose 2" ~ "12",
+                        imm_type == "six" & dose == "dose 3" ~ "16",
+                        imm_type == "mmr" & dose == "dose 1" ~ "1",
+                        imm_type == "mmr" & dose == "dose 2" ~ "3")
+  
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian"  && dataset == mmr_alldose && dose== "dose 2")
+  { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age. 
+                Data is available from the data download option.")
+  } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  { plot_nodata(height = 50)
+  } else {     
+    
+    # Create tooltip for scurve
+    tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
+    
+    #Modifying standard yaxis name applies to all curves
+    yaxis_plots[["title"]] <- "% of children who have received their vaccine"
+    yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
+    xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
+    
+    ## chart axis for all 6-in-1 scurves
+    if(imm_type == "six"){ # this doesn't seem like very efficient logic but it works
+      
+      xaxis_plots[["title"]] <- "Age of children in weeks"
+      xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
+      xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
+      xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) # To adjust x-axis min and max depending on which dose selected
+      
+      age_unit <- paste0(age_week, " weeks") #string for legend label
+    }
+    ##chart axis for MMR dose 1 scurve
+    else if(imm_type == "mmr" && dose== "dose 1" ){ #set chart parameters for mmr dose 1
+      
+      xaxis_plots[["title"]] <- "Age of children in months"
+      xaxis_plots[["tickvals"]] <- c(0, seq(343, 459, by = 29), 490) # xaxis days 343 (49 weeks) to 490 (70 weeks)
+      xaxis_plots[["ticktext"]] <- c(0, seq(11, 16, by = 1))  # xaxis labels 11 months (49 weeks) to 16 months (70 weeks)
+      xaxis_plots[["range"]] <- c((7*49),(7*70))  # To adjust x-axis min and max depending on which dose selected
+      
+      age_unit <- paste0("12 months") #string for legend label
+    }
+    
+    ##chart axis for MMR dose 2 scurve
+    else if(imm_type == "mmr" && dose== "dose 2" ){ #set chart parameters for mmr dose 2
+      
+      xaxis_plots[["title"]] <- "Age of children in years and months"
+      xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1306, by = 29), 1337) #xaxis 1190 days (170 week) to 1337 days (191 weeks)
+      xaxis_plots[["ticktext"]] <- c(0, seq(3.3,3.8 , by = 0.1))  # xaxis labels in years and months (works even though months are not decimals because we only show part of a year?)
+      xaxis_plots[["range"]] <- c((7*170),(7*191))  # To adjust x-axis min and max depending on which dose selected
+      
+      age_unit <- paste0("3y 4months") #string for legend label
+    }
+    
+    
+    #Creating time trend plot
+    plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
+      add_trace(type = 'scatter', mode = 'lines',
+                color = ~time_period_eligible, colors = pal_immun,
+                text= tooltip_scurve, hoverinfo="text") %>%
+      #Layout
+      layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(title=list(text=paste0("Children turning ", age_unit, " in:")),
+                           x = 100, y = 0.8, yanchor="top")) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }
+})
 
 #run function to generate data tables linked to s-curves  
 output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable,dose="dose 1", age_week = 8)})
@@ -238,12 +343,12 @@ output$immunisation_explorer <- renderUI({
   )
   
   # Function to create common layout to all immunisation charts
-  imm_layout <- function(s_plot, s_table, simd_tot_plot, simd_chan_plot, age_def = "") {
+  imm_layout <- function(s_table, simd_tot_plot, simd_chan_plot, age_def = "") {
     tagList(fluidRow(column(12, renderUI(intro_6in1),
                             h4(paste0(immune_title)),
                             p(immune_subtitle))),
             fluidRow(column(6,br(), br(),
-                            withSpinner(plotlyOutput(s_plot)),
+                            withSpinner(plotlyOutput("immun_scurve")),
                             p(age_def)),
                      column(6, uiOutput(s_table))),
             fluidRow(column(12, renderUI(commentary_6in1))),
@@ -266,20 +371,20 @@ output$immunisation_explorer <- renderUI({
   
   # Specify items to display in immunisation ui based on step 2 selection 
   if (input$measure_select_immun == "sixin_dose1") {
-    imm_layout(s_plot = "immun_6in1_scurve", s_table = "immun_6in1_table_dose1", 
+    imm_layout(s_table = "immun_6in1_table_dose1", 
                simd_tot_plot = "imm_6in1_simd_tot_dose1", simd_chan_plot = "imm_6in1_simd_chan_dose1")
   }  else if (input$measure_select_immun == "sixin_dose2"){
-    imm_layout(s_plot = "immun_6in1_scurve", s_table = "immun_6in1_table_dose2", 
+    imm_layout(s_table = "immun_6in1_table_dose2", 
                simd_tot_plot = "imm_6in1_simd_tot_dose2", simd_chan_plot = "imm_6in1_simd_chan_dose2")
   }  else if (input$measure_select_immun == "sixin_dose3"){
-    imm_layout(s_plot = "immun_6in1_scurve", s_table = "immun_6in1_table_dose3", 
+    imm_layout(s_table = "immun_6in1_table_dose3", 
                simd_tot_plot = "imm_6in1_simd_tot_dose3", simd_chan_plot = "imm_6in1_simd_chan_dose3")
   }  else if (input$measure_select_immun == "mmr_dose1"){
-    imm_layout(s_plot = "immun_mmr_scurve", s_table = "immun_mmr_table_dose1", 
+    imm_layout(s_table = "immun_mmr_table_dose1", 
                simd_tot_plot = "imm_mmr_simd_tot_dose1", simd_chan_plot = "imm_mmr_simd_chan_dose1",
                age_def = "12 months defined as 53 weeks")
   } else if (input$measure_select_immun == "mmr_dose2"){
-    imm_layout(s_plot = "immun_mmr_scurve", s_table = "immun_mmr_table_dose2", 
+    imm_layout(s_table = "immun_mmr_table_dose2", 
                simd_tot_plot = "imm_mmr_simd_tot_dose2", simd_chan_plot = "imm_mmr_simd_chan_dose2", 
                age_def = "3 year 4 months defined as 174 weeks")
   }
