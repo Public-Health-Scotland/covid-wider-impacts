@@ -448,12 +448,25 @@ filter_data <- function(dataset, area = T, op = F) {
 ##Immunisations-curve ----
 ## Function for drawing S-Curve charts used in immunisation tabs.
 
-plot_scurve <- function(dataset, age_week, dose) {
+plot_scurve <- function(dataset) {
  
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_immun
   
   scurve_data <- dataset
+  
+  dose <- paste("dose", #extracting dose from input
+                substr(input$measure_select_immun, nchar(input$measure_select_immun),
+                nchar(input$measure_select_immun)))
+  
+  imm_type <- substr(unique(scurve_data$immunisation),1,3)
+  
+  # Age week starting for each dose
+  age_week <- case_when(imm_type == "six" & dose == "dose 1" ~ "8",
+                        imm_type == "six" & dose == "dose 2" ~ "12",
+                        imm_type == "six" & dose == "dose 3" ~ "16",
+                        imm_type == "mmr" & dose == "dose 1" ~ "1",
+                        imm_type == "mmr" & dose == "dose 2" ~ "3")
 
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian"  && dataset == mmr_alldose && dose== "dose 2")
   { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age. 
@@ -465,16 +478,13 @@ plot_scurve <- function(dataset, age_week, dose) {
 # Create tooltip for scurve
 tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
 
-#if( any(c(six,six_dose2,six_dose3) %in% dataset)){ #original logic prior to data file change
-#if(dataset == six_alldose){ #throws up error which prevents mmr chart working
-
 #Modifying standard yaxis name applies to all curves
 yaxis_plots[["title"]] <- "% of children who have received their vaccine"
 yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
 xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
 
 ## chart axis for all 6-in-1 scurves
-if( any(c(six_alldose_filt()) %in% dataset)){ # this doesn't seem like very efficient logic but it works
+if(imm_type == "six"){ # this doesn't seem like very efficient logic but it works
   
   xaxis_plots[["title"]] <- "Age of children in weeks"
   xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
@@ -484,7 +494,7 @@ if( any(c(six_alldose_filt()) %in% dataset)){ # this doesn't seem like very effi
   age_unit <- paste0(age_week, " weeks") #string for legend label
 }
 ##chart axis for MMR dose 1 scurve
-else if(dataset == mmr_alldose_filt() && dose== "dose 1" ){ #set chart parameters for mmr dose 1
+else if(imm_type == "mmr" && dose== "dose 1" ){ #set chart parameters for mmr dose 1
 
   xaxis_plots[["title"]] <- "Age of children in months"
   xaxis_plots[["tickvals"]] <- c(0, seq(343, 459, by = 29), 490) # xaxis days 343 (49 weeks) to 490 (70 weeks)
@@ -495,7 +505,7 @@ else if(dataset == mmr_alldose_filt() && dose== "dose 1" ){ #set chart parameter
 }
 
 ##chart axis for MMR dose 2 scurve
-else if(dataset == mmr_alldose_filt() && dose== "dose 2" ){ #set chart parameters for mmr dose 2
+else if(imm_type == "mmr" && dose== "dose 2" ){ #set chart parameters for mmr dose 2
 
   xaxis_plots[["title"]] <- "Age of children in years and months"
   xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1306, by = 29), 1337) #xaxis 1190 days (170 week) to 1337 days (191 weeks)

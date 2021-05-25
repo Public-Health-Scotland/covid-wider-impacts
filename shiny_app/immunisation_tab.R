@@ -152,11 +152,8 @@ mmr_alldose_filt <- reactive({
 
 # Creating plots for each dataset
 #run chart function to generate s curves  
-output$immun_6in1_scurve_dose1 <- renderPlotly({plot_scurve(dataset=six_alldose_filt(), age_week = "8", dose= "dose 1")})
-output$immun_6in1_scurve_dose2 <- renderPlotly({plot_scurve(six_alldose_filt(), age_week = "12", dose="dose 2")})
-output$immun_6in1_scurve_dose3 <- renderPlotly({plot_scurve(six_alldose_filt(), age_week = "16", dose= "dose 3" )})
-output$immun_mmr_scurve_dose1 <- renderPlotly({plot_scurve(mmr_alldose_filt(), age_week = "1", dose= "dose 1" )})
-output$immun_mmr_scurve_dose2 <- renderPlotly({plot_scurve(mmr_alldose_filt(), age_week = "3", dose= "dose 2" )})
+output$immun_6in1_scurve <- renderPlotly({plot_scurve(dataset=six_alldose_filt())})
+output$immun_mmr_scurve <- renderPlotly({plot_scurve(mmr_alldose_filt())})
 
 #run function to generate data tables linked to s-curves  
 output$immun_6in1_table_dose1 <- renderUI({immune_table(sixtable,dose="dose 1", age_week = 8)})
@@ -269,20 +266,20 @@ output$immunisation_explorer <- renderUI({
   
   # Specify items to display in immunisation ui based on step 2 selection 
   if (input$measure_select_immun == "sixin_dose1") {
-    imm_layout(s_plot = "immun_6in1_scurve_dose1", s_table = "immun_6in1_table_dose1", 
+    imm_layout(s_plot = "immun_6in1_scurve", s_table = "immun_6in1_table_dose1", 
                simd_tot_plot = "imm_6in1_simd_tot_dose1", simd_chan_plot = "imm_6in1_simd_chan_dose1")
   }  else if (input$measure_select_immun == "sixin_dose2"){
-    imm_layout(s_plot = "immun_6in1_scurve_dose2", s_table = "immun_6in1_table_dose2", 
+    imm_layout(s_plot = "immun_6in1_scurve", s_table = "immun_6in1_table_dose2", 
                simd_tot_plot = "imm_6in1_simd_tot_dose2", simd_chan_plot = "imm_6in1_simd_chan_dose2")
   }  else if (input$measure_select_immun == "sixin_dose3"){
-    imm_layout(s_plot = "immun_6in1_scurve_dose3", s_table = "immun_6in1_table_dose3", 
+    imm_layout(s_plot = "immun_6in1_scurve", s_table = "immun_6in1_table_dose3", 
                simd_tot_plot = "imm_6in1_simd_tot_dose3", simd_chan_plot = "imm_6in1_simd_chan_dose3")
   }  else if (input$measure_select_immun == "mmr_dose1"){
-    imm_layout(s_plot = "immun_mmr_scurve_dose1", s_table = "immun_mmr_table_dose1", 
+    imm_layout(s_plot = "immun_mmr_scurve", s_table = "immun_mmr_table_dose1", 
                simd_tot_plot = "imm_mmr_simd_tot_dose1", simd_chan_plot = "imm_mmr_simd_chan_dose1",
                age_def = "12 months defined as 53 weeks")
   } else if (input$measure_select_immun == "mmr_dose2"){
-    imm_layout(s_plot = "immun_mmr_scurve_dose2", s_table = "immun_mmr_table_dose2", 
+    imm_layout(s_plot = "immun_mmr_scurve", s_table = "immun_mmr_table_dose2", 
                simd_tot_plot = "imm_mmr_simd_tot_dose2", simd_chan_plot = "imm_mmr_simd_chan_dose2", 
                age_def = "3 year 4 months defined as 174 weeks")
   }
