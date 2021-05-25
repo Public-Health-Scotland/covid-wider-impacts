@@ -134,7 +134,7 @@ gest_booking_download <- left_join(gest_booking_download, hb_lookup, by = c("are
 # Weekly scotland level booking numbers and gestation - ASK WHAT TIME PERIOD SHOULD BE AVAILABLE HERE
 ante_booking_download1 <- ante_booking %>%
   mutate(time_period="weekly") %>%
-  filter(week_book_starting < "2021-03-15") %>% 
+  filter(week_book_starting < "2021-05-10") %>% 
   rename(booking_week_beginning=week_book_starting, number_of_bookings=booked_g, average_gestation_at_booking=ave_gest)
   
 
