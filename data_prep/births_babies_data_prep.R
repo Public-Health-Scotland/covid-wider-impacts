@@ -779,8 +779,8 @@ saveRDS(preterm_linechart, paste0(data_folder,"final_app_files/preterm_linechart
 ###############################################.
 ## Perineal Tears ----
 ###############################################.
-tears_folder <- "20210423"
-tears_date <- "2021_04_23"
+tears_folder <- "20210513"
+tears_date <- "2021_05_13"
 
 
 ## 1-RUNCHART DATA
@@ -835,9 +835,9 @@ saveRDS(tears_runchart, paste0(data_folder,"final_app_files/tears_runchart_data_
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## 2- LINECHART DATA apgar for Scotland only by age and dep
-tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_SCOT_CHARTS_Tears_",tears_date,".rds")) %>%  
+tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_Tears_DOWNLOAD_Qtr_",tears_date,".rds")) %>%  
   janitor::clean_names() %>%
-  rename(area_name=hbres, quarter=date, category=variable, tot_tears_37plus = total_exc_unknown) %>%
+  rename(area_name=nhs_board_of_residence, quarter=month_of_discharge, category=variable, tot_tears_37plus = nbr_3_4_degree_tear_37plus) %>%
   mutate(quarter=as.Date(quarter),
          quarter_label=phsmethods::qtr(quarter, format="short"),
          area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
