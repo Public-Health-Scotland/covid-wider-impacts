@@ -177,15 +177,15 @@ output$cancer_explorer <- renderUI({
       br(),
       plot_box(paste0("Total count of individuals having a cancer of type:  ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_overall"),
-      p("Data extract date: 22nd February 2021"),
+      p("Data extract date: 21st May 2021"),
       br(),
       plot_box(paste0("Weekly count of individuals having a cancer of type: ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"),
-      p("Data extract date: 22nd February 2021"),
+      p("Data extract date: 21st May 2021"),
       br(),
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", cancer_site,
                       " confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"),
-      p("Data extract date: 22nd February 2021"),
+      p("Data extract date: 21st May 2021"),
       br(),
       p("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
         than for other cancer sites. Such cancers are relatively common and usually non-fatal. There is a propensity 
