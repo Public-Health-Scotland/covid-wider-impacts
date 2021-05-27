@@ -402,7 +402,7 @@ tabPanel(title = "Location of extremely preterm deliveries", icon = icon("hospit
 ###############################################.
 ## Tears Tab ----
 ###############################################.
-tabPanel(title = "Perineal tears", icon = icon("notes-medical"), value = "tears",
+tabPanel(title = "Perineal tears", icon = icon("procedures"), value = "tears",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
