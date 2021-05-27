@@ -259,7 +259,7 @@ not_all_na <- function(x) {
   any(!is.na(x))
 }
 
-format_immchild_table <- function(filename, save_as = NULL, save_file = T, 
+format_immchild_table <- function(filename, save_as = F, save_file = T, 
                                   review_var = NULL) {
 
   imm_ch_dt <- read_csv(paste0(data_folder, filename, ".csv")) %>%
