@@ -359,7 +359,10 @@ diff_data <- cancer_combined %>%
   mutate(difference20 = case_when(
       count19 > 0 ~ 100*(count20 - count19)/count19),
          difference21 = case_when(
-      count19 > 0 ~ 100*(count21 - count19)/count19)) 
+      count19 > 0 ~ 100*(count21 - count19)/count19)) %>% 
+  mutate(difference21 = case_when(week_number > 8 ~ (na_if(difference21, -100)),
+                             TRUE ~ difference21))
+
 
 ##########################################
 # Week ending labels
