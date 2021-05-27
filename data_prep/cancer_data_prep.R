@@ -374,20 +374,12 @@ diff_data <-  diff_data %>%
 ##########################################
 
 diff_data <-  diff_data %>% 
-  filter(week_number <= 52) 
+  filter(week_number <= 52) %>% 
+  mutate(count21 = case_when(week_number > 8 ~ (na_if(count21, 0)),
+                             TRUE ~ count21))
 
 ##########################################
-# Export Data
-##########################################
-
-# save as excel  and RDS file
-#write_xlsx(cancer_joined, "CWT Dashboard Input Data.xlsx")
-
-# saveRDS(diff_data, "shiny_app/data/cancer_data.rds")
-
-
-##########################################
-# To be added to app data prep
+# Generate Cumulative totals and tidy data
 ##########################################
 
 cancer_cum <- diff_data %>%
@@ -397,7 +389,8 @@ cancer_cum <- diff_data %>%
   group_by(area, site, sex) %>%
   mutate(cum_count19 = cumsum(count19),
          cum_count20 = cumsum(count20),
-         cum_count21 = cumsum(count21)) %>% 
+         cum_count21 = cumsum(count21)) %>%
+  filter(area != "Unknown") %>% 
   ungroup()
 
 # cancer_cum_dep <- diff_data %>%
@@ -407,6 +400,13 @@ cancer_cum <- diff_data %>%
 #   group_by(area, site, sex, dep) %>%
 #   mutate(cum_count19 = cumsum(count19),
 #          cum_count20 = cumsum(count20))
+
+
+##########################################
+# Export Data
+##########################################
+
+
 
 saveRDS(cancer_cum, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_2_", 
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))

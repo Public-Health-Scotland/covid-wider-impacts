@@ -295,7 +295,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 ## Function for overall cancer charts ----
 ###############################################.
 
-plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_name) {
+plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_chosen, data_name) {
   
 # set plot display if no data  
   if (is.data.frame(dataset) && nrow(dataset) == 0)
@@ -321,6 +321,8 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
   
   value2 <- dataset[[var2_chosen]]
   
+  value3 <- dataset[[var3_chosen]]
+  
   
   tooltip_1 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
                             "<br>", measure_name, value1))
@@ -329,13 +331,23 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
                         "<br>", measure_name, value2))
   
   tooltip_3 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+                        "<br>", measure_name, value3))
+  
+  tooltip_4 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
                               "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
+                 
+  tooltip_5 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+                              "<br>", measure_name, paste0(format(round(value2, 2), nsmall = 2), "%")))
 
 if(data_name != "dif") { 
   
   #Creating time trend plot for cumulative totals and incidence
   plot_ly(data=dataset, x=~week_ending) %>%
-    
+ 
+    # 2021 line
+    add_lines(y = ~get(var3_chosen), line = list(color = pal_overall[3]),text=tooltip_3, hoverinfo="text",
+              name = "2021") %>%
+           
     # 2020 line
     add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_1, hoverinfo="text",
               name = "2020") %>%
@@ -357,8 +369,11 @@ if(data_name != "dif") {
   plot_ly(data=dataset, x=~week_ending) %>%
     
     # 2020 line
-    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_3, hoverinfo="text",
+    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_4, hoverinfo="text",
               name = "2020") %>%
+
+    add_lines(y = ~get(var3_chosen), line = list(color = pal_overall[2]),text=tooltip_5, hoverinfo="text",
+              name = "2021") %>%
     
     #Layout
     layout(margin = list(b = 80, t=5), 

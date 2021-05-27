@@ -191,6 +191,8 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ## Cancer ----
 ###############################################.
 tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
+         wellPanel(width = 12,
+                   uiOutput("cancer_explorer2")),
   wellPanel(
            column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
                                  choices= c("Scotland", "Cancer Network", "Health Board"),
