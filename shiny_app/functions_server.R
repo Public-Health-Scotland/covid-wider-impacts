@@ -337,7 +337,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
                               "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
                  
   tooltip_5 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
-                              "<br>", measure_name, paste0(format(round(value2, 2), nsmall = 2), "%")))
+                              "<br>", measure_name, paste0(format(round(value3, 2), nsmall = 2), "%")))
 
 if(data_name != "dif") { 
   
