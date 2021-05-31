@@ -32,17 +32,17 @@ save_final_file("deaths", "31_May_21")
 save_final_file("cancer_data_2", "24_Feb_21")
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "04_May_21")
+save_final_file("rapid", "31_May_21")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 
 ## OOH ----
-save_final_file("ooh", "04_May_21")
+save_final_file("ooh", "31_May_21")
 ## A&E ----
-save_final_file("ae", "29_Apr_21")
+save_final_file("ae", "31_Apr_21")
 ## NHS24 ----
-save_final_file("nhs24", "04_May_21")
+save_final_file("nhs24", "31_May_21")
 ## SAS ----
-save_final_file("sas", "04_May_21")
+save_final_file("sas", "31_May_21")
 ### Outpatients ----
 save_final_file("outpats", "24_Mar_21")
 save_final_file("spec_lookup_op", "24_Mar_21")
