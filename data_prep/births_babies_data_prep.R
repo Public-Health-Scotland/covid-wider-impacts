@@ -9,8 +9,8 @@ source("data_prep/functions_packages_data_prep.R")
 ## Mode of delivery ----
 ###############################################.
 #field with date data files prepared
-mod_folder <- "20210413"
-mod_date <- "2021-04-13"
+mod_folder <- "20210518"
+mod_date <- "2021-05-18"
 
 ##mode of delivery data supplied in 4 files: runchart data, line charts for scotland (age and dep split), line charts for NHS board and data download
 
@@ -139,8 +139,8 @@ saveRDS(mod_download, paste0(open_data,"method_delivery.rds"))
 ###############################################.
 ## Inductions ----
 ###############################################.
-induct_folder <- "20210413"
-induct_date <- "2021-04-13"
+induct_folder <- "20210518"
+induct_date <- "2021-05-18"
 
 ## 1-RUNCHART DATA
 ## mod data for run chart (scotland and nhs board) - monthly
@@ -248,8 +248,8 @@ saveRDS(induct_download, paste0(open_data,"induction_labour.rds"))
 ## Gestation at delivery ----
 ###############################################.
 
-gestation_folder <- "20210413"
-gestation_date <- "2021-04-13"
+gestation_folder <- "20210518"
+gestation_date <- "2021-05-18"
 
 ## 1-RUNCHART DATA
 gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",gestation_folder,"/WI_DELIVERIES_RUNCHART_gestation_",gestation_date,".rds")) %>%  
@@ -488,8 +488,8 @@ saveRDS(perinatal, paste0(open_data, "perinatal_data.rds"))
 ###############################################.
 ## Apgar ----
 ###############################################.
-apgar_folder <- "20210318"
-apgar_date <- "2021_03_18"
+apgar_folder <- "20210513"
+apgar_date <- "2021_05_13"
 
 
 ## 1-RUNCHART DATA
