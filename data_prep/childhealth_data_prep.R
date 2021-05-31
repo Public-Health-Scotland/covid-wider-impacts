@@ -8,7 +8,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 ## Child health reviews ----
 ###############################################.
-ch_date_file <- "20210426" #date included in filepath name
+ch_date_file <- "20210524" #date included in filepath name
 #First visit data and table
 format_childhealth(filename = paste0("firstvisit_dashboard_", ch_date_file), week_var = "eligible_start",
                    week_var2 = eligible_start, save_as = "first_visit")
@@ -48,9 +48,9 @@ format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "fou
 ## Child development ----
 ###############################################.
 # Do we need any sort of supression - look at island values.
-child_dev <- rbind(read_excel(paste0(data_folder, "child_development/26thAprDashboard - 13-15m.xlsx")) %>% 
+child_dev <- rbind(read_excel(paste0(data_folder, "child_development/24thMayDashboard - 13-15m.xlsx")) %>% 
                      mutate(review = "13-15 month"),
-                   read_excel(paste0(data_folder, "child_development/26thAprDashboard - 27-30m.xlsx")) %>% 
+                   read_excel(paste0(data_folder, "child_development/24thMayDashboard - 27-30m.xlsx")) %>% 
                      mutate(review = "27-30 month")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 
@@ -122,9 +122,9 @@ saveRDS(child_dev, paste0(open_data, "child_dev_data.rds"))
 ###############################################.
 ## Breastfeeding ----
 ###############################################.
-breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/26thAprDashboard - firstvisit.xlsx")) %>% 
+breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/24thMayDashboard - firstvisit.xlsx")) %>% 
                          mutate(review = "First visit"),
-                       read_xlsx(paste0(data_folder, "/breastfeeding/26thAprDashboard - 6-8 week.xlsx")) %>% 
+                       read_xlsx(paste0(data_folder, "/breastfeeding/24thMayDashboard - 6-8 week.xlsx")) %>% 
                          mutate(review = "6-8 week")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 
