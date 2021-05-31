@@ -78,11 +78,12 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
   
   # Text to be updated every month with updated dates
-  last_month_peri <- "March 2021"
-  cutdate_peri <- "18 April 2021"
-  extractdate_peri <- "21 April 2021"
-  nextup_peri <- "June 2021"
+  last_month_peri <- "April 2021"
+  cutdate_peri <- "16 May 2021"
+  extractdate_peri <- "19 May 2021"
+  nextup_peri <- "July 2021"
   nextdata_peri <- "May 2021"
+  
   
   # Number of deaths and of births used in the text
   no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
@@ -120,7 +121,7 @@ peri_common_intro,
 tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
        "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
 Whilst each extended perinatal death is clearly a tragedy for the family involved, extended perinatal deaths are uncommon events in Scotland: ", no_stillperi ," extended perinatal deaths (and ", no_births ," total 
-[live and still] births) occurring in Scotland ", last_month_peri, " had been registered by ", cutdate_peri, ".")
+[live and still] births) occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
   } else if (input$measure_select_perinatal == "infantdeaths") {
     intro_text <- p("Infant deaths refer to", tags$a(href=link_perinatal, 
                     "all deaths in the first year", target="_blank"), "of life; 
@@ -266,6 +267,8 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
+    h2("Stillbirths and infant deaths – 2 June 2021"),
+    p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in April 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in April 2021 was 2.4 per 1,000 total births (baseline, pre-pandemic average 3.8 per 1,000 total births), the neonatal death rate was 2.7 per 1,000 live births (average 2.2 per 1,000 live births), and the infant mortality rate was 3.5 per 1,000 live births (average 3.3 per 1,000 live births). "),
     h2("Stillbirths and infant deaths – 5 May 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in March 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in March 2021 was 4.5 per 1,000 total births (average 3.8 per 1,000 total births), and the infant mortality rate was 3.3 per 1,000 live births (average 3.3 per 1,000 live births). "),
     p("All the stillbirth and infant death data have been revised in this latest release. Originally we reported these events from January 2017, and this has now been changed to July 2017. Also, a fixed centreline (average) has been recalculated for every chart using the data for the months July 2017 to December 2019.  The dotted centreline continues that average through the more recent time period to allow determination of whether the values seen in these months are unexpectedly low or high. The use of a fixed centreline increases sensitivity of detection of signals in more recent data, since recent observations within the pandemic period do not contribute to this reference centreline."),
