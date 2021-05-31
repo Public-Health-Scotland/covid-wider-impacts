@@ -32,14 +32,14 @@ cl_out <- "/conf/linkage/output/lookups/Unicode/"
 # import pathology data
 cancer <- read_csv(paste0(input_folder,"Pathology_Data_May21.csv"), col_names = T) %>%  
   clean_names() %>% 
-  mutate(postcode = postcode(postcode, format = "pc8")) %>% 
-  mutate(postcode = case_when((str_length(postcode) == 7 &
-                              str_sub(postcode, 2, 2) == "0")
-                              ~ (str_sub(postcode, 2, 2) <- ""),
-                              (str_length(postcode) == 8 &
-                              str_sub(postcode, 3, 3) == "0")
-                              ~ (str_sub(postcode, 3, 3) <- ""),
-                              TRUE ~ postcode))
+  mutate(postcode = postcode(postcode, format = "pc8"))  # %>%
+  # mutate(postcode = case_when((str_length(postcode) == 7 &
+  #                             str_sub(postcode, 2, 2) == "0")
+  #                             ~ (str_sub(postcode, 2, 2) <- ""),
+  #                             (str_length(postcode) == 8 &
+  #                             str_sub(postcode, 3, 3) == "0")
+  #                             ~ (str_sub(postcode, 3, 3) <- ""),
+  #                             TRUE ~ postcode))
 
 # import deprivation lookup
 depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2020_2_simd2020v2.rds")) %>%
@@ -53,6 +53,7 @@ depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2020_2_simd2020v2.rds"
 ###########################################################
 
 # temporarily needed 
+# IS THIS NEEDED? What if not a clerical error but person ID as other sex?
 
 cancer <- cancer %>%
   mutate(sex = case_when(person_id == 25002739 ~ 2, TRUE ~ sex ))
@@ -63,9 +64,6 @@ cancer <- cancer %>%
          doi = dmy(incidence_date),
          age = floor(difftime(doi, dob, units = "days")/365))
 
-# MAY 21: 32,777 cases failed to parse date_of_birth/incidence_date as dates
-# MUST BE FIXED BEFORE AGE GROUPS CAN BE ADDED (can match DOB using person_id,
-# but cannot get exact incidence date, only week number)
 
 # creates age group column
 # cancer <- cancer %>% 
@@ -155,6 +153,8 @@ cancer <- cancer %>%
                           siteno == 2010 ~ "Stomach",
                           siteno == 999 ~ "Other"))
 
+# 166,540
+
 # create screening cohort indicators
 
 # cancer <- cancer %>% 
@@ -168,12 +168,16 @@ cancer <- cancer %>%
 
 # get Health Boards of residence and deprivation quintil rank from postcodes
 
-cancer_joined <- left_join(cancer, depriv_dir) %>%
+cancer_joined <- inner_join(cancer, depriv_dir) %>%
   replace_na(list(hbres = "Unknown", dep = 9, sex = 9))
+
+# 157302
+# with postcodes fixed - 161789
 
 
 
 # filter impossible sex cancer combo
+# IS THIS NEEDED? What if not a clerical error but person ID as other sex?
 
 cancer_joined <- cancer_joined %>% 
   filter(!(sex != 2 & (siteno >= 740 & siteno <= 770))) %>% 
@@ -202,9 +206,11 @@ base_cancer <- cancer_joined %>%
   group_by(year, week_number, hbres, site, sex, person_id) %>% 
   summarise() %>% 
   ungroup()
+# 150984
+# 142245
+
 
 # networks
-
 networks <- base_cancer %>%
   mutate(hbres = case_when(hbres == "NHS Grampian" ~ "NCA",
                            hbres == "NHS Highland" ~ "NCA",
@@ -225,17 +231,20 @@ networks <- base_cancer %>%
   summarise() %>% 
   ungroup()
 
-# scotland
 
+# scotland
 scotland <- base_cancer %>%
   mutate(hbres = "Scotland") %>% 
   group_by(year, week_number, hbres, site, sex, person_id) %>% 
   summarise() %>% 
   ungroup()
+# 150,580
+# 142,230
 
 # bind all health board values
-
 base_cancer <-rbind(base_cancer, networks, scotland)
+# 452,536
+# 426,711
 
 # create all persons
 
@@ -244,9 +253,10 @@ base_allperson <- base_cancer %>%
   group_by(year, week_number, hbres, site, sex, person_id) %>% 
   summarise() %>% 
   ungroup()
+# 447,991
 
 base_cancer <-rbind(base_cancer, base_allperson)
-
+# 900,527
 
 ##########################################
 # All cancer types
@@ -257,7 +267,7 @@ allcancers <- base_cancer %>%
   mutate(site = "All Cancers") %>% 
   group_by(year, week_number, hbres, site, sex, person_id) %>% 
   summarise()
-
+# 840,213
 
 ##########################################
 # All cancer types excl C44
@@ -280,6 +290,7 @@ cancer_dist <- bind_rows(base_cancer, allcancers, exccancers) %>%
 cancer_dist <- cancer_dist %>% 
   group_by(year, week_number, hbres, site, sex) %>% 
   summarise(count = n())
+# 105,266
 
 
 ########################################################
@@ -293,12 +304,14 @@ cancer_2019 <- cancer_dist %>%
   group_by(hbres, site, sex, week_number) %>%
   summarise(count19 = sum(count)) %>% 
   ungroup()
+# 46548
 
 cancer_2020 <- cancer_dist %>% 
   filter(year == 2020) %>% 
   group_by(hbres, site, sex, week_number) %>%
   summarise(count20 = sum(count)) %>% 
   ungroup()
+# 45052
 
 ## ADDITION OF 2021 DATA
 
@@ -307,8 +320,11 @@ cancer_2021 <- cancer_dist %>%
   group_by(hbres, site, sex, week_number) %>%
   summarise(count21 = sum(count)) %>% 
   ungroup()
+# 6879
 
-cancer_dist <- full_join(cancer_2020, cancer_2019)
+cancer_dist <- full_join(cancer_2019,cancer_2020)
+# 55035
+
 cancer_dist <- full_join(cancer_dist, cancer_2021)
 
 
