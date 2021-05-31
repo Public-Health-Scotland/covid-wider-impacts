@@ -102,7 +102,8 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-0
 mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
-                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to25042021.csv"))) %>%
+                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to23052021.csv"),
+                         col_types="nnccccccnnccccccccccccccc")) %>% # col spec needed to avoid parse errors for disease 3 fields
   clean_names() 
 
 # List of terms used to identify mh cases
@@ -214,13 +215,13 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-04-25")
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-05-23")
 
 ###############################################.
 ## OOH - mental health ----
 ###############################################.
 
-mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-05-03-GP OOH MH WIDER IMPACT.txt")) %>%
+mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-05-31-GP OOH MH WIDER IMPACT.txt")) %>%
   janitor::clean_names() %>%
   rename(hb=patient_nhs_board_description_current, 
          dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
@@ -259,4 +260,4 @@ mh_ooh %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-04-25")
+prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-05-23")
