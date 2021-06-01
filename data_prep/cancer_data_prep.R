@@ -31,15 +31,15 @@ cl_out <- "/conf/linkage/output/lookups/Unicode/"
 
 # import pathology data
 cancer <- read_csv(paste0(input_folder,"Pathology_Data_May21.csv"), col_names = T) %>%  
-  clean_names() %>% 
-  mutate(postcode = postcode(postcode, format = "pc8"))  # %>%
-  # mutate(postcode = case_when((str_length(postcode) == 7 &
-  #                             str_sub(postcode, 2, 2) == "0")
-  #                             ~ (str_sub(postcode, 2, 2) <- ""),
-  #                             (str_length(postcode) == 8 &
-  #                             str_sub(postcode, 3, 3) == "0")
-  #                             ~ (str_sub(postcode, 3, 3) <- ""),
-  #                             TRUE ~ postcode))
+  clean_names() # %>% 
+  mutate(postcode = postcode(postcode, format = "pc8"))  %>%
+  mutate(postcode = case_when((str_length(postcode) == 7 &
+                              str_sub(postcode, 2, 2) == "0")
+                              ~ (str_sub(postcode, 2, 2) <- ""),
+                              (str_length(postcode) == 8 &
+                              str_sub(postcode, 3, 3) == "0")
+                              ~ (str_sub(postcode, 3, 3) <- ""),
+                              TRUE ~ postcode))
 
 # import deprivation lookup
 depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2020_2_simd2020v2.rds")) %>%
