@@ -8,54 +8,13 @@
 observeEvent(input$btn_tears_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-      p("The data used for the perineal tears page comes from the Scottish 
-        Morbidity Record 02 (SMR02) database. An SMR02 record is submitted by 
-        maternity hospitals to Public Health Scotland (PHS) whenever a woman is 
-        discharged from an episode of day case or inpatient maternity care. From 
-        October 2019, maternity hospitals have also been asked to submit SMR02 
-        records following attended home births."),
-      p("For the perineal tears page, SMR02 records for episodes of care 
-        involving the delivery of a singleton live or stillborn baby (i.e. 
-        one baby, not twins or more) at 37-42 weeks gestation inclusive have
-        been used. The charts presented show the total number of singleton 
-        live births at 37-42 weeks with known perineal tear status, and the 
-        percentage of women giving birth vaginally to a singleton live or 
-        stillborn baby with a cephalic presentation between 37-42 weeks 
-        gestation who have a third or fourth degree perineal tear. Data is 
-        presented for January 2018 onwards, based on the date the woman was 
-        discharged from hospital after delivery."),
-      p("Perineal tear scores range from 0 to 4, with 0 indicating no perineal 
-        tear, and higher scores indicating the degree of tear. 8 indicates a 
-        tear with unspecified degree, and 9 indicates that it is not known if 
-        there was a tear."),
-      p("Data is presented for individual months at Scotland level, and for 
-        sequential quarters (Jan-Mar 2018, Apr-Jun 2018, etc) for individual NHS 
-        Boards. Due to small numbers, the charts for individual Island Boards of 
-        residence (NHS Orkney, NHS Shetland, and NHS Western Isles) are unstable 
-        so these have not been shown. However, the Island Boards are included in 
-        the Scotland total, and data for the Island Boards is available in the 
-        spreadsheet provided through the ‘Download data’ button."),
-      p("Data is shown for up to and including the most recent month for which 
-        SMR02 records are considered near complete. Data for the most recent 
-        months should be viewed as provisional. Data for all months will be 
-        refreshed every time the dashboard page is updated, and data for the 
-        most recent months is likely to change slightly as additional SMR02 
-        records are submitted to PHS."),
-      p("Although there is no legal requirement to submit SMR02 records to PHS, 
-        data completeness is very high. For example, for the period 1 April 2019 
-        to 31 March 2020, live births recorded on SMR02 represented 98.8% of the 
-        live births registered by law with National Records of Scotland (NRS) 
-        and stillbirths on SMR02 represented 91.1% of stillbirths registered 
-        with NRS. In addition, the recording of specific data items allowing 
-        identification of singleton live births at 37-42 weeks gestation is very 
-        complete. However, identification of babies with a cephalic presentation 
-        is less robust. The data included in this dashboard use the data item 
-        ‘Mode of Delivery’ to identify cephalic presentation, which is regarded 
-        as being more accurately captured than ‘Presentation at Delivery’. For 
-        the period 1 April 2018 to 31 December 2020 ‘Mode of Delivery’ was 
-        recorded on 99.9% of SMR02 records relating to a singleton live or 
-        stillbirth and information on perineal tears was recorded on 99.6% of 
-        records."),
+      p("The data used for the perineal tears page comes from the Scottish Morbidity Record 02 (SMR02) database. An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care. From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended home births."),
+      p("For the perineal tears page, SMR02 records for episodes of care involving the delivery of a singleton live or stillborn baby (i.e. one baby, not twins or more) at 37-42 weeks gestation inclusive have been used. The charts presented show the total number of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation with known perineal tear status, and the percentage of women who have a third or fourth degree perineal tear. Data is presented for January 2018 onwards, based on the date the woman was discharged from hospital after delivery."),
+      p("Data is presented for individual months at Scotland level, and for sequential quarters (Jan-Mar 2018, Apr-Jun 2018, etc) for individual NHS Boards. Due to small numbers, the charts for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles) are unstable so these have not been shown. However, the Island Boards are included in the Scotland total, and data for the Island Boards is available in the spreadsheet provided through the ‘Download data’ button."),
+      p("Data is shown for up to and including the most recent month for which SMR02 records are considered near complete. Data for the most recent months should be viewed as provisional. Data for all months will be refreshed every time the dashboard page is updated, and data for the most recent months is likely to change slightly as additional SMR02 records are submitted to PHS."),
+      p("Although there is no legal requirement to submit SMR02 records to PHS, data completeness is very high. For example, for the period 1 April 2019 to 31 March 2020, live births recorded on SMR02 represented 98.8% of the live births registered by law with National Records of Scotland (NRS) and stillbirths on SMR02 represented 91.1% of stillbirths registered with NRS. In addition, the recording of specific data items allowing identification of delivery of a singleton live or stillborn baby at 37-42 weeks gestation is very complete. "),
+      p("SMR02 delivery records allow the recording of both mode of delivery (i.e. how the baby was delivered: spontaneous or assisted vaginal delivery, Caesarean section, etc) and the presentation of the baby at delivery prior to any operative manipulation (i.e. which part of the baby was lowest in the maternal pelvis: cephalic [‘head first’], breech, etc).  The completeness and accuracy of mode of delivery recording is very high whereas the completeness and accuracy of presentation recording is slightly less good, in particular from some hospitals.  For the period 1 April 2018 to 31 December 2020 ‘Mode of Delivery’ was recorded on 99.9% of SMR02 records relating to a singleton live or stillbirth.  When producing this indicator, we have therefore relied on the mode of delivery variable alone to identify vaginal deliveries of babies with a cephalic presentation.  Records with mode of delivery coded as spontaneous cephalic or assisted vaginal (forceps or ventouse) have been assumed to identify vaginal deliveries of babies with a cephalic presentation.  Babies with other (breech delivery, Caesarean section) or unknown mode of delivery recorded have been excluded.  As this indicator only includes deliveries of singleton babies at 37-42 weeks gestation, this is considered a reasonable assumption.  It is unlikely that these babies will have been manipulated from a non-cephalic to a cephalic presentation prior to assisted vaginal delivery, as may happen for preterm babies or second twins."),
+      p("Perineal tears are classified as 1st to 4th degree, with 4th degree tears being the most serious.  On SMR02 delivery records, a specific data item captures information on whether a woman had a perineal tear.  This item is coded as 0 (no tear), 1-4 (1st to 4th degree tear respectively), 8 (tear of unspecified degree), or 9 (unknown whether there was a tear or not).  The completeness of tear recording is very high.  For the period 1 April 2018 to 31 December 2020 information on perineal tears was recorded on 99.6% of SMR02 records relating to a singleton live or stillbirth.  Other forms of injury to the birth canal, for example isolated high vaginal tears, or cervical tears, are less common than perineal tears.  These other injuries are recorded separately on SMR02 and have not been considered as part of this indicator."),
       p("Further information based on SMR02 data is also available from the annual ",
         tags$a(href= "https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/births-in-scottish-hospitals/",
               "Births in Scottish Hospitals report." , target="_blank")),
