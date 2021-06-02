@@ -351,12 +351,12 @@ data_table <- reactive({
   } else if (input$data_select %in% "tears") {
     table_data <- table_data %>% 
       select(area_name, area_type, date_of_discharge, subgroup, variable,
-             no_tear_37_plus, "1st_2nd_degree_tear_37plus", "3rd_4th_degree_tear_37plus", unspecified_tear_37plus, 
-             known_tear_status_37plus, unknown_tear_status_37plus,
-             perc_no_tears_37plus,
-             perc_1st2nd_tears_37plus, 
-             perc_3rd4th_tears_37plus, 
-             perc_unspecified_tears_37plus) %>% 
+             no_tear_37_plus, "1st_2nd_degree_tear_37_42", "3rd_4th_degree_tear_37_42", unspecified_tear_37_42, 
+             known_tear_status_37_42, unknown_tear_status_37_42,
+             perc_no_tears_37_42,
+             perc_1st2nd_tears_37_42, 
+             perc_3rd4th_tears_37_42, 
+             perc_unspecified_tears_37_42) %>% 
       mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
                                                   "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
                                                   "5 - least deprived", "Unknown") ~ paste0(variable),
