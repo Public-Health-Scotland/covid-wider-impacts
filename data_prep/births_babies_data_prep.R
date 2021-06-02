@@ -917,8 +917,8 @@ tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
                                      T ~ phsmethods::qtr(month_of_discharge, format="short")
          )) %>%
   rename(area_name=nhs_board_of_residence,
-         centreline_tears_37plus = median_tears_37plus,
-         dottedline_tears_37plus = ext_median_tears_37plus) %>% 
+         centreline_tears_37_42 = median_tears_37plus,
+         dottedline_tears_37_42 = ext_median_tears_37plus) %>% 
   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                              area_name=="Scotland" ~ "Scotland"),
          chart_category="All",
@@ -928,22 +928,22 @@ tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
   select(-month_of_discharge) %>% 
   select(indicator, subgroup, variable, area_name, date_of_discharge, 
          no_tear_37_plus = no_perineal_tear_37plus,
-         "1st_2nd_degree_tear_37plus" = nbr_1_2_degree_tear_37plus, 
-         "3rd_4th_degree_tear_37plus" = nbr_3_4_degree_tear_37plus, 
-         unspecified_tear_37plus,
-         known_tear_status_37plus = total_exc_unknown, 
-         perc_no_tears_37plus,
-         perc_1st2nd_tears_37plus, 
-         perc_3rd4th_tears_37plus, 
-         perc_unspecified_tears_37plus,
-         centreline_tears_37plus,
-         dottedline_tears_37plus,
+         "1st_2nd_degree_tear_37_42" = nbr_1_2_degree_tear_37plus, 
+         "3rd_4th_degree_tear_37_42" = nbr_3_4_degree_tear_37plus, 
+         unspecified_tear_37_42 = unspecified_tear_37plus,
+         known_tear_status_37_42 = total_exc_unknown, 
+         perc_no_tears_37_42 = perc_no_tears_37plus,
+         perc_1st2nd_tears_37_42 = perc_1st2nd_tears_37plus, 
+         perc_3rd4th_tears_37_42 = perc_3rd4th_tears_37plus, 
+         perc_unspecified_tears_37_42 = perc_unspecified_tears_37plus,
+         centreline_tears_37_42,
+         dottedline_tears_37_42,
          perc_denominator,
          area_type,
          chart_category,
          chart_type,
-         unknown_tear_status_37plus = not_known_if_tear_37plus,
-         total_37plus = total_inc_unknown)
+         unknown_tear_status_37_42 = not_known_if_tear_37plus,
+         total_37_42 = total_inc_unknown)
 
 saveRDS(tears_download, "shiny_app/data/tears_download_data.rds")  
 saveRDS(tears_download, paste0(data_folder,"final_app_files/tears_download_data_", 
