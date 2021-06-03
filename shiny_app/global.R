@@ -177,12 +177,6 @@ apgar_download <- readRDS("data/apgar_download_data.rds")
 preterm_extract_date <- "18th March 2021"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
-preterm_download <- readRDS("data/preterm.rds") %>% 
-  select(quarter, N_deliveries_23_26_NICU_site, N_deliveries_23_26,
-         percentage_NICU_site, centreline, stdev,
-         upper_cl_3_std_dev, lower_cl_3_std_dev,
-         upper_wl_2_std_dev, lower_wl_2_std_dev,
-         area_name, outlier, shift, trend, outer, inner)
 
 ###############################################.
 ## Objects, names, lists ----
