@@ -421,418 +421,429 @@ create_delivery <- function(folderdate) {
   
 }
 
-# ###############################################.
-# ## Perinatal mortality ----
-# ###############################################.
-# # P CHART PERINATAL DATA
-# p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_mayupdate.xlsx"),
-#                                     sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
-#                          read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_mayupdate.xlsx"),
-#                                     sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
-#                          read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_mayupdate.xlsx"),
-#                                     sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi")) %>%
-#   janitor::clean_names() %>%
-#   select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16, 
-#          upper_cl_3_std_dev:type)
-# 
-# u_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_mayupdate.xlsx"),
-#                                     sheet = "ID", skip = 2) %>% mutate(type = "infantdeaths"),
-#                          read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_mayupdate.xlsx"),
-#                                     sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>%  
-#   janitor::clean_names() %>%
-#   select(month_of_year=sample,  number_of_deaths_in_month=observation, sample_size=ao_o_size, rate, centreline, stdev = poisson_st_dev_16, 
-#          upper_cl_3_std_dev:type)
-# 
-# # Mergin both datasets together 
-# perinatal <- rbind(p_perinatal, u_perinatal) %>% 
-#   mutate(area_name="Scotland", #creating geo variables
-#          area_type="Scotland",
-#          month_of_year = gsub(" ", "0", month_of_year), #formatting date
-#          month_of_year = as.Date(paste0(month_of_year,"1"), format="%Y%m%d")) 
-# 
-# # Creating rules for spc charts
-# perinatal %<>% 
-#   arrange(type, area_name, month_of_year) %>% 
-#   mutate(upper_sigma1 = rate + stdev,
-#          lower_sigma1 = rate + stdev) %>% 
-#   group_by(type, area_name) %>% 
-#   # for rules: outliers when over or under 3 sigma limit
-#   mutate(outlier = case_when(rate>upper_cl_3_std_dev | rate< lower_cl_3_std_dev ~ T, T ~ F),
-#          # Shift: run of 8or more consecutive data points above or below the centreline
-#          # First id when this run is happening and then iding all points part of it
-#          shift_i = case_when((rate > centreline & lag(rate, 1) > centreline 
-#                               & lag(rate, 2) > centreline & lag(rate, 3) > centreline 
-#                               & lag(rate, 4) > centreline & lag(rate, 5) > centreline
-#                               & lag(rate, 6) > centreline & lag(rate, 7) > centreline) |
-#                                (rate < centreline & lag(rate, 1) < centreline 
-#                                 & lag(rate, 2) < centreline & lag(rate, 3) < centreline 
-#                                 & lag(rate, 4) < centreline & lag(rate, 5) < centreline
-#                                 & lag(rate, 6) < centreline & lag(rate, 7) < centreline) ~ T , T ~ F),
-#          shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
-#                            | lead(shift_i, 3) == T | lead(shift_i, 4) == T
-#                            | lead(shift_i, 5) == T | lead(shift_i, 6) == T
-#                            | lead(shift_i, 7) == T ~ T, T ~ F),
-#          # Trend: A run of 6 or more consecutive data points
-#          trend_i = case_when((rate > lag(rate ,1) & lag(rate, 1) > lag(rate, 2) 
-#                               & lag(rate, 2) > lag(rate, 3)  & lag(rate, 3) > lag(rate, 4) 
-#                               & lag(rate, 4) > lag(rate, 5) ) |
-#                                (rate < lag(rate ,1) & lag(rate, 1) < lag(rate, 2) 
-#                                 & lag(rate, 2) < lag(rate, 3)  & lag(rate, 3) < lag(rate, 4) 
-#                                 & lag(rate, 4) < lag(rate, 5) ) 
-#                              ~ T , T ~ F),
-#          trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
-#                            | lead(trend_i, 3) == T | lead(trend_i, 4) == T
-#                            | lead(trend_i, 5) == T  ~ T, T ~ F),
-#          #Outer One –Third: Two out of three consecutive data points which sit close to one of the control limits(within 2 and 3 sigma)
-#          outer_i = case_when((rate > upper_wl_2_std_dev & rate < upper_cl_3_std_dev) & 
-#                                ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) | 
-#                                   (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
-#          outer = case_when(outer_i == T | lead(outer_i, 1) == T | lead(outer_i, 2) == T ~ T, T ~ F),
-#          # Inner One -Third: 15 or more consecutive data points that lie close to the centreline(within 1 sigma).
-#          inner_i = case_when(rate < upper_sigma1 & rate > lower_sigma1 &
-#                                lag(rate, 1) < upper_sigma1 & lag(rate, 1) > lower_sigma1 &
-#                                lag(rate, 2) < upper_sigma1 & lag(rate, 2) > lower_sigma1 &
-#                                lag(rate, 3) < upper_sigma1 & lag(rate, 3) > lower_sigma1 &
-#                                lag(rate, 4) < upper_sigma1 & lag(rate, 4) > lower_sigma1 &
-#                                lag(rate, 5) < upper_sigma1 & lag(rate, 5) > lower_sigma1 &
-#                                lag(rate, 6) < upper_sigma1 & lag(rate, 6) > lower_sigma1 &
-#                                lag(rate, 7) < upper_sigma1 & lag(rate, 7) > lower_sigma1 &
-#                                lag(rate, 8) < upper_sigma1 & lag(rate, 8) > lower_sigma1 &
-#                                lag(rate, 9) < upper_sigma1 & lag(rate, 9) > lower_sigma1 &
-#                                lag(rate, 10) < upper_sigma1 & lag(rate, 10) > lower_sigma1 &
-#                                lag(rate, 11) < upper_sigma1 & lag(rate, 11) > lower_sigma1 &
-#                                lag(rate, 12) < upper_sigma1 & lag(rate, 12) > lower_sigma1 &
-#                                lag(rate, 13) < upper_sigma1 & lag(rate, 13) > lower_sigma1 &
-#                                lag(rate, 14) < upper_sigma1 & lag(rate, 14) > lower_sigma1 ~ T, T ~F),
-#          inner = case_when(inner_i == T | lead(inner_i, 1) == T | lead(inner_i, 2) == T
-#                            | lead(inner_i, 3) == T | lead(inner_i, 4) == T
-#                            | lead(inner_i, 5) == T | lead(inner_i, 6) == T
-#                            | lead(inner_i, 7) == T | lead(inner_i, 8) == T
-#                            | lead(inner_i, 9) == T | lead(inner_i, 10) == T
-#                            | lead(inner_i, 11) == T | lead(inner_i, 12) == T
-#                            | lead(inner_i, 13) == T | lead(inner_i, 14) == T ~T, T ~ F)) %>%
-#   ungroup %>% 
-#   select(-shift_i, -trend_i, -outer_i, -inner_i) 
-# 
-# saveRDS(perinatal, "shiny_app/data/perinatal.rds")
-# saveRDS(perinatal, paste0(data_folder,"final_app_files/perinatal_", 
-#                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# 
-# # saving perinatal open data files
-# perinatal %<>% 
-#   select(area_name, month_of_year, type, number_of_deaths_in_month, rate, 
-#          relevant_births = sample_size) %>% 
-#   mutate(type = recode_factor(type, "extperi" = "Extended perinatal deaths", "infantdeaths" = "Infant deaths", "nnd" = "Neonatal deaths", 
-#                               "pnnd" = "Post-neonatal deaths", "stillbirths" = "Stillbirths")) 
-# 
-# saveRDS(perinatal, paste0(open_data, "perinatal_data.rds"))
-# 
-# ###############################################.
-# ## Apgar ----
-# ###############################################.
-# apgar_folder <- "20210318"
-# apgar_date <- "2021_03_18"
-# 
-# 
-# ## 1-RUNCHART DATA
-# ## apgar data for run chart (scotland and nhs board) - monthly
-# apgar_runchart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Scotland_Apgar5_",apgar_date,".rds")) %>% 
-#   rename(area = HBRES) %>%
-#   janitor::clean_names() %>% 
-#   mutate(date = gsub("-", "", date), #formatting date
-#          date = as.Date(paste0(date,"1"), format="%Y%m%d"),
-#          date_label = format(strptime(date, format = "%Y-%m-%d"), "%B %Y"),
-#          #date_label = as.Date(date, format="%d%m%Y"),
-#          #date_label = as.character(date_label),
-#          area_name = area,
-#          date_type = "Month")
-# 
-# 
-# apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Apgar5_",apgar_date,".rds")) %>%  
-#   rename(area = HBRES) %>%
-#   mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
-#                                area == "NHS Highlands" ~ "NHS Highland",
-#                                TRUE ~ as.character(area)),
-#          date_type = "Quarter") %>%   
-#   janitor::clean_names() %>% 
-#   mutate(date=as.Date(date),
-#          date_label=phsmethods::qtr(date, format="short")) %>% 
-#   bind_rows(apgar_runchart_scot) %>% 
-#   mutate(type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
-#                           area_name=="Scotland" ~ "Scotland"),
-#          area_type = type,
-#          category = "All") %>%
-#   
-#  
-#   # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
-#   # ext_ columns (don't exist in data file) are extended median which are blank before projection time period
-#   # group_by(area_name) %>% 
-#   # mutate(ext_apgar5_37plus = max(median_apgar5_37plus, na.rm = T)) %>% 
-#   # ungroup() %>% 
-#   mutate(ext_median_apgar5_37plus = case_when(is.na(ext_median_apgar5_37plus) ~ median_apgar5_37plus,
-#                                    TRUE ~ ext_median_apgar5_37plus)) %>%
-#   group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
-#   #call function to add flags for runchart shifts and trends
-#   #shift: name for new field where shift is flagged
-#   #trend: name for new field where trend is flagged
-#   #value: which column in dataset contains value being evaluated
-#   #median: which column in dataset contains the median against which value is tested
-#   runchart_flags(shift="apgar_shift", trend="apgar_trend", 
-#                  value=perc_low_apgar5_37plus, median=ext_median_apgar5_37plus) %>%
-#   ungroup() %>% 
-#   filter(area_name != "NHS Orkney", 
-#          area_name != "NHS Shetland",
-#          area_name != "NHS Western Isles")
-# 
-# saveRDS(apgar_runchart, "shiny_app/data/apgar_runchart_data.rds")
-# saveRDS(apgar_runchart, paste0(data_folder,"final_app_files/apgar_runchart_data_", 
-#                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# 
-# ## 2- LINECHART DATA apgar for Scotland only by age and dep
-# apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_SCOT_CHARTS_Apgar5_",apgar_date,".rds")) %>%  
-#   janitor::clean_names() %>%
-#   rename(area_name=hbres, quarter=date, category=variable, tot_apgar5_37plus = total_exc_unknown) %>%
-#   mutate(quarter=as.Date(quarter),
-#          quarter_label=phsmethods::qtr(quarter, format="short"),
-#          area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
-#                           area_name=="Scotland" ~ "Scotland"),
-#          type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD5" ~ "dep"),
-#          category=as.character(category),
-#          category = case_when(category == "-under 20" ~ "Under 20",
-#                               category == "40+" ~ "40 and over",
-#                               category == "1 - Most deprived" ~ "1 - most deprived",
-#                               category == "5 - Least deprived" ~ "5 - least deprived",
-#                                      TRUE ~ as.character(category)))
-# 
-# saveRDS(apgar_scot, "shiny_app/data/apgar_scot_data.rds")
-# saveRDS(apgar_scot, paste0(data_folder,"final_app_files/apgar_scot_data_", 
-#                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# 
-# ## 3- LINECHART DATA apgar for Scotland & NHS board
-# apgar_linechart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Scotland_Apgar5_",apgar_date,".rds")) %>% 
-#   rename(area = HBRES) %>%
-#   janitor::clean_names() %>% 
-#   mutate(tot_apgar5_37plus=total_exc_unknown) %>%
-#   #reshape data file for ease of creation of line chart with percentages
-#   pivot_longer(cols = low_apgar5_37plus:total_exc_unknown, names_to = "ind",values_to = "apgar5") %>%
-#   mutate(date = gsub("-", "", date), #formatting date
-#          date = as.Date(paste0(date,"1"), format="%Y%m%d"),
-#          date_label = format(strptime(date, format = "%Y-%m-%d"), "%B %Y"),
-#          # date_label = as.Date(date, format="%b %Y"),
-#          # date_label = as.character(date_label),
-#          area_name = area,
-#          date_type = "Month") 
-# 
-# 
-# apgar_linechart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Apgar5_",apgar_date,".rds")) %>%  
-#   rename(area=HBRES) %>%
-#   janitor::clean_names() %>% ungroup %>% 
-#   mutate(tot_apgar5_37plus=total_exc_unknown) %>%
-#   mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
-#                                area == "NHS Highlands" ~ "NHS Highland",
-#                                TRUE ~ as.character(area))) %>%  
-#   #reshape data file for ease of creation of line chart with percentages
-#   pivot_longer(cols = low_apgar5_37plus:total_exc_unknown, names_to = "ind",values_to = "apgar5") %>%
-#   mutate(date=as.Date(date, format="%Y-%m-%d "),
-#          date_label=phsmethods::qtr(date, format="short"),
-#          date_type="Quarter") %>% 
-#   bind_rows(apgar_linechart_scot) %>% 
-#   mutate(type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
-#                         area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
-#          area_type = type, 
-#          category="All",
-#          percent_apgar=((apgar5/tot_apgar5_37plus)*100),
-#          ind=case_when(ind=="low_apgar5_37plus" ~ "Babies with Apgar 5 < 7",
-#                        ind=="total_exc_unknown" ~ "Babies with known Apgar 5",
-#                        TRUE~as.character(ind))) %>% 
-#   filter(area_name != "NHS Orkney", 
-#          area_name != "NHS Shetland",
-#          area_name != "NHS Western Isles") %>% 
-#   select(-ext_median_apgar5_37plus)
-#   
-# saveRDS(apgar_linechart, "shiny_app/data/apgar_linechart_data.rds") 
-# saveRDS(apgar_linechart, paste0(data_folder,"final_app_files/apgar_linechart_data_", 
-#                                  format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# 
-# ## 4- Apgar DATA DOWNLOAD FILE FOR SHINY APP
-# apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_Apgar5_DOWNLOAD_",apgar_date,".rds")) %>%  
-#   janitor::clean_names() %>%
-#   mutate(subgroup = case_when(substr(nhs_board_of_residence,1,3) == "NHS" ~ "board",
-#                               substr(nhs_board_of_residence,1,3) == "Not" ~ "board",
-#                               is.na(subgroup) ~ "scotland",
-#                               T ~ as.character(subgroup)),
-#          month_of_discharge = 
-#            case_when(subgroup == "scotland" ~ paste0(month_of_discharge,"-01"),
-#                      T ~ month_of_discharge),
-#          month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
-#          date_of_discharge=case_when(subgroup == "scotland" ~ as.character(format(month_of_discharge, "%B %Y")),
-#                                         T ~ phsmethods::qtr(month_of_discharge, format="short")
-#          )) %>%
-#   rename(area_name=nhs_board_of_residence,
-#          centreline_apgar5_37plus = median_apgar5_37plus,
-#          dottedline_apgar5_37plus = ext_median_apgar5_37plus) %>% 
-#   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
-#                              area_name=="Scotland" ~ "Scotland"),
-#          chart_category="All",
-#          chart_type= area_type,
-#          births_37_42 = total_exc_unknown + unknown_apgar5_37plus,
-#          perc_denominator = "births_37_42_apgar5_known") %>% 
-#   select(-month_of_discharge) %>% 
-#   select(indicator, subgroup, variable, area_name, date_of_discharge, 
-#          births_37_42_apgar5_0_6 = low_apgar5_37plus, 
-#          births_37_42_apgar5_7_10 = high_apgar5_37plus,
-#          births_37_42_apgar5_known = total_exc_unknown, 
-#          perc_births_37_42_apgar5_0_6 = perc_low_apgar5_37plus,
-#          perc_births_37_42_apgar5_7_10 = perc_high_apgar5_37plus,
-#          centreline_apgar5_0_6 = centreline_apgar5_37plus,
-#          dottedline_apgar5_0_6 = dottedline_apgar5_37plus,
-#          perc_denominator,
-#          area_type,
-#          chart_category,
-#          chart_type,
-#          births_37_42_apgar5_unknown = unknown_apgar5_37plus,
-#          births_37_42)
-# 
-# saveRDS(apgar_download, "shiny_app/data/apgar_download_data.rds")  
-# saveRDS(apgar_download, paste0(data_folder,"final_app_files/apgar_download_data_", 
-#                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# 
-# ###############################################.
-# ## Preterm babies in NICU ----
-# ###############################################.
-# 
-# preterm_date <- "2021_03_18" 
-# 
-# # P CHART PRETERM DATA
-# preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_NeonatalAdmit_p-chart_",preterm_date,".xlsx"),
-#                                     sheet = "P_Chart", skip = 102) %>% 
-#   janitor::clean_names() %>%
-#   select(quarter_of_year=sample_2, N_deliveries_23_26_NICU_site=observation, N_deliveries_23_26=sample_size, rate, centreline, stdev = binomial_st_dev_16, 
-#          upper_cl_3_std_dev:lower_wl_2_std_dev) %>% 
-#   mutate(area_name="Scotland", #creating geo variables
-#          area_type="Scotland",
-#          quarter_of_year = gsub("-", "", quarter_of_year), #formatting date
-#          quarter_of_year = gsub("Q1", "01", quarter_of_year), #formatting date
-#          quarter_of_year = gsub("Q2", "04", quarter_of_year), #formatting date
-#          quarter_of_year = gsub("Q3", "07", quarter_of_year), #formatting date
-#          quarter_of_year = gsub("Q4", "10", quarter_of_year), #formatting date
-#          quarter_of_year = as.Date(paste0(quarter_of_year,"1"), format="%Y%m%d"),
-#          quarter_label=phsmethods::qtr(quarter_of_year, format="short")) %>% 
-#   filter(!is.na(quarter_of_year))
-# 
-# # Creating rules for spc charts
-# preterm %<>% 
-#   arrange(area_name, quarter_of_year) %>% 
-#   mutate(upper_sigma1 = rate + stdev,
-#          lower_sigma1 = rate + stdev) %>% 
-#   group_by(area_name) %>% 
-#   # for rules: outliers when over or under 3 sigma limit
-#   mutate(outlier = case_when(rate>upper_cl_3_std_dev | rate< lower_cl_3_std_dev ~ T, T ~ F),
-#          # Shift: run of 8or more consecutive data points above or below the centreline
-#          # First id when this run is happening and then iding all points part of it
-#          shift_i = case_when((rate > centreline & lag(rate, 1) > centreline 
-#                               & lag(rate, 2) > centreline & lag(rate, 3) > centreline 
-#                               & lag(rate, 4) > centreline & lag(rate, 5) > centreline
-#                               & lag(rate, 6) > centreline & lag(rate, 7) > centreline) |
-#                                (rate < centreline & lag(rate, 1) < centreline 
-#                                 & lag(rate, 2) < centreline & lag(rate, 3) < centreline 
-#                                 & lag(rate, 4) < centreline & lag(rate, 5) < centreline
-#                                 & lag(rate, 6) < centreline & lag(rate, 7) < centreline) ~ T , T ~ F),
-#          shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
-#                            | lead(shift_i, 3) == T | lead(shift_i, 4) == T
-#                            | lead(shift_i, 5) == T | lead(shift_i, 6) == T
-#                            | lead(shift_i, 7) == T ~ T, T ~ F),
-#          # Trend: A run of 6 or more consecutive data points
-#          trend_i = case_when((rate > lag(rate ,1) & lag(rate, 1) > lag(rate, 2) 
-#                               & lag(rate, 2) > lag(rate, 3)  & lag(rate, 3) > lag(rate, 4) 
-#                               & lag(rate, 4) > lag(rate, 5) ) |
-#                                (rate < lag(rate ,1) & lag(rate, 1) < lag(rate, 2) 
-#                                 & lag(rate, 2) < lag(rate, 3)  & lag(rate, 3) < lag(rate, 4) 
-#                                 & lag(rate, 4) < lag(rate, 5) ) 
-#                              ~ T , T ~ F),
-#          trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
-#                            | lead(trend_i, 3) == T | lead(trend_i, 4) == T
-#                            | lead(trend_i, 5) == T  ~ T, T ~ F),
-#          #Outer One –Third: Two out of three consecutive data points which sit close to one of the control limits(within 2 and 3 sigma)
-#          outer_i = case_when((rate > upper_wl_2_std_dev & rate < upper_cl_3_std_dev) & 
-#                                ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) | 
-#                                   (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
-#          outer = case_when(outer_i == T | lead(outer_i, 1) == T | lead(outer_i, 2) == T ~ T, T ~ F),
-#          # Inner One -Third: 15 or more consecutive data points that lie close to the centreline(within 1 sigma).
-#          inner_i = case_when(rate < upper_sigma1 & rate > lower_sigma1 &
-#                                lag(rate, 1) < upper_sigma1 & lag(rate, 1) > lower_sigma1 &
-#                                lag(rate, 2) < upper_sigma1 & lag(rate, 2) > lower_sigma1 &
-#                                lag(rate, 3) < upper_sigma1 & lag(rate, 3) > lower_sigma1 &
-#                                lag(rate, 4) < upper_sigma1 & lag(rate, 4) > lower_sigma1 &
-#                                lag(rate, 5) < upper_sigma1 & lag(rate, 5) > lower_sigma1 &
-#                                lag(rate, 6) < upper_sigma1 & lag(rate, 6) > lower_sigma1 &
-#                                lag(rate, 7) < upper_sigma1 & lag(rate, 7) > lower_sigma1 &
-#                                lag(rate, 8) < upper_sigma1 & lag(rate, 8) > lower_sigma1 &
-#                                lag(rate, 9) < upper_sigma1 & lag(rate, 9) > lower_sigma1 &
-#                                lag(rate, 10) < upper_sigma1 & lag(rate, 10) > lower_sigma1 &
-#                                lag(rate, 11) < upper_sigma1 & lag(rate, 11) > lower_sigma1 &
-#                                lag(rate, 12) < upper_sigma1 & lag(rate, 12) > lower_sigma1 &
-#                                lag(rate, 13) < upper_sigma1 & lag(rate, 13) > lower_sigma1 &
-#                                lag(rate, 14) < upper_sigma1 & lag(rate, 14) > lower_sigma1 ~ T, T ~F),
-#          inner = case_when(inner_i == T | lead(inner_i, 1) == T | lead(inner_i, 2) == T
-#                            | lead(inner_i, 3) == T | lead(inner_i, 4) == T
-#                            | lead(inner_i, 5) == T | lead(inner_i, 6) == T
-#                            | lead(inner_i, 7) == T | lead(inner_i, 8) == T
-#                            | lead(inner_i, 9) == T | lead(inner_i, 10) == T
-#                            | lead(inner_i, 11) == T | lead(inner_i, 12) == T
-#                            | lead(inner_i, 13) == T | lead(inner_i, 14) == T ~T, T ~ F)) %>%
-#   ungroup %>% 
-#   select(-shift_i, -trend_i, -outer_i, -inner_i) %>% 
-#   rename(percentage_NICU_site=rate, quarter=quarter_label)
-# 
-# saveRDS(preterm, "shiny_app/data/preterm.rds")
-# saveRDS(preterm, paste0(data_folder,"final_app_files/preterm_", 
-#                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# 
-# # # saving perinatal open data files
-# # preterm %<>% 
-# #   select(area_name, quarter_of_year, type, number_of_deaths_in_quarter, rate, 
-# #          relevant_births = sample_size)
-# # 
-# # saveRDS(preterm, paste0(open_data, "preterm_data.rds"))
-# 
-# ## 2- LINECHART DATA preterm for Scotland
-# preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/WI_DELIVERIES_LINECHART_Neonate_",preterm_date,".rds")) %>%  
-#   rename(area_name=HBRES, quarter=DATE) %>%
-#   janitor::clean_names() %>%
-#   mutate(tot_neonate_23_26=neonate_23_26) %>%
-#   #reshape data file for ease of creation of line chart with percentages
-#   pivot_longer(cols = nicu_23_26:neonate_23_26, names_to = "ind",values_to = "mats") %>%
-#   mutate(quarter=as.Date(quarter, format="%Y-%m-%d "),
-#          quarter_label=phsmethods::qtr(quarter, format="short"),
-#          type="Scotland",
-#          area_type = type, 
-#          category="All",
-#          percent_nicu=((mats/tot_neonate_23_26)*100),
-#          ind=case_when(ind=="nicu_23_26" ~ "Deliveries 23-26w in hosp with NICU",
-#                        ind=="neonate_23_26" ~ "All deliveries 23-26w",
-#                        TRUE~as.character(ind))) %>% 
-#   filter(quarter < "2021-01-01")
-# 
-# saveRDS(preterm_linechart, "shiny_app/data/preterm_linechart_data.rds") 
-# saveRDS(preterm_linechart, paste0(data_folder,"final_app_files/preterm_linechart_data_", 
-#                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# 
-# # ## 3- Preterm DATA DOWNLOAD FILE FOR SHINY APP
-# # preterm_download <- readRDS(paste0(data_folder, "births_babies/preterm/WI_Neonate_DOWNLOAD_",preterm_date,".rds"))%>%  
-# #   janitor::clean_names() %>%
-# #   mutate(quarter_of_discharge=as.Date(quarter_of_discharge,format="%Y-%m-%d"),
-# #          quarter_of_discharge=phsmethods::qtr(quarter_of_discharge, format="short")
-# #   ) %>%
-# #   rename(area_name=nhs_board_of_residence) %>% 
-# #   mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
-# #                              area_name=="Scotland" ~ "Scotland"),
-# #          chart_category="All",
-# #          chart_type= area_type) %>% 
-# #   select(-month_of_discharge)
-# # 
-# # saveRDS(apgar_download, "shiny_app/data/preterm_download_data.rds")  
-# # saveRDS(apgar_download, paste0(data_folder,"final_app_files/preterm_download_data_", 
-# #                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# 
-# ##END
+###############################################.
+## Perinatal mortality ----
+###############################################.
+create_perinatal <- function(foldermonth) {
+  # P CHART PERINATAL DATA
+  p_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_", foldermonth, "update.xlsx"),
+                                      sheet = "Stillbirth", skip = 2) %>% mutate(type = "stillbirths"),
+                           read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_", foldermonth, "update.xlsx"),
+                                      sheet = "NND", skip = 2) %>% mutate(type = "nnd"),
+                           read_excel(paste0(data_folder,"perinatal/Pchart - SB NND EXTPERI_", foldermonth, "update.xlsx"),
+                                      sheet = "Extended perinatal", skip = 2) %>% mutate(type = "extperi")) %>%
+    janitor::clean_names() %>%
+    select(month_of_year=sample_2, number_of_deaths_in_month=observation, sample_size, rate, centreline, stdev = binomial_st_dev_16,
+           upper_cl_3_std_dev:type)
+  
+  u_perinatal <- bind_rows(read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_", foldermonth, "update.xlsx"),
+                                      sheet = "ID", skip = 2) %>% mutate(type = "infantdeaths"),
+                           read_excel(paste0(data_folder,"perinatal/Uchart - PNND INFANT DEATHS_", foldermonth, "update.xlsx"),
+                                      sheet = "PNND", skip = 2) %>% mutate(type = "pnnd")) %>%
+    janitor::clean_names() %>%
+    select(month_of_year=sample,  number_of_deaths_in_month=observation, sample_size=ao_o_size, rate, centreline, stdev = poisson_st_dev_16,
+           upper_cl_3_std_dev:type)
+  
+  # Mergin both datasets together
+  perinatal <- rbind(p_perinatal, u_perinatal) %>%
+    mutate(area_name="Scotland", #creating geo variables
+           area_type="Scotland",
+           month_of_year = gsub(" ", "0", month_of_year), #formatting date
+           month_of_year = as.Date(paste0(month_of_year,"1"), format="%Y%m%d"))
+  
+  # Creating rules for spc charts
+  perinatal %<>%
+    arrange(type, area_name, month_of_year) %>%
+    mutate(upper_sigma1 = rate + stdev,
+           lower_sigma1 = rate + stdev) %>%
+    group_by(type, area_name) %>%
+    # for rules: outliers when over or under 3 sigma limit
+    mutate(outlier = case_when(rate>upper_cl_3_std_dev | rate< lower_cl_3_std_dev ~ T, T ~ F),
+           # Shift: run of 8or more consecutive data points above or below the centreline
+           # First id when this run is happening and then iding all points part of it
+           shift_i = case_when((rate > centreline & lag(rate, 1) > centreline
+                                & lag(rate, 2) > centreline & lag(rate, 3) > centreline
+                                & lag(rate, 4) > centreline & lag(rate, 5) > centreline
+                                & lag(rate, 6) > centreline & lag(rate, 7) > centreline) |
+                                 (rate < centreline & lag(rate, 1) < centreline
+                                  & lag(rate, 2) < centreline & lag(rate, 3) < centreline
+                                  & lag(rate, 4) < centreline & lag(rate, 5) < centreline
+                                  & lag(rate, 6) < centreline & lag(rate, 7) < centreline) ~ T , T ~ F),
+           shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
+                             | lead(shift_i, 3) == T | lead(shift_i, 4) == T
+                             | lead(shift_i, 5) == T | lead(shift_i, 6) == T
+                             | lead(shift_i, 7) == T ~ T, T ~ F),
+           # Trend: A run of 6 or more consecutive data points
+           trend_i = case_when((rate > lag(rate ,1) & lag(rate, 1) > lag(rate, 2)
+                                & lag(rate, 2) > lag(rate, 3)  & lag(rate, 3) > lag(rate, 4)
+                                & lag(rate, 4) > lag(rate, 5) ) |
+                                 (rate < lag(rate ,1) & lag(rate, 1) < lag(rate, 2)
+                                  & lag(rate, 2) < lag(rate, 3)  & lag(rate, 3) < lag(rate, 4)
+                                  & lag(rate, 4) < lag(rate, 5) )
+                               ~ T , T ~ F),
+           trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
+                             | lead(trend_i, 3) == T | lead(trend_i, 4) == T
+                             | lead(trend_i, 5) == T  ~ T, T ~ F),
+           #Outer One –Third: Two out of three consecutive data points which sit close to one of the control limits(within 2 and 3 sigma)
+           outer_i = case_when((rate > upper_wl_2_std_dev & rate < upper_cl_3_std_dev) &
+                                 ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) |
+                                    (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
+           outer = case_when(outer_i == T | lead(outer_i, 1) == T | lead(outer_i, 2) == T ~ T, T ~ F),
+           # Inner One -Third: 15 or more consecutive data points that lie close to the centreline(within 1 sigma).
+           inner_i = case_when(rate < upper_sigma1 & rate > lower_sigma1 &
+                                 lag(rate, 1) < upper_sigma1 & lag(rate, 1) > lower_sigma1 &
+                                 lag(rate, 2) < upper_sigma1 & lag(rate, 2) > lower_sigma1 &
+                                 lag(rate, 3) < upper_sigma1 & lag(rate, 3) > lower_sigma1 &
+                                 lag(rate, 4) < upper_sigma1 & lag(rate, 4) > lower_sigma1 &
+                                 lag(rate, 5) < upper_sigma1 & lag(rate, 5) > lower_sigma1 &
+                                 lag(rate, 6) < upper_sigma1 & lag(rate, 6) > lower_sigma1 &
+                                 lag(rate, 7) < upper_sigma1 & lag(rate, 7) > lower_sigma1 &
+                                 lag(rate, 8) < upper_sigma1 & lag(rate, 8) > lower_sigma1 &
+                                 lag(rate, 9) < upper_sigma1 & lag(rate, 9) > lower_sigma1 &
+                                 lag(rate, 10) < upper_sigma1 & lag(rate, 10) > lower_sigma1 &
+                                 lag(rate, 11) < upper_sigma1 & lag(rate, 11) > lower_sigma1 &
+                                 lag(rate, 12) < upper_sigma1 & lag(rate, 12) > lower_sigma1 &
+                                 lag(rate, 13) < upper_sigma1 & lag(rate, 13) > lower_sigma1 &
+                                 lag(rate, 14) < upper_sigma1 & lag(rate, 14) > lower_sigma1 ~ T, T ~F),
+           inner = case_when(inner_i == T | lead(inner_i, 1) == T | lead(inner_i, 2) == T
+                             | lead(inner_i, 3) == T | lead(inner_i, 4) == T
+                             | lead(inner_i, 5) == T | lead(inner_i, 6) == T
+                             | lead(inner_i, 7) == T | lead(inner_i, 8) == T
+                             | lead(inner_i, 9) == T | lead(inner_i, 10) == T
+                             | lead(inner_i, 11) == T | lead(inner_i, 12) == T
+                             | lead(inner_i, 13) == T | lead(inner_i, 14) == T ~T, T ~ F)) %>%
+    ungroup %>%
+    select(-shift_i, -trend_i, -outer_i, -inner_i)
+  
+  saveRDS(perinatal, "shiny_app/data/perinatal.rds")
+  saveRDS(perinatal, paste0(data_folder,"final_app_files/perinatal_",
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  print("File perinatal.rds produced and saved")
+  
+  perinatal <<- perinatal
+  
+  # saving perinatal open data files
+  perinatal %<>%
+    select(area_name, month_of_year, type, number_of_deaths_in_month, rate,
+           relevant_births = sample_size) %>%
+    mutate(type = recode_factor(type, "extperi" = "Extended perinatal deaths", "infantdeaths" = "Infant deaths", "nnd" = "Neonatal deaths",
+                                "pnnd" = "Post-neonatal deaths", "stillbirths" = "Stillbirths"))
+  
+  saveRDS(perinatal, paste0(open_data, "perinatal_data.rds"))
+  
+  print("Open data file produced and saved")
+  print("#############################################")
+  print("Remember to change final_app_files script")
+  file.edit("data_prep/final_app_files.R")
+}
+
+###############################################.
+## Apgar ----
+###############################################.
+
+create_apgar <- function(folderdate) {
+  
+  apgar_folder <- gsub("_", "", folderdate)
+  apgar_date <- folderdate
+  
+  ## 1-RUNCHART DATA
+  ## apgar data for run chart (scotland and nhs board) - monthly
+  apgar_runchart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Scotland_Apgar5_",apgar_date,".rds")) %>%
+    rename(area = HBRES) %>%
+    janitor::clean_names() %>%
+    mutate(date = gsub("-", "", date), #formatting date
+           date = as.Date(paste0(date,"1"), format="%Y%m%d"),
+           date_label = format(strptime(date, format = "%Y-%m-%d"), "%B %Y"),
+           area_name = area,
+           date_type = "Month")
+  
+  
+  apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Apgar5_",apgar_date,".rds")) %>%
+    rename(area = HBRES) %>%
+    mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
+                                 area == "NHS Highlands" ~ "NHS Highland",
+                                 TRUE ~ as.character(area)),
+           date_type = "Quarter") %>%
+    janitor::clean_names() %>%
+    mutate(date=as.Date(date),
+           date_label=phsmethods::qtr(date, format="short")) %>%
+    bind_rows(apgar_runchart_scot) %>%
+    mutate(type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                            area_name=="Scotland" ~ "Scotland"),
+           area_type = type,
+           category = "All") %>%
+  
+  
+    # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
+    # ext_ columns (don't exist in data file) are extended median which are blank before projection time period
+    # group_by(area_name) %>%
+    # mutate(ext_apgar5_37plus = max(median_apgar5_37plus, na.rm = T)) %>%
+    # ungroup() %>%
+    mutate(ext_median_apgar5_37plus = case_when(is.na(ext_median_apgar5_37plus) ~ median_apgar5_37plus,
+                                     TRUE ~ ext_median_apgar5_37plus)) %>%
+    group_by(area_name, area_type, type) %>%   #sort data to ensure trends/shifts compare correct data points
+    #call function to add flags for runchart shifts and trends
+    #shift: name for new field where shift is flagged
+    #trend: name for new field where trend is flagged
+    #value: which column in dataset contains value being evaluated
+    #median: which column in dataset contains the median against which value is tested
+    runchart_flags(shift="apgar_shift", trend="apgar_trend",
+                   value=perc_low_apgar5_37plus, median=ext_median_apgar5_37plus) %>%
+    ungroup() %>%
+    filter(area_name != "NHS Orkney",
+           area_name != "NHS Shetland",
+           area_name != "NHS Western Isles")
+  
+  saveRDS(apgar_runchart, "shiny_app/data/apgar_runchart_data.rds")
+  saveRDS(apgar_runchart, paste0(data_folder,"final_app_files/apgar_runchart_data_",
+                                  format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  apgar_runchart <<- apgar_runchart
+  
+  print("File apgar_runchart_data.rds produced and saved")
+  
+  ## 2- LINECHART DATA apgar for Scotland only by age and dep
+  apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_SCOT_CHARTS_Apgar5_",apgar_date,".rds")) %>%
+    janitor::clean_names() %>%
+    rename(area_name=hbres, quarter=date, category=variable, tot_apgar5_37plus = total_exc_unknown) %>%
+    mutate(quarter=as.Date(quarter),
+           quarter_label=phsmethods::qtr(quarter, format="short"),
+           area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                            area_name=="Scotland" ~ "Scotland"),
+           type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD5" ~ "dep"),
+           category=as.character(category),
+           category = case_when(category == "-under 20" ~ "Under 20",
+                                category == "40+" ~ "40 and over",
+                                category == "1 - Most deprived" ~ "1 - most deprived",
+                                category == "5 - Least deprived" ~ "5 - least deprived",
+                                       TRUE ~ as.character(category)))
+  
+  print("File apgar_scot_data.rds produced and saved")
+  
+  saveRDS(apgar_scot, "shiny_app/data/apgar_scot_data.rds")
+  saveRDS(apgar_scot, paste0(data_folder,"final_app_files/apgar_scot_data_",
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  ## 3- LINECHART DATA apgar for Scotland & NHS board
+  apgar_linechart_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Scotland_Apgar5_",apgar_date,".rds")) %>%
+    rename(area = HBRES) %>%
+    janitor::clean_names() %>%
+    mutate(tot_apgar5_37plus=total_exc_unknown) %>%
+    #reshape data file for ease of creation of line chart with percentages
+    pivot_longer(cols = low_apgar5_37plus:total_exc_unknown, names_to = "ind",values_to = "apgar5") %>%
+    mutate(date = gsub("-", "", date), #formatting date
+           date = as.Date(paste0(date,"1"), format="%Y%m%d"),
+           date_label = format(strptime(date, format = "%Y-%m-%d"), "%B %Y"),
+           # date_label = as.Date(date, format="%b %Y"),
+           # date_label = as.character(date_label),
+           area_name = area,
+           date_type = "Month")
+  
+  
+  apgar_linechart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Apgar5_",apgar_date,".rds")) %>%
+    rename(area=HBRES) %>%
+    janitor::clean_names() %>% ungroup %>%
+    mutate(tot_apgar5_37plus=total_exc_unknown) %>%
+    mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
+                                 area == "NHS Highlands" ~ "NHS Highland",
+                                 TRUE ~ as.character(area))) %>%
+    #reshape data file for ease of creation of line chart with percentages
+    pivot_longer(cols = low_apgar5_37plus:total_exc_unknown, names_to = "ind",values_to = "apgar5") %>%
+    mutate(date=as.Date(date, format="%Y-%m-%d "),
+           date_label=phsmethods::qtr(date, format="short"),
+           date_type="Quarter") %>%
+    bind_rows(apgar_linechart_scot) %>%
+    mutate(type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                          area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
+           area_type = type,
+           category="All",
+           percent_apgar=((apgar5/tot_apgar5_37plus)*100),
+           ind=case_when(ind=="low_apgar5_37plus" ~ "Babies with Apgar 5 < 7",
+                         ind=="total_exc_unknown" ~ "Babies with known Apgar 5",
+                         TRUE~as.character(ind))) %>%
+    filter(area_name != "NHS Orkney",
+           area_name != "NHS Shetland",
+           area_name != "NHS Western Isles") %>%
+    select(-ext_median_apgar5_37plus)
+  
+  saveRDS(apgar_linechart, "shiny_app/data/apgar_linechart_data.rds")
+  saveRDS(apgar_linechart, paste0(data_folder,"final_app_files/apgar_linechart_data_",
+                                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  print("File apgar_linechart_data.rds produced and saved")
+  
+  
+  ## 4- Apgar DATA DOWNLOAD FILE FOR SHINY APP
+  apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_Apgar5_DOWNLOAD_",apgar_date,".rds")) %>%
+    janitor::clean_names() %>%
+    mutate(subgroup = case_when(substr(nhs_board_of_residence,1,3) == "NHS" ~ "board",
+                                substr(nhs_board_of_residence,1,3) == "Not" ~ "board",
+                                is.na(subgroup) ~ "scotland",
+                                T ~ as.character(subgroup)),
+           month_of_discharge =
+             case_when(subgroup == "scotland" ~ paste0(month_of_discharge,"-01"),
+                       T ~ month_of_discharge),
+           month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
+           date_of_discharge=case_when(subgroup == "scotland" ~ as.character(format(month_of_discharge, "%B %Y")),
+                                          T ~ phsmethods::qtr(month_of_discharge, format="short")
+           )) %>%
+    rename(area_name=nhs_board_of_residence,
+           centreline_apgar5_37plus = median_apgar5_37plus,
+           dottedline_apgar5_37plus = ext_median_apgar5_37plus) %>%
+    mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
+                               area_name=="Scotland" ~ "Scotland"),
+           chart_category="All",
+           chart_type= area_type,
+           births_37_42 = total_exc_unknown + unknown_apgar5_37plus,
+           perc_denominator = "births_37_42_apgar5_known") %>%
+    select(-month_of_discharge) %>%
+    select(indicator, subgroup, variable, area_name, date_of_discharge,
+           births_37_42_apgar5_0_6 = low_apgar5_37plus,
+           births_37_42_apgar5_7_10 = high_apgar5_37plus,
+           births_37_42_apgar5_known = total_exc_unknown,
+           perc_births_37_42_apgar5_0_6 = perc_low_apgar5_37plus,
+           perc_births_37_42_apgar5_7_10 = perc_high_apgar5_37plus,
+           centreline_apgar5_0_6 = centreline_apgar5_37plus,
+           dottedline_apgar5_0_6 = dottedline_apgar5_37plus,
+           perc_denominator,
+           area_type,
+           chart_category,
+           chart_type,
+           births_37_42_apgar5_unknown = unknown_apgar5_37plus,
+           births_37_42)
+  
+  saveRDS(apgar_download, "shiny_app/data/apgar_download_data.rds")
+  saveRDS(apgar_download, paste0(data_folder,"final_app_files/apgar_download_data_",
+                                  format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  print("File apgar_download_data.rds produced and saved")
+  print("#############################################")
+  print("Remember to change final_app_files script")
+  file.edit("data_prep/final_app_files.R")
+}
+
+###############################################.
+## Preterm babies in NICU ----
+###############################################.
+
+create_preterm <- function(preterm_date) {
+  # P CHART PRETERM DATA
+  preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_NeonatalAdmit_p-chart_",preterm_date,".xlsx"),
+                                      sheet = "P_Chart", skip = 102) %>%
+    janitor::clean_names() %>%
+    select(quarter_of_year=sample_2, N_deliveries_23_26_NICU_site=observation, N_deliveries_23_26=sample_size, rate, centreline, stdev = binomial_st_dev_16,
+           upper_cl_3_std_dev:lower_wl_2_std_dev) %>%
+    mutate(area_name="Scotland", #creating geo variables
+           area_type="Scotland",
+           quarter_of_year = gsub("-", "", quarter_of_year), #formatting date
+           quarter_of_year = gsub("Q1", "01", quarter_of_year), #formatting date
+           quarter_of_year = gsub("Q2", "04", quarter_of_year), #formatting date
+           quarter_of_year = gsub("Q3", "07", quarter_of_year), #formatting date
+           quarter_of_year = gsub("Q4", "10", quarter_of_year), #formatting date
+           quarter_of_year = as.Date(paste0(quarter_of_year,"1"), format="%Y%m%d"),
+           quarter_label=phsmethods::qtr(quarter_of_year, format="short")) %>%
+    filter(!is.na(quarter_of_year))
+  
+  # Creating rules for spc charts
+  preterm %<>%
+    arrange(area_name, quarter_of_year) %>%
+    mutate(upper_sigma1 = rate + stdev,
+           lower_sigma1 = rate + stdev) %>%
+    group_by(area_name) %>%
+    # for rules: outliers when over or under 3 sigma limit
+    mutate(outlier = case_when(rate>upper_cl_3_std_dev | rate< lower_cl_3_std_dev ~ T, T ~ F),
+           # Shift: run of 8or more consecutive data points above or below the centreline
+           # First id when this run is happening and then iding all points part of it
+           shift_i = case_when((rate > centreline & lag(rate, 1) > centreline
+                                & lag(rate, 2) > centreline & lag(rate, 3) > centreline
+                                & lag(rate, 4) > centreline & lag(rate, 5) > centreline
+                                & lag(rate, 6) > centreline & lag(rate, 7) > centreline) |
+                                 (rate < centreline & lag(rate, 1) < centreline
+                                  & lag(rate, 2) < centreline & lag(rate, 3) < centreline
+                                  & lag(rate, 4) < centreline & lag(rate, 5) < centreline
+                                  & lag(rate, 6) < centreline & lag(rate, 7) < centreline) ~ T , T ~ F),
+           shift = case_when(shift_i == T | lead(shift_i, 1) == T | lead(shift_i, 2) == T
+                             | lead(shift_i, 3) == T | lead(shift_i, 4) == T
+                             | lead(shift_i, 5) == T | lead(shift_i, 6) == T
+                             | lead(shift_i, 7) == T ~ T, T ~ F),
+           # Trend: A run of 6 or more consecutive data points
+           trend_i = case_when((rate > lag(rate ,1) & lag(rate, 1) > lag(rate, 2)
+                                & lag(rate, 2) > lag(rate, 3)  & lag(rate, 3) > lag(rate, 4)
+                                & lag(rate, 4) > lag(rate, 5) ) |
+                                 (rate < lag(rate ,1) & lag(rate, 1) < lag(rate, 2)
+                                  & lag(rate, 2) < lag(rate, 3)  & lag(rate, 3) < lag(rate, 4)
+                                  & lag(rate, 4) < lag(rate, 5) )
+                               ~ T , T ~ F),
+           trend = case_when(trend_i == T | lead(trend_i, 1) == T | lead(trend_i, 2) == T
+                             | lead(trend_i, 3) == T | lead(trend_i, 4) == T
+                             | lead(trend_i, 5) == T  ~ T, T ~ F),
+           #Outer One –Third: Two out of three consecutive data points which sit close to one of the control limits(within 2 and 3 sigma)
+           outer_i = case_when((rate > upper_wl_2_std_dev & rate < upper_cl_3_std_dev) &
+                                 ((lag(rate,1) > upper_wl_2_std_dev & lag(rate,1) < upper_cl_3_std_dev) |
+                                    (lag(rate,2) > upper_wl_2_std_dev & lag(rate,2) < upper_cl_3_std_dev)) ~ T, T ~ F),
+           outer = case_when(outer_i == T | lead(outer_i, 1) == T | lead(outer_i, 2) == T ~ T, T ~ F),
+           # Inner One -Third: 15 or more consecutive data points that lie close to the centreline(within 1 sigma).
+           inner_i = case_when(rate < upper_sigma1 & rate > lower_sigma1 &
+                                 lag(rate, 1) < upper_sigma1 & lag(rate, 1) > lower_sigma1 &
+                                 lag(rate, 2) < upper_sigma1 & lag(rate, 2) > lower_sigma1 &
+                                 lag(rate, 3) < upper_sigma1 & lag(rate, 3) > lower_sigma1 &
+                                 lag(rate, 4) < upper_sigma1 & lag(rate, 4) > lower_sigma1 &
+                                 lag(rate, 5) < upper_sigma1 & lag(rate, 5) > lower_sigma1 &
+                                 lag(rate, 6) < upper_sigma1 & lag(rate, 6) > lower_sigma1 &
+                                 lag(rate, 7) < upper_sigma1 & lag(rate, 7) > lower_sigma1 &
+                                 lag(rate, 8) < upper_sigma1 & lag(rate, 8) > lower_sigma1 &
+                                 lag(rate, 9) < upper_sigma1 & lag(rate, 9) > lower_sigma1 &
+                                 lag(rate, 10) < upper_sigma1 & lag(rate, 10) > lower_sigma1 &
+                                 lag(rate, 11) < upper_sigma1 & lag(rate, 11) > lower_sigma1 &
+                                 lag(rate, 12) < upper_sigma1 & lag(rate, 12) > lower_sigma1 &
+                                 lag(rate, 13) < upper_sigma1 & lag(rate, 13) > lower_sigma1 &
+                                 lag(rate, 14) < upper_sigma1 & lag(rate, 14) > lower_sigma1 ~ T, T ~F),
+           inner = case_when(inner_i == T | lead(inner_i, 1) == T | lead(inner_i, 2) == T
+                             | lead(inner_i, 3) == T | lead(inner_i, 4) == T
+                             | lead(inner_i, 5) == T | lead(inner_i, 6) == T
+                             | lead(inner_i, 7) == T | lead(inner_i, 8) == T
+                             | lead(inner_i, 9) == T | lead(inner_i, 10) == T
+                             | lead(inner_i, 11) == T | lead(inner_i, 12) == T
+                             | lead(inner_i, 13) == T | lead(inner_i, 14) == T ~T, T ~ F)) %>%
+    ungroup %>%
+    select(-shift_i, -trend_i, -outer_i, -inner_i) %>%
+    rename(percentage_NICU_site=rate, quarter=quarter_label)
+  
+  saveRDS(preterm, "shiny_app/data/preterm.rds")
+  saveRDS(preterm, paste0(data_folder,"final_app_files/preterm_",
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  print("File preterm_data.rds produced and saved")
+  
+  preterm <<- preterm
+  
+  ## 2- LINECHART DATA preterm for Scotland
+  preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/WI_DELIVERIES_LINECHART_Neonate_",preterm_date,".rds")) %>%
+    rename(area_name=HBRES, quarter=DATE) %>%
+    janitor::clean_names() %>%
+    mutate(tot_neonate_23_26=neonate_23_26) %>%
+    #reshape data file for ease of creation of line chart with percentages
+    pivot_longer(cols = nicu_23_26:neonate_23_26, names_to = "ind",values_to = "mats") %>%
+    mutate(quarter=as.Date(quarter, format="%Y-%m-%d "),
+           quarter_label=phsmethods::qtr(quarter, format="short"),
+           type="Scotland",
+           area_type = type,
+           category="All",
+           percent_nicu=((mats/tot_neonate_23_26)*100),
+           ind=case_when(ind=="nicu_23_26" ~ "Deliveries 23-26w in hosp with NICU",
+                         ind=="neonate_23_26" ~ "All deliveries 23-26w",
+                         TRUE~as.character(ind))) %>%
+    filter(quarter < "2021-01-01")
+  
+  saveRDS(preterm_linechart, "shiny_app/data/preterm_linechart_data.rds")
+  saveRDS(preterm_linechart, paste0(data_folder,"final_app_files/preterm_linechart_data_",
+                                  format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  print("File preterm_linechart_data.rds produced and saved")
+  print("#############################################")
+  print("Remember to change final_app_files script")
+  file.edit("data_prep/final_app_files.R")
+}
+
+##END
