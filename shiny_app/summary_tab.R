@@ -31,9 +31,9 @@ observeEvent({input$measure_select}, {
                       selected = "All")
   } else if (input$measure_select == "outpats") {
     disable("adm_type")
-    enable("adm_type")
+    enable("appt_type")
     
-    updateSelectInput(session, "adm_type",
+    updateSelectInput(session, "appt_type",
                       label = "Step 3. Select type of appointment.",
                       choices = c("All", "New", "Return"), 
                       selected = "All")
@@ -365,7 +365,7 @@ rapid_spec <- reactive({
 # Outpatients dataset filtered for admission_type, then used to create the admissions charts
 op_filt <- reactive({
   outpats %>% 
-    filter(admission_type == input$adm_type &
+    filter(admission_type == input$appt_type &
              spec == "All" &
              area_type == input$geotype_op)
 })
@@ -375,7 +375,7 @@ op_spec <- reactive({
   outpats %>%
     filter(type == "sex") %>%
     filter(area_name == input$geoname_op &
-             admission_type == input$adm_type &
+             admission_type == input$appt_type &
              category == "All" &
              spec %in% input$op_specialty &
              area_type == input$geotype_op)   
@@ -413,7 +413,7 @@ output$data_explorer <- renderUI({
   
   #update date for outpatients and the rest is different
   upd_date_summ <- case_when(input$measure_select == "outpats" ~ "31st March 2021",
-                             TRUE ~ "5th May 2021")
+                             TRUE ~ "2nd June 2021")
   
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {

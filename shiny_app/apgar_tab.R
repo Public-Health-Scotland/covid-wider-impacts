@@ -375,7 +375,10 @@ observeEvent(input$switch_to_apgar,{
 output$apgar_commentary <- renderUI({
   tagList(
     bsButton("jump_to_apgar",label = "Go to data"), #this button can only be used once
-    h2("Apgar scores - 14 April 2021"),
+    h2("Apgar scores - 2nd June 2021"),
+    p("In this release of information on Apgar scores (2nd June 2021) data have been updated to include women discharged after delivery up to and including February 2021. The data show that, at all Scotland level, the percentage of singleton live born babies delivered at 37-42 weeks gestation which have a low 5 minute Apgar score (less than 7) in February 2021 was at a very similar level to the pre-pandemic average at 1.8%."),
+    p("The Apgar score data by NHS Board are presented quarterly and this information will next be updated on 7th July 2021."),
+    h2("Apgar scores - 14th April 2021"),
     p("Information on Apgar scores was included in this tool for the first time on 14 April 2021."),
     p("The Apgar score measures the condition of newborn babies.  It was developed to allow health professionals to quickly identify babies needing resuscitation after delivery.  Babies are scored 0, 1, or 2 for each of their heart rate; respiratory effort; muscle tone; response to stimulation; and colour.  Scores therefore range from 0 to 10, with higher scores indicating a better condition.  Scores of 7 or over are generally interpreted as ‘reassuring’, with scores of 4-6 considered moderately low, and scores of 0-3 considered very low.  The Apgar score is measured at 1 and 5 minutes after delivery for all babies in Scotland."),
     p("Low Apgar scores at 5 minutes after delivery are associated with a higher risk of neonatal death, neonatal morbidity, and longer term problems with babies’ development.  Babies born preterm can have lower scores due to their overall immaturity rather than a specific problem such as lack of oxygen during delivery.  Due to this, the association between low Apgar scores and poor outcomes is generally stronger for babies born at term (at 37-41 weeks gestation) or post-term (at ≥42 weeks gestation) compared to those born preterm (at <37 weeks gestation)."),

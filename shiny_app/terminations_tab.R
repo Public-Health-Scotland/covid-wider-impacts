@@ -102,7 +102,7 @@ output$top_dep_g <- renderPlotly({plot_top_split(dataset=top_filter_split("dep")
 # The charts and text shown on the app will depend on what the user wants to see
 output$top_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 7th April 2021"))
+  data_last_updated <- tagList(p("Last updated: 2nd June 2021"))
   
   # text for titles of cut charts
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
@@ -309,6 +309,10 @@ observeEvent(input$switch_to_anb,{
 output$top_commentary <- renderUI({
   tagList(
     bsButton("jump_to_top",label = "Go to data"), #this button can only be used once
+    h2("Termination of pregnancy - 2nd June 2021"),
+    p("This latest release reports on the number of terminations of pregnancy in Scotland up to February 2021. In this latest month 981 terminations were provisionally notified and numbers may be updated in subsequent releases. This is the lowest monthly figure reported since January 2018: Previous years have reported 1,093 in February 2018; 1,174 in February 2019; 1,230 in February 2020. In February 2021 two mainland boards notified their lowest number of terminations since January 2018: Grampian (82) and Lothian (176). Average gestation at termination in Scotland for February 2021 (6.9 weeks) remained similar to that reported in recent months and ranged between 6 weeks in Grampian to 8.3 weeks in Fife."),
+    p("The shift of average gestations below the centreline (average gestation between January 2018 to February 2020) started in March 2020. To a greater or lesser extent this shift has been mirrored across all the mainland boards except in Ayrshire and Arran, Borders and Fife. Also of note, the average gestation in Highland has been trending upwards (but remains below board average), and the lowest average gestations since January 2018 were reported in this release in Ayrshire and Arran (6.7 weeks), Dumfries and Galloway (6.5 weeks) and Grampian (6.0 weeks)."),
+    p("There continued to be little variation in average gestation by either age group or deprivation category in February 2021. The drop in numbers (referred to above) in February 2021 was reflected across all age groups and deprivation categories. The range in average gestation by age group was 6.8 weeks (25 to 29 and 40 and over) to 7.2 weeks (35 to 39). For deprivation category the range was from 6.8 week (SIMD 3 and 4) to 7.1 weeks (SIMD 1 - most deprived)."),
     h2("Termination of pregnancy - 5th May 2021"),
     p("This latest release reports on the number of terminations of pregnancy in Scotland up to January 2021. In this latest month 1,108 terminations were provisionally notified, which is comparable with the January average for 2018, 2019 and 2020 of 1,191."),
     p("Observing these figures are provisional and may be updated in subsequent reports, we note that Dumfries and Galloway’s terminations for January 2021 are not shown this month as their total numbers fell below the threshold that we can safely report numbers of terminations without potentially compromising patient confidentiality. Ayrshire and Arran notified their lowest number of terminations (42) since January 2018. We noted in the last release a downward trend in Tayside, which reversed in January 2021."),
