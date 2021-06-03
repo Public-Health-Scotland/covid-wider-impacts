@@ -161,9 +161,6 @@ create_aecardio <- function(filedate, last_week) {
   prepare_final_data(ae_cardio, "ae_cardio", last_week = last_week)
   
   print("File ae_cardio.rds produced and saved")
-  print("#############################################")
-  print("Remember to change final_app_files script")
-  file.edit("data_prep/final_app_files.R")
   
 }
 
@@ -276,10 +273,7 @@ create_sascardio <- function(filedate, last_week) {
   prepare_final_data_cardiac(dataset = sas_cardiac, filename = "sas_cardiac", last_week = last_week)
   
   print("File sas_cardiac.rds produced and saved")
-  print("#############################################")
-  print("Remember to change final_app_files script")
-  file.edit("data_prep/final_app_files.R")
-  
+
 }
 
 ###############################################.
@@ -319,9 +313,6 @@ create_cardiodrugs <- function(filedate, last_week) {
   prepare_final_data(cardio_drugs, "cardio_drugs", last_week = last_week)
   
   print("File cardio_drugs.rds produced and saved")
-  print("#############################################")
-  print("Remember to change final_app_files script")
-  file.edit("data_prep/final_app_files.R")
   
 }
 
