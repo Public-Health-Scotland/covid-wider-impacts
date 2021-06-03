@@ -181,6 +181,8 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, 
   
   final_data <<- data_2020
   
+  file.remove(paste0(open_data, filename,"_data.rds")) # to avoid permission issues
+  
   saveRDS(data_2020, paste0("shiny_app/data/", filename,".rds"))
   saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
@@ -238,19 +240,16 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
   data_2020 <- data_2020 %>%
     filter(week_ending <= as.Date(last_week))
   
-  # Supressing numbers under 5
-  #data_2020 <- data_2020 %>% filter(count>=5) %>% 
-  #  filter(week_ending <= as.Date(last_week)) 
-  
   final_data <<- data_2020
+  
+  file.remove(paste0(open_data, filename,"_data.rds")) # to avoid permission issues
   
   saveRDS(data_2020, paste0("shiny_app/data/", filename,".rds"))
   saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
   
-  #saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
-  #saveRDS(data_2020, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/", filename,"_data.rds"))
+
 }
 
 #Function to format the immunisations and child health review tables
