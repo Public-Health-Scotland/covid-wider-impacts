@@ -10,14 +10,15 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all antenatal booking data files prepared
-antenatal_booking_date <- "14042021"
+antenatal_booking_date <- "18052021"
 
 # Excel workbook containing number of women booking for antenatal care - weekly file (Scotland and NHS board except small islands)
 ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",antenatal_booking_date,".xlsx"),
                               sheet = "Data for Dashboard Charts") %>%
   janitor::clean_names() %>%
   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked) %>%
-  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y"))
+  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>%
+  filter(week_book_starting < "2021-05-10")
 
 # Excel workbook containing avergage gestation of women booking for antenatal care  - weekly file (Scotland and NHS board except small islands)
 ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",antenatal_booking_date,".xlsx"),
@@ -26,7 +27,8 @@ ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/
   janitor::clean_names() %>%
   rename(centreline_g=centreline, dottedline_g=dottedline, 
          centreline_g_t=tcentreline, dottedline_g_t=tdottedline, booked_g=booked) %>%
-  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y"))
+  mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>%
+  filter(week_book_starting < "2021-05-10")
 
 # join two (numbers and average gestation) booking sheets to form single file for shiny app
 ante_booking <- left_join(ante_booking_no, ante_booking_gest, by = c("week_book_starting","area"))
@@ -54,59 +56,24 @@ ante_booking <- left_join(ante_booking, hb_lookup, by = c("area" = "hb_cypher"))
          category=case_when(category=="40 plus" ~ "40 and over",TRUE ~ category)) %>%
   select(-area)
 
+ante_booking %<>% 
+  mutate(centreline_g = case_when(area_name == "NHS Tayside" & !(is.na(centreline_g_t)) ~ centreline_g_t,
+         T ~ centreline_g)) %>% 
+  mutate(dottedline_g = case_when(area_name == "NHS Tayside" & !(is.na(dottedline_g_t)) ~ dottedline_g_t, 
+                                  T ~ dottedline_g)) 
+
 #add control chart flags for charting
 ante_booking <- ante_booking %>%
   group_by(area_name, area_type, type, category) %>% 
-  mutate(# Shift: run of 6 or more consecutive data points above or below the centreline
+  # Shift: run of 6 or more consecutive data points above or below the centreline
     # First id when this run is happening and then finding all points part of it
     # SHIFT NUMBER OF WOMEN BOOKING
-    shift_i_booked_no = case_when((booked_no > dottedline_no & lag(booked_no, 1) > dottedline_no 
-                                   & lag(booked_no, 2) > dottedline_no & lag(booked_no, 3) > dottedline_no 
-                                   & lag(booked_no, 4) > dottedline_no & lag(booked_no, 5) > dottedline_no) |
-                                    (booked_no < dottedline_no & lag(booked_no, 1) < dottedline_no 
-                                     & lag(booked_no, 2) < dottedline_no & lag(booked_no, 3) < dottedline_no 
-                                     & lag(booked_no, 4) < dottedline_no & lag(booked_no, 5) < dottedline_no) ~ T , T ~ F),
-    shift_booked_no = case_when(shift_i_booked_no == T | lead(shift_i_booked_no, 1) == T | lead(shift_i_booked_no, 2) == T
-                                | lead(shift_i_booked_no, 3) == T | lead(shift_i_booked_no, 4) == T
-                                | lead(shift_i_booked_no, 5) == T  ~ T, T ~ F),
-    # SHIFT FOR AVERAGE GESTATION
-    shift_i_booked_gest = case_when((ave_gest > dottedline_g & lag(ave_gest, 1) > dottedline_g 
-                                     & lag(ave_gest, 2) > dottedline_g & lag(ave_gest, 3) > dottedline_g 
-                                     & lag(ave_gest, 4) > dottedline_g & lag(ave_gest, 5) > dottedline_g) |
-                                      (ave_gest < dottedline_g & lag(ave_gest, 1) < dottedline_g 
-                                       & lag(ave_gest, 2) < dottedline_g & lag(ave_gest, 3) < dottedline_g 
-                                       & lag(ave_gest, 4) < dottedline_g & lag(ave_gest, 5) < dottedline_g) ~ T , 
-                                    area_name == "NHS Tayside" & week_book_starting < "2020-08-03" & 
-                                      ((ave_gest > dottedline_g_t & lag(ave_gest, 1) > dottedline_g_t 
-                                        & lag(ave_gest, 2) > dottedline_g_t & lag(ave_gest, 3) > dottedline_g_t 
-                                        & lag(ave_gest, 4) > dottedline_g_t & lag(ave_gest, 5) > dottedline_g_t) |
-                                         (ave_gest < dottedline_g_t & lag(ave_gest, 1) < dottedline_g_t 
-                                          & lag(ave_gest, 2) < dottedline_g_t & lag(ave_gest, 3) < dottedline_g_t 
-                                          & lag(ave_gest, 4) < dottedline_g_t & lag(ave_gest, 5) < dottedline_g_t)) ~ T,
-                                    T ~ F),
-    shift_booked_gest = case_when(shift_i_booked_gest == T | lead(shift_i_booked_gest, 1) == T | lead(shift_i_booked_gest, 2) == T
-                                  | lead(shift_i_booked_gest, 3) == T | lead(shift_i_booked_gest, 4) == T
-                                  | lead(shift_i_booked_gest, 5) == T  ~ T, T ~ F),
-    # Trend: A run of 5 or more consecutive data points - NUMBERS OF WOMEN BOOKING
-    trend_i_booked_no = case_when((booked_no > lag(booked_no ,1) & lag(booked_no, 1) > lag(booked_no, 2) 
-                                   & lag(booked_no, 2) > lag(booked_no, 3)  & lag(booked_no, 3) > lag(booked_no, 4)) |
-                                    (booked_no < lag(booked_no ,1) & lag(booked_no, 1) < lag(booked_no, 2) 
-                                     & lag(booked_no, 2) < lag(booked_no, 3)  & lag(booked_no, 3) < lag(booked_no, 4) )  
-                                  ~ T , T ~ F),
-    trend_booked_no = case_when(trend_i_booked_no == T | lead(trend_i_booked_no, 1) == T | lead(trend_i_booked_no, 2) == T
-                                | lead(trend_i_booked_no, 3) == T | lead(trend_i_booked_no, 4) == T
-                                ~ T, T ~ F),
-    # Trend: A run of 5 or more consecutive data points - AVERAGE GESTATION
-    trend_i_booked_gest = case_when((ave_gest > lag(ave_gest ,1) & lag(ave_gest, 1) > lag(ave_gest, 2) 
-                                     & lag(ave_gest, 2) > lag(ave_gest, 3)  & lag(ave_gest, 3) > lag(ave_gest, 4)) |
-                                      (ave_gest < lag(ave_gest ,1) & lag(ave_gest, 1) < lag(ave_gest, 2) 
-                                       & lag(ave_gest, 2) < lag(ave_gest, 3)  & lag(ave_gest, 3) < lag(ave_gest, 4) )  
-                                    ~ T , T ~ F),
-    trend_booked_gest = case_when(trend_i_booked_gest == T | lead(trend_i_booked_gest, 1) == T | lead(trend_i_booked_gest, 2) == T
-                                  | lead(trend_i_booked_gest, 3) == T | lead(trend_i_booked_gest, 4) == T
-                                  ~ T, T ~ F)) %>%
-  select(-shift_i_booked_no, -trend_i_booked_no,-shift_i_booked_gest, -trend_i_booked_gest) %>%
-  ungroup()
+    
+    runchart_flags(shift="shift_booked_no", trend="trend_booked_no", 
+                   value=booked_no, median=dottedline_no) %>%
+      
+      runchart_flags(shift="shift_booked_gest", trend="trend_booked_gest", 
+                     value=ave_gest, median=dottedline_g)
 
 saveRDS(ante_booking, "shiny_app/data/ante_booking.rds")
 saveRDS(ante_booking, paste0(data_folder,"final_app_files/ante_booking_", 
@@ -132,7 +99,7 @@ gest_booking_download <- left_join(gest_booking_download, hb_lookup, by = c("are
 # Weekly scotland level booking numbers and gestation - ASK WHAT TIME PERIOD SHOULD BE AVAILABLE HERE
 ante_booking_download1 <- ante_booking %>%
   mutate(time_period="weekly") %>%
-  filter(week_book_starting < "2021-03-15") %>% 
+  filter(week_book_starting < "2021-05-10") %>% 
   rename(booking_week_beginning=week_book_starting, number_of_bookings=booked_g, average_gestation_at_booking=ave_gest)
   
 
@@ -174,7 +141,7 @@ saveRDS(ante_booking_download, paste0(open_data,"ante_booking.rds"))
 ## Pregnancy (terminations) ----
 ###############################################.
 #field with date all antenatal booking data files prepared
-top_date <- "2021-04-13"
+top_date <- "2021-05-11"
 
 ## Termination data for run chart (scotland and nhs board) - monthly
 top_runchart <- readRDS(paste0(data_folder, "pregnancy/terminations/",top_date,

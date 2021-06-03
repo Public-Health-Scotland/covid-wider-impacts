@@ -25,12 +25,12 @@ function(input, output, session) {
                    title = "New content added and future updates",
                    h4("New content and updates"),
                    tags$ul(
-                     tags$li("16 June 2021 - Outpatients data update."),
                      tags$li("16 June 2021 - Cancer pathology data update."),
+                     tags$li("16 June 2021 - Outpatients data update."),
                      tags$li("16 June 2021 - New data on vaginal tears."),
-                     tags$li("2 June - Monthly update of data (most sections)."),
-                     tags$li("5 May - Monthly update of data (most sections)."),
-                     tags$li("14 April - New sections added for births and babies data:
+                     tags$li("2 June 2021 - Monthly update of data (most sections)."),
+                     tags$li("5 May 2021 - Monthly update of data (most sections)."),
+                     tags$li("14 April 2021 - New sections added for births and babies data:
                              Apgar scores and location of birth for extremely preterm infants.")                 ),
                    h4("Future updates"),
                    p("Please keep in mind that these dates are tentative and subject to change with short notice."),
@@ -40,8 +40,6 @@ function(input, output, session) {
                      tags$li("June/July 2021 - New data on self-harm hospital admissions."),
                      tags$li("4 August - Monthly update of data (most sections)."),
                      tags$li("1 September - Monthly update of data (most sections).")
-                     
-                     
                    ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
