@@ -102,7 +102,7 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-0
 mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
-                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to23052021.csv"),
+                read_csv(paste0(data_folder, "A&E_mh/2021-05-30-A&E Extract - Mental Health Wider impacts.csv"),
                          col_types="nnccccccnnccccccccccccccc")) %>% # col spec needed to avoid parse errors for disease 3 fields
   clean_names() 
 
