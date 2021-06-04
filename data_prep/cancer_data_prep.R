@@ -31,7 +31,7 @@ cl_out <- "/conf/linkage/output/lookups/Unicode/"
 
 # import pathology data
 cancer <- read_csv(paste0(input_folder,"Pathology_Data_May21.csv"), col_names = T) %>%  
-  clean_names() # %>% 
+  clean_names() %>% 
   mutate(postcode = postcode(postcode, format = "pc8"))  %>%
   mutate(postcode = case_when((str_length(postcode) == 7 &
                               str_sub(postcode, 2, 2) == "0")
@@ -42,7 +42,7 @@ cancer <- read_csv(paste0(input_folder,"Pathology_Data_May21.csv"), col_names = 
                               TRUE ~ postcode))
 
 # import deprivation lookup
-depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2020_2_simd2020v2.rds")) %>%
+depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_1_simd2020v2.rds")) %>%
   clean_names() %>%
   select(pc8, hb2019name, simd2020v2_sc_quintile) %>%
   rename(postcode = pc8, hbres = hb2019name, dep = simd2020v2_sc_quintile)
