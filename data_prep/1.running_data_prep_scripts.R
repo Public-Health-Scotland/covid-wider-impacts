@@ -41,6 +41,22 @@ create_breastfeeding(filedate = "24thMay")
 file.edit("data_prep/final_app_files.R")
 
 ###############################################.
+## Summary datasets ----
+###############################################.
+# Still to be done, drugs need some thinking
+source("data_prep/summary_data_prep.R") # This sources the functions for the section
+# Filedate: date on filename for each update, last week = last week of data to be included
+create_rapid(last_week =  "2021-05-23") # this requires access to the RAPID dataset
+create_ae(filedate = "2021-05-27", last_week =  "2021-05-23")
+create_ooh(filename = "WIDER IMPACT PC OOH Data_53_1531979385625197123", last_week =  "2021-05-23")
+create_nhs24(filedate = "2021-05-31", last_week =  "2021-05-23")
+create_sas(filedate = "2021-05-31", last_week =  "2021-05-23")
+# Deaths require access to deaths catalogue
+source("data_prep/deaths_data_preparation.R") # And the deaths function
+create_deaths(last_week =  "2021-05-23")
+# Outpatients data created by Secondary care team
+
+###############################################.
 ## Mental health datasets ----
 ###############################################.
 # Still to be done, drugs need some thinking
