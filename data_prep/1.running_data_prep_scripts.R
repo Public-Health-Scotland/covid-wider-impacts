@@ -1,6 +1,11 @@
 ## This code runs most scripts that produces data for the dashboard
 # The functions return an object per dataset, maybe this needs tweaked so it's a better one for checking
 
+# Cancer, Outpatients, Immunisation and MH datasets still not working this way.
+
+# After running these scripts, update the final script files date and the 
+# relevant bits in the tabs of the app (e.g. update date)
+
 ###############################################.
 ## Birth and babies datasets ----
 ###############################################.
@@ -54,7 +59,25 @@ create_sas(filedate = "2021-05-31", last_week =  "2021-05-23")
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function
 create_deaths(last_week =  "2021-05-23")
+
+############## Remember to change final_app_files script dates
+file.edit("data_prep/final_app_files.R")
+
 # Outpatients data created by Secondary care team
+
+###############################################.
+## Pregnancy datasets ----
+###############################################.
+source("data_prep/pregnancy_data_prep.R") # functions for section
+
+create_antebooking(booking_date = "18052021")
+create_terminations(top_date = "2021-05-11")
+
+###############################################.
+## Immunisation datasets ----
+###############################################.
+source("data_prep/imm_data_prep.R") # functions for section
+#To be added, check with team if this would work for them
 
 ###############################################.
 ## Mental health datasets ----
