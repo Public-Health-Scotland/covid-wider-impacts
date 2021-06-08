@@ -411,9 +411,9 @@ output$cancer_commentary <- renderUI({
 
     h4(strong("Overall trends in pathologically confirmed cancers")),
     p("In 2020, numbers were similar to 2019 until towards the end of March.  After the first national “lockdown”, 
-      the numbers fell by about 40% of those seen in comparable weeks in 2019. Numbers then rose from late April 2020. Overall, the weekly numbers of patients with 
-      pathologically confirmed cancers had not fully returned to 2019 levels by the week ending 29th 
-      November 2021, when the latest data were available."),
+      the numbers fell by about 40% of those seen in comparable weeks in 2019. Numbers then rose from late April 2020. 
+      Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
+      pandemic by 26th February 2021, when the latest data were available, although this varied by cancer type."),
 
     
     ###################################
@@ -446,7 +446,7 @@ output$cancer_commentary <- renderUI({
       tags$li(" Colorectal (bowel) cancer. The cumulative difference between 2019 and 2020 was 1,111 individuals (-21%).  In 2021, the 
               cumulative difference to 26th February 2021 compared with the same week in 2020 was 65 more individuals (+8%)"),
 
-      tags$li("	Malignant melanoma of the skin.  The cumulative difference between 2019 and 2020 was 345 individuals (-18%).  In 2021, the #
+      tags$li("	Malignant melanoma of the skin.  The cumulative difference between 2019 and 2020 was 345 individuals (-18%).  In 2021, the
               cumulative difference to 26th February 2021 compared with the same week in 2020 was 24 individuals (-13%).")),
     br(),
     
