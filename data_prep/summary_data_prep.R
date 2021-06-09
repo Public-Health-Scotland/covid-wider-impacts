@@ -11,6 +11,8 @@ source("data_prep/functions_packages_data_prep.R")
 create_rapid <- function(last_week) {
   source("data_prep/extract_rapid_data.R")
   
+  date_on_filename <<- format(Sys.Date(), format = '%d-%b')
+  
 # Prepared by Unscheduled care team
 rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_", date_on_filename, ".rds")) %>% 
   janitor::clean_names() %>% 
