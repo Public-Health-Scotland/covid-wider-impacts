@@ -44,7 +44,7 @@ save_final_file("nhs24", "31_May_21")
 ## SAS ----
 save_final_file("sas", "31_May_21")
 ### Outpatients ----
-save_final_file("outpats", "24_Mar_21")
+save_final_file("outpats", "17_May_21")
 save_final_file("spec_lookup_op", "24_Mar_21")
 save_final_file("area_type_op", "24_Mar_21")
 ##########################################################.
