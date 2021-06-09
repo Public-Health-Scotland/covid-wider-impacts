@@ -48,35 +48,6 @@ hb_lookup <- read_spss(paste0(cl_out, "National Reference Files/Health_Board_Ide
 ###############################################.
 ## Functions ----
 ###############################################.
-# This function aggregates data for each different cut requires
-agg_rapid <- function(grouper = NULL, split, specialty = F) {
-  
-  agg_helper <- function(more_vars, type_chosen = split) {
-    rap_adm %>%
-      group_by_at(c("week_ending","area_name", "area_type", more_vars)) %>%
-      summarise(count = sum(count)) %>% ungroup() %>%
-      mutate(type = type_chosen)
-  }
-  
-  # Aggregating to obtain totals for each split type and then putting all back together.
-  adm_type <- agg_helper(c(grouper, "admission_type")) %>% 
-    mutate(spec = "All") 
-  
-  all <- agg_helper(grouper) %>% 
-    mutate(admission_type = "All", spec = "All") 
-  
-  if (specialty == T) {
-    spec_all <- agg_helper(c(grouper, "spec")) %>% 
-      mutate(admission_type = "All") 
-    
-    spec_adm <- agg_helper(c(grouper, "spec", "admission_type")) 
-    
-    rbind(all, adm_type, spec_all, spec_adm)
-  } else {
-    rbind(all, adm_type) 
-  }
-}
-
 
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
 agg_cut <- function(dataset, grouper) {

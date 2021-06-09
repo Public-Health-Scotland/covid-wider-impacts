@@ -8,9 +8,38 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 ## RAPID data ----
 ###############################################.
-create_rapid <- function(last_week) {
-  source("data_prep/extract_rapid_data.R")
+create_rapid <- function(last_week, extract = T) {
+  if (extract == T) { source("data_prep/extract_rapid_data.R") }
   
+  # This function aggregates data for each different cut requires
+  agg_rapid <- function(grouper = NULL, split, specialty = F) {
+    
+    agg_helper <- function(more_vars, type_chosen = split) {
+      rap_adm %>%
+        group_by_at(c("week_ending","area_name", "area_type", more_vars)) %>%
+        summarise(count = sum(count)) %>% ungroup() %>%
+        mutate(type = type_chosen)
+    }
+    
+    # Aggregating to obtain totals for each split type and then putting all back together.
+    adm_type <- agg_helper(c(grouper, "admission_type")) %>% 
+      mutate(spec = "All") 
+    
+    all <- agg_helper(grouper) %>% 
+      mutate(admission_type = "All", spec = "All") 
+    
+    if (specialty == T) {
+      spec_all <- agg_helper(c(grouper, "spec")) %>% 
+        mutate(admission_type = "All") 
+      
+      spec_adm <- agg_helper(c(grouper, "spec", "admission_type")) 
+      
+      rbind(all, adm_type, spec_all, spec_adm)
+    } else {
+      rbind(all, adm_type) 
+    }
+  }
+    
   date_on_filename <<- format(Sys.Date(), format = '%d-%b')
   
 # Prepared by Unscheduled care team
@@ -42,7 +71,7 @@ spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) 
   select("Specialty name" = spec_name, "Specialty group" = dash_groups)
 
 saveRDS(spec_lookup, "shiny_app/data/spec_lookup_rapid.rds")
-saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_rapid", 
+saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_rapid",
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # Formatting groups
@@ -76,7 +105,7 @@ rap_adm %<>% mutate(scot = "Scotland") %>%
 
 # Aggregating to obtain totals for each split type and then putting all back together
 # Totals for overalls for all pop including totals by specialty too
-rap_adm_all <- agg_rapid(NULL, split = "sex", specialty = T) %>% mutate(category = "All") 
+rap_adm_all <- agg_rapid(grouper = NULL, split = "sex", specialty = T) %>% mutate(category = "All") 
 rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% rename(category = sex) # Totals for overalls for all sexes
 rap_adm_age <- agg_rapid(c("age"), split = "age") %>% rename(category = age) # Totals for overalls for all age groups
 # Totals for overalls for deprivation quintiles
