@@ -144,6 +144,8 @@ create_delivery <- function(folderdate) {
     mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                 TRUE ~ "All"))
   
+  file.remove(paste0(open_data,"method_delivery.rds")) #to avoid permission issues
+  
   saveRDS(mod_download, paste0(open_data,"method_delivery.rds"))
   
   print("File for open data team produced and saved")
@@ -264,7 +266,7 @@ create_delivery <- function(folderdate) {
     mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                 TRUE ~ "All"))
   
-  
+  file.remove(paste0(open_data,"induction_labour.rds")) #to avoid permission issues
   saveRDS(induct_download, paste0(open_data,"induction_labour.rds"))
   
   print("Open data file produced and saved")
@@ -412,6 +414,7 @@ create_delivery <- function(folderdate) {
     mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                 TRUE ~ "All"))
   
+  file.remove(paste0(open_data,"gestation.rds")) #to avoid permission issues
   saveRDS(gestation_download, paste0(open_data,"gestation.rds"))
   
   print("Open data file produced and saved")
@@ -530,6 +533,7 @@ create_perinatal <- function(foldermonth) {
     mutate(type = recode_factor(type, "extperi" = "Extended perinatal deaths", "infantdeaths" = "Infant deaths", "nnd" = "Neonatal deaths",
                                 "pnnd" = "Post-neonatal deaths", "stillbirths" = "Stillbirths"))
   
+  file.remove(paste0(open_data,"perinatal_data.rds")) # to avoid permission issues
   saveRDS(perinatal, paste0(open_data, "perinatal_data.rds"))
   
   print("Open data file produced and saved")
