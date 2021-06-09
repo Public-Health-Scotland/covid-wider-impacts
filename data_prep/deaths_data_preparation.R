@@ -55,12 +55,16 @@ data_deaths <- as_tibble(dbGetQuery(channel, statement=
 
 ### check that last week is a complete week. complete weeks have 6 or 7 days of data in them. 
 # There could be more recent data available in SMR than what we want
-check_week <- as.integer(data_deaths %>% 
-    filter( week_ending==max(week_ending)) %>%
+check_week <- data_deaths %>% 
+    filter(week_ending==last_week) %>%
     group_by(date_of_registration) %>%
-    summarise() %>% ungroup() %>% count())
+    summarise() %>% ungroup() %>% count()
 
-print("Last week in data has", check_week, "days. Complete weeks have 6 or 7 days")
+if (check_week$n == 6|check_week$n == 7) {
+  print("Last week in data is complete. Complete weeks have 6 or 7 days")
+} else {
+  print("Last week in data is NOT complete. Complete weeks have 6 or 7 days")
+}
 
 #Merging with deprivation and geography lookup
 data_deaths <- left_join(data_deaths, geo_lookup) %>% select(-datazone2011) 
