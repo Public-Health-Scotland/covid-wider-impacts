@@ -1,8 +1,4 @@
 ##### Weekly all-cause deaths data preparation for Wider Impacts app
-
-###############################################.
-## Functions/Packages/filepaths ----
-###############################################.
 source("data_prep/functions_packages_data_prep.R")
 
 library(odbc)
@@ -11,6 +7,12 @@ channel <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
                                       uid=.rs.askForPassword("SMRA Username:"), 
                                       pwd=.rs.askForPassword("SMRA Password:")))
 
+
+###############################################.
+## Functions/Packages/filepaths ----
+###############################################.
+create_deaths <- function(last_week) {
+  
 ###############################################.
 ## Lookups ----
 ###############################################.
@@ -53,10 +55,16 @@ data_deaths <- as_tibble(dbGetQuery(channel, statement=
 
 ### check that last week is a complete week. complete weeks have 6 or 7 days of data in them. 
 # There could be more recent data available in SMR than what we want
-as.integer(data_deaths %>% 
-    filter( week_ending==max(week_ending)) %>%
+check_week <- data_deaths %>% 
+    filter(week_ending==last_week) %>%
     group_by(date_of_registration) %>%
-    summarise() %>% ungroup() %>% count())
+    summarise() %>% ungroup() %>% count()
+
+if (check_week$n == 6|check_week$n == 7) {
+  print("Last week in data is complete. Complete weeks have 6 or 7 days")
+} else {
+  print("Last week in data is NOT complete. Complete weeks have 6 or 7 days")
+}
 
 #Merging with deprivation and geography lookup
 data_deaths <- left_join(data_deaths, geo_lookup) %>% select(-datazone2011) 
@@ -105,7 +113,7 @@ data_deaths %<>%
 
 # Running final functions
 prepare_final_data(dataset = data_deaths, filename = "deaths", 
-                   last_week = "2021-05-23", aver = 5)
+                   last_week = last_week, aver = 5)
 
 # Dealing with variation to replicate previous output. 
 # This might not be needed in future if we set a standard way of dealing with this.
@@ -120,4 +128,8 @@ saveRDS(final_deaths, paste0(data_folder,"final_app_files/deaths_",
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(final_deaths, paste0(open_data, "deaths_data.rds"))
 
+final_deaths <<- final_deaths
+
+print("deaths_data.rds file prepared and saved, including open data")
+}
 ### END

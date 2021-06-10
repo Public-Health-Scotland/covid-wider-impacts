@@ -8,13 +8,17 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 ## Child health reviews ----
 ###############################################.
-ch_date_file <- "20210524" #date included in filepath name
+create_chreview <- function(ch_date_file) {
+  
+
 #First visit data and table
 format_childhealth(filename = paste0("firstvisit_dashboard_", ch_date_file), week_var = "eligible_start",
                    week_var2 = eligible_start, save_as = "first_visit")
 
 format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "first_visit", 
                       review_var = "HV First Visit") 
+
+print("HV First visit files produced and saved")
 
 # 6-8 weeks visit data and table
 format_childhealth(filename = paste0("sixtoeight_dashboard_", ch_date_file), week_var = "eligible_start",
@@ -23,12 +27,16 @@ format_childhealth(filename = paste0("sixtoeight_dashboard_", ch_date_file), wee
 format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "six_to_eight",
                       review_var = "6-8 Week Review") 
 
+print("6 to 8 week visit files produced and saved")
+
 # 13-15 month visit data and table
 format_childhealth(filename = paste0("thirteen_dashboard_", ch_date_file), week_var = "eligible_start",
                    week_var2 = eligible_start, save_as = "thirteen", intmin = 370, intmax = 519)
 
 format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "thirteen",
                       review_var = "13-15 Month Review") 
+
+print("13 to 15 month visit files produced and saved")
 
 ## 27 to 30 month visit data and table
 format_childhealth(filename = paste0("twentyseven_dashboard_", ch_date_file), week_var = "eligible_start",
@@ -37,6 +45,8 @@ format_childhealth(filename = paste0("twentyseven_dashboard_", ch_date_file), we
 format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "twentyseven",
                       review_var = "27-30 Month Review") 
 
+print("27 to 30 month visit files produced and saved")
+
 ## 4 to 5 year visit data and table
 format_childhealth(filename = paste0("fourtofive_dashboard_", ch_date_file), week_var = "eligible_start",
                    week_var2 = eligible_start, save_as = "fourtofive", intmin = 1427, intmax = 1583)
@@ -44,13 +54,18 @@ format_childhealth(filename = paste0("fourtofive_dashboard_", ch_date_file), wee
 format_immchild_table(paste0("child_health/dashboardtable_", ch_date_file), "fourtofive",
                       review_var = "4-5 Year Review") 
 
+print("4 to 5 year visit files produced and saved")
+
+}
+
 ###############################################.
 ## Child development ----
 ###############################################.
-# Do we need any sort of supression - look at island values.
-child_dev <- rbind(read_excel(paste0(data_folder, "child_development/24thMayDashboard - 13-15m.xlsx")) %>% 
+create_childdev <- function(filedate) {
+  
+child_dev <- rbind(read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 13-15m.xlsx")) %>% 
                      mutate(review = "13-15 month"),
-                   read_excel(paste0(data_folder, "child_development/24thMayDashboard - 27-30m.xlsx")) %>% 
+                   read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 27-30m.xlsx")) %>% 
                      mutate(review = "27-30 month")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 
@@ -110,6 +125,9 @@ saveRDS(child_dev, "shiny_app/data/child_dev.rds")
 saveRDS(child_dev, paste0(data_folder,"final_app_files/child_dev_", 
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+child_dev <<- child_dev
+print("File child_dev_data.rds produced and saved")
+
 child_dev %<>% 
   select(area_name, month_review, review, number_reviews = no_reviews, 
          meaningful_reviews = no_meaningful_reviews,
@@ -118,13 +136,18 @@ child_dev %<>%
          "% one or more concerns" = pc_1_plus)
 
 saveRDS(child_dev, paste0(open_data, "child_dev_data.rds"))
+print("Open data file produced and saved")
+
+}
 
 ###############################################.
 ## Breastfeeding ----
 ###############################################.
-breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/24thMayDashboard - firstvisit.xlsx")) %>% 
+create_breastfeeding <- function(filedate) {
+  
+breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/", filedate, "Dashboard - firstvisit.xlsx")) %>% 
                          mutate(review = "First visit"),
-                       read_xlsx(paste0(data_folder, "/breastfeeding/24thMayDashboard - 6-8 week.xlsx")) %>% 
+                       read_xlsx(paste0(data_folder, "/breastfeeding/", filedate, "Dashboard - 6-8 week.xlsx")) %>% 
                          mutate(review = "6-8 week")) %>% 
   clean_names() %>% 
   rename(area_name = geography) %>% 
@@ -160,11 +183,14 @@ breastfeeding %<>%
                  value = pc_ever, median = pc_ever_centreline) %>% 
   ungroup
 
-remove(breastfeeding_centreline)
-
 saveRDS(breastfeeding, "shiny_app/data/breastfeeding.rds")
 saveRDS(breastfeeding, paste0(data_folder,"final_app_files/breastfeeding_", 
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+breastfeeding <<- breastfeeding
+
+print("File breastfeeding.rds produced and saved")
+
+}
 
 ##END

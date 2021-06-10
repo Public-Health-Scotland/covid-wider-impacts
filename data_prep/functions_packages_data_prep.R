@@ -48,35 +48,6 @@ hb_lookup <- read_spss(paste0(cl_out, "National Reference Files/Health_Board_Ide
 ###############################################.
 ## Functions ----
 ###############################################.
-# This function aggregates data for each different cut requires
-agg_rapid <- function(grouper = NULL, split, specialty = F) {
-  
-  agg_helper <- function(more_vars, type_chosen = split) {
-    rap_adm %>%
-      group_by_at(c("week_ending","area_name", "area_type", more_vars)) %>%
-      summarise(count = sum(count)) %>% ungroup() %>%
-      mutate(type = type_chosen)
-  }
-  
-  # Aggregating to obtain totals for each split type and then putting all back together.
-  adm_type <- agg_helper(c(grouper, "admission_type")) %>% 
-    mutate(spec = "All") 
-  
-  all <- agg_helper(grouper) %>% 
-    mutate(admission_type = "All", spec = "All") 
-  
-  if (specialty == T) {
-    spec_all <- agg_helper(c(grouper, "spec")) %>% 
-      mutate(admission_type = "All") 
-    
-    spec_adm <- agg_helper(c(grouper, "spec", "admission_type")) 
-    
-    rbind(all, adm_type, spec_all, spec_adm)
-  } else {
-    rbind(all, adm_type) 
-  }
-}
-
 
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
 agg_cut <- function(dataset, grouper) {
@@ -181,6 +152,8 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, 
   
   final_data <<- data_2020
   
+  file.remove(paste0(open_data, filename,"_data.rds")) # to avoid permission issues
+  
   saveRDS(data_2020, paste0("shiny_app/data/", filename,".rds"))
   saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
@@ -238,19 +211,16 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
   data_2020 <- data_2020 %>%
     filter(week_ending <= as.Date(last_week))
   
-  # Supressing numbers under 5
-  #data_2020 <- data_2020 %>% filter(count>=5) %>% 
-  #  filter(week_ending <= as.Date(last_week)) 
-  
   final_data <<- data_2020
+  
+  file.remove(paste0(open_data, filename,"_data.rds")) # to avoid permission issues
   
   saveRDS(data_2020, paste0("shiny_app/data/", filename,".rds"))
   saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
   
-  #saveRDS(data_2020, paste0("shiny_app/data/", filename,"_data.rds"))
-  #saveRDS(data_2020, paste0("/conf/PHSCOVID19_Analysis/Publication outputs/open_data/", filename,"_data.rds"))
+
 }
 
 #Function to format the immunisations and child health review tables
