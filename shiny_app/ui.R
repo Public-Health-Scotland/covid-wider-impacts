@@ -206,7 +206,7 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
                                       selected = "All Persons"))),
                      # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
 
-           column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
+           column(4,actionButton("btn_cancer_modal", "Data source and definitions", icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton('download_cancer_data', 'Download data'),
                   fluidRow(br()),
