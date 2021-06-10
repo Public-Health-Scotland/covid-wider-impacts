@@ -853,9 +853,10 @@ create_preterm <- function(preterm_date) {
 ###############################################.
 ## Perineal Tears ----
 ###############################################.
-tears_folder <- "20210513"
-tears_date <- "2021_05_13"
 
+create_tears <- function(tears_date, max_week) {
+  
+tears_folder <- gsub("_", "", tears_date)
 
 ## 1-RUNCHART DATA
 ## apgar data for run chart (scotland and nhs board) - monthly
@@ -970,7 +971,7 @@ tears_linechart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_fold
          area_name != "NHS Shetland",
          area_name != "NHS Western Isles") %>% 
   select(-ext_median_tears_37plus) %>% 
-  filter(date <= "2021-02-01")
+  filter(date <= max_date)
 
 saveRDS(tears_linechart, "shiny_app/data/tears_linechart_data.rds") 
 saveRDS(tears_linechart, paste0(data_folder,"final_app_files/tears_linechart_data_", 
@@ -1023,5 +1024,6 @@ saveRDS(tears_download, "shiny_app/data/tears_download_data.rds")
 saveRDS(tears_download, paste0(data_folder,"final_app_files/tears_download_data_", 
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+}
 
 ##END
