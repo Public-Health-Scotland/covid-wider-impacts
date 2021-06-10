@@ -148,9 +148,7 @@ output$tears_explorer <- renderUI({
                         perineal tear: ",input$geoname_tears)
   
   chart_explanation <- 
-    tagList(#p("We have used ",                      
-              # tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-              #        'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
+    tagList(
             p("On the ‘Percentage of women who have a third or fourth degree 
               perineal tear’ chart above, the dots joined by a solid black line 
               show the percentage of women giving birth vaginally to a singleton 
