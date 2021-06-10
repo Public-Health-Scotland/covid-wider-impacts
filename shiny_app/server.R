@@ -77,6 +77,7 @@ function(input, output, session) {
   source(file.path("perinatal_tab.R"),  local = TRUE)$value
   source(file.path("apgar_tab.R"),  local = TRUE)$value
   source(file.path("preterm_tab.R"),  local = TRUE)$value
+  source(file.path("tears_tab.R"),  local = TRUE)$value
   source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
   source(file.path("inductions_tab.R"),  local = TRUE)$value
   source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
@@ -118,6 +119,7 @@ function(input, output, session) {
   observeEvent(input$jump_to_gestation, {updateTabsetPanel(session, "intabset", selected = "gestation")})
   observeEvent(input$jump_to_apgar, {updateTabsetPanel(session, "intabset", selected = "apgar")})
   observeEvent(input$jump_to_preterm, {updateTabsetPanel(session, "intabset", selected = "preterm")})
+  observeEvent(input$jump_to_tears, {updateTabsetPanel(session, "intabset", selected = "tears")})
 
   observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
@@ -160,6 +162,9 @@ function(input, output, session) {
   
   observeEvent(input$jump_commentary_preterm, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Location of extremely preterm deliveries")})
+  
+  observeEvent(input$jump_commentary_tears, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Perineal tears")})
 
   observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
@@ -229,6 +234,9 @@ observeEvent(input$summary_button, ({
   observeEvent(input$preterm_button, ({
     updateCollapse(session, "collapse_commentary", open = "Location of extremely preterm deliveries")}))
 
+  observeEvent(input$tears_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Perineal tears")}))  
+  
   observeEvent(input$cancer_button, ({
   updateCollapse(session, "collapse_commentary", open = "Cancer")}))
 

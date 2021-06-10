@@ -178,6 +178,13 @@ preterm_extract_date <- "18th March 2021"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
 
+# Tears (births and babies tab)
+tears_extract_date <- "23rd April 2021"
+tears_runchart <- readRDS("data/tears_runchart_data.rds")
+tears_scot <- readRDS("data/tears_scot_data.rds")
+tears_linechart <- readRDS("data/tears_linechart_data.rds")
+tears_download <- readRDS("data/tears_download_data.rds")
+
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
@@ -242,6 +249,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Gestation at delivery" = "gestation",
                         "Apgar scores" = "apgar",
                         "Location of extremely preterm deliveries" = "preterm",
+                        "Perineal tears" = "tears",
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",

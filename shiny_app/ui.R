@@ -99,6 +99,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
                           actionLink("apgar_button", "Apgar scores", width="150px"),br(),
                           actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
+                          actionLink("tears_button", "Perineal tears", width="150px"),br(),
                           actionLink("cancer_button", "Cancer", width="150px")
 
                          ),
@@ -119,6 +120,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
                                      bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
                                      bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
+                                     bsCollapsePanel("Perineal tears", uiOutput("tears_commentary")),
                                      bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
 
                           )))
@@ -243,13 +245,13 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
          )# mainPanel bracket
 ),#tabPanel bracket
 ###############################################.
-## Pregnancy ----
+## Pregnancy menu ----
 ##############################################.
 navbarMenu("Pregnancy", icon = icon("venus"),
 ###############################################.
-## Antenatal booking Tab ----
+## Antenatal booking ----
 ###############################################.
-tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking",
+tabPanel(title = "Antenatal booking", value = "booking",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -269,9 +271,9 @@ tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking
          )# mainPanel bracket
 ), #tab panel
 ###############################################.
-## Termination of pregnancy Tab ----
+## Termination of pregnancy  ----
 ###############################################.
-tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "terminations",
+tabPanel(title = "Termination of pregnancy", value = "terminations",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -291,13 +293,13 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
 ) # tabPanel bracket
  ), # navbar menu bracket
 ###############################################.
-## Births and Babies ----
+## Births and Babies menu ----
 ##############################################.
 navbarMenu("Births and babies", icon = icon("baby"),
 ###############################################.
-## Inductions Tab ----
+## Inductions ----
 ###############################################.
-tabPanel(title = "Induction of labour", icon = icon("hand-holding-medical"), value = "inductions",
+tabPanel(title = "Induction of labour", value = "inductions",
         wellPanel(
           column(4, div(title="Select a breakdown",
                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -316,9 +318,9 @@ tabPanel(title = "Induction of labour", icon = icon("hand-holding-medical"), val
         )# mainPanel bracket
 ), # tabPanel bracket
 ###############################################.
-## Mode of delivery Tab ----
+## Mode of delivery ----
 ###############################################.
-tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mod",
+tabPanel(title = "Method of delivery", value = "mod",
         wellPanel(
            column(4, div(title="Select a breakdown",
                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -339,9 +341,9 @@ tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mo
         )# mainPanel bracket
 ), # tabPanel bracket
 ###############################################.
-## Gestation at delivery Tab ----
+## Gestation at delivery ----
 ###############################################.
-tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "gestation",
+tabPanel(title = "Gestation at delivery", value = "gestation",
         wellPanel(
           column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -360,9 +362,9 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
         )# mainPanel bracket
  ), # tabPanel bracket
 ###############################################.
-## Apgar Tab ----
+## Apgar ----
 ###############################################.
-tabPanel(title = "Apgar scores", icon = icon("notes-medical"), value = "apgar",
+tabPanel(title = "Apgar scores", value = "apgar",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -381,16 +383,12 @@ tabPanel(title = "Apgar scores", icon = icon("notes-medical"), value = "apgar",
          )# mainPanel bracket
 ), # tabPanel bracket
 ###############################################.
-## Preterm Tab ----
+## Preterm ----
 ###############################################.
-tabPanel(title = "Location of extremely preterm deliveries", icon = icon("hospital-alt"), value = "preterm",
+tabPanel(title = "Location of extremely preterm deliveries", value = "preterm",
          wellPanel(
            column(6, div(title="",
                          p(tags$b("Location of extremely preterm deliveries data is only available at Scotland level.")))),
-           # ,
-           #               selectInput("geotype_preterm", label = NULL, choices= c("Scotland"),
-           #                           selected = "Scotland")),
-           #        uiOutput("geoname_ui_preterm")),
            column(4,offset=2,
                   actionButton("btn_preterm_modal", "Data source: SMR02", icon = icon('question-circle')),
                   fluidRow(br()),
@@ -402,10 +400,31 @@ tabPanel(title = "Location of extremely preterm deliveries", icon = icon("hospit
                    uiOutput("preterm_explorer")
          )# mainPanel bracket
 ), # tabPanel bracket
+###############################################.
+## Perineal tears  ----
+###############################################.
+tabPanel(title = "Perineal tears", value = "tears",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_tears", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_tears")),
+           column(4,offset=4,
+                  actionButton("btn_tears_modal", "Data source: SMR02", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_tears_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_tears","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("tears_explorer")
+         )# mainPanel bracket
+), # tabPanel bracket
 ##############################################.
 ## Perinatal ----
 ###############################################.
-tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal_mortality",
+tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_perinatal",
@@ -425,13 +444,13 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
 ) # tabpanel bracket
  ), # navbar menu bracket
 ###############################################.
-## Child health navbarmenu ----
+## Child health menu ----
 ###############################################.
 navbarMenu("Child health", icon = icon("child"),
            ##############################################.
-           # Immunisation Tab ----
+           # Immunisations ----
            ##############################################.
-           tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
+           tabPanel(title = "Immunisations", value = "imm",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_immun",
@@ -465,7 +484,7 @@ navbarMenu("Child health", icon = icon("child"),
            ##############################################.
            # Child Health reviews ----
            #############################################.
-           tabPanel(title = "Child health reviews", icon = icon("child"), value = "child_health",
+           tabPanel(title = "Child health reviews", value = "child_health",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_child",
@@ -493,9 +512,9 @@ navbarMenu("Child health", icon = icon("child"),
                     )# mainPanel bracket
            ), # tabpanel bracket
            ###############################################.
-           ## Breastfeeding tab ----
+           ## Breastfeeding  ----
            ##############################################.
-           tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
+           tabPanel(title = "Breastfeeding", value = "breastfeeding",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_bf",
@@ -520,7 +539,7 @@ navbarMenu("Child health", icon = icon("child"),
            ###############################################.
            ## Child development ----
            ###############################################.
-           tabPanel(title = "Child development", icon = icon("seedling"), value = "child_dev",
+           tabPanel(title = "Child development", value = "child_dev",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_childdev",
