@@ -731,7 +731,7 @@ create_apgar <- function(folderdate) {
 ## Preterm babies in NICU ----
 ###############################################.
 
-create_preterm <- function(preterm_date) {
+create_preterm <- function(preterm_date, max_date) {
   # P CHART PRETERM DATA
   preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_NeonatalAdmit_p-chart_",preterm_date,".xlsx"),
                                       sheet = "P_Chart", skip = 102) %>%
@@ -838,7 +838,7 @@ create_preterm <- function(preterm_date) {
            ind=case_when(ind=="nicu_23_26" ~ "Deliveries 23-26w in hosp with NICU",
                          ind=="neonate_23_26" ~ "All deliveries 23-26w",
                          TRUE~as.character(ind))) %>%
-    filter(quarter < "2021-01-01")
+    filter(quarter < max_date)
   
   saveRDS(preterm_linechart, "shiny_app/data/preterm_linechart_data.rds")
   saveRDS(preterm_linechart, paste0(data_folder,"final_app_files/preterm_linechart_data_",
@@ -854,7 +854,7 @@ create_preterm <- function(preterm_date) {
 ## Perineal Tears ----
 ###############################################.
 
-create_tears <- function(tears_date, max_week) {
+create_tears <- function(tears_date, max_date) {
   
 tears_folder <- gsub("_", "", tears_date)
 
@@ -866,8 +866,6 @@ tears_runchart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_
   mutate(date = gsub("-", "", date), #formatting date
          date = as.Date(paste0(date,"1"), format="%Y%m%d"),
          date_label = format(strptime(date, format = "%Y-%m-%d"), "%B %Y"),
-         #date_label = as.Date(date, format="%d%m%Y"),
-         #date_label = as.character(date_label),
          area_name = area,
          date_type = "Month")
 
@@ -886,7 +884,7 @@ tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
                           area_name=="Scotland" ~ "Scotland"),
          area_type = type,
          category = "All") %>%
-  filter(date <= "2021-02-01") %>% 
+  filter(date <= max_date) %>% 
   
   
   # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
@@ -909,6 +907,8 @@ saveRDS(tears_runchart, "shiny_app/data/tears_runchart_data.rds")
 saveRDS(tears_runchart, paste0(data_folder,"final_app_files/tears_runchart_data_", 
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+tears_runchart <<- tears_runchart
+
 ## 2- LINECHART DATA apgar for Scotland only by age and dep
 tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_Tears_DOWNLOAD_Qtr_",tears_date,".rds")) %>%  
   janitor::clean_names() %>%
@@ -924,11 +924,13 @@ tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/
                               category == "1 - Most deprived" ~ "1 - most deprived",
                               category == "5 - Least deprived" ~ "5 - least deprived",
                               TRUE ~ as.character(category))) %>% 
-  filter(quarter <= "2021-02-01")
+  filter(quarter <= max_date)
 
 saveRDS(tears_scot, "shiny_app/data/tears_scot_data.rds")
 saveRDS(tears_scot, paste0(data_folder,"final_app_files/tears_scot_data_", 
                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+print("File tears_scot_data.rds produced and saved")
 
 ## 3- LINECHART DATA apgar for Scotland & NHS board
 tears_linechart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_LINECHART_Scotland_Tears_",tears_date,".rds")) %>% 
@@ -977,6 +979,8 @@ saveRDS(tears_linechart, "shiny_app/data/tears_linechart_data.rds")
 saveRDS(tears_linechart, paste0(data_folder,"final_app_files/tears_linechart_data_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+print("File tears_linechart_data.rds produced and saved")
+
 ## 4- Apgar DATA DOWNLOAD FILE FOR SHINY APP
 tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_Tears_DOWNLOAD_Qtr_",tears_date,".rds")) %>%  
   janitor::clean_names() %>%
@@ -999,7 +1003,7 @@ tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
          chart_category="All",
          chart_type= area_type,
          perc_denominator = "births_37plus_tears_known") %>% 
-  filter(month_of_discharge <= "2021-02-01") %>% 
+  filter(month_of_discharge <= max_date) %>% 
   select(-month_of_discharge) %>% 
   select(indicator, subgroup, variable, area_name, date_of_discharge, 
          no_tear_37_plus = no_perineal_tear_37plus,
@@ -1023,6 +1027,11 @@ tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
 saveRDS(tears_download, "shiny_app/data/tears_download_data.rds")  
 saveRDS(tears_download, paste0(data_folder,"final_app_files/tears_download_data_", 
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+print("File tears_download_data.rds produced and saved")
+print("#############################################")
+print("Remember to change final_app_files script")
+file.edit("data_prep/final_app_files.R")
 
 }
 
