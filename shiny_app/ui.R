@@ -1,5 +1,5 @@
 #UI
- #secure_app( #uncomment if needing password protection
+# secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -198,6 +198,8 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ## Cancer ----
 ###############################################.
 tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
+         wellPanel(width = 12,
+                   uiOutput("cancer_explorer2")),
   wellPanel(
            column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
                                  choices= c("Scotland", "Cancer Network", "Health Board"),
@@ -211,7 +213,7 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
                                       selected = "All Persons"))),
                      # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
 
-           column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
+           column(4,actionButton("btn_cancer_modal", "Data source and definitions", icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton('download_cancer_data', 'Download data'),
                   fluidRow(br()),
@@ -580,5 +582,5 @@ navbarMenu("Child health", icon = icon("child"),
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
- #)#secure app
+# )#secure app
 #END

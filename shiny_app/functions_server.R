@@ -295,7 +295,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 ## Function for overall cancer charts ----
 ###############################################.
 
-plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_name) {
+plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_chosen, data_name) {
   
 # set plot display if no data  
   if (is.data.frame(dataset) && nrow(dataset) == 0)
@@ -305,7 +305,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
   
 # Set y axis label
   yaxis_title <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals",
-                           data_name == "dif" ~ "% Change from 2019 to 2020 ",
+                           data_name == "dif" ~ "% Change from 2019 ",
                            data_name == "inc" ~ "Weekly Total of Individuals")
   
   yaxis_plots[["title"]] <- yaxis_title
@@ -314,38 +314,73 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, data_na
 #Text for tooltips  
   
   measure_name <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals: ",
-                            data_name == "dif" ~ "% Change from 2019 to 2020: ",
+                            data_name == "dif" ~ "% Change from 2019 : ",
                             data_name == "inc" ~ "Weekly Total of Individuals: ")
  
   value1 <- dataset[[var1_chosen]]
   
   value2 <- dataset[[var2_chosen]]
   
+  value3 <- dataset[[var3_chosen]]
   
-  tooltip_1 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+  
+  tooltip_1 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                             "<br>", measure_name, value1))
   
-  tooltip_2 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+  tooltip_2 <- c(paste0("Year:2019", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                         "<br>", measure_name, value2))
   
-  tooltip_3 <- c(paste0("Week ending: ", format(dataset$week_ending, "%d %b"),
+  tooltip_3 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                        "<br>", measure_name, value3))
+  
+  tooltip_4 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                               "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
+                 
+  tooltip_5 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                              "<br>", measure_name, paste0(format(round(value3, 2), nsmall = 2), "%")))
+  
+  # Function for verical line at start of lockdown
+  vline <- function(x = 0, color = "grey") {
+    list(
+      type = "line",
+      y0 = 0,
+      y1 = 1,
+      yref = "paper",
+      x0 = x,
+      x1 = x,
+      line = list(color = color, dash = 'dash')
+    )
+  }
+  
 
 if(data_name != "dif") { 
   
   #Creating time trend plot for cumulative totals and incidence
   plot_ly(data=dataset, x=~week_ending) %>%
-    
+ 
+    # 2021 line
+    add_lines(y = ~get(var3_chosen), line = list(color = "blue", opacity = 0.3, width = 3), text=tooltip_3, hoverinfo="text",
+              name = "2021") %>%
+           
     # 2020 line
-    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_1, hoverinfo="text",
+    add_lines(y = ~get(var1_chosen), line = list(color = "green", opacity = 0.6, width = 2),text=tooltip_1, hoverinfo="text",
               name = "2020") %>%
     # 2019 line
-    add_lines(y = ~get(var2_chosen), line = list(color = pal_overall[2], dash = 'dash'),text=tooltip_2, 
+    add_lines(y = ~get(var2_chosen), line = list(color = "black", dash = 'dash', opacity = 3, width = 1),text=tooltip_2, 
               hoverinfo="text", name = "2019") %>%
+ 
+    add_annotations(x = "2020-04-05",
+                    y = max(var1_chosen),
+                    text = "1st lockdown",
+                    xref = "1",
+                    yref = "1",
+                    showarrow = FALSE) %>% 
     
+       
     #Layout
-    layout(margin = list(b = 80, t=5), 
-           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
+    layout(margin = list(b = 80, t=5),
+           shapes = list(vline("2020-03-22")),
+           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000*4),
            legend = list(x = 100, y = 0.5)) %>% 
     
     # leaving only save plot button
@@ -357,13 +392,25 @@ if(data_name != "dif") {
   plot_ly(data=dataset, x=~week_ending) %>%
     
     # 2020 line
-    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_3, hoverinfo="text",
+    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[2]),text=tooltip_4, hoverinfo="text",
               name = "2020") %>%
+
+    # 2021 line
+    add_lines(y = ~get(var3_chosen), line = list(color = "blue"),text=tooltip_5, hoverinfo="text",
+              name = "2021") %>%
+    
+    add_annotations(x = "2020-04-05",
+                    y = max(var1_chosen),
+                    text = "1st lockdown",
+                    xref = "1",
+                    yref = "1",
+                    showarrow = FALSE) %>% 
     
     #Layout
-    layout(margin = list(b = 80, t=5), 
-           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
-           legend = list(x = 100, y = 0.5)) %>% 
+    layout(margin = list(b = 80, t=5),
+           shapes = list(vline("2020-03-22")),
+           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000*4),
+           legend = list(x = 100, y = 0.5, traceorder = 'reversed')) %>% 
     
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}

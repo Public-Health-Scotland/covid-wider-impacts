@@ -16,6 +16,10 @@ require(janitor)||install.packages("janitor")
 require(lubridate)||install.packages("lubridate")
 require(writexl)||install.packages("writexl")
 require(plotly)||install.packages("plotly")
+require(remotes)||install.packages("remotes")
+
+remotes::install_github("Public-Health-Scotland/phsmethods", upgrade = "never")
+library(phsmethods)
 
 ##########################################
 # Import Data
@@ -26,14 +30,22 @@ input_folder <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Pr
 cl_out <- "/conf/linkage/output/lookups/Unicode/"
 
 # import pathology data
-cancer <- read_csv(paste0(input_folder,"Pathology_Data_Feb21.csv"), col_names = T) %>%  
-  clean_names() 
+cancer <- read_csv(paste0(input_folder,"Pathology_Data_May21.csv"), col_names = T) %>%  
+  clean_names() %>% 
+  mutate(postcode = postcode(postcode, format = "pc8"))  %>%
+  mutate(postcode = case_when((str_length(postcode) == 7 &
+                              str_sub(postcode, 2, 2) == "0")
+                              ~ (str_sub(postcode, 2, 2) <- ""),
+                              (str_length(postcode) == 8 &
+                              str_sub(postcode, 3, 3) == "0")
+                              ~ (str_sub(postcode, 3, 3) <- ""),
+                              TRUE ~ postcode))
 
 # import deprivation lookup
-depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2020_2_simd2020v2.rds")) %>% 
-  clean_names() %>% 
-  select(pc8, hb2019name, simd2020v2_sc_quintile) %>% 
-  rename(postcode = pc8, hbres = hb2019name, dep = simd2020v2_sc_quintile) 
+depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_1_simd2020v2.rds")) %>%
+  clean_names() %>%
+  select(pc8, hb2019name, simd2020v2_sc_quintile) %>%
+  rename(postcode = pc8, hbres = hb2019name, dep = simd2020v2_sc_quintile)
 
 
 ###########################################################
@@ -41,6 +53,7 @@ depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2020_2_simd2020v2.rds"
 ###########################################################
 
 # temporarily needed 
+# IS THIS NEEDED? What if not a clerical error but person ID as other sex?
 
 cancer <- cancer %>%
   mutate(sex = case_when(person_id == 25002739 ~ 2, TRUE ~ sex ))
@@ -51,25 +64,26 @@ cancer <- cancer %>%
          doi = dmy(incidence_date),
          age = floor(difftime(doi, dob, units = "days")/365))
 
+
 # creates age group column
-cancer <- cancer %>% 
-  mutate(age_group = case_when(between(age, 0, 4) ~ "Under 5",
-                               between(age, 5, 9) ~ "5-9",
-                               between(age, 10, 14) ~ "10-14",
-                               between(age, 15, 19)  ~ "15-19",
-                               between(age, 20, 24) ~ "20-24",
-                               between(age, 25, 29) ~ "25-29",
-                               between(age, 30, 34) ~ "30-34",
-                               between(age, 35, 39) ~ "35-39",
-                               between(age, 40, 44) ~ "40-44",
-                               between(age, 45, 49) ~ "45-49",
-                               between(age, 50, 54) ~ "50-54",
-                               between(age, 55, 59) ~ "55-59",
-                               between(age, 60, 64) ~ "60-64",
-                               between(age, 65, 69) ~ "65-69",
-                               between(age, 70, 74)~ "70-74",
-                               between(age, 75, 79) ~ "75-79",
-                               age > 79 ~ "80 and over"))
+# cancer <- cancer %>% 
+#   mutate(age_group = case_when(between(age, 0, 4) ~ "Under 5",
+#                                between(age, 5, 9) ~ "5-9",
+#                                between(age, 10, 14) ~ "10-14",
+#                                between(age, 15, 19)  ~ "15-19",
+#                                between(age, 20, 24) ~ "20-24",
+#                                between(age, 25, 29) ~ "25-29",
+#                                between(age, 30, 34) ~ "30-34",
+#                                between(age, 35, 39) ~ "35-39",
+#                                between(age, 40, 44) ~ "40-44",
+#                                between(age, 45, 49) ~ "45-49",
+#                                between(age, 50, 54) ~ "50-54",
+#                                between(age, 55, 59) ~ "55-59",
+#                                between(age, 60, 64) ~ "60-64",
+#                                between(age, 65, 69) ~ "65-69",
+#                                between(age, 70, 74)~ "70-74",
+#                                between(age, 75, 79) ~ "75-79",
+#                                age > 79 ~ "80 and over"))
 
 
 # create cancer siteno
@@ -139,15 +153,17 @@ cancer <- cancer %>%
                           siteno == 2010 ~ "Stomach",
                           siteno == 999 ~ "Other"))
 
+# 166,540
+
 # create screening cohort indicators
 
-cancer <- cancer %>% 
-  mutate(breast_scr = if_else(siteno == 510 & age >= 50 & age <= 70 & sex == 2, 1, 0)) %>% 
-  mutate(colo_scr = if_else(siteno == 610 & age >= 50 & age <= 74, 1, 0)) %>% 
-  mutate(cerv_scr = case_when(str_detect(icd10_conv, "C53") & age >= 25 & age <= 49 ~ 1,
-                              str_detect(icd10_conv, "C53") & age >= 50 & age <= 64 ~ 2,
-                              str_detect(icd10_conv, "C53") & age < 25 & age > 64 ~ 3,
-                              TRUE ~ 0))
+# cancer <- cancer %>% 
+#   mutate(breast_scr = if_else(siteno == 510 & age >= 50 & age <= 70 & sex == 2, 1, 0)) %>% 
+#   mutate(colo_scr = if_else(siteno == 610 & age >= 50 & age <= 74, 1, 0)) %>% 
+#   mutate(cerv_scr = case_when(str_detect(icd10_conv, "C53") & age >= 25 & age <= 49 ~ 1,
+#                               str_detect(icd10_conv, "C53") & age >= 50 & age <= 64 ~ 2,
+#                               str_detect(icd10_conv, "C53") & age < 25 & age > 64 ~ 3,
+#                               TRUE ~ 0))
 
 
 # get Health Boards of residence and deprivation quintil rank from postcodes
@@ -155,7 +171,13 @@ cancer <- cancer %>%
 cancer_joined <- inner_join(cancer, depriv_dir) %>%
   replace_na(list(hbres = "Unknown", dep = 9, sex = 9))
 
+# 157302
+# with postcodes fixed - 161789
+
+
+
 # filter impossible sex cancer combo
+# IS THIS NEEDED? What if not a clerical error but person ID as other sex?
 
 cancer_joined <- cancer_joined %>% 
   filter(!(sex != 2 & (siteno >= 740 & siteno <= 770))) %>% 
@@ -184,10 +206,12 @@ base_cancer <- cancer_joined %>%
   group_by(year, week_number, hbres, site, sex, person_id) %>% 
   summarise() %>% 
   ungroup()
+# 150984
+# 142245
+
 
 # networks
-
-networks <- base_cancer %>% 
+networks <- base_cancer %>%
   mutate(hbres = case_when(hbres == "NHS Grampian" ~ "NCA",
                            hbres == "NHS Highland" ~ "NCA",
                            hbres == "NHS Orkney" ~ "NCA",
@@ -201,22 +225,26 @@ networks <- base_cancer %>%
                            hbres == "NHS Ayrshire & Arran" ~ "WOSCAN",
                            hbres == "NHS Forth Valley" ~ "WOSCAN",
                            hbres == "NHS Greater Glasgow & Clyde" ~ "WOSCAN",
-                           hbres == "NHS Lanarkshire" ~ "WOSCAN")) %>% 
+                           hbres == "NHS Lanarkshire" ~ "WOSCAN",
+                           TRUE ~ hbres)) %>% 
   group_by(year, week_number, hbres, site, sex, person_id) %>% 
   summarise() %>% 
   ungroup()
 
-# scotland
 
+# scotland
 scotland <- base_cancer %>%
   mutate(hbres = "Scotland") %>% 
   group_by(year, week_number, hbres, site, sex, person_id) %>% 
   summarise() %>% 
   ungroup()
+# 150,580
+# 142,230
 
 # bind all health board values
-
 base_cancer <-rbind(base_cancer, networks, scotland)
+# 452,536
+# 426,711
 
 # create all persons
 
@@ -225,9 +253,10 @@ base_allperson <- base_cancer %>%
   group_by(year, week_number, hbres, site, sex, person_id) %>% 
   summarise() %>% 
   ungroup()
+# 447,991
 
 base_cancer <-rbind(base_cancer, base_allperson)
-
+# 900,527
 
 ##########################################
 # All cancer types
@@ -238,7 +267,7 @@ allcancers <- base_cancer %>%
   mutate(site = "All Cancers") %>% 
   group_by(year, week_number, hbres, site, sex, person_id) %>% 
   summarise()
-
+# 840,213
 
 ##########################################
 # All cancer types excl C44
@@ -261,6 +290,7 @@ cancer_dist <- bind_rows(base_cancer, allcancers, exccancers) %>%
 cancer_dist <- cancer_dist %>% 
   group_by(year, week_number, hbres, site, sex) %>% 
   summarise(count = n())
+# 105,266
 
 
 ########################################################
@@ -272,18 +302,37 @@ cancer_dist <- cancer_dist %>%
 cancer_2019 <- cancer_dist %>% 
   filter(year == 2019) %>%
   group_by(hbres, site, sex, week_number) %>%
-  summarise(count19 = sum(count))
+  summarise(count19 = sum(count)) %>% 
+  ungroup()
+# 46548
 
 cancer_2020 <- cancer_dist %>% 
   filter(year == 2020) %>% 
   group_by(hbres, site, sex, week_number) %>%
-  summarise(count20 = sum(count))
-
-cancer_dist <- full_join(cancer_2020, cancer_2019) %>% 
+  summarise(count20 = sum(count)) %>% 
   ungroup()
+# 45052
+
+## ADDITION OF 2021 DATA
+
+cancer_2021 <- cancer_dist %>% 
+  filter(year == 2021 & week_number <= 8) %>% 
+  group_by(hbres, site, sex, week_number) %>%
+  summarise(count21 = sum(count)) %>% 
+  ungroup()
+# 6879
+
+cancer_dist <- full_join(cancer_2019,cancer_2020)
+# 55035
+
+cancer_dist <- full_join(cancer_dist, cancer_2021)
+
 
 cancer_dist <- cancer_dist %>% 
-  mutate(count20 = case_when(
+  mutate(count21 = case_when(
+    is.na(count21) ~ 0,
+    count21 >= 0 ~ as.double(count21)),
+    count20 = case_when(
     is.na(count20) ~ 0,
     count20 >= 0 ~ as.double(count20)),
     count19 = case_when(
@@ -296,16 +345,21 @@ cancer_sex <- cancer_dist %>%
   filter(sex != "Unknown") %>% 
   rename(type = sex) %>% 
   group_by(hbres, site, week_number, category, type) %>% 
-  summarise(count20 = sum(count20),
-            count19 = sum(count19))
+  summarise(count21 = sum(count21),
+            count20 = sum(count20),
+            count19 = sum(count19)) %>% 
+  ungroup()
 
 # for comparison of health board 
 cancer_hb <- cancer_dist %>%
   mutate(category = "hb", hbres = as.character(hbres)) %>%
   mutate(type = hbres) %>% 
   group_by(hbres, site, week_number, category, type) %>%
-  summarise(count19 = sum(count19),
-            count20 = sum(count20))
+  summarise(count21 = sum(count21),
+            count20 = sum(count20),
+            count19 = sum(count19)) %>% 
+  ungroup()
+
 
 #Bind rows
 
@@ -318,8 +372,13 @@ cancer_combined <- rbind(cancer_hb, cancer_sex) %>%
 ##########################################
 
 diff_data <- cancer_combined %>%
-  mutate(difference = case_when(
-    count19 > 0 ~ 100*(count20 - count19)/count19)) 
+  mutate(difference20 = case_when(
+      count19 > 0 ~ 100*(count20 - count19)/count19),
+         difference21 = case_when(
+      count19 > 0 ~ 100*(count21 - count19)/count19)) %>% 
+  mutate(difference21 = case_when(week_number > 8 ~ (na_if(difference21, -100)),
+                             TRUE ~ difference21))
+
 
 ##########################################
 # Week ending labels
@@ -334,31 +393,24 @@ diff_data <-  diff_data %>%
 ##########################################
 
 diff_data <-  diff_data %>% 
-  filter(week_number <= 48) %>%
-  ungroup()
-
-
-##########################################
-# Export Data
-##########################################
-
-# save as excel  and RDS file
-#write_xlsx(cancer_joined, "CWT Dashboard Input Data.xlsx")
-
-# saveRDS(diff_data, "shiny_app/data/cancer_data.rds")
-
+  filter(week_number <= 52) %>% 
+  mutate(count21 = case_when(week_number > 8 ~ (na_if(count21, 0)),
+                             TRUE ~ count21))
 
 ##########################################
-# To be added to app data prep
+# Generate Cumulative totals and tidy data
 ##########################################
 
 cancer_cum <- diff_data %>%
   filter(category == "sex") %>%
   rename(sex = type) %>%
-  select(area, site, sex, week_ending, count19, count20, difference) %>%
+  select(area, site, sex, week_ending, count19, count20, count21, difference20, difference21) %>%
   group_by(area, site, sex) %>%
   mutate(cum_count19 = cumsum(count19),
-         cum_count20 = cumsum(count20))
+         cum_count20 = cumsum(count20),
+         cum_count21 = cumsum(count21)) %>%
+  filter(area != "Unknown") %>% 
+  ungroup()
 
 # cancer_cum_dep <- diff_data %>%
 #   filter(category == "sex") %>%
@@ -367,6 +419,13 @@ cancer_cum <- diff_data %>%
 #   group_by(area, site, sex, dep) %>%
 #   mutate(cum_count19 = cumsum(count19),
 #          cum_count20 = cumsum(count20))
+
+
+##########################################
+# Export Data
+##########################################
+
+
 
 saveRDS(cancer_cum, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_2_", 
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
