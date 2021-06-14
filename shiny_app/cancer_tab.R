@@ -314,7 +314,7 @@ output$cancer_commentary <- renderUI({
     
     h3(strong("Cancer in Scotland in 2019/2020/2021")),
     p(strong("Note: as the information provided in this dashboard is updated, it will both add more recent 
-       data and may also change historical data.  This commentary includes reference to pathological specimens 
+       data and may also change historical data. This commentary includes reference to pathological specimens 
        reported to the week ending 26th February 2021, which were available for inclusion in the analysis 
        when the data were extracted on 20th May 2021.")),
 
@@ -326,13 +326,13 @@ output$cancer_commentary <- renderUI({
       in usual treatment, are less clear."),
 
     p("We explored how many patients had their cancers confirmed pathologically from 2020 onwards compared with how 
-      many there were in 2019, as a proxy measure of changes in cancer incidence.  However, final high-quality cancer 
+      many there were in 2019, as a proxy measure of changes in cancer incidence. However, final high-quality cancer 
       incidence data will not be published until 2022, when all potential information sources for cancer 
       have been considered by the Scottish Cancer Registry. "),
 
     h4(strong("What these data do and do not show")),
     p("The numbers in this dashboard are individuals from whom a pathology sample found cancer in 2019 onwards 
-      in Scotland.  Each individual was counted once the first time they appeared from 1st January; any subsequent 
+      in Scotland. Each individual was counted once the first time they appeared from 1st January; any subsequent 
       samples for the same individual were not counted (except when reporting cancer type-specific numbers, where 
       an individual could contribute to more than one cancer type)."),
 
@@ -340,8 +340,8 @@ output$cancer_commentary <- renderUI({
       follow-up samples of cancers that were diagnosed previously."),
 
     p("Cancer is often diagnosed initially through clinical examination (including radiology) followed by pathological 
-      confirmation.  However, not all cancers are diagnosed by pathology: some are better diagnosed through other methods 
-      (e.g. blood tests) and for some, the tumour is inaccessible for tissue sampling.  On average, around 80% of cancers 
+      confirmation. However, not all cancers are diagnosed by pathology: some are better diagnosed through other methods 
+      (e.g. blood tests) and for some, the tumour is inaccessible for tissue sampling. On average, around 80% of cancers 
       have pathological confirmation, though this varies by the type of cancer."),
 
     p("There is generally a 2-3 month time lag between the pathology sample being reported on by the laboratory and 
@@ -362,7 +362,7 @@ output$cancer_commentary <- renderUI({
     
 
     h4(strong("Overall trends in pathologically confirmed cancers")),
-    p("In 2020, numbers were similar to 2019 until towards the end of March.  After the first national “lockdown”, 
+    p("In 2020, numbers were similar to 2019 until towards the end of March. After the first national “lockdown”, 
       the numbers fell by about 40% of those seen in comparable weeks in 2019. Numbers then rose from late April 2020. 
       Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
       pandemic by 26th February 2021, when the latest data were available, although this varied by cancer type."),
