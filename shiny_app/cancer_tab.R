@@ -22,6 +22,11 @@ observeEvent(input$btn_cancer_modal,
                  and cytology specimens. Peripheral blood smears are not included such as leukaemia diagnosed from 
                  peripheral blood film.  The majority of pathology records will relate to new primary cancers, some 
                  records will relate to disease recurrence or known primary cancers and/or metastatic disease."),
+               p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of
+                each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had
+                a subsequent cancer specimen reported that year for the same type of cancer, they were not counted again; but they
+                were counted twice or more for those with different types of cancer. "),
+               
                p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
@@ -229,20 +234,16 @@ output$cancer_explorer2 <- renderUI({
            on 20th May 2021; the dashboard may now reflect more recent information."),
     br(),
     br(),
-    p(strong("First updated: - 04/11/2020 ;  date of extraction of data: - 16/9/2020, with pathological records to week ending
-      21/06/2020.  ")),
-    p(strong("Last updated: - 10/03/2021 ;  date of extraction of data: - 22/02/2021, with pathological records to week ending
-      29/11/2020.  ")),
+    # p(strong("First updated: - 04/11/2020 ;  date of extraction of data: - 16/9/2020, with pathological records to week ending
+    #   21/06/2020.  ")),
+    # p(strong("Last updated: - 10/03/2021 ;  date of extraction of data: - 22/02/2021, with pathological records to week ending
+    #   29/11/2020.  ")),
     p(strong("Last updated: - 16/06/2021 ;  date of extraction of data: - 20/05/2021, with pathological records to week ending
-      26/02/2021.  ")),
-    p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of
-      each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had
-      a subsequent cancer specimen reported that year for the same type of cancer, they were not counted again; but they
-      were counted twice or more for those with different types of cancer. "),
-    p("The first chart shows the cumulative total, or a running sum of the individuals confirmed pathologically as having
-      cancer.  The second and third charts show the weekly numbers and the weekly percent differences between 2020/21 and
-      2019 of new individuals confirmed each week.  "),
-    p("Drop-down menus allow further details for specific Health Boards, cancer types and sex to be selected"))
+      26/02/2021.  ")))#,
+    # p("The first chart shows the cumulative total, or a running sum of the individuals confirmed pathologically as having
+    #   cancer.  The second and third charts show the weekly numbers and the weekly percent differences between 2020/21 and
+    #   2019 of new individuals confirmed each week.  "),
+    # p("Drop-down menus allow further details for specific Health Boards, cancer types and sex to be selected"))
     # br(),
     # plot_box(paste0("Total count of individuals having a cancer of type:  ", cancer_site,
     #                 " confirmed on a pathological specimen since January for 2019/2020"), "cancer_overall"),
