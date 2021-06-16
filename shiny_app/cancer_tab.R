@@ -220,7 +220,7 @@ output$cancer_explorer2 <- renderUI({
     #   been expected."),
     p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and colorectal.  By the week
       ending 27th December 2020, compared to the same week in 2019, there were 761 fewer lung cancers (a total fall of 21.2%);
-      1591 fewer breast cancers (a total fall of 19.1%); 624 fewer prostate cancers (a total fall of 17.9%); and 1,111 fewer colorectal
+      1591 fewer breast cancers (a total fall of 19.1%); 831 fewer prostate cancers (a total fall of 18.7%); and 1,111 fewer colorectal
       cancers (a total fall of 21.1%)."),
     # p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and bowel.  By the week
     #   ending 21st June 2020, compared to the same week in 2019, there were 376 fewer lung cancers (a total fall of 23%);
@@ -392,8 +392,8 @@ output$cancer_commentary <- renderUI({
       tags$li(" Breast cancer (females).  The cumulative difference between 2019 and 2020 was 1,557 individuals (-19%).  In 2021, the cumulative 
               difference to 26th February 2021 compared with the same week in 2020 was 22 more individuals (+2%)."),
 
-      tags$li("	Prostate cancer. The cumulative difference between 2019 and 2020 was 624 individuals (-18%).  In 2021, the cumulative difference 
-              to 26th February 2021 compared with the same week in 2020 was 5 fewer individuals (less than 1% decrease)."),
+      tags$li("	Prostate cancer. The cumulative difference between 2019 and 2020 was 831 individuals (-18%).  In 2021, the cumulative difference 
+              to 26th February 2021 compared with the same week in 2020 was 34 fewer individuals (less than 5% decrease)."),
 
       tags$li(" Colorectal (bowel) cancer. The cumulative difference between 2019 and 2020 was 1,111 individuals (-21%).  In 2021, the 
               cumulative difference to 26th February 2021 compared with the same week in 2020 was 65 more individuals (+8%)"),
