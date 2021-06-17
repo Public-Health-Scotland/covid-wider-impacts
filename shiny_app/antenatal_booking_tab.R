@@ -139,7 +139,23 @@ output$booking_explorer <- renderUI({
                      column(12,
                             p(booking_subtitle),
                             p(chart_explanation)))
-    } else {
+    } else if (input$geoname_booking == "NHS Forth Valley"){
+      fluidRow(column(12,
+                      h4(booking_trend_title),
+                      actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
+               column(6,
+                      h4(paste0(booking_title_n)), br(), p(" "),
+                      #actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
+                      withSpinner(plotlyOutput("booking_trend_n"))),
+               column(6,
+                      h4(paste0(booking_title_g)),
+                      p(paste0(booking_title_g2)),
+                      withSpinner(plotlyOutput("booking_trend_g"))),
+               column(12,
+                      p(booking_subtitle),
+                      p(chart_explanation)))
+    
+      } else {
       fluidRow(column(12,
                       h4(booking_trend_title),
                       actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
@@ -207,6 +223,7 @@ plot_booking_trend <- function(measure, shift, trend){
     # chart legend labels  
     centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")   
     centreline_name_T <- paste0(input$geoname_booking, " average from Aug 2020 to end Dec 2020")
+    centreline_name_V <- paste0(input$geoname_booking, " average from Mar 2021 to Jun 2021")
     dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020") 
     dottedline_name_T <- paste0(input$geoname_booking," projected average from Jan 2021") 
     # format max and min x-axis to show initial time period and to add padding so markers aren't cut in half at start and end of chart
@@ -253,6 +270,7 @@ plot_booking_trend <- function(measure, shift, trend){
       centre_line <-  plot_data$centreline_g
       dotted_line_t <- plot_data$dottedline_g_t
       centre_line_t <- plot_data$centreline_g_t
+      centre_line_v <- plot_data$centreline_g_v
       yname <- "Average gestation"
       
       #Creating time trend plot
@@ -270,6 +288,8 @@ plot_booking_trend <- function(measure, shift, trend){
         add_lines(y = ~dotted_line_t,
                   line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
                   name = dottedline_name_T) %>%
+        add_lines(y = ~centre_line_v, name = centreline_name_V,
+                  line = list(color = "limegreen"), hoverinfo="none") %>%
         # adding trends
         add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
                     marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
