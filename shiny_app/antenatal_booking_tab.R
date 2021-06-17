@@ -217,8 +217,9 @@ plot_booking_trend <- function(measure, shift, trend){
   # Display message if island/small board is supplied and no chart available
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
-                text_nodata = "Weekly data not shown due to small numbers.Monthly data is available through the Download data button above")
-  } else if (plot_data$area_name == "NHS Tayside") {
+                text_nodata = "Weekly data not shown due to small numbers. Monthly data is available through the Download data button above")
+ 
+    } else if (plot_data$area_name == "NHS Tayside") {
     
     # chart legend labels  
     centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")   
