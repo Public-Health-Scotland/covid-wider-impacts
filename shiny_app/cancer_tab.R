@@ -50,24 +50,6 @@ cancer_data_cum_main <- reactive({
 # })
 
 
-
-cancer_data_dl <- reactive({
-  
-  cancer_data_cum_main() %>% 
-    rename("Area name" = area, "Cancer type" = site,
-           "Sex" = sex,
-           "Week ending" = week_ending,
-           "Count 2019" = count19,
-           "Count 2020" = count20,
-           "Count 2021" = count21,
-           "Cumulative count 2019" = cum_count19,
-           "Cumulative count 2020" = cum_count20,
-           "Cumulative count 2021" = cum_count21,
-           "Variation (%)" = difference)
-  
-})
-
-
 ###############################################.
 ## Reactive layout ----
 ###############################################.
@@ -301,7 +283,18 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
 output$download_cancer_data <- downloadHandler(
   filename ="cancer_extract.csv",
   content = function(file) {
-    write_csv(cancer_data_dl(),
+    write_csv(cancer_data_cum_main() %>% 
+                rename("Area name" = area, "Cancer type" = site,
+                       "Sex" = sex,
+                       "Week ending" = week_ending,
+                       "Count 2019" = count19,
+                       "Count 2020" = count20,
+                       "Count 2021" = count21,
+                       "Cumulative count 2019" = cum_count19,
+                       "Cumulative count 2020" = cum_count20,
+                       "Cumulative count 2021" = cum_count21,
+                       "Variation (%) 2020 vs 2019" = difference20,
+                       "Variation (%) 2021 vs 2019" = difference21),
               file) } 
 ) 
 

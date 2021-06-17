@@ -221,13 +221,17 @@ data_table <- reactive({
              "Type" = type)
   } else if (input$data_select %in% "cancer") {
     table_data <- table_data %>%
-      select(area, site, sex, week_ending, count19, count20, difference) %>%
-      mutate("Variation (%)" = format(round(difference, 2), nsmall = 2)) %>% 
-      rename("Area name" = area, "Cancer Type" = site,
+      select(area, site, sex, week_ending, count19, count20, count21, difference20, difference21) %>%
+      mutate(difference20 = format(round(difference20, 2), nsmall = 2),
+             difference21 = format(round(difference21, 2), nsmall = 2)) %>% 
+      rename("Area name" = area, "Cancer type" = site,
              "Sex" = sex,
-             "Week Ending" = week_ending,
+             "Week ending" = week_ending,
              "Count 2019" = count19,
-             "Count 2020" = count20)
+             "Count 2020" = count20,
+             "Count 2021" = count21,
+             "Variation (%) 2020 vs 2019" = difference20,
+             "Variation (%) 2021 vs 2019" = difference21)
   } else if (input$data_select %in% "childdev") {
     table_data %<>%
       select(area_name, month_review, review, number_reviews = no_reviews, 
