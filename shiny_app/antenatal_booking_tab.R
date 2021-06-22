@@ -18,8 +18,7 @@ observeEvent(input$btn_booking_rules,
                p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
                tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
                        tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
+                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance.")),
                p("Further information on these methods of presenting data can be found in the ",                      
                  tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                         'PHS guide to statistical process control charts', target="_blank"),"."),
@@ -218,94 +217,8 @@ plot_booking_trend <- function(measure, shift, trend){
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
                 text_nodata = "Weekly data not shown due to small numbers. Monthly data is available through the Download data button above")
- 
-    } else if (plot_data$area_name == "NHS Tayside") {
     
-    # chart legend labels  
-    centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")   
-    centreline_name_T <- paste0(input$geoname_booking, " average from Aug 2020 to end Dec 2020")
-    centreline_name_V <- paste0(input$geoname_booking, " average from Mar 2021 to Jun 2021")
-    dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020") 
-    dottedline_name_T <- paste0(input$geoname_booking," projected average from Jan 2021") 
-    # format max and min x-axis to show initial time period and to add padding so markers aren't cut in half at start and end of chart
-    xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting)-7, max(plot_data$week_book_starting)+7) #force x-axis to display first week of data
-    
-    #switch y-axis according to which measure is selected
-    if(measure == "booked_no"){
-      yaxis_plots[["title"]] <- "Number of women booking"
-      tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
-                                  "Number of women booking: ",plot_data$booked_no))
-      dotted_line <-  plot_data$dottedline_no
-      centre_line <-  plot_data$centreline_no
-      yname <- "Number of women booking"
-      
-      #Creating time trend plot
-      plot_ly(data=plot_data, x=~week_book_starting) %>%
-        add_lines(y = ~get(measure),  
-                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-                  marker = list(color = "black"), name = yname) %>% 
-        add_lines(y = ~centre_line, name = centreline_name,
-                  line = list(color = "blue"), hoverinfo="none") %>%        
-        add_lines(y = ~dotted_line,
-                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
-                  name = dottedline_name) %>%
-        # adding trends
-        add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
-                    marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
-        # adding shifts - add these last so that shifts are always visible on top of trends
-        add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
-                    marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
-        #Layout
-        layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-               yaxis = yaxis_plots,  xaxis = xaxis_plots,
-               #legend = list(x = 0.1, y = 0.1)) %>% #position of legend inside plot
-               legend = list(orientation = 'h')) %>% #position of legend underneath plot
-        #leaving only save plot button
-        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-    } else if (measure  == "ave_gest") {
-      yaxis_plots[["title"]] <- "Average gestation at booking"
-      yaxis_plots[["range"]] <- c(0, 16)  # forcing range from 0 to 16 weeks to ensure doesn't change when NHS board selected
-      tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
-                                  "Average gestation: ",format(plot_data$ave_gest,digits = 1,nsmall=1)," weeks"))
-      dotted_line <-  plot_data$dottedline_g
-      centre_line <-  plot_data$centreline_g
-      dotted_line_t <- plot_data$dottedline_g_t
-      centre_line_t <- plot_data$centreline_g_t
-      centre_line_v <- plot_data$centreline_g_v
-      yname <- "Average gestation"
-      
-      #Creating time trend plot
-      plot_ly(data=plot_data, x=~week_book_starting) %>%
-        add_lines(y = ~get(measure),  
-                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-                  marker = list(color = "black"), name = yname) %>% 
-        add_lines(y = ~centre_line, name = centreline_name,
-                  line = list(color = "blue"), hoverinfo="none") %>%        
-        add_lines(y = ~dotted_line,
-                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
-                  name = dottedline_name) %>%
-        add_lines(y = ~centre_line_t, name = centreline_name_T,
-                  line = list(color = "limegreen"), hoverinfo="none") %>%
-        add_lines(y = ~dotted_line_t,
-                  line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
-                  name = dottedline_name_T) %>%
-        add_lines(y = ~centre_line_v, name = centreline_name_V,
-                  line = list(color = "limegreen"), hoverinfo="none") %>%
-        # adding trends
-        add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
-                    marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
-        # adding shifts - add these last so that shifts are always visible on top of trends
-        add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
-                    marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
-        #Layout
-        layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-               yaxis = yaxis_plots,  xaxis = xaxis_plots,
-               #legend = list(x = 0.1, y = 0.1)) %>% #position of legend inside plot
-               legend = list(orientation = 'h')) %>% #position of legend underneath plot
-        #leaving only save plot button
-        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-    } 
-  } else {
+  } else { 
     # chart legend labels  
     centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")    
     dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020")
@@ -320,27 +233,64 @@ plot_booking_trend <- function(measure, shift, trend){
       dotted_line <-  plot_data$dottedline_no
       centre_line <-  plot_data$centreline_no
       yname <- "Number of women booking"
+      
     } else if (measure  == "ave_gest") {
+      # chart legend labels, for most boards and the different centrelines of Tayside and FV  
+      centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")   
+      centreline_name_t <- paste0(input$geoname_booking, " average from Aug 2020 to end Dec 2020")
+      centreline_name_v <- paste0(input$geoname_booking, " average from Mar 2021 to Jun 2021")
+      dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020") 
+      dottedline_name_t <- paste0(input$geoname_booking," projected average from Jan 2021") 
+      dottedline_name_v <- paste0(input$geoname_booking," projected average from Jul 2021") 
+      # format max and min x-axis to show initial time period and to add padding so markers aren't cut in half at start and end of chart
+      xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting)-7, max(plot_data$week_book_starting)+7) #force x-axis to display first week of data
+      
       yaxis_plots[["title"]] <- "Average gestation at booking"
       yaxis_plots[["range"]] <- c(0, 16)  # forcing range from 0 to 16 weeks to ensure doesn't change when NHS board selected
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
                                   "Average gestation: ",format(plot_data$ave_gest,digits = 1,nsmall=1)," weeks"))
+      
       dotted_line <-  plot_data$dottedline_g
       centre_line <-  plot_data$centreline_g
+      dotted_line_t <- plot_data$dottedline_g_t
+      centre_line_t <- plot_data$centreline_g_t
+      centre_line_v <- plot_data$centreline_g_v
+      dotted_line_v <- plot_data$dottedline_g_v
+      
       yname <- "Average gestation"
     } 
-  
+    
     
     #Creating time trend plot
-    plot_ly(data=plot_data, x=~week_book_starting) %>%
+    ante_plot <- plot_ly(data=plot_data, x=~week_book_starting) %>%
       add_lines(y = ~get(measure),  
                 line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
                 marker = list(color = "black"), name = yname) %>% 
-            add_lines(y = ~centre_line, name = centreline_name,
-                line = list(color = "blue"), hoverinfo="none") %>%
+      add_lines(y = ~centre_line, name = centreline_name,
+                line = list(color = "blue"), hoverinfo="none") %>%        
       add_lines(y = ~dotted_line,
                 line = list(color = "blue", dash = "dash"), hoverinfo="none",
-                name = dottedline_name) %>%
+                name = dottedline_name) 
+    
+    # Adding a couple of different centrelines for average gestation in FV and Tayside
+    if(measure == "ave_gest"){
+      ante_plot <- ante_plot %>% 
+        # For Tayside
+        add_lines(y = ~centre_line_t, name = centreline_name_t,
+                  line = list(color = "limegreen"), hoverinfo="none") %>%
+        add_lines(y = ~dotted_line_t,
+                  line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name_t) %>%
+        # For Forth Valley
+        add_lines(y = ~centre_line_v, name = centreline_name_v,
+                  line = list(color = "limegreen"), hoverinfo="none") %>%
+        add_lines(y = ~dotted_line_v,
+                  line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name_v) 
+      
+    } 
+      
+    ante_plot %>%
       # adding trends
       add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
                   marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
@@ -354,8 +304,10 @@ plot_booking_trend <- function(measure, shift, trend){
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
   }
 }
+
 
 ## Trend plot for weekly bookings numbers and average gestation at booking split by age group and simd quintile 
 plot_booking_split <- function(dataset, split, measure){
