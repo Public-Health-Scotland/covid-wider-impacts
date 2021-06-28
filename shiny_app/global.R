@@ -141,21 +141,21 @@ top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "18th May 2021"
+mod_extract_date <- "15th June 2021"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
 mod_download <- readRDS("data/mod_download_data.rds")
 
 #inductions (pregnanacy tab)
-induct_extract_date <- "18th May 2021"
+induct_extract_date <- "15th June 2021"
 induct_runchart <- readRDS("data/induct_runchart_data.rds")
 induct_scot <- readRDS("data/induct_scot_data.rds")
 induct_linechart <- readRDS("data/induct_linechart_data.rds")
 induct_download <- readRDS("data/induct_download_data.rds")
 
 #gestation at delivery (pregnanacy tab)
-gestation_extract_date <- "18th May 2021"
+gestation_extract_date <- "15th June 2021"
 gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
 gestation_scot <- readRDS("data/gestation_scot_data.rds")
 gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
@@ -167,7 +167,7 @@ breastfeeding <- readRDS("data/breastfeeding.rds")
 child_dev <- readRDS("data/child_dev.rds")
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "13th May 2021"
+apgar_extract_date <- "21st June 2021"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
