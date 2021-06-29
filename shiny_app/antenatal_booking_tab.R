@@ -241,7 +241,7 @@ plot_booking_trend <- function(measure, shift, trend){
       centreline_name_v <- paste0(input$geoname_booking, " average from Mar 2021 to Jun 2021")
       dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020") 
       dottedline_name_t <- paste0(input$geoname_booking," projected average from Jan 2021") 
-      dottedline_name_v <- paste0(input$geoname_booking," projected average from Jul 2021") 
+      dottedline_name_v <- paste0(input$geoname_booking," projected average from Jul 2021")
       # format max and min x-axis to show initial time period and to add padding so markers aren't cut in half at start and end of chart
       xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting)-7, max(plot_data$week_book_starting)+7) #force x-axis to display first week of data
       
@@ -395,6 +395,9 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Antenatal bookings - 7th July 2021"),
+    p("In this release of information on antenatal booking data (7th July 2021) data have been updated to include women booking for antenatal care up to the week beginning 7th June 2021. 
+       A new centreline line for average gestation has been included for NHS Forth Valley because a technical change to the way their data are recorded is thought to have resulted in data which more accurately represent the timing of when women book for antenatal care in NHS Forth Valley. The new centreline starts from the week beginning 1st March 2021 and will be calculated over the period 1st March - 12th July 2021 after which a projected centreline will be presented on the average gestation chart for NHS Forth Valley."),
     h2("Antenatal bookings - 2nd June 2021"),
     p("In this release of information on antenatal booking data (2nd June 2021) data have been updated to include women booking for antenatal care up to the week beginning 3rd May 2021. Since the previous release, which showed data up until the week beginning 5th April 2021, numbers of women booking for antenatal care in Scotland have reduced (to 869 in week of 3rd May). This is likely to be as a result of fewer women booking over the May public holiday. This reduction is also reflected in the numbers of bookings by NHS Board with NHS Borders, NHS Lothian and NHS Greater Glasgow & Clyde showing notable decreases for the week beginning 3rd May 2021. NHS Forth Valley have recorded six consecutive data points below their average number of bookings."),
     p("The updated (all-Scotland) data in this release show that the average gestation at which women booked for antenatal care in recent weeks is around the average based on the pre-pandemic period. Recent data on average gestation by NHS Board are more varied. Lower than average gestation at booking has been observed over at least six consecutive data points in the most recent NHS Ayrshire & Arran, NHS Dumfries & Galloway, NHS Highland, NHS Lanarkshire and NHS Lothian data. NHS Forth Valley continues to show an increased average gestation at booking in recent weeks compared to their pre-pandemic average. This is believed to be as a result of a technical change in data recording and we are continuing to work with the Health Board to clarify this."),
