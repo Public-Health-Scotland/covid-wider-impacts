@@ -97,9 +97,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("mod_button", "Method of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
                           actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
-                          actionLink("apgar_button", "Apgar scores", width="150px")#,br(),
-                          # actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
-                          # actionLink("tears_button", "Perineal tears", width="150px"),br(),
+                          actionLink("apgar_button", "Apgar scores", width="150px"),br(),
+                          actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
+                          actionLink("tears_button", "Perineal tears", width="150px"),br()#,
                           # actionLink("cancer_button", "Cancer", width="150px")
 
                          ),
@@ -118,9 +118,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
                                      bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
-                                     bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary"))#,
-                                     # bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
-                                     # bsCollapsePanel("Perineal tears", uiOutput("tears_commentary")),
+                                     bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
+                                     bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
+                                     bsCollapsePanel("Perineal tears", uiOutput("tears_commentary"))#,
                                      # bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
 
                           )))
@@ -383,46 +383,46 @@ tabPanel(title = "Apgar scores", value = "apgar",
          mainPanel(width = 12,
                    uiOutput("apgar_explorer")
          )# mainPanel bracket
+), # tabPanel bracket
+###############################################.
+## Preterm ----
+###############################################.
+tabPanel(title = "Location of extremely preterm deliveries", value = "preterm",
+         wellPanel(
+           column(6, div(title="",
+                         p(tags$b("Location of extremely preterm deliveries data is only available at Scotland level.")))),
+           column(4,offset=2,
+                  actionButton("btn_preterm_modal", "Data source: SMR02", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_preterm_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_preterm","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("preterm_explorer")
+         )# mainPanel bracket
+), # tabPanel bracket
+###############################################.
+## Perineal tears  ----
+###############################################.
+tabPanel(title = "Perineal tears", value = "tears",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_tears", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_tears")),
+           column(4,offset=4,
+                  actionButton("btn_tears_modal", "Data source: SMR02", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_tears_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_tears","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("tears_explorer")
+         )# mainPanel bracket
 )#, # tabPanel bracket
-# ###############################################.
-# ## Preterm ----
-# ###############################################.
-# tabPanel(title = "Location of extremely preterm deliveries", value = "preterm",
-#          wellPanel(
-#            column(6, div(title="",
-#                          p(tags$b("Location of extremely preterm deliveries data is only available at Scotland level.")))),
-#            column(4,offset=2,
-#                   actionButton("btn_preterm_modal", "Data source: SMR02", icon = icon('question-circle')),
-#                   fluidRow(br()),
-#                   downloadButton("download_preterm_data", "Download data"),
-#                   fluidRow(br()),
-#                   actionButton("jump_commentary_preterm","Go to commentary"))
-#          ), #well panel
-#          mainPanel(width = 12,
-#                    uiOutput("preterm_explorer")
-#          )# mainPanel bracket
-# ), # tabPanel bracket
-# ###############################################.
-# ## Perineal tears  ----
-# ###############################################.
-# tabPanel(title = "Perineal tears", value = "tears",
-#          wellPanel(
-#            column(4, div(title="Select a breakdown",
-#                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-#                          selectInput("geotype_tears", label = NULL, choices= c("Scotland", "Health board"),
-#                                      selected = "Scotland")),
-#                   uiOutput("geoname_ui_tears")),
-#            column(4,offset=4,
-#                   actionButton("btn_tears_modal", "Data source: SMR02", icon = icon('question-circle')),
-#                   fluidRow(br()),
-#                   downloadButton("download_tears_data", "Download data"),
-#                   fluidRow(br()),
-#                   actionButton("jump_commentary_tears","Go to commentary"))
-#          ), #well panel
-#          mainPanel(width = 12,
-#                    uiOutput("tears_explorer")
-#          )# mainPanel bracket
-# ), # tabPanel bracket
 # ##############################################.
 # ## Perinatal ----
 # ###############################################.
