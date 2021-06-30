@@ -239,9 +239,11 @@ plot_booking_trend <- function(measure, shift, trend){
       centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")   
       centreline_name_t <- paste0(input$geoname_booking, " average from Aug 2020 to end Dec 2020")
       centreline_name_v <- paste0(input$geoname_booking, " average from Mar 2021 to Jun 2021")
-      dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020") 
+      dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020") 
       dottedline_name_t <- paste0(input$geoname_booking," projected average from Jan 2021") 
       dottedline_name_v <- paste0(input$geoname_booking," projected average from Jul 2021")
+      dottedline_name_ts <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020")
+      dottedline_name_fv <- paste0(input$geoname_booking," projected average from Mar 2020 to end Feb 2021")
       # format max and min x-axis to show initial time period and to add padding so markers aren't cut in half at start and end of chart
       xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting)-7, max(plot_data$week_book_starting)+7) #force x-axis to display first week of data
       
@@ -262,33 +264,53 @@ plot_booking_trend <- function(measure, shift, trend){
     
     
     #Creating time trend plot
-    ante_plot <- plot_ly(data=plot_data, x=~week_book_starting) %>%
-      add_lines(y = ~get(measure),  
-                line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-                marker = list(color = "black"), name = yname) %>% 
-      add_lines(y = ~centre_line, name = centreline_name,
-                line = list(color = "blue"), hoverinfo="none") %>%        
-      add_lines(y = ~dotted_line,
-                line = list(color = "blue", dash = "dash"), hoverinfo="none",
-                name = dottedline_name) 
+    ante_plot <- plot_ly(data=plot_data, x=~week_book_starting)
     
     # Adding a couple of different centrelines for average gestation in FV and Tayside
-    if(measure == "ave_gest"){
+    if(measure == "ave_gest" & input$geoname_booking == "NHS Tayside"){
       ante_plot <- ante_plot %>% 
         # For Tayside
+        add_lines(y = ~get(measure),  
+                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                  marker = list(color = "black"), name = yname) %>% 
+        add_lines(y = ~centre_line, name = centreline_name,
+                  line = list(color = "blue"), hoverinfo="none") %>%        
+        add_lines(y = ~dotted_line,
+                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name_ts) %>%
         add_lines(y = ~centre_line_t, name = centreline_name_t,
-                  line = list(color = "limegreen"), hoverinfo="none") %>%
+                line = list(color = "limegreen"), hoverinfo="none") %>%
         add_lines(y = ~dotted_line_t,
                   line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
-                  name = dottedline_name_t) %>%
-        # For Forth Valley
-        add_lines(y = ~centre_line_v, name = centreline_name_v,
-                  line = list(color = "limegreen"), hoverinfo="none") %>%
+                  name = dottedline_name_t) 
+    
+    } else if(measure == "ave_gest" & input$geoname_booking == "NHS Forth Valley") {
+      ante_plot <- ante_plot %>% 
+        # For Tayside
+        add_lines(y = ~get(measure),  
+                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                  marker = list(color = "black"), name = yname) %>% 
+        add_lines(y = ~centre_line, name = centreline_name,
+                  line = list(color = "blue"), hoverinfo="none") %>%        
+        add_lines(y = ~dotted_line,
+                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name_fv) %>%
+      add_lines(y = ~centre_line_v, name = centreline_name_v,
+                line = list(color = "limegreen"), hoverinfo="none") %>%
         add_lines(y = ~dotted_line_v,
                   line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
                   name = dottedline_name_v) 
       
-    } 
+    } else {
+      ante_plot <- ante_plot %>%
+        add_lines(y = ~get(measure),  
+                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                  marker = list(color = "black"), name = yname) %>% 
+        add_lines(y = ~centre_line, name = centreline_name,
+                  line = list(color = "blue"), hoverinfo="none") %>%        
+        add_lines(y = ~dotted_line,
+                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name) }
       
     ante_plot %>%
       # adding trends
