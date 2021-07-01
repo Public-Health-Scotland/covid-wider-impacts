@@ -636,6 +636,13 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 7th July 2021"),
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 7 July. It should be noted that the data recorded for the 
+      most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake 
+      is likely to be under-reported and will be updated as the data becomes more complete."),
+    p("Uptake of pre-school immunisations has remained high for children who became eligible during the Covid-19 pandemic. Information on final achieved uptake will continue to be provided through ",
+      tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
+             "official statistics publications", target="_blank"), "."),
     h2("Immunisations - 2nd June 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 2 June. It should be noted that the data recorded for the 
       most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake 
