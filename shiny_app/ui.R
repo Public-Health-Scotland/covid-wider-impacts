@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+ #secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -444,7 +444,7 @@ tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ) # tabpanel bracket
- ), # navbar menu bracket
+  ), # navbar menu bracket
 ###############################################.
 ## Child health menu ----
 ###############################################.
@@ -582,5 +582,5 @@ navbarMenu("Child health", icon = icon("child"),
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-# )#secure app
+ #)#secure app
 #END
