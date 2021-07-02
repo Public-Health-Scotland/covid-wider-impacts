@@ -38,7 +38,7 @@ save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
 save_final_file("ooh", "31_May_21")
 ## A&E ----
-save_final_file("ae", "31_May_21")
+save_final_file("ae", "02_Jul_21")
 ## NHS24 ----
 save_final_file("nhs24", "31_May_21")
 ## SAS ----
