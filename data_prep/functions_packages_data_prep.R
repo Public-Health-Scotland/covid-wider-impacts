@@ -35,6 +35,9 @@ if (sessionInfo()$platform %in% c("x86_64-redhat-linux-gnu (64-bit)", "x86_64-pc
   
 }
 
+# Setting file permissions to anyone to allow writing/overwriting of project files
+Sys.umask("006")
+
 ###############################################.
 ## Lookups ----
 ###############################################.
