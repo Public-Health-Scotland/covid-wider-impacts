@@ -159,7 +159,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
            conditionalPanel(condition = "input.measure_select != 'outpats' ",
            selectInput("adm_type", label = "Step 3. Select type of admission.",
                        choices = c("All", "Emergency", "Planned"), selected = "All")),
-           
+
            conditionalPanel(condition = "input.measure_select == 'outpats' ",
                             selectInput("appt_type", label = "Step 3. Select type of appointment.",
                                         choices = c("All", "New", "Return"), selected = "All")),
