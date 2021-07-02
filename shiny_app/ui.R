@@ -172,9 +172,9 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
             uiOutput("data_explorer")
   )# mainPanel bracket
 ), # tabpanel bracket
-#############################################.
-# Cardiovascular ----
-#############################################.
+##############################################.
+## Cardiovascular ----
+##############################################.
 tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -194,9 +194,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          )# mainPanel bracket
 ), # tabpanel bracket
 
-##############################################.
-# Cancer ----
-##############################################.
+###############################################.
+## Cancer ----
+###############################################.
 tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
          wellPanel(width = 12,
                    uiOutput("cancer_explorer2")),
@@ -226,9 +226,9 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
                    uiOutput("cancer_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-#############################################.
-#Mental Health ----
-#############################################.
+##############################################.
+# Mental Health ----
+##############################################.
 tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -246,9 +246,9 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
                    uiOutput("mh_explorer")
          )# mainPanel bracket
 ),#tabPanel bracket
+###############################################.
+## Pregnancy menu ----
 ##############################################.
-# Pregnancy menu ----
-#############################################.
 navbarMenu("Pregnancy", icon = icon("venus"),
 ###############################################.
 ## Antenatal booking ----
@@ -272,9 +272,9 @@ tabPanel(title = "Antenatal booking", value = "booking",
                    uiOutput("booking_explorer")
          )# mainPanel bracket
 ), #tab panel
-##############################################.
-# Termination of pregnancy  ----
-##############################################.
+###############################################.
+## Termination of pregnancy  ----
+###############################################.
 tabPanel(title = "Termination of pregnancy", value = "terminations",
          wellPanel(
            column(4, div(title="Select a breakdown",
@@ -294,9 +294,9 @@ tabPanel(title = "Termination of pregnancy", value = "terminations",
          )# mainPanel bracket
 ) # tabPanel bracket
  ), # navbar menu bracket
+###############################################.
+## Births and Babies menu ----
 ##############################################.
-# Births and Babies menu ----
-#############################################.
 navbarMenu("Births and babies", icon = icon("baby"),
 ###############################################.
 ## Inductions ----
@@ -483,9 +483,9 @@ navbarMenu("Child health", icon = icon("child"),
                               uiOutput("immunisation_explorer")
                     )# mainPanel bracket
            ), # tabpanel bracket
+           ##############################################.
+           # Child Health reviews ----
            #############################################.
-           #Child Health reviews ----
-           ############################################.
            tabPanel(title = "Child health reviews", value = "child_health",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
@@ -513,9 +513,9 @@ navbarMenu("Child health", icon = icon("child"),
                               uiOutput("child_health_explorer")
                     )# mainPanel bracket
            ), # tabpanel bracket
+           ###############################################.
+           ## Breastfeeding  ----
            ##############################################.
-           # Breastfeeding  ----
-           #############################################.
            tabPanel(title = "Breastfeeding", value = "breastfeeding",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
@@ -538,9 +538,9 @@ navbarMenu("Child health", icon = icon("child"),
                               uiOutput("breastfeeding_explorer")
                     )# mainPanel bracket
            ), # tabpanel bracket
-##############################################.
-# Child development ----
-##############################################.
+           ###############################################.
+           ## Child development ----
+           ###############################################.
            tabPanel(title = "Child development", value = "child_dev",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
