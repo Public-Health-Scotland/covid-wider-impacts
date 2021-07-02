@@ -5,6 +5,22 @@
 ###############################################.
 source("data_prep/functions_packages_data_prep.R")
 
+# Function to read all files required for mh drugs as only earliest week 
+# required for most of them
+read_mh_drugs <- function(filedate) {
+
+  mh_file <- read_xlsx(filedate) 
+  
+  # Bringing all the file for the last date, but only earliest week for the rest
+  if (filedate != last(files_mh)) {
+    mh_file %>% 
+      filter(as.Date(`Week Ending`) == min(as.Date(`Week Ending`)))
+  } else {
+    mh_file
+  }
+  
+}
+
 ###############################################.
 ## Prescribing - Mental health ----
 ###############################################.
@@ -25,44 +41,18 @@ source("data_prep/functions_packages_data_prep.R")
 #     meet up with the first of the latest extract.
 # Any questions speak to Lucinda (lucinda.lawrie@phs.scot).
 
+# List of weekly extracts for drugs MH
+files_mh <-  list.files(path = paste0(data_folder, "prescribing_mh/"), 
+                        pattern = "*-Weekly new incident emessage - Multi-condition.xlsx", full.names = TRUE)
+
 mentalhealth_drugs <- rbind(# Historic data 01/01/18 to 28/06/20 - DO NOT CHANGE
                             read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition Jan 18-Jun 20.xlsx")),
-                            # Historic data 05/07/20 to 27/09/20 - DO NOT CHANGE        
+                            # Historic data 05/07/20 to 16/08/20 - DO NOT CHANGE        
                             read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_57_05-07-2020 to 04-10-2020.xlsx")) %>% 
-                              filter(between(as.Date(`Week Ending`), as.Date("2020-07-05"), as.Date("2020-09-27"))),
-                            # Weeks ending 04/10/20 and 11/10/20 - DO NOT CHANGE          
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-07-Weekly new incident emessage - Multi-condition_04-10-2020 to 03-01-2021.xlsx")) %>% 
-                              filter(between(as.Date(`Week Ending`), as.Date("2020-10-04"), as.Date("2020-10-11"))), 
-                            # Weeks ending 18/10/20 and 25/11/20 - DO NOT CHANGE
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-21-Weekly new incident emessage - Multi-condition_18-10-2020 to 17-01-2021.xlsx")) %>%
-                              filter(between(as.Date(`Week Ending`), as.Date("2020-10-18"), as.Date("2020-10-25"))), 
-                            # Week ending 01/11/20 and 08/11/20 - DO NOT CHANGE        
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-04-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                              filter(between(as.Date(`Week Ending`), as.Date("2020-11-01"), as.Date("2020-11-08"))), 
-                            # Week ending 15/11/20 and 22/11/20 - DO NOT CHANGE        
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-18-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                              filter(between(as.Date(`Week Ending`), as.Date("2020-11-15"), as.Date("2020-11-22"))),
-                            # Week ending 29/11/20 and 06/12/20 - DO NOT CHANGE        
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-03-04-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                              filter(between(as.Date(`Week Ending`), as.Date("2020-11-29"), as.Date("2020-12-06"))),
-                            # Week ending 13/12/20 and 20/12/20 - DO NOT CHANGE        
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-03-18-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                              filter(between(as.Date(`Week Ending`), as.Date("2020-12-13"), as.Date("2020-12-20"))),
-                            # Week ending 27/12/21 and 03/01/21 - DO NOT CHANGE        
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-04-01-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                              filter(between(as.Date(`Week Ending`), as.Date("2020-12-27"), as.Date("2021-01-03"))),
-                            # Week ending 10/01/21 and 17/01/21 - DO NOT CHANGE        
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-04-15-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                              filter(between(as.Date(`Week Ending`), as.Date("2021-01-10"), as.Date("2021-01-17"))),
-                            # Week ending 24/01/21 and 31/01/21 - DO NOT CHANGE        
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-04-29-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                              filter(between(as.Date(`Week Ending`), as.Date("2021-01-24"), as.Date("2021-01-31"))),
-                            # Week ending 07/02/21 and 14/02/21- DO NOT CHANGE        
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-05-13-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                              filter(between(as.Date(`Week Ending`), as.Date("2021-02-07"), as.Date("2021-02-14"))),
-                            # Latest data - Week ending 21/02/21 to present
-                            read_xlsx(paste0(data_folder, "prescribing_mh/2021-05-27-Weekly new incident emessage - Multi-condition.xlsx"))) %>%
-  
+                              filter(between(as.Date(`Week Ending`), as.Date("2020-07-05"), as.Date("2020-08-16"))),
+                      # Brings the earliest week in each data file, apart from last one.
+                      # This ensures most up to date data
+                            do.call(rbind, lapply(files_mh, read_mh_drugs)) ) %>%
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -92,7 +82,7 @@ mentalhealth_drugs_all <- mentalhealth_drugs %>%
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all) %>% 
   arrange(area_name, area_type, category, week_ending) # so plotly works correctly
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-05-23")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-06-27")
 
 ###############################################.
 ## A&E - mental health ----
@@ -102,7 +92,7 @@ prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-0
 mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
-                read_csv(paste0(data_folder, "A&E_mh/2021-05-30-A&E Extract - Mental Health Wider impacts.csv"),
+                read_csv(paste0(data_folder, "A&E_mh/2021-07-04-A&E Extract - Mental Health Wider impacts.csv"),
                          col_types="nnccccccnnccccccccccccccc")) %>% # col spec needed to avoid parse errors for disease 3 fields
   clean_names() 
 
@@ -215,13 +205,13 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-05-23")
+prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-06-27")
 
 ###############################################.
 ## OOH - mental health ----
 ###############################################.
 
-mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-05-31-GP OOH MH WIDER IMPACT.txt")) %>%
+mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-07-05-GP OOH MH WIDER IMPACT.txt")) %>%
   janitor::clean_names() %>%
   rename(hb=patient_nhs_board_description_current, 
          dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
@@ -260,4 +250,4 @@ mh_ooh %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-05-23")
+prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-06-27")
