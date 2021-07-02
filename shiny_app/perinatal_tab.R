@@ -78,11 +78,11 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
   
   # Text to be updated every month with updated dates
-  last_month_peri <- "April 2021"
-  cutdate_peri <- "16 May 2021"
-  extractdate_peri <- "19 May 2021"
-  nextup_peri <- "July 2021"
-  nextdata_peri <- "May 2021"
+  last_month_peri <- "May 2021"
+  cutdate_peri <- "20 June 2021"
+  extractdate_peri <- "23 June 2021"
+  nextup_peri <- "August 2021"
+  nextdata_peri <- "June 2021"
   
   
   # Number of deaths and of births used in the text
