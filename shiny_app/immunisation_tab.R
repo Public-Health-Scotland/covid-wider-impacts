@@ -245,8 +245,8 @@ output$immun_table <- renderUI({
                         imm_type == "mmr" & dose == "dose 2" ~ 3)
   
   #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
-  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("FEB 2021", "MAR 2021"))
-  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("JAN 2021", "FEB 2021", "MAR 2021"))
+  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("MAR 2021", "APR 2021"))
+  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("MAR 2021", "APR 2021"))
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
