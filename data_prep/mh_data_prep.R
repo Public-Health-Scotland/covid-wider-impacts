@@ -25,22 +25,11 @@ read_mh_drugs <- function(filedate) {
 ## Prescribing - Mental health ----
 ###############################################.
 
-### historic file for MH drugs ##
 # These files contain rolling (14) weeks so attention needs to be paid to not miss or 
 # duplicate any week. 
-# This is not an ideal method, but to get the most recent data we use the most
-# recent data extract in the folder and then extract the first two weeks from 
-# the previous files (apart from the two historic ones). 
-# So when updating this section:
-# 1 - Update the latest data filepath 
-# 2 - Copy and paste the most recent Week ending chunk twice
-# 3 - Advance the filepath and week ending dates of the first copy by two weeks.
-# 4 - Advance the filepath and week ending dates of the second copy by a further
-#     two weeks.
-# 5 - Some fudging may be required if first two weeks in previous extracts don't
-#     meet up with the first of the latest extract.
-# Any questions speak to Lucinda (lucinda.lawrie@phs.scot).
 
+create_drugsmh <- function(last_week) {
+  
 # List of weekly extracts for drugs MH
 files_mh <-  list.files(path = paste0(data_folder, "prescribing_mh/"), 
                         pattern = "*-Weekly new incident emessage - Multi-condition.xlsx", full.names = TRUE)
@@ -82,17 +71,21 @@ mentalhealth_drugs_all <- mentalhealth_drugs %>%
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all) %>% 
   arrange(area_name, area_type, category, week_ending) # so plotly works correctly
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-06-27")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = last_week)
+
+}
 
 ###############################################.
 ## A&E - mental health ----
 ###############################################.
+create_aemh <- function(filedate, last_week) {
+  
 # mh_aye_hist <- read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv"))
 # saveRDS(mh_aye_hist, paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds"))
 mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
-                read_csv(paste0(data_folder, "A&E_mh/2021-07-04-A&E Extract - Mental Health Wider impacts.csv"),
+                read_csv(paste0(data_folder, "A&E_mh/", filedate, "-A&E Extract - Mental Health Wider impacts.csv"),
                          col_types="nnccccccnnccccccccccccccc")) %>% # col spec needed to avoid parse errors for disease 3 fields
   clean_names() 
 
@@ -205,13 +198,16 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-06-27")
+prepare_final_data(mh_aye, "mh_A&E", last_week = last_week)
+
+}
 
 ###############################################.
 ## OOH - mental health ----
 ###############################################.
-
-mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-07-05-GP OOH MH WIDER IMPACT.txt")) %>%
+create_oohmh <- function(filedate, last_week) {
+  
+mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/", filedate, "-GP OOH MH WIDER IMPACT.txt")) %>%
   janitor::clean_names() %>%
   rename(hb=patient_nhs_board_description_current, 
          dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
@@ -250,4 +246,6 @@ mh_ooh %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-06-27")
+prepare_final_data(mh_ooh, "mh_ooh", last_week = last_week)
+
+}
