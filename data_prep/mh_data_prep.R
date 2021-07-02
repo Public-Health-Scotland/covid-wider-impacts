@@ -5,22 +5,6 @@
 ###############################################.
 source("data_prep/functions_packages_data_prep.R")
 
-# Function to read all files required for mh drugs as only earliest week 
-# required for most of them
-read_mh_drugs <- function(filedate) {
-
-  mh_file <- read_xlsx(filedate) 
-  
-  # Bringing all the file for the last date, but only earliest week for the rest
-  if (filedate != last(files_mh)) {
-    mh_file %>% 
-      filter(as.Date(`Week Ending`) == min(as.Date(`Week Ending`)))
-  } else {
-    mh_file
-  }
-  
-}
-
 ###############################################.
 ## Prescribing - Mental health ----
 ###############################################.
@@ -30,9 +14,25 @@ read_mh_drugs <- function(filedate) {
 
 create_drugsmh <- function(last_week) {
   
-# List of weekly extracts for drugs MH
-files_mh <-  list.files(path = paste0(data_folder, "prescribing_mh/"), 
-                        pattern = "*-Weekly new incident emessage - Multi-condition.xlsx", full.names = TRUE)
+  # List of weekly extracts for drugs MH
+  files_mh <-  list.files(path = paste0(data_folder, "prescribing_mh/"), 
+                          pattern = "*-Weekly new incident emessage - Multi-condition.xlsx", full.names = TRUE)
+  
+  # Function to read all files required for mh drugs as only earliest week 
+  # required for most of them
+  read_mh_drugs <- function(filedate) {
+    
+    mh_file <- read_xlsx(filedate) 
+    
+    # Bringing all the file for the last date, but only earliest week for the rest
+    if (filedate != last(files_mh)) {
+      mh_file %>% 
+        filter(as.Date(`Week Ending`) == min(as.Date(`Week Ending`)))
+    } else {
+      mh_file
+    }
+    
+  }
 
 mentalhealth_drugs <- rbind(# Historic data 01/01/18 to 28/06/20 - DO NOT CHANGE
                             read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition Jan 18-Jun 20.xlsx")),

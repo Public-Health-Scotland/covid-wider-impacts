@@ -93,6 +93,7 @@ create_oohmh(filedate = "2021-07-05", last_week =  "2021-06-27")
 create_drugsmh(last_week =  "2021-06-27")
 
 # Change update date in mental_health_tab.R script
+file.edit("shiny_app/mental_health_tab.R")
 
 ###############################################.
 ## Immunisation datasets ----
