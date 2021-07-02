@@ -84,7 +84,7 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "24th May 2021"
+child_extract_date <- "28th June 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
@@ -174,12 +174,12 @@ apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
 apgar_download <- readRDS("data/apgar_download_data.rds")
 
 # Preterm
-preterm_extract_date <- "18th March 2021"
+preterm_extract_date <- "21st June 2021"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
 
 # Tears (births and babies tab)
-tears_extract_date <- "23rd April 2021"
+tears_extract_date <- "21st June 2021"
 tears_runchart <- readRDS("data/tears_runchart_data.rds")
 tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
@@ -330,7 +330,8 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
-               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966") 
+               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
+               "APR 2021" = "#a64208") 
 # more distinctive colour palette (save for later)
               # c("2019" = "#000000", "2020" = "#41b6c4", 
               #   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
