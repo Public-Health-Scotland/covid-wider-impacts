@@ -35,6 +35,9 @@ if (sessionInfo()$platform %in% c("x86_64-redhat-linux-gnu (64-bit)", "x86_64-pc
   
 }
 
+# Setting file permissions to anyone to allow writing/overwriting of project files
+Sys.umask("006")
+
 ###############################################.
 ## Lookups ----
 ###############################################.
@@ -152,7 +155,10 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, 
   
   final_data <<- data_2020
   
-  file.remove(paste0(open_data, filename,"_data.rds")) # to avoid permission issues
+  if (dir.exists(paste0(open_data, filename,"_data.rds")) == T) {
+    file.remove(paste0(open_data, filename,"_data.rds")) # to avoid permission issues
+    
+  }
   
   saveRDS(data_2020, paste0("shiny_app/data/", filename,".rds"))
   saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_", 

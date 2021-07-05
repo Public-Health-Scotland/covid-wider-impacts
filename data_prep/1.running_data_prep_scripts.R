@@ -55,16 +55,16 @@ file.edit("data_prep/final_app_files.R")
 ###############################################.
 ## Summary datasets ----
 ###############################################.
-# Still to be done, drugs need some thinking
 source("data_prep/summary_data_prep.R") # This sources the functions for the section
 # Filedate: date on filename for each update, last week = last week of data to be included
 # Change extract to F if you just want to run the data prep and not the extraction 
 # (quicker once the extraction has been done once)
 create_rapid(last_week =  "2021-05-23", extract = T) # this requires access to the RAPID dataset
 create_ae(filedate = "2021-07-01", last_week =  "2021-06-27")
-create_ooh(filename = "WIDER IMPACT PC OOH Data_53_1531979385625197123", last_week =  "2021-05-23")
+create_ooh(filename = "WIDER IMPACT PC OOH Data_53_4481403547016458084", last_week =  "2021-06-27")
 create_nhs24(filedate = "2021-07-05", last_week =  "2021-06-27")
-create_sas(filedate = "2021-05-31", last_week =  "2021-05-23")
+create_sas(filedate = "2021-07-05", last_week =  "2021-06-27")
+
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function
 create_deaths(last_week =  "2021-05-23")
@@ -87,17 +87,23 @@ create_terminations(top_date = "2021-06-15")
 # Add here what needs to be changed in the shiny scripts
 
 ###############################################.
+## Mental health datasets ----
+###############################################.
+source("data_prep/mh_data_prep.R") # This sources the functions for the section
+create_aemh(filedate = "2021-07-04", last_week =  "2021-06-27") #takes a while
+create_oohmh(filedate = "2021-07-05", last_week =  "2021-06-27")
+create_drugsmh(last_week =  "2021-06-27")
+
+# Change update date in mental_health_tab.R script
+file.edit("shiny_app/mental_health_tab.R")
+
+###############################################.
 ## Immunisation datasets ----
 ###############################################.
 source("data_prep/imm_data_prep.R") # functions for section
 #To be added, check with team if this would work for them
 
 # Add here what needs to be changed in the shiny scripts
-
-###############################################.
-## Mental health datasets ----
-###############################################.
-# Still to be done, drugs need some thinking
 
 ##END
 
