@@ -309,8 +309,6 @@ observeEvent(input$switch_to_anb,{
 output$top_commentary <- renderUI({
   tagList(
     bsButton("jump_to_top",label = "Go to data"), #this button can only be used once
-    h2("Termination of pregnancy - 7th July 2021"),
-    p("COMMENTARY PLACEHOLDER"),
     h2("Termination of pregnancy - 2nd June 2021"),
     p("This latest release reports on the number of terminations of pregnancy in Scotland up to February 2021. In this latest month 981 terminations were provisionally notified and numbers may be updated in subsequent releases. This is the lowest monthly figure reported since January 2018: Previous years have reported 1,093 in February 2018; 1,174 in February 2019; 1,230 in February 2020. In February 2021 two mainland boards notified their lowest number of terminations since January 2018: Grampian (82) and Lothian (176). Average gestation at termination in Scotland for February 2021 (6.9 weeks) remained similar to that reported in recent months and ranged between 6 weeks in Grampian to 8.3 weeks in Fife."),
     p("The shift of average gestations below the centreline (average gestation between January 2018 to February 2020) started in March 2020. To a greater or lesser extent this shift has been mirrored across all the mainland boards except in Ayrshire and Arran, Borders and Fife. Also of note, the average gestation in Highland has been trending upwards (but remains below board average), and the lowest average gestations since January 2018 were reported in this release in Ayrshire and Arran (6.7 weeks), Dumfries and Galloway (6.5 weeks) and Grampian (6.0 weeks)."),
