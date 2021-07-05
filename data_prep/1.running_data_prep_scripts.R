@@ -12,11 +12,12 @@
 
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
-create_delivery(folderdate = "2021-05-18") # Mode of delivery, induction and gestation data
-create_perinatal(foldermonth = "june") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2021_05_13") # Apgar scores
-create_preterm(preterm_date = "2021_03_18", max_date = "2021-01-01") # Preterm
-create_tears(tears_date = "2021_05_13", max_date = "2021-02-01") # Perineal tears
+create_delivery(folderdate = "2021-06-15") # Mode of delivery, induction and gestation data
+create_perinatal(foldermonth = "july21") # Stillbirths and perinatal mortality
+create_apgar(folderdate = "2021_06_21") # Apgar scores
+create_preterm(preterm_date = "2021_06_21", max_date = "2021-03-01") # Preterm
+create_tears(tears_date = "2021_06_21", max_date = "2021-03-01") # Perineal tears
+
 
 # Add here what needs to be changed in the shiny scripts
 
@@ -43,9 +44,9 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20210524") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "24thMay")
-create_breastfeeding(filedate = "24thMay")
+create_chreview(ch_date_file = "20210628") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "28thJun")
+create_breastfeeding(filedate = "28thJun")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
@@ -59,10 +60,11 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # Change extract to F if you just want to run the data prep and not the extraction 
 # (quicker once the extraction has been done once)
 create_rapid(last_week =  "2021-05-23", extract = T) # this requires access to the RAPID dataset
-create_ae(filedate = "2021-05-27", last_week =  "2021-05-23")
+create_ae(filedate = "2021-07-01", last_week =  "2021-06-27")
 create_ooh(filename = "WIDER IMPACT PC OOH Data_53_1531979385625197123", last_week =  "2021-06-27")
-create_nhs24(filedate = "2021-05-31", last_week =  "2021-05-23")
+create_nhs24(filedate = "2021-07-05", last_week =  "2021-06-27")
 create_sas(filedate = "2021-07-05", last_week =  "2021-06-27")
+
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function
 create_deaths(last_week =  "2021-05-23")
@@ -78,9 +80,9 @@ file.edit("shiny_app/summary_tab.R")
 ## Pregnancy datasets ----
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
+create_antebooking(booking_date = "17062021", max_book_date = "2021-06-14")
+create_terminations(top_date = "2021-06-15")
 
-create_antebooking(booking_date = "18052021")
-create_terminations(top_date = "2021-05-11")
 
 # Add here what needs to be changed in the shiny scripts
 

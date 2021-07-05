@@ -33,7 +33,7 @@ observeEvent(input$btn_immune_modal,
                p(tags$a(href="https://publichealthscotland.scot/",
                         "Public Health Scotland (PHS)", target="_blank"),
                  " routinely receives quarterly data extracts from SIRS for the purpose of producing and ",
-                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
+                 tags$a(href="https://publichealthscotland.scot/publications/childhood-immunisation-statistics-scotland/",
                         "publishing", target="_blank"),
                  " immunisation uptake rates. To allow the more rapid monitoring of the impact of Covid-19 on childhood immunisation uptake rates presented here, PHS is also currently extracting a sub-set of data from SIRS each month."),
                p("SIRS is an electronic system used by all NHS Boards in Scotland. The system facilitates the invitation of children when a scheduled immunisation is due. When a child receives an immunisation, relevant information is returned to administrative staff in the NHS Board child health department. The administrative staff then update the child’s SIRS record accordingly."),
@@ -158,7 +158,7 @@ output$immun_scurve <- renderPlotly({
                         imm_type == "mmr" & dose == "dose 1" ~ "1",
                         imm_type == "mmr" & dose == "dose 2" ~ "3")
   
-  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian"  && dataset == mmr_alldose && dose== "dose 2")
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian" && dose== "dose 2")
   { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age. 
                 Data is available from the data download option.")
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
@@ -245,8 +245,8 @@ output$immun_table <- renderUI({
                         imm_type == "mmr" & dose == "dose 2" ~ 3)
   
   #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
-  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("FEB 2021", "MAR 2021"))
-  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("JAN 2021", "FEB 2021", "MAR 2021"))
+  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("MAR 2021", "APR 2021"))
+  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("MAR 2021", "APR 2021"))
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
@@ -636,6 +636,13 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 7th July 2021"),
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 7 July. It should be noted that the data recorded for the 
+      most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake 
+      is likely to be under-reported and will be updated as the data becomes more complete."),
+    p("Uptake of pre-school immunisations has remained high for children who became eligible during the Covid-19 pandemic. Information on final achieved uptake will continue to be provided through ",
+      tags$a(href="https://publichealthscotland.scot/publications/childhood-immunisation-statistics-scotland/",
+             "official statistics publications", target="_blank"), "."),
     h2("Immunisations - 2nd June 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 2 June. It should be noted that the data recorded for the 
       most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake 

@@ -1,5 +1,6 @@
 #UI
-# secure_app( #uncomment if needing password protection
+ #secure_app( #uncomment if needing password protection
+
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
@@ -159,7 +160,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
            conditionalPanel(condition = "input.measure_select != 'outpats' ",
            selectInput("adm_type", label = "Step 3. Select type of admission.",
                        choices = c("All", "Emergency", "Planned"), selected = "All")),
-           
+
            conditionalPanel(condition = "input.measure_select == 'outpats' ",
                             selectInput("appt_type", label = "Step 3. Select type of appointment.",
                                         choices = c("All", "New", "Return"), selected = "All")),
@@ -444,7 +445,7 @@ tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ) # tabpanel bracket
- ), # navbar menu bracket
+  ), # navbar menu bracket
 ###############################################.
 ## Child health menu ----
 ###############################################.
@@ -582,5 +583,6 @@ navbarMenu("Child health", icon = icon("child"),
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-# )#secure app
+ #)#secure app
+
 #END

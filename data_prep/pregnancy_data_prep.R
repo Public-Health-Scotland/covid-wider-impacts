@@ -10,7 +10,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all antenatal booking data files prepared
-create_antebooking <- function(booking_date) {
+create_antebooking <- function(booking_date, max_book_date) {
   
 # Excel workbook containing number of women booking for antenatal care - weekly file (Scotland and NHS board except small islands)
 ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyNosBooked_Charts_",booking_date,".xlsx"),
@@ -18,17 +18,19 @@ ante_booking_no <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/We
   janitor::clean_names() %>%
   rename(centreline_no=centreline, dottedline_no=dottedline, booked_no=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>%
-  filter(week_book_starting < "2021-05-10")
+  filter(week_book_starting < max_book_date)
 
 # Excel workbook containing avergage gestation of women booking for antenatal care  - weekly file (Scotland and NHS board except small islands)
 ante_booking_gest <- read_excel(paste0(data_folder,"pregnancy/antenatal_booking/WeeklyAveGestation_Charts_",booking_date,".xlsx"),
                                 sheet = "Data for Dashboard Charts",
-                                col_types = c("text", "date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric")) %>%
+                                col_types = c("text", "date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric")) %>%
   janitor::clean_names() %>%
   rename(centreline_g=centreline, dottedline_g=dottedline, 
-         centreline_g_t=tcentreline, dottedline_g_t=tdottedline, booked_g=booked) %>%
+         centreline_g_t=tcentreline, dottedline_g_t=tdottedline,
+         centreline_g_v=vcentreline, dottedline_g_v = vdottedline,
+         booked_g=booked) %>%
   mutate(week_book_starting=as.Date(week_book_starting,format="%d-%b-%y")) %>%
-  filter(week_book_starting < "2021-05-10")
+  filter(week_book_starting < max_book_date)
 
 # join two (numbers and average gestation) booking sheets to form single file for shiny app
 ante_booking <- left_join(ante_booking_no, ante_booking_gest, by = c("week_book_starting","area"))
@@ -60,7 +62,10 @@ ante_booking %<>%
   mutate(centreline_g = case_when(area_name == "NHS Tayside" & !(is.na(centreline_g_t)) ~ centreline_g_t,
          T ~ centreline_g)) %>% 
   mutate(dottedline_g = case_when(area_name == "NHS Tayside" & !(is.na(dottedline_g_t)) ~ dottedline_g_t, 
-                                  T ~ dottedline_g)) 
+                                  T ~ dottedline_g)) %>%
+  mutate(centreline_g = case_when(area_name == "NHS Forth Valley" & !(is.na(centreline_g_v)) ~ centreline_g_v,
+                                  T ~ centreline_g))
+  
 
 #add control chart flags for charting
 ante_booking <- ante_booking %>%
@@ -100,7 +105,7 @@ gest_booking_download <- left_join(gest_booking_download, hb_lookup, by = c("are
 # Weekly scotland level booking numbers and gestation - ASK WHAT TIME PERIOD SHOULD BE AVAILABLE HERE
 ante_booking_download1 <- ante_booking %>%
   mutate(time_period="weekly") %>%
-  filter(week_book_starting < "2021-05-10") %>% 
+  filter(week_book_starting < max_book_date) %>% 
   rename(booking_week_beginning=week_book_starting, number_of_bookings=booked_g, average_gestation_at_booking=ave_gest)
   
 
@@ -116,11 +121,12 @@ ante_booking_download <- bind_rows(ante_booking_download1, gest_booking_download
          centreline_gestation=centreline_g,
          dottedline_gestation=dottedline_g,
          centreline_gestation_tayside=centreline_g_t,
-         dottedline_gestation_tayside=dottedline_g_t) %>%
+         dottedline_gestation_tayside=dottedline_g_t,
+         centreline_gestation_forthvalley=centreline_g_v) %>%
   select(time_period, booking_week_beginning, booking_month, area_name, area_type, chart_type, chart_category,
          number_of_women_booking, centreline_number, dottedline_number,
          number_of_women_booking_gest_under_10wks,number_of_women_booking_gest_10to12wks,number_of_women_booking_gest_over_12wks,
-         average_gestation_at_booking, centreline_gestation, dottedline_gestation, centreline_gestation_tayside, dottedline_gestation_tayside)
+         average_gestation_at_booking, centreline_gestation, dottedline_gestation, centreline_gestation_tayside, dottedline_gestation_tayside, centreline_gestation_forthvalley)
 
 saveRDS(ante_booking_download, "shiny_app/data/ante_booking_download.rds")
 saveRDS(ante_booking_download, paste0(data_folder,"final_app_files/ante_booking_download_", 
