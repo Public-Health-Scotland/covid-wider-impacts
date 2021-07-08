@@ -96,6 +96,14 @@ proper <- function(dataset) {
 # Function to format data in the right format for the Shiny app
 prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, aver = 3) {
   
+  # We may end up with multiple rows for one area where an area appears under
+  # more than one code in the source data - these rows need combined
+  dataset = 
+    dataset %>% 
+    group_by(across(all_of(c("category", "type", "area_name", 
+                             "area_type", "week_ending", extra_vars)))) %>%
+    summarise(count = sum(count), .groups = "drop")
+  
   # Creating week number to be able to compare pre-covid to covid period
   dataset <- dataset %>% mutate(week_no = isoweek(week_ending),
                                 # Fixing HSCP names
