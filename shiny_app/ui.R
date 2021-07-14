@@ -564,6 +564,36 @@ navbarMenu("Child health", icon = icon("child"),
                     )# mainPanel bracket
            ) # tabpanel bracket
 ), #navbarMenu bracket
+
+###############################################.
+## Drugs ----
+###############################################.
+tabPanel(title = "Drugs", icon = icon("tablets"), value = "drugs",
+         wellPanel(
+           column(8, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("drug_categories",
+                                           label= "Step 1 – Select the data you want to explore.",
+                                           choices = c('Drug harms', 'Drug services'), status = "primary",
+                                           direction = "vertical", justified = T)),
+                  uiOutput('drug_subcategories')),
+           column(4, selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
+                                    choices = c('Scotland','ADP'), selected = "Scotland"),
+                  uiOutput("geoname_ui_drugs")),
+           
+           
+           column(4, downloadButton('download_cardio_data', 'Download data'),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_cardio','Go to commentary')),
+           
+           column(4, uiOutput("drugs_types") )
+         ),#wellPanel bracket
+         
+         mainPanel(width = 12,
+                   plotOutput('TwoYrComparison'),
+                   plotOutput('PercentChange')
+                   
+         )# mainPanel bracket
+), # tabpanel bracket
 ##############################################.
 # Data ----
 ##############################################.
