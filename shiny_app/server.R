@@ -99,6 +99,10 @@ function(input, output, session) {
   source(file.path("cancer_tab.R"),  local = TRUE)$value
   
   ###############################################.
+  # Drugs tab
+  source(file.path("drugs_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
   # Data tab
   source(file.path("data_tab.R"),  local = TRUE)$value
 
