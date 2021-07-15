@@ -583,14 +583,12 @@ tabPanel(title = "Drugs", icon = icon("tablets"), value = "drugs",
            
            column(4, downloadButton('download_cardio_data', 'Download data'),
                   fluidRow(br()),
-                  actionButton('jump_commentary_cardio','Go to commentary')),
-           
-           column(4, uiOutput("drugs_types") )
+                  actionButton('jump_commentary_cardio','Go to commentary'))
          ),#wellPanel bracket
-         
+         column(4, uiOutput("drugs_types") ),
          mainPanel(width = 12,
-                   plotOutput('TwoYrComparison'),
-                   plotOutput('PercentChange')
+                   plotlyOutput('TwoYrComparison'),
+                   plotlyOutput('PercentChange')
                    
          )# mainPanel bracket
 ), # tabpanel bracket
