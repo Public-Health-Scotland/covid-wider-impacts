@@ -45,7 +45,7 @@ output$TwoYrComparison<-renderPlotly({
   
   if(input$drug_subcategories=='Drug treatment referrals'){
     plot_data<-subset(DTR_drug_data2,(Board==input$geoname_drugs)& Type==input$DTR_types)
-    trend<-plot_ly(data = plot_data, x = ~Date, y = ~DTR,color=~Year, mode='lines')
+    trend<-plot_ly(data = plot_data, x = ~Date, y = ~DTR,color=~Year, mode='lines', colors=c(pal_overall[2],pal_overall[1]),dash=c('solid','dash'))
     
     trend <- trend %>% layout(
       title = ("2020 and 2021 compared with 2018-2019 average"),
@@ -69,5 +69,6 @@ output$PercentChange<-renderPlotly({
     
   }
 })
+
 
 
