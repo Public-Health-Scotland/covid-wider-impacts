@@ -25,21 +25,22 @@ function(input, output, session) {
                    title = "New content added and future updates",
                    h4("New content and updates"),
                    tags$ul(
+                     tags$li("7 July- Monthly update of data (most sections)."),
                      tags$li("16 June 2021 - Cancer pathology data update."),
                      tags$li("16 June 2021 - Outpatients data update."),
                      tags$li("16 June 2021 - New data on vaginal tears."),
                      tags$li("2 June 2021 - Monthly update of data (most sections)."),
-                     tags$li("5 May 2021 - Monthly update of data (most sections)."),
                      tags$li("14 April 2021 - New sections added for births and babies data:
                              Apgar scores and location of birth for extremely preterm infants.")                 ),
                    h4("Future updates"),
                    p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                    tags$ul(
-                     tags$li("7 July- Monthly update of data (most sections)."),
-                     tags$li("June/July 2021 - New data on injury hospital admissions."),
-                     tags$li("June/July 2021 - New data on self-harm hospital admissions."),
-                     tags$li("4 August - Monthly update of data (most sections)."),
-                     tags$li("1 September - Monthly update of data (most sections).")
+                     tags$li("28 July 2021 - New data on chemotherapy treatments."),
+                     tags$li("4 August 2021 - Monthly update of data (most sections)."),
+                     tags$li("1 September 2021 - Monthly update of data (most sections)."),
+                     tags$li("August/September 2021 - New data on injury hospital admissions."),
+                     tags$li("To be confirmed - New data on self-harm hospital admissions."),
+                     tags$li("To be confirmed - New data on substance misuse.")
                    ),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
