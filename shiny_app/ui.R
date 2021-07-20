@@ -568,24 +568,22 @@ navbarMenu("Child health", icon = icon("child"),
 ###############################################.
 ## Drugs ----
 ###############################################.
-tabPanel(title = "Drugs", icon = icon("tablets"), value = "drugs",
+tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
          wellPanel(
-           column(8, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("drug_categories",
+           column(6, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("drug_subcategories",
                                            label= "Step 1 – Select the data you want to explore.",
-                                           choices = c('Drug harms', 'Drug services'), status = "primary",
+                                           choices = c('Drug treatment referrals','Take home Naloxone kits', 'OST prescribing', 'Emergency naloxone administration by SAS'), status = "primary",
                                            direction = "vertical", justified = T)),
-                  uiOutput('drug_subcategories')),
-           column(4, selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
-                                    choices = c('Scotland','ADP'), selected = "Scotland"),
-                  uiOutput("geoname_ui_drugs")),
-           
-           
-           column(4, downloadButton('download_cardio_data', 'Download data'),
-                  fluidRow(br()),
-                  actionButton('jump_commentary_cardio','Go to commentary'))
-         ),#wellPanel bracket
-         column(4, uiOutput("drugs_types") ),
+                  column(4, selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
+                                           choices = c('Scotland','ADP'), selected = "Scotland"),
+                         uiOutput("geoname_ui_drugs")),
+                  
+                  column(4, uiOutput("drugs_types") ),
+                  column(4, downloadButton('download_cardio_data', 'Download data'),
+                         fluidRow(br()),
+                         actionButton('jump_commentary_cardio','Go to commentary'))
+           )),#wellPanel bracket
          mainPanel(width = 12,
                    plotlyOutput('TwoYrComparison'),
                    plotlyOutput('PercentChange')
