@@ -35,7 +35,7 @@ function(input, output, session) {
                    h4("Future updates"),
                    p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                    tags$ul(
-                     tags$li("28 July 2021 - New data on anti-cancer therapies"),
+                     tags$li("28 July 2021 - New data on systemic anti-cancer therapies"),
                      tags$li("4 August 2021 - Monthly update of data (most sections)."),
                      tags$li("1 September 2021 - Monthly update of data (most sections)."),
                      tags$li("August/September 2021 - New data on injury hospital admissions."),
