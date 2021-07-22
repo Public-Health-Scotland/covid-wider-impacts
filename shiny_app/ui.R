@@ -574,20 +574,20 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                          radioGroupButtons("drug_subcategories",
                                            label= "Step 1 – Select the data you want to explore.",
                                            choices = c('Drug treatment referrals','Take home Naloxone kits', 'OST prescribing', 'Emergency naloxone administration by SAS'), status = "primary",
-                                           direction = "vertical", justified = T)),
-                  column(4, selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
-                                           choices = c('Scotland','ADP'), selected = "Scotland"),
-                         uiOutput("geoname_ui_drugs")),
-                  
-                  column(4, uiOutput("drugs_types") ),
-                  column(4, downloadButton('download_cardio_data', 'Download data'),
-                         fluidRow(br()),
-                         actionButton('jump_commentary_cardio','Go to commentary'))
-           )),#wellPanel bracket
+                                           direction = "vertical", justified = T))),
+           column(3,uiOutput('area_drugs_select'),
+                  uiOutput("geoname_ui_drugs")),
+           
+           column(3, uiOutput("types") )
+           
+         ),#wellPanel bracket
          mainPanel(width = 12,
                    plotlyOutput('TwoYrComparison'),
-                   plotlyOutput('PercentChange')
+                   plotlyOutput('PercentChange'),
                    
+                   column(3, downloadButton('download_cardio_data', 'Download data'),
+                          fluidRow(br()),
+                          actionButton('jump_commentary_cardio','Go to commentary'))
          )# mainPanel bracket
 ), # tabpanel bracket
 ##############################################.
