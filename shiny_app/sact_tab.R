@@ -1,251 +1,440 @@
-#Server side
-credentials <- readRDS("admin/credentials.rds")
+# Server side for SACT tab - 
 
-function(input, output, session) {
+###############################################.
+## Modals ----
+###############################################.
+# Pop-up modal explaining source of data
+
+observeEvent(input$btn_sact_modal, 
+             showModal(modalDialog(
+               title = "Frequently Asked Questions",
+               h5(strong("What is SACT?")),
+               p("SACT is an acronym for Systemic Anti-Cancer Therapies and is used as a collective 
+                 term for drugs that are used in the treatment of cancer that affect the whole body. 
+                 The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments 
+                 such as targeted agents and immunotherapies."),
+               h5(strong("What is the SACT national MVP data platform?")),
+               p("The SACT national data platform is a new system currently being developed by PHS 
+                 and NSS (National Services Scotland) that allows PHS to access a data from all five 
+                 instances of ChemoCare across Scotland effectively giving a unified view of SACT prescribing 
+                 data. The data platform is currently available as a âMinimum Viable Productâ (MVP) allowing analysts to 
+                 access the raw data for validation and development purposes until the final platform has been 
+                 developed."),
+               h5(strong("What is included in the data presented?")),
+               p("The data include all SACT and non-SACT activity that is prescribed for adult patients on one 
+                 of the five instances of ChemoCare. ChemoCare is an electronic prescribing system for SACT drugs 
+                 that is used in secondary care. Patients will typically be prescribed SACT treatment through 
+                 this system, however other treatments can be prescribed in this way, such as hormones and supportive 
+                 treatments including anti sickness medication and supportive medicines."),
+               h5(strong("What is not included in the data presented?")),
+               p("The data does not include patients treated in a paediatric setting and patients who are younger 
+                 than 16 years at the start of their treatment. Treatments that are not prescribed through a ChemoCare 
+                 system, such as prescriptions in the community and paper prescriptions, are also not included in 
+                 the data."),
+               h5(strong("Why do you advise not to compare the data from different regions directly?")),
+               p("ChemoCare is used as a prescribing system for drugs and different recording practices are used across 
+                 Scotland. This may lead to different results when using a national approach to counting appointments. An 
+                 example would be that a treatment consisting of multiple drugs is set up as one treatment on one instance 
+                 of ChemoCare while on another the same treatment is set up as two different treatments used in conjunction, 
+                 resulting in two appointments on the same day."),
+               p("Therefore, we advise to look at general trends and trends over time."),
+               h5(strong("What is the definition of an appointment?")),
+               p("An appointment is the unique combination of patient CHI (identifier), appointment date and the treatment 
+                 name, referred to as regimen, used locally. It is possible that a patient has multiple appointments in a 
+                 week. Oral drugs are typically dispensed as a packet for the patient to take away and, in these cases, only one 
+                 appointment is counted for the day that the patient was scheduled to have the drug dispensed."),
+               h5(strong("How is the route of administration derived?")),
+               p("At an appointment a patient will typically receive multiple drugs, for example a SACT drug and supportive 
+                 treatments. Each drug can be administered in different ways. We have therefore implemented a hierarchy 
+                 based on the invasiveness of the treatment to reflect the most invasive route for the appointment, at 
+                 appointment level, or the regimen, at regimen level. The hierarchy is intrathecal, intravenous, subcutaneous, 
+                 other and oral as the least invasive. Where patients receive SACT drugs the administration route is derived 
+                 from these only but at appointments where only non-SACT drugs are administered the route is derived from these."),
+               h5(strong("What are the geographies referring to?")),
+               p("All data is presented by region (cancer network or health board) of treatment. This is derived from the ward 
+                 that the treatment was scheduled to take place. In some cases, where there is no ward in the data, the location 
+                 the prescription originated from is used as treatment location. There are a few wards that are serviced by 
+                 prescribing locations in a different region, for example wards in Argyll are serviced by the Beatson. For these 
+                 known cases, the prescribing location is used to reflect the origin of the prescription. "),
+               
+               # p(paste0("Figures presented based on data extracted on ",sact_extract_date)), 
+               size = "l",
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
+observeEvent(input$btn_sact_wk_modal, 
+             showModal(modalDialog(
+               title = "What is the data source?",
+               h5(strong("What is SACT?")),
+               p("SACT is an acronym for Systemic Anti Cancer Therapies and is used as a collective 
+                 term for drugs that are used in the treatment of cancer that affect the whole body. 
+                 The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments 
+                 such as targeted agents and immunotherapies."),
+               h5(strong("What is the SACT national MVP data platform?")),
+               p("The SACT national MVP data platform is a new system currently being developed by PHS 
+                 and NSS (National Services Scotland) that allows PHS to access a data from all five 
+                 instances of ChemoCare across Scotland effectively giving a unified view of SACT prescribing 
+                 data. The data platform is currently a âMinimum Viable Productâ (MVP) allowing analysts to 
+                 access the raw data for validation and development purposes until the final platform has been 
+                 developed."),
+               h5(strong("What is included in the data presented?")),
+               p("The data include all SACT and non-SACT activity that is prescribed for adult patients on one 
+                 of the five instances of ChemoCare. ChemoCare is an electronic prescribing system for SACT drugs 
+                 that is used in secondary care. Patients will typically be prescribed SACT treatment through 
+                 this system, however other treatments can be prescribed in this way, such hormones and supportive 
+                 treatments including anti sickness medication and supportive medicines."),
+               h5(strong("What is not included in the data presented?")),
+               p("The data does not include patients treated in a paediatric setting and patients that are younger 
+                 than 16 years at the start of their treatment. Treatments that are not prescribed through a ChemoCare 
+                 system, such as prescriptions in the community and paper prescriptions, are also not included in 
+                 the data."),
+               h5(strong("What is the definition of an appointment?")),
+               p("An appointment is the unique combination of patient CHI (identifier), appointment date and the treatment 
+                 name, referred to as regimen, used locally. It is possible that a patient has multiple appointments in a 
+                 week. Oral drugs are typically dispensed as a packet for the patient to take away; in these cases only one 
+                 appointment is counted for the day that the patient was scheduled to have the drug dispensed."),
+               h5(strong("Why do you advise not to compare the data from different regions directly?")),
+               p("ChemoCare is used as a prescribing system for drugs and different recording practices are used across 
+                 Scotland. This may lead to different results when using a national approach to counting appointments. An 
+                 example would be that a treatment consisting of multiple drugs is set up as one treatment on one instance 
+                 of ChemoCare while on another the same treatment is set up as two different treatments used in conjunction 
+                 resulting in the possibility that a patient has two appointments on the same day."),
+               p("Therefore, we advise to look at general trends and trends over time."),
+               h5(strong("How is the route of administration derived?")),
+               p("At an appointment a patient will typically receive multiple drugs, for example a SACT drug and supportive 
+                 treatments. Each drug can be administered in different ways. We have therefore implemented a hierarchy 
+                 based on the invasiveness of the treatment to reflect the most invasive route for the appointment, at 
+                 appointment level, or the regimen, at regimen level. The hierarchy is intrathecal, intravenous, subcutaneous, 
+                 other and oral as the least invasive. Where patients receive SACT drugs the administration route is derived 
+                 from these only but at appointments where only non-SACT drugs are administered the route is derived from these."),
+               h5(strong("What are the geographies referring to?")),
+               p("All data is presented by region (cancer network or health board) of treatment. This is derived from the ward 
+                 that the treatment was scheduled to take place. In some cases, where there is no ward in the data, the location 
+                 the prescription originated from is used as treatment location. There are a few wards that are serviced by 
+                 prescribing locations in a different region, for example wards in Argyll are serviced by the Beatson. For these 
+                 known cases, the prescribing location is used to reflect the origin of the prescription. "),
+               
+               # p(paste0("Figures presented based on data extracted on ",sact_extract_date)), 
+               size = "l",
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
+
+###############################################.
+## Reactive datasets ----
+###############################################.
+
+############ 1. MONTHLY ########################
+
+sact_data_main <- reactive({
   
-  # Shinymanager Auth
+  sact_data_inc %>%
+    filter(area == input$geoname_sact, site == input$sact_type, 
+           treatment == input$sact_treatment)
   
-  res_auth <- secure_server(
-    check_credentials = check_credentials(credentials)
+})
+
+
+sact_data_main_area <- reactive({
+  
+  sact_data_inc %>%
+    filter(as.character(region) != as.character(area)) %>% 
+    filter(region == input$geoname_sact, site == input$sact_type, 
+           treatment == input$sact_treatment)
+  
+})
+
+sact_data_main_treatment <- reactive({
+  
+  sact_data_inc %>%
+    filter(area == input$geoname_sact,
+           site == input$sact_type)
+  
+})
+
+############ 2. WEEKLY ########################
+
+# INCIDENCE #
+sact_data_wk_main <- reactive({
+  
+  sact_data_wk_inc %>%
+    filter(area == input$geoname_wk_sact, site == input$sact_wk_type, 
+           treatment == input$sact_wk_treatment, appt_reg == input$sact_wk_appt_reg)
+  
+})
+
+
+sact_data_wk_main_area <- reactive({
+  
+  sact_data_wk_inc %>%
+    filter(as.character(region) != as.character(area)) %>% 
+    filter(region == input$geoname_wk_sact, site == input$sact_wk_type, 
+           treatment == input$sact_wk_treatment, appt_reg == input$sact_wk_appt_reg)
+  
+})
+
+sact_data_wk_main_treatment <- reactive({
+  
+  sact_data_wk_inc %>%
+    filter(area == input$geoname_wk_sact,
+           site == input$sact_wk_type,
+           appt_reg == input$sact_wk_appt_reg)
+  
+})
+
+# WEEKLY DIFFERENCE #
+
+sact_data_wk_diff <- reactive({
+  
+  sact_data_wk_difference %>%
+    filter(area == input$geoname_wk_sact, site == input$sact_wk_type, 
+           treatment == input$sact_wk_treatment, appt_reg == input$sact_wk_appt_reg)
+  
+})
+
+
+sact_data_wk_diff_area <- reactive({
+  
+  sact_data_wk_difference %>%
+    # filter(as.character(region) != as.character(area)) %>% 
+    filter(region == input$geoname_wk_sact, site == input$sact_wk_type, 
+           treatment == input$sact_wk_treatment, appt_reg == input$sact_wk_appt_reg)
+  
+})
+
+sact_data_wk_diff_treatment <- reactive({
+  
+  sact_data_wk_difference %>%
+    filter(area == input$geoname_wk_sact,
+           site == input$sact_wk_type,
+           appt_reg == input$sact_wk_appt_reg)
+  
+})
+
+
+
+###############################################.
+## Reactive layout ---- MONTHLY
+###############################################.
+
+# sact reactive drop-down control showing list of area names depending on areatype selected
+output$geoname_ui_sact <- renderUI({
+  if (input$geotype_sact == "Cancer Network") {
+    selectizeInput("geoname_sact", label = NULL, choices = c("NCA", "SCAN", "WOSCAN"), selected = "NCA")
+  } else if (input$geotype_sact == "Scotland") {
+    selectizeInput("geoname_sact", label = NULL, choices = c("Scotland"), selected = "Scotland")
+  } else if (input$geotype_sact == "Health Board") {
+    selectizeInput("geoname_sact", label = NULL, choices = c("NHS Ayrshire & Arran",
+                                                             "NHS Borders", "NHS Dumfries & Galloway",
+                                                             "NHS Fife","NHS Forth Valley",
+                                                             "NHS Grampian", "NHS Greater Glasgow & Clyde",
+                                                             "NHS Highland", "NHS Lanarkshire",
+                                                             "NHS Lothian", "NHS Orkney",
+                                                             "NHS Shetland", "NHS Tayside",
+                                                             "NHS Western Isles"), selected = "NHS Ayrshire & Arran")
+  }
+})
+
+
+output$treatment_ui_sact <- renderUI({
+  if (input$sact_plot_filter %in% c("Geographic area", "Standard graph")) {
+    div(radioButtons("sact_treatment", "Select administration route",
+                     list("All","Intravenous","Oral","Subcutaneous","Intrathecal", "Other"), inline = TRUE,
+                     selected = "All"))
+  } else  {
+    div(radioButtons("sact_treatment", "Select administration route",
+                     list("All","Intravenous","Oral","Subcutaneous","Intrathecal", "Other"), inline = TRUE,
+                     selected = "All", disabled = TRUE))  
+  } 
+})
+
+# The charts and text shown on the app will depend on what the user wants to see
+
+output$sact_explorer <- renderUI({
+  
+  # text for titles of cut charts
+  sact_site <- case_when(input$sact_type == "All" ~ "All",
+                         input$sact_type == "Bone Sarcoma" ~ "Bone Sarcoma",
+                         input$sact_type == "Breast" ~ "Breast",
+                         input$sact_type == "Central Nervous System" ~ "Central Nervous System",
+                         input$sact_type == "Cancer of Unknown Origin" ~ "Cancer of Unknown Origin",                         input$sact_type == "Germ Cell" ~ "Germ Cell",
+                         input$sact_type == "Gynaecology" ~ "Gynaecology",
+                         input$sact_type == "Haematology" ~ "Haematology",
+                         input$sact_type == "Head & Neck" ~ "Head & Neck",
+                         input$sact_type == "Lower GI" ~ "Lower GI",
+                         input$sact_type == "Lung & Chest" ~ "Lung & Chest",
+                         input$sact_type == "Neuroendocrine" ~ "Neuroendocrine",
+                         input$sact_type == "Other" ~ "Other",
+                         input$sact_type == "Skin" ~ "Skin",
+                         input$sact_type == "Soft Tissue Sarcoma" ~ "Soft Tissue Sarcoma",
+                         input$sact_type == "Upper GI" ~ "Upper GI",
+                         input$sact_type == "Urological" ~ "Urological",
+                         input$sact_type == "Unknown" ~ "Unknown"
   )
   
-  output$auth_output <- renderPrint({
-    reactiveValuesToList(res_auth)
-  })
+  tagList(
+    
+    if(input$sact_plot_filter == "Geographic area" & input$geotype_sact %in% c("Scotland", "Cancer Network")){
+      plot_box(paste0("Monthly Number of Patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
+               "sact_incidence_area")
+    } else if (input$sact_plot_filter == "Geographic area" & input$geotype_sact == "Health Board"){
+      plot_box(paste0("Monthly Number of Patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
+               "sact_incidence")
+    } else if (input$sact_plot_filter == "Treatment administration"){
+      plot_box(paste0("Monthly Number of Patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
+               "sact_incidence_treatment")
+    } else if (input$sact_plot_filter == "Standard graph"){
+      plot_box(paste0("Monthly Number of Patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
+               "sact_incidence")
+    },
+    p(em("The monthly SACT activity shows the number of unique patients per full calendar month since January 2020. 
+         Patients receiving more than one treatment are counted once overall but may appear in counts for multiple administration 
+         routes. Monthly patient numbers are a good indication for long-term trends in SACT activity.", style = "font-family: 'calibri'; font-si15pt"))
+    ) # tag list
   
-  
-  # For debugging
-  # observeEvent(input$browser, browser())
-  
-  ##############################################.
-  # New content and future updates ----
-  ##############################################.
-  observeEvent(input$new_next,
-               showModal(modalDialog(# Cardio A&E MODAL
-                 title = "New content added and future updates",
-                 h4("New content and updates"),
-                 tags$ul(
-                   tags$li("7 July- Monthly update of data (most sections)."),
-                   tags$li("28 July 2021 - Cancer pathology data update."),
-                   tags$li("16 June 2021 - Outpatients data update."),
-                   tags$li("16 June 2021 - New data on vaginal tears."),
-                   tags$li("2 June 2021 - Monthly update of data (most sections)."),
-                   tags$li("14 April 2021 - New sections added for births and babies data:
-                           Apgar scores and location of birth for extremely preterm infants.")                 ),
-                 h4("Future updates"),
-                 p("Please keep in mind that these dates are tentative and subject to change with short notice."),
-                 tags$ul(
-                   tags$li("28 July 2021 - New data on systemic anti-cancer therapies"),
-                   tags$li("4 August 2021 - Monthly update of data (most sections)."),
-                   tags$li("1 September 2021 - Monthly update of data (most sections)."),
-                   tags$li("August/September 2021 - New data on injury hospital admissions."),
-                   tags$li("To be confirmed - New data on self-harm hospital admissions."),
-                   tags$li("To be confirmed - New data on substance misuse.")
-                 ),
-                 size = "m",
-                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               )
-  
-  ##############################################.
-  # Sourcing server files for each tab ----
-  ###############################################.
-  # Sourcing file with functions code
-  source(file.path("functions_server.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Summary trends tab
-  source(file.path("summary_tab.R"),  local = TRUE)$value
-  
-  ##############################################.
-  # Cardiovascular tab
-  source(file.path("cardio_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Immunisation tab
-  source(file.path("immunisation_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Child health reviews tab
-  source(file.path("child_health_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Pregnancy tabs
-  source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
-  source(file.path("terminations_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Births and Babies tabs
-  source(file.path("perinatal_tab.R"),  local = TRUE)$value
-  source(file.path("apgar_tab.R"),  local = TRUE)$value
-  source(file.path("preterm_tab.R"),  local = TRUE)$value
-  source(file.path("tears_tab.R"),  local = TRUE)$value
-  source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
-  source(file.path("inductions_tab.R"),  local = TRUE)$value
-  source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Child development tab
-  source(file.path("child_dev_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Breastfeeding tab
-  source(file.path("breastfeeding_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Mental health tab
-  source(file.path("mental_health_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Cancer tab
-  source(file.path("cancer_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # SACT tab
-  source(file.path("sact_tab.R"),  local = TRUE)$value
-  
-  ###############################################.
-  # Data tab
-  source(file.path("data_tab.R"),  local = TRUE)$value
-  
-  ##############################################.
-  # jump to data pages from commentary ----
-  ##############################################.
-  observeEvent(input$jump_to_summary, {updateTabsetPanel(session, "intabset", selected = "summary")})
-  observeEvent(input$jump_to_cardio, {updateTabsetPanel(session, "intabset", selected = "cardio")})
-  observeEvent(input$jump_to_table, {updateTabsetPanel(session, "intabset", selected = "table")})
-  observeEvent(input$jump_to_immunisation, {updateTabsetPanel(session, "intabset", selected = "imm")})
-  observeEvent(input$jump_to_childreview, {updateTabsetPanel(session, "intabset", selected = "child_health")})
-  observeEvent(input$jump_to_perinatal_mortality, {updateTabsetPanel(session, "intabset", selected = "perinatal_mortality")})
-  observeEvent(input$jump_to_booking, {updateTabsetPanel(session, "intabset", selected = "booking")})
-  observeEvent(input$jump_to_top, {updateTabsetPanel(session, "intabset", selected = "terminations")})
-  
-  observeEvent(input$jump_to_mod, {updateTabsetPanel(session, "intabset", selected = "mod")})
-  observeEvent(input$jump_to_induction, {updateTabsetPanel(session, "intabset", selected = "inductions")})
-  observeEvent(input$jump_to_gestation, {updateTabsetPanel(session, "intabset", selected = "gestation")})
-  observeEvent(input$jump_to_apgar, {updateTabsetPanel(session, "intabset", selected = "apgar")})
-  observeEvent(input$jump_to_preterm, {updateTabsetPanel(session, "intabset", selected = "preterm")})
-  observeEvent(input$jump_to_tears, {updateTabsetPanel(session, "intabset", selected = "tears")})
-  
-  observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
-  observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
-  observeEvent(input$jump_to_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "mentalhealth")})
-  observeEvent(input$jump_to_cancer, {updateTabsetPanel(session, "intabset", selected = "cancer")})
-  
-  ###############################################.
-  ## jump to commentary tab from data tabs ----
-  ###############################################.
-  # To jump to commentary tab and ensures correct panel is expanded - requires multiple lines becuase action buttons must have unique ID
-  observeEvent(input$jump_commentary_imm, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Immunisation")})
-  
-  observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Child health reviews")})
-  
-  observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Cardiovascular")})
-  
-  observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Summary trends")})
-  
-  observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Stillbirths and infant deaths")})
-  
-  observeEvent(input$jump_commentary_booking, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Antenatal bookings")})
-  
-  observeEvent(input$jump_commentary_top, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")})
-  
-  observeEvent(input$jump_commentary_mod, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Method of delivery")})
-  
-  observeEvent(input$jump_commentary_induction, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Induction of labour")})
-  
-  observeEvent(input$jump_commentary_apgar, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Apgar scores")})
-  
-  observeEvent(input$jump_commentary_preterm, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Location of extremely preterm deliveries")})
-  
-  observeEvent(input$jump_commentary_tears, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Perineal tears")})
-  
-  observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
-  
-  observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Child development")})
-  
-  observeEvent(input$jump_commentary_breastfed, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Breastfeeding")})
-  
-  observeEvent(input$jump_commentary_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Mental health")})
-  
-  observeEvent(input$jump_commentary_cancer, {updateTabsetPanel(session, "intabset", selected = "comment")
-    updateCollapse(session, "collapse_commentary", open = "Cancer")})
-  
-  observeEvent(input$jump_commentary_oohissue, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  observeEvent(input$jump_commentary_oohissue_sum, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  
-  ###############################################.
-  ## Opening collapse panels in commentary ----
-  ###############################################.
-  
-  # ObserveEvents to open collapsepanels in commentary tab when sidepanel option clicked
-  observeEvent(input$summary_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Summary trends")}))
-  
-  observeEvent(input$immunisation_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Immunisation")}))
-  
-  observeEvent(input$ch_review_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Child health reviews")}))
-  
-  observeEvent(input$cardio_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Cardiovascular")}))
-  
-  observeEvent(input$perinatal_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Stillbirths and infant deaths")}))
-  
-  observeEvent(input$mentalhealth_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Mental health")}))
-  
-  observeEvent(input$childdev_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Child development")}))
-  
-  observeEvent(input$breastfeeding_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Breastfeeding")}))
-  
-  observeEvent(input$booking_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Antenatal bookings")}))
-  
-  observeEvent(input$top_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")}))
-  
-  observeEvent(input$mod_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Method of delivery")}))
-  
-  observeEvent(input$induction_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Induction of labour")}))
-  
-  observeEvent(input$gestation_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")}))
-  
-  observeEvent(input$apgar_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Apgar scores")}))
-  
-  observeEvent(input$preterm_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Location of extremely preterm deliveries")}))
-  
-  observeEvent(input$tears_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Perineal tears")}))  
-  
-  observeEvent(input$cancer_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Cancer")}))
-  
-  
-} # server end
+})
 
-##END
+###############################################.
+## Reactive layout ---- WEEKLY
+###############################################.
+
+# sact reactive drop-down control showing list of area names depending on areatype selected
+output$geoname_ui_wk_sact <- renderUI({
+  # areas_summary_sact <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_sact])
+  if (input$geotype_wk_sact == "Cancer Network") {
+    selectizeInput("geoname_wk_sact", label = NULL, choices = c("NCA", "SCAN", "WOSCAN"), selected = "NCA")
+  } else if (input$geotype_wk_sact == "Scotland") {
+    selectizeInput("geoname_wk_sact", label = NULL, choices = c("Scotland"), selected = "Scotland")
+  } else if (input$geotype_wk_sact == "Health Board") {
+    selectizeInput("geoname_wk_sact", label = NULL, choices = c("NHS Ayrshire & Arran",
+                                                                "NHS Borders", "NHS Dumfries & Galloway",
+                                                                "NHS Fife","NHS Forth Valley",
+                                                                "NHS Grampian", "NHS Greater Glasgow & Clyde",
+                                                                "NHS Highland", "NHS Lanarkshire",
+                                                                "NHS Lothian", "NHS Orkney",
+                                                                "NHS Shetland", "NHS Tayside",
+                                                                "NHS Western Isles"), selected = "NHS Ayrshire & Arran")
+  }
+})
+
+output$treatment_ui_wk_sact <- renderUI({
+  # areas_summary_sact <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_sact])
+  if (input$sact_plot_wk_filter %in% c("Geographic area", "Standard graph")) {
+    div(radioButtons("sact_wk_treatment", "Select administration route",
+                     list("All","Intravenous","Oral","Subcutaneous","Intrathecal", "Other"), inline = TRUE,
+                     selected = "All"))
+  } else  {
+    div(radioButtons("sact_wk_treatment", "Select administration route",
+                     list("All","Intravenous","Oral","Subcutaneous","Intrathecal", "Other"), inline = TRUE,
+                     selected = "All", disabled = TRUE))  
+  } 
+})
+
+output$sact_wk_explorer <- renderUI({
+  
+  # text for titles of cut charts
+  sact_wk_site <- case_when(input$sact_wk_type == "All" ~ "All",
+                            input$sact_wk_type == "Bone Sarcoma" ~ "Bone Sarcoma",
+                            input$sact_wk_type == "Breast" ~ "Breast",
+                            input$sact_wk_type == "Central Nervous System" ~ "Central Nervous System",
+                            input$sact_wk_type == "Cancer of Unknown Origin" ~ "Cancer of Unknown Origin",
+                            input$sact_wk_type == "Germ Cell" ~ "Germ Cell",
+                            input$sact_wk_type == "Gynaecology" ~ "Gynaecology",
+                            input$sact_wk_type == "Haematology" ~ "Haematology",
+                            input$sact_wk_type == "Head & Neck" ~ "Head & Neck",
+                            input$sact_wk_type == "Lower GI" ~ "Lower GI",
+                            input$sact_wk_type == "Lung & Chest" ~ "Lung & Chest",
+                            input$sact_wk_type == "Neuroendocrine" ~ "Neuroendocrine",
+                            input$sact_wk_type == "Other" ~ "Other",
+                            input$sact_wk_type == "Skin" ~ "Skin",
+                            input$sact_wk_type == "Soft Tissue Sarcoma" ~ "Soft Tissue Sarcoma",
+                            input$sact_wk_type == "Upper GI" ~ "Upper GI",
+                            input$sact_wk_type == "Urological" ~ "Urological",
+                            input$sact_wk_type == "Unknown" ~ "Unknown"
+                            
+  )
+  
+  tagList(
+    
+    if(input$sact_plot_wk_filter == "Geographic area" & input$geotype_wk_sact %in% c("Scotland", "Cancer Network")){
+      plot_box(paste0("Weekly Number of Patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
+               "sact_wk_incidence_area")
+    } else if (input$sact_plot_wk_filter == "Geographic area" & input$geotype_wk_sact == "Health Board"){
+      plot_box(paste0("Weekly Number of Patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
+               "sact_wk_incidence")
+    } else if (input$sact_plot_wk_filter == "Treatment administration"){
+      plot_box(paste0("Weekly Number of Patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
+               "sact_wk_incidence_treatment")
+    } else if (input$sact_plot_wk_filter == "Standard graph"){
+      plot_box(paste0("Weekly Number of Patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
+               "sact_wk_incidence")
+    },
+    
+    p(em("An appointment is defined as the unique combination of patient CHI, the local treatment name and the appointment date. 
+         It is therefore possible that a single patient has more than one appointment per week or on a single day. The number of 
+         weekly appointments gives an indication of activity and the workload within the areas. Data in this report is available 
+         from the first calendar week 2020 (30-12-2019).", style = "font-family: 'calibri'; font-si14pt")) , 
+    br(),
+    
+    if(input$sact_plot_wk_filter == "Geographic area" & input$geotype_wk_sact %in% c("Scotland", "Cancer Network")){
+      plot_box(paste0("Weekly Percentage Difference from 6 Week Average Pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
+               "sact_wk_difference_area")
+    } else if (input$sact_plot_wk_filter == "Geographic area" & input$geotype_wk_sact == "Health Board"){
+      plot_box(paste0("Weekly Percentage Difference from 6 Week Average Pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
+               "sact_wk_difference")
+    } else if (input$sact_plot_wk_filter == "Treatment administration"){
+      plot_box(paste0("Weekly Percentage Difference from 6 Week Average Pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
+               "sact_wk_difference_treatment")
+    } else if (input$sact_plot_wk_filter == "Standard graph"){
+      plot_box(paste0("Weekly Percentage Difference from 6 Week Average Pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
+               "sact_wk_difference")
+    },
+    
+    p(em("The percentage change of weekly appointments shows weekly activity against an average week in the pre-COVID period. The 
+         average week (also called reference week) is defined as the average number of appointments occurring during the weeks 
+         beginning 22/01/2020 up to the week beginning 26/02/2020. The percentage change is good measure to demonstrate the effect 
+         of COVID-19 on SACT activity and how cancer services are recovering from the impact.", style = "font-family: 'calibri'; font-si15pt"))
+    
+    )
+  
+})
+
+###############################################.
+## Charts ----
+###############################################.
+
+# MONTHLY INCIDENCE
+
+output$sact_incidence <- renderPlotly({plot_sact_incidence_chart(sact_dataset = sact_data_main())})
+
+output$sact_incidence_area <- renderPlotly({plot_sact_incidence_chart_area(sact_dataset = sact_data_main_area())})
+
+output$sact_incidence_treatment <- renderPlotly({plot_sact_incidence_chart_treatment(sact_dataset = sact_data_main_treatment())})
+
+# WEEKLY INCIDENCE
+
+output$sact_wk_incidence <- renderPlotly({plot_sact_wk_incidence_chart(sact_wk_dataset = sact_data_wk_main())})
+
+output$sact_wk_incidence_area <- renderPlotly({plot_sact_wk_incidence_chart_area(sact_wk_dataset = sact_data_wk_main_area())})
+
+output$sact_wk_incidence_treatment <- renderPlotly({plot_sact_wk_incidence_chart_treatment(sact_wk_dataset = sact_data_wk_main_treatment())})
+
+# WEEKLY DIFFERENCE
+
+output$sact_wk_difference <- renderPlotly({plot_sact_wk_difference_chart(sact_wk_dataset = sact_data_wk_diff())})
+
+output$sact_wk_difference_area <- renderPlotly({plot_sact_wk_difference_chart_area(sact_wk_dataset = sact_data_wk_diff_area())})
+
+output$sact_wk_difference_treatment <- renderPlotly({plot_sact_wk_difference_chart_treatment(sact_wk_dataset = sact_data_wk_diff_treatment())})
+
+
+
+
+###############################################.
+## Data downloads ----
+###############################################.
+
+
+
+
+###############################################.
+## Commentary ----
+##################

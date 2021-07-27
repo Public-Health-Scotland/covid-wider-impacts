@@ -25,7 +25,7 @@ observeEvent(input$btn_cancer_modal,
                p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of
                  each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had
                  a subsequent cancer specimen reported that year for the same type of cancer, they were not counted again; but they
-                 were counted twice or more for those with different types of cancer. "),
+                 were counted twice or more for those with different types of cancer, or in different geographic areas. "),
                
                p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
                size = "m",
@@ -127,7 +127,7 @@ output$cancer_explorer <- renderUI({
              "cancer_split"),
     p("Data extract date: 20th May 2021"),
     br(),
-    p("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
+    p(em("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
       than for other cancer sites. Such cancers are relatively common and usually non-fatal. There is a propensity 
       for multiple tumours to occur in one individual and cancer registries adopt different practices in recording 
       these. The tumours are most common in the elderly population and the completeness of registration in the very 
@@ -135,7 +135,7 @@ output$cancer_explorer <- renderUI({
       diagnosed and treated within GP surgeries and the registration scheme is not confident that all such cases 
       are notified. Because cancer registries across the world have different practices for recording non-melanoma 
       skin cancer (some do not record them at all), the category 'All Malignant Neoplasms (Excl. C44)' omits these tumours 
-      in the interests of making international comparisons of cancer incidence more valid."))
+      in the interests of making international comparisons of cancer incidence more valid.", style = "font-family: 'calibri'; font-si15pt")))
   
   
 })
@@ -182,7 +182,7 @@ output$cancer_explorer2 <- renderUI({
              unique patients; this has been corrected.  In addition, additional improvements were made in the identification 
              of non-residents of Scotland and in the identification of inappropriate cancer type/sex combinations. As such 
              there have been some revisions made to the numbers reported for the pathological specimens reported to the week 
-             ending 26th February 2021, extracted on 20th May 2021. These revisions are shown in red.",
+             ending 21st February 2021, extracted on 20th May 2021. These revisions are shown in red.",
              style = "font-family: 'arial'; font-si20pt; color: #DC143C;")),
     p("Cancer services in Scotland have been disrupted since late March 2020 as a result of the coronavirus
       pandemic.  It is important to understand whether fewer patients have been diagnosed with cancer as a
@@ -243,7 +243,7 @@ output$cancer_explorer2 <- renderUI({
       corresponds with those reported by cancer clinicians. "),
     strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and
            may also change historical data. This commentary refers to pathological specimens reported to the week
-           ending 26th February 2021, which were available for inclusion in the analysis when the data were extracted
+           ending 21st February 2021, which were available for inclusion in the analysis when the data were extracted
            on 20th May 2021; the dashboard may now reflect more recent information."),
     br(),
     br(),
@@ -254,7 +254,7 @@ output$cancer_explorer2 <- renderUI({
     # p(strong("Last updated: - 16/06/2021 ;  date of extraction of data: - 20/05/2021, with pathological records to week ending
     #          26/02/2021.  ")))#,
     p(strong("Last updated: - 28/07/2021 ;  date of extraction of data: - 20/05/2021, with pathological records to week ending
-             26/02/2021.  ")))#,
+             21/02/2021.  ")))#,
   
   # p("The first chart shows the cumulative total, or a running sum of the individuals confirmed pathologically as having
   #   cancer.  The second and third charts show the weekly numbers and the weekly percent differences between 2020/21 and
@@ -342,13 +342,13 @@ output$cancer_commentary <- renderUI({
     h3(strong("Cancer in Scotland in 2019/2020/2021")),
     p(strong("Note: as the information provided in this dashboard is updated, it will both add more recent 
              data and may also change historical data. This commentary includes reference to pathological specimens 
-             reported to the week ending 26th February 2021, which were available for inclusion in the analysis 
+             reported to the week ending 21st February 2021, which were available for inclusion in the analysis 
              when the data were extracted on 20th May 2021.")),
     p(strong("28/07/21 - Following a quality assurance exercise, a mistake was found in the methodology used to identify 
              unique patients; this has been corrected.  In addition, additional improvements were made in the identification 
              of non-residents of Scotland and in the identification of inappropriate cancer type/sex combinations. As such 
              there have been some revisions made to the numbers reported for the pathological specimens reported to the week 
-             ending 26th February 2021, extracted on 20th May 2021. These revisions are shown in red.",
+             ending 21st February 2021, extracted on 20th May 2021. These revisions are shown in red.",
              style = "font-family: 'arial'; font-si20pt; color: #DC143C;")),
     
     
@@ -401,7 +401,7 @@ output$cancer_commentary <- renderUI({
     p("In 2020, numbers were similar to 2019 until towards the end of March. After the first national lockdown, 
       the numbers fell by about 40% of those seen in comparable weeks in 2019. Numbers then rose from late April 2020. 
       Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
-      pandemic by 26th February 2021, when the latest data were available, although this varied by cancer type."),
+      pandemic by 21st February 2021, when the latest data were available, although this varied by cancer type."),
     
     
     ###################################
@@ -423,7 +423,7 @@ output$cancer_commentary <- renderUI({
     
     p("By December 2020, weekly numbers of pathological cancer diagnoses had risen from an initial drop of 40% at the start of the pandemic  
       to around 3% lower than in the previous year. This meant that the gap was continuing to increase but by a small amount.  In the first 
-      two months of 2021 (to week ending 23rd February), the total number of individuals with a pathologically confirmed cancer (excluding 
+      two months of 2021 (to week ending 21st February), the total number of individuals with a pathologically confirmed cancer (excluding 
       non-melanoma skin cancers) was 5,922, compared with 5,844 in 2020 (before the impact of the pandemic).  This suggests that the overall 
       rate of cancer diagnoses in Scotland has returned to levels that are similar to, or higher than, pre-pandemic ones.  For some cancer types, 
       numbers of diagnoses in 2021 are higher than previously and for others, lower. "),
@@ -435,7 +435,7 @@ output$cancer_commentary <- renderUI({
               "individuals (",
               strong ("-20.6%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               "). In 2021, the cumulative difference to 
-              26th February 2021 compared with the same week in 2020 was",
+              21st February 2021 compared with the same week in 2020 was",
               strong ("40 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               " fewer individuals (",
               strong ("-9.6%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -446,7 +446,7 @@ output$cancer_commentary <- renderUI({
               "individuals (",
               strong ("-15.8%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               "). In 2021, the cumulative difference to 
-              26th February 2021 compared with the same week in 2020 was",
+              21st February 2021 compared with the same week in 2020 was",
               strong ("17 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               " more individuals (",
               strong ("1.6%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -457,7 +457,7 @@ output$cancer_commentary <- renderUI({
               "individuals (",
               strong ("-16.8%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               "). In 2021, the cumulative difference to 
-              26th February 2021 compared with the same week in 2020 was",
+              21st February 2021 compared with the same week in 2020 was",
               strong ("6 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               " fewer individuals (",
               strong ("-1.1%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -468,7 +468,7 @@ output$cancer_commentary <- renderUI({
               "individuals (",
               strong ("-20.3%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               "). In 2021, the cumulative difference to 
-              26th February 2021 compared with the same week in 2020 was",
+              21st February 2021 compared with the same week in 2020 was",
               strong ("31 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               " fewer individuals (",
               strong ("-4.2%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -479,7 +479,7 @@ output$cancer_commentary <- renderUI({
               "individuals (",
               strong ("-19.8%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               "). In 2021, the cumulative difference to 
-              26th February 2021 compared with the same week in 2020 was",
+              21st February 2021 compared with the same week in 2020 was",
               strong ("32 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
               " fewer individuals (",
               strong ("-12.8%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),

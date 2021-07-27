@@ -75,7 +75,7 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
-cancer_extract_date <- "21st May 2021"
+cancer_extract_date <- "20th May 2021"
 
 # SACT data
 sact_data <- readRDS("data/sact_data.rds") 

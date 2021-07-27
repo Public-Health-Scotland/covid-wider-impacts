@@ -332,7 +332,7 @@ tagList( #needed for shinyjs
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
                                            ) # tabpanel bracket
-                        )# , # navbar bracket 
+                        ) , # navbar bracket 
              
              
              
