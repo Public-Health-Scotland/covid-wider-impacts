@@ -42,13 +42,6 @@ cancer_data_cum_main <- reactive({
   
 })
 
-# cancer_data_cum_main2 <- reactive({
-#   
-#   cancer_data3 %>% filter(sex == input$gender, area == input$geoname_cancer, site == input$cancer_type) %>% 
-#     mutate(dep = factor(dep))
-#   
-# })
-
 
 ###############################################.
 ## Reactive layout ----
@@ -140,42 +133,9 @@ output$cancer_explorer <- renderUI({
   
 })
 
-################# POSSIBLE ADDITION MAY 21 TO RE-ARRANGE PAGE ##############
+################# ADDITION MAY 21 TO RE-ARRANGE PAGE ##############
 
 output$cancer_explorer2 <- renderUI({
-  
-  # text for titles of cut charts
-  # cancer_site <- case_when(input$cancer_type == "All Malignant Neoplasms (Excl. C44)" ~ "All Malignant Neoplasms (Excl. C44)",
-  #                          input$cancer_type == "All Cancers" ~ "All Cancers",
-  #                          input$cancer_type == "Bladder" ~ "Bladder",
-  #                          input$cancer_type == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
-  #                          input$cancer_type == "Breast" ~ "Breast",
-  #                          input$cancer_type == "Colorectal" ~ "Colorectal",
-  #                          input$cancer_type == "Head and Neck" ~ "Head and Neck",
-  #                          input$cancer_type == "Hodgkin Lymphoma" ~ "Hodgkin Lymphoma",
-  #                          input$cancer_type == "Kidney" ~ "Kidney",
-  #                          input$cancer_type == "Leukaemias" ~ "Leukaemias",
-  #                          input$cancer_type == "Liver and Intrahepatic Bile Ducts" ~ "Liver and Intrahepatic Bile Ducts",
-  #                          input$cancer_type == "Brain Tumour" ~ "Brain Tumour",
-  #                          input$cancer_type == "Malignant Melanoma of the Skin" ~ "Malignant Melanoma of the Skin",
-  #                          input$cancer_type == "Mesothelioma" ~ "Mesothelioma",
-  #                          input$cancer_type == "Multiple Myeloma and malignant plasma cell neoplasms" ~ "Multiple Myeloma and malignant plasma cell neoplasms",
-  #                          input$cancer_type == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
-  #                          input$cancer_type == "Oesophagus" ~ "Oesophagus",
-  #                          input$cancer_type == "Other" ~ "Other",
-  #                          input$cancer_type == "Ovary - Females only" ~ "Ovary - Females only",
-  #                          input$cancer_type == "Pancreas" ~ "Pancreas",
-  #                          input$cancer_type == "Penis - Males only" ~ "Penis - Males Only",
-  #                          input$cancer_type == "Prostate - Males only" ~ "Prostate - Males only",
-  #                          input$cancer_type == "Stomach" ~ "Stomach",
-  #                          input$cancer_type == "Testis - Males only" ~ "Testis - Males only",
-  #                          input$cancer_type == "Thyroid" ~ "Thyroid",
-  #                          input$cancer_type == "Trachea, Bronchus and Lung" ~ "Trachea, Bronchus and Lung",
-  #                          input$cancer_type == "Uterus - Females only" ~ "Uterus - Females only",
-  #                          input$cancer_type == "Vagina - Females only" ~ "Vagina - Females only",
-  #                          input$cancer_type == "Vulva - Females only" ~ "Vulva - Females only"
-  # )
-  
   
   tagList(
     p(strong("28/07/21 - Following a quality assurance exercise, a mistake was found in the methodology used to identify 
@@ -191,13 +151,7 @@ output$cancer_explorer2 <- renderUI({
       numbers of individuals from whom a pathology sample found cancer in 2020/2021 and compares them to 2019."),
     p(strong("Note - this does not include all patients who have been newly diagnosed with cancer, and also will include some patients
              who are being followed-up from an earlier diagnosis of cancer. ")),
-    # p("In 2020, the number of individuals was similar to 2019 until the end of March.  Weekly numbers then
-    #   fell by about 40% of those in 2019.  By the week ending 30th August 2020, numbers had not increased again
-    #   to 2019 levels for most cancers."),
-    # p("In 2020, the number of individuals was similar to 2019 until the end of March.  Weekly numbers then
-    #   fell by about 40% of those in 2019.  By the week ending 21st June 2020, numbers had not increased again
-    #   to 2019 levels for most cancers."),
-    
+
     p(("By the end of 2020 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
        cancer (excluding non-melanoma skin cancers) in Scotland was "),  
       strong ("28,774 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -212,11 +166,6 @@ output$cancer_explorer2 <- renderUI({
       ("fewer patients in Scotland had a pathologically confirmed cancer diagnosis by the end of 2020 than would have 
        been expected.")),
     
-    # p("By week ending 21st June 2020, the total number of individuals in Scotland with a pathologically confirmed
-    #   cancer (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference
-    #   of 4,063 individuals (and an overall cumulative difference of 19%).  Thus, around 4,000 fewer
-    #   patients in Scotland had a pathologically confirmed cancer diagnosis by the end of June 2020 than would have
-    #   been expected."),
     p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and colorectal.  By the week
       ending 27th December 2020, compared to the same week in 2019, there were ",
       strong ("584 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -235,10 +184,6 @@ output$cancer_explorer2 <- renderUI({
       "fewer colorectal cancers (a total fall of ",
       strong ("20.3%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
       "). "),
-    # p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and bowel.  By the week
-    #   ending 21st June 2020, compared to the same week in 2019, there were 376 fewer lung cancers (a total fall of 23%);
-    #   799 fewer breast cancers (a total fall of 20%); 279 prostate cancers (a total fall of 17%); and 677 fewer bowel
-    #   cancers (a total fall of 27%)."),
     p("While these numbers are only proxy measures of new cancer diagnoses in Scotland, the size of the changes
       corresponds with those reported by cancer clinicians. "),
     strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and
@@ -256,33 +201,7 @@ output$cancer_explorer2 <- renderUI({
     p(strong("Last updated: - 28/07/2021 ;  date of extraction of data: - 20/05/2021, with pathological records to week ending
              21/02/2021.  ")))#,
   
-  # p("The first chart shows the cumulative total, or a running sum of the individuals confirmed pathologically as having
-  #   cancer.  The second and third charts show the weekly numbers and the weekly percent differences between 2020/21 and
-  #   2019 of new individuals confirmed each week.  "),
-  # p("Drop-down menus allow further details for specific Health Boards, cancer types and sex to be selected"))
-  # br(),
-  # plot_box(paste0("Total count of individuals having a cancer of type:  ", cancer_site,
-  #                 " confirmed on a pathological specimen since January for 2019/2020"), "cancer_overall"),
-  # p("Data extract date: 21st May 2021"),
-  # br(),
-  # plot_box(paste0("Weekly count of individuals having a cancer of type: ", cancer_site,
-  #                 " confirmed on a pathological specimen since January for 2019/2020"), "cancer_incidence"),
-  # p("Data extract date: 21st May 2021"),
-  # br(),
-  # plot_box(paste0("Percentage change of individuals having a cancer of type: ", cancer_site,
-  #                 " confirmed on a pathological specimen since January for 2019/2020"), "cancer_split"),
-  # p("Data extract date: 21st May 2021"),
-  # br(),
-  # p("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
-  #     than for other cancer sites. Such cancers are relatively common and usually non-fatal. There is a propensity 
-  #     for multiple tumours to occur in one individual and cancer registries adopt different practices in recording 
-  #     these. The tumours are most common in the elderly population and the completeness of registration in the very 
-  #     elderly is likely to be less than for younger patients. Furthermore, increasing numbers of these cancers are 
-  #     diagnosed and treated within GP surgeries and the registration scheme is not confident that all such cases 
-  #     are notified. Because cancer registries across the world have different practices for recording non-melanoma 
-  #     skin cancer (some do not record them at all), the category 'All Malignant Neoplasms (Excl. C44)' omits these tumours 
-  #     in the interests of making international comparisons of cancer incidence more valid."))
-  
+
   
 })
 
