@@ -33,9 +33,9 @@ save_final_file("cancer_data_2", "27_Jul_21")
 
 ##########################################################.
 ## SACT ----
-save_final_file("sact_data", "26_Jul_21")
+save_final_file("sact_data", "27_Jul_21")
 
-save_final_file("sact_weekly_data", "26_Jul_21")
+save_final_file("sact_weekly_data", "27_Jul_21")
 
 ##########################################################.
 ## RAPID ----
