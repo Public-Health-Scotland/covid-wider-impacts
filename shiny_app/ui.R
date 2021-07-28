@@ -22,7 +22,7 @@ tagList( #needed for shinyjs
                       fluidRow(column(9, h3("COVID-19 wider impacts on the health care system")),
                                column(3, actionButton("new_next", tags$b("New content and future updates"),
                                                       icon = icon('calendar-alt')))),
-                      p("The COVID-19 pandemic has wider impacts on individualsâ health, and their use of healthcare services,
+                      p("The COVID-19 pandemic has wider impacts on individuals' health, and their use of healthcare services,
                                  than those that occur as the direct result of infection"),
                                p("Reasons for this may include:"),
                                tags$ul(
@@ -204,7 +204,7 @@ tagList( #needed for shinyjs
                         
                         # CANCER PATHOLOGY
                         
-                        tabPanel(title = "Cancer Pathology", icon = icon("microscope"), value = "cancer",
+                        tabPanel(title = "Cancer pathology", icon = icon("microscope"), value = "cancer",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer2")),
                                  wellPanel(
@@ -216,11 +216,11 @@ tagList( #needed for shinyjs
                                    column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
                                                           selected = "All Malignant Neoplasms (Excl. C44)"),
                                           div(radioButtons("gender", "Step 3. Select sex",
-                                                           list("All","Male","Female"), inline = TRUE,
-                                                           selected = "All"))),
+                                                           list("All Persons","Male","Female"), inline = TRUE,
+                                                           selected = "All Persons"))),
                                    # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
                                    
-                                   column(4,actionButton("btn_cancer_modal", "Data source and definitions", icon = icon('question-circle')),
+                                   column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
                                           fluidRow(br()),
                                           downloadButton('download_cancer_data', 'Download data'),
                                           fluidRow(br()),
