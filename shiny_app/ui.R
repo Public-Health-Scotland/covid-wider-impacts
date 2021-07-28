@@ -204,7 +204,7 @@ tagList( #needed for shinyjs
                         
                         # CANCER PATHOLOGY
                         
-                        tabPanel(title = "Cancer Pathology", icon = icon("microscope"), value = "cancer",
+                        tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer2")),
                                  wellPanel(
@@ -216,11 +216,11 @@ tagList( #needed for shinyjs
                                    column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
                                                           selected = "All Malignant Neoplasms (Excl. C44)"),
                                           div(radioButtons("gender", "Step 3. Select sex",
-                                                           list("All","Male","Female"), inline = TRUE,
-                                                           selected = "All"))),
+                                                           list("All Persons","Male","Female"), inline = TRUE,
+                                                           selected = "All Persons"))),
                                    # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
                                    
-                                   column(4,actionButton("btn_cancer_modal", "Data source and definitions", icon = icon('question-circle')),
+                                   column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
                                           fluidRow(br()),
                                           downloadButton('download_cancer_data', 'Download data'),
                                           fluidRow(br()),

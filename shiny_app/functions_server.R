@@ -324,26 +324,19 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
     value3 <- dataset[[var3_chosen]]
     
     
-    week_detail19 <- dmy("06/01/2019") + days(7*(dataset$week_number-1))
-    
-    week_detail20 <- dmy("05/01/2020") + days(7*(dataset$week_number-1))
-    
-    week_detail21 <- dmy("03/01/2021") + days(7*(dataset$week_number-1))
-    
-    
-    tooltip_1 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(week_detail20, "%d %b"),
+    tooltip_1 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, value1))
     
-    tooltip_2 <- c(paste0("Year:2019", "<br>", "Week ending: ", format(week_detail19, "%d %b"),
+    tooltip_2 <- c(paste0("Year:2019", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, value2))
     
-    tooltip_3 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(week_detail21, "%d %b"),
+    tooltip_3 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, value3))
     
-    tooltip_4 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(week_detail20, "%d %b"),
+    tooltip_4 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
     
-    tooltip_5 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(week_detail21, "%d %b"),
+    tooltip_5 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, paste0(format(round(value3, 2), nsmall = 2), "%")))
     
     # Function for verical line at start of lockdown
@@ -387,7 +380,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
         #Layout
         layout(margin = list(b = 80, t=5),
                shapes = list(vline("2020-03-22")),
-               yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000*4),
+               yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
                legend = list(x = 100, y = 0.5)) %>% 
         
         # leaving only save plot button
@@ -416,13 +409,14 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
         #Layout
         layout(margin = list(b = 80, t=5),
                shapes = list(vline("2020-03-22")),
-               yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000*4),
+               yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
                legend = list(x = 100, y = 0.5, traceorder = 'reversed')) %>% 
         
         # leaving only save plot button
         config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
   }
 }
+
 
 ###############################################.
 ## Functions for SACT charts ----
