@@ -204,7 +204,7 @@ tagList( #needed for shinyjs
                         
                         # CANCER PATHOLOGY
                         
-                        tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
+                        tabPanel(title = "Cancer pathology", icon = icon("microscope"), value = "cancer",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer2")),
                                  wellPanel(
