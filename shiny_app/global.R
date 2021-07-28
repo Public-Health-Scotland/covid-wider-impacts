@@ -19,7 +19,8 @@ library(flextable)
 library(shinyBS) #for collapsible panels in commentary 
 library(zoo)
 library(magrittr)
-library(shinymanager) 
+library(shinymanager)
+library(lubridate)
 
 ###############################################.
 ## Functions ----
@@ -37,7 +38,7 @@ plot_cut_box <- function(title_plot1, plot_output1,
     extra_content,
     fluidRow(column(6, withSpinner(plotlyOutput(plot_output1))),
              column(6, withSpinner(plotlyOutput(plot_output2))))
-    )
+  )
 }
 
 #Function to create boxes for intro sumamry
@@ -46,7 +47,7 @@ intro_box <- function(title_box, button_name, description) {
   div(class="landing-page-box",
       div(title_box, class = "landing-page-box-title"),
       actionButton(button_name, NULL, class="landing-page-button")
-      )
+  )
 }
 
 ###############################################.
@@ -75,8 +76,38 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
-# cancer_data3 <- readRDS("data/cancer_data_dep.rds")
-cancer_extract_date <- "21st May 2021"
+cancer_extract_date <- "20th May 2021"
+
+# SACT data
+sact_data <- readRDS("data/sact_data.rds") 
+
+sact_data_inc <- sact_data %>%
+  mutate(region = factor(region)) %>%
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) 
+
+sact_weekly_data <- readRDS("data/sact_weekly_data.rds") 
+
+sact_data_wk_difference <- sact_weekly_data %>%
+  mutate(region = factor(region)) %>% 
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
+
+sact_data_wk_inc <- sact_weekly_data %>%
+  # filter(week <= 52) %>% 
+  mutate(region = factor(region)) %>% 
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
+
 
 # mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
@@ -196,10 +227,10 @@ spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
 
 data_list <- c(
   "Hospital admissions" = "rapid", "A&E attendances" = "aye",
-               "NHS 24 completed contacts" = "nhs24",
-               "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
-               "Excess mortality" = "deaths",
-               "Outpatient appointments" = "outpats")
+  "NHS 24 completed contacts" = "nhs24",
+  "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
+  "Excess mortality" = "deaths",
+  "Outpatient appointments" = "outpats")
 
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
@@ -210,21 +241,21 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
 
 # List of data items available in step 2 of child health tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
-            "6-8 Week Review" = "six_eightwks",
-            "13-15 Month Review" = "13_15mnth",
-            "27-30 Month Review" = "27_30mnth",
-            "4-5 Year Review" = "4_5yr")
+                     "6-8 Week Review" = "six_eightwks",
+                     "13-15 Month Review" = "13_15mnth",
+                     "27-30 Month Review" = "27_30mnth",
+                     "4-5 Year Review" = "4_5yr")
 
 ## Data lists for pregnancy tab
 # List of data items available in step 1 of antenatal booking
 data_list_booking <- c("Number" = "booking_number",
-                    "Average gestation" = "booking_gestation")
+                       "Average gestation" = "booking_gestation")
 # List of data items available in step 1 of terminations
 data_list_top <- c("Number" = "top_number",
-                       "Average gestation" = "top_gestation")
+                   "Average gestation" = "top_gestation")
 
 data_list_childdev <- c("13-15 month review" = "13_15mnth",
-                     "27-30 month review" = "27_30mnth")
+                        "27-30 month review" = "27_30mnth")
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
@@ -254,7 +285,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
                         "Cancer" = "cancer"
-                        )
+)
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",
@@ -262,6 +293,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Bone and Connective Tissue" = "Bone and Connective Tissue",
                       "Brain Tumour" = "Brain Tumour",
                       "Breast" = "Breast", 
+                      "Cervical - Females only" = "Cervical - Females only",
                       "Colorectal" = "Colorectal",
                       "Head and Neck" = "Head and Neck",
                       "Hodgkin Lymphoma" = "Hodgkin Lymphoma",
@@ -308,7 +340,7 @@ mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye", "Ou
 pal_depr <- c('#2c7fb8', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 #Palette for 9 series in a gradient
 pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
-                    '#74add1', '#4575b4', '#313695')
+             '#74add1', '#4575b4', '#313695')
 pal_moc <- c('#543005', '#8c510a', '#bf812d', '#d0d1e6')
 #Palette for those with a single category per sex and overall
 pal_sex <- c('#000000', '#9ebcda','#8856a7')
@@ -332,10 +364,26 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
                "APR 2021" = "#a64208") 
+
+pal_sact <- c('#3F3685', 
+              '#9F9BC2', 
+              '#9B4393', 
+              '#CDA1C9', 
+              '#0078D4', 
+              '#B3D7F2', 
+              '#EE82EE', 
+              '#9CC951', 
+              '#DAEBBE', 
+              '#1E7F84', 
+              '#948DE3', 
+              '#C73918', 
+              '#E39C8C', 
+              '#000000' )
+
 # more distinctive colour palette (save for later)
-              # c("2019" = "#000000", "2020" = "#41b6c4", 
-              #   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
-              #   "DEC 2020" = "#1d91c0", "JAN 2021" = "#253494", "FEB 2021" = "#990099")
+# c("2019" = "#000000", "2020" = "#41b6c4", 
+#   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
+#   "DEC 2020" = "#1d91c0", "JAN 2021" = "#253494", "FEB 2021" = "#990099")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
@@ -346,7 +394,7 @@ yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4
 
 # Buttons to remove
 bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
-                       'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                        'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
+                     'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
+                     'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
 
 ## END
