@@ -387,7 +387,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
         #Layout
         layout(margin = list(b = 80, t=5),
                shapes = list(vline("2020-03-22")),
-               yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-06", dtick = 60*60*24*7*1000*4),
+               yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000*4),
                legend = list(x = 100, y = 0.5)) %>% 
         
         # leaving only save plot button
@@ -416,7 +416,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
         #Layout
         layout(margin = list(b = 80, t=5),
                shapes = list(vline("2020-03-22")),
-               yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-06", dtick = 60*60*24*7*1000*4),
+               yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000*4),
                legend = list(x = 100, y = 0.5, traceorder = 'reversed')) %>% 
         
         # leaving only save plot button
