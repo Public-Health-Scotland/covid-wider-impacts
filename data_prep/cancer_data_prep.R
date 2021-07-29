@@ -34,10 +34,10 @@ cancer <- read_csv(paste0(input_folder,"Pathology_Data_May21.csv"), col_names = 
   clean_names() %>% 
   mutate(postcode = postcode(postcode, format = "pc8"))  %>%
   mutate(postcode = case_when((str_length(postcode) == 7 &
-                              str_sub(postcode, 2, 2) == "0")
+                                 str_sub(postcode, 2, 2) == "0")
                               ~ (str_sub(postcode, 2, 2) <- ""),
                               (str_length(postcode) == 8 &
-                              str_sub(postcode, 3, 3) == "0")
+                                 str_sub(postcode, 3, 3) == "0")
                               ~ (str_sub(postcode, 3, 3) <- ""),
                               TRUE ~ postcode))
 
@@ -103,7 +103,6 @@ cancer <- cancer %>%
                             icd_2 == 45 ~ 1320,
                             icd_2 == 60 ~ 1410,
                             icd_2 == 61 ~ 1420,
-                            icd_2 == 63 ~ 1420,
                             icd_2 == 62 ~ 1430,
                             icd_2 == 90 ~ 1510,
                             icd_2 == 15 ~ 1710,
@@ -334,8 +333,8 @@ cancer_dist <- cancer_dist %>%
     is.na(count21) ~ 0,
     count21 >= 0 ~ as.double(count21)),
     count20 = case_when(
-    is.na(count20) ~ 0,
-    count20 >= 0 ~ as.double(count20)),
+      is.na(count20) ~ 0,
+      count20 >= 0 ~ as.double(count20)),
     count19 = case_when(
       is.na(count19) ~ 0,
       count19 >= 0 ~ as.double(count19)))
@@ -374,11 +373,11 @@ cancer_combined <- rbind(cancer_hb, cancer_sex) %>%
 
 diff_data <- cancer_combined %>%
   mutate(difference20 = case_when(
-      count19 > 0 ~ 100*(count20 - count19)/count19),
-         difference21 = case_when(
+    count19 > 0 ~ 100*(count20 - count19)/count19),
+    difference21 = case_when(
       count19 > 0 ~ 100*(count21 - count19)/count19)) %>% 
   mutate(difference21 = case_when(week_number > 8 ~ (na_if(difference21, -100)),
-                             TRUE ~ difference21))
+                                  TRUE ~ difference21))
 
 
 ##########################################
@@ -429,8 +428,7 @@ cancer_cum <- diff_data %>%
 
 
 saveRDS(cancer_cum, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_2_", 
-                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(cancer_cum, "shiny_app/data/cancer_data_2.rds")
 
 # saveRDS(cancer_cum_dep, "shiny_app/data/cancer_data_dep.rds")
-
