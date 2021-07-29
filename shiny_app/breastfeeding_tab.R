@@ -253,6 +253,8 @@ output$bf_ever_pc <- renderPlotly({
 output$breastfeeding_commentary <- renderUI({
   tagList(
     bsButton("jump_to_breastfed",label = "Go to data"), #this button can only be used once
+    h2("Breastfeeding - 4th August 2021"),
+    p("Information on breastfeeding has been updated in this tool on 4 August 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old. Data is shown by month of review from January 2019 to May 2021. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
     h2("Breastfeeding - 7th July 2021"),
     p("Information on breastfeeding has been updated in this tool on 7 July 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old."),
     p("Data is shown by month of review from January 2019 to April 2021, so comparisons can be made for babies receiving their reviews before and during the COVID-19 pandemic."),
