@@ -638,7 +638,8 @@ output$immun_commentary_section <- renderUI({
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
     h2("Immunisations - 4th August 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 4 August and includes information on cohorts eligible for their immunisations  
-      to week beginning 7 June 2021. Background information on interpreting the data is provided in the commentary for previous updates below."),
+      to week beginning 7 June 2021."),
+    p("Background information on interpreting the data is provided in the commentary for previous updates below."),
     h2("Immunisations - 7th July 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 7 July. It should be noted that the data recorded for the 
       most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake 
