@@ -79,7 +79,7 @@ tagList( #needed for shinyjs
              # ###############################################.
              # ## Commentary ----
              # ###############################################.
-             # 
+              
              tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                       wellPanel(column(12,
                                        p("Select topic areas to find commentary relating to data presented in this tool."))),
@@ -126,7 +126,7 @@ tagList( #needed for shinyjs
                                         
                              )))
              ), #tab panel
-             # 
+             
              # ###############################################.
              # # Summary trends ----
              # ##############################################.
@@ -194,14 +194,14 @@ tagList( #needed for shinyjs
                                 uiOutput("cardio_explorer")
                       )# mainPanel bracket
              ), # tabpanel bracket
-             
+
              ###############################################.
              ## Cancer ----
              ###############################################.
-             #
+             
              
              navbarMenu("Cancer", icon = icon("disease"),
-                        
+
                         # CANCER PATHOLOGY
                         
                         tabPanel(title = "Cancer Pathology", icon = icon("microscope"), value = "cancer",
@@ -212,7 +212,7 @@ tagList( #needed for shinyjs
                                                          choices= c("Scotland", "Cancer Networks", "Health Boards"),
                                                          selected = "Scotland"),
                                           uiOutput("geoname_ui_cancer")),
-                                   
+
                                    column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
                                                           selected = "All Malignant Neoplasms (Excl. C44)"),
                                           div(radioButtons("gender", "Step 3. Select sex",
@@ -233,91 +233,91 @@ tagList( #needed for shinyjs
                                            uiOutput("cancer_explorer")
                                  )# mainPanel bracket
                         ), # tabpanel bracket
-                        
+
                         ###############################################.
                         ## SACT ----
                         ###############################################.
-                        
-                        
-                        #### MONTHLY TAB          
-                        
+
+
+                        #### MONTHLY TAB
+
                         tabPanel(title = "SACT (Chemotherapy) Monthly Patients ", icon = icon("syringe"), value = "sact",
                                  wellPanel(h4(strong("SACT Treatment Activity in Scotland - Monthly Patient Data")),
                                            p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
-                                             of cancer. The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments 
+                                             of cancer. The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments
                                              such as targeted agents and immunotherapies."),
-                                           p("The weekly and monthly activity reports are generated from the SACT national MVP data platform 
-                                             held by PHS, which is updated weekly from the five instances of ChemoCare across Scotland. 
-                                             All SACT and non-SACT (e.g. other drugs used to treat cancer such as hormones and supportive medicines 
-                                             such as anti-sickness medicines and steroids) activity which is prescribed 
+                                           p("The weekly and monthly activity reports are generated from the SACT national MVP data platform
+                                             held by PHS, which is updated weekly from the five instances of ChemoCare across Scotland.
+                                             All SACT and non-SACT (e.g. other drugs used to treat cancer such as hormones and supportive medicines
+                                             such as anti-sickness medicines and steroids) activity which is prescribed
                                              in secondary care settings and is recorded on ChemoCare is included. Paediatric patient activity
                                              and prescriptions not recorded on a ChemoCare system are not included."),
-                                           p("Local values have been used in the calculations, however, national mappings 
-                                             and derivations were applied to define tumour groups and identify the administration route."), 
-                                           p("Due to differences in recording practice", 
+                                           p("Local values have been used in the calculations, however, national mappings
+                                             and derivations were applied to define tumour groups and identify the administration route."),
+                                           p("Due to differences in recording practice",
                                              em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
-                                           
+
                                            actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle'))), # well panel
-                                 
+
                                  wellPanel(column(7, selectInput("geotype_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_sact"),
                                                   uiOutput("treatment_ui_sact")),
-                                           column(5,  selectInput("sact_type", label = "Select all or specific cancer type", 
+                                           column(5,  selectInput("sact_type", label = "Select all or specific cancer type",
                                                                   choices = c("All","Bone Sarcoma", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
-                                                                              "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI", 
+                                                                              "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
                                                                               "Lung & Chest", "Neuroendocrine", "Other", "Skin", "Soft Tissue Sarcoma",
                                                                               "Upper GI", "Urological", "Unknown"), selected = "All"),
                                                   div(radioButtons("sact_plot_filter", "Select data breakdown to display together:",
                                                                    list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
                                                                    selected = "Standard graph")))
                                  ), #well panel
-                                 
+
                                  mainPanel(width = 12,
                                            uiOutput("sact_explorer")
                                  )# mainPanel bracket
-                                 
+
                                            ), # tabpanel bracket
-                        
-                        
+
+
                         #### WEEKLY TAB
-                        
+
                         tabPanel(title = "SACT (Chemotherapy) Weekly Appointments", icon = icon("syringe"), value = "sact",
                                  wellPanel(h4(strong("SACT Treatment Activity in Scotland - Weekly Appointment Data")),
-                                           #p(strong("Data from the ChemoCare system in the North Cancer Alliance (NCA) Highland has not 
-                                           #          refreshed on the 28th of June 2021. Data from this instance is therefore only deemed 
-                                           #         complete up to the week beginning 7th of June and only presented in the graphs up to 
-                                           #        that date. This affects Scotland level data, NCA network level data and NCA Highland 
-                                           #       health boards: NHS Highland and NHS Western Isles."), 
+                                           #p(strong("Data from the ChemoCare system in the North Cancer Alliance (NCA) Highland has not
+                                           #          refreshed on the 28th of June 2021. Data from this instance is therefore only deemed
+                                           #         complete up to the week beginning 7th of June and only presented in the graphs up to
+                                           #        that date. This affects Scotland level data, NCA network level data and NCA Highland
+                                           #       health boards: NHS Highland and NHS Western Isles."),
                                            #style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
                                            p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
-                                             of cancer. The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments 
+                                             of cancer. The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments
                                              such as targeted agents and immunotherapies."),
-                                           p("The weekly and monthly activity reports are generated from the SACT national MVP data platform 
-                                             held by PHS, which is updated weekly from the five instances of ChemoCare across Scotland. 
-                                             All SACT and non-SACT (e.g. other drugs used to treat cancer such as hormones and supportive medicines 
-                                             such as anti-sickness medicines and steroids) activity which is prescribed 
+                                           p("The weekly and monthly activity reports are generated from the SACT national MVP data platform
+                                             held by PHS, which is updated weekly from the five instances of ChemoCare across Scotland.
+                                             All SACT and non-SACT (e.g. other drugs used to treat cancer such as hormones and supportive medicines
+                                             such as anti-sickness medicines and steroids) activity which is prescribed
                                              in secondary care settings and is recorded on ChemoCare is included. Paediatric patient activity
                                              and prescriptions not recorded on a ChemoCare system are not included."),
-                                           p("Local values have been used in the calculations, however, national mappings 
-                                             and derivations were applied to define tumour groups and identify the administration route."),  
-                                           p("Due to differences in recording practice", 
-                                             em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")), 
+                                           p("Local values have been used in the calculations, however, national mappings
+                                             and derivations were applied to define tumour groups and identify the administration route."),
+                                           p("Due to differences in recording practice",
+                                             em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
-                                           p("Activity data is released two week in arrears. The latest data currently available in the 
+                                           p("Activity data is released two week in arrears. The latest data currently available in the
                                              dashboard is for the week beginning", strong(format(max(sact_weekly_data$week_beginning), "%d %B %Y"))),
-                                           
+
                                            actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle'))), # well panel
-                                 
+
                                  wellPanel(column(7, selectInput("geotype_wk_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_wk_sact"),
                                                   uiOutput("treatment_ui_wk_sact")),
-                                           
-                                           column(5, selectInput("sact_wk_type", label = "Select all or specific cancer type", 
+
+                                           column(5, selectInput("sact_wk_type", label = "Select all or specific cancer type",
                                                                  choices = c("All","Bone Sarcoma", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
-                                                                             "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI", 
+                                                                             "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
                                                                              "Lung & Chest", "Neuroendocrine", "Other", "Skin", "Soft Tissue Sarcoma",
                                                                              "Upper GI", "Urological", "Unknown"), selected = "All"),
                                                   div(radioButtons("sact_wk_appt_reg", "Select method of administration route derivation",
@@ -327,16 +327,16 @@ tagList( #needed for shinyjs
                                                                    list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
                                                                    selected = "Standard graph")))
                                  ), #well panel
-                                 
+
                                  mainPanel(width = 12,
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
                                            ) # tabpanel bracket
-                        ) , # navbar bracket 
-             
-             
-             
-             
+                        ) , # navbar bracket
+
+
+
+
              ##############################################.
              # Mental Health ----
              ##############################################.
@@ -693,6 +693,6 @@ tagList( #needed for shinyjs
                    ) # tabpanel bracket
              ) # page bracket
 )# taglist bracket
-# )#secure app
+ #)#secure app
 
 #END
