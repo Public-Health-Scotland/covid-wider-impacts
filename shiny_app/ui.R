@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+ secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -693,6 +693,6 @@ tagList( #needed for shinyjs
               #      ) # tabpanel bracket
              ) # page bracket
 ))# taglist bracket
-# )#secure app
+ )#secure app
 
 #END
