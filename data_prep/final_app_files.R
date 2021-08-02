@@ -39,15 +39,15 @@ save_final_file("sact_weekly_data", "27_Jul_21")
 
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "05_Jul_21")
+save_final_file("rapid", "02_Aug_21")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 
 ## OOH ----
 save_final_file("ooh", "05_Jul_21")
 ## A&E ----
-save_final_file("ae", "02_Jul_21")
+save_final_file("ae", "02_Aug_21")
 ## NHS24 ----
-save_final_file("nhs24", "05_Jul_21")
+save_final_file("nhs24", "02_Aug_21")
 ## SAS ----
 save_final_file("sas", "05_Jul_21")
 ### Outpatients ----
