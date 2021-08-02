@@ -17,15 +17,15 @@ require(janitor)||install.packages("janitor")
 require(lubridate)||install.packages("lubridate")
 
 ##########################################
-# Date Input (Wednesday after data refresh)
+# Date Input (Monday after data refresh)
 
 year <- "2021"
-month <- "07"
-day <- "29"
+month <- "08"
+day <- "02"
 
 release_date <- paste(year, month, day, sep = "-")
-path_monthly_data <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects//20210205-SACT-dashboard//R Shiny//sact-dashboard//data//SummaryMonthlyPatients-", release_date, ".csv")
-path_weekly_data <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects//20210205-SACT-dashboard//R Shiny//sact-dashboard//data//WeeklySACTActivityDashboard-", release_date, ".csv")
+path_monthly_data <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects//20210205-SACT-dashboard//R Shiny//SACT Dashboard Data//SummaryMonthlyPatients-", release_date, ".csv")
+path_weekly_data <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects//20210205-SACT-dashboard//R Shiny//SACT Dashboard Data//WeeklySACTActivityDashboard-", release_date, ".csv")
 
 rm(year, month, day, release_date)
 
