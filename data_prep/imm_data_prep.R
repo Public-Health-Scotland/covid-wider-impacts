@@ -10,7 +10,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all immunisation data files prepared
-imms_date <- "20210628"
+imms_date <- "20210726"
 
 six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/", imms_date, "/six_in_one_dashboard_",imms_date,".csv"), 
                         col_types =list(eligible_start=col_date(format="%m/%d/%Y"),

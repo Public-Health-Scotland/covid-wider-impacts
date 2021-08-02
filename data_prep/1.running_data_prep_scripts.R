@@ -12,6 +12,7 @@
 
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
+
 create_delivery(folderdate = "2021-07-13") # Mode of delivery, induction and gestation data
 create_perinatal(foldermonth = "july21") # Stillbirths and perinatal mortality
 create_apgar(folderdate = "2021_07_13") # Apgar scores
@@ -26,10 +27,10 @@ create_tears(tears_date = "2021_07_13", max_date = "2021-04-01") # Perineal tear
 ###############################################.
 source("data_prep/cardio_data_prep.R") # This sources the functions for the section
 # Filedate: date on filename for each update, last week = last week of data to be included
-create_aecardio(filedate = "2021-07-01", last_week =  "2021-06-27")
-create_oohcardio(filedate = "2021-07-05", last_week =  "2021-06-27")
-create_sascardio(filedate = "2021-07-05", last_week =  "2021-06-27")
-create_cardiodrugs(filedate = "2021-07-01", last_week =  "2021-06-27")
+create_aecardio(filedate = "2021-07-29", last_week =  "2021-07-25")
+create_sascardio(filedate = "2021-08-02", last_week =  "2021-07-25")
+create_cardiodrugs(filedate = "2021-07-29", last_week =  "2021-07-25")
+create_oohcardio(filedate = "2021-08-02", last_week =  "2021-07-25")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the cardio_tab script 
@@ -44,9 +45,9 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20210628") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "28thJun")
-create_breastfeeding(filedate = "28thJun")
+create_chreview(ch_date_file = "20210726") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "26thJul")
+create_breastfeeding(filedate = "26thJul")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
@@ -59,15 +60,15 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # Filedate: date on filename for each update, last week = last week of data to be included
 # Change extract to F if you just want to run the data prep and not the extraction 
 # (quicker once the extraction has been done once)
-create_rapid(last_week =  "2021-06-27", extract = T) # this requires access to the RAPID dataset
-create_ae(filedate = "2021-07-01", last_week =  "2021-06-27")
-create_ooh(filename = "WIDER IMPACT PC OOH Data_53_4481403547016458084", last_week =  "2021-06-27")
-create_nhs24(filedate = "2021-07-05", last_week =  "2021-06-27")
-create_sas(filedate = "2021-07-05", last_week =  "2021-06-27")
+create_rapid(last_week =  "2021-07-25", extract = T) # this requires access to the RAPID dataset
+create_ae(filedate = "2021-07-29", last_week =  "2021-07-25")
+create_ooh(filename = "WIDER IMPACT PC OOH Data_52_2391570734380116889", last_week =  "2021-07-25")
+create_nhs24(filedate = "2021-08-02", last_week =  "2021-07-25")
+create_sas(filedate = "2021-08-02", last_week =  "2021-07-25")
 
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function
-create_deaths(last_week =  "2021-06-27")
+create_deaths(last_week =  "2021-07-25")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the summary_tab script 
@@ -80,8 +81,10 @@ file.edit("shiny_app/summary_tab.R")
 ## Pregnancy datasets ----
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
+
 create_antebooking(booking_date = "19072021", max_book_date = "2021-07-11")
-create_terminations(top_date = "2021-06-15")
+create_terminations(top_date = "2021-07-13")
+
 
 
 # Add here what needs to be changed in the shiny scripts
@@ -90,9 +93,9 @@ create_terminations(top_date = "2021-06-15")
 ## Mental health datasets ----
 ###############################################.
 source("data_prep/mh_data_prep.R") # This sources the functions for the section
-create_aemh(filedate = "2021-07-04", last_week =  "2021-06-27") #takes a while
-create_oohmh(filedate = "2021-07-05", last_week =  "2021-06-27")
-create_drugsmh(last_week =  "2021-06-27")
+create_aemh(filedate = "2021-08-01", last_week =  "2021-07-25") #takes a while
+create_oohmh(filedate = "2021-08-02", last_week =  "2021-07-25")
+create_drugsmh(last_week =  "2021-07-25")
 
 # Change update date in mental_health_tab.R script
 file.edit("shiny_app/mental_health_tab.R")
