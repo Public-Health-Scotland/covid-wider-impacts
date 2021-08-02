@@ -19,7 +19,8 @@ library(flextable)
 library(shinyBS) #for collapsible panels in commentary 
 library(zoo)
 library(magrittr)
-library(shinymanager) 
+library(shinymanager)
+library(lubridate)
 
 ###############################################.
 ## Functions ----
@@ -37,7 +38,7 @@ plot_cut_box <- function(title_plot1, plot_output1,
     extra_content,
     fluidRow(column(6, withSpinner(plotlyOutput(plot_output1))),
              column(6, withSpinner(plotlyOutput(plot_output2))))
-    )
+  )
 }
 
 #Function to create boxes for intro sumamry
@@ -46,7 +47,7 @@ intro_box <- function(title_box, button_name, description) {
   div(class="landing-page-box",
       div(title_box, class = "landing-page-box-title"),
       actionButton(button_name, NULL, class="landing-page-button")
-      )
+  )
 }
 
 ###############################################.
@@ -75,8 +76,38 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
-# cancer_data3 <- readRDS("data/cancer_data_dep.rds")
-cancer_extract_date <- "21st May 2021"
+cancer_extract_date <- "20th May 2021"
+
+# SACT data
+sact_data <- readRDS("data/sact_data.rds") 
+
+sact_data_inc <- sact_data %>%
+  mutate(region = factor(region)) %>%
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) 
+
+sact_weekly_data <- readRDS("data/sact_weekly_data.rds") 
+
+sact_data_wk_difference <- sact_weekly_data %>%
+  mutate(region = factor(region)) %>% 
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
+
+sact_data_wk_inc <- sact_weekly_data %>%
+  # filter(week <= 52) %>% 
+  mutate(region = factor(region)) %>% 
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
+
 
 # mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
@@ -84,7 +115,7 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "28th June 2021"
+child_extract_date <- "26th July 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
@@ -102,7 +133,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "28 June 2021"
+immunisation_extract_date <- "26 July 2021"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -131,31 +162,31 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "17th June 2021"
+booking_extract_date <- "19th July 2021"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "15th June 2021"
+top_extract_date <- "17th July 2021"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "15th June 2021"
+mod_extract_date <- "13th July 2021"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
 mod_download <- readRDS("data/mod_download_data.rds")
 
 #inductions (pregnanacy tab)
-induct_extract_date <- "15th June 2021"
+induct_extract_date <- "13th July 2021"
 induct_runchart <- readRDS("data/induct_runchart_data.rds")
 induct_scot <- readRDS("data/induct_scot_data.rds")
 induct_linechart <- readRDS("data/induct_linechart_data.rds")
 induct_download <- readRDS("data/induct_download_data.rds")
 
 #gestation at delivery (pregnanacy tab)
-gestation_extract_date <- "15th June 2021"
+gestation_extract_date <- "13th July 2021"
 gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
 gestation_scot <- readRDS("data/gestation_scot_data.rds")
 gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
@@ -167,7 +198,7 @@ breastfeeding <- readRDS("data/breastfeeding.rds")
 child_dev <- readRDS("data/child_dev.rds")
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "21st June 2021"
+apgar_extract_date <- "13th July 2021"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
@@ -179,7 +210,7 @@ preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
 
 # Tears (births and babies tab)
-tears_extract_date <- "21st June 2021"
+tears_extract_date <- "13th July 2021"
 tears_runchart <- readRDS("data/tears_runchart_data.rds")
 tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
@@ -196,10 +227,10 @@ spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
 
 data_list <- c(
   "Hospital admissions" = "rapid", "A&E attendances" = "aye",
-               "NHS 24 completed contacts" = "nhs24",
-               "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
-               "Excess mortality" = "deaths",
-               "Outpatient appointments" = "outpats")
+  "NHS 24 completed contacts" = "nhs24",
+  "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
+  "Excess mortality" = "deaths",
+  "Outpatient appointments" = "outpats")
 
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
@@ -210,21 +241,21 @@ data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
 
 # List of data items available in step 2 of child health tab
 data_list_child <- c("Health Visitor first visit" = "first_visit",
-            "6-8 Week Review" = "six_eightwks",
-            "13-15 Month Review" = "13_15mnth",
-            "27-30 Month Review" = "27_30mnth",
-            "4-5 Year Review" = "4_5yr")
+                     "6-8 Week Review" = "six_eightwks",
+                     "13-15 Month Review" = "13_15mnth",
+                     "27-30 Month Review" = "27_30mnth",
+                     "4-5 Year Review" = "4_5yr")
 
 ## Data lists for pregnancy tab
 # List of data items available in step 1 of antenatal booking
 data_list_booking <- c("Number" = "booking_number",
-                    "Average gestation" = "booking_gestation")
+                       "Average gestation" = "booking_gestation")
 # List of data items available in step 1 of terminations
 data_list_top <- c("Number" = "top_number",
-                       "Average gestation" = "top_gestation")
+                   "Average gestation" = "top_gestation")
 
 data_list_childdev <- c("13-15 month review" = "13_15mnth",
-                     "27-30 month review" = "27_30mnth")
+                        "27-30 month review" = "27_30mnth")
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
@@ -254,7 +285,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
                         "Cancer" = "cancer"
-                        )
+)
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",
@@ -262,6 +293,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Bone and Connective Tissue" = "Bone and Connective Tissue",
                       "Brain Tumour" = "Brain Tumour",
                       "Breast" = "Breast", 
+                      "Cervical - Females only" = "Cervical - Females only",
                       "Colorectal" = "Colorectal",
                       "Head and Neck" = "Head and Neck",
                       "Hodgkin Lymphoma" = "Hodgkin Lymphoma",
@@ -308,7 +340,7 @@ mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye", "Ou
 pal_depr <- c('#2c7fb8', '#bdbdbd', '#bdbdbd', '#bdbdbd', '#7fcdbb')
 #Palette for 9 series in a gradient
 pal_age <- c('#543005', '#8c510a', '#bf812d',  '#d0d1e6',
-                    '#74add1', '#4575b4', '#313695')
+             '#74add1', '#4575b4', '#313695')
 pal_moc <- c('#543005', '#8c510a', '#bf812d', '#d0d1e6')
 #Palette for those with a single category per sex and overall
 pal_sex <- c('#000000', '#9ebcda','#8856a7')
@@ -323,7 +355,7 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
-               "APR 2021" =  "#a64208") 
+               "APR 2021" = "#a64208", "MAY 2021" = "#e3b419") 
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
@@ -331,11 +363,28 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
-               "APR 2021" = "#a64208") 
+               "APR 2021" = "#a64208", "MAY 2021" = "#e3b419") 
+
+pal_sact <- c('#3F3685', 
+              '#9F9BC2', 
+              '#9B4393', 
+              '#CDA1C9', 
+              '#0078D4', 
+              '#B3D7F2', 
+              '#EE82EE', 
+              '#9CC951', 
+              '#DAEBBE', 
+              '#1E7F84', 
+              '#948DE3', 
+              '#C73918', 
+              '#E39C8C', 
+              '#000000' )
+
+
 # more distinctive colour palette (save for later)
-              # c("2019" = "#000000", "2020" = "#41b6c4", 
-              #   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
-              #   "DEC 2020" = "#1d91c0", "JAN 2021" = "#253494", "FEB 2021" = "#990099")
+# c("2019" = "#000000", "2020" = "#41b6c4", 
+#   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
+#   "DEC 2020" = "#1d91c0", "JAN 2021" = "#253494", "FEB 2021" = "#990099")
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
@@ -346,7 +395,7 @@ yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4
 
 # Buttons to remove
 bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
-                       'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                        'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
+                     'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
+                     'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
 
 ## END

@@ -26,23 +26,30 @@ save_final_file <- function(dataset, date_saved) {
 ###############################################.
 ###############################################.
 ## Deaths ----
-save_final_file("deaths", "05_Jul_21")
+save_final_file("deaths", "02_Aug_21")
 ##########################################################.
 ## Cancer ----
-save_final_file("cancer_data_2", "16_Jun_21")
+save_final_file("cancer_data_2", "30_Jul_21")
+
+##########################################################.
+## SACT ----
+save_final_file("sact_data", "02_Aug_21")
+
+save_final_file("sact_weekly_data", "02_Aug_21")
+
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "05_Jul_21")
+save_final_file("rapid", "02_Aug_21")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 
 ## OOH ----
-save_final_file("ooh", "05_Jul_21")
+save_final_file("ooh", "02_Aug_21")
 ## A&E ----
-save_final_file("ae", "02_Jul_21")
+save_final_file("ae", "02_Aug_21")
 ## NHS24 ----
-save_final_file("nhs24", "05_Jul_21")
+save_final_file("nhs24", "02_Aug_21")
 ## SAS ----
-save_final_file("sas", "05_Jul_21")
+save_final_file("sas", "02_Aug_21")
 ### Outpatients ----
 save_final_file("outpats", "17_May_21")
 save_final_file("spec_lookup_op", "24_Mar_21")
@@ -51,63 +58,63 @@ save_final_file("area_type_op", "24_Mar_21")
 ## Cardio - cath labs ----
 save_final_file("cath_lab", "16_Nov_20")
 ## Cardio - A&E ----
-save_final_file("ae_cardio", "05_Jul_21")
+save_final_file("ae_cardio", "02_Aug_21")
 save_final_file("ae_cardio_codes", "30_Nov_20")
 ## Cardio - OOH ----
-save_final_file("ooh_cardiac", "05_Jul_21")
+save_final_file("ooh_cardiac", "02_Aug_21")
 ## Cardio - SAS ----
-save_final_file("sas_cardiac", "05_Jul_21")
+save_final_file("sas_cardiac", "02_Aug_21")
 ## Cardio - Prescribing ----
-save_final_file("cardio_drugs", "09_Jul_21")
+save_final_file("cardio_drugs", "02_Aug_21")
 ##########################################################.
 ## Immunisations - six in one ----
-save_final_file("six_alldose", "01_Jul_21")
-save_final_file("six_dose1_simdtable", "01_Jul_21")
-save_final_file("six_dose2_simdtable", "01_Jul_21")
-save_final_file("six_dose3_simdtable", "01_Jul_21")
-save_final_file("sixinone_datatable", "01_Jul_21")
+save_final_file("six_alldose", "30_Jul_21")
+save_final_file("six_dose1_simdtable", "30_Jul_21")
+save_final_file("six_dose2_simdtable", "30_Jul_21")
+save_final_file("six_dose3_simdtable", "30_Jul_21")
+save_final_file("sixinone_datatable", "30_Jul_21")
 ## Immunisations - MMR ----
-save_final_file("mmr_alldose", "01_Jul_21")
-save_final_file("mmr_dose1_simdtable", "01_Jul_21")
-save_final_file("mmr_dose2_simdtable", "01_Jul_21")
-save_final_file("mmr_datatable", "01_Jul_21")
-save_final_file("mmr_dose2_grampian_datatable", "01_Jul_21")
+save_final_file("mmr_alldose", "30_Jul_21")
+save_final_file("mmr_dose1_simdtable", "30_Jul_21")
+save_final_file("mmr_dose2_simdtable", "30_Jul_21")
+save_final_file("mmr_datatable", "30_Jul_21")
+save_final_file("mmr_dose2_grampian_datatable", "30_Jul_21")
 # Immunisations - definitions
-save_final_file("age_defs_imm_6inone", "01_Jul_21")
-save_final_file("age_defs_imm_mmr", "01_Jul_21")
-save_final_file("month_eligibility_immun", "01_Jul_21")
+save_final_file("age_defs_imm_6inone", "30_Jul_21")
+save_final_file("age_defs_imm_mmr", "30_Jul_21")
+save_final_file("month_eligibility_immun", "30_Jul_21")
 ##########################################################.
 ## Child health reviews - first visit ----
-save_final_file("first_visit", "29_Jun_21")
-save_final_file("first_visit_datatable", "29_Jun_21")
-save_final_file("first_visit_data", "29_Jun_21")
+save_final_file("first_visit", "28_Jul_21")
+save_final_file("first_visit_datatable", "28_Jul_21")
+save_final_file("first_visit_data", "28_Jul_21")
 ## Child health reviews - 6-8 weeks ----
-save_final_file("six_to_eight", "29_Jun_21")
-save_final_file("six_to_eight_datatable", "29_Jun_21")
-save_final_file("six_to_eight_data", "29_Jun_21")
+save_final_file("six_to_eight", "28_Jul_21")
+save_final_file("six_to_eight_datatable", "28_Jul_21")
+save_final_file("six_to_eight_data", "28_Jul_21")
 ## Child health reviews - 13-15 months ----
-save_final_file("thirteen", "29_Jun_21")
-save_final_file("thirteen_datatable", "29_Jun_21")
-save_final_file("thirteen_data", "29_Jun_21")
+save_final_file("thirteen", "28_Jul_21")
+save_final_file("thirteen_datatable", "28_Jul_21")
+save_final_file("thirteen_data", "28_Jul_21")
 ## Child health reviews - 27-30 months ----
-save_final_file("twentyseven", "29_Jun_21")
-save_final_file("twentyseven_datatable", "29_Jun_21")
-save_final_file("twentyseven_data", "29_Jun_21")
+save_final_file("twentyseven", "28_Jul_21")
+save_final_file("twentyseven_datatable", "28_Jul_21")
+save_final_file("twentyseven_data", "28_Jul_21")
 ## Child health reviews - 4-5 years ----
-save_final_file("fourtofive", "29_Jun_21")
-save_final_file("fourtofive_datatable", "29_Jun_21")
-save_final_file("fourtofive_data", "29_Jun_21")
+save_final_file("fourtofive", "28_Jul_21")
+save_final_file("fourtofive_datatable", "28_Jul_21")
+save_final_file("fourtofive_data", "28_Jul_21")
 ## Child development ----
-save_final_file("child_dev", "29_Jun_21")
+save_final_file("child_dev", "28_Jul_21")
 ## Breastfeeding ----
-save_final_file("breastfeeding", "29_Jun_21")
+save_final_file("breastfeeding", "28_Jul_21")
 ##########################################################.
 ## Pregnancy - Antenatal bookings ----
 save_final_file("ante_booking", "28_Jun_21")
 save_final_file("ante_booking_download", "28_Jun_21")
 ## Pregnancy - Terminations ----
-save_final_file("top", "05_Jul_21")
-save_final_file("top_download", "05_Jul_21")
+save_final_file("top", "21_Jul_21")
+save_final_file("top_download", "21_Jul_21")
 ##########################################################.
 ## B&B - Mode/Method of Delivery ----
 save_final_file("mod_runchart_data", "28_Jun_21")
@@ -127,24 +134,24 @@ save_final_file("gestation_download_data", "28_Jun_21")
 ## B&B - Stillbirths and perinatal mortality ----
 save_final_file("perinatal", "21_Jul_21")
 ## B&B - Apgar ----
-save_final_file("apgar_runchart_data", "30_Jun_21")
-save_final_file("apgar_scot_data", "30_Jun_21")
-save_final_file("apgar_linechart_data", "30_Jun_21")
-save_final_file("apgar_download_data", "30_Jun_21")
+save_final_file("apgar_runchart_data", "23_Jul_21")
+save_final_file("apgar_scot_data", "23_Jul_21")
+save_final_file("apgar_linechart_data", "23_Jul_21")
+save_final_file("apgar_download_data", "23_Jul_21")
 ## B&B - Preterm ----
 save_final_file("preterm_linechart_data", "28_Jun_21")
 save_final_file("preterm", "28_Jun_21")
 ## B&B - Tears ----
-save_final_file("tears_runchart_data", "28_Jun_21")
-save_final_file("tears_scot_data", "28_Jun_21")
-save_final_file("tears_linechart_data", "28_Jun_21")
-save_final_file("tears_download_data", "28_Jun_21")
+save_final_file("tears_runchart_data", "23_Jul_21")
+save_final_file("tears_scot_data", "23_Jul_21")
+save_final_file("tears_linechart_data", "23_Jul_21")
+save_final_file("tears_download_data", "23_Jul_21")
 ##########################################################.
 ## Mental health - Prescribing ----
-save_final_file("mentalhealth_drugs", "09_Jul_21")
+save_final_file("mentalhealth_drugs", "30_Jul_21")
 ## Mental health - A&E ----
-save_final_file("mh_A&E", "05_Jul_21")
+save_final_file("mh_A&E", "02_Aug_21")
 ## Mental health - OOH ----
-save_final_file("mh_ooh", "05_Jul_21")
+save_final_file("mh_ooh", "02_Aug_21")
 
 ##END
