@@ -185,6 +185,13 @@ tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
 tears_download <- readRDS("data/tears_download_data.rds")
 
+
+#Drugs data 
+ADP_names<-readRDS('data/ADP_names.rds')
+Health_board<-readRDS('data/Health_board.rds')
+DTR_July_update<-readRDS('data/DTR_July_update.rds')
+THN_by_HB<-readRDS('data/THN_by_HB.rds')
+
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
