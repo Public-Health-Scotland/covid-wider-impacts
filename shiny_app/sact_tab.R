@@ -63,7 +63,7 @@ observeEvent(input$btn_sact_modal,
 
 observeEvent(input$btn_sact_wk_modal, 
              showModal(modalDialog(
-               title = "What is the data source?",
+               title = "Frequently Asked Questions",
                h5(strong("What is SACT?")),
                p("SACT is an acronym for Systemic Anti Cancer Therapies and is used as a collective 
                  term for drugs that are used in the treatment of cancer that affect the whole body. 
