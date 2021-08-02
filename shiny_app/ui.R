@@ -153,7 +153,7 @@ tagList( #needed for shinyjs
                         ),
                  column(4, div(title="Select the data you want to explore.", # tooltip
                      radioGroupButtons("measure_select",
-                                       label= "Step 2 â Select the data you want to explore.",
+                                       label= "Step 2. Select the data you want to explore.",
                                        choices = data_list, status = "primary",
                                        direction = "vertical", justified = T))),
                  column(4,

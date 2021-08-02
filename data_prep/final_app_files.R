@@ -45,9 +45,9 @@ save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
 save_final_file("ooh", "02_Aug_21")
 ## A&E ----
-save_final_file("ae", "02_Jul_21")
+save_final_file("ae", "02_Aug_21")
 ## NHS24 ----
-save_final_file("nhs24", "05_Jul_21")
+save_final_file("nhs24", "02_Aug_21")
 ## SAS ----
 save_final_file("sas", "02_Aug_21")
 ### Outpatients ----
