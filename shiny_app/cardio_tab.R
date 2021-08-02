@@ -387,11 +387,7 @@ cath_lab_type <- reactive({
 # The charts and text shown on the app will depend on what the user wants to see
 output$cardio_explorer <- renderUI({
   
-  # TODO: remove data_last_updated_prescribing
-  # Data issues prevented update of prescribing section in July 21, so separate
-  # update date added. Once resolved, this should be removed
-  data_last_updated <- tagList(p("Last updated: 7th July 2021"))
-  data_last_updated_prescribing = tagList(p("Last updated: 2nd June 2021"))
+  data_last_updated <- tagList(p("Last updated: 4th August 2021"))
   
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
@@ -444,11 +440,14 @@ output$cardio_explorer <- renderUI({
       )
     } else if (input$measure_cardio_select == "drug_presc") {
       tagList(# Prescribing - items dispensed
+        tags$em("Please note that an improved drugs mapping procedure was implemented for the August 2021 update, 
+                which increased the number of prescriptions compared to what was previously published. The mean increase 
+                across all time periods and areas was 4%, and the majority of individual increases were less than 10%."),
         h3(paste0("Weekly number of cardiovascular medicines prescribed in ", input$geoname_cardio)),
         fluidRow(column(6,
                         actionButton("btn_cardio_modal", "Data source and definitions", 
                                      icon = icon('question-circle'))),
-                 column(6,data_last_updated_prescribing)),
+                 column(6,data_last_updated)),
         plot_box("2020 and 2021 compared with 2018-2019 average", "prescribing_all"),
         plot_cut_box(paste0("Percentage change in cardiovascular medicines prescribed in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by medicine groupings"), "cardio_drugs_var",
