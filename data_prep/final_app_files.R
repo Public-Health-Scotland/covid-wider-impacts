@@ -29,7 +29,7 @@ save_final_file <- function(dataset, date_saved) {
 save_final_file("deaths", "02_Aug_21")
 ##########################################################.
 ## Cancer ----
-save_final_file("cancer_data_2", "30_Jul_21")
+save_final_file("cancer_data_2", "27_Jul_21")
 
 ##########################################################.
 ## SACT ----
@@ -110,27 +110,27 @@ save_final_file("child_dev", "28_Jul_21")
 save_final_file("breastfeeding", "28_Jul_21")
 ##########################################################.
 ## Pregnancy - Antenatal bookings ----
-save_final_file("ante_booking", "28_Jun_21")
-save_final_file("ante_booking_download", "28_Jun_21")
+save_final_file("ante_booking", "23_Jul_21")
+save_final_file("ante_booking_download", "23_Jul_21")
 ## Pregnancy - Terminations ----
 save_final_file("top", "21_Jul_21")
 save_final_file("top_download", "21_Jul_21")
 ##########################################################.
 ## B&B - Mode/Method of Delivery ----
-save_final_file("mod_runchart_data", "28_Jun_21")
-save_final_file("mod_scot_data", "28_Jun_21")
-save_final_file("mod_linechart_data", "28_Jun_21")
-save_final_file("mod_download_data", "28_Jun_21")
+save_final_file("mod_runchart_data", "23_Jul_21")
+save_final_file("mod_scot_data", "23_Jul_21")
+save_final_file("mod_linechart_data", "23_Jul_21")
+save_final_file("mod_download_data", "23_Jul_21")
 ## B&B - Inductions ----
-save_final_file("induct_runchart_data", "28_Jun_21")
-save_final_file("induct_scot_data", "28_Jun_21")
-save_final_file("induct_linechart_data", "28_Jun_21")
-save_final_file("induct_download_data", "28_Jun_21")
+save_final_file("induct_runchart_data", "23_Jul_21")
+save_final_file("induct_scot_data", "23_Jul_21")
+save_final_file("induct_linechart_data", "23_Jul_21")
+save_final_file("induct_download_data", "23_Jul_21")
 ## B&B - Gestation at Delivery ----
-save_final_file("gestation_runchart_data", "28_Jun_21")
-save_final_file("gestation_scot_data", "28_Jun_21")
-save_final_file("gestation_linechart_data", "28_Jun_21")
-save_final_file("gestation_download_data", "28_Jun_21")
+save_final_file("gestation_runchart_data", "23_Jul_21")
+save_final_file("gestation_scot_data", "23_Jul_21")
+save_final_file("gestation_linechart_data", "23_Jul_21")
+save_final_file("gestation_download_data", "23_Jul_21")
 ## B&B - Stillbirths and perinatal mortality ----
 save_final_file("perinatal", "21_Jul_21")
 ## B&B - Apgar ----
