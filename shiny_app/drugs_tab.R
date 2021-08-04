@@ -33,7 +33,7 @@ output$types<-renderUI({
   if(input$drug_subcategories=='Drug treatment referrals'){
     column(8,
            radioButtons("types", label="Step 3 - Select type of referral",
-                        choices = c('Drug','Alcohol','Co-dependency'),selected = 'Drug'))
+                        choices = c('Drug','Alcohol','All'),selected = 'Drug'))
   }
   
   else if(input$drug_subcategories=='Take home Naloxone kits'){
@@ -64,7 +64,7 @@ output$TwoYrComparison<-renderPlotly({
     plot_data<-subset(DTR_July_update,(Board==location)& Type==input$types)
     trend<-plot_ly(data = plot_data, x = ~Date)
     trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]))
-    trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average 2018 & 2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dash'))
+    trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average 2018 & 2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'))
     trend <- trend %>% layout(
       title = ("2020 and 2021 compared with 2018-2019 average"),
       yaxis = list(title = "Number of drug treatment referrals")
@@ -76,7 +76,7 @@ output$TwoYrComparison<-renderPlotly({
     plot_data<-subset(THN_by_HB,(Board==location) & (Type==input$types))
     trend<-plot_ly(data = plot_data, x =seq(1:nrow(plot_data)))
     trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]))
-    trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average 2018 & 2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dash'))
+    trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average 2018 & 2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'))
     trend<-trend %>% 
       layout(
         xaxis=list(
@@ -137,6 +137,29 @@ output$PercentChange<-renderPlotly({
     )
     
   }
+  
 })
+  
+  #### Data for download ####
+  
+  
+  output$download_drugs_data <- downloadHandler(
+    filename ="drugs_extract.csv",
+    
+    if(input$drug_subcategories=='Drug treatment referrals'){
+    content = function(file) {
+      write_csv(DTR_July_update,
+                file) } 
+    }
+    
+    else if(input$drug_subcategories=='Take home Naloxone kits'){
+      content = function(file) {
+        write_csv(THN_by_HB,
+                  file) } 
+    }
+  )
+  
+  
+
 
 
