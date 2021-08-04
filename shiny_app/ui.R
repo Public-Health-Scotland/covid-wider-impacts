@@ -1,5 +1,5 @@
 #UI
- #secure_app( #uncomment if needing password protection
+ secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -585,9 +585,9 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    plotlyOutput('TwoYrComparison'),
                    plotlyOutput('PercentChange'),
                    
-                   column(3, downloadButton('download_cardio_data', 'Download data'),
+                  column(3, downloadButton('download_drugs_data', 'Download data'),
                           fluidRow(br()),
-                          actionButton('jump_commentary_cardio','Go to commentary'))
+                          actionButton('jump_commentary_drugs','Go to commentary'))
          )# mainPanel bracket
 ), # tabpanel bracket
 ##############################################.
@@ -609,6 +609,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
- #)#secure app
+ )#secure app
 
 #END
