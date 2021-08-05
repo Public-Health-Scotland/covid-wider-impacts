@@ -583,6 +583,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
          ),#wellPanel bracket
          mainPanel(width = 12,
                    plotlyOutput('TwoYrComparison'),
+                   uiOutput('Prop_barplot'),
                    plotlyOutput('PercentChange'),
                    
                   column(3, downloadButton('download_drugs_data', 'Download data'),
