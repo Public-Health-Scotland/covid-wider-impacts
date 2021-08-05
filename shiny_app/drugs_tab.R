@@ -94,6 +94,50 @@ output$TwoYrComparison<-renderPlotly({
   
 })
 
+
+output$Prop_barplot<-renderUI({
+  if(input$drug_subcategories=='Take home Naloxone kits'){
+    
+    
+    if (input$area_drugs_select=='Scotland'){
+      location<-'Scotland'
+    }
+    else if (input$area_drugs_select=='ADP'){
+      location<-input$geoname_drugs
+    }
+    else if (input$area_drugs_select=='Health board'){
+      location<-input$geoname_drugs
+    }
+    
+    output$prop_plot<-renderPlotly({
+      
+      plot_data<-subset(THN_by_HB,(Board==location))
+      prop<-plot_ly(data = plot_data, x =seq(1:15),y = plot_data$`Proportion 20/21`[which(plot_data$Type=='Community')],type='bar',name='Community')
+      prop<-prop %>% add_trace(y = plot_data$`Proportion 20/21`[which(plot_data$Type=='Prescribing')], name = 'Prescribing')
+      prop<-prop %>% add_trace(y = plot_data$`Proportion 20/21`[which(plot_data$Type=='Prison')], name = 'Prison')
+      prop<-prop %>% add_trace(y = plot_data$`Proportion 20/21`[which(plot_data$Type=='Ambulance')], name = 'Ambulance')
+      prop <- prop %>% layout(yaxis = list(title = 'Count'), barmode = 'stack')
+      prop<-prop %>% 
+        layout(
+          xaxis=list(
+            tickmode='array',
+            tickvals=seq(1:nrow(plot_data)),
+            ticktext=c(paste(unique(plot_data$Date),' 2020'),'Jan 2021','Feb 2021','Mar 2021')
+          ))
+      prop <- prop %>% layout(
+        title = ("Comparison of the number of kits provided by each source"),
+        xaxis=list(title='Date'),
+        yaxis = list(title = "Proportion")
+      )
+    })
+    
+    plotlyOutput('prop_plot')
+    
+  }
+  
+})
+
+
 output$PercentChange<-renderPlotly({
   
   if (input$area_drugs_select=='Scotland'){
@@ -143,21 +187,23 @@ output$PercentChange<-renderPlotly({
   #### Data for download ####
   
   
-  output$download_drugs_data <- downloadHandler(
-    filename ="drugs_extract.csv",
+
+output$download_drugs_data <- downloadHandler(
+  filename ="drugs_extract.csv",
+  content = function(file) {
     
     if(input$drug_subcategories=='Drug treatment referrals'){
-    content = function(file) {
+      
       write_csv(DTR_July_update,
                 file) } 
-    }
+    
     
     else if(input$drug_subcategories=='Take home Naloxone kits'){
-      content = function(file) {
-        write_csv(THN_by_HB,
-                  file) } 
-    }
-  )
+      write_csv(THN_by_HB,
+                file) } 
+    
+  }
+)
   
   
 
