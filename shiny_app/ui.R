@@ -1,5 +1,5 @@
 #UI
- secure_app( #uncomment if needing password protection
+# secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -570,25 +570,32 @@ navbarMenu("Child health", icon = icon("child"),
 ###############################################.
 tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
          wellPanel(
-           column(6, div(title="Select the data you want to explore.", # tooltip
+           column(4, div(title="Select the data you want to explore", # tooltip
                          radioGroupButtons("drug_subcategories",
-                                           label= "Step 1 – Select the data you want to explore.",
-                                           choices = c('Drug treatment referrals','Take home Naloxone kits', 'OST prescribing', 'Emergency naloxone administration by SAS'), status = "primary",
+                                           label= "Step 1 – Select the data you want to explore",
+                                           choices = c('Drug and alcohol treatment referrals','Take home naloxone kits', 'OST prescribing', 'Emergency naloxone administration by SAS'), status = "primary",
                                            direction = "vertical", justified = T))),
-           column(3,uiOutput('area_drugs_select'),
+           column(4,uiOutput('area_drugs_select'),
                   uiOutput("geoname_ui_drugs")),
            
-           column(3, uiOutput("types") )
+           column(4, uiOutput("types"),
+                  downloadButton('download_drugs_data', 'Download data'),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_drugs','Go to commentary'))
            
          ),#wellPanel bracket
          mainPanel(width = 12,
+                   fluidRow(br()),
+                   fluidRow(br()),
                    plotlyOutput('TwoYrComparison'),
-                   uiOutput('Prop_barplot'),
+                   fluidRow(br()),
+                   fluidRow(br()),
                    plotlyOutput('PercentChange'),
+                   fluidRow(br()),
+                   fluidRow(br()),
+                   uiOutput('Prop_barplot')
                    
-                  column(3, downloadButton('download_drugs_data', 'Download data'),
-                          fluidRow(br()),
-                          actionButton('jump_commentary_drugs','Go to commentary'))
+                   
          )# mainPanel bracket
 ), # tabpanel bracket
 ##############################################.
@@ -610,6 +617,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
- )#secure app
+# )#secure app
 
 #END
