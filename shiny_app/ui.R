@@ -99,8 +99,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
                           actionLink("apgar_button", "Apgar scores", width="150px"),br(),
                           actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
-                          actionLink("cancer_button", "Cancer", width="150px")
-
+                          actionLink("cancer_button", "Cancer", width="150px"), br(),
+                          actionLink("injuries_button", "Injuries", width="150px")
                          ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
@@ -119,8 +119,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
                                      bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
                                      bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
-                                     bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
-
+                                     bsCollapsePanel("Cancer", uiOutput("cancer_commentary")),
+                                     bsCollapsePanel("Injuries", uiOutput("injuries_commentary"))
                           )))
 ), #tab panel
 
@@ -215,6 +215,36 @@ tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
          ), #well panel
          mainPanel(width = 12,
                    uiOutput("cancer_explorer")
+         )# mainPanel bracket
+), # tabpanel bracket
+###############################################.
+## Unintentional Injuries ----
+###############################################.
+tabPanel(title = "Injuries", icon = icon("user-injured"), value = "injuries",
+         wellPanel(
+           column(4, div(title="Select the data you want to explore.", # tooltip
+                         radioGroupButtons("measure_injury_select",
+                                           label= "Step 1 – Select injury type",
+                                           choices = injury_data_list, status = "primary",
+                                           direction = "vertical", justified = T))),
+           column(4, selectizeInput("area_injuries_select", "Step 2. Select a geography level",
+                                    choices = c("Scotland", "Health board", "HSC partnership"), selected = "Scotland"),
+                  uiOutput("geoname_injuries_ui")),
+           
+           column(4,  selectInput("type_select", label = "Step 3. Select type of split",
+                              choices = injury_split_list, selected="age group")),     
+               
+           # div(radioButtons("type", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "age"))),
+           
+           column(4,                downloadButton('download_injuries_data', 'Download data'),
+                  fluidRow(br()),
+                  actionButton('jump_commentary_injuries','Go to commentary'),
+                  fluidRow(br()))
+           # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"),
+           #                  inline = TRUE, selected = "Cumulative")))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("injuries_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
 ##############################################.

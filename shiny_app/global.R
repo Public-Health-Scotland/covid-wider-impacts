@@ -1,5 +1,5 @@
 # Global
-cncjkvkfo
+
 ###############################################.
 ## Packages ----
 ###############################################.
@@ -77,6 +77,16 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
 # cancer_data3 <- readRDS("data/cancer_data_dep.rds")
 cancer_extract_date <- "22nd February 2021"
+
+#Injuries data
+ui_smr01_all <- readRDS("data/ui_smr01_all.rds")
+ui_smr01_rta <- readRDS("data/ui_smr01_rta.rds")
+ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
+ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
+ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
+ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
+injuries_extract_date <- "22nd May 2021"
+
 
 # mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
@@ -251,8 +261,28 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
-                        "Cancer" = "cancer"
+                        "Cancer" = "cancer",
+                        "Injuries" = "injuries"
                         )
+injury_data_list <- c("All unintentional injuries" = "ui_smr01_all",
+                        "Road traffic accidents" = "ui_smr01_rta",
+                        "Poisonings" = "ui_smr01_poison",
+                        "Falls" = "ui_smr01_falls",
+                        "Other" = "ui_smr01_other",
+                        "Assaults" = "ui_smr01_assaults")
+
+injury_type_list <- c("All unintentional injuries" =	"all unintentional injuries",
+                     "Road traffic accidents" =	"road traffic accident",
+                     "Poisonings" =	"poisoning",
+                     "Falls"=	"falls",
+                     "Other" =	"other",
+                     "Assaults"="assaults")
+
+injury_split_list <- c("Age group" =	"age",
+                       "Deprivation" =	"dep",
+                       "Injury location" =	"injurylocation",
+                       "Sex" =	"sex")
+
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",

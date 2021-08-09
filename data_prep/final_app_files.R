@@ -31,6 +31,10 @@ save_final_file("deaths", "04_May_21")
 ## Cancer ----
 save_final_file("cancer_data_2", "24_Feb_21")
 ##########################################################.
+##########################################################.
+## Injuries ----
+save_final_file("ui_smr01", "24_May_21")
+##########################################################.
 ## RAPID ----
 save_final_file("rapid", "04_May_21")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
