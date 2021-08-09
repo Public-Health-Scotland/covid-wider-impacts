@@ -25,20 +25,18 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("4 August 2021 - Systemic anti-cancer therapies data update"),
+                   tags$li("11 August 2021 - Systemic anti-cancer therapies data update"),
+                   tags$li("4 August 2021 - Monthly update of data (most sections)."),
                    tags$li("30 July 2021 - Cancer pathology data update."),
                    tags$li("7 July- Monthly update of data (most sections)."),
                    tags$li("16 June 2021 - Outpatients data update."),
                    tags$li("16 June 2021 - Cancer pathology data update."),
-                   tags$li("16 June 2021 - New data on vaginal tears."),
-                   tags$li("2 June 2021 - Monthly update of data (most sections)."),
-                   tags$li("14 April 2021 - New sections added for births and babies data:
-                           Apgar scores and location of birth for extremely preterm infants.")                 ),
+                   tags$li("16 June 2021 - New data on vaginal tears.")
+                   ),
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("11 August 2021 - Systemic anti-cancer therapies data update"),
-                   tags$li("4 August 2021 - Monthly update of data (most sections)."),
+                   tags$li("18 August 2021 - Systemic anti-cancer therapies data update"),
                    tags$li("1 September 2021 - Monthly update of data (most sections)."),
                    tags$li("August/September 2021 - New data on injury hospital admissions."),
                    tags$li("To be confirmed - New data on self-harm hospital admissions."),
