@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+#secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -573,17 +573,20 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
            column(4, div(title="Select the data you want to explore", # tooltip
                          radioGroupButtons("drug_subcategories",
                                            label= "Step 1 – Select the data you want to explore",
-                                           choices = c('Drug and alcohol treatment referrals','Take home naloxone kits', 'OST prescribing', 'Emergency naloxone administration by SAS'), status = "primary",
+                                           choices = c('Drug and alcohol treatment referrals','Take home naloxone kits'), status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,uiOutput('area_drugs_select'),
                   uiOutput("geoname_ui_drugs")),
            
-           column(4, uiOutput("types"),
-                  downloadButton('download_drugs_data', 'Download data'),
+           column(4, uiOutput("types")),
+           column(4,downloadButton('download_drugs_data', 'Download data'),
+                  actionButton('jump_commentary_drugs','Go to commentary'),
                   fluidRow(br()),
-                  actionButton('jump_commentary_drugs','Go to commentary'))
-           
+                  actionButton("btn_drugs_modal", "Data source and definitions",
+                                                    icon = icon('question-circle')))
          ),#wellPanel bracket
+         
+
          mainPanel(width = 12,
                    fluidRow(br()),
                    fluidRow(br()),
@@ -617,6 +620,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-# )#secure app
+#)#secure app
 
 #END
