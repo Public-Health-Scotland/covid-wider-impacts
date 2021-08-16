@@ -3,13 +3,37 @@ observeEvent(input$btn_drugs_modal,
              if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
              showModal(modalDialog(
                title = "What is the data source?",
-              p('referrals'),
+              p('This section of the PHS Covid-19 wider impacts dashboard provides weekly information on the number of 
+                referrals to specialist alcohol and drug treatment services in Scotland.'),
+              p('These data have been extracted from the Drug and Alcohol Treatment Waiting Times (DATWT) database and the new Drug and Alcohol Information System (DAISy) (both Public Health Scotland) . DAISy is a national system that collects drug and alcohol waiting times and treatment information. 
+                This replaced the DATWT database and the Scottish Drug Misuse Database (SDMD) systems.'),
+              p('Data from the start of 2020 to the latest available week are shown alongside historical activity data (average from 2018 and 2019) for comparison purposes. Data are available for Scotland and at 
+                NHS Board and Alcohol and Drug Partnership levels and are also broken down by client type (Drugs, Alcohol and All). '),
+              p('DAISy introduced an additional ‘co-dependency’ client type (where the referral relates to treatment for both alcohol and drug use), but this has only been recorded in all NHS Boards since April 2021 so is not available as a separate breakdown here. To ensure completeness, the ‘Drugs’ category includes all referrals relating to drugs and co-dependency and the ‘Alcohol’ category includes all referrals relating to alcohol and co-dependency. From 1 December 2020 onwards, 
+                the sum of referrals in the ‘Alcohol’ and ‘Drugs’ categories will be higher than the ‘All’ data category, due to the inclusion of ‘co-dependency’ in both.'),
+              p('May 2021 figures may currently be underreported due to late data submissions for the most recent weeks (a dashed line is used to indicate the lower degree of certainty in the figures for this period).'),
+              p('For further information, contact',
+                 tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
              else if(input$drug_subcategories == 'Take home naloxone kits'){
               showModal(modalDialog(
                  title = "What is the data source?",
-              p('naloxone'),
+              p('Accidental overdose is a common cause of death among users of opioids such as heroin and morphine. 
+                  Naloxone is a drug which reverses the effects of a potentially fatal overdose with these drugs. 
+                  Administration of naloxone provides time for emergency services to arrive and for further treatment to be given. Following suitable training, ‘take home’ naloxone kits (hereafter referred to as ‘THN’) 
+                are issued to people at risk of opioid overdose, their friends and family and service workers in order to help prevent overdose deaths. '),
+              p('Information on THN kits supplied by community outlets, dispensed by community pharmacies and supplied by prisons on release from custody is shown. 
+                For THN supplied by prisons, NHS Board relates to the location of the prison. Monthly data from the start of 2020 up to March 2021 are shown, 
+                alongside historical activity data (average from 2018 and 2019) for comparison purposes. Data are available for Scotland and at NHS Board level.'),
+              p('Data on THN supplies from community services and the Scottish Prison Service are based on data submitted to PHS from the National Naloxone Database. 
+                Data on naloxone dispensed by community pharmacies is extracted from the Prescribing Information System, held by PHS. '),
+              p('The data relate to numbers of THN kits distributed rather than individuals. Data can include supplies of multiple kits, repeat supplies and those issued to service workers and family/friends of persons at risk. The supply of THN was expanded to non-drug treatment services (such as homelessness services and mental health services) 
+                at the end of April 2020 to ensure continued supply during the COVID-19 pandemic. Data on supply by these services is included in ‘Community’ figures.'),
+              p('The distribution of THN supplied by each source is shown in this dashboard (chart titled ‘Percentage of take home naloxone kits provided by each source’). This includes data supplied by the Scottish Ambulance Service (SAS), whose figures are not included in the other charts as data are not available nationally for the pre-COVID period. 
+                SAS undertook a THN supply pilot between February 2020 and June 2020 and have subsequently rolled out this work on a nationwide basis. '),
+              p('For further information, contact',
+                tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
                )
@@ -218,7 +242,7 @@ output$PercentChange<-renderUI({
     }
     else if(length(which(is.na(plot_data$Change)))!=0){
       
-      output$data_message<-renderText('Percent change plot not shown due to NA values being produced by comparison with 0 values in 2018/2019 average')
+      output$data_message<-renderText('Percent change plot not shown due to \'not applicable\' values being produced by comparison with 0 values in 2018/2019 average.')
       textOutput('data_message')
     }
   }
@@ -247,7 +271,7 @@ output$PercentChange<-renderUI({
           ticktext=c(paste(unique(plot_data$Date),'2020',sep=' '),'Jan 2021','Feb 2021','Mar 2021')
         ))
     change <- change %>% layout(
-      title = (sprintf("Percentage change in supply of take home naloxone kits in %s compared with the corresponding time in 2018-2019 (%s)",location,input$types)),
+      title = (sprintf("Percentage change in supply of take home naloxone in %s compared with the corresponding time in 2018-2019 (%s)",location,input$types)),
       yaxis = list(title = "% Change"
                    ),
       xaxis = list(title = "Date")
@@ -263,7 +287,7 @@ output$PercentChange<-renderUI({
     
     else if(length(which(is.na(plot_data$Change)))!=0){
       
-      output$data_message<-renderText('Percent change plot not shown due to NA values being produced by comparison with 0 values in 2018/2019 average')
+      output$data_message<-renderText('Percent change plot not shown due to \'not applicable\' values being produced by comparison with 0 values in 2018/2019 average.')
       textOutput('data_message')
     }
   }
@@ -281,35 +305,37 @@ output$drug_commentary <- renderUI({
              alcohol treatment services was included for the first time on 01 September 
              2021")),
     tags$ul(
-      tags$li(""),
-      tags$li(""),
-      tags$li(""),
-      tags$li(""),
-      tags$li("")),
-    p('For further information, contact phs.drugsteam@phs.scot'),
-    
+      tags$li("The numbers of specialist drug and alcohol treatment referrals in January and February 2020 were broadly comparable to the 2018 and 2019 average for the corresponding weeks. Subsequently, 
+              a 63% decrease in referrals was observed from week beginning 9 March 2020 (1,156 referrals) to week beginning 23 March 2020 (424 referrals). "),
+      tags$li("Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising from 387 in the week beginning 6 April 2020 to 1,060 in the week beginning 24 August. This figure remained approximately stable until December, when the annual seasonal decrease in treatment 
+              referrals in late November and December 2020 was broadly comparable with decreases observed in previous years. "),
+      tags$li("From January 2021 to May 2021, referral numbers remained stable and at a similar level seen in the latter half of 2020 (generally around 20% lower than the 2018 and 2019 average for corresponding weeks)."),
+      tags$li("A similar pattern was seen for both drug and alcohol referrals over the 18-month time period, although alcohol treatment referrals dropped to a greater extent following the UK lockdown (at their lowest, alcohol referrals were 74% below the 2018 and 2019 average for the week beginning 6 April, compared with 58% below observed in drug referrals). However, both referral types increased to around 20% below the 2018 and 2019 average by 22 June. "),
+      tags$li("The trends described were broadly observed across all NHS Boards and Alcohol and Drug Partnerships.")),
+
     h4(strong('Take home naloxone kits')),
     tags$ul(
-      tags$li(""),
-      tags$li(""),
-      tags$li(""),
-      tags$li(""),
-      tags$li("")),
-    
+      tags$li("Overall THN supply in Scotland showed peaks between March and May 2020 and around December 2020 and January 2021. Most NHS Boards showed either one or both of these increases."),
+      tags$li("Supply by community outlets was the most common source of THN, although this varied between NHS Boards and source distribution has varied over the time period presented here. For example, NHS Dumfries & Galloway showed a large increase in community pharmacy supply between March and May 2020 (25% of all supply in March, 57% in April, and 35% in May, compared with around 6% or lower throughout the rest of time period from January 2020 to March 2021). ")),
+
     p(strong('Community')),
     tags$ul(
-      tags$li(""),
-      tags$li("")),
+      tags$li("The trend in community outlet supplies per month shows an exceptionally large number of THN kits supplied in April and May 2020 during the initial response to the COVID-19 pandemic (from 961 in March to 2,546 in April and 1,675 in May). Large-scale distributions by NHS Fife and NHS Ayrshire and Arran accounted for the notable increases in supplies observed in April and May 2020 respectively. "),
+      tags$li("Aside from these peaks in April and May 2020, weekly supply numbers in 2020 were broadly the same as the combined 2018 and 2019 average. The two minor exceptions to this were smaller peaks in September and December 2020. Although the December 2020 figure was lower than that for of the 2018 & 2019 average, the regular peak observed at that time of year increase suggests a seasonal increase in THN supply.")),
     
     p(strong('Pharmacy')),
     tags$ul(
-      tags$li("")),
+      tags$li("The number of THN kits dispensed by pharmacies on the basis of a community prescription was consistently higher from March 2020 to March 2021 than the average for 2018 & 2019. In particular, two large peaks in supply were observed in April 2020 (from 193 kits in March 2020 to 1,393 in April) and December 2020 (from 241 in October to 1,418 in December).")),
     
     p(strong('Prisons')),
     tags$ul(
-      tags$li(""),
-      tags$li("")),
-    p('For further information, contact phs.drugsteam@phs.scot')
+      tags$li("The number of THN supplies issued by prisons per month was consistently higher for the period February 2020 to March 2021 than the corresponding 2018 & 2019 averages. The exception to this was November 2020 when supplies were 21% lower than the 2018 & 2019 average for the same month. "),
+      tags$li("The large peak in May 2020 may partially have been a result of the Scottish Prison Service’s ",
+              tags$a(href="https://www.sps.gov.uk/Corporate/Information/covid19/covid-19-information-hub.aspx", 
+                     "COVID Early Release scheme ",  target="_blank"),
+             "in which the Coronavirus (Scotland) Act 2020 provided new powers for the early release of a specific class of prisoners held in Scottish prisons. Early release was deemed necessary in order to provide the Scottish Prison Service with additional operational capacity including allowing for a greater use of single cell occupancy, keeping prison staff and the people in their care safe. It is understood that that scheme is no longer operational, so subsequent increases may reflect other factors.")),
+    p('For further information, contact ',
+      tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.')
   )
 })
   
