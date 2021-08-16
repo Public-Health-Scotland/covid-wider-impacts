@@ -1,5 +1,5 @@
 #UI
-#secure_app( #uncomment if needing password protection
+secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -101,7 +101,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("apgar_button", "Apgar scores", width="150px"),br(),
                           actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
                           actionLink("tears_button", "Perineal tears", width="150px"),br(),
-                          actionLink("cancer_button", "Cancer", width="150px")
+                          actionLink("cancer_button", "Cancer", width="150px"),br(),
+                          actionLink("drug_button", "Substance use", width="150px")
 
                          ),
                    column(10,
@@ -122,7 +123,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
                                      bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
                                      bsCollapsePanel("Perineal tears", uiOutput("tears_commentary")),
-                                     bsCollapsePanel("Cancer", uiOutput("cancer_commentary"))
+                                     bsCollapsePanel("Cancer", uiOutput("cancer_commentary")),
+                                     bsCollapsePanel("Substance use", uiOutput("drug_commentary"))
 
                           )))
 ), #tab panel
@@ -593,7 +595,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    plotlyOutput('TwoYrComparison'),
                    fluidRow(br()),
                    fluidRow(br()),
-                   plotlyOutput('PercentChange'),
+                   uiOutput('PercentChange'),
                    fluidRow(br()),
                    fluidRow(br()),
                    uiOutput('Prop_barplot')
@@ -620,6 +622,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-#)#secure app
+)#secure app
 
 #END
