@@ -1,30 +1,18 @@
 #Server side for drugs tab
 observeEvent(input$btn_drugs_modal, 
+             if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
              showModal(modalDialog(
                title = "What is the data source?",
-               p("",
-                 tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/Scottish-Cancer-Registry/How-data-are-collected/",class="externallink")),
-               p("The Scottish Cancer Registry receives notifications of cancer from many data sources. Pathology 
-                 records are one of the main sources, these are routinely transferred to the registry from the health 
-                 board laboratories. These data are valuable to identify and maximise case ascertainment of potential 
-                 new cancers."),
-               p("Pathology records contain diagnosis information, which has been determined by examining the
-                 cells and tissues microscopically.  Microscopic examination is generally considered as the most 
-                 accurate method of diagnosis. The specimens used to determine diagnosis are received from various 
-                 procedures such as smears and fluids, simple diagnostic punch biopsies, lymph node biopsies to 
-                 fuller wide local excisions and resections. Therefore, it is highly likely that there are numerous 
-                 pathology reports for one individual. The reports received by the registry related to solid tissue 
-                 and cytology specimens. Peripheral blood smears are not included such as leukaemia diagnosed from 
-                 peripheral blood film.  The majority of pathology records will relate to new primary cancers, some 
-                 records will relate to disease recurrence or known primary cancers and/or metastatic disease."),
-               p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of
-                 each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had
-                 a subsequent cancer specimen reported that year for the same type of cancer, they were not counted again; but they
-                 were counted twice or more for those with different types of cancer. "),
-               
-              # p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
-              # size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+              p('referrals'),
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             }
+             else if(input$drug_subcategories == 'Take home naloxone kits'){
+              showModal(modalDialog(
+                 title = "What is the data source?",
+              p('naloxone'),
+              easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             }
+               )
 
 output$area_drugs_select<-renderUI({
   
@@ -90,8 +78,8 @@ output$TwoYrComparison<-renderPlotly({
     plot_data<-subset(DTR_July_update,(Board==location)& Type==input$types & Date<'2021-06-28')#cutting off in line with most recent covid report
     complete_data<-subset(plot_data,Date<='2021-05-24')
     incomplete_data<-subset(plot_data,Date>='2021-05-24')
-    trend<-plot_ly(data = complete_data, x = ~Date,y = ~ `2020 & 2021`,name='20/21 (Complete)',type='scatter', mode='lines', line=list(color=pal_overall[1]))
-    trend<-trend %>% add_trace(data=incomplete_data, x=~Date,y=~`2020 & 2021`,name='20/21 (Incomplete)',type='scatter',mode='lines',line=list(color=pal_overall[1],dash='dash'))
+    trend<-plot_ly(data = complete_data, x = ~Date,y = ~ `2020 & 2021`,name='20/21',type='scatter', mode='lines', line=list(color=pal_overall[1]))
+    trend<-trend %>% add_trace(data=incomplete_data, x=~Date,y=~`2020 & 2021`,type='scatter',name='20/21 (Incomplete)',mode='lines',line=list(color=pal_overall[1],dash='dash'),showlegend=FALSE)
     trend<-trend %>% add_trace(data=plot_data,x=~Date,y = ~ `Average 2018 & 2019`,name='Average 18/19',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'))
     trend <- trend %>% layout(
       title = (sprintf("%s treatment referrals in %s in 2020 and 2021 compared with 2018-19 average",input$types,location)),
@@ -184,7 +172,7 @@ output$Prop_barplot<-renderUI({
 })
 
 
-output$PercentChange<-renderPlotly({
+output$PercentChange<-renderUI({
   
   if (input$area_drugs_select=='Scotland'){
     location<-'Scotland'
@@ -203,6 +191,8 @@ output$PercentChange<-renderPlotly({
     plot_data<-subset(DTR_July_update,(Board==location) & Type==input$types)
     
     if(length(which(is.na(plot_data$Change)))==0){
+      
+      output$change_plot<-renderPlotly({
     
     tooltip_trend<-c(paste0(
                           "Date: ", plot_data$Date,
@@ -222,7 +212,14 @@ output$PercentChange<-renderPlotly({
     change <- change %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
                                                                             'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                                                                            'hoverClosestCartesian', 'zoom2d', 'pan2d'))
+                                                                          'hoverClosestCartesian', 'zoom2d', 'pan2d'))
+      })  
+      plotlyOutput('change_plot')
+    }
+    else if(length(which(is.na(plot_data$Change)))!=0){
+      
+      output$data_message<-renderText('Percent change plot not shown due to NA values being produced by comparison with 0 values in 2018/2019 average')
+      textOutput('data_message')
     }
   }
   
@@ -231,8 +228,10 @@ output$PercentChange<-renderPlotly({
     plot_data<-subset(THN_by_HB,(Board==location) & (Type==input$types))
     if(length(which(is.na(plot_data$Change)))==0){
     
+      output$change_plot<-renderPlotly({
+      
     tooltip_trend<-c(paste0(
-      "Month: ", plot_data$Date,
+      "Month: ", c(paste(unique(plot_data$Date),'2020',sep=' '),'Jan 2021','Feb 2021','Mar 2021'),
       "<br>", "Change from 2018 - 2019 average: ", plot_data$Change, "%"))
     change<-plot_ly(data = plot_data,x =seq(1:nrow(plot_data)), y = ~Change,
                     type='scatter', 
@@ -257,9 +256,61 @@ output$PercentChange<-renderPlotly({
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
                                                                             'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
                                                                             'hoverClosestCartesian', 'zoom2d', 'pan2d'))
+      })
+      
+      plotlyOutput('change_plot')
+    }
+    
+    else if(length(which(is.na(plot_data$Change)))!=0){
+      
+      output$data_message<-renderText('Percent change plot not shown due to NA values being produced by comparison with 0 values in 2018/2019 average')
+      textOutput('data_message')
     }
   }
   
+})
+
+###############################################.
+## Commentary ----
+###############################################.
+output$drug_commentary <- renderUI({
+  tagList(
+    bsButton("jump_to_drugs",label = "Go to data"),#this button can only be used once
+    h4(strong("Drug treatment referrals")),
+    p(strong("Information on the number of referrals to specialist drug and 
+             alcohol treatment services was included for the first time on 01 September 
+             2021")),
+    tags$ul(
+      tags$li(""),
+      tags$li(""),
+      tags$li(""),
+      tags$li(""),
+      tags$li("")),
+    p('For further information, contact phs.drugsteam@phs.scot'),
+    
+    h4(strong('Take home naloxone kits')),
+    tags$ul(
+      tags$li(""),
+      tags$li(""),
+      tags$li(""),
+      tags$li(""),
+      tags$li("")),
+    
+    p(strong('Community')),
+    tags$ul(
+      tags$li(""),
+      tags$li("")),
+    
+    p(strong('Pharmacy')),
+    tags$ul(
+      tags$li("")),
+    
+    p(strong('Prisons')),
+    tags$ul(
+      tags$li(""),
+      tags$li("")),
+    p('For further information, contact phs.drugsteam@phs.scot')
+  )
 })
   
   #### Data for download ####
