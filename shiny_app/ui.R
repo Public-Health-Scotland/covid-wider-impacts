@@ -1,5 +1,5 @@
 #UI
-secure_app( #uncomment if needing password protection
+#secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -592,7 +592,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
          mainPanel(width = 12,
                    fluidRow(br()),
                    fluidRow(br()),
-                   plotlyOutput('TwoYrComparison'),
+                   plotlyOutput('TwoYrComparison',width='100%'),
                    fluidRow(br()),
                    fluidRow(br()),
                    uiOutput('PercentChange'),
@@ -622,6 +622,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-)#secure app
+#)#secure app
 
 #END

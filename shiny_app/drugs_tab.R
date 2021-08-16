@@ -165,7 +165,7 @@ output$Prop_barplot<-renderUI({
                                                                               'hoverClosestCartesian', 'zoom2d', 'pan2d'))
     })
     
-    plotlyOutput('prop_plot')
+    plotlyOutput('prop_plot',width='100%')
     
   }
   
@@ -188,7 +188,7 @@ output$PercentChange<-renderUI({
   
   if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
     
-    plot_data<-subset(DTR_July_update,(Board==location) & Type==input$types)
+    plot_data<-subset(DTR_July_update,(Board==location) & Type==input$types  & Date<'2021-06-28')
     
     if(length(which(is.na(plot_data$Change)))==0){
       
@@ -214,7 +214,7 @@ output$PercentChange<-renderUI({
                                                                             'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
                                                                           'hoverClosestCartesian', 'zoom2d', 'pan2d'))
       })  
-      plotlyOutput('change_plot')
+      plotlyOutput('change_plot',width='90%')
     }
     else if(length(which(is.na(plot_data$Change)))!=0){
       
@@ -258,7 +258,7 @@ output$PercentChange<-renderUI({
                                                                             'hoverClosestCartesian', 'zoom2d', 'pan2d'))
       })
       
-      plotlyOutput('change_plot')
+      plotlyOutput('change_plot',width='92%')
     }
     
     else if(length(which(is.na(plot_data$Change)))!=0){
