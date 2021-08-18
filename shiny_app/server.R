@@ -38,9 +38,9 @@ function(input, output, session) {
                  tags$ul(
                    tags$li("25 August 2021 - Systemic anti-cancer therapies data update"),
                    tags$li("1 September 2021 - Monthly update of data (most sections)."),
-                   tags$li("August/September 2021 - New data on injury hospital admissions."),
-                   tags$li("To be confirmed - New data on self-harm hospital admissions."),
-                   tags$li("To be confirmed - New data on substance misuse.")
+                   tags$li("1 September 2021 - New data on substance misuse."),
+                   tags$li("October 2021 - New data on injury hospital admissions."),
+                   tags$li("To be confirmed - New data on self-harm hospital admissions.")
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
