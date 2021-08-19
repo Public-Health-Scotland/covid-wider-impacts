@@ -432,8 +432,32 @@ output$sact_wk_difference_treatment <- renderPlotly({plot_sact_wk_difference_cha
 ## Data downloads ----
 ###############################################.
 
+output$download_sact_weekly_data <- downloadHandler(
+  filename ="sact_weekly_extract.csv",
+  content = function(file) {
+    write_csv(sact_data_wk_main() %>% 
+                select(week_beginning, region, area, site, appt_reg, treatment, count,
+                       week_on_refweek_perc) %>% 
+                rename("Week beginning" = week_beginning, "Region" = region, 
+                       "Area name" = area, "Cancer type" = site,
+                       "Administration route derivation" = appt_reg,
+                       "Administration route" = treatment,
+                       "Number of appointments" = count,
+                       "Percentage change vs. average reference Week" = week_on_refweek_perc),
+              file) } 
+) 
 
 
+output$download_sact_monthly_data <- downloadHandler(
+  filename ="sact_monthly_extract.csv",
+  content = function(file) {
+    write_csv(sact_data_main() %>% 
+                select(month, region, area, site, treatment, count) %>% 
+                rename("Month" = month, "Region" = region, "Area name" = area, 
+                       "Cancer type" = site, "Administration route" = treatment,
+                       "Number of patients" = count),
+              file) } 
+) 
 
 ###############################################.
 ## Commentary ----
