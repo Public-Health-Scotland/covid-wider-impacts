@@ -197,7 +197,7 @@ plot_top_trend <- function(measure, shift, trend){
   } else if (measure  == "av_gest") {
     #yaxis_measure <- plot_data$av_gest
     yaxis_plots[["title"]] <- "Average gestation at termination"
-    yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10 weeks
+    yaxis_plots[["range"]] <- c(0, 11.5)  # forcing range from 0 to 10 weeks
     tooltip_top <- c(paste0("Month: ",format(plot_data$month,"%B %Y"),"<br>",
                             "Average gestation at termination: ",format(plot_data$av_gest,digits = 1,nsmall=1)," weeks"))                           
         dotted_line <-  plot_data$dottedline_g
