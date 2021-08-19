@@ -100,7 +100,6 @@ sact_data_wk_difference <- sact_weekly_data %>%
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
 sact_data_wk_inc <- sact_weekly_data %>%
-  # filter(week <= 52) %>% 
   mutate(region = factor(region)) %>% 
   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",

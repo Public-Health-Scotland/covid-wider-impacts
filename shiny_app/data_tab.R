@@ -388,7 +388,8 @@ data_table <- reactive({
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
     mutate_if(is.numeric, round, 1)
   
-  if (!(input$data_select %in% c("childdev", "breastfeeding"))) {
+  if (!(input$data_select %in% c("childdev", "breastfeeding", "cancer", "sact_weekly", 
+                                 "sact_monthly"))) {
     table_data %<>% 
       select(sort(current_vars()))  # order columns alphabetically
   }

@@ -149,14 +149,12 @@ sact_weekly_new$site <-  recode(sact_weekly_new$site, "BONE SARCOMA" = "Bone Sar
                                 "UROLOGICAL" = "Urological",
                                 "Unknown" = "Unknown")
 
-
 # divide dataset into Regimen and Appointment level 
 sact_weekly_reg <- sact_weekly_new %>% 
   select(week:site, all_appointments, it_regimen_level:other_regimen_level) %>%
   rename(All = all_appointments, Intrathecal = it_regimen_level, Intravenous = iv_regimen_level, 
          Oral = oral_regimen_level, Subcutaneous = sc_regimen_level, Other = other_regimen_level) %>%
   mutate(appt_reg = "Regimen level") 
-
 
 sact_weekly_appt <- sact_weekly_new %>% 
   select(week:site, all_appointments, it_appointment_level:other_appointment_level) %>%
@@ -173,20 +171,11 @@ sact_weekly <- rbind(sact_weekly_reg, sact_weekly_appt)  %>%
   select(-region) %>% 
   complete(week, nesting(area, site, treatment, appt_reg), fill = list(count = 0)) %>% 
   complete(area, nesting(week, site, treatment, appt_reg), fill = list(count = 0)) %>% 
-  mutate(region = case_when(area == "NHS Grampian" ~ "NCA",
-                            area == "NHS Highland" ~ "NCA",
-                            area == "NHS Orkney" ~ "NCA",
-                            area == "NHS Shetland" ~ "NCA",
-                            area == "NHS Tayside" ~ "NCA",
-                            area == "NHS Western Isles" ~ "NCA",
-                            area == "NHS Borders" ~ "SCAN",
-                            area == "NHS Dumfries & Galloway" ~ "SCAN",
-                            area == "NHS Fife" ~ "SCAN",
-                            area == "NHS Lothian" ~ "SCAN",
-                            area == "NHS Ayrshire & Arran" ~ "WOSCAN",
-                            area == "NHS Forth Valley" ~ "WOSCAN",
-                            area == "NHS Greater Glasgow & Clyde" ~ "WOSCAN",
-                            area == "NHS Lanarkshire" ~ "WOSCAN",
+  mutate(region = case_when(area %in% c("NHS Grampian", "NHS Orkney", "NHS Shetland", "NHS Highland", "NHS Tayside", 
+                                        "NHS Western Isles") ~ "NCA",
+                            area %in% c("NHS Borders", "NHS Dumfries & Galloway", "NHS Fife", "NHS Lothian") ~ "SCAN",
+                            area %in% c("NHS Ayrshire & Arran", "NHS Forth Valley", "NHS Greater Glasgow & Clyde",
+                                        "NHS Lanarkshire") ~ "WOSCAN",
                             TRUE ~ "Scotland"))
 
 # calculate reference week from mean count of weeks 4-9
