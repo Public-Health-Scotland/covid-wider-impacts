@@ -198,19 +198,19 @@ breastfeeding <- readRDS("data/breastfeeding.rds")
 child_dev <- readRDS("data/child_dev.rds")
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "13th July 2021"
+apgar_extract_date <- "17 August 2021"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
 apgar_download <- readRDS("data/apgar_download_data.rds")
 
 # Preterm
-preterm_extract_date <- "21st June 2021"
+preterm_extract_date <- "21 June 2021"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
 
 # Tears (births and babies tab)
-tears_extract_date <- "13th July 2021"
+tears_extract_date <- "17 August 2021"
 tears_runchart <- readRDS("data/tears_runchart_data.rds")
 tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
