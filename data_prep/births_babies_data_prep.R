@@ -577,8 +577,6 @@ create_apgar <- function(folderdate) {
                             area_name=="Scotland" ~ "Scotland"),
            area_type = type,
            category = "All") %>%
-  
-  
     # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
     # ext_ columns (don't exist in data file) are extended median which are blank before projection time period
     # group_by(area_name) %>%
@@ -607,15 +605,16 @@ create_apgar <- function(folderdate) {
   
   print("File apgar_runchart_data.rds produced and saved")
   
+
   ## 2- LINECHART DATA apgar for Scotland only by age and dep
   apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_SCOT_CHARTS_Apgar5_",apgar_date,".rds")) %>%
     janitor::clean_names() %>%
-    rename(area_name=hbres, quarter=date, category=variable, tot_apgar5_37plus = total_exc_unknown) %>%
+    rename(area_name=hbres, quarter = month_of_discharge, category=variable, tot_apgar5_37plus = total_exc_unknown) %>%
     mutate(quarter=as.Date(quarter),
            quarter_label=phsmethods::qtr(quarter, format="short"),
            area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                             area_name=="Scotland" ~ "Scotland"),
-           type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD5" ~ "dep"),
+           type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
            category=as.character(category),
            category = case_when(category == "-under 20" ~ "Under 20",
                                 category == "40+" ~ "40 and over",
@@ -677,22 +676,18 @@ create_apgar <- function(folderdate) {
   
   print("File apgar_linechart_data.rds produced and saved")
   
-  
   ## 4- Apgar DATA DOWNLOAD FILE FOR SHINY APP
   apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_Apgar5_DOWNLOAD_",apgar_date,".rds")) %>%
     janitor::clean_names() %>%
-    mutate(subgroup = case_when(substr(nhs_board_of_residence,1,3) == "NHS" ~ "board",
-                                substr(nhs_board_of_residence,1,3) == "Not" ~ "board",
+    mutate(subgroup = case_when(substr(hbres,1,3) == "NHS" ~ "board",
+                                substr(hbres,1,3) == "Not" ~ "board",
                                 is.na(subgroup) ~ "scotland",
                                 T ~ as.character(subgroup)),
-           month_of_discharge =
-             case_when(subgroup == "scotland" ~ paste0(month_of_discharge,"-01"),
-                       T ~ month_of_discharge),
            month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
            date_of_discharge=case_when(subgroup == "scotland" ~ as.character(format(month_of_discharge, "%B %Y")),
                                           T ~ phsmethods::qtr(month_of_discharge, format="short")
            )) %>%
-    rename(area_name=nhs_board_of_residence,
+    rename(area_name=hbres,
            centreline_apgar5_37plus = median_apgar5_37plus,
            dottedline_apgar5_37plus = ext_median_apgar5_37plus) %>%
     mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
@@ -821,8 +816,8 @@ create_preterm <- function(preterm_date, max_date) {
   print("File preterm_data.rds produced and saved")
   
   preterm <<- preterm
-  
-  ## 2- LINECHART DATA preterm for Scotland
+
+    ## 2- LINECHART DATA preterm for Scotland
   preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/WI_DELIVERIES_LINECHART_Neonate_",preterm_date,".rds")) %>%
     rename(area_name=HBRES, quarter=DATE) %>%
     janitor::clean_names() %>%
@@ -917,7 +912,7 @@ tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/
          quarter_label=phsmethods::qtr(quarter, format="short"),
          area_type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                                area_name=="Scotland" ~ "Scotland"),
-         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD5" ~ "dep"),
+         type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
          category=as.character(category),
          category = case_when(category == "-under 20" ~ "Under 20",
                               category == "40+" ~ "40 and over",
@@ -988,9 +983,6 @@ tears_download <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
                               substr(nhs_board_of_residence,1,3) == "Not" ~ "board",
                               is.na(subgroup) ~ "scotland",
                               T ~ as.character(subgroup)),
-         month_of_discharge = 
-           case_when(subgroup == "scotland" ~ paste0(month_of_discharge,"-01"),
-                     T ~ month_of_discharge),
          month_of_discharge=as.Date(month_of_discharge,format="%Y-%m-%d"),
          date_of_discharge=case_when(subgroup == "scotland" ~ as.character(format(month_of_discharge, "%B %Y")),
                                      T ~ phsmethods::qtr(month_of_discharge, format="short")
