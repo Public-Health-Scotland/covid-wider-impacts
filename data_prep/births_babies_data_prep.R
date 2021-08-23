@@ -609,6 +609,7 @@ create_apgar <- function(folderdate) {
   ## 2- LINECHART DATA apgar for Scotland only by age and dep
   apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_SCOT_CHARTS_Apgar5_",apgar_date,".rds")) %>%
     janitor::clean_names() %>%
+    filter(month_of_discharge <= as.Date("2021-03-01")) %>%
     rename(area_name=hbres, quarter = month_of_discharge, category=variable, tot_apgar5_37plus = total_exc_unknown) %>%
     mutate(quarter=as.Date(quarter),
            quarter_label=phsmethods::qtr(quarter, format="short"),
@@ -907,6 +908,7 @@ tears_runchart <<- tears_runchart
 ## 2- LINECHART DATA apgar for Scotland only by age and dep
 tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_Tears_DOWNLOAD_Qtr_",tears_date,".rds")) %>%  
   janitor::clean_names() %>%
+  filter(month_of_discharge <= "2021-03-01") %>%
   rename(area_name=nhs_board_of_residence, quarter=month_of_discharge, category=variable, tot_tears_37plus = nbr_3_4_degree_tear_37plus) %>%
   mutate(quarter=as.Date(quarter),
          quarter_label=phsmethods::qtr(quarter, format="short"),
