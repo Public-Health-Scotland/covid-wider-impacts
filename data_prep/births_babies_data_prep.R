@@ -564,6 +564,7 @@ create_apgar <- function(folderdate) {
   
   
   apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Apgar5_",apgar_date,".rds")) %>%
+    filter(DATE < "2021-03-01") %>%
     rename(area = HBRES) %>%
     mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
                                  area == "NHS Highlands" ~ "NHS Highland",
@@ -646,6 +647,7 @@ create_apgar <- function(folderdate) {
   
   
   apgar_linechart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Apgar5_",apgar_date,".rds")) %>%
+    filter(DATE < "2021-03-01") %>%
     rename(area=HBRES) %>%
     janitor::clean_names() %>% ungroup %>%
     mutate(tot_apgar5_37plus=total_exc_unknown) %>%
@@ -866,12 +868,13 @@ tears_runchart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_
          date_type = "Month")
 
 
-tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_RUNCHART_Tears_",tears_date,".rds")) %>%  
+tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_RUNCHART_Tears_",tears_date,".rds")) %>%
+  filter(DATE <= "2021-03-01") %>%
   rename(area = HBRES) %>%
   mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
                                area == "NHS Highlands" ~ "NHS Highland",
                                TRUE ~ as.character(area)),
-         date_type = "Quarter") %>%   
+         date_type = "Quarter") %>%
   janitor::clean_names() %>% 
   mutate(date=as.Date(date),
          date_label=phsmethods::qtr(date, format="short")) %>% 
@@ -945,7 +948,8 @@ tears_linechart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears
          date_type = "Month") 
 
 
-tears_linechart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_LINECHART_Tears_",tears_date,".rds")) %>%  
+tears_linechart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_LINECHART_Tears_",tears_date,".rds")) %>% 
+  filter(DATE <= "2021-03-01") %>%
   rename(area=HBRES) %>%
   janitor::clean_names() %>% ungroup %>% 
   mutate(tot_tears_37plus=total_exc_unknown) %>%
