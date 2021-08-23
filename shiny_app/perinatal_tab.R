@@ -78,11 +78,11 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
   
   # Text to be updated every month with updated dates
-  last_month_peri <- "June 2021"
-  cutdate_peri <- "18 July 2021"
-  extractdate_peri <- "21 July 2021"
-  nextup_peri <- "September 2021"
-  nextdata_peri <- "July 2021"
+  last_month_peri <- "July 2021"
+  cutdate_peri <- "15 August 2021"
+  extractdate_peri <- "18 August 2021"
+  nextup_peri <- "October 2021"
+  nextdata_peri <- "August 2021"
   
   # Number of deaths and of births used in the text
   no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
@@ -151,7 +151,13 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                            "It is therefore possible that some stillbirths occurring in the last week of ", last_month_peri, " may not have been registered by the time the data extract was taken. The stillbirth and extended perinatal mortality rates for ", last_month_peri, " should 
                            therefore be taken as provisional, and they may increase when the data is refreshed (and new rates for ", nextdata_peri, " are added) in ", nextup_peri, ".", br(),  
                            "We would expect any increases to be small, as in previous years 95% of stillbirths have been registered within 14 days of the baby being delivered, despite the legal limit allowing up to 21 days.", br(),  
-                           "This issue affects infant deaths (neonatal, post-neonatal, and infant death categories) less as the legal time limit for registration is 8 days.")        
+                           "This issue affects infant deaths (neonatal, post-neonatal, and infant death categories) less as the legal time limit for registration is 8 days.")
+  
+  sept_data_commentary <- p("It is important to note that chart data is based on month of occurrence rather than month of registration used in NRS publications, and so figures may differ slightly.
+                            In August 2021, NRS published data on stillbirths and infant deaths registered in 2020. The data tables can be found in", 
+                            tags$a(href= 'https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2020/list-of-data-tables#section4', 
+                            "Section 4: Stillbirths and infant deaths", target="_blank"), "on the NRS website.")
+  
   # Specify items to display in perinatal ui 
   tagList(
     fluidRow(column(12, 
@@ -162,7 +168,8 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
     fluidRow(withSpinner(plotlyOutput("perinatal_chart"))),
     fluidRow(column(12, renderUI(nrs_commentary))),
     fluidRow(column(12, renderUI(control_chart_commentary))),
-    fluidRow(column(12, renderUI(may_data_commentary))))
+    fluidRow(column(12, renderUI(may_data_commentary))),
+    fluidRow(column(12, renderUI(sept_data_commentary))))
   
 }) #close perinatal_explorer function
   
