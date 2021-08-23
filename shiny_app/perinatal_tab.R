@@ -133,7 +133,10 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
   }
 
   nrs_commentary <- p("It is important to note that chart data is based on month of occurence rather than month of registration used in NRS publications, and so
-                      figures may differ slightly.")
+                      figures may differ slightly.
+                      In August 2021, NRS published data on stillbirths and infant deaths registered in 2020. The data tables can be found in", 
+                      tags$a(href= 'https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2020/list-of-data-tables#section4', 
+                      "Section 4: Stillbirths and infant deaths", target="_blank"), "on the NRS website.")
   
   control_chart_commentary <- p("As stillbirths and infant deaths are relatively rare events in Scotland mortality rates tend to fluctuate over time just by chance.
                       We have therefore used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
@@ -153,10 +156,6 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                            "We would expect any increases to be small, as in previous years 95% of stillbirths have been registered within 14 days of the baby being delivered, despite the legal limit allowing up to 21 days.", br(),  
                            "This issue affects infant deaths (neonatal, post-neonatal, and infant death categories) less as the legal time limit for registration is 8 days.")
   
-  sept_data_commentary <- p("It is important to note that chart data is based on month of occurrence rather than month of registration used in NRS publications, and so figures may differ slightly.
-                            In August 2021, NRS published data on stillbirths and infant deaths registered in 2020. The data tables can be found in", 
-                            tags$a(href= 'https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2020/list-of-data-tables#section4', 
-                            "Section 4: Stillbirths and infant deaths", target="_blank"), "on the NRS website.")
   
   # Specify items to display in perinatal ui 
   tagList(
@@ -168,8 +167,7 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
     fluidRow(withSpinner(plotlyOutput("perinatal_chart"))),
     fluidRow(column(12, renderUI(nrs_commentary))),
     fluidRow(column(12, renderUI(control_chart_commentary))),
-    fluidRow(column(12, renderUI(may_data_commentary))),
-    fluidRow(column(12, renderUI(sept_data_commentary))))
+    fluidRow(column(12, renderUI(may_data_commentary))))
   
 }) #close perinatal_explorer function
   
