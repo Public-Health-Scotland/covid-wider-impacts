@@ -1,4 +1,4 @@
-##Server script for pregnancy - inductions tab
+##Server script for pregnancy - inductions tab.
 
 # Pop-up modal explaining source of data
 observeEvent(input$btn_induct_modal, 
