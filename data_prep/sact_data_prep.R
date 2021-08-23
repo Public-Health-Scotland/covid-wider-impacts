@@ -17,7 +17,7 @@ require(janitor)||install.packages("janitor")
 require(lubridate)||install.packages("lubridate")
 
 ##########################################
-# Date Input (Monday after data refresh)
+# Date Input (Monday of data refresh)
 
 year <- "2021"
 month <- "08"
@@ -36,29 +36,21 @@ rm(year, month, day, release_date)
 
 # 1. MONTHLY DATA
 
-# seperate 2020 and 2021 data, rename vars
-sact20 <- read_csv(path_monthly_data) %>%
+# rename vars, create month - year variable
+sact <- read_csv(path_monthly_data) %>%
   clean_names() %>%
   rename(site = tumour_group, area = treatment_hb_name,
          year = appointment_year, month = appointment_month,
          region = cancer_network, All = all, Intravenous = iv,
          Oral = oral, Subcutaneous = sc, Intrathecal = it, Other = other) %>%
-  filter(year != 2021) %>%
   replace(is.na(.), "Unknown") %>% 
-  select(-year)
+  arrange(year, month) %>% 
+  mutate(month_name = paste(month.abb[month], year, sep = "-")) %>% 
+  select(-c(year, month)) %>% 
+  rename(month = month_name)
 
-sact21 <- read_csv(path_monthly_data) %>%
-  clean_names() %>%
-  rename(site = tumour_group, area = treatment_hb_name,
-         year = appointment_year, month = appointment_month,
-         region = cancer_network, All = all, Intravenous = iv,
-         Oral = oral, Subcutaneous = sc, Intrathecal = it, Other = other) %>%
-  filter(year == 2021) %>%
-  replace(is.na(.), "Unknown") %>% 
-  mutate(month = month + 12) %>% 
-  select(-year)
-
-sact <- rbind(sact20, sact21)
+levelvector <- unique(sact$month)
+sact$month <- factor(sact$month, levels = levelvector)
 
 sact$area <-  recode(sact$area, "NHS AYRSHIRE AND ARRAN" = "NHS Ayrshire & Arran",
                      "NHS BORDERS" = "NHS Borders",
@@ -94,25 +86,11 @@ sact$site <-  recode(sact$site, "BONE SARCOMA" = "Bone Sarcoma",
                      "Unknown" = "Unknown")
 
 # convert to long dataset format
-sact_long <- sact %>% 
+sact <- sact %>% 
   group_by(month, region, area, site) %>% 
   pivot_longer(All:Intrathecal, names_to = "treatment", values_to = "count") %>% 
-  ungroup
-
-sact_long <- sact_long %>%
-  mutate(region = if_else((area %in% c("NCA", "SCAN", "WOSCAN")),"Scotland",region)) %>%
-  mutate(month_name = as.factor(month))
-
-levels(sact_long$month_name) <- c("Jan-20", "Feb-20", "Mar-20", "Apr-20", "May-20", "Jun-20", "Jul-20", "Aug-20",
-                                  "Sep-20", "Oct-20", "Nov-20", "Dec-20", "Jan-21", "Feb-21", "Mar-21",
-                                  "Apr-21", "May-21", "Jun-21")
-
-sact <- sact_long %>% 
-  select(-month) %>% 
-  rename(month = month_name) 
-
-
-rm(sact_long)
+  ungroup() %>%
+  mutate(region = if_else((area %in% c("NCA", "SCAN", "WOSCAN")),"Scotland",region))
 
 saveRDS(sact, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "sact_data_", 
                      format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
@@ -124,22 +102,14 @@ saveRDS(sact, "shiny_app/data/sact_data.rds")
 
 # 2. WEEKLY DATA 
 
-# read in 2021 data and recode week number values
+# read in data, recode week number values, rename vars and recode region for networks
 sact_weekly_new <- read_csv(path_weekly_data) %>%  
   clean_names() %>% 
   select(iso_appointment_year:other_regimen_level, it_appointment_level:week_beginning) %>% 
-  filter(iso_appointment_year == "2021" & treatment_hb_name != "Unmapped") %>% 
-  mutate(appointment_week = appointment_week + 53) %>% 
-  select(-iso_appointment_year)
-
-sact_weekly <- read_csv(path_weekly_data) %>%  
-  clean_names() %>% 
-  select(iso_appointment_year:other_regimen_level, it_appointment_level:week_beginning) %>% 
-  filter(iso_appointment_year != "2021" & treatment_hb_name != "Unmapped") %>% 
-  select(-iso_appointment_year)
-
-# rename vars and recode region for networks
-sact_weekly_new <- rbind(sact_weekly, sact_weekly_new) %>% 
+  filter(treatment_hb_name != "Unmapped") %>% 
+  arrange(iso_appointment_year, appointment_week) %>% 
+  mutate(appointment_week = rle(appointment_week)$lengths %>% {rep(seq(length(.)), .)}) %>%
+  select(-iso_appointment_year) %>% 
   rename(site = tumour_group, area = treatment_hb_name,
          week = appointment_week,
          region = cancer_network) %>%
@@ -179,14 +149,12 @@ sact_weekly_new$site <-  recode(sact_weekly_new$site, "BONE SARCOMA" = "Bone Sar
                                 "UROLOGICAL" = "Urological",
                                 "Unknown" = "Unknown")
 
-
 # divide dataset into Regimen and Appointment level 
 sact_weekly_reg <- sact_weekly_new %>% 
   select(week:site, all_appointments, it_regimen_level:other_regimen_level) %>%
   rename(All = all_appointments, Intrathecal = it_regimen_level, Intravenous = iv_regimen_level, 
          Oral = oral_regimen_level, Subcutaneous = sc_regimen_level, Other = other_regimen_level) %>%
   mutate(appt_reg = "Regimen level") 
-
 
 sact_weekly_appt <- sact_weekly_new %>% 
   select(week:site, all_appointments, it_appointment_level:other_appointment_level) %>%
@@ -203,20 +171,11 @@ sact_weekly <- rbind(sact_weekly_reg, sact_weekly_appt)  %>%
   select(-region) %>% 
   complete(week, nesting(area, site, treatment, appt_reg), fill = list(count = 0)) %>% 
   complete(area, nesting(week, site, treatment, appt_reg), fill = list(count = 0)) %>% 
-  mutate(region = case_when(area == "NHS Grampian" ~ "NCA",
-                            area == "NHS Highland" ~ "NCA",
-                            area == "NHS Orkney" ~ "NCA",
-                            area == "NHS Shetland" ~ "NCA",
-                            area == "NHS Tayside" ~ "NCA",
-                            area == "NHS Western Isles" ~ "NCA",
-                            area == "NHS Borders" ~ "SCAN",
-                            area == "NHS Dumfries & Galloway" ~ "SCAN",
-                            area == "NHS Fife" ~ "SCAN",
-                            area == "NHS Lothian" ~ "SCAN",
-                            area == "NHS Ayrshire & Arran" ~ "WOSCAN",
-                            area == "NHS Forth Valley" ~ "WOSCAN",
-                            area == "NHS Greater Glasgow & Clyde" ~ "WOSCAN",
-                            area == "NHS Lanarkshire" ~ "WOSCAN",
+  mutate(region = case_when(area %in% c("NHS Grampian", "NHS Orkney", "NHS Shetland", "NHS Highland", "NHS Tayside", 
+                                        "NHS Western Isles") ~ "NCA",
+                            area %in% c("NHS Borders", "NHS Dumfries & Galloway", "NHS Fife", "NHS Lothian") ~ "SCAN",
+                            area %in% c("NHS Ayrshire & Arran", "NHS Forth Valley", "NHS Greater Glasgow & Clyde",
+                                        "NHS Lanarkshire") ~ "WOSCAN",
                             TRUE ~ "Scotland"))
 
 # calculate reference week from mean count of weeks 4-9

@@ -29,6 +29,8 @@ data_table <- reactive({
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
          "cancer" = cancer_data2,
+        "sact_weekly" = sact_data_wk_inc,
+        "sact_monthly" = sact_data_inc,
          "childdev" = child_dev,
          "breastfeeding" = breastfeeding,
         "perinatal" = perinatal,
@@ -232,6 +234,18 @@ data_table <- reactive({
              "Count 2021" = count21,
              "Variation (%) 2020 vs 2019" = difference20,
              "Variation (%) 2021 vs 2019" = difference21)
+  } else if (input$data_select %in% "sact_weekly") {
+    table_data <- table_data %>%
+      select(week_beginning, region, area, site, appt_reg, treatment, count, week_on_refweek_perc) %>%
+      rename("Week beginning" = week_beginning, "Region" = region, "Area name" = area, 
+             "Cancer type" = site, "Administration route derivation" = appt_reg,
+             "Administration route" = treatment, "Number of appointments" = count,
+             "Percentage change vs. average reference Week" = week_on_refweek_perc)
+  } else if (input$data_select %in% "sact_monthly") {
+    table_data <- table_data %>%
+      select(month, region, area, site, treatment, count) %>%
+      rename("Month" = month, "Region" = region, "Area name" = area, "Cancer type" = site, 
+             "Administration route" = treatment, "Number of patients" = count)
   } else if (input$data_select %in% "childdev") {
     table_data %<>%
       select(area_name, month_review, review, number_reviews = no_reviews, 
@@ -374,7 +388,8 @@ data_table <- reactive({
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
     mutate_if(is.numeric, round, 1)
   
-  if (!(input$data_select %in% c("childdev", "breastfeeding"))) {
+  if (!(input$data_select %in% c("childdev", "breastfeeding", "cancer", "sact_weekly", 
+                                 "sact_monthly"))) {
     table_data %<>% 
       select(sort(current_vars()))  # order columns alphabetically
   }

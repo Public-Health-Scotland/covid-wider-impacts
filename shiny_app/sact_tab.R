@@ -251,24 +251,7 @@ output$treatment_ui_sact <- renderUI({
 output$sact_explorer <- renderUI({
   
   # text for titles of cut charts
-  sact_site <- case_when(input$sact_type == "All" ~ "All",
-                         input$sact_type == "Bone Sarcoma" ~ "Bone Sarcoma",
-                         input$sact_type == "Breast" ~ "Breast",
-                         input$sact_type == "Central Nervous System" ~ "Central Nervous System",
-                         input$sact_type == "Cancer of Unknown Origin" ~ "Cancer of Unknown Origin",                         input$sact_type == "Germ Cell" ~ "Germ Cell",
-                         input$sact_type == "Gynaecology" ~ "Gynaecology",
-                         input$sact_type == "Haematology" ~ "Haematology",
-                         input$sact_type == "Head & Neck" ~ "Head & Neck",
-                         input$sact_type == "Lower GI" ~ "Lower GI",
-                         input$sact_type == "Lung & Chest" ~ "Lung & Chest",
-                         input$sact_type == "Neuroendocrine" ~ "Neuroendocrine",
-                         input$sact_type == "Other" ~ "Other",
-                         input$sact_type == "Skin" ~ "Skin",
-                         input$sact_type == "Soft Tissue Sarcoma" ~ "Soft Tissue Sarcoma",
-                         input$sact_type == "Upper GI" ~ "Upper GI",
-                         input$sact_type == "Urological" ~ "Urological",
-                         input$sact_type == "Unknown" ~ "Unknown"
-  )
+  sact_site <- input$sact_type
   
   tagList(
     
@@ -331,26 +314,7 @@ output$treatment_ui_wk_sact <- renderUI({
 output$sact_wk_explorer <- renderUI({
   
   # text for titles of cut charts
-  sact_wk_site <- case_when(input$sact_wk_type == "All" ~ "All",
-                            input$sact_wk_type == "Bone Sarcoma" ~ "Bone Sarcoma",
-                            input$sact_wk_type == "Breast" ~ "Breast",
-                            input$sact_wk_type == "Central Nervous System" ~ "Central Nervous System",
-                            input$sact_wk_type == "Cancer of Unknown Origin" ~ "Cancer of Unknown Origin",
-                            input$sact_wk_type == "Germ Cell" ~ "Germ Cell",
-                            input$sact_wk_type == "Gynaecology" ~ "Gynaecology",
-                            input$sact_wk_type == "Haematology" ~ "Haematology",
-                            input$sact_wk_type == "Head & Neck" ~ "Head & Neck",
-                            input$sact_wk_type == "Lower GI" ~ "Lower GI",
-                            input$sact_wk_type == "Lung & Chest" ~ "Lung & Chest",
-                            input$sact_wk_type == "Neuroendocrine" ~ "Neuroendocrine",
-                            input$sact_wk_type == "Other" ~ "Other",
-                            input$sact_wk_type == "Skin" ~ "Skin",
-                            input$sact_wk_type == "Soft Tissue Sarcoma" ~ "Soft Tissue Sarcoma",
-                            input$sact_wk_type == "Upper GI" ~ "Upper GI",
-                            input$sact_wk_type == "Urological" ~ "Urological",
-                            input$sact_wk_type == "Unknown" ~ "Unknown"
-                            
-  )
+  sact_wk_site <- input$sact_wk_type
   
   tagList(
     
@@ -432,8 +396,32 @@ output$sact_wk_difference_treatment <- renderPlotly({plot_sact_wk_difference_cha
 ## Data downloads ----
 ###############################################.
 
+output$download_sact_weekly_data <- downloadHandler(
+  filename ="sact_weekly_extract.csv",
+  content = function(file) {
+    write_csv(sact_data_wk_inc %>% 
+                select(week_beginning, region, area, site, appt_reg, treatment, count,
+                       week_on_refweek_perc) %>% 
+                rename("Week beginning" = week_beginning, "Region" = region, 
+                       "Area name" = area, "Cancer type" = site,
+                       "Administration route derivation" = appt_reg,
+                       "Administration route" = treatment,
+                       "Number of appointments" = count,
+                       "Percentage change vs. average reference Week" = week_on_refweek_perc),
+              file) } 
+) 
 
 
+output$download_sact_monthly_data <- downloadHandler(
+  filename ="sact_monthly_extract.csv",
+  content = function(file) {
+    write_csv(sact_data_inc %>% 
+                select(month, region, area, site, treatment, count) %>% 
+                rename("Month" = month, "Region" = region, "Area name" = area, 
+                       "Cancer type" = site, "Administration route" = treatment,
+                       "Number of patients" = count),
+              file) } 
+) 
 
 ###############################################.
 ## Commentary ----
