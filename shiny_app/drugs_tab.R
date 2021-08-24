@@ -314,7 +314,7 @@ output$drug_commentary <- renderUI({
     p(strong(
       'These data on numbers of referrals to specialist drug and alcohol treatment services during the pandemic can be interpreted as a measure of demand for support with substance use issues and/or the capacity of services to process referrals for treatment. 
      Although these data are sourced from the systems that monitor waiting times for drug and alcohol treatment waiting times, they do not indicate the percentage of waits for specialist treatment where the target was met, nor whether individuals were provided with support that met their needs. 
-       Information on performance against Scotland’s Drug and Alcohol Treatment Waiting Time target can be found at',
+       Information on performance against Scotland\'s Drug and Alcohol Treatment Waiting Time target can be found at',
        tags$a(href="https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/", 
               "https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/",  target="_blank"), '.'
     )),
@@ -344,7 +344,7 @@ output$drug_commentary <- renderUI({
     p(strong('Prisons')),
     tags$ul(
       tags$li("The number of THN supplies issued by prisons per month was consistently higher for the period February 2020 to March 2021 than the corresponding 2018 & 2019 averages. The exception to this was November 2020 when supplies were 21% lower than the 2018 & 2019 average for the same month. "),
-      tags$li("The large peak in May 2020 may partially have been a result of the Scottish Prison Service’s ",
+      tags$li("The large peak in May 2020 may partially have been a result of the Scottish Prison Service\'s ",
               tags$a(href="https://www.sps.gov.uk/Corporate/Information/covid19/covid-19-information-hub.aspx", 
                      "COVID Early Release scheme ",  target="_blank"),
              "in which the Coronavirus (Scotland) Act 2020 provided new powers for the early release of a specific class of prisoners held in Scottish prisons. Early release was deemed necessary in order to provide the Scottish Prison Service with additional operational capacity including allowing for a greater use of single cell occupancy, keeping prison staff and the people in their care safe. It is understood that that scheme is no longer operational, so subsequent increases may reflect other factors.")),
