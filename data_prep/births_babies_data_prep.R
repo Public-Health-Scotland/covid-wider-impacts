@@ -697,7 +697,7 @@ create_apgar <- function(folderdate) {
                                area_name=="Scotland" ~ "Scotland"),
            chart_category="All",
            chart_type= area_type,
-           births_37_42 = total_exc_unknown + unknown_apgar5_37plus,
+           births_37_42 = total_exc_unknown + unknown,
            perc_denominator = "births_37_42_apgar5_known") %>%
     select(-month_of_discharge) %>%
     select(indicator, subgroup, variable, area_name, date_of_discharge,
@@ -712,7 +712,7 @@ create_apgar <- function(folderdate) {
            area_type,
            chart_category,
            chart_type,
-           births_37_42_apgar5_unknown = unknown_apgar5_37plus,
+           births_37_42_apgar5_unknown = unknown,
            births_37_42)
   
   saveRDS(apgar_download, "shiny_app/data/apgar_download_data.rds")
