@@ -102,14 +102,22 @@ output$TwoYrComparison<-renderPlotly({
     plot_data<-subset(DTR_July_update,(Board==location)& Type==input$types & Date<'2021-06-28')#cutting off in line with most recent covid report
     complete_data<-subset(plot_data,Date<='2021-05-24')
     incomplete_data<-subset(plot_data,Date>='2021-05-24')
-    trend<-plot_ly(data = complete_data, x = ~Date,y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]))
-    trend<-trend %>% add_trace(data=incomplete_data, x=~Date,y=~`2020 & 2021`,type='scatter',name='20/21 (Incomplete)',mode='lines',line=list(color=pal_overall[1],dash='dash'),showlegend=FALSE)
-    trend<-trend %>% add_trace(data=plot_data,x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'))
+    
+    trend<-plot_ly(data = complete_data, x = ~Date,y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),
+                   text=c(paste0("Date: ", format(complete_data$Date, format = "%b %d, %Y"),
+                            "<br>", 'Number of referrals: ', complete_data$`2020 & 2021`,
+                            "<br>", "Historic average: ", complete_data$`Average 2018 & 2019`)),hoverinfo='text')
+    trend<-trend %>% add_trace(data=incomplete_data, x=~Date,y=~`2020 & 2021`,type='scatter',name='20/21 (Incomplete)',mode='lines',line=list(color=pal_overall[1],dash='dash'),showlegend=FALSE,
+                               text=c(paste0("Date: ", format(incomplete_data$Date, format = "%b %d, %Y"),
+                                             "<br>", 'Number of referrals: ', incomplete_data$`2020 & 2021`,
+                                             "<br>", "Historic average: ", incomplete_data$`Average 2018 & 2019`)),hoverinfo='text')
+    trend<-trend %>% add_trace(data=plot_data,x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
+                               text=c(paste0("Date: ", format(plot_data$Date, format = "%b %d, %Y"),
+                                             "<br>", 'Number of referrals: ', plot_data$`2020 & 2021`,
+                                             "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`)),hoverinfo='text')
     trend <- trend %>% layout(
       title = (sprintf("Number of %s treatment referrals in 2020 and 2021 \n compared with 2018-19 average (%s)",tolower(input$types),location)),
-      yaxis = list(title = "Number of referrals"),
-      hovermode= 'x unified',
-      hoverlabel=list(namelength=-1)
+      yaxis = list(title = "Number of referrals")
     )
     trend <- trend %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
@@ -120,18 +128,19 @@ output$TwoYrComparison<-renderPlotly({
   
   else if(input$drug_subcategories=='Take home naloxone kits'){
     plot_data<-subset(THN_by_HB,(Board==location) & (Type==input$types))
+    lab_text<-c(paste0("Month: ", c(paste(unique(plot_data$Date),'2020',sep=' '),'Jan 2021','Feb 2021','Mar 2021'),
+                       "<br>", 'Number of THN: ', plot_data$`2020 & 2021`,
+                       "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
     trend<-plot_ly(data = plot_data, x =seq(1:nrow(plot_data)))
-    trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]))
-    trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'))
+    trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text,hoverinfo='text')
+    trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),text=lab_text,hoverinfo='text')
     trend<-trend %>% layout(
           xaxis=list(
           tickmode='array',
           tickvals=seq(1:nrow(plot_data)),
           ticktext=c(paste(unique(plot_data$Date),'2020',sep=' '),'Jan 2021','Feb 2021','Mar 2021')
           
-        ),
-        hovermode= 'x unified',
-        hoverlabel=list(namelength=-1)
+        )
         )
     trend <- trend %>% layout(
       title = (sprintf("Number of take home naloxone supplied in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location,input$types)),
@@ -226,7 +235,7 @@ output$PercentChange<-renderUI({
       output$change_plot<-renderPlotly({
     
     tooltip_trend<-c(paste0(
-                          "Date: ", plot_data$Date,
+                          "Date: ", format(plot_data$Date, format = "%b %d, %Y"),
                           "<br>", "Change from 2018-2019 average: ",ifelse(plot_data$Change >= 0, "+", ""), plot_data$Change, "%"))
     change<-plot_ly(data = plot_data, x = ~Date, y = ~Change,
                     type='scatter', 
@@ -237,8 +246,7 @@ output$PercentChange<-renderUI({
     
     change <- change %>% layout(
       title = (sprintf("Percentage difference in the number of %s treatment referrals in 2020 and 2021 \n compared with 2018-2019 average (%s)",tolower(input$types),location)),
-      yaxis = list(title = "% Change"),
-      hovertemplate = "%{Date}: <br> Change from 2018-2019 average: %{Change}"
+      yaxis = list(title = "% Change")
     )
     change <- change %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
