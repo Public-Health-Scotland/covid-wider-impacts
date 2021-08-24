@@ -1,4 +1,4 @@
-#Server side
+#Server side.
 credentials <- readRDS("admin/credentials.rds")
 
 function(input, output, session) {
