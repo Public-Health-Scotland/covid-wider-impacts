@@ -1,3 +1,8 @@
+###############################################.
+## Functions/Packages/filepaths/lookups ----
+###############################################.
+source("data_prep/functions_packages_data_prep.R")
+
 
 ##########################################################
 # Name of file - Drug and Alcohol Treatment referral data 
@@ -22,9 +27,15 @@
 ####Drug and alcohol treatment referrals####
 
 library(readxl)
-Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/DrugTreatmentReferrals/Referrals_20210715_breakdown.xlsx", 
-                                  col_types = c("text", "text", "date", 
-                                                "numeric"))
+# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
+# Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/DrugTreatmentReferrals/Referrals_20210715_breakdown.xlsx", 
+#                                   col_types = c("text", "text", "date", 
+#                                                 "numeric"))
+
+# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+Referrals_breakdown <- read_excel(paste0(data_folder,"drugs/Referrals_20210715_breakdown.xlsx"),
+                                         col_types = c("text", "text", "date", 
+                                                       "numeric"))
 
 
 library(lubridate)
@@ -162,14 +173,23 @@ saveRDS(long.axis,file='DTR_July_update.rds')
 Health_board<-Hb[grep('NHS',Hb)]
 ADP_names<-Hb[grep('ADP',Hb)]
 
+#SAVING FOR SUBSTANCE USE TEAM
 saveRDS(Health_board,file='Health_board.rds')
 saveRDS(ADP_names,file='ADP_names.rds')
+
+#SAVING FOR WIDER IMPACTS TEAM
+saveRDS(Health_board, "shiny_app/data/Health_board.rds")
+saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
 
 
 
 #### take home naloxone####
 
-dashboard_monthly_data <- readRDS("/PHI_conf/SubstanceMisuse1/Topics/Naloxone/Projects/20200515-COVID19-Naloxone/Temp/dashboard_monthly_data.rds")
+# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
+# dashboard_monthly_data <- readRDS("/PHI_conf/SubstanceMisuse1/Topics/Naloxone/Projects/20200515-COVID19-Naloxone/Temp/dashboard_monthly_data.rds")
+
+# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+dashboard_monthly_data <- readRDS(paste0(data_folder, "drugs/dashboard_monthly_data.rds"))
 
 HB_data<-dashboard_monthly_data[order(dashboard_monthly_data$month),] #ordering by date
 
@@ -201,7 +221,12 @@ THN_by_Hb<-cbind(comp.data.temp, 'Change'=Change)
 THN_by_Hb$Date<-month.abb[THN_by_Hb$Date]
 
 THN_by_Hb$Change[which(is.infinite(THN_by_Hb$Change))]<-NA
+
+#SAVING FOR SUBSTANCE USE TEAM
 saveRDS(THN_by_Hb,'THN_by_HB.rds')
+
+# SAVING FOR WIDER IMPACTS TEAM
+saveRDS(THN_by_Hb, "shiny_app/data/THN_by_Hb.rds")
 
 #####adding proportion of type of THN### 
 
@@ -228,4 +253,10 @@ new_THN<-cbind(THN_by_Hb,'Proportion 20/21'=proportion_current)
 new_THN$Change<-as.numeric(format(round(new_THN$Change, 1), nsmall = 1) )
 new_THN$`Proportion 20/21`<-as.numeric(format(round(new_THN$`Proportion 20/21` ,1),nsmall=1))
 'Now want to save new_THN as THN_by_Hb for use in the dashboard'
+
+#SAVING FOR SUBSTANCE USE TEAM
 saveRDS(new_THN,'THN_by_HB.rds')
+
+# SAVING FOR WIDER IMPACTS TEAM
+saveRDS(new_THN, "shiny_app/data/THN_by_Hb.rds")
+

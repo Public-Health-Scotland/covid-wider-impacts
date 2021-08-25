@@ -146,5 +146,11 @@ save_final_file("mentalhealth_drugs", "05_Jul_21")
 save_final_file("mh_A&E", "05_Jul_21")
 ## Mental health - OOH ----
 save_final_file("mh_ooh", "05_Jul_21")
+##########################################################.
+## Drugs - substance use ----
+save_final_file("ADP_names", "25_Aug_21")
+save_final_file("Health_board", "25_Aug_21")
+save_final_file("DTR_July_update", "25_Aug_21")
+save_final_file("THN_by_HB", "25_Aug_21")
 
 ##END
