@@ -1,4 +1,4 @@
-##Server script for child development tab
+##Server script for child development tab.
 
 ###############################################.
 ## Modal ----

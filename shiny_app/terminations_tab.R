@@ -1,4 +1,4 @@
-##Server script for terminations tab
+##Server script for terminations tab.
 
 # Pop-up modal explaining source of data
 observeEvent(input$btn_top_modal, 

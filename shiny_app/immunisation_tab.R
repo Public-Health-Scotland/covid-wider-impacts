@@ -69,7 +69,7 @@ observeEvent(input$imm_elig_defs,
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
-###############################################.
+###############################################..
 ## Reactive controls  ----
 ###############################################.
 
