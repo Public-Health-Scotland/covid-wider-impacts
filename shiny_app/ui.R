@@ -1,5 +1,5 @@
 #UI
-secure_app( #uncomment if needing password protection
+#secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -575,7 +575,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
            column(4, div(title="Select the data you want to explore", # tooltip
                          radioGroupButtons("drug_subcategories",
                                            label= "Step 1 – Select the data you want to explore",
-                                           choices = c('Drug and alcohol treatment referrals','Take home naloxone kits'), status = "primary",
+                                           choices = c('Take home naloxone kits'), status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,uiOutput('area_drugs_select'),
                   uiOutput("geoname_ui_drugs")),
@@ -622,6 +622,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
 #       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-)#secure app
+#)#secure app
 
 #END
