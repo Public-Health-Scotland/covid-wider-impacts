@@ -100,7 +100,6 @@ sact_data_wk_difference <- sact_weekly_data %>%
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
 sact_data_wk_inc <- sact_weekly_data %>%
-  # filter(week <= 52) %>% 
   mutate(region = factor(region)) %>% 
   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
@@ -284,7 +283,9 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
-                        "Cancer" = "cancer"
+                        "Cancer" = "cancer",
+                        "Weekly SACT activity" = "sact_weekly",
+                        "Monthly SACT activity" = "sact_monthly"
 )
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",

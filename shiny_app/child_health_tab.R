@@ -1,4 +1,4 @@
-##Server script for child health tab
+##Server script for child health tab.
 
 
 # Pop-up modal explaining source of data

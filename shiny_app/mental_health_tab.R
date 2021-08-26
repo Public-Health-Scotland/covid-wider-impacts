@@ -1,4 +1,4 @@
-##Server script for MENTAL HEALTH tab
+##Server script for MENTAL HEALTH tab.
 
 ###############################################.
 ## Reactive controls ----

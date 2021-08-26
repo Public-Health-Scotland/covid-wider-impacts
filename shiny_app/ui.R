@@ -1,5 +1,7 @@
 #UI.
- #secure_app( #uncomment if needing password protection
+
+# secure_app( #uncomment if needing password protection
+
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -258,8 +260,9 @@ tagList( #needed for shinyjs
                                              em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
 
-                                           actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle'))), # well panel
-
+                                           actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle')),
+                                           downloadButton('download_sact_monthly_data', 'Download data')), # well panel
+                                 
                                  wellPanel(column(7, selectInput("geotype_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_sact"),
@@ -308,7 +311,8 @@ tagList( #needed for shinyjs
                                            p("Activity data is released two week in arrears. The latest data currently available in the
                                              dashboard is for the week beginning", strong(format(max(sact_weekly_data$week_beginning), "%d %B %Y"))),
 
-                                           actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle'))), # well panel
+                                           actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle')),
+                                           downloadButton('download_sact_weekly_data', 'Download data')), # well panel
 
                                  wellPanel(column(7, selectInput("geotype_wk_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
