@@ -636,6 +636,9 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 1st September 2021"),
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 1 September and includes information on cohorts eligible for their immunisations  
+      to week beginning 5 July 2021."),
     h2("Immunisations - 4th August 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 4 August and includes information on cohorts eligible for their immunisations  
       to week beginning 7 June 2021."),
