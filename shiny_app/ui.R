@@ -1,5 +1,7 @@
+
 #UI.
 # secure_app( #uncomment if needing password protection
+
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -127,9 +129,9 @@ tagList( #needed for shinyjs
                              )))
              ), #tab panel
              
-             # ###############################################.
-             # # Summary trends ----
-             # ##############################################.
+             ###############################################.
+             # Summary trends ----
+             ##############################################.
              tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
                wellPanel(
                  column(4,
@@ -198,12 +200,12 @@ tagList( #needed for shinyjs
              ###############################################.
              ## Cancer ----
              ###############################################.
-             
-             
+
+
              navbarMenu("Cancer", icon = icon("disease"),
 
                         # CANCER PATHOLOGY
-                        
+
                         tabPanel(title = "Cancer Pathology", icon = icon("microscope"), value = "cancer",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer2")),
@@ -219,7 +221,7 @@ tagList( #needed for shinyjs
                                                            list("All","Male","Female"), inline = TRUE,
                                                            selected = "All"))),
                                    # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
-                                   
+
                                    column(4,actionButton("btn_cancer_modal", "Data source and definitions", icon = icon('question-circle')),
                                           fluidRow(br()),
                                           downloadButton('download_cancer_data', 'Download data'),
@@ -260,7 +262,7 @@ tagList( #needed for shinyjs
 
                                            actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle')),
                                            downloadButton('download_sact_monthly_data', 'Download data')), # well panel
-                                 
+
                                  wellPanel(column(7, selectInput("geotype_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_sact"),
