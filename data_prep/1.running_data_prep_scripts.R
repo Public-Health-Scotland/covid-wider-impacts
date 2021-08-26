@@ -95,7 +95,7 @@ create_terminations(top_date = "2021-07-13")
 source("data_prep/mh_data_prep.R") # This sources the functions for the section
 create_aemh(filedate = "2021-08-01", last_week =  "2021-07-25") #takes a while
 create_oohmh(filedate = "2021-08-02", last_week =  "2021-07-25")
-create_drugsmh(last_week =  "2021-07-25")
+create_drugsmh(last_week =  "2021-08-22")
 
 # Change update date in mental_health_tab.R script
 file.edit("shiny_app/mental_health_tab.R")
