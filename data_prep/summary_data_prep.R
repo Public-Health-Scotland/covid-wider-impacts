@@ -240,7 +240,8 @@ ae_data <- rbind(read_csv(unz(paste0(ae_folder, filedate, "-HSCP-ED-Attendances-
                  read_csv(unz(paste0(ae_folder, filedate, "-NHSBoard-ED-Attendances-SIMD-AgeBand-COVID-19-Publication.zip"), 
                               "NHS Boards.csv")) %>% 
                    janitor::clean_names() %>% 
-                   rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode))
+                   rename(area=treatment_nhs_board_9_digit_code_as_at_date_of_episode) %>% 
+                   select(-hscp_of_residence_code_as_at_arrival_date, -hscp_of_residence_name_as_at_arrival_date))
 
 # Format data
 ae_data %<>% 

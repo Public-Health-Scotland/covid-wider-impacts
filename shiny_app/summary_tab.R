@@ -1,4 +1,4 @@
-###############################################.
+###############################################..
 #  # Reactive controls  ----
 ###############################################.
 
@@ -413,7 +413,7 @@ output$data_explorer <- renderUI({
   
   #update date for outpatients and the rest is different
   upd_date_summ <- case_when(input$measure_select == "outpats" ~ "16 June 2021",
-                             TRUE ~ "7 July 2021")
+                             TRUE ~ "4 August 2021")
   
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {

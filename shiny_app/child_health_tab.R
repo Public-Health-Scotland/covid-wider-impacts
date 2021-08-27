@@ -1,4 +1,4 @@
-##Server script for child health tab
+##Server script for child health tab.
 
 
 # Pop-up modal explaining source of data
@@ -169,6 +169,8 @@ output$child_health_explorer <- renderUI({
  output$child_comments <- renderUI({
      tagList(
        bsButton("jump_to_childreview",label = "Go to data"),
+       h2("Child Health reviews - 4th August 2021"),
+       p("Information on uptake of pre-school child health reviews was updated in this tool on 4 August, and includes information on children becoming eligible for review up to May 2021. Background information on interpreting the data is provided in the commentary for 8 and 15 July 2020 below."),
        h2("Child Health reviews - 7th July 2021"),
        h4("What is reported?"),
        p("Information on uptake of pre-school child health reviews was updated in this tool on 7 July. Information is provided on children becoming eligible for a review during the Covid-19 pandemic (in March 2020 to April 2021) as well as before the pandemic (2019, January 2020, and February 2020). The month and year time periods for which data is shown in the chart and table is now selectable using “Step 3. Select time periods of interest.” The data downloads include more detailed information, including by Health and Social Care Partnership, and weekly cohorts (note that due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland and NHS Western Isles are presented for monthly and yearly cohorts only)."),
