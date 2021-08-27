@@ -1,5 +1,7 @@
 #UI.
+
 # secure_app( #uncomment if needing password protection
+
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
