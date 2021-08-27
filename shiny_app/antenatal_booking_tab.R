@@ -1,4 +1,6 @@
-##Server script for antenatal booking tab
+
+##Server script for antenatal booking tab.
+
 
 
 # Pop-up modal explaining source of data
@@ -10,7 +12,6 @@ observeEvent(input$btn_booking_modal,
                p("The charts presented on this page show the number of women booking for antenatal care in each week from the week beginning 1 April 2019 onwards.  Data is shown at all Scotland level and for each mainland NHS Board of residence.  Due to small numbers, weekly data is not shown for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles), however the Island Boards are included in the Scotland total.  In addition to the weekly data, the ‘Download data’ button provides monthly data (based on exact month of booking rather than summation of sequential weeks) for each NHS Board of residence, including the Island Boards."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
 # Modal to explain run charts rules
 observeEvent(input$btn_booking_rules,
              showModal(modalDialog(
@@ -417,6 +418,8 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Antenatal bookings - 1st September 2021"),
+    p("The average gestation is noted to be higher than usual in the latest week presented for NHS Borders. This is likely to be the effect of small numbers of bookings in NHS Borders. A few later bookings can dramatically alter the average gestation at booking for a particular week (e.g. 26 July). Some of these may be in pregnancies that were originally booked elsewhere. There is no evidence of a sustained pattern of increased average gestation in NHS Borders although we will continue to monitor these data. "),
     h2("Antenatal bookings - 7th July 2021"),
     p("In this release of information on antenatal booking data (7th July 2021) data have been updated to include women booking for antenatal care up to the week beginning 7th June 2021. 
        A new centreline line for average gestation has been included for NHS Forth Valley because a technical change to the way their data are recorded is thought to have resulted in data which more accurately represent the timing of when women book for antenatal care in NHS Forth Valley. The new centreline starts from the week beginning 1st March 2021 and will be calculated over the period 1st March - 12th July 2021 after which a projected centreline will be presented on the average gestation chart for NHS Forth Valley."),
