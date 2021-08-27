@@ -98,10 +98,14 @@ function(input, output, session) {
   ###############################################.
   # Cancer tab
   source(file.path("cancer_tab.R"),  local = TRUE)$value
-  
+
   ###############################################.
   # SACT tab
   source(file.path("sact_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
+  # Drugs tab
+  source(file.path("drugs_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Data tab
@@ -130,6 +134,7 @@ function(input, output, session) {
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
   observeEvent(input$jump_to_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "mentalhealth")})
   observeEvent(input$jump_to_cancer, {updateTabsetPanel(session, "intabset", selected = "cancer")})
+  observeEvent(input$jump_to_drugs, {updateTabsetPanel(session, "intabset", selected = "drugs")})
   
   ###############################################.
   ## jump to commentary tab from data tabs ----
@@ -189,23 +194,26 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_oohissue, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_oohissue_sum, {updateTabsetPanel(session, "intabset", selected = "comment")})
   
-  ###############################################.
-  ## Opening collapse panels in commentary ----
-  ###############################################.
-  
-  # ObserveEvents to open collapsepanels in commentary tab when sidepanel option clicked
-  observeEvent(input$summary_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Summary trends")}))
-  
-  observeEvent(input$immunisation_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Immunisation")}))
-  
-  observeEvent(input$ch_review_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Child health reviews")}))
-  
-  observeEvent(input$cardio_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Cardiovascular")}))
-  
+  observeEvent(input$jump_commentary_drugs, {updateTabsetPanel(session, "intabset", selected = "comment")
+    updateCollapse(session, "collapse_commentary", open = "Substance use")})
+
+###############################################.
+## Opening collapse panels in commentary ----
+###############################################.
+
+# ObserveEvents to open collapsepanels in commentary tab when sidepanel option clicked
+observeEvent(input$summary_button, ({
+  updateCollapse(session, "collapse_commentary", open = "Summary trends")}))
+
+   observeEvent(input$immunisation_button, ({
+     updateCollapse(session, "collapse_commentary", open = "Immunisation")}))
+
+   observeEvent(input$ch_review_button, ({
+     updateCollapse(session, "collapse_commentary", open = "Child health reviews")}))
+
+   observeEvent(input$cardio_button, ({
+     updateCollapse(session, "collapse_commentary", open = "Cardiovascular")}))
+
   observeEvent(input$perinatal_button, ({
     updateCollapse(session, "collapse_commentary", open = "Stillbirths and infant deaths")}))
   
@@ -243,8 +251,12 @@ function(input, output, session) {
     updateCollapse(session, "collapse_commentary", open = "Perineal tears")}))  
   
   observeEvent(input$cancer_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Cancer")}))
+
+  updateCollapse(session, "collapse_commentary", open = "Cancer")}))
   
+  observeEvent(input$drug_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Substance Use")}))
+
   
 } # server end
 

@@ -215,6 +215,13 @@ tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
 tears_download <- readRDS("data/tears_download_data.rds")
 
+
+#Drugs data 
+ADP_names<-readRDS('data/ADP_names.rds')
+Health_board<-readRDS('data/Health_board.rds')
+DTR_July_update<-readRDS('data/DTR_July_update.rds')
+THN_by_HB<-readRDS('data/THN_by_HB.rds')
+
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
@@ -365,6 +372,8 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
                "APR 2021" = "#a64208", "MAY 2021" = "#e3b419") 
+
+pal_drug <- c('#e66101','#fdb863','#b2abd2','#5e3c99')
 
 pal_sact <- c('#3F3685', 
               '#9F9BC2', 
