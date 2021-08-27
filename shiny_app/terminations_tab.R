@@ -7,9 +7,9 @@ observeEvent(input$btn_top_modal,
                p("These data are derived from the Notifications of Abortion to the Chief Medical Officer for Scotland (CMO) under the Abortion (Scotland) Regulations 1991."),
                p("Public Health Scotland (PHS) is responsible for the collation of data derived from notifications of terminations of pregnancy on behalf of the Chief Medical Officer (CMO) in Scotland. A termination of pregnancy (also referred to as a therapeutic or induced abortion) is carried out under the terms of the Abortion Act 1967, which applies to England, Wales and Scotland. Two doctors must agree that a termination of pregnancy is necessary under at least one of the grounds as specified in the 1991 Regulations. There is a legal requirement to notify the CMO in Scotland of all terminations carried out in Scotland within seven days of the termination of pregnancy."),
                p("Further information is available from the PHS ",
-                 tags$a(href="https://beta.isdscotland.org/media/5320/2020-08-25-terminations-2019-report.pdf", "annual report on termination of pregnancy up to December 2019.",class="externallink"),
+                 tags$a(href="https://www.publichealthscotland.scot/media/7976/2021-05-25-terminations-2020-report.pdf", "annual report on termination of pregnancy up to December 2020.",class="externallink"),
                  "The ",
-                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/sexual-health/termination-of-pregnancy-statistics/", "data tables and charts",class="externallink"),
+                 tags$a(href="https://publichealthscotland.scot/publications/termination-of-pregnancy-statistics/termination-of-pregnancy-statistics-year-ending-december-2020/", "data tables and charts",class="externallink"),
                  "are also available."),
                p("The number of terminations of pregnancy is shown for each month from January 2018 onwards.  Data is shown at all Scotland level and for each mainland NHS Board of residence.  Due to small numbers, data is not shown for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles, however the Island Boards are included in the Scotland total."),
                size = "m",
@@ -197,7 +197,7 @@ plot_top_trend <- function(measure, shift, trend){
   } else if (measure  == "av_gest") {
     #yaxis_measure <- plot_data$av_gest
     yaxis_plots[["title"]] <- "Average gestation at termination"
-    yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10 weeks
+    yaxis_plots[["range"]] <- c(0, 11.5)  # forcing range from 0 to 10 weeks
     tooltip_top <- c(paste0("Month: ",format(plot_data$month,"%B %Y"),"<br>",
                             "Average gestation at termination: ",format(plot_data$av_gest,digits = 1,nsmall=1)," weeks"))                           
         dotted_line <-  plot_data$dottedline_g
