@@ -166,9 +166,13 @@ long.axis<-long.axis %>%
 long.axis<-long.axis[which(long.axis$Type != 'Co-dependency'),] #removing co-dependency
 long.axis<-long.axis[-nrow(long.axis),]
 saveRDS(long.axis,file='DTR_July_update.rds')
+
+saveRDS(long.axis, "shiny_app/data/DTR_July_update.rds")
+saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_July_update_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+
 ###making a file for names of health boards and names of ADPs###
-
-
 
 Health_board<-Hb[grep('NHS',Hb)]
 ADP_names<-Hb[grep('ADP',Hb)]
@@ -178,10 +182,13 @@ saveRDS(Health_board,file='Health_board.rds')
 saveRDS(ADP_names,file='ADP_names.rds')
 
 #SAVING FOR WIDER IMPACTS TEAM
-saveRDS(Health_board, "shiny_app/data/Health_board.rds")
 saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
+saveRDS(ADP_names, paste0(data_folder,"final_app_files/ADP_names_", 
+                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
-
+saveRDS(ADP_names, "shiny_app/data/Health_board.rds")
+saveRDS(ADP_names, paste0(data_folder,"final_app_files/Health_board_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 #### take home naloxone####
 
@@ -222,11 +229,7 @@ THN_by_Hb$Date<-month.abb[THN_by_Hb$Date]
 
 THN_by_Hb$Change[which(is.infinite(THN_by_Hb$Change))]<-NA
 
-#SAVING FOR SUBSTANCE USE TEAM
 saveRDS(THN_by_Hb,'THN_by_HB.rds')
-
-# SAVING FOR WIDER IMPACTS TEAM
-saveRDS(THN_by_Hb, "shiny_app/data/THN_by_Hb.rds")
 
 #####adding proportion of type of THN### 
 
@@ -258,5 +261,7 @@ new_THN$`Proportion 20/21`<-as.numeric(format(round(new_THN$`Proportion 20/21` ,
 saveRDS(new_THN,'THN_by_HB.rds')
 
 # SAVING FOR WIDER IMPACTS TEAM
-saveRDS(new_THN, "shiny_app/data/THN_by_Hb.rds")
+saveRDS(new_THN, "shiny_app/data/THN_by_HB.rds")
+saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
