@@ -169,6 +169,9 @@ output$child_health_explorer <- renderUI({
  output$child_comments <- renderUI({
      tagList(
        bsButton("jump_to_childreview",label = "Go to data"),
+       h2("Child Health reviews - 1st September 2021"),
+       p("Information on uptake of pre-school child health reviews was updated in this tool on 1 September, and includes information on children becoming eligible for review up to June 2021. Background information on interpreting the data is provided in the commentary for 8 and 15 July 2020 below."),
+       p("Please note that going forward the dashboard will continue to be updated on the first Wednesday of each month, but the commentary will only be updated in the case of exceptions."),
        h2("Child Health reviews - 4th August 2021"),
        p("Information on uptake of pre-school child health reviews was updated in this tool on 4 August, and includes information on children becoming eligible for review up to May 2021. Background information on interpreting the data is provided in the commentary for 8 and 15 July 2020 below."),
        h2("Child Health reviews - 7th July 2021"),

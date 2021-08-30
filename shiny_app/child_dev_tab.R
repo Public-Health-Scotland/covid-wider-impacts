@@ -233,6 +233,9 @@ output$download_childdev_data <- downloadHandler(
 output$childdev_commentary <- renderUI({
   tagList(
     bsButton("jump_to_childdev",label = "Go to data"), #this button can only be used once
+    h2("Child development - 1st September 2021"),
+    p("Information on child development has been updated on 1 September 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Data is shown by month of review from January 2019 to June 2021. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
+    p("Please note that going forward the dashboard will continue to be updated on the first Wednesday of each month, but the commentary will only be updated in the case of exceptions."),
     h2("Child development - 4th August 2021"),
     p("Information on child development has been updated on 4 August 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Data is shown by month of review from January 2019 to May 2021. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
     h2("Child development - 7th July 2021"),
