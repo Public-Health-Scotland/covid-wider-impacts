@@ -25,7 +25,7 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("25 August 2021 - Systemic anti-cancer therapies data update"),
+                   tags$li("1 September 2021 - Systemic anti-cancer therapies data update"),
                    tags$li("4 August 2021 - Monthly update of data (most sections)."),
                    tags$li("30 July 2021 - Cancer pathology data update."),
                    tags$li("7 July- Monthly update of data (most sections)."),
@@ -36,7 +36,7 @@ function(input, output, session) {
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("1 September 2021 - Systemic anti-cancer therapies data update"),
+                   tags$li("8 September 2021 - Systemic anti-cancer therapies data update"),
                    tags$li("1 September 2021 - Monthly update of data (most sections)."),
                    tags$li("1 September 2021 - New data on substance misuse."),
                    tags$li("October 2021 - New data on injury hospital admissions."),
