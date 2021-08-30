@@ -186,8 +186,8 @@ saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
 saveRDS(ADP_names, paste0(data_folder,"final_app_files/ADP_names_", 
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
-saveRDS(ADP_names, "shiny_app/data/Health_board.rds")
-saveRDS(ADP_names, paste0(data_folder,"final_app_files/Health_board_", 
+saveRDS(Health_board, "shiny_app/data/Health_board.rds")
+saveRDS(Health_board, paste0(data_folder,"final_app_files/Health_board_", 
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 #### take home naloxone####
