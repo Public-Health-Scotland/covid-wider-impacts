@@ -78,11 +78,11 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
   
   # Text to be updated every month with updated dates
-  last_month_peri <- "June 2021"
-  cutdate_peri <- "18 July 2021"
-  extractdate_peri <- "21 July 2021"
-  nextup_peri <- "September 2021"
-  nextdata_peri <- "July 2021"
+  last_month_peri <- "July 2021"
+  cutdate_peri <- "15 August 2021"
+  extractdate_peri <- "18 August 2021"
+  nextup_peri <- "October 2021"
+  nextdata_peri <- "August 2021"
   
   # Number of deaths and of births used in the text
   no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
@@ -133,7 +133,10 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
   }
 
   nrs_commentary <- p("It is important to note that chart data is based on month of occurence rather than month of registration used in NRS publications, and so
-                      figures may differ slightly.")
+                      figures may differ slightly.
+                      In August 2021, NRS published data on stillbirths and infant deaths registered in 2020. The data tables can be found in", 
+                      tags$a(href= 'https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables/2020/list-of-data-tables#section4', 
+                      "Section 4: Stillbirths and infant deaths", target="_blank"), "on the NRS website.")
   
   control_chart_commentary <- p("As stillbirths and infant deaths are relatively rare events in Scotland mortality rates tend to fluctuate over time just by chance.
                       We have therefore used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf', 
@@ -151,7 +154,9 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                            "It is therefore possible that some stillbirths occurring in the last week of ", last_month_peri, " may not have been registered by the time the data extract was taken. The stillbirth and extended perinatal mortality rates for ", last_month_peri, " should 
                            therefore be taken as provisional, and they may increase when the data is refreshed (and new rates for ", nextdata_peri, " are added) in ", nextup_peri, ".", br(),  
                            "We would expect any increases to be small, as in previous years 95% of stillbirths have been registered within 14 days of the baby being delivered, despite the legal limit allowing up to 21 days.", br(),  
-                           "This issue affects infant deaths (neonatal, post-neonatal, and infant death categories) less as the legal time limit for registration is 8 days.")        
+                           "This issue affects infant deaths (neonatal, post-neonatal, and infant death categories) less as the legal time limit for registration is 8 days.")
+  
+  
   # Specify items to display in perinatal ui 
   tagList(
     fluidRow(column(12, 
@@ -266,14 +271,14 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
-    h2("Stillbirths and infant deaths – 2 June 2021"),
+    h2("Stillbirths and infant deaths - 2nd June 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in April 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in April 2021 was 2.4 per 1,000 total births (baseline, pre-pandemic average 3.8 per 1,000 total births), the neonatal death rate was 2.7 per 1,000 live births (average 2.2 per 1,000 live births), and the infant mortality rate was 3.5 per 1,000 live births (average 3.3 per 1,000 live births). "),
-    h2("Stillbirths and infant deaths – 5 May 2021"),
+    h2("Stillbirths and infant deaths - 5th May 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in March 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in March 2021 was 4.5 per 1,000 total births (average 3.8 per 1,000 total births), and the infant mortality rate was 3.3 per 1,000 live births (average 3.3 per 1,000 live births). "),
     p("All the stillbirth and infant death data have been revised in this latest release. Originally we reported these events from January 2017, and this has now been changed to July 2017. Also, a fixed centreline (average) has been recalculated for every chart using the data for the months July 2017 to December 2019.  The dotted centreline continues that average through the more recent time period to allow determination of whether the values seen in these months are unexpectedly low or high. The use of a fixed centreline increases sensitivity of detection of signals in more recent data, since recent observations within the pandemic period do not contribute to this reference centreline."),
     h2("Stillbirths and infant deaths - 7th April 2020"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in February 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in February 2021 was 4.3 per 1,000 total births, and infant mortality rate was 3.2 per 1,000 live births."),
-    p("Further background information is available within the commentary for July 2020. "),
+    p("Further background information is available within the commentary for July 2020."),
     h2("Stillbirths and infant deaths - 3rd March 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in January 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in January 2021 was 4.9 per 1,000 total births, and infant mortality rate was 3.6 per 1,000 live births. "),
     p("Last month we reported an issue involving a small number of infant deaths which were not included in the data files sent from NRS to PHS (affecting less than 3% of infant deaths). We now believe that this discrepancy has been resolved and any data affected have been retrospectively updated on the dashboard. "),
