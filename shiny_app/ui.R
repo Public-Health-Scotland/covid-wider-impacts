@@ -208,35 +208,52 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 
                         # CANCER PATHOLOGY
 
-                        tabPanel(title = "Cancer Pathology", icon = icon("microscope"), value = "cancer",
+                        tabPanel(title = "Cancer pathology", icon = icon("microscope"), value = "cancer",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer2")),
                                  wellPanel(
-                                   column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
+                                   column(4, selectInput("geotype_cancer", label = "Select a geography level and then an area of interest.",
                                                          choices= c("Scotland", "Cancer Networks", "Health Boards"),
                                                          selected = "Scotland"),
                                           uiOutput("geoname_ui_cancer")),
-
-                                   column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
-                                                          selected = "All Malignant Neoplasms (Excl. C44)"),
-                                          div(radioButtons("gender", "Step 3. Select sex",
-                                                           list("All","Male","Female"), inline = TRUE,
-                                                           selected = "All"))),
-                                   # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
-
-                                   column(4,actionButton("btn_cancer_modal", "Data source and definitions", icon = icon('question-circle')),
+                                   column(4,  selectInput("cancer_type", label = "Select all or specific cancer type", choices = cancer_type_list,
+                                                          selected = "All Malignant Neoplasms (Excl. C44)")),
+                                   column(4,
+                                          fluidRow(br()),
+                                          actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
                                           fluidRow(br()),
                                           downloadButton('download_cancer_data', 'Download data'),
                                           fluidRow(br()),
-                                          actionButton('jump_commentary_cancer','Go to commentary'),
-                                          fluidRow(br()))
-                                   # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"),
-                                   #                  inline = TRUE, selected = "Cumulative")))
+                                          actionButton('jump_commentary_cancer','Go to commentary'))
                                  ), #well panel
-                                 mainPanel(width = 12,
+                                 wellPanel(
+                                   column(4,
+                                          div(radioButtons("baseline", "Select Baseline for comparison",
+                                                           list("2019", "Mean 2017-2019"), inline = TRUE,
+                                                           selected = "2019"))),
+                                   column(8,
+                                          div(radioButtons("gender", "Select sex",
+                                                           list("All","Male","Female"), inline = TRUE,
+                                                           selected = "All")))
+                                   
+                                 ) ,# wellPanel bracket
+                                 
+                                 wellPanel(width = 12,
                                            uiOutput("cancer_explorer")
-                                 )# mainPanel bracket
-                        ), # tabpanel bracket
+                                 ) ,# wellPanel bracket
+                                 
+                                 wellPanel(
+                                   column(6,
+                                          div(radioButtons("cum_baseline", "Select standard/cumulative baseline",
+                                                           list("Standard", "Cumulative"), inline = TRUE,
+                                                           selected = "Standard"))),
+                                   column(6,
+                                          div(radioButtons("breakdown", "Select Breakdown Type",
+                                                           list("None","Age Group","Deprivation"), inline = TRUE,
+                                                           selected = "None")))),
+                                 wellPanel(width = 12,
+                                           uiOutput("cancer_explorer3"))
+                        ) , # tabpanel bracket
 
                         ###############################################.
                         ## SACT ----
