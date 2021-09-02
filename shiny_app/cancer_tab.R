@@ -618,7 +618,6 @@ output$cancer_commentary <- renderUI({
     
     p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "(Data Source)"))
     
-    ) 
+      ) 
   
 })
-

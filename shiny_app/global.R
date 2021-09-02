@@ -391,11 +391,11 @@ pal_sact <- c('#3F3685',
 #                      '#E6E6FA',
 #                      '#9400D3')
 
-pal_cancer_diff <- c('#00008B',
-                     '#D3D3D3',
-                     '#DCDCDC',
-                     '#C0C0C0',
-                     '#9400D3')
+pal_cancer_diff <- c("1" = '#000080',
+                     "2" = '#DCDCDC',
+                     "3" = '#D3D3D3',
+                     "4" = '#C0C0C0',
+                     "5" = '#0000FF')
 
 
 # more distinctive colour palette (save for later)
