@@ -46,7 +46,7 @@ save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
 save_final_file("ooh", "30_Aug_21")
 ## A&E ----
-save_final_file("ae", "30_Aug_21")
+save_final_file("ae", "03_Sep_21")
 ## NHS24 ----
 save_final_file("nhs24", "30_Aug_21")
 ## SAS ----
@@ -59,7 +59,7 @@ save_final_file("area_type_op", "24_Mar_21")
 ## Cardio - cath labs ----
 save_final_file("cath_lab", "16_Nov_20")
 ## Cardio - A&E ----
-save_final_file("ae_cardio", "27_Aug_21")
+save_final_file("ae_cardio", "03_Sep_21")
 save_final_file("ae_cardio_codes", "30_Nov_20")
 ## Cardio - OOH ----
 save_final_file("ooh_cardiac", "30_Aug_21")
