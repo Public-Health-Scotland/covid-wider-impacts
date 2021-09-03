@@ -1029,6 +1029,10 @@ rm(base_cancer_counts_all_quarters,
    base_cancer_slim_quarters)
 
 
+saveRDS(diff_data_base_quarters, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_diff_", 
+                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+
 saveRDS(diff_data_base_quarters, "shiny_app/data/cancer_data_diff.rds")
 
 # END
