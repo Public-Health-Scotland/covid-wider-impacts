@@ -484,6 +484,8 @@ output$data_explorer <- renderUI({
     )
   } else if (input$measure_select == "aye") { 
     tagList(#A&E Attendances
+    tags$em("Please note that a data recording issue has been identified and was rectified on 3/9/21 for the gender, age 
+            and SIMD data for the week ending 20 September 2020, mainly affecting Perth and Kinross HSCP and NHS Tayside."),
     cut_charts(title= "Weekly attendances to A&E departments", 
                source = "PHS AE2 Datamart", data_name = "aye"))
     
