@@ -836,8 +836,9 @@ rm(base_cancer_mean, base_cancer_slim)
 # incidence
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# ADD % WEEKLY VARIATION BETWEEN 2019 AND 2020/21, AND BETWEEN
-# MEAN(2017-19) AND 2020/21
+# Add % weekly variation between 2020/2019 and 2020/mean(2017-19)
+# (BELOW VARIABLES USED FOR WEEKLY DIFFERENCE GRAPH ONLY - NOT
+# ON DASHBOARD FROM SEP 21 UPDATE BUT MAY BRING BACK AS OPTION) 
 
 diff_data_base <- base_cancer_cum %>%
   mutate(difference20 = case_when(count19 > 0 ~ 100*(count20 - count19)/count19,
