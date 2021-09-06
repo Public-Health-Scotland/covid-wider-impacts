@@ -49,6 +49,7 @@ intro_box <- function(title_box, button_name, description) {
       )
 }
 
+
 ###############################################.
 ## Data ----
 ###############################################.
@@ -85,7 +86,7 @@ ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
 ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
 ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
 ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
-injuries_extract_date <- "22nd May 2021"
+injuries_extract_date <- "01 September 2021"
 
 
 # mental health data
@@ -282,7 +283,10 @@ injury_split_list <- c("Age group" =	"age",
                        "Deprivation" =	"dep",
                        "Injury location" =	"injurylocation",
                        "Sex" =	"sex")
-
+injury_colour_list <- c("Age group" =	1,
+                       "Deprivation" =	2,
+                       "Injury location" =	3,
+                       "Sex" =	4)
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",
@@ -357,8 +361,12 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
-               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050") 
-# more distinctive colour palette (save for later)
+               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050")
+pal_inj <- list(pal_age,pal_depr,pal_sex)
+
+
+
+# more distinctive colour ppalalette (save for later)
               # c("2019" = "#000000", "2020" = "#41b6c4", 
               #   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
               #   "DEC 2020" = "#1d91c0", "JAN 2021" = "#253494", "FEB 2021" = "#990099")

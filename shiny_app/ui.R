@@ -1,7 +1,7 @@
 #UI
  #secure_app( #uncomment if needing password protection
-tagList( #needed for shinyjs
-  useShinyjs(),  # Include shinyjs
+#tagList( #needed for shinyjs
+#  useShinyjs(),  # Include shinyjs
   navbarPage(id = "intabset", # id used for jumping between tabs
   title = div(tags$a(img(src="phs-logo.png", width=120, alt = "Public Health Scotland logo"), 
                      href= "https://www.publichealthscotland.scot/",
@@ -232,8 +232,8 @@ tabPanel(title = "Injuries", icon = icon("user-injured"), value = "injuries",
                   uiOutput("geoname_injuries_ui")),
            
            column(4,  selectInput("type_select", label = "Step 3. Select type of split",
-                              choices = injury_split_list, selected="age group")),     
-               
+                              choices = injury_split_list, selected="Age group")),     
+                     
            # div(radioButtons("type", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "age"))),
            
            column(4,                downloadButton('download_injuries_data', 'Download data'),
@@ -585,6 +585,6 @@ navbarMenu("Child health", icon = icon("child"),
                     DT::dataTableOutput("table_filtered"))
       ) # tabpanel bracket
    ) # page bracket
- )# taglist bracket
+# )# taglist bracket
  #)#secure app
 #END

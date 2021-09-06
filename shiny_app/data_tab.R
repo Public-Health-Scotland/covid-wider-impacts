@@ -29,6 +29,7 @@ data_table <- reactive({
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
          "cancer" = cancer_data2,
+         "injuries" = ui_smr01_all,
          "childdev" = child_dev,
          "breastfeeding" = breastfeeding,
         "perinatal" = perinatal,

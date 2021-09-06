@@ -99,10 +99,14 @@ function(input, output, session) {
   ###############################################.
   # Mental health tab
   source(file.path("mental_health_tab.R"),  local = TRUE)$value
-
-  ###############################################.
+  
+   ###############################################.
   # Cancer tab
   source(file.path("cancer_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
+  # Unintentional Injuries tab
+  source(file.path("injuries_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Data tab
@@ -129,7 +133,9 @@ function(input, output, session) {
   observeEvent(input$jump_to_childdev, {updateTabsetPanel(session, "intabset", selected = "child_dev")})
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
   observeEvent(input$jump_to_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "mentalhealth")})
+  
   observeEvent(input$jump_to_cancer, {updateTabsetPanel(session, "intabset", selected = "cancer")})
+  observeEvent(input$jump_to_injuries, {updateTabsetPanel(session, "intabset", selected = "injuries")})
 
   ###############################################.
   ## jump to commentary tab from data tabs ----
@@ -182,8 +188,11 @@ function(input, output, session) {
 
    observeEvent(input$jump_commentary_cancer, {updateTabsetPanel(session, "intabset", selected = "comment")
      updateCollapse(session, "collapse_commentary", open = "Cancer")})
-
-  observeEvent(input$jump_commentary_oohissue, {updateTabsetPanel(session, "intabset", selected = "comment")})
+  
+    observeEvent(input$jump_commentary_injuries, {updateTabsetPanel(session, "intabset", selected = "comment")
+     updateCollapse(session, "collapse_commentary", open = "Injuries")})
+ 
+     observeEvent(input$jump_commentary_oohissue, {updateTabsetPanel(session, "intabset", selected = "comment")})
   observeEvent(input$jump_commentary_oohissue_sum, {updateTabsetPanel(session, "intabset", selected = "comment")})
 
 ###############################################.
@@ -238,7 +247,10 @@ observeEvent(input$summary_button, ({
 
   observeEvent(input$cancer_button, ({
   updateCollapse(session, "collapse_commentary", open = "Cancer")}))
-
+ 
+   observeEvent(input$injuries_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Injuries")}))
+  
   
 } # server end
 
