@@ -64,17 +64,17 @@ output$geoname_injuries_ui <- renderUI({
 # Injury time trend charts
 
                     
- output$ui_smr01_all_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_all  %>% filter(area_name == input$geoname_injuries & category=="all"),  var1_chosen = "count", var2_chosen = "count_average", 
+ output$ui_smr01_all_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_all  %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
                                                                     data_name = "ui_smr01_all" )})
- output$ui_smr01_rta_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_rta %>% filter(area_name == input$geoname_injuries & category=="all"),  var1_chosen = "count", var2_chosen = "count_average", 
+ output$ui_smr01_rta_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_rta %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
                                                                      data_name = "ui_smr01_rta")})
- output$ui_smr01_poison_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_poison %>% filter(area_name == input$geoname_injuries & category=="all"),  var1_chosen = "count", var2_chosen = "count_average", 
+ output$ui_smr01_poison_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_poison %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
                                                                      data_name = "ui_smr01_poison")})
- output$ui_smr01_falls_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_falls %>% filter(area_name == input$geoname_injuries & category=="all"),  var1_chosen = "count", var2_chosen = "count_average", 
+ output$ui_smr01_falls_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_falls %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
                                                                      data_name = "ui_smr01_falls")})
- output$ui_smr01_other_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_other %>% filter(area_name == input$geoname_injuries & category=="all"),  var1_chosen = "count", var2_chosen = "count_average", 
+ output$ui_smr01_other_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_other %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
                                                                    data_name = "ui_smr01_other")})
- output$ui_smr01_assaults_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_assaults %>% filter(area_name == input$geoname_injuries & category=="all"),  var1_chosen = "count", var2_chosen = "count_average", 
+ output$ui_smr01_assaults_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_assaults %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
   
                                                                                                                             data_name = "ui_smr01_assaults")})
  output$ui_smr01_all_sex <- renderPlotly({
@@ -165,18 +165,43 @@ output$injuries_explorer <- renderUI({
 overall_injuries_download <- reactive({
   
   # Branching this so that depending on input the right variables and names can be used
-  # Cath branch
-  if (input$measure_injuries_select == "ui_smr01_all") {
-    selection <- c("week_ending", "count", "count_average", "variation")
-    new_var_name <- "count"
+  if (input$measure_injury_select == "ui_smr01_all") {
+    selection <- c("week_ending", "count","area_name", "count_average", "variation","category")
+    new_var_name <- "average_2018_2019"
+  }
+  if (input$measure_injury_select == "ui_smr01_rta") {
+    selection <- c("week_ending", "count","area_name", "count_average", "variation","category")
+    new_var_name <- "average_2018_2019"
+  }
+  if (input$measure_injury_select == "ui_smr01_poison") {
+    selection <- c("week_ending", "count","area_name", "count_average", "variation","category")
+    new_var_name <- "average_2018_2019"
+  }
+  if (input$measure_injury_select == "ui_smr01_falls") {
+    selection <- c("week_ending", "count","area_name", "count_average", "variation","category")
+    new_var_name <- "average_2018_2019"
+  }
+  if (input$measure_injury_select == "ui_smr01_other") {
+    selection <- c("week_ending", "count","area_name", "count_average", "variation","category")
+    new_var_name <- "average_2018_2019"
+  }
+  if (input$measure_injury_select == "ui_smr01_assaults") {
+    selection <- c("week_ending", "count","area_name", "count_average", "variation","category")
+    new_var_name <- "average_2018_2019"
   }
   # Prep data for download
   switch(
-    input$measure_injuries_select,
-    "ui_smr01_all" = filter_data(injuries_overall(), area = F)) %>% 
+    input$measure_injury_select,
+    "ui_smr01_all" = filter_data(ui_smr01_all, area = F),
+    "ui_smr01_rta" = filter_data(ui_smr01_rta, area = F),
+    "ui_smr01_poison" = filter_data(ui_smr01_poison, area = F),
+    "ui_smr01_falls" = filter_data(ui_smr01_falls, area = F),
+    "ui_smr01_other" = filter_data(ui_smr01_other, area = F),
+    "ui_smr01_assaults" = filter_data(ui_smr01_assaults, area = F)) %>% 
     select_at(selection) %>% 
-    rename(!!new_var_name := count_average) %>% 
-    mutate(week_ending = format(week_ending, "%d %b %y"))
+    rename(!!new_var_name := count_average) %>%
+    rename(month=week_ending) %>%
+    mutate(month = format(month, "%b %y"))
 })
 
 output$download_injuries_data <- downloadHandler(
