@@ -236,7 +236,7 @@ tabPanel(title = "Injuries", icon = icon("user-injured"), value = "injuries",
                      
            # div(radioButtons("type", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "age"))),
            
-           column(4,                downloadButton('download_injuries_data', 'Download data'),
+           column(4,downloadButton("download_injuries_data", "Download data"),
                   fluidRow(br()),
                   actionButton('jump_commentary_injuries','Go to commentary'),
                   fluidRow(br()))
