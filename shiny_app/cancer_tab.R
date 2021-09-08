@@ -165,12 +165,12 @@ output$cancer_explorer <- renderUI({
     plot_box(paste0("Total count of individuals having a cancer of type:  ", input$cancer_type, #cancer_site,
                     " confirmed on a pathological specimen since January for 2019/2020/2021"), 
              "cancer_overall"),
-    p("Data extract date: 20th May 2021"),
+    p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt")),
     br(),
     plot_box(paste0("Weekly count of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
                     " confirmed on a pathological specimen since January for 2019/2020/2021"), 
              "cancer_incidence"),
-    p("Data extract date: 20th May 2021")
+    p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt"))
     # br(),
     #   if(input$breakdown == "Age Group") {
     #   plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
@@ -225,7 +225,7 @@ output$cancer_explorer3 <- renderUI({
                "cancer_split")
     },
     
-    p(em("Data extract date: 20th May 2021", style = "font-family: 'calibri'; font-si15pt")),
+    p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt")),
     br(),
     p(em("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
          than for other cancer sites. Such cancers are relatively common and usually non-fatal. There is a propensity 
@@ -460,7 +460,7 @@ output$cancer_commentary <- renderUI({
     
     
     h4(strong("Overall trends in pathologically confirmed cancers")),
-    p("In 2020, numbers were similar to 2019 until towards the end of March. After the first national âlockdownâ, 
+    p("In 2020, numbers were similar to 2019 until towards the end of March. After the first national lockdown, 
       the numbers fell by about 40% of those seen in comparable weeks in 2019. Numbers then rose from late April 2020. 
       Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
       pandemic by 26th February 2021, when the latest data were available, although this varied by cancer type."),
@@ -511,7 +511,7 @@ output$cancer_commentary <- renderUI({
       been expected."),
     
     p("After the initial fall by 40% of 2019 figures in late March, weekly numbers of pathological cancer diagnoses increased to around 10% lower than the previous 
-      yearâs numbers by 29th November 2020.  While the total (cumulative) difference in cancer diagnoses between 2020 and 2019 
+      year's numbers by 29th November 2020.  While the total (cumulative) difference in cancer diagnoses between 2020 and 2019 
       was therefore not increasing as much as at the beginning of the pandemic, the gap was continuing to widen rather than close. However,
       for some types of cancer by the autumn of 2020, weekly pathological cancer diagnoses were the same or higher than in 2019. "),
     
@@ -547,7 +547,7 @@ output$cancer_commentary <- renderUI({
       been expected."),
     
     p("After the initial fall by 40% of 2019 figures in late March, weekly numbers increased to just under 20% of the previous 
-      yearâs numbers by 30th August 2020.  While the total (cumulative) difference in cancer diagnoses between 2020 and 2019 
+      year's numbers by 30th August 2020.  While the total (cumulative) difference in cancer diagnoses between 2020 and 2019 
       was therefore not increasing as much as at the beginning of the pandemic, it was still increasing, and there continued 
       to be 20% fewer confirmed cases of cancer in 2020 than in 2019. "),
     
@@ -555,14 +555,14 @@ output$cancer_commentary <- renderUI({
     tags$ul(
       tags$li(" Lung cancers: weekly numbers were down a quarter of the previous yearâs (-25%) taking the cumulative difference 
               from the start of the year to 577 individuals."),
-      tags$li(" Breast cancer (female only): weekly numbers were down over a quarter of the previous yearâs (-27%) taking the 
+      tags$li(" Breast cancer (female only): weekly numbers were down over a quarter of the previous year's (-27%) taking the 
               cumulative difference from the start of the year to 1320 individuals."),
       tags$li("	Prostate caners (male only): weekly numbers were down nearly 40% of the previous yearâs (-39%) taking the 
               cumulative difference from the start of the year to 482 individuals."),
-      tags$li(" Colorectal cancer: weekly numbers were down over a quarter of the previous yearâs (-27%) taking the cumulative 
+      tags$li(" Colorectal cancer: weekly numbers were down over a quarter of the previous year's (-27%) taking the cumulative 
               difference from the start of the year to 950 individuals."),
       tags$li(" Non-melanoma skin cancer. from late March 2020, weekly numbers fell more steeply initially (to -80% of the 2019 figures) 
-              than other cancers but by the end of August, they were down by 18% of the previous yearâs.  The cumulative difference 
+              than other cancers but by the end of August, they were down by 18% of the previous year's.  The cumulative difference 
               from the start of the year was 4,312 individuals.")),
     br(),
     

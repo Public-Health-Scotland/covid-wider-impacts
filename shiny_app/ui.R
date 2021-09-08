@@ -249,7 +249,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                                            selected = "Standard"))),
                                    column(6,
                                           div(radioButtons("breakdown", "Select Breakdown Type",
-                                                           list("None","Age Group","Deprivation"), inline = TRUE,
+                                                           list("None","Age Group","Deprivation (1=most deprived; 5= least deprived)"), inline = TRUE,
                                                            selected = "None")))),
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer3"))

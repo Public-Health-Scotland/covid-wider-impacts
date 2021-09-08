@@ -79,7 +79,7 @@ cancer_data2 <- readRDS("data/cancer_data_2.rds")
 
 cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>% 
   mutate(dep = factor(dep)) %>% 
-  mutate(quarter = factor(quarter, levels = c("Q0", "Q1", "Q2", "Q3", "Q4"), ordered = TRUE))
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE))
 
 cancer_extract_date <- "19th August 2021"
 
@@ -120,7 +120,7 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "28th June 2021"
+child_extract_date <- "23rd August 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
@@ -221,6 +221,12 @@ tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
 tears_download <- readRDS("data/tears_download_data.rds")
 
+#Drugs data 
+ADP_names<-readRDS('data/ADP_names.rds')
+Health_board<-readRDS('data/Health_board.rds')
+DTR_July_update<-readRDS('data/DTR_July_update.rds')
+THN_by_HB<-readRDS('data/THN_by_HB.rds')
+
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
@@ -298,6 +304,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Bone and Connective Tissue" = "Bone and Connective Tissue",
                       "Brain Tumour" = "Brain Tumour",
                       "Breast" = "Breast",
+                      "Cervical" = "Cervical",
                       "Colorectal" = "Colorectal",
                       "Head and Neck" = "Head and Neck",
                       "Hodgkin Lymphoma" = "Hodgkin Lymphoma",

@@ -53,10 +53,10 @@ rm(cancer2017_18)
 # Allocate records to Quarter groupings
 cancer <- cancer %>% 
   mutate(quarter = qtr(incidence_date)) %>% 
-  mutate(quarter = case_when(str_detect(quarter, "January") ~ "Q1",
-                             str_detect(quarter, "April") ~ "Q2",
-                             str_detect(quarter, "July") ~ "Q3",
-                             str_detect(quarter, "October") ~ "Q4")) 
+  mutate(quarter = case_when(str_detect(quarter, "January") ~ "Jan-Mar 20",
+                             str_detect(quarter, "April") ~ "Apr-Jun 20",
+                             str_detect(quarter, "July") ~ "Jul-Sep 20",
+                             str_detect(quarter, "October") ~ "Oct-Dec 20")) 
 
 
 # import deprivation lookup
@@ -698,12 +698,12 @@ gc()
 #### SET Q4 IN EACH YEAR TO QUARTER 0 FOR DIFFERENCE GRAPH
 
 base_cancer_slim_q0 <- base_cancer_slim %>%
-  filter(quarter == "Q4") %>% 
+  filter(quarter == "Oct-Dec 20") %>% 
   mutate(year = case_when(year == 2017 ~ 2018,
                           year == 2018 ~ 2019,
                           year == 2019 ~ 2020,
                           year == 2020 ~ 2021)) %>% 
-  mutate(quarter = "Q0")
+  mutate(quarter = "Oct-Dec 19")
 
 base_cancer_slim_quarters <- bind_rows(base_cancer_slim, base_cancer_slim_q0) 
 
@@ -902,7 +902,7 @@ base_cancer_counts_quarters <- base_cancer_slim_quarters %>%
   rename(area = hbres, count17 = "2017",count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(age_group = "All Ages", dep = 0, breakdown = "None") %>% 
-  mutate(quarter = factor(quarter, levels = c("Q0", "Q1", "Q2", "Q3", "Q4"), ordered = TRUE)) %>%
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE)) %>%
   arrange(quarter)
 
 
@@ -922,7 +922,7 @@ base_cancer_counts_agegroups_quarters <- base_cancer_slim_quarters %>%
   rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(dep = 0, breakdown = "Age Group") %>% 
-  mutate(quarter = factor(quarter, levels = c("Q0", "Q1", "Q2", "Q3", "Q4"), ordered = TRUE)) %>%
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE)) %>%
   arrange(quarter) 
 
 
@@ -943,7 +943,7 @@ base_cancer_counts_dep_quarters <- base_cancer_slim_quarters %>%
   rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(age_group = "All Ages", breakdown = "Deprivation") %>% 
-  mutate(quarter = factor(quarter, levels = c("Q0", "Q1", "Q2", "Q3", "Q4"), ordered = TRUE)) %>%
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE)) %>%
   arrange(quarter)
 
 
@@ -957,7 +957,7 @@ rm(base_cancer_counts_quarters, base_cancer_counts_dep_quarters, base_cancer_cou
 # get mean of weekly counts from 2017-2019
 
 base_cancer_mean_quarters_ave <- base_cancer_counts_all_quarters %>%
-  filter(quarter != "Q0") %>% 
+  filter(quarter != "Oct-Dec 19") %>% 
   mutate(count_mean_17_19 =  round((count17 + count18 + count19)/3)) %>%
   group_by(area, site, sex, age_group, dep, breakdown) %>%
   mutate(cum_count19 = cumsum(count19),
