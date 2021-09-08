@@ -214,7 +214,7 @@ Tab3 <- Tab2 %>%
          area_type = recode(area_type, "hb" = "Health board", 
                             "hscp" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
-  mutate(all="all") %>%
+  mutate(all="All") %>%
   group_by(year,month_ending,all,sex, dep, age, injurylocation, area_name, area_type, class) %>% 
   summarise(admissions= sum(admissions)) %>% ungroup()
 
@@ -334,7 +334,7 @@ saveRDS(final_falls_SMR01, paste0(open_data, "ui_smr01_falls.rds"))
 
 #filter only on other
 # Running final functions
-prepare_final_data(dataset = ui_other, filename = "ui_smr01_other", 
+prepare_final_data_m(dataset = ui_other, filename = "ui_smr01_other", 
                    last_month = "2021-05-01", aver = 3)
 
 final_other_SMR01 <- final_data %>% 
