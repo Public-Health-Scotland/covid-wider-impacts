@@ -1019,7 +1019,12 @@ base_cancer_mean_quarters <- base_cancer_counts_all_quarters %>%
   select(quarter:sex, age_group:breakdown, denom:difference21_cum)
 
 diff_data_base_quarters <- bind_rows(base_cancer_mean_quarters,
-                                     base_cancer_mean_quarters_ave) 
+                                     base_cancer_mean_quarters_ave) %>% 
+  mutate(depdesc = case_when(dep == 1 ~ "1 - most deprived",
+                             dep == 2 ~ "2",
+                             dep == 3 ~ "3",
+                             dep == 4 ~ "4",
+                             dep == 5 ~ "5 - least deprived"))
 
 rm(base_cancer_counts_all_quarters,
    base_cancer_mean_quarters,

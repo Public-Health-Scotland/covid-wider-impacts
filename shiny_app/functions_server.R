@@ -541,7 +541,7 @@ plot_diff_cancer_chart_age <- function(dataset, diffvar1) {
     #Layout
     layout(margin = list(b = 80, t=5),
            xaxis = xaxis_plots, yaxis = yaxis_plots,
-           legend = list(orientation = 'h', x = 0, y = 1.1, title=list(text='<b> Age  </b>'))) %>% 
+           legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
       
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
@@ -608,6 +608,7 @@ plot_diff_cancer_chart_dep <- function(dataset, diffvar1) {
                 y = ~get(diffvar1),
                 type = 'scatter', 
                 mode = 'line',
+                name = paste0(dataset$depdesc),
                 color = ~dep,
                 colors = pal_cancer_diff,
                 text=tooltip_1, 
@@ -616,7 +617,7 @@ plot_diff_cancer_chart_dep <- function(dataset, diffvar1) {
     #Layout
     layout(margin = list(b = 80, t=5),
            xaxis = xaxis_plots, yaxis = yaxis_plots,
-           legend = list(orientation = 'h', x = 0, y = 1.1, title=list(text='<b> Deprivation (1=Low/5= High)  </b>'))) %>% 
+           legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
       
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
