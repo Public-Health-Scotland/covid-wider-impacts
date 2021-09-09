@@ -463,14 +463,6 @@ plot_diff_cancer_chart <- function(dataset, diffvar1) {
                 text=tooltip_1, 
                 hoverinfo="text") %>%
       
-      # add_trace(x=~quarter, 
-      #           y = ~get(diffvar1),
-      #           type = 'scatter', 
-      #           mode = 'line',
-      #           color = 'green',
-      #           text=tooltip_2, 
-      #           hoverinfo="text") %>%
-      
       
       #Layout
     layout(margin = list(b = 80, t=5),
@@ -511,22 +503,14 @@ plot_diff_cancer_chart_age <- function(dataset, diffvar1) {
     
     measure_name <- case_when(diffvar1 == "difference20"  ~ "Percentage(%) Change:",
                               diffvar1 == "difference20_cum"  ~ "Cumulative Percentage(%) Change:") # ,
-    # diffvar2 == "difference21"  ~ "Percentage(%) Change:",
-    # diffvar2 == "difference21_cum"  ~ "Cumulative Percentage(%) Change:")
-    
+
     value1 <- dataset[[diffvar1]]
-    
-    # value2 <- dataset[[diffvar2]]
     
     tooltip_1 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
                           "Age Group: ", dataset$age_group, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
     
-    # tooltip_2 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
-    #                       "Age Group: ", dataset$age_group, "<br>",
-    #                       measure_name, " ", paste0(format(round(value2, 2), nsmall = 2), "%")))
-    
-    
+
     # Function for verical line at start of lockdown
     vline <- function(x = 0, color = "grey") {
       list(
@@ -553,20 +537,11 @@ plot_diff_cancer_chart_age <- function(dataset, diffvar1) {
                 text=tooltip_1, 
                 hoverinfo="text") %>%
       
-      # add_trace(x=~quarter, 
-      #           y = ~get(diffvar2),
-      #           type = 'scatter', 
-      #           mode = 'line',
-      #           color = ~age_group,
-      #           colors = pal_depr,
-      #           text = tooltip_2, 
-      #           hoverinfo = "text") %>%
-      
       
     #Layout
     layout(margin = list(b = 80, t=5),
            xaxis = xaxis_plots, yaxis = yaxis_plots,
-           legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
+           legend = list(orientation = 'h', x = 0, y = 1.1, title=list(text='<b> Age  </b>'))) %>% 
       
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
@@ -601,9 +576,7 @@ plot_diff_cancer_chart_dep <- function(dataset, diffvar1) {
     
     measure_name <- case_when(diffvar1 == "difference20"  ~ "Percentage(%) Change:",
                               diffvar1 == "difference20_cum"  ~ "Cumulative Percentage(%) Change:") # ,
-    # diffvar2 == "difference21"  ~ "Percentage(%) Change:",
-    # diffvar2 == "difference21_cum"  ~ "Cumulative Percentage(%) Change:")
-    
+
     value1 <- dataset[[diffvar1]]
     
     # value2 <- dataset[[diffvar2]]
@@ -612,10 +585,7 @@ plot_diff_cancer_chart_dep <- function(dataset, diffvar1) {
                           "Age Group: ", dataset$age_group, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
     
-    # tooltip_2 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
-    #                       "Age Group: ", dataset$age_group, "<br>",
-    #                       measure_name, " ", paste0(format(round(value2, 2), nsmall = 2), "%")))
-    
+
     # Function for verical line at start of lockdown
     vline <- function(x = 0, color = "grey") {
       list(
@@ -643,20 +613,10 @@ plot_diff_cancer_chart_dep <- function(dataset, diffvar1) {
                 text=tooltip_1, 
                 hoverinfo="text") %>%
       
-      # add_trace(x=~quarter, 
-      #           y = ~get(diffvar2),
-      #           type = 'scatter', 
-      #           mode = 'line',
-      #           color = ~dep,
-      #           colors = pal_cancer_diff2,
-      #           text=tooltip_2, 
-      #           hoverinfo="text") %>%
-      
-      
     #Layout
     layout(margin = list(b = 80, t=5),
            xaxis = xaxis_plots, yaxis = yaxis_plots,
-           legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
+           legend = list(orientation = 'h', x = 0, y = 1.1, title=list(text='<b> Deprivation (1=Low/5= High)  </b>'))) %>% 
       
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)

@@ -138,7 +138,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "28 June 2021"
+immunisation_extract_date <- "23 August 2021"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -167,12 +167,12 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "17th June 2021"
+booking_extract_date <- "12th August 2021"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "15th June 2021"
+top_extract_date <- "16th August 2021"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
@@ -184,14 +184,14 @@ mod_linechart <- readRDS("data/mod_linechart_data.rds")
 mod_download <- readRDS("data/mod_download_data.rds")
 
 #inductions (pregnanacy tab)
-induct_extract_date <- "15th June 2021"
+induct_extract_date <- "16th August 2021"
 induct_runchart <- readRDS("data/induct_runchart_data.rds")
 induct_scot <- readRDS("data/induct_scot_data.rds")
 induct_linechart <- readRDS("data/induct_linechart_data.rds")
 induct_download <- readRDS("data/induct_download_data.rds")
 
 #gestation at delivery (pregnanacy tab)
-gestation_extract_date <- "15th June 2021"
+gestation_extract_date <- "16th August 2021"
 gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
 gestation_scot <- readRDS("data/gestation_scot_data.rds")
 gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
@@ -203,7 +203,7 @@ breastfeeding <- readRDS("data/breastfeeding.rds")
 child_dev <- readRDS("data/child_dev.rds")
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "21st June 2021"
+apgar_extract_date <- "17th August 2021"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
@@ -295,7 +295,9 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
-                        "Cancer" = "cancer"
+                        "Cancer" = "cancer",
+                        "Weekly SACT activity" = "sact_weekly",
+                        "Monthly SACT activity" = "sact_monthly"
 )
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
@@ -304,7 +306,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Bone and Connective Tissue" = "Bone and Connective Tissue",
                       "Brain Tumour" = "Brain Tumour",
                       "Breast" = "Breast",
-                      "Cervical" = "Cervical",
+                      "Cervicalv - Females Only" = "Cervical - Females Only",
                       "Colorectal" = "Colorectal",
                       "Head and Neck" = "Head and Neck",
                       "Hodgkin Lymphoma" = "Hodgkin Lymphoma",
@@ -366,7 +368,7 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
-               "APR 2021" =  "#a64208") 
+               "APR 2021" =  "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff") 
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
@@ -374,7 +376,9 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
-               "APR 2021" = "#a64208") 
+               "APR 2021" =  "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff")
+
+pal_drug <- c('#e66101','#fdb863','#b2abd2','#5e3c99')
 
 pal_sact <- c('#3F3685', 
               '#9F9BC2', 
@@ -391,11 +395,6 @@ pal_sact <- c('#3F3685',
               '#E39C8C', 
               '#000000' )
 
-# pal_cancer_diff <- c('#00008B',
-#                      '#E6E6FA',
-#                      '#E6E6FA',
-#                      '#E6E6FA',
-#                      '#9400D3')
 
 pal_cancer_diff <- c("1" = '#000080',
                      "2" = '#DCDCDC',

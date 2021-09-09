@@ -171,33 +171,6 @@ output$cancer_explorer <- renderUI({
                     " confirmed on a pathological specimen since January for 2019/2020/2021"), 
              "cancer_incidence"),
     p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt"))
-    # br(),
-    #   if(input$breakdown == "Age Group") {
-    #   plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-    #                 " confirmed on a pathological specimen since January for 2019/2020 and 2019/2021"),
-    #          "cancer_split_age")
-    # 
-    #   } else if (input$breakdown == "Deprivation") {
-    #   plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-    #                   " confirmed on a pathological specimen since January for 2019/2020 and 2019/2021"),
-    #            "cancer_split_dep")
-    #   } else {
-    #   plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-    #                   " confirmed on a pathological specimen since January for 2019/2020 and 2019/2021"),
-    #            "cancer_split")
-    #   },
-    # 
-    # p("Data extract date: 20th May 2021"),
-    # br(),
-    # p("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
-    #   than for other cancer sites. Such cancers are relatively common and usually non-fatal. There is a propensity 
-    #   for multiple tumours to occur in one individual and cancer registries adopt different practices in recording 
-    #   these. The tumours are most common in the elderly population and the completeness of registration in the very 
-    #   elderly is likely to be less than for younger patients. Furthermore, increasing numbers of these cancers are 
-    #   diagnosed and treated within GP surgeries and the registration scheme is not confident that all such cases 
-    #   are notified. Because cancer registries across the world have different practices for recording non-melanoma 
-    #   skin cancer (some do not record them at all), the category 'All Malignant Neoplasms (Excl. C44)' omits these tumours 
-    #   in the interests of making international comparisons of cancer incidence more valid."))
   )  
   
 })
@@ -243,38 +216,7 @@ output$cancer_explorer3 <- renderUI({
 
 output$cancer_explorer2 <- renderUI({
   
-  # text for titles of cut charts
-  # cancer_site <- case_when(input$cancer_type == "All Malignant Neoplasms (Excl. C44)" ~ "All Malignant Neoplasms (Excl. C44)",
-  #                          input$cancer_type == "All Cancers" ~ "All Cancers",
-  #                          input$cancer_type == "Bladder" ~ "Bladder",
-  #                          input$cancer_type == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
-  #                          input$cancer_type == "Breast" ~ "Breast",
-  #                          input$cancer_type == "Colorectal" ~ "Colorectal",
-  #                          input$cancer_type == "Head and Neck" ~ "Head and Neck",
-  #                          input$cancer_type == "Hodgkin Lymphoma" ~ "Hodgkin Lymphoma",
-  #                          input$cancer_type == "Kidney" ~ "Kidney",
-  #                          input$cancer_type == "Leukaemias" ~ "Leukaemias",
-  #                          input$cancer_type == "Liver and Intrahepatic Bile Ducts" ~ "Liver and Intrahepatic Bile Ducts",
-  #                          input$cancer_type == "Brain Tumour" ~ "Brain Tumour",
-  #                          input$cancer_type == "Malignant Melanoma of the Skin" ~ "Malignant Melanoma of the Skin",
-  #                          input$cancer_type == "Mesothelioma" ~ "Mesothelioma",
-  #                          input$cancer_type == "Multiple Myeloma and malignant plasma cell neoplasms" ~ "Multiple Myeloma and malignant plasma cell neoplasms",
-  #                          input$cancer_type == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
-  #                          input$cancer_type == "Oesophagus" ~ "Oesophagus",
-  #                          input$cancer_type == "Other" ~ "Other",
-  #                          input$cancer_type == "Ovary - Females only" ~ "Ovary - Females only",
-  #                          input$cancer_type == "Pancreas" ~ "Pancreas",
-  #                          input$cancer_type == "Penis - Males only" ~ "Penis - Males Only",
-  #                          input$cancer_type == "Prostate - Males only" ~ "Prostate - Males only",
-  #                          input$cancer_type == "Stomach" ~ "Stomach",
-  #                          input$cancer_type == "Testis - Males only" ~ "Testis - Males only",
-  #                          input$cancer_type == "Thyroid" ~ "Thyroid",
-  #                          input$cancer_type == "Trachea, Bronchus and Lung" ~ "Trachea, Bronchus and Lung",
-  #                          input$cancer_type == "Uterus - Females only" ~ "Uterus - Females only",
-  #                          input$cancer_type == "Vagina - Females only" ~ "Vagina - Females only",
-  #                          input$cancer_type == "Vulva - Females only" ~ "Vulva - Females only"
-  # )
-  
+
   
   tagList(
     p(strong("29/07/21 - Following a quality assurance exercise, a mistake was found in the methodology used to identify 
@@ -331,12 +273,8 @@ output$cancer_explorer2 <- renderUI({
            on 20th May 2021; the dashboard may now reflect more recent information."),
     br(),
     br(),
-    # p(strong("First updated: - 04/11/2020 ;  date of extraction of data: - 16/9/2020, with pathological records to week ending
-    #   21/06/2020.  ")),
-    # p(strong("Last updated: - 10/03/2021 ;  date of extraction of data: - 22/02/2021, with pathological records to week ending
-    #   29/11/2020.  ")),
     p(strong("Last updated: - 16/06/2021 ;  date of extraction of data: - 20/05/2021, with pathological records to week ending
-             26/02/2021.  ")))#,
+             26/02/2021.  ")))
   
   
 })
@@ -553,11 +491,11 @@ output$cancer_commentary <- renderUI({
     
     p("Among the most common cancer types, by 30th August:"),
     tags$ul(
-      tags$li(" Lung cancers: weekly numbers were down a quarter of the previous yearâs (-25%) taking the cumulative difference 
+      tags$li(" Lung cancers: weekly numbers were down a quarter of the previous year's (-25%) taking the cumulative difference 
               from the start of the year to 577 individuals."),
       tags$li(" Breast cancer (female only): weekly numbers were down over a quarter of the previous year's (-27%) taking the 
               cumulative difference from the start of the year to 1320 individuals."),
-      tags$li("	Prostate caners (male only): weekly numbers were down nearly 40% of the previous yearâs (-39%) taking the 
+      tags$li("	Prostate cancers (male only): weekly numbers were down nearly 40% of the previous year's (-39%) taking the 
               cumulative difference from the start of the year to 482 individuals."),
       tags$li(" Colorectal cancer: weekly numbers were down over a quarter of the previous year's (-27%) taking the cumulative 
               difference from the start of the year to 950 individuals."),

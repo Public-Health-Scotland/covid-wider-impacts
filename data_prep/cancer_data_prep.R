@@ -1019,8 +1019,7 @@ base_cancer_mean_quarters <- base_cancer_counts_all_quarters %>%
   select(quarter:sex, age_group:breakdown, denom:difference21_cum)
 
 diff_data_base_quarters <- bind_rows(base_cancer_mean_quarters,
-                                     base_cancer_mean_quarters_ave)         
-
+                                     base_cancer_mean_quarters_ave) 
 
 rm(base_cancer_counts_all_quarters,
    base_cancer_mean_quarters,
