@@ -216,7 +216,7 @@ output$cancer_explorer3 <- renderUI({
 
 output$cancer_explorer2 <- renderUI({
   
-
+  
   
   tagList(
     p(strong("29/07/21 - Following a quality assurance exercise, a mistake was found in the methodology used to identify 
@@ -411,24 +411,24 @@ output$cancer_commentary <- renderUI({
       of individuals with a pathological diagnosis of cancer compared with those in 2019 (16455 and 16569 in 2021 and 2019,
       respectively, a difference of less than 1%).  However, within cancer sites, some were higher and some lower than
       expected in 2021 compared with 2019.  Comparing January to weeks ending 14th June in 2021 and 2019:"),
-
+    
     p("Among the most common cancer types:"),
     tags$ul(
       tags$li("Lung cancer. There were 1102 and 1328 pathological diagnoses in 2021 and 2019 respectively, a decrease
               of 226 individuals, or 17% lower."),
-
+      
       tags$li("Breast cancer (females). There were 2658 and 2774 pathological diagnoses in 2021 and 2019 respectively,
               a decrease of 116 individuals, or 4% lower."),
-
+      
       tags$li("Prostate cancer. There were 1581 and 1544 pathological diagnoses in 2021 and 2019 respectively, an increase
               of 37 individuals, or 2% higher."),
-
+      
       tags$li("Colorectal (bowel) cancer. There 1958 and 2011 pathological diagnoses in 2021 and 2019 respectively, a
               decrease of 53 individuals, or 3% lower."),
-
+      
       tags$li("Liver and intrahepatic bile ducts.   There were 166 and 147 pathological diagnoses in 2021 and 2019
               respectively, an increase of 19 individuals, or 11% higher."),
-
+      
       tags$li("Oesophagus.   There 579 and 473 pathological diagnoses in 2021 and 2019 respectively, an increase
               of 106 individuals, or 22% higher.")),
     br(),
@@ -438,7 +438,7 @@ output$cancer_commentary <- renderUI({
       by the end of Q3 with a small recovery by the end of Q4 was seen for the commonest cancers – lung, breast, colorectal,
       and prostate."),
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
-      data to the end of December in 2020 compared to 2019:")),
+             data to the end of December in 2020 compared to 2019:")),
     h4(strong("Age")),
     p("For all cancers except non-melanoma skin cancers in 2020 compared with 2019, the largest proportionate fall in
       pathologically confirmed cancers were among those aged 50-69 years and the smallest falls were in those under 50 years.
@@ -467,7 +467,7 @@ output$cancer_commentary <- renderUI({
     
     
     ###################################
-   
+    
     h4(strong("Update 16/6/2021: For pathology data to 26th February 2020 (extracted 20/5/2021)")),
     p("By the end of 2020 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
       cancer (excluding non-melanoma skin cancers) in Scotland was 37,706 in 2020 and 44,655 in 2019, an absolute difference 
