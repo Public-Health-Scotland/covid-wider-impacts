@@ -33,7 +33,13 @@ save_final_file("cancer_data_2", "24_Feb_21")
 ##########################################################.
 ##########################################################.
 ## Injuries ----
-save_final_file("ui_smr01", "24_May_21")
+save_final_file("ui_smr01_all", "08_Sep_21")
+save_final_file("ui_smr01_rta", "08_Sep_21")
+save_final_file("ui_smr01_poison", "08_Sep_21")
+save_final_file("ui_smr01_other", "08_Sep_21")
+save_final_file("ui_smr01_falls", "08_Sep_21")
+save_final_file("ui_smr01_assaults", "08_Sep_21")
+
 ##########################################################.
 ## RAPID ----
 save_final_file("rapid", "04_May_21")
