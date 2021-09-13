@@ -215,7 +215,19 @@ output$download_injuries_data <- downloadHandler(
 ## Commentary ----
 ###############################################.
 output$injuries_commentary <- renderUI({
-  tagList()
+  tagList( bsButton("jump_to_injuries",label = "Go to data"), #this button can only be used once
+           h2("Unintentional Injuries - 6th October 2021"), 
+           h3("Emergency admissions to hospital as a result of injury"),
+           tags$ul(
+             tags$li("The term ‘unintentional injury’ is preferred to ‘accidents’ as the latter implies that events are
+inevitable and unavoidable whereas a high proportion of these incidents are now regarded as
+being preventable.
+Detailed information on the injuries included in each group are available within the PHS annual report on Unintentional Injuries in Scotland:
+"),p(tags$a(href="https://www.publichealthscotland.scot/media/5838/2021-03-23-ui-2021-report.pdf")))
+           
+                     )
+             
+           
 })
 ##END
 
