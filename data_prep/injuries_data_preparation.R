@@ -224,7 +224,7 @@ Tab4 <- Tab3 %>%
   #filter(class=="all unintentional injuries") %>%
   # More formatting
   group_by(year,area_type, category, type,month_ending, area_name, class) %>%
-  filter(!(area_type != "Scotland" & type == "dep")) %>% #SIMD only at Scotland level
+  filter(!(area_type != "Scotland" & area_type != "Health board" & type == "dep")) %>% #SIMD only at Scotland level
   summarise(count= sum(admissions)) %>% ungroup()
 
 #Creating a table for each diagnosis grouping
@@ -274,8 +274,8 @@ final_UI_SMR01 <- final_data %>%
        
 #save weekly data        
 saveRDS(final_UI_SMR01, paste0("shiny_app/data/ui_smr01_all.rds"))
-saveRDS(final_UI_SMR01, paste0(data_folder,"final_app_files/ui_smr01_", 
-                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+saveRDS(final_UI_SMR01, paste0(data_folder,"final_app_files/ui_smr01_all_", 
+                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(final_UI_SMR01, paste0(open_data, "ui_smr01_data.rds"))
 
 #filter only on rta
@@ -292,7 +292,7 @@ final_rta_SMR01 <- final_data %>%
 
 
 saveRDS(final_rta_SMR01, paste0("shiny_app/data/ui_smr01_rta.rds"))
-saveRDS(final_rta_SMR01, paste0(data_folder,"final_app_files/ui_smr01_rta", 
+saveRDS(final_rta_SMR01, paste0(data_folder,"final_app_files/ui_smr01_rta_", 
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(final_rta_SMR01, paste0(open_data, "ui_smr01_rta.rds"))
 
@@ -310,7 +310,7 @@ final_poison_SMR01 <- final_data %>%
 
 
 saveRDS(final_poison_SMR01, paste0("shiny_app/data/ui_smr01_poison.rds"))
-saveRDS(final_poison_SMR01, paste0(data_folder,"final_app_files/ui_smr01_poison", 
+saveRDS(final_poison_SMR01, paste0(data_folder,"final_app_files/ui_smr01_poison_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(final_poison_SMR01, paste0(open_data, "ui_smr01_poison.rds"))
 
@@ -328,7 +328,7 @@ final_falls_SMR01 <- final_data %>%
 
 
 saveRDS(final_falls_SMR01, paste0("shiny_app/data/ui_smr01_falls.rds"))
-saveRDS(final_falls_SMR01, paste0(data_folder,"final_app_files/ui_smr01_falls", 
+saveRDS(final_falls_SMR01, paste0(data_folder,"final_app_files/ui_smr01_falls_", 
                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(final_falls_SMR01, paste0(open_data, "ui_smr01_falls.rds"))
 
@@ -346,7 +346,7 @@ final_other_SMR01 <- final_data %>%
 
 
 saveRDS(final_other_SMR01, paste0("shiny_app/data/ui_smr01_other.rds"))
-saveRDS(final_other_SMR01, paste0(data_folder,"final_app_files/ui_smr01_other", 
+saveRDS(final_other_SMR01, paste0(data_folder,"final_app_files/ui_smr01_other_", 
                                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(final_other_SMR01, paste0(open_data, "ui_smr01_other.rds"))
 
@@ -363,8 +363,8 @@ ui_assault <- data_UI_SMR01 %>%
          other_assault = if_else (diag1 %in% other_assault_ui | diag2 %in% other_assault_ui | diag3 %in% other_assault_ui | 
                                     diag4 %in% other_assault_ui | diag5 %in% other_assault_ui | diag6 %in% other_assault_ui,1,0),
          qrt= quarter(discharge_date)) %>%
-  mutate(all="all",area_type="Scotland", area_name="Scotland") %>%
-  pivot_longer(cols = c(sex, age, all), names_to="type", values_to="category") %>%
+  mutate(all="All",area_type="Scotland", area_name="Scotland") %>%
+  pivot_longer(cols = c(all,sex, dep, age, injurylocation), names_to="type", values_to="category") %>%
   group_by(area_type, category, type, month_ending, area_name) %>%
   summarise_at(c("assault_all"), sum) %>%
   rename(count=assault_all)  %>% ungroup()
@@ -383,7 +383,7 @@ final_assault_SMR01 <- final_data %>%
 
 
 saveRDS(final_assault_SMR01, paste0("shiny_app/data/ui_smr01_assaults.rds"))
-saveRDS(final_assault_SMR01, paste0(data_folder,"final_app_files/ui_smr01_assaults", 
+saveRDS(final_assault_SMR01, paste0(data_folder,"final_app_files/ui_smr01_assaults_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(final_assault_SMR01, paste0(open_data, "ui_smr01_assaults.rds"))
 
