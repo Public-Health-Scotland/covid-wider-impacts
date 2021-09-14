@@ -9,23 +9,39 @@ source("data_prep/functions_packages_data_prep.R")
 ## Prescribing - Mental health ----
 ###############################################.
 
-### historic file for MH drugs ##
-# Files contain rolling weeks so attention needs to be paid to not miss or 
-# duplicate any week. This is not an ideal method, to get the most recent data
-# for each week we would need to select the first week from each file, apart
-# from for the historic one, the last one and those covered by the last one = tricky
-mentalhealth_drugs <- rbind(read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition Jan 18-Jun 20.xlsx")),
-                                     read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_57_05-07-2020 to 04-10-2020.xlsx")),
-                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-14-Weekly new incident emessage - Multi-condition_11-10-2020 to 10-01-2021.xlsx")) %>% 
-                                       filter(between(as.Date(`Week Ending`), as.Date("2020-10-11"), as.Date("2020-10-18"))), 
-                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-01-28-Weekly new incident emessage - Multi-condition_25-10-2020 to 24-01-2021.xlsx")) %>%
-                                       filter(between(as.Date(`Week Ending`), as.Date("2020-10-25"), as.Date("2020-11-01"))), 
-                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-11-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                                      filter(between(as.Date(`Week Ending`), as.Date("2020-11-08"), as.Date("2020-11-15"))), 
-                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-02-11-Weekly new incident emessage - Multi-condition.xlsx")) %>%
-                                      filter(between(as.Date(`Week Ending`), as.Date("2020-11-22"), as.Date("2021-01-17"))),
-                                     read_xlsx(paste0(data_folder, "prescribing_mh/2021-04-29-Weekly new incident emessage - Multi-condition.xlsx"))) %>%
+# These files contain rolling (14) weeks so attention needs to be paid to not miss or 
+# duplicate any week. 
+
+create_drugsmh <- function(last_week) {
   
+  # List of weekly extracts for drugs MH
+  files_mh <-  list.files(path = paste0(data_folder, "prescribing_mh/"), 
+                          pattern = "*-Weekly new incident emessage - Multi-condition.xlsx", full.names = TRUE)
+  
+  # Function to read all files required for mh drugs as only earliest week 
+  # required for most of them
+  read_mh_drugs <- function(filedate) {
+    
+    mh_file <- read_xlsx(filedate) 
+    
+    # Bringing all the file for the last date, but only earliest week for the rest
+    if (filedate != last(files_mh)) {
+      mh_file %>% 
+        filter(as.Date(`Week Ending`) == min(as.Date(`Week Ending`)))
+    } else {
+      mh_file
+    }
+    
+  }
+
+mentalhealth_drugs <- rbind(# Historic data 01/01/18 to 28/06/20 - DO NOT CHANGE
+                            read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition Jan 18-Jun 20.xlsx")),
+                            # Historic data 05/07/20 to 16/08/20 - DO NOT CHANGE        
+                            read_xlsx(paste0(data_folder, "prescribing_mh/Weekly new incident emessage - Multi-condition_57_05-07-2020 to 04-10-2020.xlsx")) %>% 
+                              filter(between(as.Date(`Week Ending`), as.Date("2020-07-05"), as.Date("2020-08-16"))),
+                      # Brings the earliest week in each data file, apart from last one.
+                      # This ensures most up to date data
+                            do.call(rbind, lapply(files_mh, read_mh_drugs)) ) %>%
   select(1:5) %>% 
   clean_names() %>% 
   filter(condition %in% c("Anxiolytic",
@@ -55,17 +71,22 @@ mentalhealth_drugs_all <- mentalhealth_drugs %>%
 mentalhealth_drugs <- rbind(mentalhealth_drugs, mentalhealth_drugs_all) %>% 
   arrange(area_name, area_type, category, week_ending) # so plotly works correctly
 
-prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = "2021-04-25")
+prepare_final_data(mentalhealth_drugs, "mentalhealth_drugs", last_week = last_week)
+
+}
 
 ###############################################.
 ## A&E - mental health ----
 ###############################################.
+create_aemh <- function(filedate, last_week) {
+  
 # mh_aye_hist <- read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv"))
 # saveRDS(mh_aye_hist, paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds"))
 mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
-                read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts 01062020to25042021.csv"))) %>%
+                read_csv(paste0(data_folder, "A&E_mh/", filedate, "-A&E Extract - Mental Health Wider impacts.csv"),
+                         col_types="nnccccccnnccccccccccccccc")) %>% # col spec needed to avoid parse errors for disease 3 fields
   clean_names() 
 
 # List of terms used to identify mh cases
@@ -177,13 +198,16 @@ mh_aye %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_aye, "mh_A&E", last_week = "2021-04-25")
+prepare_final_data(mh_aye, "mh_A&E", last_week = last_week)
+
+}
 
 ###############################################.
 ## OOH - mental health ----
 ###############################################.
-
-mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/2021-05-03-GP OOH MH WIDER IMPACT.txt")) %>%
+create_oohmh <- function(filedate, last_week) {
+  
+mh_ooh <- read_tsv(paste0(data_folder, "GP_OOH_mh/", filedate, "-GP OOH MH WIDER IMPACT.txt")) %>%
   janitor::clean_names() %>%
   rename(hb=patient_nhs_board_description_current, 
          dep=patient_prompt_dataset_deprivation_scot_quintile,sex=gender_description,
@@ -222,4 +246,6 @@ mh_ooh %<>%
   filter(!(area_name %in% c("NHS Western Isles", "NHS Orkney", "NHS Shetland"))) %>% 
   filter(area_name == "Scotland" | category == "All")
 
-prepare_final_data(mh_ooh, "mh_ooh", last_week = "2021-04-25")
+prepare_final_data(mh_ooh, "mh_ooh", last_week = last_week)
+
+}

@@ -1,4 +1,6 @@
-##Server script for pregnancy gestation at delivery tab
+
+##Server script for pregnancy gestation at delivery tab..
+
 
 # Pop-up modal explaining source of data
 observeEvent(input$btn_gest_modal, 
@@ -467,6 +469,9 @@ observeEvent(input$switch_to_gestation,{
 output$gestation_commentary <- renderUI({
   tagList(
     bsButton("jump_to_gestation",label = "Go to data"), #this button can only be used once
+    h2("Gestation at delivery - 2nd June 2021"),
+    p("In this release of information on gestation at delivery (2nd June 2021) data have been updated to include women discharged after delivery up to and including February 2021. The data at all Scotland level show that the preterm proportion (the percentage of singleton live births delivered at under 37 weeks gestation) has decreased in February 2021 to a level of 5.5%, although the previous two months were either side of the pre-pandemic average. The data by NHS Board vary. In February 2021, NHS Borders and NHS Ayrshire & Arran have recorded a preterm proportion lower than their pre-pandemic average for at least 6 consecutive months. In the last 5 consecutive months, NHS Fife have shown a sequential month-on-month increasing trend in the proportion of singleton live births delivered at under 32 weeks gestation. Including February 2021, NHS Borders have shown 8 consecutive months where the proportion of births delivered between 32-36 weeks gestation was lower than their pre-pandemic average."),
+    p("In February 2021, the percentage of singleton live births in Scotland delivered at or over 42 weeks (‘post-term’) has continued to be below its usual historical level (for a 16th consecutive month). In February 2021, NHS Greater Glasgow & Clyde recorded a lower than average post-term proportion for the 17th consecutive month."),
     h2("Gestation at delivery - 5th May 2021"),
     p("In this release of information on gestation at delivery (5th May 2021) data have been updated to include women discharged after delivery up to and including January 2021. The data at all Scotland level show that the preterm proportion (the percentage of singleton live births delivered at under 37 weeks gestation) in January 2021 is 6.5%, a level similar to the pre-pandemic average. The data by NHS Board vary. In January 2021, NHS Borders has recorded a preterm proportion lower than their pre-pandemic average for the 7th consecutive month albeit based on very small numbers. NHS Fife has recorded unusually high preterm proportions in December 2020 and January 2021. However, data are thought to be incomplete for NHS Fife for these two periods so these proportions could change in future releases of the dashboard. PHS are working with NHS Fife to clarify this situation. Including Jan 21, NHS Tayside have shown 6 consecutive months where the proportion of births delivered between 32-36 weeks gestation was lower than their pre-pandemic average."),
     p("In January 2021, the percentage of singleton live births in Scotland delivered at or over 42 weeks (‘post-term’) has continued to be below its usual historical level (for a 15th consecutive month). In January 2021, NHS Greater Glasgow & Clyde recorded a lower than average post-term proportion for the 16th consecutive month. Including Jan 21, NHS Highland have shown 5 consecutive months where a sequential month-on-month decrease in the proportion of post-term births has occurred."),

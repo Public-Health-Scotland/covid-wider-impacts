@@ -1,7 +1,9 @@
 #UI
- #secure_app( #uncomment if needing password protection
-#tagList( #needed for shinyjs
-#  useShinyjs(),  # Include shinyjs
+
+# secure_app( #uncomment if needing password protection
+tagList( #needed for shinyjs
+  useShinyjs(),  # Include shinyjs
+
   navbarPage(id = "intabset", # id used for jumping between tabs
   title = div(tags$a(img(src="phs-logo.png", width=120, alt = "Public Health Scotland logo"), 
                      href= "https://www.publichealthscotland.scot/",
@@ -99,8 +101,10 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
                           actionLink("apgar_button", "Apgar scores", width="150px"),br(),
                           actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
-                          actionLink("cancer_button", "Cancer", width="150px"), br(),
-                          actionLink("injuries_button", "Injuries", width="150px")
+                          actionLink("tears_button", "Perineal tears", width="150px"),br(),
+                          actionLink("cancer_button", "Cancer", width="150px"),br(),
+                          actionLink("injuries_button", "Injuries", width="150px", br(),
+                          actionLink("drug_button", "Substance use", width="150px")
                          ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
@@ -119,14 +123,16 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
                                      bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
                                      bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
+                                     bsCollapsePanel("Perineal tears", uiOutput("tears_commentary")),
                                      bsCollapsePanel("Cancer", uiOutput("cancer_commentary")),
-                                     bsCollapsePanel("Injuries", uiOutput("injuries_commentary"))
+                                     bsCollapsePanel("Injuries", uiOutput("injuries_commentary")),
+                                     bsCollapsePanel("Substance use", uiOutput("drug_commentary"))
                           )))
 ), #tab panel
 
-###############################################.
-# Summary trends ----
-##############################################.
+# ###############################################.
+# # Summary trends ----
+# ##############################################.
 tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   wellPanel(
     column(4,
@@ -154,8 +160,13 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
                           choices = data_list, status = "primary",
                           direction = "vertical", justified = T))),
     column(4,
+           conditionalPanel(condition = "input.measure_select != 'outpats' ",
            selectInput("adm_type", label = "Step 3. Select type of admission.",
-                       choices = c("All", "Emergency", "Planned"), selected = "All"),
+                       choices = c("All", "Emergency", "Planned"), selected = "All")),
+
+           conditionalPanel(condition = "input.measure_select == 'outpats' ",
+                            selectInput("appt_type", label = "Step 3. Select type of appointment.",
+                                        choices = c("All", "New", "Return"), selected = "All")),
            downloadButton('download_chart_data', 'Download data'),
            fluidRow(br()),
            actionButton('jump_commentary_summary','Go to commentary')
@@ -190,33 +201,141 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ###############################################.
 ## Cancer ----
 ###############################################.
-tabPanel(title = "Cancer", icon = icon("disease"), value = "cancer",
-  wellPanel(
-           column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
-                                 choices= c("Scotland", "Cancer Network", "Health Board"),
-                                     selected = "Scotland"),
-                  uiOutput("geoname_ui_cancer")),
+             navbarMenu("Cancer", icon = icon("disease"),
 
-           column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
-                                     selected = "All Malignant Neoplasms (Excl. C44)"),
-                     div(radioButtons("gender", "Step 3. Select sex",
-                                      list("All Persons","Male","Female"), inline = TRUE,
-                                      selected = "All Persons"))),
-                     # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
+                        # CANCER PATHOLOGY
 
-           column(4,actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton('download_cancer_data', 'Download data'),
-                  fluidRow(br()),
-                  actionButton('jump_commentary_cancer','Go to commentary'),
-                  fluidRow(br()))
-                  # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"),
-                  #                  inline = TRUE, selected = "Cumulative")))
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("cancer_explorer")
-         )# mainPanel bracket
-), # tabpanel bracket
+                        tabPanel(title = "Cancer Pathology", icon = icon("microscope"), value = "cancer",
+                                 wellPanel(width = 12,
+                                           uiOutput("cancer_explorer2")),
+                                 wellPanel(
+                                   column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
+                                                         choices= c("Scotland", "Cancer Networks", "Health Boards"),
+                                                         selected = "Scotland"),
+                                          uiOutput("geoname_ui_cancer")),
+
+                                   column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
+                                                          selected = "All Malignant Neoplasms (Excl. C44)"),
+                                          div(radioButtons("gender", "Step 3. Select sex",
+                                                           list("All","Male","Female"), inline = TRUE,
+                                                           selected = "All"))),
+                                   # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
+
+                                   column(4,actionButton("btn_cancer_modal", "Data source and definitions", icon = icon('question-circle')),
+                                          fluidRow(br()),
+                                          downloadButton('download_cancer_data', 'Download data'),
+                                          fluidRow(br()),
+                                          actionButton('jump_commentary_cancer','Go to commentary'),
+                                          fluidRow(br()))
+                                   # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"),
+                                   #                  inline = TRUE, selected = "Cumulative")))
+                                 ), #well panel
+                                 mainPanel(width = 12,
+                                           uiOutput("cancer_explorer")
+                                 )# mainPanel bracket
+                        ), # tabpanel bracket
+
+                        ###############################################.
+                        ## SACT ----
+                        ###############################################.
+
+
+                        #### MONTHLY TAB
+
+                        tabPanel(title = "SACT (Chemotherapy) Monthly Patients ", icon = icon("syringe"), value = "sact",
+                                 wellPanel(h4(strong("SACT Treatment Activity in Scotland - Monthly Patient Data")),
+                                           p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
+                                             of cancer. The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments
+                                             such as targeted agents and immunotherapies."),
+                                           p("The weekly and monthly activity reports are generated from the SACT national MVP data platform
+                                             held by PHS, which is updated weekly from the five instances of ChemoCare across Scotland.
+                                             All SACT and non-SACT (e.g. other drugs used to treat cancer such as hormones and supportive medicines
+                                             such as anti-sickness medicines and steroids) activity which is prescribed
+                                             in secondary care settings and is recorded on ChemoCare is included. Paediatric patient activity
+                                             and prescriptions not recorded on a ChemoCare system are not included."),
+                                           p("Local values have been used in the calculations, however, national mappings
+                                             and derivations were applied to define tumour groups and identify the administration route."),
+                                           p("Due to differences in recording practice",
+                                             em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
+                                             style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+
+                                           actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle')),
+                                           downloadButton('download_sact_monthly_data', 'Download data')), # well panel
+
+                                 wellPanel(column(7, selectInput("geotype_sact", label = "Select a geography level and then an area of interest",
+                                                                 choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
+                                                  uiOutput("geoname_ui_sact"),
+                                                  uiOutput("treatment_ui_sact")),
+                                           column(5,  selectInput("sact_type", label = "Select all or specific cancer type",
+                                                                  choices = c("All","Bone Sarcoma", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
+                                                                              "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
+                                                                              "Lung & Chest", "Neuroendocrine", "Other", "Skin", "Soft Tissue Sarcoma",
+                                                                              "Upper GI", "Urological", "Unknown"), selected = "All"),
+                                                  div(radioButtons("sact_plot_filter", "Select data breakdown to display together:",
+                                                                   list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
+                                                                   selected = "Standard graph")))
+                                 ), #well panel
+
+                                 mainPanel(width = 12,
+                                           uiOutput("sact_explorer")
+                                 )# mainPanel bracket
+
+                                           ), # tabpanel bracket
+
+
+                        #### WEEKLY TAB
+
+                        tabPanel(title = "SACT (Chemotherapy) Weekly Appointments", icon = icon("syringe"), value = "sact",
+                                 wellPanel(h4(strong("SACT Treatment Activity in Scotland - Weekly Appointment Data")),
+                                           #p(strong("Data from the ChemoCare system in the North Cancer Alliance (NCA) Highland has not
+                                           #          refreshed on the 28th of June 2021. Data from this instance is therefore only deemed
+                                           #         complete up to the week beginning 7th of June and only presented in the graphs up to
+                                           #        that date. This affects Scotland level data, NCA network level data and NCA Highland
+                                           #       health boards: NHS Highland and NHS Western Isles."),
+                                           #style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+                                           p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
+                                             of cancer. The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments
+                                             such as targeted agents and immunotherapies."),
+                                           p("The weekly and monthly activity reports are generated from the SACT national MVP data platform
+                                             held by PHS, which is updated weekly from the five instances of ChemoCare across Scotland.
+                                             All SACT and non-SACT (e.g. other drugs used to treat cancer such as hormones and supportive medicines
+                                             such as anti-sickness medicines and steroids) activity which is prescribed
+                                             in secondary care settings and is recorded on ChemoCare is included. Paediatric patient activity
+                                             and prescriptions not recorded on a ChemoCare system are not included."),
+                                           p("Local values have been used in the calculations, however, national mappings
+                                             and derivations were applied to define tumour groups and identify the administration route."),
+                                           p("Due to differences in recording practice",
+                                             em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
+                                             style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+                                           p("Activity data is released two week in arrears. The latest data currently available in the
+                                             dashboard is for the week beginning", strong(format(max(sact_weekly_data$week_beginning), "%d %B %Y"))),
+
+                                           actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle')),
+                                           downloadButton('download_sact_weekly_data', 'Download data')), # well panel
+
+                                 wellPanel(column(7, selectInput("geotype_wk_sact", label = "Select a geography level and then an area of interest",
+                                                                 choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
+                                                  uiOutput("geoname_ui_wk_sact"),
+                                                  uiOutput("treatment_ui_wk_sact")),
+
+                                           column(5, selectInput("sact_wk_type", label = "Select all or specific cancer type",
+                                                                 choices = c("All","Bone Sarcoma", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
+                                                                             "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
+                                                                             "Lung & Chest", "Neuroendocrine", "Other", "Skin", "Soft Tissue Sarcoma",
+                                                                             "Upper GI", "Urological", "Unknown"), selected = "All"),
+                                                  div(radioButtons("sact_wk_appt_reg", "Select method of administration route derivation",
+                                                                   list("Appointment level","Regimen level"), inline = TRUE,
+                                                                   selected = "Appointment level")),
+                                                  div(radioButtons("sact_plot_wk_filter", "Select data breakdown to display together:",
+                                                                   list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
+                                                                   selected = "Standard graph")))
+                                 ), #well panel
+
+                                 mainPanel(width = 12,
+                                           uiOutput("sact_wk_explorer")
+                                 )# mainPanel bracket
+                                           ) # tabpanel bracket
+                        ) , # navbar bracket          
 ###############################################.
 ## Unintentional Injuries ----
 ###############################################.
@@ -268,13 +387,13 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
          )# mainPanel bracket
 ),#tabPanel bracket
 ###############################################.
-## Pregnancy ----
+## Pregnancy menu ----
 ##############################################.
 navbarMenu("Pregnancy", icon = icon("venus"),
 ###############################################.
-## Antenatal booking Tab ----
+## Antenatal booking ----
 ###############################################.
-tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking",
+tabPanel(title = "Antenatal booking", value = "booking",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -294,9 +413,9 @@ tabPanel(title = "Antenatal booking", icon = icon("book-open"), value = "booking
          )# mainPanel bracket
 ), #tab panel
 ###############################################.
-## Termination of pregnancy Tab ----
+## Termination of pregnancy  ----
 ###############################################.
-tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "terminations",
+tabPanel(title = "Termination of pregnancy", value = "terminations",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -316,13 +435,13 @@ tabPanel(title = "Termination of pregnancy", icon = icon("bars"), value = "termi
 ) # tabPanel bracket
  ), # navbar menu bracket
 ###############################################.
-## Births and Babies ----
+## Births and Babies menu ----
 ##############################################.
 navbarMenu("Births and babies", icon = icon("baby"),
 ###############################################.
-## Inductions Tab ----
+## Inductions ----
 ###############################################.
-tabPanel(title = "Induction of labour", icon = icon("hand-holding-medical"), value = "inductions",
+tabPanel(title = "Induction of labour", value = "inductions",
         wellPanel(
           column(4, div(title="Select a breakdown",
                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -341,9 +460,9 @@ tabPanel(title = "Induction of labour", icon = icon("hand-holding-medical"), val
         )# mainPanel bracket
 ), # tabPanel bracket
 ###############################################.
-## Mode of delivery Tab ----
+## Mode of delivery ----
 ###############################################.
-tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mod",
+tabPanel(title = "Method of delivery", value = "mod",
         wellPanel(
            column(4, div(title="Select a breakdown",
                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -364,9 +483,9 @@ tabPanel(title = "Method of delivery", icon = icon("hospital-user"), value = "mo
         )# mainPanel bracket
 ), # tabPanel bracket
 ###############################################.
-## Gestation at delivery Tab ----
+## Gestation at delivery ----
 ###############################################.
-tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "gestation",
+tabPanel(title = "Gestation at delivery", value = "gestation",
         wellPanel(
           column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -385,9 +504,9 @@ tabPanel(title = "Gestation at delivery", icon = icon("calendar-alt"), value = "
         )# mainPanel bracket
  ), # tabPanel bracket
 ###############################################.
-## Apgar Tab ----
+## Apgar ----
 ###############################################.
-tabPanel(title = "Apgar scores", icon = icon("notes-medical"), value = "apgar",
+tabPanel(title = "Apgar scores", value = "apgar",
          wellPanel(
            column(4, div(title="Select a breakdown",
                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -406,16 +525,12 @@ tabPanel(title = "Apgar scores", icon = icon("notes-medical"), value = "apgar",
          )# mainPanel bracket
 ), # tabPanel bracket
 ###############################################.
-## Preterm Tab ----
+## Preterm ----
 ###############################################.
-tabPanel(title = "Location of extremely preterm deliveries", icon = icon("hospital-alt"), value = "preterm",
+tabPanel(title = "Location of extremely preterm deliveries", value = "preterm",
          wellPanel(
            column(6, div(title="",
                          p(tags$b("Location of extremely preterm deliveries data is only available at Scotland level.")))),
-           # ,
-           #               selectInput("geotype_preterm", label = NULL, choices= c("Scotland"),
-           #                           selected = "Scotland")),
-           #        uiOutput("geoname_ui_preterm")),
            column(4,offset=2,
                   actionButton("btn_preterm_modal", "Data source: SMR02", icon = icon('question-circle')),
                   fluidRow(br()),
@@ -427,10 +542,31 @@ tabPanel(title = "Location of extremely preterm deliveries", icon = icon("hospit
                    uiOutput("preterm_explorer")
          )# mainPanel bracket
 ), # tabPanel bracket
+###############################################.
+## Perineal tears  ----
+###############################################.
+tabPanel(title = "Perineal tears", value = "tears",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_tears", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_tears")),
+           column(4,offset=4,
+                  actionButton("btn_tears_modal", "Data source: SMR02", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_tears_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_tears","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("tears_explorer")
+         )# mainPanel bracket
+), # tabPanel bracket
 ##############################################.
 ## Perinatal ----
 ###############################################.
-tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value = "perinatal_mortality",
+tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
                          radioGroupButtons("measure_select_perinatal",
@@ -448,15 +584,15 @@ tabPanel(title = "Stillbirths and infant deaths", icon = icon("female"), value =
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ) # tabpanel bracket
- ), # navbar menu bracket
+  ), # navbar menu bracket
 ###############################################.
-## Child health navbarmenu ----
+## Child health menu ----
 ###############################################.
 navbarMenu("Child health", icon = icon("child"),
            ##############################################.
-           # Immunisation Tab ----
+           # Immunisations ----
            ##############################################.
-           tabPanel(title = "Immunisations", icon = icon("syringe"), value = "imm",
+           tabPanel(title = "Immunisations", value = "imm",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_immun",
@@ -490,7 +626,7 @@ navbarMenu("Child health", icon = icon("child"),
            ##############################################.
            # Child Health reviews ----
            #############################################.
-           tabPanel(title = "Child health reviews", icon = icon("child"), value = "child_health",
+           tabPanel(title = "Child health reviews", value = "child_health",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_child",
@@ -518,9 +654,9 @@ navbarMenu("Child health", icon = icon("child"),
                     )# mainPanel bracket
            ), # tabpanel bracket
            ###############################################.
-           ## Breastfeeding tab ----
+           ## Breastfeeding  ----
            ##############################################.
-           tabPanel(title = "Breastfeeding", icon = icon("baby"), value = "breastfeeding",
+           tabPanel(title = "Breastfeeding", value = "breastfeeding",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_bf",
@@ -545,7 +681,7 @@ navbarMenu("Child health", icon = icon("child"),
            ###############################################.
            ## Child development ----
            ###############################################.
-           tabPanel(title = "Child development", icon = icon("seedling"), value = "child_dev",
+           tabPanel(title = "Child development", value = "child_dev",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
                                     radioGroupButtons("measure_select_childdev",
@@ -567,9 +703,46 @@ navbarMenu("Child health", icon = icon("child"),
                     )# mainPanel bracket
            ) # tabpanel bracket
 ), #navbarMenu bracket
-##############################################.
-# Data ----
-##############################################.
+
+###############################################.
+## Drugs ----
+###############################################.
+tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
+         wellPanel(
+           column(4, div(title="Select the data you want to explore", # tooltip
+                         radioGroupButtons("drug_subcategories",
+                                           label= "Step 1 – Select the data you want to explore",
+                                           choices = c('Take home naloxone kits'), status = "primary",
+                                           direction = "vertical", justified = T))),
+           column(4,uiOutput('area_drugs_select'),
+                  uiOutput("geoname_ui_drugs")),
+           
+           column(4, uiOutput("types")),
+           column(4,downloadButton('download_drugs_data', 'Download data'),
+                  actionButton('jump_commentary_drugs','Go to commentary'),
+                  fluidRow(br()),
+                  actionButton("btn_drugs_modal", "Data source and definitions",
+                                                    icon = icon('question-circle')))
+         ),#wellPanel bracket
+         
+
+         mainPanel(width = 12,
+                   fluidRow(br()),
+                   fluidRow(br()),
+                   plotlyOutput('TwoYrComparison',width='100%'),
+                   fluidRow(br()),
+                   fluidRow(br()),
+                   uiOutput('PercentChange'),
+                   fluidRow(br()),
+                   fluidRow(br()),
+                   uiOutput('Prop_barplot')
+                   
+                   
+         )# mainPanel bracket
+), # tabpanel bracket
+# ##############################################.
+# # Data ----
+# ##############################################.
  tabPanel(title = "Data", icon = icon("table"), value = "table",
           p("This section allows you to view the data in table format.
          You can use the filters to select the data you are interested in.
@@ -585,6 +758,7 @@ navbarMenu("Child health", icon = icon("child"),
                     DT::dataTableOutput("table_filtered"))
       ) # tabpanel bracket
    ) # page bracket
-# )# taglist bracket
- #)#secure app
+ )# taglist bracket
+#)#secure app
+
 #END

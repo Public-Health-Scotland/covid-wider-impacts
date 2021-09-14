@@ -1,4 +1,4 @@
-##Server script for breastfeeding tab
+##Server script for breastfeeding tab..
 
 ###############################################.
 ## Modal ----
@@ -253,6 +253,23 @@ output$bf_ever_pc <- renderPlotly({
 output$breastfeeding_commentary <- renderUI({
   tagList(
     bsButton("jump_to_breastfed",label = "Go to data"), #this button can only be used once
+    h2("Breastfeeding - 1st September 2021"),
+    p("Information on breastfeeding has been updated in this tool on 1 September 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old. Data is shown by month of review from January 2019 to June 2021. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
+    p("Please note that going forward the dashboard will continue to be updated on the first Wednesday of each month, but the commentary will only be updated in the case of exceptions."),
+    h2("Breastfeeding - 4th August 2021"),
+    p("Information on breastfeeding has been updated in this tool on 4 August 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old. Data is shown by month of review from January 2019 to May 2021. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
+    h2("Breastfeeding - 7th July 2021"),
+    p("Information on breastfeeding has been updated in this tool on 7 July 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old."),
+    p("Data is shown by month of review from January 2019 to April 2021, so comparisons can be made for babies receiving their reviews before and during the COVID-19 pandemic."),
+    p("Information at Health & Social Care Partnership level is available in the data download function."),
+    p("At Scotland level, the data show that there was a small increase in the overall proportion of babies recorded as having been breastfed at both the Heath Visitor first visit, and 6-8 week review in the early months of the pandemic, but this now appears to have fallen back to pre-pandemic levels."),
+    p("Further background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
+    h2("Breastfeeding - 2nd June 2021"),
+    p("Information on breastfeeding has been updated in this tool on 2 June 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old."),
+    p("Data is shown by month of review from January 2019 to March 2021, so comparisons can be made for babies receiving their reviews before and during the COVID-19 pandemic."),
+    p("Information at Health & Social Care Partnership level is available in the data download function."),
+    p("At Scotland level, the data show that there was a small increase in the overall proportion of babies recorded as having been breastfed at both the Heath Visitor first visit, and 6-8 week review in the early months of the pandemic, but this now appears to have fallen back to pre-pandemic levels."),
+    p("Further background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
     h2("Breastfeeding - 5th May 2021"),
     p("Information on breastfeeding has been updated in this tool on 5 May 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when babies are 10-14 days (Health Visitor [HV] First Visit) and 6-8 weeks old."),
     p("Data is shown by month of review from January 2019 to February 2021, so comparisons can be made for babies receiving their reviews before and during the COVID-19 pandemic."),

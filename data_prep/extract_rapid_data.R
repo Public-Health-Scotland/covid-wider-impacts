@@ -118,7 +118,7 @@ rapid <- rapid %>% mutate(age_group = case_when(
                               TRUE ~ 'missing') ) 
 
 ### Subsection: Lookup SIMDs by postcode.
-simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2020_2_simd2020v2.rds') %>% 
+simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2021_1_simd2020v2.rds') %>% 
   select(pc7, simd2020v2_sc_quintile) %>% as.data.table
 
 #Using a data table lookup is much faster than using an index lookup in base R.  
@@ -191,7 +191,7 @@ lookup_end_date_by_hb['X'] <- min(lookup_end_date_by_hb)
 combined_records <- combined_records %>% filter(date_adm <= lookup_end_date_by_hb[combined_records$hb])
 
 #Save the file to a shared area. 
-date_on_filename <- format(Sys.Date(), format = '%d-%b')
+date_on_filename <<- format(Sys.Date(), format = '%d-%b')
 saveRDS(combined_records, paste0(data_folder, 'rapid/Admissions_by_category_', date_on_filename, '.rds') ) 
 
 

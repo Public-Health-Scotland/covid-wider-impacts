@@ -1,4 +1,4 @@
-##Server script for child development tab
+##Server script for child development tab..
 
 ###############################################.
 ## Modal ----
@@ -10,7 +10,7 @@ observeEvent(input$btn_childdev_modal,
                title = "What is the data source?",
                p("Data source: CHSP Pre-School"),
                tags$b("Meaningful data"),
-               p("TThis refers to records where a value of N (no concerns), C (concern newly suspected), or P (concern previously identified) 
+               p("This refers to records where a value of N (no concerns), C (concern newly suspected), or P (concern previously identified) 
                  has been recorded for all eight developmental domains assessed as part of the 13-15 month and 27-30 month child health reviews. See the ",
                tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/early-child-development/15-september-2020/dashboard/",
                       "Early Child Development", target="_blank"), " publication for further details."),
@@ -233,6 +233,31 @@ output$download_childdev_data <- downloadHandler(
 output$childdev_commentary <- renderUI({
   tagList(
     bsButton("jump_to_childdev",label = "Go to data"), #this button can only be used once
+    h2("Child development - 1st September 2021"),
+    p("Information on child development has been updated on 1 September 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Data is shown by month of review from January 2019 to June 2021. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
+    p("Please note that going forward the dashboard will continue to be updated on the first Wednesday of each month, but the commentary will only be updated in the case of exceptions."),
+    h2("Child development - 4th August 2021"),
+    p("Information on child development has been updated on 4 August 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Data is shown by month of review from January 2019 to May 2021. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
+    h2("Child development - 7th July 2021"),
+    h4("What is reported?"),
+    p("Information on child development has been updated on 7 July 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Data is shown on the proportion of children with 1 or more developmental concern recorded on their child health review record. Data is also shown on the overall number of reviews provided, and on the number of reviews with full meaningful data recorded for every development domain."),
+    p("Data is shown by month of review from January 2019 to April 2021, so comparisons can be made for children receiving their reviews before and during the COVID-19 pandemic. For the 13-15 month review specifically, no data is available for the period January to April 2019 for NHS Greater Glasgow & Clyde, as this review has only been delivered in NHS GG&C from May 2019 onwards. This means that information for ‘Scotland’ excludes NHS GG&C for January to April 2019, and includes NHS GG&C for May 2019 onwards."),
+    p("Data is available at Health & Social Care Partnership (HSCP) level, but this is only available through the data download function."),
+    h4("Data quality"),
+    p("The proportion of reviews which have meaningful data recorded for all development domains was substantially lower in April and May 2020, than the level seen in 2019. Data from more recent months show that this has improved, with full meaningful data recording returning to around 90% for both reviews in autumn 2020."),
+    h4("Findings"),
+    p("At Scotland level, the data show that the proportion of children having at least one developmental concern documented remain similar to pre-pandemic levels, having been much lower in April 2020. This drop was associated with the reduction in complete data recording, and is likely to reflect changes in ascertainment of developmental concerns (either identification or recording)."),
+    p("Further background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
+    h2("Child development - 2nd June 2021"),
+    h4("What is reported?"),
+    p("Information on child development has been updated on 2 June 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Data is shown on the proportion of children with 1 or more developmental concern recorded on their child health review record. Data is also shown on the overall number of reviews provided, and on the number of reviews with full meaningful data recorded for every development domain."),
+    p("Data is shown by month of review from January 2019 to February 2021, so comparisons can be made for children receiving their reviews before and during the COVID-19 pandemic. For the 13-15 month review specifically, no data is available for the period January to April 2019 for NHS Greater Glasgow & Clyde, as this review has only been delivered in NHS GG&C from May 2019 onwards. This means that information for ‘Scotland’ excludes NHS GG&C for January to April 2019, and includes NHS GG&C for May 2019 onwards."),
+    p("Data is available at Health & Social Care Partnership (HSCP) level, but this is only available through the data download function."),
+    h4("Data quality"),
+    p("The proportion of reviews which have meaningful data recorded for all development domains was substantially lower in April and May 2020, than the level seen in 2019. Data from more recent months show that this has improved, with full meaningful data recording returning to around 90% for both reviews in autumn 2020."),
+    h4("Findings"),
+    p("At Scotland level, the data show that the proportion of children having at least one developmental concern documented remain similar to pre-pandemic levels, having been much lower in April 2020. This drop was associated with the reduction in complete data recording, and is likely to reflect changes in ascertainment of developmental concerns (either identification or recording)."),
+    p("Further background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
     h2("Child development - 5th May 2021"),
     h4("What is reported?"),
     p("Information on child development has been updated on 5 May 2021. This is based on data recorded at child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Data is shown on the proportion of children with 1 or more developmental concern recorded on their child health review record. Data is also shown on the overall number of reviews provided, and on the number of reviews with full meaningful data recorded for every development domain."),

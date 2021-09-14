@@ -1,5 +1,5 @@
 
-###############################################.
+###############################################...
 ## Reactive data ----
 ###############################################.
 
@@ -30,6 +30,8 @@ data_table <- reactive({
          "fourtofive_visit" = fourtofivetable,
          "cancer" = cancer_data2,
          "injuries" = ui_smr01_all,
+        "sact_weekly" = sact_data_wk_inc,
+        "sact_monthly" = sact_data_inc,
          "childdev" = child_dev,
          "breastfeeding" = breastfeeding,
         "perinatal" = perinatal,
@@ -40,6 +42,7 @@ data_table <- reactive({
         "gestation" = gestation_download,
         "apgar" = apgar_download,
         "preterm" = preterm_chart,
+        "tears" = tears_download,
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
@@ -221,13 +224,29 @@ data_table <- reactive({
              "Type" = type)
   } else if (input$data_select %in% "cancer") {
     table_data <- table_data %>%
-      select(area, site, sex, week_ending, count19, count20, difference) %>%
-      mutate("Variation (%)" = format(round(difference, 2), nsmall = 2)) %>% 
-      rename("Area name" = area, "Cancer Type" = site,
+      select(area, site, sex, week_ending, count19, count20, count21, difference20, difference21) %>%
+      mutate(difference20 = format(round(difference20, 2), nsmall = 2),
+             difference21 = format(round(difference21, 2), nsmall = 2)) %>% 
+      rename("Area name" = area, "Cancer type" = site,
              "Sex" = sex,
-             "Week Ending" = week_ending,
+             "Week ending" = week_ending,
              "Count 2019" = count19,
-             "Count 2020" = count20)
+             "Count 2020" = count20,
+             "Count 2021" = count21,
+             "Variation (%) 2020 vs 2019" = difference20,
+             "Variation (%) 2021 vs 2019" = difference21)
+  } else if (input$data_select %in% "sact_weekly") {
+    table_data <- table_data %>%
+      select(week_beginning, region, area, site, appt_reg, treatment, count, week_on_refweek_perc) %>%
+      rename("Week beginning" = week_beginning, "Region" = region, "Area name" = area, 
+             "Cancer type" = site, "Administration route derivation" = appt_reg,
+             "Administration route" = treatment, "Number of appointments" = count,
+             "Percentage change vs. average reference Week" = week_on_refweek_perc)
+  } else if (input$data_select %in% "sact_monthly") {
+    table_data <- table_data %>%
+      select(month, region, area, site, treatment, count) %>%
+      rename("Month" = month, "Region" = region, "Area name" = area, "Cancer type" = site, 
+             "Administration route" = treatment, "Number of patients" = count)
   } else if (input$data_select %in% "childdev") {
     table_data %<>%
       select(area_name, month_review, review, number_reviews = no_reviews, 
@@ -348,14 +367,30 @@ data_table <- reactive({
              "Number of deliveries at 23-26w that occurred in a hospital with a NICU on site" = N_deliveries_23_26_NICU_site,
              "Percentage" = percentage_NICU_site)
     
-}
+  } else if (input$data_select %in% "tears") {
+    table_data <- table_data %>% 
+      select(area_name, area_type, date_of_discharge, subgroup, variable,
+             no_tear_37_plus, "1st_2nd_degree_tear_37_42", "3rd_4th_degree_tear_37_42", unspecified_tear_37_42, 
+             known_tear_status_37_42, unknown_tear_status_37_42,
+             perc_no_tears_37_42,
+             perc_1st2nd_tears_37_42, 
+             perc_3rd4th_tears_37_42, 
+             perc_unspecified_tears_37_42) %>% 
+      mutate(variable = case_when(variable %in% c("20-24", "25-29", "30-34", "35-39", 
+                                                  "40 and over", "Under 20", "1 - most deprived", "2", "3", "4", 
+                                                  "5 - least deprived", "Unknown") ~ paste0(variable),
+                                  TRUE ~ "All")) %>% 
+      mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
+                                  TRUE ~ "All"))
+  }
   
   
   table_data %<>% 
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
     mutate_if(is.numeric, round, 1)
   
-  if (!(input$data_select %in% c("childdev", "breastfeeding"))) {
+  if (!(input$data_select %in% c("childdev", "breastfeeding", "cancer", "sact_weekly", 
+                                 "sact_monthly"))) {
     table_data %<>% 
       select(sort(current_vars()))  # order columns alphabetically
   }

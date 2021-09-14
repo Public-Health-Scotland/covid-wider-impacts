@@ -1,4 +1,6 @@
-##Server script for antenatal booking tab
+
+##Server script for antenatal booking tab..
+
 
 
 # Pop-up modal explaining source of data
@@ -10,7 +12,6 @@ observeEvent(input$btn_booking_modal,
                p("The charts presented on this page show the number of women booking for antenatal care in each week from the week beginning 1 April 2019 onwards.  Data is shown at all Scotland level and for each mainland NHS Board of residence.  Due to small numbers, weekly data is not shown for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles), however the Island Boards are included in the Scotland total.  In addition to the weekly data, the ‘Download data’ button provides monthly data (based on exact month of booking rather than summation of sequential weeks) for each NHS Board of residence, including the Island Boards."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
 # Modal to explain run charts rules
 observeEvent(input$btn_booking_rules,
              showModal(modalDialog(
@@ -18,8 +19,7 @@ observeEvent(input$btn_booking_rules,
                p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
                tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
                        tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
+                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance.")),
                p("Further information on these methods of presenting data can be found in the ",                      
                  tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                         'PHS guide to statistical process control charts', target="_blank"),"."),
@@ -139,7 +139,23 @@ output$booking_explorer <- renderUI({
                      column(12,
                             p(booking_subtitle),
                             p(chart_explanation)))
-    } else {
+    } else if (input$geoname_booking == "NHS Forth Valley"){
+      fluidRow(column(12,
+                      h4(booking_trend_title),
+                      actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
+               column(6,
+                      h4(paste0(booking_title_n)), br(), p(" "),
+                      #actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
+                      withSpinner(plotlyOutput("booking_trend_n"))),
+               column(6,
+                      h4(paste0(booking_title_g)),
+                      p(paste0(booking_title_g2)),
+                      withSpinner(plotlyOutput("booking_trend_g"))),
+               column(12,
+                      p(booking_subtitle),
+                      p(chart_explanation)))
+    
+      } else {
       fluidRow(column(12,
                       h4(booking_trend_title),
                       actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
@@ -201,90 +217,9 @@ plot_booking_trend <- function(measure, shift, trend){
   # Display message if island/small board is supplied and no chart available
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
   { plot_nodata(height = 50, 
-                text_nodata = "Weekly data not shown due to small numbers.Monthly data is available through the Download data button above")
-  } else if (plot_data$area_name == "NHS Tayside") {
+                text_nodata = "Weekly data not shown due to small numbers. Monthly data is available through the Download data button above")
     
-    # chart legend labels  
-    centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")   
-    centreline_name_T <- paste0(input$geoname_booking, " average from Aug 2020 to end Dec 2020")
-    dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020") 
-    dottedline_name_T <- paste0(input$geoname_booking," projected average from Jan 2021") 
-    # format max and min x-axis to show initial time period and to add padding so markers aren't cut in half at start and end of chart
-    xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting)-7, max(plot_data$week_book_starting)+7) #force x-axis to display first week of data
-    
-    #switch y-axis according to which measure is selected
-    if(measure == "booked_no"){
-      yaxis_plots[["title"]] <- "Number of women booking"
-      tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
-                                  "Number of women booking: ",plot_data$booked_no))
-      dotted_line <-  plot_data$dottedline_no
-      centre_line <-  plot_data$centreline_no
-      yname <- "Number of women booking"
-      
-      #Creating time trend plot
-      plot_ly(data=plot_data, x=~week_book_starting) %>%
-        add_lines(y = ~get(measure),  
-                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-                  marker = list(color = "black"), name = yname) %>% 
-        add_lines(y = ~centre_line, name = centreline_name,
-                  line = list(color = "blue"), hoverinfo="none") %>%        
-        add_lines(y = ~dotted_line,
-                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
-                  name = dottedline_name) %>%
-        # adding trends
-        add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
-                    marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
-        # adding shifts - add these last so that shifts are always visible on top of trends
-        add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
-                    marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
-        #Layout
-        layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-               yaxis = yaxis_plots,  xaxis = xaxis_plots,
-               #legend = list(x = 0.1, y = 0.1)) %>% #position of legend inside plot
-               legend = list(orientation = 'h')) %>% #position of legend underneath plot
-        #leaving only save plot button
-        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-    } else if (measure  == "ave_gest") {
-      yaxis_plots[["title"]] <- "Average gestation at booking"
-      yaxis_plots[["range"]] <- c(0, 16)  # forcing range from 0 to 16 weeks to ensure doesn't change when NHS board selected
-      tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
-                                  "Average gestation: ",format(plot_data$ave_gest,digits = 1,nsmall=1)," weeks"))
-      dotted_line <-  plot_data$dottedline_g
-      centre_line <-  plot_data$centreline_g
-      dotted_line_t <- plot_data$dottedline_g_t
-      centre_line_t <- plot_data$centreline_g_t
-      yname <- "Average gestation"
-      
-      #Creating time trend plot
-      plot_ly(data=plot_data, x=~week_book_starting) %>%
-        add_lines(y = ~get(measure),  
-                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-                  marker = list(color = "black"), name = yname) %>% 
-        add_lines(y = ~centre_line, name = centreline_name,
-                  line = list(color = "blue"), hoverinfo="none") %>%        
-        add_lines(y = ~dotted_line,
-                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
-                  name = dottedline_name) %>%
-        add_lines(y = ~centre_line_t, name = centreline_name_T,
-                  line = list(color = "limegreen"), hoverinfo="none") %>%
-        add_lines(y = ~dotted_line_t,
-                  line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
-                  name = dottedline_name_T) %>%
-        # adding trends
-        add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
-                    marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
-        # adding shifts - add these last so that shifts are always visible on top of trends
-        add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
-                    marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
-        #Layout
-        layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-               yaxis = yaxis_plots,  xaxis = xaxis_plots,
-               #legend = list(x = 0.1, y = 0.1)) %>% #position of legend inside plot
-               legend = list(orientation = 'h')) %>% #position of legend underneath plot
-        #leaving only save plot button
-        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-    } 
-  } else {
+  } else { 
     # chart legend labels  
     centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")    
     dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020")
@@ -299,27 +234,86 @@ plot_booking_trend <- function(measure, shift, trend){
       dotted_line <-  plot_data$dottedline_no
       centre_line <-  plot_data$centreline_no
       yname <- "Number of women booking"
+      
     } else if (measure  == "ave_gest") {
+      # chart legend labels, for most boards and the different centrelines of Tayside and FV  
+      centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")   
+      centreline_name_t <- paste0(input$geoname_booking, " average from Aug 2020 to end Dec 2020")
+      centreline_name_v <- paste0(input$geoname_booking, " average from Mar 2021 to Jun 2021")
+      dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020") 
+      dottedline_name_t <- paste0(input$geoname_booking," projected average from Jan 2021") 
+      dottedline_name_v <- paste0(input$geoname_booking," projected average from Jul 2021")
+      dottedline_name_ts <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020")
+      dottedline_name_fv <- paste0(input$geoname_booking," projected average from Mar 2020 to end Feb 2021")
+      # format max and min x-axis to show initial time period and to add padding so markers aren't cut in half at start and end of chart
+      xaxis_plots[["range"]] <- c(min(plot_data$week_book_starting)-7, max(plot_data$week_book_starting)+7) #force x-axis to display first week of data
+      
       yaxis_plots[["title"]] <- "Average gestation at booking"
       yaxis_plots[["range"]] <- c(0, 16)  # forcing range from 0 to 16 weeks to ensure doesn't change when NHS board selected
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
                                   "Average gestation: ",format(plot_data$ave_gest,digits = 1,nsmall=1)," weeks"))
+      
       dotted_line <-  plot_data$dottedline_g
       centre_line <-  plot_data$centreline_g
+      dotted_line_t <- plot_data$dottedline_g_t
+      centre_line_t <- plot_data$centreline_g_t
+      centre_line_v <- plot_data$centreline_g_v
+      dotted_line_v <- plot_data$dottedline_g_v
+      
       yname <- "Average gestation"
     } 
-  
+    
     
     #Creating time trend plot
-    plot_ly(data=plot_data, x=~week_book_starting) %>%
-      add_lines(y = ~get(measure),  
-                line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
-                marker = list(color = "black"), name = yname) %>% 
-            add_lines(y = ~centre_line, name = centreline_name,
-                line = list(color = "blue"), hoverinfo="none") %>%
-      add_lines(y = ~dotted_line,
-                line = list(color = "blue", dash = "dash"), hoverinfo="none",
-                name = dottedline_name) %>%
+    ante_plot <- plot_ly(data=plot_data, x=~week_book_starting)
+    
+    # Adding a couple of different centrelines for average gestation in FV and Tayside
+    if(measure == "ave_gest" & input$geoname_booking == "NHS Tayside"){
+      ante_plot <- ante_plot %>% 
+        # For Tayside
+        add_lines(y = ~get(measure),  
+                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                  marker = list(color = "black"), name = yname) %>% 
+        add_lines(y = ~centre_line, name = centreline_name,
+                  line = list(color = "blue"), hoverinfo="none") %>%        
+        add_lines(y = ~dotted_line,
+                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name_ts) %>%
+        add_lines(y = ~centre_line_t, name = centreline_name_t,
+                line = list(color = "limegreen"), hoverinfo="none") %>%
+        add_lines(y = ~dotted_line_t,
+                  line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name_t) 
+    
+    } else if(measure == "ave_gest" & input$geoname_booking == "NHS Forth Valley") {
+      ante_plot <- ante_plot %>% 
+        # For Tayside
+        add_lines(y = ~get(measure),  
+                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                  marker = list(color = "black"), name = yname) %>% 
+        add_lines(y = ~centre_line, name = centreline_name,
+                  line = list(color = "blue"), hoverinfo="none") %>%        
+        add_lines(y = ~dotted_line,
+                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name_fv) %>%
+      add_lines(y = ~centre_line_v, name = centreline_name_v,
+                line = list(color = "limegreen"), hoverinfo="none") %>%
+        add_lines(y = ~dotted_line_v,
+                  line = list(color = "limegreen", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name_v) 
+      
+    } else {
+      ante_plot <- ante_plot %>%
+        add_lines(y = ~get(measure),  
+                  line = list(color = "black"), text=tooltip_booking, hoverinfo="text",
+                  marker = list(color = "black"), name = yname) %>% 
+        add_lines(y = ~centre_line, name = centreline_name,
+                  line = list(color = "blue"), hoverinfo="none") %>%        
+        add_lines(y = ~dotted_line,
+                  line = list(color = "blue", dash = "dash"), hoverinfo="none",
+                  name = dottedline_name) }
+      
+    ante_plot %>%
       # adding trends
       add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
                   marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
@@ -333,8 +327,10 @@ plot_booking_trend <- function(measure, shift, trend){
              legend = list(orientation = 'h')) %>% #position of legend underneath plot
       #leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
   }
 }
+
 
 ## Trend plot for weekly bookings numbers and average gestation at booking split by age group and simd quintile 
 plot_booking_split <- function(dataset, split, measure){
@@ -422,6 +418,14 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Antenatal bookings - 1st September 2021"),
+    p("The average gestation is noted to be higher than usual in the latest week presented for NHS Borders. This is likely to be the effect of small numbers of bookings in NHS Borders. A few later bookings can dramatically alter the average gestation at booking for a particular week (e.g. 26 July). Some of these may be in pregnancies that were originally booked elsewhere. There is no evidence of a sustained pattern of increased average gestation in NHS Borders although we will continue to monitor these data. "),
+    h2("Antenatal bookings - 7th July 2021"),
+    p("In this release of information on antenatal booking data (7th July 2021) data have been updated to include women booking for antenatal care up to the week beginning 7th June 2021. 
+       A new centreline line for average gestation has been included for NHS Forth Valley because a technical change to the way their data are recorded is thought to have resulted in data which more accurately represent the timing of when women book for antenatal care in NHS Forth Valley. The new centreline starts from the week beginning 1st March 2021 and will be calculated over the period 1st March - 12th July 2021 after which a projected centreline will be presented on the average gestation chart for NHS Forth Valley."),
+    h2("Antenatal bookings - 2nd June 2021"),
+    p("In this release of information on antenatal booking data (2nd June 2021) data have been updated to include women booking for antenatal care up to the week beginning 3rd May 2021. Since the previous release, which showed data up until the week beginning 5th April 2021, numbers of women booking for antenatal care in Scotland have reduced (to 869 in week of 3rd May). This is likely to be as a result of fewer women booking over the May public holiday. This reduction is also reflected in the numbers of bookings by NHS Board with NHS Borders, NHS Lothian and NHS Greater Glasgow & Clyde showing notable decreases for the week beginning 3rd May 2021. NHS Forth Valley have recorded six consecutive data points below their average number of bookings."),
+    p("The updated (all-Scotland) data in this release show that the average gestation at which women booked for antenatal care in recent weeks is around the average based on the pre-pandemic period. Recent data on average gestation by NHS Board are more varied. Lower than average gestation at booking has been observed over at least six consecutive data points in the most recent NHS Ayrshire & Arran, NHS Dumfries & Galloway, NHS Highland, NHS Lanarkshire and NHS Lothian data. NHS Forth Valley continues to show an increased average gestation at booking in recent weeks compared to their pre-pandemic average. This is believed to be as a result of a technical change in data recording and we are continuing to work with the Health Board to clarify this."),
     h2("Antenatal bookings - 5th May 2021"),
     p("In this release of information on antenatal booking data (5th May 2021) data have been updated to include women booking for antenatal care up to the week beginning 5th April 2021. Since the previous release, which showed data up until the week beginning 8th March 2021, numbers of women booking for antenatal care in Scotland have reduced slightly (to 971 in week of 5 April) but are still at a level which is very similar to the average numbers seen pre-pandemic. Numbers of bookings in different NHS Boards vary. NHS Borders, NHS Grampian and NHS Highland are all showing runs of at least six consecutive data points above their average number of bookings per week, that continue into April. NHS Ayrshire & Arran have recorded six consecutive data points below their average number of bookings."),
     p("The updated (all-Scotland) data in this release show that the average gestation at which women booked for antenatal care is at a very similar level to the average based on the pre-pandemic period: at 9.3 weeks. A higher than average gestation at booking for women aged under 20 is evident in six out of the last seven time points (average gestation of 11.2 weeks, in week of 5 April). Recent data on average gestation by NHS Board are more varied. Lower than average gestation at booking has been observed over at least six consecutive data points in the most recent NHS Ayrshire & Arran, NHS Lanarkshire and NHS Lothian data. NHS Forth Valley has shown a sharp rise in average gestation at booking in recent weeks. This is believed to be as a result of a technical change in data recording and we are continuing to work with the Health Board to clarify this."),

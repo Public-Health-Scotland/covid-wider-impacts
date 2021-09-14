@@ -1,4 +1,4 @@
-##Server script for preterm tab
+##Server script for preterm tab..
 
 ###############################################.
 ## Modal ----
@@ -192,7 +192,12 @@ output$preterm_linechart <- renderPlotly({
 ###############################################.
 
 preterm_download_data <- reactive({
-  preterm_download
+  preterm_chart %>% 
+    select(quarter, N_deliveries_23_26_NICU_site, N_deliveries_23_26,
+           percentage_NICU_site, centreline, stdev,
+           upper_cl_3_std_dev, lower_cl_3_std_dev,
+           upper_wl_2_std_dev, lower_wl_2_std_dev,
+           area_name, outlier, shift, trend, outer, inner)
 })
 
 output$download_preterm_data <- downloadHandler(
