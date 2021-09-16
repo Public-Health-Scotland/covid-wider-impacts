@@ -141,35 +141,33 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       # Creating objects that change depending on dataset
       yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                                data_name == "aye" ~ "Number of attendances",
-                               data_name == "ooh" ~ "Number of cases",
+                               substr(data_name, 1, 3) == "ooh" ~ "Number of cases",
                                data_name == "nhs24" ~ "Number of completed contacts",
-                               data_name == "sas" ~ "Number of incidents",
+                               substr(data_name, 1, 3) == "sas" ~ "Number of incidents",
                                data_name == "cath" ~ "Number of cases",
                                data_name == "drug_presc" ~ "Number of items prescribed",
-                               data_name == "ooh_cardiac" ~ "Number of cases",
-                               data_name == "sas_cardiac" ~ "Number of incidents",
                                data_name == "deaths" ~ "Number of deaths",
                                data_name == "mentalhealth_drugs" ~ "Number of patients",
                                data_name == "mh_ooh" ~ "Number of consultations",
-                               data_name == "op" ~ "Number of appointments")
+                               data_name == "op" ~ "Number of appointments",
+                               substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions")
       
       #Modifying standard layout
       yaxis_plots[["title"]] <- yaxis_title
       
       measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                                 data_name == "aye" ~ "Attendances: ",
-                                data_name == "ooh" ~ "Cases: ",
+                                substr(data_name, 1, 3) == "ooh" ~ "Cases: ",
                                 data_name == "nhs24" ~ "Completed contacts: ",
-                                data_name == "sas" ~ "Incidents: ",
+                                substr(data_name, 1, 3) == "sas" ~ "Incidents: ",
                                 data_name == "cath" ~ "Cases: ",
                                 data_name == "drug_presc" ~ "Items prescribed: ",
-                                data_name == "ooh_cardiac" ~ "Cases: ",
-                                data_name == "sas_cardiac" ~ "Incidents: ",
                                 data_name == "cancer" ~ "Referrals: ",
                                 data_name == "deaths" ~ "Deaths: ",
                                 data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
                                 data_name == "mh_ooh" ~ "Consultations: ",
-                                data_name == "op" ~ "Appointments: ")
+                                data_name == "op" ~ "Appointments: ",
+                                substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ")
       
       #Text for tooltip
       if (aver_week == T) {
