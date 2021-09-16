@@ -385,7 +385,7 @@ output$cancer_commentary <- renderUI({
       in the initial release of the dashboard are for pathological samples taken for patients to the week ending 29th 
       November."),
     
-    p("Any observed differences in numbers of pathologically confirmed cancers in 2020 compared to 2019 could be due to changes in:"),
+    p("Any observed differences in numbers of pathologically confirmed cancers in 2020 (or 2021) compared to 2019 could be due to changes in:"),
     tags$ul(
       tags$li("patients seeking or obtaining an initial medical consultation"),
       tags$li("availability of cancer screening"),
