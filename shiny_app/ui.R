@@ -103,7 +103,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
                           actionLink("tears_button", "Perineal tears", width="150px"),br(),
                           actionLink("cancer_button", "Cancer", width="150px"),br(),
-                          actionLink("injuries_button", "Injuries", width="150px", br(),
+                          actionLink("injuries_button", "Injuries", width="150px"), br(),
                           actionLink("drug_button", "Substance use", width="150px")
                          ),
                    column(10,
