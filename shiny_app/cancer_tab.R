@@ -134,6 +134,7 @@ output$cancer_explorer <- renderUI({
                            input$cancer_type == "Bladder" ~ "Bladder",
                            input$cancer_type == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
                            input$cancer_type == "Breast" ~ "Breast",
+                           input$cancer_type == "Cervical - Females only" ~ "Cervical - Females only",
                            input$cancer_type == "Colorectal" ~ "Colorectal",
                            input$cancer_type == "Head and Neck" ~ "Head and Neck",
                            input$cancer_type == "Hodgkin Lymphoma" ~ "Hodgkin Lymphoma",
@@ -273,8 +274,8 @@ output$cancer_explorer2 <- renderUI({
            on 20th May 2021; the dashboard may now reflect more recent information."),
     br(),
     br(),
-    p(strong("Last updated: - 16/06/2021 ;  date of extraction of data: - 20/05/2021, with pathological records to week ending
-             26/02/2021.  ")))
+    p(strong("Last updated: - 29/07/2021 ;  date of extraction of data: - 20/05/2021, with pathological records to week ending
+             21/02/2021.  ")))
   
   
 })
@@ -353,6 +354,12 @@ output$cancer_commentary <- renderUI({
              data and may also change historical data. This commentary includes reference to pathological specimens 
              reported to the week ending 26th February 2021, which were available for inclusion in the analysis 
              when the data were extracted on 20th May 2021.")),
+    p(strong("29/07/21 - Following a quality assurance exercise, a mistake was found in the methodology used to identify 
+             unique patients; this has been corrected.  In addition, additional improvements were made in the identification 
+             of non-residents of Scotland and in the identification of inappropriate cancer type/sex combinations. As such 
+             there have been some revisions made to the numbers reported for the pathological specimens reported to the week 
+             ending 21st February 2021, extracted on 20th May 2021. These revisions are shown in red.",
+             style = "font-family: 'arial'; font-si20pt; color: #DC143C;")),
     
     h4(strong("Background")),
     p("COVID-19 has had a wide impact on cancer in Scotland since it led to widespread social disruption 
@@ -468,36 +475,86 @@ output$cancer_commentary <- renderUI({
     
     ###################################
     
-    h4(strong("Update 16/6/2021: For pathology data to 26th February 2020 (extracted 20/5/2021)")),
-    p("By the end of 2020 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
-      cancer (excluding non-melanoma skin cancers) in Scotland was 37,706 in 2020 and 44,655 in 2019, an absolute difference 
-      of 6,949 individuals (an overall cumulative difference of -16%).  That is to say, around 7,000 fewer 
-      patients in Scotland had a pathologically confirmed cancer diagnosis by the end of 2020 than would have 
-      been expected."),
+    h4(strong("Update 29/7/2021: For pathology data to 26th February 2021 (extracted 20/5/2021)")),
+    p(("By the end of 2020 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
+       cancer (excluding non-melanoma skin cancers) in Scotland was "),  
+      strong ("28,474 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+      ("in 2020 and"),
+      strong ("33,343 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+      ("in 2019, an absolute difference of "), 
+      strong ("4,869 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+      ("individuals (an overall cumulative difference of "),
+      strong ("-14.6% ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+      (").  That is to say, more than "),
+      strong ("4,800 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+      ("fewer patients in Scotland had a pathologically confirmed cancer diagnosis by the 27th of December 2020 than would have 
+       been expected.")),
     
     p("By December 2020, weekly numbers of pathological cancer diagnoses had risen from an initial drop of 40% at the start of the pandemic  
       to around 3% lower than in the previous year. This meant that the gap was continuing to increase but by a small amount.  In the first 
-      two months of 2021 (to week ending 23rd February), the total number of individuals with a pathologically confirmed cancer (excluding 
-      non-melanoma skin cancers) was 6,589, compared with 6,409 in 2020 (before the impact of the pandemic).  This suggests that the overall 
+      two months of 2021 (to week ending 21st February), the total number of individuals with a pathologically confirmed cancer (excluding 
+      non-melanoma skin cancers) was 5,922, compared with 5,844 in 2020 (before the impact of the pandemic).  This suggests that the overall  
       rate of cancer diagnoses in Scotland has returned to levels that are similar to, or higher than, pre-pandemic ones.  For some cancer types, 
       numbers of diagnoses in 2021 are higher than previously and for others, lower. "),
     
     p("Among the most common cancer types:"),
     tags$ul(
-      tags$li(" Lung cancer: The cumulative difference between 2019 and 2020 was 715 individuals (-20%).  In 2021, the cumulative difference to 
-              26th February 2021 compared with the same week in 2020 was 24 fewer individuals (-5%)."),
-      
-      tags$li(" Breast cancer (females).  The cumulative difference between 2019 and 2020 was 1,557 individuals (-19%).  In 2021, the cumulative 
-              difference to 26th February 2021 compared with the same week in 2020 was 22 more individuals (+2%)."),
-      
-      tags$li("	Prostate cancer. The cumulative difference between 2019 and 2020 was 831 individuals (-18%).  In 2021, the cumulative difference 
-              to 26th February 2021 compared with the same week in 2020 was 34 fewer individuals (less than 5% decrease)."),
-      
-      tags$li(" Colorectal (bowel) cancer. The cumulative difference between 2019 and 2020 was 1,111 individuals (-21%).  In 2021, the 
-              cumulative difference to 26th February 2021 compared with the same week in 2020 was 65 more individuals (+8%)"),
-      
-      tags$li("	Malignant melanoma of the skin.  The cumulative difference between 2019 and 2020 was 345 individuals (-18%).  In 2021, the
-              cumulative difference to 26th February 2021 compared with the same week in 2020 was 24 individuals (-13%).")),
+      tags$li("Lung cancer: The cumulative difference between 2019 and 2020 was",
+              strong ("584 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "individuals (",
+              strong ("-20.6%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "). In 2021, the cumulative difference to 
+              21st February 2021 compared with the same week in 2020 was",
+              strong ("40 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              " fewer individuals (",
+              strong ("-9.6%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              ")."
+      ),
+      tags$li("Breast cancer: The cumulative difference between 2019 and 2020 was",
+              strong ("849 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "individuals (",
+              strong ("-15.8%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "). In 2021, the cumulative difference to 
+              21st February 2021 compared with the same week in 2020 was",
+              strong ("17 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              " more individuals (",
+              strong ("1.6%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              ")."
+      ),
+      tags$li("Prostate cancer: The cumulative difference between 2019 and 2020 was",
+              strong ("556 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "individuals (",
+              strong ("-17.7%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "). In 2021, the cumulative difference to 
+              21st February 2021 compared with the same week in 2020 was",
+              strong ("6 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              " fewer individuals (",
+              strong ("-1.1%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              ")."
+      ),
+      tags$li("Colorectal cancer: The cumulative difference between 2019 and 2020 was",
+              strong ("851 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "individuals (",
+              strong ("-21.1%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "). In 2021, the cumulative difference to 
+              21st February 2021 compared with the same week in 2020 was",
+              strong ("31 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              " fewer individuals (",
+              strong ("-4.2%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              ")."
+      ),
+      tags$li("Malignant melanoma of the skin: The cumulative difference between 2019 and 2020 was",
+              strong ("338 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "individuals (",
+              strong ("-20.2%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              "). In 2021, the cumulative difference to 
+              21st February 2021 compared with the same week in 2020 was",
+              strong ("32 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              " fewer individuals (",
+              strong ("-12.8%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+              ")."
+      )
+    ),
     br(),
     
     
