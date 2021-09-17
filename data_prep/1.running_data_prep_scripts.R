@@ -14,11 +14,11 @@ source("data_prep/births_babies_data_prep.R") # This sources the functions for t
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
 
 
-create_delivery(folderdate = "2021-08-16") # Mode of delivery, induction and gestation data
+create_delivery(folderdate = "2021-09-13") # Mode of delivery, induction and gestation data
 create_perinatal(foldermonth = "sep21") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2021_08_17") # Apgar scores
-create_preterm(preterm_date = "2021_06_21", max_date = "2021-03-01") # Preterm
-create_tears(tears_date = "2021_08_17", max_date = "2021-05-01") # Perineal tears
+create_apgar(folderdate = "2021_09_13") # Apgar scores
+create_preterm(preterm_date = "2021_09_13", max_date = "2021-06-01") # Preterm
+create_tears(tears_date = "2021_09_13", max_date = "2021-06-01") # Perineal tears
 
 
 # Add here what needs to be changed in the shiny scripts
@@ -87,7 +87,7 @@ file.edit("shiny_app/summary_tab.R")
 source("data_prep/pregnancy_data_prep.R") # functions for section
 
 
-create_antebooking(booking_date = "12082021", max_book_date = "2021-08-01")
+create_antebooking(booking_date = "16092021", max_book_date = "2021-09-12")
 create_terminations(top_date = "2021-08-16")
 
 
