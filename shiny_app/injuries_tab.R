@@ -10,23 +10,17 @@ the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.”"
 observeEvent(input$btn_injuries_modal, 
                 showModal(modalDialog(# injury discharges MODAL
                  title = "What is the data source?",
-                 p("This tool provides a weekly summary of discharges from hospital with an unintentional injury (Acute Hospitals) 
+                 p("This tool provides a monthly summary of discharges from hospital with an unintentional injury (Acute Hospitals) 
                     in the recent past, along with historical activity for 
-                   comparison purposes. The recent trend data is shown by age group, sex
-                   and broad deprivation category (SIMD). This data only include Acute Hospital 
+                   comparison purposes. The recent trend data is shown by age group, sex, injury location
+                   and deprivation category (SIMD). This data only include Acute Hospital 
                    Discharges and do not include minor injury units and other small hospitals and 
                    health centres in rural areas that carry out Acute Hospital related activity, 
                    for more information on what sites are included please see this ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/Hospital-Site-List/",
                           "hospital list.",  target="_blank")),
-                 p("Discharges", week_standard),
-                 p(tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are 
-                            incomplete for a number of NHS Boards. Thus, the figures reported for injuries-related 
-                            Discharges offer only a very approximate indication of Discharges. 
-                            Additionally, some NHS Boards have moved to a new recording standard which 
-                            has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020, 
-                            even prior to the introduction of lockdown measures, appear somehwat lower when compared to 
-                            previous years.")),
+                 p("Discharges-These statistics are derived from data collected on discharges from non-obstetric and non-psychiatric acute hospitals (SMR01) in Scotland."),
+                 p(tags$em("")),
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 ###############################################.
 ## Reactive datasets ----
