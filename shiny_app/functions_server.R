@@ -183,7 +183,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
         
       } else {
         tooltip_trend <- c(paste0(trend_data$category, "<br>",
-                                  "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                  period_data, format(trend_data$week_ending, "%d %b %y"),
                                   "<br>", measure_name, trend_data$count,
                                   "<br>", "Historic average: ", trend_data$count_average))
         
