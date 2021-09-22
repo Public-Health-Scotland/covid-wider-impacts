@@ -33,7 +33,7 @@ function(input, output, session) {
                    tags$li("7 July- Monthly update of data (most sections)."),
                    tags$li("16 June 2021 - Outpatients data update."),
                    tags$li("16 June 2021 - Cancer pathology data update."),
-                   tags$li("16 June 2021 - New data on vaginal tears.")
+                   tags$li("16 June 2021 - New data on vaginal tears.")            
                    ),
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
