@@ -87,17 +87,17 @@ cancer_data_diff_dep <- reactive({
 
 cancer_data_dl <- reactive({
   
-  cancer_data_cum_main() %>% 
+  cancer_data2 %>% 
+    select(area:count21, breakdown) %>% 
     rename("Area name" = area, "Cancer type" = site,
            "Sex" = sex,
-           "Week ending" = week_ending,
+           "Age Group" = age_group,
+           "Deprivation Quintile (0=unknown)" = dep,
+           "Week Number" = week_number,
            "Count 2019" = count19,
            "Count 2020" = count20,
            "Count 2021" = count21,
-           "Cumulative count 2019" = cum_count19,
-           "Cumulative count 2020" = cum_count20,
-           "Cumulative count 2021" = cum_count21,
-           "Variation (%)" = difference)
+           "Breakdown" = breakdown)
   
 })
 
@@ -274,8 +274,9 @@ output$cancer_explorer2 <- renderUI({
            on 20th May 2021; the dashboard may now reflect more recent information."),
     br(),
     br(),
-    p(strong("Last updated: - 29/07/2021 ;  date of extraction of data: - 20/05/2021, with pathological records to week ending
-             21/02/2021.  ")))
+    p(paste0("Figures presented based on data extracted on ",cancer_extract_date)),
+    p(strong(paste0("Last updated: - 22/09/2021 ;  date of extraction of data: -",cancer_extract_date, "with pathological records to week ending
+             14/06/2021."))))
   
   
 })
@@ -421,22 +422,22 @@ output$cancer_commentary <- renderUI({
     
     p("Among the most common cancer types, comparing January to week ending 14th June in 2021 and 2019:"),
     tags$ul(
-      tags$li("Lung cancer. 1,102 versus 1,328 pathological diagnoses; a decrease
+      tags$li("Lung cancer: 1,102 versus 1,328 pathological diagnoses; a decrease
               of 226 individuals, or 17% lower."),
       
-      tags$li("Breast cancer (females). 2,658 versus 2,774 pathological diagnoses; 
+      tags$li("Breast cancer (females): 2,658 versus 2,774 pathological diagnoses; 
               a decrease of 116 individuals, or 4% lower."),
       
-      tags$li("Prostate cancer. 1,581 versus 1,544 pathological diagnoses; an increase
+      tags$li("Prostate cancer: 1,581 versus 1,544 pathological diagnoses; an increase
               of 37 individuals, or 2% higher."),
       
-      tags$li("Colorectal (bowel) cancer. 1,958 versus 2,011 pathological diagnoses; a
+      tags$li("Colorectal (bowel) cancer: 1,958 versus 2,011 pathological diagnoses; a
               decrease of 53 individuals, or 3% lower."),
       
-      tags$li("Liver and intrahepatic bile ducts. 166 versus 147 pathological diagnoses;
+      tags$li("Liver and intrahepatic bile ducts: 166 versus 147 pathological diagnoses;
               an increase of 19 individuals, or 11% higher."),
       
-      tags$li("Oesophagus. 579 versus 473 pathological diagnoses; an increase
+      tags$li("Oesophagus: 579 versus 473 pathological diagnoses; an increase
               of 106 individuals, or 22% higher.")),
     br(),
     p("A new quarterly chart of cumulative numbers shows that after initial falls in diagnoses, there was some recovery
