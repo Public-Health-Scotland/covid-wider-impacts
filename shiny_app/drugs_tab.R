@@ -101,6 +101,18 @@ output$TwoYrComparison<-renderPlotly({
     location<-input$geoname_drugs
   }
   
+  lockdown<-function(x){
+    list(
+    type = "line",
+    y0 = 0,
+    y1 = 1,
+    yref = "paper",
+    x0 = x,
+    x1 = x,
+    line = list(color = 'grey', dash = 'dash')
+  )
+  }
+  
   # if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
   #   plot_data<-subset(DTR_July_update,(Board==location)& Type==input$types & Date<'2021-06-28')#cutting off in line with most recent covid report
   #   complete_data<-subset(plot_data,Date<='2021-05-24')
@@ -150,7 +162,14 @@ output$TwoYrComparison<-renderPlotly({
       title = (sprintf("Number of take home naloxone supplied in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location,input$types)),
     
       xaxis=list(title='Date'),          
-      yaxis = list(title = "Number of THN kits")
+      yaxis = list(title = "Number of THN kits"),
+      shapes=lockdown('3.77'),
+      annotations=list(x = "4.5",
+                        y = max(max(plot_data$`2020 & 2021`),max(plot_data$`Average 2018 & 2019`)),
+                        text = "1st lockdown",
+                        xref = "1",
+                        yref = "1",
+                        showarrow = FALSE)
     )
     trend <- trend %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 

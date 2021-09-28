@@ -222,6 +222,9 @@ THN_by_Hb$Date<-month.abb[THN_by_Hb$Date]
 
 THN_by_Hb$Change[which(is.infinite(THN_by_Hb$Change))]<-NA
 
+THN_by_Hb$Date[1:nrow(comp.data)]<-paste(THN_by_Hb$Date[1:nrow(comp.data)],'2020')
+THN_by_Hb$Date[(nrow(comp.data)+1):nrow(THN_by_Hb)]<-paste(THN_by_Hb$Date[(nrow(comp.data)+1):nrow(THN_by_Hb)],'2021')
+
 #SAVING FOR SUBSTANCE USE TEAM
 saveRDS(THN_by_Hb,'THN_by_HB.rds')
 
@@ -253,6 +256,7 @@ new_THN<-cbind(THN_by_Hb,'Proportion 20/21'=proportion_current)
 new_THN$Change<-as.numeric(format(round(new_THN$Change, 1), nsmall = 1) )
 new_THN$`Proportion 20/21`<-as.numeric(format(round(new_THN$`Proportion 20/21` ,1),nsmall=1))
 'Now want to save new_THN as THN_by_Hb for use in the dashboard'
+
 
 #SAVING FOR SUBSTANCE USE TEAM
 saveRDS(new_THN,'THN_by_HB.rds')
