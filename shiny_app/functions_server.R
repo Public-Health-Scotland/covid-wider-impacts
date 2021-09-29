@@ -13,9 +13,6 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name = NULL, tab = "summary", period = "weekly",
                              aver_week = F) {
   
-  period_data <- case_when(period == "weekly" ~ "Week ending: ",
-                           period == "monthly" ~ "Month: ")
-
   if (split != FALSE) {
     if (tab == "summary") {
       if (input$measure_select != "outpats") {
@@ -35,7 +32,11 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   } else { # for cases outside summary tab
     trend_data <- dataset
   }
+
   
+  period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
+                           period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))
+    
   #If no data available for that period then plot message saying data is missing
   if (is.data.frame(trend_data) && nrow(trend_data) == 0)
   {
@@ -123,7 +124,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     } else {
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                                period_data, format(trend_data$week_ending, "%d %b %y"),
+                                period_data, 
                                 "<br>", "Change from ", aver_period, " average: ", 
                                 round(trend_data$variation, 1), "%"))
       
@@ -183,7 +184,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
         
       } else {
         tooltip_trend <- c(paste0(trend_data$category, "<br>",
-                                  period_data, format(trend_data$week_ending, "%d %b %y"),
+                                  period_data, 
                                   "<br>", measure_name, trend_data$count,
                                   "<br>", "Historic average: ", trend_data$count_average))
         
@@ -1214,12 +1215,12 @@ plot_overall_injury_chart <- function(dataset, var1_chosen, var2_chosen, data_na
     value2 <- dataset[[var2_chosen]]
     
     
-    tooltip_1 <- c(paste0("Month: ", format(dataset$week_ending, "%b"),
+    tooltip_1 <- c(paste0("Month: ", format(dataset$week_ending, "%b %y"),
                           "<br>", "Admissions from ",measure_name,": ", value1))
-    tooltip_2 <- c(paste0("Month: ", format(dataset$week_ending, "%b"),
+    tooltip_2 <- c(paste0("Month: ", format(dataset$week_ending, "%b %y"),
                           "<br>", "Admissions from ",measure_name,": ", value2))
     
-    tooltip_3 <- c(paste0("Month: ", format(dataset$week_ending, "%b"),
+    tooltip_3 <- c(paste0("Month: ", format(dataset$week_ending, "%b %y"),
                           "<br>", "Admissions: ", paste0(format(round(value1, 2), nsmall = 2), "%")))
     
     if(data_name != "dif") { 
