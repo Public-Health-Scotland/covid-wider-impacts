@@ -2,26 +2,32 @@
 ###############################################.
 ## Modals ----
 ###############################################.
-week_standard <- " are allocated to weeks based on the ISO8601 standard. Following this standard
-the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use 
-the 2018-2019 average of week 52 value as a comparator for 2020’s week 53.”"
-
 # Link action button click to modal launch 
 observeEvent(input$btn_injuries_modal, 
                 showModal(modalDialog(# injury discharges MODAL
                  title = "What is the data source?",
-                 p("This tool provides a monthly summary of discharges from hospital with an unintentional injury (Acute Hospitals) 
-                    in the recent past, along with historical activity for 
-                   comparison purposes. The recent trend data is shown by age group, sex, injury location
-                   and deprivation category (SIMD). This data only include Acute Hospital 
-                   Discharges and do not include minor injury units and other small hospitals and 
-                   health centres in rural areas that carry out Acute Hospital related activity, 
-                   for more information on what sites are included please see this ", 
+                 p("These data provide a monthly summary of  the number of admissions to hospital as a result of
+                    an unintentional injury or assault since Jan 2020, with data from 2018-2019 for comparison purposes.
+                    The recent trend data is shown by age group, sex, injury location and deprivation category (SIMD)."),
+                 p("The source of data is the Scottish Morbidity Record 01 (SMR01) database, which holds information on
+                    discharges from non-obstetric and non-psychiatric acute hospitals in Scotland.  The information shown
+                    does not include minor injury units and other small hospitals and health centres in rural areas that 
+                    carry out Acute Hospital related activity, for more information on what sites are included please see this 
+                     ", 
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/Hospital-Site-List/",
                           "hospital list.",  target="_blank")),
-                 p("Discharges-These statistics are derived from data collected on discharges from non-obstetric and non-psychiatric acute hospitals (SMR01) in Scotland."),
-                 p(tags$em("")),
-                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+                 p("Injury location and type is determined by the admission type and ICD-10 codes applied to the SMR01 record.
+                    Details of the included codes for each category are provided in Appendix 1 of the annual PHS publication
+                   ‘Unintentional Injuries in Scotland’",
+                   tags$a(href="https://www.publichealthscotland.scot/media/5838/2021-03-23-ui-2021-report.pdf","Appendix 1",  target="_blank")),
+                   p("Note the category ‘Assaults’ is an independent category, and is not included in the data on ‘All unintentional injuries’."),
+                    p("The term ‘unintentional injury’ is used in preference to ‘accidents’ as the latter implies that events are inevitable
+                    and unavoidable whereas a high proportion of these incidents are now regarded as being preventable. The data shown here
+                    include events where it is not possible to determine intent from the hospital records, but do not include those that were
+                    documented to be self-harm. Many unintentional injuries result do not result in hospital admission, but are treated by the
+                    individual, GPs, at Accident and Emergency departments or by a child's parent or carer, and are therefore not represented in this information."),
+                 size = "m",
+                 easyClose = TRUE, fade=FALSE, footer = modalButton("Close (Esc)"))))
 ###############################################.
 ## Reactive datasets ----
 ###############################################.
@@ -47,6 +53,55 @@ output$geoname_injuries_ui <- renderUI({
   selectizeInput("geoname_injuries", label = NULL,
                  choices = areas_summary, selected = "")
 
+})
+# Adding 'observeEvent' to allow reactive 'area of interest' selction on cardio tab
+observeEvent(input$measure_injury_select, {
+  x <- input$measure_injury_select
+  
+  if (x == "ui_smr01_all") {
+    injuries_label = "Step 2. Select a geography level"
+    injuries_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::show("geoname_injuries_ui")
+    enable("area_injuries_select")
+  }
+  
+  if (x == "ui_smr01_rta") {
+    injuries_label = "Step 2. Select a geography level"
+    injuries_choices = c("Scotland","Health board")
+    shinyjs::show("geoname_injuries_ui")
+    enable("area_injuries_select")
+  }
+  
+  if (x == "ui_smr01_poison") {
+    injuries_label = "Step 2. Select a geography level"
+    injuries_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::show("geoname_injuries_ui")
+    enable("area_injuries_select")
+  }
+  if (x == "ui_smr01_falls") {
+    injuries_label = "Step 2. Select a geography level"
+    injuries_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::show("geoname_injuries_ui")
+    enable("area_injuries_select")
+  }
+  
+  if (x == "ui_smr01_other") {
+    injuries_label = "Step 2. Select a geography level"
+    injuries_choices = c("Scotland", "Health board")
+    shinyjs::show("geoname_injuries_ui")
+    enable("area_injuries_select")
+  }
+  if (x == "ui_smr01_assaults") {
+    injuries_label = "Step 2. Select a geography level"
+    injuries_choices = c("Scotland")
+    shinyjs::show("geoname_injuries_ui")
+    enable("area_injuries_select")
+  } 
+  updateSelectInput(session, "area_injuries_select",
+                    label = injuries_label,
+                    choices = injuries_choices,
+                    selected = injuries_choices[1]
+  )
 })
 
 
@@ -143,7 +198,7 @@ output$injuries_explorer <- renderUI({
  
     tagList( # injuries
       h3(paste0("Monthly admissions for ", injury_select)),
-      actionButton("btn_injuries_modal", paste0("Data source: SMR01 "), icon = icon('question-circle')),
+      actionButton("btn_injuries_modal", paste0("Data source and definitions"), icon = icon('question-circle')),
       plot_box(paste0("2020 and 2021 compared with 2018-2019 average ",", ",input$geoname_injuries), paste0(dataset,"_overall")),
       plot_box(paste0(paste0("Percentage change in admissions for ", injury_select, " compared with the corresponding time in 2018-2019, by ", injury_split),
                       ", ", input$geoname_injuries), paste0(dataset,"_sex")),
@@ -209,19 +264,50 @@ output$download_injuries_data <- downloadHandler(
 ## Commentary ----
 ###############################################.
 output$injuries_commentary <- renderUI({
-  tagList( bsButton("jump_to_injuries",label = "Go to data"), #this button can only be used once
-           h2("Unintentional Injuries - 6th October 2021"), 
-           h3("Emergency admissions to hospital as a result of injury"),
-           tags$ul(
-             tags$li("The term ‘unintentional injury’ is preferred to ‘accidents’ as the latter implies that events are
-inevitable and unavoidable whereas a high proportion of these incidents are now regarded as
-being preventable.
-Detailed information on the injuries included in each group are available within the PHS annual report on Unintentional Injuries in Scotland:
-"),p(tags$a(href="https://www.publichealthscotland.scot/media/5838/2021-03-23-ui-2021-report.pdf")))
-           
-                     )
-             
-           
-})
+  tagList(bsButton("jump_to_injuries",label = "Go to data"), #this button can only be used once
+           h2("Unintentional Injuries and Assaults - Extracted 29th September 2021"), 
+           h3("Background"),
+          p("The response to the COVID-19 pandemic has had the potential to influence both the occurrence
+                   of unintentional injuries and assaults, and how people receive care after such events. Within
+                   this dashboard information is presented on the number of such events resulting in an admission
+                   to hospital each month from January 2020, along with data from 2018-2018 for comparison. Data
+                   on unintentional injuries is split by type (road traffic accidents, poisonings, falls and other),
+                   and all data can be explored by age, sex, deprivation (SIMD) and location of event, as well as at
+                   Scotland, Health Board and Health and Social Care Partnership (HSCP) level."),
+          p("The data shown here include events where it is not possible to determine intent from the hospital
+                   records, but do not include those that were documented to be self-harm. Many unintentional injuries
+                   result do not result in hospital admission, but are treated by the individual, GPs, at Accident and
+                   Emergency departments or by a child's parent or carer, and are therefore not represented in this
+                   information. Changes in the number of admissions for injury do not necessarily mean changes in the
+                   number of injury events, but may also reflect changes in how injuries are cared for, for example,
+                   more people may seek to treat themselves, or may have been less likely to be admitted for less severe
+                   injuries at particular times."),
+          p("Description of key findings for months in the period January 2020 to May 2021, compared with
+                   average admissions for the same months in 2018-2019"),
+          p("There was a substantial fall in the number of admissions for unintentional injury in April 2020, with around
+                   one-third fewer admissions compared with the average for the same period in 2018-2019. In the subsequent months,
+                   numbers gradually increased, and by August 2020 were at a similar level to previous years. There was a further,
+                   smaller fall in admissions in November 2020, but since then the overall number has been similar to that seen in 2018-19."),
+          p("The most substantial reduction in April 2020 was seen in children and young people aged 5-24 years, among whom admissions 
+                   were between a half and two-thirds lower than previous years. This reduction was particularly notable in admissions for falls,
+                   which constitute the largest proportion of unintentional injuries. Among adults there was a notable increase in admissions in
+                   January 2021, which was contributed to largely by an increase in the number of admissions for falls among those aged 25-64 years."),
+          p("Admissions due to injury following a road-traffic accident have been lower each month from April 2020 to May 2021, compared to 2018-2019,
+                   with the exceptions of August 2020 and March 2021, when levels were similar. The number of admissions for poisoning has been similar to
+                   previous years throughout this period, with the exception of June 2020, when they were 18% higher. In that month the largest number of
+                   admissions was among those aged 25-64 years, although the largest proportional increase on previous years was seen in those aged 5-11 years.
+                   The number of admissions for assault was lower than in previous years in March to May 2020, and again from October 2020 to February 2021,
+                   at other points the number were similar." ),
+          p("Across all unintentional injuries and assaults, the largest number of admissions were among people living in the most deprived fifth of areas in Scotland,
+                   according to the Scottish Index of Multiple Deprivation (SIMD 1). However, the percentage change in admissions compared with previous years was similar across deprivation groups,
+                   or a mixed picture, with the exception of the increase in falls observed in January 2021, when the largest increase (52%) was seen in those living in the least deprived areas."),
+          p("The overall number of admissions per month was similar between men and women up to November 2020. The fall in admissions in April 2020 was more substantial among men (-39%) than women (-26%).
+             From December 2020 there has been a larger number of admissions among women, and these have been similar to or higher than previous years, most notably in January 2021, when they were 19% higher
+             among women, which was largely attributable to an increase in falls. For men there was a change in the number of admissions for poisoning in May and June 2020, when they were around 20% higher
+             than previous years."),
+          p("Across the period from May 2020 to May 2021 there was around a 10% to 25% increase in admissions due to injuries occurring in the home, and a reduction in admissions for injuries in other
+             and undisclosed locations, compared with 2018-2019. ")
+          
+          )})
 ##END
 

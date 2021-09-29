@@ -304,7 +304,12 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Cancer" = "cancer",
                         "Weekly SACT activity" = "sact_weekly",
                         "Monthly SACT activity" = "sact_monthly",
-                        "Injuries" = "injuries"
+                        "All unintentional injuries" = "ui_smr01_all",
+                        "Road traffic accidents" = "ui_smr01_rta",
+                        "Poisonings" = "ui_smr01_poison",
+                        "Falls" = "ui_smr01_falls",
+                        "Other" = "ui_smr01_other",
+                        "Assaults" = "ui_smr01_assaults"
                         )
 injury_data_list <- c("All unintentional injuries" = "ui_smr01_all",
                         "Road traffic accidents" = "ui_smr01_rta",
