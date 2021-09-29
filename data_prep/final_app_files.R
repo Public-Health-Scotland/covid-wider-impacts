@@ -132,7 +132,7 @@ save_final_file("gestation_scot_data", "18_Aug_21")
 save_final_file("gestation_linechart_data", "18_Aug_21")
 save_final_file("gestation_download_data", "18_Aug_21")
 ## B&B - Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "26_Aug_21")
+save_final_file("perinatal", "23_Sep_21")
 ## B&B - Apgar ----
 save_final_file("apgar_runchart_data", "24_Aug_21")
 save_final_file("apgar_scot_data", "24_Aug_21")
