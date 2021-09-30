@@ -67,7 +67,7 @@ Query_SMR01 <- paste("SELECT LINK_NO, DR_POSTCODE, SEX, ADMISSION_DATE, ADMISSIO
 
 data_UI_SMR01 <- as_tibble(dbGetQuery(smra_connect, Query_SMR01)) %>%
   setNames(tolower(names(.))) %>% 
-  filter(discharge_date >= lubridate::dmy(01012018),
+  filter(discharge_date >= lubridate::dmy(01012018) & discharge_date < lubridate::dmy(01042021),
          hbres_currentdate != "S27000001", hbres_currentdate != "S08100001", hbres_currentdate != "S08200001",
          hbres_currentdate != "S08200002", hbres_currentdate != "S08200003", hbres_currentdate != "S08200004") %>%
   rename(pc7=dr_postcode)  %>%
@@ -237,13 +237,17 @@ ui_all <- Tab4 %>%
 ui_rta <- Tab4 %>%
   filter(class=="road transport accidents") %>%
   group_by(area_type, category, type, month_ending, area_name) %>%
-  #filter((area_name !="Shetland Islands" & area_name !="NHS Shetland" & area_name !="NHS Orkney" & area_name !="Orkney Islands")) %>%
+  filter(((area_name !="Shetland Islands" & area_name !="NHS Shetland" & area_name !="NHS Orkney" & area_name !="Orkney Islands" & area_name !="NHS Borders"
+           & area_name !="NHS Fife" & area_name !="NHS Forth Valley" & area_name !="NHS Dumfries and Galloway" & area_name !="NHS Ayrshire and Arran" & 
+             area_name !="NHS Western Isles")|type=="all")) %>%
   summarise(count= sum(count)) %>% ungroup()
 
 ui_poison <- Tab4 %>%
   filter(class=="poisoning") %>%
   group_by(area_type, category, type, month_ending, area_name) %>% 
-  #filter((area_name !="Shetland Islands" & area_name !="NHS Shetland" & area_name !="NHS Orkney" & area_name !="Orkney Islands")) %>%
+  filter(((area_name !="Shetland Islands" & area_name !="NHS Shetland" & area_name !="NHS Orkney" & area_name !="Orkney Islands" & area_name !="NHS Borders"
+           & area_name !="NHS Fife" & area_name !="NHS Forth Valley" & area_name !="NHS Dumfries and Galloway" & area_name !="NHS Ayrshire and Arran" & 
+             area_name !="NHS Western Isles")|type=="all")) %>%
   summarise(count= sum(count)) %>% ungroup()
 
 ui_falls <- Tab4 %>%
@@ -255,7 +259,7 @@ ui_falls <- Tab4 %>%
 ui_other <- Tab4 %>%
   filter(class=="other") %>%
   group_by(area_type, category, type, month_ending, area_name) %>% 
-  #filter((area_name !="Shetland Islands" & area_name !="NHS Shetland" & area_name !="NHS Orkney" & area_name !="Orkney Islands")) %>%
+  filter((area_name !="Shetland Islands" & area_name !="NHS Shetland" & area_name !="NHS Orkney" & area_name !="Orkney Islands")) %>%
   summarise(count= sum(count)) %>% ungroup()
 
 
@@ -351,9 +355,13 @@ saveRDS(final_other_SMR01, paste0(data_folder,"final_app_files/ui_smr01_other_",
 saveRDS(final_other_SMR01, paste0(open_data, "ui_smr01_other.rds"))
 
 
-# only assault with admission type =32, each assault category counted separately, but the total include only 1 assault per episode
-ui_assault <- data_UI_SMR01 %>%
-  mutate(month_ending = floor_date(as.Date(discharge_date), "month")) %>% 
+# exclude assault with admission type =32, each assault category counted separately, but the total include only 1 assault per episode
+  ui_assault <- data_UI_SMR01
+  # Match on SIMD quintile from the postcode files
+  ui_assault <- left_join(ui_assault, SIMD_lookup, by='pc7')  %>% 
+  mutate(dep = recode(dep,"1" = "1 - most deprived", "2" = "2",  "3" = "3", 
+                        "4" = "4", "5" = "5 - least deprived"),
+  month_ending = floor_date(as.Date(discharge_date), "month")) %>% 
   mutate(assault_all = if_else(diag1 %in% all_assault_ui | diag2 %in% all_assault_ui | diag3  %in% all_assault_ui |
                                  diag4 %in% all_assault_ui | diag5 %in% all_assault_ui |diag6 %in% all_assault_ui,1,0)) %>%
   filter(assault_all ==1) %>%
@@ -361,10 +369,9 @@ ui_assault <- data_UI_SMR01 %>%
   mutate(assault_all = 1,
          knife = if_else (diag1 =="X99" | diag2 =="X99" | diag3 =="X99" | diag4 =="X99" | diag5 =="X99" | diag6 =="X99",1,0),
          other_assault = if_else (diag1 %in% other_assault_ui | diag2 %in% other_assault_ui | diag3 %in% other_assault_ui | 
-                                    diag4 %in% other_assault_ui | diag5 %in% other_assault_ui | diag6 %in% other_assault_ui,1,0),
-         qrt= quarter(discharge_date)) %>%
+                                    diag4 %in% other_assault_ui | diag5 %in% other_assault_ui | diag6 %in% other_assault_ui,1,0)) %>%
   mutate(all="All",area_type="Scotland", area_name="Scotland") %>%
-  pivot_longer(cols = c(all,sex, dep, age, injurylocation), names_to="type", values_to="category") %>%
+  pivot_longer(cols = c(all,sex, dep, age), names_to="type", values_to="category") %>%
   group_by(area_type, category, type, month_ending, area_name) %>%
   summarise_at(c("assault_all"), sum) %>%
   rename(count=assault_all)  %>% ungroup()

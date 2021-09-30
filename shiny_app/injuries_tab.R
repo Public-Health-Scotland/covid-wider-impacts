@@ -74,7 +74,7 @@ observeEvent(input$measure_injury_select, {
   
   if (x == "ui_smr01_poison") {
     injuries_label = "Step 2. Select a geography level"
-    injuries_choices = c("Scotland", "Health board", "HSC partnership")
+    injuries_choices = c("Scotland", "Health board")
     shinyjs::show("geoname_injuries_ui")
     enable("area_injuries_select")
   }
