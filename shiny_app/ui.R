@@ -1,5 +1,4 @@
 #UI
-
 #secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -352,6 +351,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
                                            ) # tabpanel bracket
+
                         ) , # navbar bracket          
 ###############################################.
 ## Unintentional Injuries ----
@@ -489,7 +489,6 @@ tabPanel(title = "Method of delivery", value = "mod",
           column(4,offset=4,
                   actionButton("btn_mod_modal", "Data source: SMR02", icon = icon('question-circle')),
                   fluidRow(br()),
-
                   downloadButton("download_mod_data", "Download data"),
                   fluidRow(br()),
 

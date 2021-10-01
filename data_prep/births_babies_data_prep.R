@@ -564,7 +564,6 @@ create_apgar <- function(folderdate) {
   
   
   apgar_runchart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_RUNCHART_Apgar5_",apgar_date,".rds")) %>%
-    filter(DATE < "2021-03-01") %>%
     rename(area = HBRES) %>%
     mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
                                  area == "NHS Highlands" ~ "NHS Highland",
@@ -610,7 +609,6 @@ create_apgar <- function(folderdate) {
   ## 2- LINECHART DATA apgar for Scotland only by age and dep
   apgar_scot <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_SCOT_CHARTS_Apgar5_",apgar_date,".rds")) %>%
     janitor::clean_names() %>%
-    filter(month_of_discharge <= as.Date("2021-03-01")) %>%
     rename(area_name=hbres, quarter = month_of_discharge, category=variable, tot_apgar5_37plus = total_exc_unknown) %>%
     mutate(quarter=as.Date(quarter),
            quarter_label=phsmethods::qtr(quarter, format="short"),
@@ -647,7 +645,6 @@ create_apgar <- function(folderdate) {
   
   
   apgar_linechart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Apgar5_",apgar_date,".rds")) %>%
-    filter(DATE < "2021-03-01") %>%
     rename(area=HBRES) %>%
     janitor::clean_names() %>% ungroup %>%
     mutate(tot_apgar5_37plus=total_exc_unknown) %>%
@@ -731,7 +728,7 @@ create_apgar <- function(folderdate) {
 
 create_preterm <- function(preterm_date, max_date) {
   # P CHART PRETERM DATA
-  preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_NeonatalAdmit_p-chart_",preterm_date,".xlsx"),
+  preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_Neonate_p-chart_",preterm_date,".xlsx"),
                                       sheet = "P_Chart", skip = 102) %>%
     janitor::clean_names() %>%
     select(quarter_of_year=sample_2, N_deliveries_23_26_NICU_site=observation, N_deliveries_23_26=sample_size, rate, centreline, stdev = binomial_st_dev_16,
@@ -869,7 +866,6 @@ tears_runchart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_
 
 
 tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_RUNCHART_Tears_",tears_date,".rds")) %>%
-  filter(DATE <= "2021-03-01") %>%
   rename(area = HBRES) %>%
   mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
                                area == "NHS Highlands" ~ "NHS Highland",
@@ -911,7 +907,6 @@ tears_runchart <<- tears_runchart
 ## 2- LINECHART DATA apgar for Scotland only by age and dep
 tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_Tears_DOWNLOAD_Qtr_",tears_date,".rds")) %>%  
   janitor::clean_names() %>%
-  filter(month_of_discharge <= "2021-03-01") %>%
   rename(area_name=nhs_board_of_residence, quarter=month_of_discharge, category=variable, tot_tears_37plus = nbr_3_4_degree_tear_37plus) %>%
   mutate(quarter=as.Date(quarter),
          quarter_label=phsmethods::qtr(quarter, format="short"),
@@ -949,7 +944,6 @@ tears_linechart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears
 
 
 tears_linechart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_LINECHART_Tears_",tears_date,".rds")) %>% 
-  filter(DATE <= "2021-03-01") %>%
   rename(area=HBRES) %>%
   janitor::clean_names() %>% ungroup %>% 
   mutate(tot_tears_37plus=total_exc_unknown) %>%

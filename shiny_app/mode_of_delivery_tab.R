@@ -390,6 +390,9 @@ observeEvent(input$switch_to_mod,{
 output$mod_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mod",label = "Go to data"), #this button can only be used once
+    h2("Method of delivery - 6th October 2021"),
+    p("The proportion of all caesarean sections in Scotland has risen and remains higher than the pre-pandemic average for a number of consecutive months with the proportion approaching 40%. 
+      Over the last five months the proportions of births recorded as caesarean sections in NHS Greater Glasgow & Clyde have been consistently above 40%. We are linking with NHS Greater Glasgow & Clyde to investigate this further."),
     h2("Method of delivery - 1st September 2021"),
     p("In this release of information on method of delivery (1st September 2021) data have been updated to include women discharged after delivery up to and including May 2021. The data for all Scotland show that the proportion of all caesarean sections has risen, they remain higher than the pre-pandemic average in the last 12 consecutive months and are now approaching 40%.  In recent months the proportions recorded for NHS Grampian have been particularly high, approaching 50%. We are linking with NHS Grampian to investigate this further."),
     h2("Method of delivery - 7th July 2021"),
