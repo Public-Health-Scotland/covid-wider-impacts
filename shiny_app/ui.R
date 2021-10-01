@@ -202,46 +202,63 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ## Cancer ----
 ###############################################.
              navbarMenu("Cancer", icon = icon("disease"),
-
+                        
                         # CANCER PATHOLOGY
-
+                        
                         tabPanel(title = "Cancer Pathology", icon = icon("microscope"), value = "cancer",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer2")),
                                  wellPanel(
-                                   column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
+                                   column(4, selectInput("geotype_cancer", label = "Select a geography level and then an area of interest.",
                                                          choices= c("Scotland", "Cancer Networks", "Health Boards"),
                                                          selected = "Scotland"),
                                           uiOutput("geoname_ui_cancer")),
-
-                                   column(4,  selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
-                                                          selected = "All Malignant Neoplasms (Excl. C44)"),
-                                          div(radioButtons("gender", "Step 3. Select sex",
-                                                           list("All","Male","Female"), inline = TRUE,
-                                                           selected = "All"))),
-                                   # div(radioButtons("split", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "Age"))),
-
-                                   column(4,actionButton("btn_cancer_modal", "Data source and definitions", icon = icon('question-circle')),
+                                   column(4,  selectInput("cancer_type", label = "Select all or specific cancer type", choices = cancer_type_list,
+                                                          selected = "All Malignant Neoplasms (Excl. C44)")),
+                                   column(4,
+                                          fluidRow(br()),
+                                          actionButton("btn_cancer_modal", "Data source: ", icon = icon('question-circle')),
                                           fluidRow(br()),
                                           downloadButton('download_cancer_data', 'Download data'),
                                           fluidRow(br()),
-                                          actionButton('jump_commentary_cancer','Go to commentary'),
-                                          fluidRow(br()))
-                                   # div(radioButtons("data", "Data Type", list("Cumulative","Incidence"),
-                                   #                  inline = TRUE, selected = "Cumulative")))
+                                          actionButton('jump_commentary_cancer','Go to commentary'))
                                  ), #well panel
-                                 mainPanel(width = 12,
+                                 wellPanel(
+                                   column(4,
+                                          div(radioButtons("baseline", "Select Baseline for comparison",
+                                                           list("2019", "Mean 2017-2019"), inline = TRUE,
+                                                           selected = "2019"))),
+                                   column(8,
+                                          div(radioButtons("gender", "Select sex",
+                                                           list("All","Male","Female"), inline = TRUE,
+                                                           selected = "All")))
+                                   
+                                 ) ,# wellPanel bracket
+                                 
+                                 wellPanel(width = 12,
                                            uiOutput("cancer_explorer")
-                                 )# mainPanel bracket
-                        ), # tabpanel bracket
-
+                                 ) ,# wellPanel bracket
+                                 
+                                 wellPanel(
+                                   column(6,
+                                          div(radioButtons("cum_baseline", "Select standard/cumulative baseline",
+                                                           list("Standard", "Cumulative"), inline = TRUE,
+                                                           selected = "Standard"))),
+                                   column(6,
+                                          div(radioButtons("breakdown", "Select Breakdown Type",
+                                                           list("None","Age Group","Deprivation"), inline = TRUE,
+                                                           selected = "None")))),
+                                 wellPanel(width = 12,
+                                           uiOutput("cancer_explorer3"))
+                        ) , # tabpanel bracket
+                        
                         ###############################################.
                         ## SACT ----
                         ###############################################.
-
-
+                        
+                        
                         #### MONTHLY TAB
-
+                        
                         tabPanel(title = "SACT (Chemotherapy) Monthly Patients ", icon = icon("syringe"), value = "sact",
                                  wellPanel(h4(strong("SACT Treatment Activity in Scotland - Monthly Patient Data")),
                                            p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
@@ -258,10 +275,10 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            p("Due to differences in recording practice",
                                              em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
-
+                                           
                                            actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle')),
                                            downloadButton('download_sact_monthly_data', 'Download data')), # well panel
-
+                                 
                                  wellPanel(column(7, selectInput("geotype_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_sact"),
@@ -275,16 +292,16 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                                                    list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
                                                                    selected = "Standard graph")))
                                  ), #well panel
-
+                                 
                                  mainPanel(width = 12,
                                            uiOutput("sact_explorer")
                                  )# mainPanel bracket
-
+                                 
                                            ), # tabpanel bracket
-
-
+                        
+                        
                         #### WEEKLY TAB
-
+                        
                         tabPanel(title = "SACT (Chemotherapy) Weekly Appointments", icon = icon("syringe"), value = "sact",
                                  wellPanel(h4(strong("SACT Treatment Activity in Scotland - Weekly Appointment Data")),
                                            #p(strong("Data from the ChemoCare system in the North Cancer Alliance (NCA) Highland has not
@@ -309,15 +326,15 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
                                            p("Activity data is released two week in arrears. The latest data currently available in the
                                              dashboard is for the week beginning", strong(format(max(sact_weekly_data$week_beginning), "%d %B %Y"))),
-
+                                           
                                            actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle')),
                                            downloadButton('download_sact_weekly_data', 'Download data')), # well panel
-
+                                 
                                  wellPanel(column(7, selectInput("geotype_wk_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_wk_sact"),
                                                   uiOutput("treatment_ui_wk_sact")),
-
+                                           
                                            column(5, selectInput("sact_wk_type", label = "Select all or specific cancer type",
                                                                  choices = c("All","Bone Sarcoma", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
                                                                              "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
@@ -330,7 +347,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                                                    list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
                                                                    selected = "Standard graph")))
                                  ), #well panel
-
+                                 
                                  mainPanel(width = 12,
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
@@ -748,7 +765,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
          You can use the filters to select the data you are interested in.
          You can also download the data as a csv using the download button.
          Some of the data is also hosted in the",
-
             tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
                    "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
           column(6, selectInput("data_select", "Select the data you want to explore.",
@@ -759,6 +775,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-#)#secure app
+# )#secure app
 
 #END

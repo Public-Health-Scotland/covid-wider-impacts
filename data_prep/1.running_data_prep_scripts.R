@@ -15,7 +15,7 @@ source("data_prep/births_babies_data_prep.R") # This sources the functions for t
 
 
 create_delivery(folderdate = "2021-08-16") # Mode of delivery, induction and gestation data
-create_perinatal(foldermonth = "sep21") # Stillbirths and perinatal mortality
+create_perinatal(foldermonth = "oct21") # Stillbirths and perinatal mortality
 create_apgar(folderdate = "2021_08_17") # Apgar scores
 create_preterm(preterm_date = "2021_06_21", max_date = "2021-03-01") # Preterm
 create_tears(tears_date = "2021_08_17", max_date = "2021-05-01") # Perineal tears

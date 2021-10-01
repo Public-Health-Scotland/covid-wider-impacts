@@ -1,4 +1,4 @@
-# Global...
+# Global
 
 ###############################################.
 ## Packages ----
@@ -77,10 +77,15 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
-cancer_extract_date <- "20th May 2021"
+
+cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>% 
+  mutate(dep = factor(dep)) %>% 
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE))
+
+cancer_extract_date <- "19th August 2021"
 
 # SACT data
-sact_data <- readRDS("data/sact_data.rds") 
+sact_data <- readRDS("data/sact_data.rds")
 
 sact_data_inc <- sact_data %>%
   mutate(region = factor(region)) %>%
@@ -88,12 +93,12 @@ sact_data_inc <- sact_data %>%
                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
-                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) 
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
-sact_weekly_data <- readRDS("data/sact_weekly_data.rds") 
+sact_weekly_data <- readRDS("data/sact_weekly_data.rds")
 
 sact_data_wk_difference <- sact_weekly_data %>%
-  mutate(region = factor(region)) %>% 
+  mutate(region = factor(region)) %>%
   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
@@ -101,7 +106,8 @@ sact_data_wk_difference <- sact_weekly_data %>%
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
 sact_data_wk_inc <- sact_weekly_data %>%
-  mutate(region = factor(region)) %>% 
+  # filter(week <= 52) %>%
+  mutate(region = factor(region)) %>%
   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
@@ -226,7 +232,6 @@ tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
 tears_download <- readRDS("data/tears_download_data.rds")
 
-
 #Drugs data 
 ADP_names<-readRDS('data/ADP_names.rds')
 Health_board<-readRDS('data/Health_board.rds')
@@ -340,7 +345,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Bladder" = "Bladder",
                       "Bone and Connective Tissue" = "Bone and Connective Tissue",
                       "Brain Tumour" = "Brain Tumour",
-                      "Breast" = "Breast", 
+                      "Breast" = "Breast",
                       "Cervical - Females only" = "Cervical - Females only",
                       "Colorectal" = "Colorectal",
                       "Head and Neck" = "Head and Neck",
@@ -403,7 +408,7 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
-               "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff") 
+               "APR 2021" =  "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff") 
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
@@ -411,7 +416,7 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
-               "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#e3e319") 
+               "APR 2021" =  "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff")
 
 pal_inj <- list(pal_age,pal_depr,pal_sex)
 
@@ -431,6 +436,13 @@ pal_sact <- c('#3F3685',
               '#C73918', 
               '#E39C8C', 
               '#000000' )
+
+
+pal_cancer_diff <- c("1" = '#000080',
+                     "2" = '#DCDCDC',
+                     "3" = '#D3D3D3',
+                     "4" = '#C0C0C0',
+                     "5" = '#0000FF')
 
 
 # more distinctive colour palette (save for later)
