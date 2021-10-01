@@ -51,6 +51,7 @@ intro_box <- function(title_box, button_name, description) {
   )
 }
 
+
 ###############################################.
 ## Data ----
 ###############################################.
@@ -113,6 +114,16 @@ sact_data_wk_inc <- sact_weekly_data %>%
                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
+
+
+#Injuries data
+ui_smr01_all <- readRDS("data/ui_smr01_all.rds")
+ui_smr01_rta <- readRDS("data/ui_smr01_rta.rds")
+ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
+ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
+ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
+ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
+injuries_extract_date <- "13 September 2021"
 
 
 # mental health data
@@ -298,8 +309,37 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Out of hours mental health cases" = "ooh_mh",
                         "Cancer" = "cancer",
                         "Weekly SACT activity" = "sact_weekly",
-                        "Monthly SACT activity" = "sact_monthly"
-)
+                        "Monthly SACT activity" = "sact_monthly",
+                        "All unintentional injuries" = "ui_smr01_all",
+                        "Road traffic accidents" = "ui_smr01_rta",
+                        "Poisonings" = "ui_smr01_poison",
+                        "Falls" = "ui_smr01_falls",
+                        "Other" = "ui_smr01_other",
+                        "Assaults" = "ui_smr01_assaults"
+                        )
+injury_data_list <- c("All unintentional injuries" = "ui_smr01_all",
+                        "Road traffic accidents" = "ui_smr01_rta",
+                        "Poisonings" = "ui_smr01_poison",
+                        "Falls" = "ui_smr01_falls",
+                        "Other" = "ui_smr01_other",
+                        "Assaults" = "ui_smr01_assaults")
+
+injury_type_list <- c("All unintentional injuries" =	"all unintentional injuries",
+                     "Road traffic accidents" =	"road traffic accident",
+                     "Poisonings" =	"poisoning",
+                     "Falls"=	"falls",
+                     "Other" =	"other",
+                     "Assaults"="assaults")
+
+injury_split_list <- c("Age group" =	"age",
+                       "Deprivation" =	"dep",
+                       "Injury location" =	"injurylocation",
+                       "Sex" =	"sex")
+injury_colour_list <- c("Age group" =	1,
+                       "Deprivation" =	2,
+                       "Injury location" =	3,
+                       "Sex" =	4)
+
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",
@@ -378,6 +418,8 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
                "APR 2021" =  "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff")
+
+pal_inj <- list(pal_age,pal_depr,pal_sex)
 
 pal_drug <- c('#e66101','#fdb863','#b2abd2','#5e3c99')
 

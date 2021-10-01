@@ -39,6 +39,16 @@ save_final_file("sact_data", "20_Sep_21")
 save_final_file("sact_weekly_data", "20_Sep_21")
 
 ##########################################################.
+##########################################################.
+## Injuries ----
+save_final_file("ui_smr01_all", "30_Sep_21")
+save_final_file("ui_smr01_rta", "30_Sep_21")
+save_final_file("ui_smr01_poison", "30_Sep_21")
+save_final_file("ui_smr01_other", "30_Sep_21")
+save_final_file("ui_smr01_falls", "30_Sep_21")
+save_final_file("ui_smr01_assaults", "30_Sep_21")
+
+##########################################################.
 ## RAPID ----
 save_final_file("rapid", "30_Aug_21")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
@@ -133,7 +143,7 @@ save_final_file("gestation_scot_data", "17_Sep_21")
 save_final_file("gestation_linechart_data", "17_Sep_21")
 save_final_file("gestation_download_data", "17_Sep_21")
 ## B&B - Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "26_Aug_21")
+save_final_file("perinatal", "23_Sep_21")
 ## B&B - Apgar ----
 save_final_file("apgar_runchart_data", "17_Sep_21")
 save_final_file("apgar_scot_data", "17_Sep_21")
