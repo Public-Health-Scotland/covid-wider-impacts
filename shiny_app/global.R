@@ -1,5 +1,6 @@
 # Global
 
+
 ###############################################.
 ## Packages ----
 ###############################################.
@@ -49,6 +50,7 @@ intro_box <- function(title_box, button_name, description) {
       actionButton(button_name, NULL, class="landing-page-button")
   )
 }
+
 
 ###############################################.
 ## Data ----
@@ -114,6 +116,16 @@ sact_data_wk_inc <- sact_weekly_data %>%
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
 
+#Injuries data
+ui_smr01_all <- readRDS("data/ui_smr01_all.rds")
+ui_smr01_rta <- readRDS("data/ui_smr01_rta.rds")
+ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
+ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
+ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
+ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
+injuries_extract_date <- "13 September 2021"
+
+
 # mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
 ae_mh <- readRDS("data/mh_A&E.rds")
@@ -167,7 +179,7 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "12 August 2021"
+booking_extract_date <- "13 September 2021"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
@@ -177,21 +189,21 @@ top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "16 August 2021"
+mod_extract_date <- "13 September 2021"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
 mod_download <- readRDS("data/mod_download_data.rds")
 
 #inductions (pregnanacy tab)
-induct_extract_date <- "16 August 2021"
+induct_extract_date <- "13 September 2021"
 induct_runchart <- readRDS("data/induct_runchart_data.rds")
 induct_scot <- readRDS("data/induct_scot_data.rds")
 induct_linechart <- readRDS("data/induct_linechart_data.rds")
 induct_download <- readRDS("data/induct_download_data.rds")
 
 #gestation at delivery (pregnanacy tab)
-gestation_extract_date <- "16 August 2021"
+gestation_extract_date <- "13 September 2021"
 gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
 gestation_scot <- readRDS("data/gestation_scot_data.rds")
 gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
@@ -203,19 +215,19 @@ breastfeeding <- readRDS("data/breastfeeding.rds")
 child_dev <- readRDS("data/child_dev.rds")
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "17 August 2021"
+apgar_extract_date <- "13 September 2021"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
 apgar_download <- readRDS("data/apgar_download_data.rds")
 
 # Preterm
-preterm_extract_date <- "21 June 2021"
+preterm_extract_date <- "13 September 2021"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
 
 # Tears (births and babies tab)
-tears_extract_date <- "17 August 2021"
+tears_extract_date <- "13 September 2021"
 tears_runchart <- readRDS("data/tears_runchart_data.rds")
 tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
@@ -297,8 +309,37 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Out of hours mental health cases" = "ooh_mh",
                         "Cancer" = "cancer",
                         "Weekly SACT activity" = "sact_weekly",
-                        "Monthly SACT activity" = "sact_monthly"
-)
+                        "Monthly SACT activity" = "sact_monthly",
+                        "All unintentional injuries" = "ui_smr01_all",
+                        "Road traffic accidents" = "ui_smr01_rta",
+                        "Poisonings" = "ui_smr01_poison",
+                        "Falls" = "ui_smr01_falls",
+                        "Other" = "ui_smr01_other",
+                        "Assaults" = "ui_smr01_assaults"
+                        )
+injury_data_list <- c("All unintentional injuries" = "ui_smr01_all",
+                        "Road traffic accidents" = "ui_smr01_rta",
+                        "Poisonings" = "ui_smr01_poison",
+                        "Falls" = "ui_smr01_falls",
+                        "Other" = "ui_smr01_other",
+                        "Assaults" = "ui_smr01_assaults")
+
+injury_type_list <- c("All unintentional injuries" =	"all unintentional injuries",
+                     "Road traffic accidents" =	"road traffic accident",
+                     "Poisonings" =	"poisoning",
+                     "Falls"=	"falls",
+                     "Other" =	"other",
+                     "Assaults"="assaults")
+
+injury_split_list <- c("Age group" =	"age",
+                       "Deprivation" =	"dep",
+                       "Injury location" =	"injurylocation",
+                       "Sex" =	"sex")
+injury_colour_list <- c("Age group" =	1,
+                       "Deprivation" =	2,
+                       "Injury location" =	3,
+                       "Sex" =	4)
+
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
                       "All Cancers" = "All Cancers",
@@ -377,6 +418,8 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
                "APR 2021" =  "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff")
+
+pal_inj <- list(pal_age,pal_depr,pal_sex)
 
 pal_drug <- c('#e66101','#fdb863','#b2abd2','#5e3c99')
 

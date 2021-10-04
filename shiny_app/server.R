@@ -1,4 +1,4 @@
-#Server side..
+#Server side.
 credentials <- readRDS("admin/credentials.rds")
 
 function(input, output, session) {
@@ -109,6 +109,10 @@ function(input, output, session) {
   source(file.path("drugs_tab.R"),  local = TRUE)$value
   
   ###############################################.
+  # Unintentional Injuries tab
+  source(file.path("injuries_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
   # Data tab
   source(file.path("data_tab.R"),  local = TRUE)$value
   
@@ -135,8 +139,9 @@ function(input, output, session) {
   observeEvent(input$jump_to_breastfed, {updateTabsetPanel(session, "intabset", selected = "breastfeeding")})
   observeEvent(input$jump_to_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "mentalhealth")})
   observeEvent(input$jump_to_cancer, {updateTabsetPanel(session, "intabset", selected = "cancer")})
+  observeEvent(input$jump_to_injuries, {updateTabsetPanel(session, "intabset", selected = "injuries")})
   observeEvent(input$jump_to_drugs, {updateTabsetPanel(session, "intabset", selected = "drugs")})
-  
+
   ###############################################.
   ## jump to commentary tab from data tabs ----
   ###############################################.
@@ -188,12 +193,14 @@ function(input, output, session) {
   
   observeEvent(input$jump_commentary_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Mental health")})
-  
-  observeEvent(input$jump_commentary_cancer, {updateTabsetPanel(session, "intabset", selected = "comment")
+
+    observeEvent(input$jump_commentary_cancer, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Cancer")})
   
-  observeEvent(input$jump_commentary_oohissue, {updateTabsetPanel(session, "intabset", selected = "comment")})
-  observeEvent(input$jump_commentary_oohissue_sum, {updateTabsetPanel(session, "intabset", selected = "comment")})
+    observeEvent(input$jump_commentary_injuries, {updateTabsetPanel(session, "intabset", selected = "comment")
+     updateCollapse(session, "collapse_commentary", open = "Injuries")})
+ 
+     observeEvent(input$jump_commentary_oohissue, {updateTabsetPanel(session, "intabset", selected = "comment")})
   
   observeEvent(input$jump_commentary_drugs, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Substance use")})
@@ -252,12 +259,13 @@ observeEvent(input$summary_button, ({
     updateCollapse(session, "collapse_commentary", open = "Perineal tears")}))  
   
   observeEvent(input$cancer_button, ({
-
-  updateCollapse(session, "collapse_commentary", open = "Cancer")}))
+    updateCollapse(session, "collapse_commentary", open = "Cancer")}))
+ 
+   observeEvent(input$injuries_button, ({
+    updateCollapse(session, "collapse_commentary", open = "Injuries")}))
   
   observeEvent(input$drug_button, ({
     updateCollapse(session, "collapse_commentary", open = "Substance Use")}))
-
   
 } # server end
 
