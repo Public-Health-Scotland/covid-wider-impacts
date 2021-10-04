@@ -37,6 +37,7 @@ observeEvent(input$btn_drugs_modal,
               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
                )
+#observeEvent(input$browser, browser())
 
 output$area_drugs_select<-renderUI({
   
@@ -85,66 +86,71 @@ output$types<-renderUI({
                         choices=c('Methadone','Buprenorphine'),selected='Methadone'))
     }
 })
+ 
+location<-reactive({
+  
+  if (input$area_drugs_select=='Scotland'){
+    location<-'Scotland'
+  }
+  else if (input$area_drugs_select=='Alcohol and Drug Partnership'||input$area_drugs_select=='NHS Board'){
+    location<-input$geoname_drugs
+  }
+  }) 
+
+
+plot_data<-reactive({ 
+  
+  if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+    
+    plot_data<-subset(DTR_July_update,(Board==location()) & Type==input$types & Date<'2021-04-01')
+  }
+  else if(input$drug_subcategories=='Take home naloxone kits'){
+    plot_data<-subset(THN_by_HB,(Board==location()) )
+  }
+  else if(input$drug_subcategories=='OST prescribing'){
+    plot_data<-subset(OST_paid,(Board==location()) & (Type==input$types))
+  }
+  else if(input$drug_subcategories=='SAS naloxone administration'){
+    plot_data<-subset(SASdata,(Board==location()))
+  }
+  plot_data
+})
 
 
 output$TwoYrComparison<-renderPlotly({
   
   ###DTR section###
+  plot_data<-plot_data()
   
-  if (input$area_drugs_select=='Scotland'){
-    location<-'Scotland'
-  }
-  else if (input$area_drugs_select=='Alcohol and Drug Partnership'){
-    location<-input$geoname_drugs
-  }
-  else if (input$area_drugs_select=='NHS Board'){
-    location<-input$geoname_drugs
-  }
-  
-  lockdown<-function(x){
-    list(
-    type = "line",
-    y0 = 0,
-    y1 = 1,
-    yref = "paper",
-    x0 = x,
-    x1 = x,
-    line = list(color = 'grey', dash = 'dash')
-  )
-  }
   
   if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
-    plot_data<-subset(DTR_July_update,(Board==location) & Type==input$types & Date<'2021-06-28')#cutting off in line with most recent covid report
-    complete_data<-subset(plot_data,Date<='2021-05-24')
-    incomplete_data<-subset(plot_data,Date>='2021-05-24')
-
-    trend<-plot_ly(data = complete_data, x = ~Date,y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),
-                   text=c(paste0("Date: ", format(complete_data$Date, format = "%b %d, %Y"),
-                            "<br>", 'Number of referrals: ', complete_data$`2020 & 2021`,
-                            "<br>", "Historic average: ", complete_data$`Average 2018 & 2019`)),hoverinfo='text')
-    trend<-trend %>% add_trace(data=incomplete_data, x=~Date,y=~`2020 & 2021`,type='scatter',name='20/21 (Incomplete)',mode='lines',line=list(color=pal_overall[1],dash='dash'),showlegend=FALSE,
-                               text=c(paste0("Date: ", format(incomplete_data$Date, format = "%b %d, %Y"),
-                                             "<br>", 'Number of referrals: ', incomplete_data$`2020 & 2021`,
-                                             "<br>", "Historic average: ", incomplete_data$`Average 2018 & 2019`)),hoverinfo='text')
-    trend<-trend %>% add_trace(data=plot_data,x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
+    
+    trend<-plot_ly(data = plot_data, x = ~Date,y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),
+                   text=c(paste0("Date: ", format(plot_data$Date, format = "%b %d, %Y"),
+                                 "<br>", 'Number of referrals: ', plot_data$`2020 & 2021`,
+                                 "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`)),hoverinfo='text')
+    trend<-trend %>% add_trace(x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
                                text=c(paste0("Date: ", format(plot_data$Date, format = "%b %d, %Y"),
                                              "<br>", 'Number of referrals: ', plot_data$`2020 & 2021`,
                                              "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`)),hoverinfo='text')
     trend <- trend %>% layout(
+      shapes=lockdown('2020-03-23'),
+      annotations=annote("2020-03-23", plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`),
       margin=list(t=80),
-      title = (sprintf("Number of %s treatment referrals in 2020 and 2021 \n compared with 2018-19 average (%s)",tolower(input$types),location)),
-      yaxis = list(title = "Number of referrals")
+      title = (sprintf("Number of %s treatment referrals in 2020 and 2021 \n compared with 2018-19 average (%s)",tolower(input$types),location())),
+      yaxis = list(title = "Number of referrals",
+                   rangemode='tozero')
     )
     trend <- trend %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d',
                                                                             'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
                                                                             'hoverClosestCartesian', 'zoom2d', 'pan2d'))
-
+    
   }
-
+  
   
   else if(input$drug_subcategories=='Take home naloxone kits'){
-    plot_data<-subset(THN_by_HB,(Board==location) & (Type==input$types))
+    plot_data<-subset(plot_data(),(Type==input$types))
     lab_text<-c(paste0("Month: ", unique(plot_data$Date),
                        "<br>", 'Number of THN: ', plot_data$`2020 & 2021`,
                        "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
@@ -152,26 +158,21 @@ output$TwoYrComparison<-renderPlotly({
     trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text,hoverinfo='text')
     trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),text=lab_text,hoverinfo='text')
     trend<-trend %>% layout(
-          margin=list(t=80),
-          xaxis=list(
-          tickmode='array',
-          tickvals=seq(1:nrow(plot_data)),
-          ticktext=unique(plot_data$Date)
-          
-        )
-        )
+      margin=list(t=80),
+      xaxis=list(
+        tickmode='array',
+        tickvals=seq(1:nrow(plot_data)),
+        ticktext=unique(plot_data$Date)
+        
+      )
+    )
     trend <- trend %>% layout(
-      title = (sprintf("Number of take home naloxone supplied in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location,input$types)),
-    
+      title = (sprintf("Number of take home naloxone supplied in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location(),input$types)),
       xaxis=list(title='Date'),          
-      yaxis = list(title = "Number of THN kits"),
+      yaxis = list(title = "Number of THN kits",
+                   rangemode='tozero'),
       shapes=lockdown('3.77'),
-      annotations=list(x = "4.5",
-                        y = max(max(plot_data$`2020 & 2021`),max(plot_data$`Average 2018 & 2019`)),
-                        text = "1st lockdown",
-                        xref = "1",
-                        yref = "1",
-                        showarrow = FALSE)
+      annotations=annote("3.77", plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`)
     )
     trend <- trend %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
@@ -181,8 +182,8 @@ output$TwoYrComparison<-renderPlotly({
   }
   else if(input$drug_subcategories=='OST prescribing'){
     
-    plot_item<-subset(OST_paid,(Board==location) & (Type==input$types) & (Measurement=='Items'))
-    plot_qpi<-subset(OST_paid,(Board==location) & (Type==input$types) & (Measurement=='Quantity per item'))
+    plot_item<-subset(plot_data(),(Measurement=='Items'))
+    plot_qpi<-subset(plot_data(),(Measurement=='Quantity per item'))
     lab_text<-c(paste0("Month: ", plot_item$Date,
                        "<br>", 'Number of items: ', plot_item$`2020 & 2021`,
                        "<br>", "Historic average: ", plot_item$`Average 2018 & 2019`))
@@ -195,7 +196,9 @@ output$TwoYrComparison<-renderPlotly({
     trend<-trend %>% add_trace(data=plot_qpi, x=seq(1:nrow(plot_qpi)),y = ~ `2020 & 2021`,name='QPI: 2020 & 2021',type='scatter',yaxis='y2', mode='lines', line=list(color=pal_overall[2],width=3),text=lab_text1,hoverinfo='text')
     trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='QPI: Average \n2018-2019',type='scatter', mode='lines',yaxis='y2', line=list(color=pal_overall[2],dash='dot'),text=lab_text1,hoverinfo='text')
     trend<-trend %>% layout(
-      title=(sprintf("Paid OST prescribing in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location,input$types)),
+      shapes=lockdown('3.77'),
+      annotations=annote("3.77",plot_item$`Average 2018 & 2019`,plot_item$`2020 & 2021` ),
+      title=(sprintf("Paid OST prescribing in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location(),input$types)),
       margin=list(t=80),
       xaxis=list(
         title='Date',
@@ -213,28 +216,38 @@ output$TwoYrComparison<-renderPlotly({
                     rangemode='tozero'),
       legend = list(x=1.08,y=1)
     )
+    trend <- trend %>%  config(
+      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d',
+                                                                            'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
+                                                                            'hoverClosestCartesian', 'zoom2d', 'pan2d'))
     
   }
-    
+  
   else if(input$drug_subcategories=='SAS naloxone administration'){
-    plot_data<-subset(SASdata,(Board==location))
     
-    lab_text1<-c(paste0("Date: ", plot_data$Date,
-                        "<br>", 'No. of SAS naloxone incidents: ', plot_data$`2020 & 2021`,
-                        "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
-    trend<-plot_ly(data = plot_data,x=plot_data$Date)
+    lab_text1<-c(paste0("Date: ", plot_data()$Date,
+                        "<br>", 'No. of SAS naloxone incidents: ', plot_data()$`2020 & 2021`,
+                        "<br>", "Historic average: ", plot_data()$`Average 2018 & 2019`))
+    trend<-plot_ly(data = plot_data(),x=plot_data()$Date)
     trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text1,hoverinfo='text')
     trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),text=lab_text1,hoverinfo='text')
     trend<-trend %>% layout(
+      shapes=lockdown('2020-03-23'),
+      annotations=annote("2020-03-23",plot_data()$`Average 2018 & 2019`,plot_data()$`2020 & 2021`),
       margin=list(t=80),
-      title = (sprintf("Number of SAS incidents where naloxone was supplied in 2020 and 2021 \n compared with 2018-19 average (%s)",location)),
+      title = (sprintf("Number of SAS incidents where naloxone was supplied in 2020 and 2021 \n compared with 2018-19 average (%s)",location())),
       xaxis=list(
         title='Date'
         
       ),
-      yaxis=list(title='No. of SAS naloxone incidents',rangemode='tozero')
+      yaxis=list(title='No. of SAS naloxone incidents',
+                 rangemode='tozero')
       
     )
+    trend <- trend %>%  config(
+      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d',
+                                                                            'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
+                                                                            'hoverClosestCartesian', 'zoom2d', 'pan2d'))
   }
   
 })
@@ -243,20 +256,9 @@ output$TwoYrComparison<-renderPlotly({
 output$Prop_barplot<-renderUI({
   if(input$drug_subcategories=='Take home naloxone kits'){
     
-    
-    if (input$area_drugs_select=='Scotland'){
-      location<-'Scotland'
-    }
-    else if (input$area_drugs_select=='Alcohol and Drug Partnership'){
-      location<-input$geoname_drugs
-    }
-    else if (input$area_drugs_select=='NHS Board'){
-      location<-input$geoname_drugs
-    }
-    
     output$prop_plot<-renderPlotly({
       
-      plot_data<-subset(THN_by_HB,(Board==location))
+      plot_data<-plot_data()
       prop<-plot_ly(data = plot_data, x =seq(1:15),y = plot_data$`2020 & 2021`[which(plot_data$Type=='Community')],type='bar',name='Community',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Community')],' %'),marker = list(color = pal_drug[1]))
       prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')], name = 'Prescribing',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prescribing')],' %'),marker = list(color = pal_drug[2]))
       prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')], name = 'Prison',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prison')],' %'),marker = list(color = pal_drug[3]))
@@ -275,7 +277,7 @@ output$Prop_barplot<-renderUI({
             ticktext=unique(plot_data$Date)
           ))
       prop <- prop %>% layout(
-        title = (sprintf("Percentage of take home naloxone provided by source of supply in 2020 and 2021 (%s)",location)),
+        title = (sprintf("Percentage of take home naloxone provided by source of supply in 2020 and 2021 (%s)",location())),
         xaxis=list(title='Date'),
         yaxis = list(title = "Number of THN kits"),
         hovermode= 'x unified'
@@ -294,31 +296,9 @@ output$Prop_barplot<-renderUI({
 
 output$Cum_plot<-renderUI({
   
-  if (input$area_drugs_select=='Scotland'){
-    location<-'Scotland'
-  }
-  else if (input$area_drugs_select=='Alcohol and Drug Partnership'){
-    location<-input$geoname_drugs
-  }
-  else if (input$area_drugs_select=='NHS Board'){
-    location<-input$geoname_drugs
-  }
-  
-  lockdown<-function(x){
-    list(
-      type = "line",
-      y0 = 0,
-      y1 = 1,
-      yref = "paper",
-      x0 = x,
-      x1 = x,
-      line = list(color = 'grey', dash = 'dash')
-    )
-  }
-  
   if(input$drug_subcategories=='Take home naloxone kits'){
     output$cum_plot<-renderPlotly({
-    plot_data<-subset(THN_by_HB,(Board==location) & (Type==input$types))
+    plot_data<-subset(plot_data(),(Type==input$types))
     plot_data1<-plot_data[1:12,]
     plot_21<-plot_data[13:nrow(plot_data),]
     lab_text<-function(x,y,z){
@@ -326,30 +306,28 @@ output$Cum_plot<-renderUI({
                "<br>", 'Month: ', y,
                "<br>", "Cumulative sum of THN kits: ", z))
     }
-    trend<-plot_ly(data = plot_data1, x =seq(1:nrow(plot_data1)))
-    trend<-trend %>% add_trace(y = ~ cumsum(`2020 & 2021`),name='2020',type='scatter', mode='lines',color=pal_drug[1],text=lab_text('2020',plot_data1$Date,cumsum(plot_data1$`2020 & 2021`)),hoverinfo='text')
-    trend<-trend %>% add_trace(y = ~ cumsum(`Average 2018 & 2019`),name='Average 2018 & 2019',type='scatter', mode='lines',color=pal_drug[2],text=lab_text('Average 2018 & 2019',plot_data1$Date,cumsum(plot_data1$`Average 2018 & 2019`)),hoverinfo='text')
-    trend<-trend %>% add_trace(data=plot_21, x= seq(1:nrow(plot_21)),y=~cumsum(`2020 & 2021`), name='2021', type='scatter',mode='lines',color=pal_drug[3],text=lab_text('2021',plot_21$Date,cumsum(plot_21$`2020 & 2021`)),hoverinfo='text')
+    trend<-plot_ly(data = plot_data1, x =seq(1:(nrow(plot_data1)+1)))
+    trend<-trend %>% add_trace(y = c(0,cumsum(plot_data1$`Average 2018 & 2019`)),name='Average 2018 & 2019',type='scatter', mode='lines',color=pal_drug[2],text=lab_text('Average 2018 & 2019',c('',substr(plot_data1$Date,1,3)),c(0,cumsum(plot_data1$`Average 2018 & 2019`))),hoverinfo='text')
+    trend<-trend %>% add_trace(y = c(0,cumsum(plot_data1$`2020 & 2021`)),name='2020',type='scatter', mode='lines',color=pal_drug[1],text=lab_text('2020',c('',substr(plot_data1$Date,1,3)),c(0,cumsum(plot_data1$`2020 & 2021`))),hoverinfo='text')
+    trend<-trend %>% add_trace(data=plot_21, x=seq(1:(nrow(plot_21)+1)),y=c(0,cumsum(plot_21$`2020 & 2021`)), name='2021', type='scatter',mode='lines',color=pal_drug[3],text=lab_text('2021',c('',substr(plot_21$Date,1,3)),c(0,cumsum(plot_21$`2020 & 2021`))),hoverinfo='text')
     trend<-trend %>% 
       layout(
         margin=list(t=80),
-        title=(sprintf("Cumulative sum of take home naloxone provided in 2020 and 2021 \n compared with 2018-19 average (%s, %s)",location,input$types)),
+        title=(sprintf("Cumulative sum of take home naloxone provided in 2020 and 2021 \n compared with 2018-19 average (%s, %s)",location(),input$types)),
         xaxis=list(
-          tickmode='date',
-          tickvals=seq(1:nrow(plot_data)),
-          ticktext=c(unique(plot_data$Date),'Jan','Feb','Mar'),
-          title='Month',
-          ticklabelmode='period'
+          #tickmode='date',
+          tickvals=seq(1:(nrow(plot_data1)+1)),
+          ticktext=c('',substr(plot_data1$Date,1,3)),
+          title='Month'
+          #ticklabelmode='period'
         ),
-        shapes=lockdown('3.77'),
-        annotations=list(x = "4.5",
-                         y = max(max(cumsum(plot_data$`2020 & 2021`)),max(cumsum(plot_data$`Average 2018 & 2019`))),
-                         text = "1st lockdown",
-                         xref = "1",
-                         yref = "1",
-                         showarrow = FALSE,
-                         align='left'),
+        shapes=lockdown('4.77'),
+        annotations=annote("4.77",cumsum(plot_data$`2020 & 2021`),cumsum(plot_data$`Average 2018 & 2019`)),
         yaxis = list(title = "Cumulative sum of THN kits"))
+      trend <- trend %>%  config(
+      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d',
+                                                                            'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
+                                                                            'hoverClosestCartesian', 'zoom2d', 'pan2d'))
     
       })
     plotlyOutput('cum_plot')
@@ -359,9 +337,10 @@ output$Cum_plot<-renderUI({
  else if(input$drug_subcategories=='SAS naloxone administration'){
    
    output$cum_plot<-renderPlotly({
-   plot_data<-subset(SASdata,(Board==location))
+   plot_data<-plot_data()
    plot_data1<-subset(plot_data,Date<'2021-01-04')
    plot_21<-subset(plot_data,Date>='2021-01-04')
+   min.date<-plot_data$Date[1]-7
    lab_text<-function(x,y,z){
      c(paste0("Year: ", x,
               "<br>", 'Date: ', y,
@@ -369,28 +348,26 @@ output$Cum_plot<-renderUI({
    }
    y_1819<-cumsum(plot_data1$`Raw 2018/19`)
    y_20<- cumsum(plot_data1$`Raw 20/21`)
-   trend<-plot_ly(data = plot_data1, x =plot_data1$Date)
-   trend<-trend %>% add_trace(y = y_1819,name='Average 2018 & 2019',type='scatter', mode='lines',color=pal_drug[2],text=lab_text('Average 2018 & 2019',plot_data1$Date,y_1819),hoverinfo='text')
-   trend<-trend %>% add_trace(y = y_20,name='2020',type='scatter', mode='lines',color=pal_drug[1],text=lab_text('2020',plot_data1$Date,y_20),hoverinfo='text')
-   trend<-trend %>% add_trace(data=plot_21,x=plot_data1$Date[1:nrow(plot_21)], y=cumsum(plot_21$`Raw 20/21`), name='2021', type='scatter',mode='lines',color=pal_drug[3],text=lab_text('2021',plot_data1$Date[1:nrow(plot_21)],cumsum(plot_21$`Raw 20/21`)),hoverinfo='text')
+   trend<-plot_ly(data = plot_data1, x =c(min.date,plot_data1$Date))
+   trend<-trend %>% add_trace(y =c(0,y_1819),name='Average 2018 & 2019',type='scatter', mode='lines',color=pal_drug[2],text=lab_text('Average 2018 & 2019',c('',as.character(plot_data1$Date)),c(0,y_1819)),hoverinfo='text')
+   trend<-trend %>% add_trace(y = c(0,y_20),name='2020',type='scatter', mode='lines',color=pal_drug[1],text=lab_text('2020',c('',as.character(plot_data1$Date)),c(0,y_20)),hoverinfo='text')
+   trend<-trend %>% add_trace(data=plot_21,x=c(min.date,plot_data1$Date[1:nrow(plot_21)]), y=c(0,cumsum(plot_21$`Raw 20/21`)), name='2021', type='scatter',mode='lines',color=pal_drug[3],text=lab_text('2021',c('',as.character(plot_data1$Date[1:nrow(plot_21)])),c(0,cumsum(plot_21$`Raw 20/21`))),hoverinfo='text')
    trend<-trend %>% 
      layout(
        margin=list(t=80),
-       title=(sprintf("Cumulative sum of SAS incidents where naloxone was administered in 2020 and 2021 \n compared with 2018-19 average (%s)",location)),
+       title=(sprintf("Cumulative sum of SAS incidents where naloxone was administered in 2020 and 2021 \n compared with 2018-19 average (%s)",location())),
        xaxis=list(
          tickmode='date',
          title='Date'
        ),
        shapes=lockdown('2020-03-23'),
-       annotations=list(x = "2020-05-01",
-                        y = max(max(y_1819),max(y_20)),
-                        text = "1st lockdown",
-                        xref = "1",
-                        yref = "1",
-                        showarrow = FALSE,
-                        align='left'),
+       annotations=annote("2020-03-23",y_1819,y_20),
        yaxis = list(title = "Cumulative sum SAS naloxone incidents"))
    
+   trend <- trend %>%  config(
+     displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d',
+                                                                           'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
+                                                                           'hoverClosestCartesian', 'zoom2d', 'pan2d'))
    })
    plotlyOutput('cum_plot')
    
@@ -401,21 +378,10 @@ output$Cum_plot<-renderUI({
 
 output$PercentChange<-renderUI({
   
-  if (input$area_drugs_select=='Scotland'){
-    location<-'Scotland'
-  }
-  else if (input$area_drugs_select=='Alcohol and Drug Partnership'){
-    location<-input$geoname_drugs
-  }
-  else if (input$area_drugs_select=='NHS Board'){
-    location<-input$geoname_drugs
-  }
-  
-  
   
   if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
 
-    plot_data<-subset(DTR_July_update,(Board==location) & Type==input$types  & Date<'2021-06-28')
+    plot_data<-plot_data()
 
     if(length(which(is.na(plot_data$Change)))==0){
 
@@ -433,8 +399,16 @@ output$PercentChange<-renderUI({
 
     change <- change %>% layout(
       margin=list(t=80),
-      title = (sprintf("Percentage difference in the number of %s treatment referrals in 2020 and 2021 \n compared with 2018-2019 average (%s)",tolower(input$types),location)),
-      yaxis = list(title = "% Change")
+      title = (sprintf("Percentage difference in the number of %s treatment referrals in 2020 and 2021 \n compared with 2018-2019 average (%s)",tolower(input$types),location())),
+      yaxis = list(title = "% Change"),
+      shapes=lockdown('2020-03-23'),
+      annotations=list(x = "2020-03-23",
+                       y = max(plot_data$Change),
+                       text = "1st lockdown",
+                       xref = "1",
+                       yref = "1",
+                       showarrow = TRUE,
+                       align='left')
     )
     change <- change %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d',
@@ -449,86 +423,42 @@ output$PercentChange<-renderUI({
       textOutput('data_message')
     }
   }
-
-  # 
-  # else if(input$drug_subcategories=='Take home naloxone kits'){
-  #   
-  #   plot_data<-subset(THN_by_HB,(Board==location) & (Type==input$types))
-  #   if(length(which(is.na(plot_data$Change)))==0){
-  #   
-  #     output$change_plot<-renderPlotly({
-  #     
-  #   tooltip_trend<-c(paste0(
-  #     "Month: ", unique(plot_data$Date),
-  #     "<br>", "Change from 2018 & 2019 average: ",ifelse(plot_data$Change >= 0, "+", ""), plot_data$Change, "%"))
-  #   change<-plot_ly(data = plot_data,x =seq(1:nrow(plot_data)), y = ~Change,
-  #                   type='scatter', 
-  #                   mode='lines',
-  #                   line=list(color=pal_overall[1]),
-  #                   text=tooltip_trend, 
-  #                   hoverinfo="text")
-  #   change<-change %>% 
-  #     layout(
-  #       xaxis=list(
-  #         tickmode='array',
-  #         tickvals=seq(1:nrow(plot_data)),
-  #         ticktext=unique(plot_data$Date)
-  #       ))
-  #   change <- change %>% layout(
-  #     title = (sprintf("Percentage difference in supply of take home naloxone in 2020 and 2021 \n compared with 2018-2019 average (%s,%s)",location,input$types)),
-  #     yaxis = list(title = "% Change"
-  #                  ),
-  #     xaxis = list(title = "Date")
-  #   )
-  #   change <- change %>%  config(
-  #     displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
-  #                                                                           'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-  #                                                                           'hoverClosestCartesian', 'zoom2d', 'pan2d'))
-  #     })
-  #     
-  #     plotlyOutput('change_plot',width='92%')
-  #   }
-  #   
-  #   else if(length(which(is.na(plot_data$Change)))!=0){
-  #     
-  #     output$data_message<-renderText('Percent difference plot not shown due to \'not applicable\' values being produced by comparison with 0 values in 2018/2019 average.')
-  #     textOutput('data_message')
-  #   }
-  # }
   
 })
 
 output$Quan_plot<-renderUI({
   if (input$drug_subcategories=='OST prescribing'){
-    if (input$area_drugs_select=='Scotland'){
-      location<-'Scotland'
-    }
-    else if (input$area_drugs_select=='Alcohol and Drug Partnership'){
-      location<-input$geoname_drugs
-    }
-    else if (input$area_drugs_select=='NHS Board'){
-      location<-input$geoname_drugs
-    }
-    
     
     output$quan_plot<-renderPlotly({
       
-      plot_quantity<-subset(OST_paid_quantity,(Board==location) & (Type==input$types))
+      plot_quantity<-subset(OST_paid_quantity,(Board==location()) & (Type==input$types))
       lab_text<-c(paste0("Month: ", plot_quantity$Date,
                          "<br>", 'Quantity: ', plot_quantity$Quantity, ' mg'))
       trend<-plot_ly(data = plot_quantity,x=seq(1:nrow(plot_quantity)))
       trend<-trend %>% add_trace(y = ~ Quantity,type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text,hoverinfo='text')
       trend<-trend %>% layout(
         margin=list(t=80),
-        title=(sprintf('Total quantity (mg) of %s prescribed since January 2018 (%s)',input$types,location)),
+        title=(sprintf('Total quantity (mg) of %s prescribed since January 2018 (%s)',input$types,location())),
         xaxis=list(
           title=('Date'),
           tickmode='array',
           tickvals=seq(1,nrow(plot_quantity),6),
           ticktext=as.character(plot_quantity$Date)[c( TRUE , rep(FALSE, 5)) ]
         ),
-        yaxis=list(title='Quantity (mg)',rangemode='tozero')
+        yaxis=list(title='Quantity (mg)',rangemode='tozero'),
+        shapes=lockdown('27.77'),
+        annotations=list(x = "27.77",
+                         y = max(plot_quantity$Quantity),
+                         text = "1st lockdown",
+                         xref = "1",
+                         yref = "1",
+                         showarrow = TRUE,
+                         align='left')
       )
+      trend <- trend %>%  config(
+        displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d',
+                                                                              'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
+                                                                              'hoverClosestCartesian', 'zoom2d', 'pan2d'))
     })
     plotlyOutput('quan_plot')
   }
@@ -599,16 +529,22 @@ output$download_drugs_data <- downloadHandler(
   content = function(file) {
 
     if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
-
       write_csv(DTR_July_update,
                 file) }
 
-    
-     
     else if(input$drug_subcategories=='Take home naloxone kits'){
       write_csv(THN_by_HB,
-                file) } 
+                file) }
     
+    else if(input$drug_subcategories=='SAS naloxone administration'){
+      write_csv(SASdata,
+                file) }
+    else if(input$drug_subcategories=='OST prescribing'){
+      write_csv(OST_paid,
+                file)
+      write_csv(OST_paid_quantity,
+                file)
+    }
   }
 )
   
