@@ -245,8 +245,8 @@ output$immun_table <- renderUI({
                         imm_type == "mmr" & dose == "dose 2" ~ 3)
   
   #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
-  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("MAY 2021", "JUN 2021"))
-  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("APR 2021", "MAY 2021", "JUN 2021"))
+  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("JUN 2021", "JUL 2021"))
+  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("MAY 2021", "JUN 2021", "JUL 2021"))
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
@@ -636,14 +636,22 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
-    h2("Immunisations - 1st September 2021"),
-    p("Information on the uptake of pre-school immunisations was updated in this tool on 1 September and includes information on cohorts eligible for their immunisations  
-      to week beginning 5 July 2021."),
-    p("Background information on interpreting the data is provided in the commentary for previous updates below."),
-    h2("Immunisations - 4th August 2021"),
-    p("Information on the uptake of pre-school immunisations was updated in this tool on 4 August and includes information on cohorts eligible for their immunisations  
-      to week beginning 7 June 2021."),
-    p("Background information on interpreting the data is provided in the commentary for previous updates below."),
+    h2("Immunisations - 6th October 2021"),
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 6 October and includes information on cohorts eligible for their immunisations to week beginning 9 August 2021. 
+      It should be noted that the data recorded for the most recent eligible cohorts will not be fully complete at this stage. 
+      This means that immunisation uptake is likely to be under-reported and will be updated as the data becomes more complete."),
+    p("Please note that going forward the dashboard will continue to be updated on the first Wednesday of each month, but the commentary will only be updated in the case of exceptions. 
+      Background information on interpreting the data is provided in the commentary for previous updates below. Information on final achieved uptake will continue to be provided through ",
+      tags$a(href="https://publichealthscotland.scot/publications/childhood-immunisation-statistics-scotland/",
+             "official statistics publications", target="_blank"), "."),
+     h2("Immunisations - 1st September 2021"),
+     p("Information on the uptake of pre-school immunisations was updated in this tool on 1 September and includes information on cohorts eligible for their immunisations  
+       to week beginning 5 July 2021."),
+     p("Background information on interpreting the data is provided in the commentary for previous updates below."),
+     h2("Immunisations - 4th August 2021"),
+     p("Information on the uptake of pre-school immunisations was updated in this tool on 4 August and includes information on cohorts eligible for their immunisations  
+       to week beginning 7 June 2021."),
+     p("Background information on interpreting the data is provided in the commentary for previous updates below."),
     h2("Immunisations - 7th July 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 7 July. It should be noted that the data recorded for the 
       most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake 
