@@ -83,7 +83,7 @@ cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>%
   mutate(dep = factor(dep)) %>% 
   mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE))
 
-cancer_extract_date <- "19th August 2021"
+cancer_extract_date <- "19 August 2021"
 
 # SACT data
 sact_data <- readRDS("data/sact_data.rds")
