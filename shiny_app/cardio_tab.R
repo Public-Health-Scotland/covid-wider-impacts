@@ -387,7 +387,7 @@ cath_lab_type <- reactive({
 # The charts and text shown on the app will depend on what the user wants to see
 output$cardio_explorer <- renderUI({
   
-  data_last_updated <- tagList(p("Last updated: 4 October 2021"))
+  data_last_updated <- tagList(p("Last updated: 6 October 2021"))
   
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
