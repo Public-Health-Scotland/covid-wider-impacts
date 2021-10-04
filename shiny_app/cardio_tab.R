@@ -476,7 +476,10 @@ output$cardio_explorer <- renderUI({
                                                     icon = icon('question-circle')))
         )
      } else if (input$measure_cardio_select == "sas_cardiac") {
-       tagList(# OOH Attendances
+       tagList(# SAS incidents
+         tags$b(span("The Scottish Ambulance Service submitted duplicate records on 4/9/21, artificially increasing the 
+                number of incidents for the week ending 5/9/21. PHS are currently working to delete these duplicate records.", 
+                     style = "color:red")), 
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$geoname_cardio)),
          fluidRow(column(6,
                          actionButton("btn_cardio_modal", "Data source and definitions", 

@@ -26,7 +26,7 @@ save_final_file <- function(dataset, date_saved) {
 ###############################################.
 ###############################################.
 ## Deaths ----
-save_final_file("deaths", "30_Aug_21")
+save_final_file("deaths", "04_Oct_21")
 ##########################################################.
 ## Cancer ----
 save_final_file("cancer_data_2", "10_Sep_21")
@@ -50,17 +50,17 @@ save_final_file("ui_smr01_assaults", "30_Sep_21")
 
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "30_Aug_21")
+save_final_file("rapid", "04_Oct_21")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 
 ## OOH ----
-save_final_file("ooh", "30_Aug_21")
+save_final_file("ooh", "04_Oct_21")
 ## A&E ----
-save_final_file("ae", "03_Sep_21")
+save_final_file("ae", "04_Oct_21")
 ## NHS24 ----
-save_final_file("nhs24", "30_Aug_21")
+save_final_file("nhs24", "04_Oct_21")
 ## SAS ----
-save_final_file("sas", "30_Aug_21")
+save_final_file("sas", "04_Oct_21")
 ### Outpatients ----
 save_final_file("outpats", "17_May_21")
 save_final_file("spec_lookup_op", "24_Mar_21")
