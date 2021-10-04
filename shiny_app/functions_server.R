@@ -32,10 +32,6 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   } else { # for cases outside summary tab
     trend_data <- dataset
   }
-
-  
-  period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
-                           period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))
     
   #If no data available for that period then plot message saying data is missing
   if (is.data.frame(trend_data) && nrow(trend_data) == 0)
@@ -99,7 +95,12 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     } else {
     trend_data <- trend_data 
   }
-  }
+    }
+    
+    
+    period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))  
+    
   # If variation selected different values
   if (type == "variation") {
     
