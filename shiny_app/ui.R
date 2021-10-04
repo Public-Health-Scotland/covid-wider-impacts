@@ -351,7 +351,6 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
                                            ) # tabpanel bracket
-
                         ) , # navbar bracket          
 ###############################################.
 ## Unintentional Injuries ----

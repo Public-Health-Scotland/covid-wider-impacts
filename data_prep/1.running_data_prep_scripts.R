@@ -84,10 +84,8 @@ file.edit("shiny_app/summary_tab.R")
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
 
-
 create_antebooking(booking_date = "16092021", max_book_date = "2021-09-12")
-create_terminations(top_date = "2021-08-16")
-
+create_terminations(top_date = "2021-09-13")
 
 # Add here what needs to be changed in the shiny scripts
 
