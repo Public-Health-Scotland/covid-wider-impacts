@@ -198,7 +198,7 @@ output$TwoYrComparison<-renderPlotly({
     trend<-trend %>% layout(
       shapes=lockdown('3.77'),
       annotations=annote("3.77",plot_item$`Average 2018 & 2019`,plot_item$`2020 & 2021` ),
-      title=(sprintf("Paid OST prescribing in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location(),input$types)),
+      title=(sprintf("OST prescribing in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location(),input$types)),
       margin=list(t=80),
       xaxis=list(
         title='Date',
@@ -211,7 +211,7 @@ output$TwoYrComparison<-renderPlotly({
                  rangemode='tozero'),
       yaxis2 = list(overlaying = "y", 
                     side = "right", 
-                    title='Quantity per item (mg)',
+                    title='Quantity per item (QPI) (mg)',
                     automargin=T,
                     rangemode='tozero'),
       legend = list(x=1.08,y=1)
