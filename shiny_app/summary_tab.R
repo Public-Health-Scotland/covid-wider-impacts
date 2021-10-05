@@ -440,10 +440,6 @@ output$data_explorer <- renderUI({
           Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the 
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
-        p("Data for the last two weeks of 2020 are affected by public holidays. There were fewer registrations than usual in these weeks. 
-          Death registrations are therefore likely to be lower than the actual numbers of deaths that occurred in these weeks and do not 
-          provide a reliable indication of the trend. We expect to see an increase in registrations in the coming weeks as registrars deal 
-          with any backlogs."),
         plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else if (input$measure_select == "outpats") {
           plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
