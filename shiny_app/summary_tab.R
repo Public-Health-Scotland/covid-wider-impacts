@@ -381,6 +381,15 @@ op_spec <- reactive({
              area_type == input$geotype_op)   
 })
 
+# # Outpatients dataset used for ethnicity charts
+op_eth <- reactive({
+  outpats %>%
+    filter(type == "eth" & 
+             area_type == "Scotland" &
+             admission_type == input$appt_type &
+             category %in% input$op_ethnicity)   
+})
+
 ###############################################.
 ## Reactive layout  ----
 ###############################################.
@@ -548,7 +557,25 @@ output$data_explorer <- renderUI({
             fluidRow(column(6,
                             withSpinner(plotlyOutput("op_moc_var"))),
                      column(6,
-                            withSpinner(plotlyOutput("op_moc_tot"))))
+                            withSpinner(plotlyOutput("op_moc_tot")))),
+            
+            #Add ethnicity charts
+            fluidRow(column(6,
+                            h4(paste0(total_title, "ethnicity group"))),
+                     # Adding adm_type here to make clear what is selected
+                     column(6,
+                            h4(paste0(total_title, "ethnicity group")))),
+            ###Adding adm_type here to make clear what is selected
+            fluidRow(column(6,
+                            pickerInput("op_ethnicity", "Select one or more ethnicity groups",
+                                        choices = eth_list_op, 
+                                        multiple = TRUE,
+                                        selected = eth_list_op)),  
+            fluidRow(column(6,
+                            withSpinner(plotlyOutput("op_eth_tot"))),
+                     column(6,
+                            withSpinner(plotlyOutput("op_eth_tot")))))
+            
     )
   }
 }) 
@@ -626,6 +653,8 @@ output$op_depr_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep",
 output$op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", "total", "op")})
 output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80)})
 output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80)})
+
+output$op_eth_tot <- renderPlotly({plot_eth("total", op_eth(), period = "monthly", marg = 80)})
 
 
 # Palette for specialty
