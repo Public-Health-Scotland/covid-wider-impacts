@@ -248,6 +248,11 @@ spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
                           "Paediatrics (medical & surgical)")) # specialty list
 spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
 
+#List of ethnic groups included in the outpatients by ethnicity section
+eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "White Other", "White Polish", 
+                      "Mixed", "Pakistani", "Indian", "Other Asian", "Chinese", "African",
+                      "Caribbean or Black", "Other ethnic group", "Missing"))
+
 data_list <- c(
   "Hospital admissions" = "rapid", "A&E attendances" = "aye",
   "NHS 24 completed contacts" = "nhs24",
