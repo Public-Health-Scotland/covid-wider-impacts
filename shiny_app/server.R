@@ -39,6 +39,8 @@ function(input, output, session) {
                    tags$li("20 October 2021 - Systemic anti-cancer therapies data update"),
                    tags$li("27 October 2021 - New data on detect cancer early"),
                    tags$li("3 November 2021 - Monthly update of data (most sections)."),
+                   tags$li("3 November 2021 - New data on opioid substitution therapy,
+                           ambulance administered naloxone and drug treatment referrals."),
                    tags$li("1 December 2021 - Monthly update of data (most sections).")
                  ),
                  size = "m",
