@@ -182,6 +182,10 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                   "<br>", "Historic average: ", 
                                   trend_data$count_average))
         
+      } else if (split == "eth"){
+        tooltip_trend <- c(paste0(trend_data$category, "<br>",
+                                  period_data, 
+                                  "<br>", measure_name, trend_data$count))
       } else {
         tooltip_trend <- c(paste0(trend_data$category, "<br>",
                                   period_data, 

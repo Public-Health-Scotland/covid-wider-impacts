@@ -68,6 +68,7 @@ nhs24 <- readRDS("data/nhs24.rds") # OOH data
 sas <- readRDS("data/sas.rds") # OOH data
 deaths <- readRDS("data/deaths.rds") # deaths data
 outpats <- readRDS("data/outpats.rds") # outpatients data
+outpats_ethnicity <- readRDS("data/outpats_ethnicity.rds")
 
 #Cardiovascular data
 ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
