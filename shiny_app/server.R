@@ -105,6 +105,10 @@ function(input, output, session) {
   source(file.path("sact_tab.R"),  local = TRUE)$value
   
   ###############################################.
+  # DCE tab
+  source(file.path("dce_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
   # Drugs tab
   source(file.path("drugs_tab.R"),  local = TRUE)$value
   
