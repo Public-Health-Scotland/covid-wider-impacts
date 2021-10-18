@@ -351,15 +351,27 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
                               ), # tabpanel bracket
+                        
+                        ###############################################.
+                        ## DCE ----
+                        ###############################################.
+                        
                         tabPanel(title = "Cancer Staging - DCE Data", icon = icon("clock"), value = "dce",
                                  wellPanel(
-                                   column(6, selectInput("geotype_dce", label = "Select a geography level",
+                                   column(5, selectInput("geotype_dce", label = "Select a geography level",
                                                          choices= c("Scotland", "Cancer Network"),
                                                          selected = "Scotland"),
                                           uiOutput("geoname_ui_dce")),
                                    
-                                   column(6,  selectInput("dce_type", label = "Select all or specific cancer type",
-                                                          choices = c("Breast", "Colorectal", "Lung"), selected = "Breast"))
+                                   column(5,  selectInput("dce_type", label = "Select all or specific cancer type",
+                                                          choices = c("Breast", "Colorectal", "Lung"), selected = "Breast")),
+                                   column(2,
+                                          fluidRow(br()),
+                                          actionButton("btn_dce_modal", "Data source: ", icon = icon('question-circle')),
+                                          fluidRow(br()),
+                                          downloadButton('download_dce_data', 'Download data')) #,
+                                          # fluidRow(br()),
+                                          # actionButton('jump_commentary_cancer','Go to commentary'))
                                  ) , #well panel
                                  mainPanel(width = 12,
                                            uiOutput("dce_explorer1"),
@@ -369,8 +381,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            uiOutput("dce_explorer2")
                                  )# mainPanel bracket
                         ) # tabpanel bracket
-                        
-                        ) , # navbar bracket          
+                ) , # navbar bracket          
 ###############################################.
 ## Unintentional Injuries ----
 ###############################################.

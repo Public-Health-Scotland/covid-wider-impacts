@@ -4,6 +4,32 @@
 ## Modals ----
 ###############################################.
 # Pop-up modal explaining source of data
+observeEvent(input$btn_dce_modal, 
+             showModal(modalDialog(
+               title = "What is the data source?",
+               p("",
+                 tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/Scottish-Cancer-Registry/How-data-are-collected/",class="externallink")),
+               p("The Scottish Cancer Registry receives notifications of cancer from many data sources. Pathology 
+                 records are one of the main sources, these are routinely transferred to the registry from the health 
+                 board laboratories. These data are valuable to identify and maximise case ascertainment of potential 
+                 new cancers."),
+               p("Pathology records contain diagnosis information, which has been determined by examining the
+                 cells and tissues microscopically.  Microscopic examination is generally considered as the most 
+                 accurate method of diagnosis. The specimens used to determine diagnosis are received from various 
+                 procedures such as smears and fluids, simple diagnostic punch biopsies, lymph node biopsies to 
+                 fuller wide local excisions and resections. Therefore, it is highly likely that there are numerous 
+                 pathology reports for one individual. The reports received by the registry related to solid tissue 
+                 and cytology specimens. Peripheral blood smears are not included such as leukaemia diagnosed from 
+                 peripheral blood film.  The majority of pathology records will relate to new primary cancers, some 
+                 records will relate to disease recurrence or known primary cancers and/or metastatic disease."),
+               p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of
+                 each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had
+                 a subsequent cancer specimen reported that year for the same type of cancer, they were not counted again; but they
+                 were counted twice or more for those with different types of cancer. "),
+               
+               p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
+               size = "m",
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 ###############################################.
 ## Reactive datasets ----
@@ -29,6 +55,15 @@ dce_data_main3 <- reactive({
     dce_data %>% filter(area == input$geoname_dce, site == input$dce_type)
   }
 })
+
+dce_data_dl <- reactive({
+  
+  dce_data %>% 
+  select(area:count20, month) %>%
+    rename("Area name" = area, "Cancer Type" = site, "Stage" = stage, 
+           "No. Patients 2019" = count19, "No. Patients 2020" = count20, "Month" = month)
+})
+
 
 
 ###############################################.
@@ -117,4 +152,9 @@ output$dce_inc_bar20_2 <- renderPlotly({plot_dce_inc_bar20_2(dce_dataset = dce_d
 ## Data downloads ----
 ###############################################.
 
-
+output$download_dce_data <- downloadHandler(
+  filename ="dce_extract.csv",
+  content = function(file) {
+    write_csv(dce_data_dl(),
+              file) } 
+)
