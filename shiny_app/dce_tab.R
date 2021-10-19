@@ -7,8 +7,6 @@
 observeEvent(input$btn_dce_modal, 
              showModal(modalDialog(
                title = "What is the data source?",
-               p("",
-                 tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/Scottish-Cancer-Registry/How-data-are-collected/",class="externallink")),
                p("Data to support the Detect Cancer Early (DCE) initiative are collected by Cancer Audit staff across 
                  NHS Scotland and are part of the Scottish National Prospective Cancer Audit data sets, which are 
                  recorded onto the NHS Boards’ prospective cancer audit systems."),
@@ -82,31 +80,9 @@ output$dce_explorer1 <- renderUI({
   
     tagList(
       
-      p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer 
-        in Scotland and approximately 34,000 people were diagnosed with cancer, excluding non-melanoma 
-        skin cancer. The most common causes of cancer diagnosis are lung, breast, prostate and colorectal cancer."),
-      p("Cancer staging is the process of determining the extent to which a cancer has developed and spread. 
-        For the majority of patients with cancer it is common practice to assign a number from 1 to 4 to a cancer, 
-        with 1 indicating the cancer is confined to the original organ in which it occurred and 4 being a cancer 
-        which has spread beyond the original organ and its local lymph glands (regional lymph nodes). Patients 
-        diagnosed with stage 1 disease tend to have better outcomes and longer survival compared with patients 
-        diagnosed with stage 4 disease."),
-      p("The proportion of patients with cancer diagnosed with stage 1 disease can vary because of a number of 
-        factors, including the presence and uptake of national screening programmes. On March 30th 2020, the 
-        Scottish Government suspended the national screening programmes for breast and colorectal cancer due to 
-        COVID-19."),
-      p("In February 2012 the Cabinet Secretary for Health and Wellbeing formally launched the Detect Cancer Early 
-        programme . One aim of the Detect Cancer Early programme was to increase the proportion of people who were 
-        diagnosed early in the disease process (with stage 1 disease). The programme concentrates on breast, colorectal 
-        and lung cancers, which collectively account for 42.6% of all cancers diagnosed in Scotland in 2018."),
-      p("This dashboard has used data collected for the DCE programme to compare the number of diagnoses in 2020
-        to 2019, to show how the impact of COVID-19 has affected cancer detection for these three cancer types
-        by stage for areas within Scotland."),
-      p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date))),
-      br(),
       plot_cut_box(paste0("Number of " , dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19",
                  paste0("Number of " , dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20"),
-      p(em("(Click on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
+      p(em("(Click and drag on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
     br(),
     plot_cut_box(paste0("Proportion of ", dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19_2",
                  paste0("Proportion of ", dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20_2"))
@@ -126,7 +102,7 @@ output$dce_explorer2 <- renderUI({
     p("The below graphs can be filtered by the stage of the cancer when it is detected - choose above."), 
     plot_box(paste0("Monthly count of individuals with ", dce_site, 
                     " cancer - Stage ", input$dce_stage), "dce_incidence") ,
-    p(em("(Click on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
+    p(em("(Click and drag on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
     br(),
     plot_box(paste0("Percentage change (2019 to 2020) of individuals with ", dce_site,
                     " cancer - Stage ", input$dce_stage), "dce_split"),

@@ -1,5 +1,5 @@
 #UI
-#secure_app( #uncomment if needing password protection
+# secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
@@ -357,6 +357,29 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         ###############################################.
                         
                         tabPanel(title = "Cancer Staging - DCE Data", icon = icon("clock"), value = "dce",
+                                 wellPanel(h4(strong("Cancer Staging - Detect Cancer Early Data (Breast, Colorectal & Lung)")),
+                                   p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer 
+                                      in Scotland and approximately 34,000 people were diagnosed with cancer, excluding non-melanoma 
+                                        skin cancer. The most common causes of cancer diagnosis are lung, breast, prostate and colorectal cancer."),
+                                   p("In February 2012 the Cabinet Secretary for Health and Wellbeing formally launched the Detect Cancer Early 
+                                      programme . One aim of the Detect Cancer Early programme was to increase the proportion of people who were 
+                                      diagnosed early in the disease process (with stage 1 disease). The programme concentrates on breast, colorectal 
+                                      and lung cancers, which collectively account for 42.6% of all cancers diagnosed in Scotland in 2018."),
+                                   p("Cancer staging is the process of determining the extent to which a cancer has developed and spread. 
+                                      For the majority of patients with cancer it is common practice to assign a number from 1 to 4 to a cancer, 
+                                      with 1 indicating the cancer is confined to the original organ in which it occurred and 4 being a cancer 
+                                      which has spread beyond the original organ and its local lymph glands (regional lymph nodes). Patients 
+                                      diagnosed with stage 1 disease tend to have better outcomes and longer survival compared with patients 
+                                      diagnosed with stage 4 disease."),
+                                   p("The proportion of patients with cancer diagnosed with stage 1 disease can vary because of a number of 
+                                      factors, including the presence and uptake of national screening programmes. On March 30th 2020, the 
+                                      Scottish Government suspended the national screening programmes for breast and colorectal cancer due to 
+                                      COVID-19, restarting gradually from July onwards."),
+                                   p("This dashboard has used data collected for the DCE programme to compare the number of diagnoses in 2020
+                                      to 2019, to show how the impact of COVID-19 has affected cancer detection for these three cancer types
+                                      by stage for areas within Scotland."),
+                                   p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
+                                 ),
                                  wellPanel(
                                    column(5, selectInput("geotype_dce", label = "Select a geography level",
                                                          choices= c("Scotland", "Cancer Network"),
