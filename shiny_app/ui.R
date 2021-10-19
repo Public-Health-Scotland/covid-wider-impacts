@@ -375,7 +375,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                  ) , #well panel
                                  mainPanel(width = 12,
                                            uiOutput("dce_explorer1"),
-                                           div(radioButtons("dce_stage", "Select stage of cancer (NK â Not Known)",
+                                           div(radioButtons("dce_stage", "Select stage of cancer (NK - Not Known)",
                                                             list("1","2","3","4","NK"), inline = TRUE,
                                                             selected = "1")),
                                            uiOutput("dce_explorer2")

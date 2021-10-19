@@ -9,25 +9,14 @@ observeEvent(input$btn_dce_modal,
                title = "What is the data source?",
                p("",
                  tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/Scottish-Cancer-Registry/How-data-are-collected/",class="externallink")),
-               p("The Scottish Cancer Registry receives notifications of cancer from many data sources. Pathology 
-                 records are one of the main sources, these are routinely transferred to the registry from the health 
-                 board laboratories. These data are valuable to identify and maximise case ascertainment of potential 
-                 new cancers."),
-               p("Pathology records contain diagnosis information, which has been determined by examining the
-                 cells and tissues microscopically.  Microscopic examination is generally considered as the most 
-                 accurate method of diagnosis. The specimens used to determine diagnosis are received from various 
-                 procedures such as smears and fluids, simple diagnostic punch biopsies, lymph node biopsies to 
-                 fuller wide local excisions and resections. Therefore, it is highly likely that there are numerous 
-                 pathology reports for one individual. The reports received by the registry related to solid tissue 
-                 and cytology specimens. Peripheral blood smears are not included such as leukaemia diagnosed from 
-                 peripheral blood film.  The majority of pathology records will relate to new primary cancers, some 
-                 records will relate to disease recurrence or known primary cancers and/or metastatic disease."),
-               p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of
-                 each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had
-                 a subsequent cancer specimen reported that year for the same type of cancer, they were not counted again; but they
-                 were counted twice or more for those with different types of cancer. "),
-               
-               p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
+               p("Data to support the Detect Cancer Early (DCE) initiative are collected by Cancer Audit staff across 
+                 NHS Scotland and are part of the Scottish National Prospective Cancer Audit data sets, which are 
+                 recorded onto the NHS Boards’ prospective cancer audit systems."),
+               p("These data are collected locally by individual NHS Boards using national data standards. The information 
+                 is collected as patients progress through their pathway of care from initial referral, investigations and 
+                 diagnosis, to staging, treatments and follow-up. Further information on prospective cancer audit data 
+                 definitions can be found under QPI data sets in the Cancer Audit section of the PHS website."),
+               p(paste0("Figures presented based on data extracted on ",dce_extract_date)), # need to define cancer_extract_date reactive value
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
@@ -91,12 +80,33 @@ output$dce_explorer1 <- renderUI({
                         input$dce_type == "Lung" ~ "Lung"
   )
   
-  tagList(
-    p("DCE services in Scotland have been disrupted since late March 2020 as a result of the coronavirus 
-      pandemic.  It is important to understand whether fewer patients have been diagnosed with cancer as a 
-      result of these changes."),
-    plot_cut_box(paste0("Number of " , dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19",
+    tagList(
+      
+      p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer 
+        in Scotland and approximately 34,000 people were diagnosed with cancer, excluding non-melanoma 
+        skin cancer. The most common causes of cancer diagnosis are lung, breast, prostate and colorectal cancer."),
+      p("Cancer staging is the process of determining the extent to which a cancer has developed and spread. 
+        For the majority of patients with cancer it is common practice to assign a number from 1 to 4 to a cancer, 
+        with 1 indicating the cancer is confined to the original organ in which it occurred and 4 being a cancer 
+        which has spread beyond the original organ and its local lymph glands (regional lymph nodes). Patients 
+        diagnosed with stage 1 disease tend to have better outcomes and longer survival compared with patients 
+        diagnosed with stage 4 disease."),
+      p("The proportion of patients with cancer diagnosed with stage 1 disease can vary because of a number of 
+        factors, including the presence and uptake of national screening programmes. On March 30th 2020, the 
+        Scottish Government suspended the national screening programmes for breast and colorectal cancer due to 
+        COVID-19."),
+      p("In February 2012 the Cabinet Secretary for Health and Wellbeing formally launched the Detect Cancer Early 
+        programme . One aim of the Detect Cancer Early programme was to increase the proportion of people who were 
+        diagnosed early in the disease process (with stage 1 disease). The programme concentrates on breast, colorectal 
+        and lung cancers, which collectively account for 42.6% of all cancers diagnosed in Scotland in 2018."),
+      p("This dashboard has used data collected for the DCE programme to compare the number of diagnoses in 2020
+        to 2019, to show how the impact of COVID-19 has affected cancer detection for these three cancer types
+        by stage for areas within Scotland."),
+      p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date))),
+      br(),
+      plot_cut_box(paste0("Number of " , dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19",
                  paste0("Number of " , dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20"),
+      p(em("(Click on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
     br(),
     plot_cut_box(paste0("Proportion of ", dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19_2",
                  paste0("Proportion of ", dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20_2"))
@@ -116,8 +126,20 @@ output$dce_explorer2 <- renderUI({
     p("The below graphs can be filtered by the stage of the cancer when it is detected - choose above."), 
     plot_box(paste0("Monthly count of individuals with ", dce_site, 
                     " cancer - Stage ", input$dce_stage), "dce_incidence") ,
+    p(em("(Click on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
+    br(),
     plot_box(paste0("Percentage change (2019 to 2020) of individuals with ", dce_site,
-                    " cancer - Stage ", input$dce_stage), "dce_split")) #,
+                    " cancer - Stage ", input$dce_stage), "dce_split"),
+  
+  p(em("The cancer networks are regional collaborations working together across NHS Boards to improve 
+       patient care and cancer services:", style = "font-family: 'calibri'; font-si15pt")),
+  p(em("NCA (North Cancer Alliance) – NHS Grampian, NHS Highland, NHS Orkney, NHS Shetland, NHS Tayside 
+       and NHS Western Isles.", style = "font-family: 'calibri'; font-si15pt")),
+  p(em("SCAN (South East of Scotland Cancer Network) – NHS Borders, NHS Dumfries & Galloway, NHS Fife and 
+       NHS Lothian.", style = "font-family: 'calibri'; font-si15pt")),
+  p(em("WoSCAN (West of Scotland Cancer Network) – NHS Ayrshire & Arran, NHS Forth Valley, NHS Greater 
+       Glasgow & Clyde and NHS Lanarkshire.", style = "font-family: 'calibri'; font-si15pt")))
+  
   # plot_box(paste0("Ratio of individuals with ", dce_site,
   #                 " cancer by Stage "), "dce_split2"))
   # ABOVE TWO LINES COMMENTED OUT UNTIL FORMAT OF CHART AGREED 8-10-21
