@@ -80,12 +80,14 @@ output$dce_explorer1 <- renderUI({
   
     tagList(
       
-      plot_cut_box(paste0("Number of " , dce_site, " cancer diagnoses in 2019 by stage (NK - Not Known): "), "dce_inc_bar19",
+      plot_cut_box(paste0("Number of " , dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19",
                  paste0("Number of " , dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20"),
       p(em("(Click and drag on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
+      p("NK = Not Known"),
     br(),
     plot_cut_box(paste0("Proportion of ", dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19_2",
-                 paste0("Proportion of ", dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20_2"))
+                 paste0("Proportion of ", dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20_2"),
+    p("NK = Not Known"))
   
 })
 
