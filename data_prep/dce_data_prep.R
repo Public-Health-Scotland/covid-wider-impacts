@@ -186,7 +186,7 @@ rm(dce_data, dce_BI_extract, dce_counts, dce_dash_data, dce_percent)
 saveRDS(dce_data_total, "shiny_app/data/dce_data.rds")
 # saveRDS(dce_all_areas, "shiny_app/data/dce_data_areas.rds")
 
-saveRDS(dce_data_total, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "dce_data", 
+saveRDS(dce_data_total, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "dce_data_", 
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 
