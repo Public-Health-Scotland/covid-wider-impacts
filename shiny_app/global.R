@@ -126,7 +126,7 @@ dce_data <- readRDS("data/dce_data.rds") %>%
   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>% 
   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
 
-dce_extract_date <- "18 October 2021"
+dce_extract_date <- "8 October 2021"
 
 
 
