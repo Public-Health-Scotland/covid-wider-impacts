@@ -449,7 +449,7 @@ tabPanel(title = "Termination of pregnancy", value = "terminations",
                    uiOutput("top_explorer")
          )# mainPanel bracket
 ) # tabPanel bracket
- ), # navbar menu bracket
+ ) # navbar menu bracket
 ###############################################.
 ## Births and Babies menu ----
 ##############################################.
