@@ -78,11 +78,11 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
   
   # Text to be updated every month with updated dates
-  last_month_peri <- "August 2021"
-  cutdate_peri <- "19 September 2021"
-  extractdate_peri <- "23 September 2021"
-  nextup_peri <- "November 2021"
-  nextdata_peri <- "September 2021"
+  last_month_peri <- "September 2021"
+  cutdate_peri <- "17 October 2021"
+  extractdate_peri <- "20 October 2021"
+  nextup_peri <- "December 2021"
+  nextdata_peri <- "October 2021"
   
   # Number of deaths and of births used in the text
   no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
@@ -215,19 +215,24 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                 hoverinfo= "none", showlegend = FALSE) %>%
       # adding outliers
       add_markers(data = trend_data %>% filter(outlier == T), y = ~ rate,
-                  marker = list(color = "red", size = 10, symbol = "diamond"), name = "Outliers") %>% 
+                  marker = list(color = "red", size = 10, symbol = "diamond"), 
+                  name = "Outliers", hoverinfo= "text") %>% 
       # adding shifts
       add_markers(data = trend_data %>% filter(shift == T), y = ~ rate,
-                  marker = list(color = "blue", size = 10, symbol = "circle"), name = "Shifts") %>% 
+                  marker = list(color = "blue", size = 10, symbol = "circle"), 
+                  name = "Shifts", hoverinfo= "text") %>% 
       # adding shifts
       add_markers(data = trend_data %>% filter(trend == T), y = ~ rate,
-                  marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>% 
+                  marker = list(color = "green", size = 10, symbol = "square"), 
+                  name = "Trends", hoverinfo= "text") %>% 
       # adding inner third
       add_markers(data = trend_data %>% filter(inner == T), y = ~ rate,
-                  marker = list(color = "gray", size = 10, symbol = "x"), name = "Inner one-third") %>% 
+                  marker = list(color = "gray", size = 10, symbol = "x"), 
+                  name = "Inner one-third", hoverinfo= "text") %>% 
       # adding outer third
       add_markers(data = trend_data %>% filter(outer == T), y = ~ rate,
-                  marker = list(color = "orange", size = 10, symbol = "star"), name = "Outer one-third") %>% 
+                  marker = list(color = "orange", size = 10, symbol = "star"), 
+                  name = "Outer one-third", hoverinfo= "text") %>% 
       layout( #to avoid labels getting cut out
         yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
       # leaving only save plot button
