@@ -150,7 +150,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "27 September 2021"
+immunisation_extract_date <- "25 October 2021"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -410,7 +410,7 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
                "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
-               "JUL 2021" = "#00cc00") 
+               "JUL 2021" = "#00cc00", "AUG 2021" = "#660033") 
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
