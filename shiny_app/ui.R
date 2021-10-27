@@ -358,26 +358,41 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         
                         tabPanel(title = "Cancer Staging - DCE Data", icon = icon("clock"), value = "dce",
                                  wellPanel(h4(strong("Cancer Staging - Detect Cancer Early Data (Breast, Colorectal & Lung)")),
-                                   p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer 
-                                      in Scotland and approximately 34,000 people were diagnosed with cancer, excluding non-melanoma 
-                                        skin cancer. The most common causes of cancer diagnosis are lung, breast, prostate and colorectal cancer."),
-                                   p("In February 2012 the Cabinet Secretary for Health and Wellbeing formally launched the Detect Cancer Early 
-                                      programme . One aim of the Detect Cancer Early programme was to increase the proportion of people who were 
-                                      diagnosed early in the disease process (with stage 1 disease). The programme concentrates on breast, colorectal 
-                                      and lung cancers, which collectively account for 42.6% of all cancers diagnosed in Scotland in 2018."),
+                                   # p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer 
+                                   #    in Scotland and approximately 34,000 people were diagnosed with cancer, excluding non-melanoma 
+                                   #      skin cancer. The most common causes of cancer diagnosis are lung, breast, prostate and colorectal cancer."),
+                                   # p("In February 2012 the Cabinet Secretary for Health and Wellbeing formally launched the Detect Cancer Early 
+                                   #    programme . One aim of the Detect Cancer Early programme was to increase the proportion of people who were 
+                                   #    diagnosed early in the disease process (with stage 1 disease). The programme concentrates on breast, colorectal 
+                                   #    and lung cancers, which collectively account for 42.6% of all cancers diagnosed in Scotland in 2018."),
                                    p("Cancer staging is the process of determining the extent to which a cancer has developed and spread. 
                                       For the majority of patients with cancer it is common practice to assign a number from 1 to 4 to a cancer, 
                                       with 1 indicating the cancer is confined to the original organ in which it occurred and 4 being a cancer 
                                       which has spread beyond the original organ and its local lymph glands (regional lymph nodes). Patients 
                                       diagnosed with stage 1 disease tend to have better outcomes and longer survival compared with patients 
                                       diagnosed with stage 4 disease."),
+                                   p("This dashboard looks at each of breast, colorectal and lung cancer staging data separately to examine the 
+                                     different impacts of the pandemic, and 
+                                     how well cancer services are recovering to the expected pre-pandemic levels."),
                                    p("The proportion of patients with cancer diagnosed with stage 1 disease can vary because of a number of 
                                       factors, including the presence and uptake of national screening programmes. On March 30th 2020, the 
                                       Scottish Government suspended the national screening programmes for breast and colorectal cancer due to 
                                       COVID-19, restarting gradually from July onwards."),
-                                   p("This dashboard has used data collected for the DCE programme to compare the number of diagnoses in 2020
-                                      to 2019, to show how the impact of COVID-19 has affected cancer detection for these three cancer types
-                                      by stage for areas within Scotland."),
+                                   p("During the nine months of the pandemic in 2020 (April-December), there were 2,681 patients diagnosed with 
+                                     breast cancer, 1,958 patients diagnosed with colorectal cancer and 3,287 patients diagnosed with lung cancer. 
+                                     These numbers are 19% (breast), 25% (colorectal) and 9% (lung) lower than would have been expected in this 
+                                     period had COVID-19 not happened."),
+                                   tags$ul(
+                                     tags$li("For breast cancer, there were large falls numbers in stages 1 and 2 (35% and 15% respectively). In 
+                                             contrast, there were small increases in stages 3 and 4 (5% and 7%), with the biggest increase seen for 
+                                             those of unknown stage (34%)."),
+                                     
+                                     tags$li("For Colorectal Cancer, there were substantial drops (30% and more) in the numbers diagnosed with 
+                                             stages 1, 2 or 3 colorectal cancer; whereas there was only a 4% drop for metastatic colorectal cancer."),
+                                     
+                                     tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4 
+                                             diagnoses, which was only lower than expected in April 2020.")),
+                                   
                                    p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                                  ),
                                  wellPanel(
