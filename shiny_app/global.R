@@ -7,17 +7,17 @@
 
 library(shiny)
 library(plotly) # for charts
-library(shinyWidgets) # for dropdowns  
-library(dplyr) # for data manipulation 
-library(DT) # for data table  
-library(shinycssloaders) #for loading icons, see line below 
+library(shinyWidgets) # for dropdowns
+library(dplyr) # for data manipulation
+library(DT) # for data table
+library(shinycssloaders) #for loading icons, see line below
 # it uses github version devtools::install_github("andrewsali/shinycssloaders")
 # This is to avoid issues with loading symbols behind charts and perhaps with bouncing of app
-library(shinyjs) # for enable/disable functions  
+library(shinyjs) # for enable/disable functions
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
 library(flextable)
-library(shinyBS) #for collapsible panels in commentary 
+library(shinyBS) #for collapsible panels in commentary
 library(zoo)
 library(magrittr)
 library(shinymanager)
@@ -79,8 +79,8 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
 
-cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>% 
-  mutate(dep = factor(dep)) %>% 
+cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>%
+  mutate(dep = factor(dep)) %>%
   mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE))
 
 cancer_extract_date <- "19 August 2021"
@@ -233,7 +233,7 @@ tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
 tears_download <- readRDS("data/tears_download_data.rds")
 
-#Drugs data 
+#Drugs data
 ADP_names<-readRDS('data/ADP_names.rds')
 Health_board<-readRDS('data/Health_board.rds')
 DTR_July_update<-readRDS('data/DTR_July_update.rds')
@@ -406,38 +406,40 @@ pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine
 pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
-               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
-               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
+               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#0d38b0",
+               "OCT 2020" = "#5959d7", "NOV 2020" = "#42249f", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
                "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
-               "JUL 2021" = "#00cc00") 
+               "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
+               "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141")
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
-               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
-               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
+               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#0d38b0",
+               "OCT 2020" = "#5959d7", "NOV 2020" = "#42249f", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
-               "APR 2021" =  "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
-               "JUL 2021" = "#2d2da1")
+               "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
+               "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
+               "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141")
 
 pal_inj <- list(pal_age,pal_depr,pal_sex)
 
 pal_drug <- c('#e66101','#fdb863','#b2abd2','#5e3c99')
 
-pal_sact <- c('#3F3685', 
-              '#9F9BC2', 
-              '#9B4393', 
-              '#CDA1C9', 
-              '#0078D4', 
-              '#B3D7F2', 
-              '#EE82EE', 
-              '#9CC951', 
-              '#DAEBBE', 
-              '#1E7F84', 
-              '#948DE3', 
-              '#C73918', 
-              '#E39C8C', 
+pal_sact <- c('#3F3685',
+              '#9F9BC2',
+              '#9B4393',
+              '#CDA1C9',
+              '#0078D4',
+              '#B3D7F2',
+              '#EE82EE',
+              '#9CC951',
+              '#DAEBBE',
+              '#1E7F84',
+              '#948DE3',
+              '#C73918',
+              '#E39C8C',
               '#000000' )
 
 
@@ -449,8 +451,8 @@ pal_cancer_diff <- c("1" = '#000080',
 
 
 # more distinctive colour palette (save for later)
-# c("2019" = "#000000", "2020" = "#41b6c4", 
-#   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
+# c("2019" = "#000000", "2020" = "#41b6c4",
+#   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32",
 #   "DEC 2020" = "#1d91c0", "JAN 2021" = "#253494", "FEB 2021" = "#990099")
 
 # Style of x and y axis
@@ -461,8 +463,8 @@ yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4
                     tickfont = list(size=14), titlefont = list(size=14))
 
 # Buttons to remove
-bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
-                     'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
+bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
+                     'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
                      'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
 
 ## END
