@@ -1,5 +1,5 @@
 
-###############################################.
+###############################################...
 ## Reactive data ----
 ###############################################.
 
@@ -29,6 +29,15 @@ data_table <- reactive({
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
          "cancer" = cancer_data2,
+         "dce" = dce_data,
+         "ui_smr01_all" = ui_smr01_all %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation,Month=week_ending),
+         "ui_smr01_rta"= ui_smr01_rta %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+         "ui_smr01_poison"=ui_smr01_poison %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation), 
+         "ui_smr01_other"=ui_smr01_other %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+         "ui_smr01_falls"=ui_smr01_falls %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+         "ui_smr01_assaults"=ui_smr01_assaults%>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
+        "sact_weekly" = sact_data_wk_inc,
+        "sact_monthly" = sact_data_inc,
          "childdev" = child_dev,
          "breastfeeding" = breastfeeding,
         "perinatal" = perinatal,
@@ -225,17 +234,34 @@ data_table <- reactive({
              "Type" = type)
   } else if (input$data_select %in% "cancer") {
     table_data <- table_data %>%
-      select(area, site, sex, week_ending, count19, count20, count21, difference20, difference21) %>%
-      mutate(difference20 = format(round(difference20, 2), nsmall = 2),
-             difference21 = format(round(difference21, 2), nsmall = 2)) %>% 
+      select(area:count21, breakdown) %>%
+      filter(breakdown != "None") %>% 
       rename("Area name" = area, "Cancer type" = site,
              "Sex" = sex,
-             "Week ending" = week_ending,
+             "Age Group" = age_group,
+             "Deprivation Quintile (0=unknown)" = dep,
+             "Week Number" = week_number,
              "Count 2019" = count19,
              "Count 2020" = count20,
              "Count 2021" = count21,
-             "Variation (%) 2020 vs 2019" = difference20,
-             "Variation (%) 2021 vs 2019" = difference21)
+             "Breakdown" = breakdown)
+  } else if (input$data_select %in% "sact_weekly") {
+    table_data <- table_data %>%
+      select(week_beginning, region, area, site, appt_reg, treatment, count, week_on_refweek_perc) %>%
+      rename("Week beginning" = week_beginning, "Region" = region, "Area name" = area, 
+             "Cancer type" = site, "Administration route derivation" = appt_reg,
+             "Administration route" = treatment, "Number of appointments" = count,
+             "Percentage change vs. average reference Week" = week_on_refweek_perc)
+  } else if (input$data_select %in% "sact_monthly") {
+    table_data <- table_data %>%
+      select(month, region, area, site, treatment, count) %>%
+      rename("Month" = month, "Region" = region, "Area name" = area, "Cancer type" = site, 
+             "Administration route" = treatment, "Number of patients" = count)
+  } else if (input$data_select %in% "dce") {
+    table_data <- table_data %>%
+      select(area:count20, month) %>%
+      rename("Area name" = area, "Cancer Type" = site, "Stage" = stage, 
+             "No. Patients 2019" = count19, "No. Patients 2020" = count20, "Month" = month)
   } else if (input$data_select %in% "childdev") {
     table_data %<>%
       select(area_name, month_review, review, number_reviews = no_reviews, 
@@ -378,7 +404,8 @@ data_table <- reactive({
     rename_all(list(~str_to_sentence(.))) %>% # initial capital letter
     mutate_if(is.numeric, round, 1)
   
-  if (!(input$data_select %in% c("childdev", "breastfeeding"))) {
+  if (!(input$data_select %in% c("childdev", "breastfeeding", "cancer", "sact_weekly", 
+                                 "sact_monthly"))) {
     table_data %<>% 
       select(sort(current_vars()))  # order columns alphabetically
   }

@@ -1,4 +1,4 @@
-###############################################.
+###############################################...
 #  # Reactive controls  ----
 ###############################################.
 
@@ -413,7 +413,7 @@ output$data_explorer <- renderUI({
   
   #update date for outpatients and the rest is different
   upd_date_summ <- case_when(input$measure_select == "outpats" ~ "16 June 2021",
-                             TRUE ~ "7 July 2021")
+                             TRUE ~ "6 October 2021")
   
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
@@ -440,10 +440,6 @@ output$data_explorer <- renderUI({
           Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the 
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
-        p("Data for the last two weeks of 2020 are affected by public holidays. There were fewer registrations than usual in these weeks. 
-          Death registrations are therefore likely to be lower than the actual numbers of deaths that occurred in these weeks and do not 
-          provide a reliable indication of the trend. We expect to see an increase in registrations in the coming weeks as registrars deal 
-          with any backlogs."),
         plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else if (input$measure_select == "outpats") {
           plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
@@ -484,6 +480,8 @@ output$data_explorer <- renderUI({
     )
   } else if (input$measure_select == "aye") { 
     tagList(#A&E Attendances
+    tags$em("Please note that a data recording issue has been identified and was rectified on 3/9/21 for the gender, age 
+            and SIMD data for the week ending 20 September 2020, mainly affecting Perth and Kinross HSCP and NHS Tayside."),
     cut_charts(title= "Weekly attendances to A&E departments", 
                source = "PHS AE2 Datamart", data_name = "aye"))
     
@@ -501,6 +499,9 @@ output$data_explorer <- renderUI({
     
   } else if (input$measure_select == "sas") { 
     tagList(# SAS data
+    tags$b(span("The Scottish Ambulance Service submitted duplicate records on 4/9/21, artificially increasing the 
+                number of incidents for the week ending 5/9/21. PHS are currently working to delete these duplicate records.", 
+                style = "color:red")),
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service", 
                source = "PHS Unscheduled Care Datamart", data_name ="sas"))
     

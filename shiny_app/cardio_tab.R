@@ -1,4 +1,4 @@
-# Server side for cardiovascular tab
+# Server side for cardiovascular tab..
 
 ###############################################.
 ## Reactive controls  ----
@@ -387,7 +387,7 @@ cath_lab_type <- reactive({
 # The charts and text shown on the app will depend on what the user wants to see
 output$cardio_explorer <- renderUI({
   
-  data_last_updated <- tagList(p("Last updated: 2nd June 2021"))
+  data_last_updated <- tagList(p("Last updated: 6 October 2021"))
   
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
@@ -440,6 +440,9 @@ output$cardio_explorer <- renderUI({
       )
     } else if (input$measure_cardio_select == "drug_presc") {
       tagList(# Prescribing - items dispensed
+        tags$em("Please note that an improved drugs mapping procedure was implemented for the August 2021 update, 
+                which increased the number of prescriptions compared to what was previously published. The mean increase 
+                across all time periods and areas was 4%, and the majority of individual increases were less than 10%."),
         h3(paste0("Weekly number of cardiovascular medicines prescribed in ", input$geoname_cardio)),
         fluidRow(column(6,
                         actionButton("btn_cardio_modal", "Data source and definitions", 
@@ -473,7 +476,10 @@ output$cardio_explorer <- renderUI({
                                                     icon = icon('question-circle')))
         )
      } else if (input$measure_cardio_select == "sas_cardiac") {
-       tagList(# OOH Attendances
+       tagList(# SAS incidents
+         tags$b(span("The Scottish Ambulance Service submitted duplicate records on 4/9/21, artificially increasing the 
+                number of incidents for the week ending 5/9/21. PHS are currently working to delete these duplicate records.", 
+                     style = "color:red")), 
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$geoname_cardio)),
          fluidRow(column(6,
                          actionButton("btn_cardio_modal", "Data source and definitions", 

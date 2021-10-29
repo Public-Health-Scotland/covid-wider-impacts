@@ -149,7 +149,6 @@ long.axis<-long.axis %>%
 
 long.axis<-long.axis[which(long.axis$Type != 'Co-dependency'),] #removing co-dependency 
 
-
 ###making a file for names of health boards and names of ADPs###
 Health_board<-Hb[grep('NHS',Hb)]
 ADP_names<-Hb[grep('ADP',Hb)]
@@ -160,9 +159,17 @@ saveRDS(ADP_names,file='ADP_names.rds')
 saveRDS(long.axis,file='DTR_data.rds')
 
 #SAVING FOR WIDER IMPACTS TEAM
-saveRDS(Health_board, "shiny_app/data/Health_board.rds")
 saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
+saveRDS(ADP_names, paste0(data_folder,"final_app_files/ADP_names_", 
+                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+saveRDS(Health_board, "shiny_app/data/Health_board.rds")
+saveRDS(Health_board, paste0(data_folder,"final_app_files/Health_board_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
 saveRDS(long.axis,file="shiny_app/data/DTR_data.rds")
+saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Take Home Naloxone ----
@@ -177,8 +184,6 @@ dashboard_monthly_data <- readRDS("/PHI_conf/SubstanceMisuse1/Topics/Naloxone/Pr
 HB_data<-dashboard_monthly_data[order(dashboard_monthly_data$month),] #ordering by date
 
 HB_data<-HB_data[,c(3,2,1,4:8)]#Reordering columns
-
-
 
 colnames(HB_data)[1:3]<-c('Date','Board','Type')
 
@@ -207,13 +212,10 @@ Change[which(is.infinite(Change))]<-NA
 THN_by_Hb<-cbind(comp.data.temp, 'Change'=Change)
 THN_by_Hb$Date<-month.abb[THN_by_Hb$Date]#Changing from numbers into abbreviated month names
 
-
-
 THN_by_Hb$Date[1:nrow(comp.data)]<-paste(THN_by_Hb$Date[1:nrow(comp.data)],'2020')
 THN_by_Hb$Date[(nrow(comp.data)+1):nrow(THN_by_Hb)]<-paste(THN_by_Hb$Date[(nrow(comp.data)+1):nrow(THN_by_Hb)],'2021')
 
 #Adding proportion column
-
 proportion_av<-rep(0,nrow(THN_by_Hb))
 proportion_current<-rep(0,nrow(THN_by_Hb))
 
@@ -243,6 +245,9 @@ saveRDS(new_THN,'THN_by_HB.rds')
 
 # SAVING FOR WIDER IMPACTS TEAM
 saveRDS(new_THN, "shiny_app/data/THN_by_HB.rds")
+saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
 
 ###############################################.
 ## SAS data prep ----
@@ -533,6 +538,4 @@ saveRDS(paid.final,'OST_paid.rds')
 saveRDS(paid.final, "shiny_app/data/OST_paid.rds")
 saveRDS(paid.quantity,'OST_paid_quantity.rds')
 saveRDS(paid.quantity, "shiny_app/data/OST_paid_quantity.rds")
-
-
 

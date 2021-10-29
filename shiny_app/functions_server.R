@@ -13,9 +13,6 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name = NULL, tab = "summary", period = "weekly",
                              aver_week = F) {
   
-  period_data <- case_when(period == "weekly" ~ "Week ending: ",
-                           period == "monthly" ~ "Month: ")
-  
   if (split != FALSE) {
     if (tab == "summary") {
       if (input$measure_select != "outpats") {
@@ -26,44 +23,51 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
           filter(type == split & area_name == input$geoname_op)
       }
 
-    } else if (tab %in% c("cardio", "mh")) {
+    } else if (tab %in% c("cardio", "mh", "injuries")) {
+
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type %in% split)
     }
- # if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
+    # if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
   } else { # for cases outside summary tab
     trend_data <- dataset
   }
-  
+    
   #If no data available for that period then plot message saying data is missing
   if (is.data.frame(trend_data) && nrow(trend_data) == 0)
   {
     plot_nodata(height = 50)
   } else {
     
-  # Formatting age groups as factor so they appear in the correct order in the legend
-  if ( split == "age") {
-    if (tab == "summary") {
-    trend_data <- trend_data %>% 
-      mutate(category = factor(category, levels = c("Under 5", "5 - 14", "Under 65", "15 - 44",  
-                                                    "45 - 64", "65 - 74", "65 and over", 
-                                                    "75 - 84", "85 and over"))) 
-
-    } else if (tab == "cardio") {
-      trend_data <- trend_data %>% 
-        mutate(category = factor(category, levels = c("All", "Under 5", "5 - 14", "Under 65", "15 - 24", "15 - 44", "25 - 44",
-                                                      "45 - 64", "<65", "65 - 74", "65+","65 and over", 
-                                                      "75 - 84", "85 and over"))) 
-
-    } else if (tab == "cancer") {
-      trend_data <- trend_data %>% 
-        mutate(category = factor(category, levels = c("Under 5", "5-9", "10-14", "15-19",  
-                                                      "20-24", "25-29", "30-34", 
-                                                      "35-39", "40-44", "45-49", 
-                                                      "50-54", "55-59", "60-64", 
-                                                      "65-69", "70-74", "75-79","80 and over")))
-    }
-  } else if (split == "condition") {
+    # Formatting age groups as factor so they appear in the correct order in the legend
+    if ( split == "age") {
+      if (tab == "summary") {
+        trend_data <- trend_data %>% 
+          mutate(category = factor(category, levels = c("Under 5", "5 - 14", "Under 65", "15 - 44",  
+                                                        "45 - 64", "65 - 74", "65 and over", 
+                                                        "75 - 84", "85 and over"))) 
+        
+      } else if (tab == "cardio") {
+        trend_data <- trend_data %>% 
+          mutate(category = factor(category, levels = c("All", "Under 5", "5 - 14", "Under 65", "15 - 24", "15 - 44", "25 - 44",
+                                                        "45 - 64", "<65", "65 - 74", "65+","65 and over", 
+                                                        "75 - 84", "85 and over"))) 
+        
+      } else if (tab == "cancer") {
+        trend_data <- trend_data %>% 
+          mutate(category = factor(category, levels = c("Under 5", "5-9", "10-14", "15-19",  
+                                                        "20-24", "25-29", "30-34", 
+                                                        "35-39", "40-44", "45-49", 
+                                                        "50-54", "55-59", "60-64", 
+                                                        "65-69", "70-74", "75-79","80 and over")))
+           } else if (tab == "injuries") {
+        trend_data <- trend_data %>% 
+            mutate(category = factor(category, levels = c("0-4", "5-11", "12-17",  
+                                                    "18-24", "25-44", "45-64", 
+                                                    "65-79", "80 and over")))
+        
+      }
+    } else if (split == "condition") {
       if (tab == "cardio") {
         trend_data <- trend_data %>% 
           filter(type %in% split & area_name == input$geoname_cardio,
@@ -83,10 +87,19 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
             category == "Hypnotic" ~ "Insomnia medicine",
             TRUE ~ category
           ))
-      }
-  } else {
+
+      } else if (tab == "injuries") {
+        trend_data <- trend_data %>% 
+          filter(type %in% split & area_name == input$geoname_injuries,
+                 category != "all")
+    } else {
     trend_data <- trend_data 
   }
+    }
+    
+    
+    period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))  
     
   # If variation selected different values
   if (type == "variation") {
@@ -94,10 +107,11 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", 
                                                      "sas", "drug_presc", "cath", 
                                                      "mentalhealth_drugs", "mh_ooh",
-                                                     "ooh_cardiac", "sas_cardiac",
-                                                     "op") ~ "2018-2019",
+                                                     "ooh_cardiac", "sas_cardiac", "ui_smr01_all", "ui_smr01_assaults",
+                                                     "ui_smr01_falls", "ui_smr01_other", "ui_smr01_poison",
+                                                     "ui_smr01_rta","op") ~ "2018-2019",
                              data_name == "deaths" ~ "2015-2019"))
-    
+      
     if (aver_week == T) {
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$category, "<br>", 
@@ -111,91 +125,89 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     } else {
       #Text for tooltip
       tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                                "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                                period_data, 
                                 "<br>", "Change from ", aver_period, " average: ", 
                                 round(trend_data$variation, 1), "%"))
       
     }
-
+      
       #Modifying standard layout
-    yaxis_plots[["title"]] <- paste0("% change from ", aver_period, " average")
-    
+      yaxis_plots[["title"]] <- paste0("% change from ", aver_period, " average")
+      
       #Creating time trend plot
       trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation) 
       
-  } else if (type == "total") {
-    
-    ###############################################.
-    # Creating objects that change depending on dataset
-    yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
-                             data_name == "aye" ~ "Number of attendances",
-                             data_name == "ooh" ~ "Number of cases",
-                             data_name == "nhs24" ~ "Number of completed contacts",
-                             data_name == "sas" ~ "Number of incidents",
-                             data_name == "cath" ~ "Number of cases",
-                             data_name == "drug_presc" ~ "Number of items prescribed",
-                             data_name == "ooh_cardiac" ~ "Number of cases",
-                             data_name == "sas_cardiac" ~ "Number of incidents",
-                             data_name == "deaths" ~ "Number of deaths",
-                             data_name == "mentalhealth_drugs" ~ "Number of patients",
-                             data_name == "mh_ooh" ~ "Number of consultations",
-                             data_name == "op" ~ "Number of appointments")
-    
-    #Modifying standard layout
-    yaxis_plots[["title"]] <- yaxis_title
-    
-    measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
-                              data_name == "aye" ~ "Attendances: ",
-                              data_name == "ooh" ~ "Cases: ",
-                              data_name == "nhs24" ~ "Completed contacts: ",
-                              data_name == "sas" ~ "Incidents: ",
-                              data_name == "cath" ~ "Cases: ",
-                              data_name == "drug_presc" ~ "Items prescribed: ",
-                              data_name == "ooh_cardiac" ~ "Cases: ",
-                              data_name == "sas_cardiac" ~ "Incidents: ",
-                              data_name == "cancer" ~ "Referrals: ",
-                              data_name == "deaths" ~ "Deaths: ",
-                              data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
-                              data_name == "mh_ooh" ~ "Consultations: ",
-                              data_name == "op" ~ "Appointments: ")
-
-    #Text for tooltip
-    if (aver_week == T) {
-      #Text for tooltip
-      tooltip_trend <- c(paste0(trend_data$category, "<br>", 
-                                "Average of weeks ending on ", 
-                                format(trend_data$week_ending - 7, "%d %b %y"), ", ",
-                                format(trend_data$week_ending, "%d %b %y"), " and ", 
-                                format(trend_data$week_ending + 7, "%d %b %y"),
-                                "<br>", measure_name, trend_data$count,
-                                "<br>", "Historic average: ", 
-                                trend_data$count_average))
+    } else if (type == "total") {
       
-    } else {
-      tooltip_trend <- c(paste0(trend_data$category, "<br>",
-                                "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
-                                "<br>", measure_name, trend_data$count,
-                                "<br>", "Historic average: ", trend_data$count_average))
-
+      ###############################################.
+      # Creating objects that change depending on dataset
+      yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
+                               data_name == "aye" ~ "Number of attendances",
+                               substr(data_name, 1, 3) == "ooh" ~ "Number of cases",
+                               data_name == "nhs24" ~ "Number of completed contacts",
+                               substr(data_name, 1, 3) == "sas" ~ "Number of incidents",
+                               data_name == "cath" ~ "Number of cases",
+                               data_name == "drug_presc" ~ "Number of items prescribed",
+                               data_name == "deaths" ~ "Number of deaths",
+                               data_name == "mentalhealth_drugs" ~ "Number of patients",
+                               data_name == "mh_ooh" ~ "Number of consultations",
+                               data_name == "op" ~ "Number of appointments",
+                               substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions")
+      
+      #Modifying standard layout
+      yaxis_plots[["title"]] <- yaxis_title
+      
+      measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
+                                data_name == "aye" ~ "Attendances: ",
+                                substr(data_name, 1, 3) == "ooh" ~ "Cases: ",
+                                data_name == "nhs24" ~ "Completed contacts: ",
+                                substr(data_name, 1, 3) == "sas" ~ "Incidents: ",
+                                data_name == "cath" ~ "Cases: ",
+                                data_name == "drug_presc" ~ "Items prescribed: ",
+                                data_name == "cancer" ~ "Referrals: ",
+                                data_name == "deaths" ~ "Deaths: ",
+                                data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
+                                data_name == "mh_ooh" ~ "Consultations: ",
+                                data_name == "op" ~ "Appointments: ",
+                                substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ")
+      
+      #Text for tooltip
+      if (aver_week == T) {
+        #Text for tooltip
+        tooltip_trend <- c(paste0(trend_data$category, "<br>", 
+                                  "Average of weeks ending on ", 
+                                  format(trend_data$week_ending - 7, "%d %b %y"), ", ",
+                                  format(trend_data$week_ending, "%d %b %y"), " and ", 
+                                  format(trend_data$week_ending + 7, "%d %b %y"),
+                                  "<br>", measure_name, trend_data$count,
+                                  "<br>", "Historic average: ", 
+                                  trend_data$count_average))
+        
+      } else {
+        tooltip_trend <- c(paste0(trend_data$category, "<br>",
+                                  period_data, 
+                                  "<br>", measure_name, trend_data$count,
+                                  "<br>", "Historic average: ", trend_data$count_average))
+        
+      }
+      
+      #Creating time trend plot
+      trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count) 
+      
     }
     
     #Creating time trend plot
-    trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count) 
+    trend_plot %>%
+      add_trace(type = 'scatter', mode = 'lines',
+                color = ~category, colors = pal_chose,
+                text=tooltip_trend, hoverinfo="text") %>%
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
     
-  }
-  
-  #Creating time trend plot
-  trend_plot %>%
-    add_trace(type = 'scatter', mode = 'lines',
-              color = ~category, colors = pal_chose,
-              text=tooltip_trend, hoverinfo="text") %>%
-    #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.5)) %>% #position of legend
-    # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
-  
   }
 }
 
@@ -219,74 +231,80 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
   {
     plot_nodata(height = 50)
   } else {
-  
-  ###############################################.
-  # Creating objects that change depending on dataset
-  yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
-                           data_name == "aye" ~ "Number of attendances",
-                           data_name == "ooh" ~ "Number of cases",
-                           data_name == "nhs24" ~ "Number of completed contacts",
-                           data_name == "sas" ~ "Number of incidents",
-                           data_name == "cath" ~ "Number of cases",
-                           data_name == "drug_presc" ~ "Number of items prescribed",
-                           data_name == "ooh_cardiac" ~ "Number of cases",
-                           data_name == "sas_cardiac" ~ "Number of incidents",
-                           data_name == "deaths" ~ "Number of deaths",
-                           data_name == "cancer" ~ "Number of referrals",
-                           data_name == "mentalhealth_drugs" ~ "Number of patients",
-                           data_name == "mh_ooh" ~ "Number of consultations",
-                           data_name == "op" ~ "Number of appointments")
-
-  #Modifying standard layout
-  yaxis_plots[["title"]] <- yaxis_title
-  
-  hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
-                                            "ooh_cardiac", "sas_cardiac",
-                                            "cath", "mentalhealth_drugs", "mh_ooh",
-                                            "op") ~ "Average 2018-2019",
-                          data_name == "deaths" ~ "Average 2015-2019")
-  
-  hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
-                                                     "ooh_cardiac", "sas_cardiac",
-                                                      "mentalhealth_drugs", "mh_ooh", "deaths") ~ "2020 & 2021",
-                                    data_name %in% c("cath", "op")  ~ "2020")
-  
-  measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
-                            data_name == "aye" ~ "Attendances: ",
-                            data_name == "ooh" ~ "Cases: ",
-                            data_name == "nhs24" ~ "Completed contacts: ",
-                            data_name == "sas" ~ "Incidents: ",
-                            data_name == "cath" ~ "Cases: ",
-                            data_name == "drug_presc" ~ "Items prescribed: ",
-                            data_name == "ooh_cardiac" ~ "Cases: ",
-                            data_name == "sas_cardiac" ~ "Incidents: ",
-                            data_name == "deaths" ~ "Deaths: ",
-                            data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
-                            data_name == "mh_ooh" ~ "Consultations: ",
-                            data_name == "op" ~ "Appointments: ")
-  
-  #Text for tooltip
+    
+    ###############################################.
+    # Creating objects that change depending on dataset
+    yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
+                             data_name == "aye" ~ "Number of attendances",
+                             data_name == "ooh" ~ "Number of cases",
+                             data_name == "nhs24" ~ "Number of completed contacts",
+                             data_name == "sas" ~ "Number of incidents",
+                             data_name == "cath" ~ "Number of cases",
+                             data_name == "drug_presc" ~ "Number of items prescribed",
+                             data_name == "ooh_cardiac" ~ "Number of cases",
+                             data_name == "sas_cardiac" ~ "Number of incidents",
+                             data_name == "deaths" ~ "Number of deaths",
+                             data_name == "cancer" ~ "Number of referrals",
+                             data_name == "mentalhealth_drugs" ~ "Number of patients",
+                             data_name == "mh_ooh" ~ "Number of consultations",
+                             data_name == "op" ~ "Number of appointments",
+                             data_name == "ui_smr01_all" ~ "Number of admissions",
+                             data_name == "ui_smr01_assaults" ~ "Number of admissions",
+                             data_name == "ui_smr01_falls" ~ "Number of admissions",
+                             data_name == "ui_smr01_other" ~ "Number of admissions",
+                             data_name == "ui_smr01_poison" ~ "Number of admissions",
+                             data_name == "ui_smr01_rta" ~ "Number of admissions")
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
+                                                       "ooh_cardiac", "sas_cardiac",
+                                                       "cath", "mentalhealth_drugs", "mh_ooh",
+                                                       "op") ~ "Average 2018-2019",
+                                      data_name == "deaths" ~ "Average 2015-2019")
+    
+    hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
+                                                    "ooh_cardiac", "sas_cardiac",
+                                                    "mentalhealth_drugs", "mh_ooh", "deaths") ~ "2020 & 2021",
+                                   data_name %in% c("cath", "op")  ~ "2020")
+    
+    measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
+                              data_name == "aye" ~ "Attendances: ",
+                              data_name == "ooh" ~ "Cases: ",
+                              data_name == "nhs24" ~ "Completed contacts: ",
+                              data_name == "sas" ~ "Incidents: ",
+                              data_name == "cath" ~ "Cases: ",
+                              data_name == "drug_presc" ~ "Items prescribed: ",
+                              data_name == "ooh_cardiac" ~ "Cases: ",
+                              data_name == "sas_cardiac" ~ "Incidents: ",
+                              data_name == "deaths" ~ "Deaths: ",
+                              data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
+                              data_name == "mh_ooh" ~ "Consultations: ",
+                              data_name == "op" ~ "Appointments: ")
+    
+    #Text for tooltip
     tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
-
-  #Creating time trend plot
-  plot_ly(data=trend_data, x=~get(xvar)) %>%
-    # 2020/21 line
-    add_lines(y = ~get(var2020), line = list(color = pal_overall[1]),
-              text=tooltip_trend, hoverinfo="text",
-              name = hist_legend_covid) %>%
-    # Average of previous years line
-    add_lines(y = ~get(var_aver), line = list(color = pal_overall[2], dash = 'dash'),
-              text=tooltip_trend, hoverinfo="text",
-              name = hist_legend_previous) %>%
-    #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.5)) %>% #position of legend
-    # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
-  
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~get(xvar)) %>%
+      # 2020/21 line
+      add_lines(y = ~get(var2020), line = list(color = pal_overall[1]),
+                text=tooltip_trend, hoverinfo="text",
+                name = hist_legend_covid) %>%
+      # Average of previous years line
+      add_lines(y = ~get(var_aver), line = list(color = pal_overall[2], dash = 'dash'),
+                text=tooltip_trend, hoverinfo="text",
+                name = hist_legend_previous) %>%
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+    
   }
   
 }
@@ -297,125 +315,1570 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
 plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_chosen, data_name) {
   
-# set plot display if no data  
+  # set plot display if no data  
   if (is.data.frame(dataset) && nrow(dataset) == 0)
   { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
   } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals",
+                             data_name == "inc" ~ "Weekly Total of Individuals")
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips  
+    
+    measure_name <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals: ",
+                              data_name == "inc" ~ "Weekly Total of Individuals: ")
+    
+    denom_period <- case_when(var2_chosen %in% c("count19", "cum_count19")  ~ "2019",
+                              var2_chosen %in% c("count_mean_17_19", "cum_count_mean_17_19") ~ "Mean 2017-2019")
+    
+    
+    value1 <- dataset[[var1_chosen]]
+    
+    value2 <- dataset[[var2_chosen]]
+    
+    value3 <- dataset[[var3_chosen]]
+    
+    
+    tooltip_1 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, value1))
+    
+    tooltip_2 <- c(paste0("Year:", denom_period, "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, value2))
+    
+    tooltip_3 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, value3))
+    
+    tooltip_4 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
+    tooltip_5 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, paste0(format(round(value3, 2), nsmall = 2), "%")))
+    
+    # Function for verical line at start of lockdown
+    vline <- function(x = 0, color = "lightgrey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    
+    
+    #Creating time trend plot for cumulative totals and incidence
+    plot_ly(data=dataset, x=~week_ending) %>%
+      
+      # 2021 line
+      add_lines(y = ~get(var3_chosen), line = list(color = "blue", opacity = 0.3, width = 3), 
+                text=tooltip_3, hoverinfo="text", name = "2021") %>%
+      
+      # 2020 line
+      add_lines(y = ~get(var1_chosen), line = list(color = "green", opacity = 0.6, width = 2),
+                text=tooltip_1, hoverinfo="text", name = "2020") %>%
+      # 2019 line
+      add_lines(y = ~get(var2_chosen), line = list(color = "black", dash = 'dash', opacity = 3, width = 1),
+                text=tooltip_2, hoverinfo="text", name = "2019") %>%
+      
+      add_annotations(x = "2020-04-05",
+                      y = max(var1_chosen),
+                      text = "1st lockdown",
+                      xref = "1",
+                      yref = "1",
+                      showarrow = FALSE) %>% 
+      
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             shapes = list(vline("2020-03-22")),
+             yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
+             legend = list(x = 100, y = 0.5)) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##### DIFF PLOT - NO BREAKDOWN ----
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+plot_diff_cancer_chart <- function(dataset, diffvar1) {
+  
+  # set plot display if no data  
+  if (is.data.frame(dataset) && nrow(dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <-  "% Change"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips  
+    
+    measure_name <- "% Change from 2019 "
+    
+    denom_period <- case_when(input$baseline == "2019" ~ "2019",
+                              input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
+    
+    measure_name <- case_when(diffvar1 == "difference20"  ~ "Percentage(%) Change:",
+                              diffvar1 == "difference20_cum"  ~ "Cumulative Percentage(%) Change:") # ,
+    # diffvar2 == "difference21"  ~ "Percentage(%) Change:",
+    # diffvar2 == "difference21_cum"  ~ "Cumulative Percentage(%) Change:")
+    
+    value1 <- dataset[[diffvar1]]
+    
+    # value2 <- dataset[[diffvar2]]
+    
+    tooltip_1 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
+                          "Age Group: ", dataset$age_group, "<br>",
+                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
+    # tooltip_2 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
+    #                       "Age Group: ", dataset$age_group, "<br>",
+    #                       measure_name, " ", paste0(format(round(value2, 2), nsmall = 2), "%")))
+    
+    # Function for vertical line at start of lockdown
+    vline <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    #Creating time trend plot for difference
+    
+    
+    plot_ly(data=dataset) %>%
+      
+      add_trace(x=~quarter, 
+                y = ~get(diffvar1),
+                type = 'scatter', 
+                mode = 'line',
+                color = 'purple',
+                text=tooltip_1, 
+                hoverinfo="text") %>%
+      
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             xaxis = xaxis_plots, yaxis = yaxis_plots,
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##### DIFF PLOT - AGE BREAKDOWN ----
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+plot_diff_cancer_chart_age <- function(dataset, diffvar1) {
+  
+  # set plot display if no data  
+  if (is.data.frame(dataset) && nrow(dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <-  "% Change"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips  
+    
+    measure_name <- "% Change from 2019 "
+    
+    denom_period <- case_when(input$baseline == "2019" ~ "2019",
+                              input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
+    
+    measure_name <- case_when(diffvar1 == "difference20"  ~ "Percentage(%) Change:",
+                              diffvar1 == "difference20_cum"  ~ "Cumulative Percentage(%) Change:") # ,
+    
+    value1 <- dataset[[diffvar1]]
+    
+    tooltip_1 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
+                          "Age Group: ", dataset$age_group, "<br>",
+                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
+    
+    # Function for verical line at start of lockdown
+    vline <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    ####Creating time trend plot for difference
+    
+    plot_ly(data=dataset) %>%
+      
+      add_trace(x=~quarter, 
+                y = ~get(diffvar1),
+                type = 'scatter', 
+                mode = 'line',
+                color = ~age_group,
+                colors = pal_sact,
+                text=tooltip_1, 
+                hoverinfo="text") %>%
+      
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             xaxis = xaxis_plots, yaxis = yaxis_plots,
+             legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##### DIFF PLOT - DEPRIVATION BREAKDOWN ----
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+plot_diff_cancer_chart_dep <- function(dataset, diffvar1) {
+  
+  # set plot display if no data  
+  if (is.data.frame(dataset) && nrow(dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <-  "% Change"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips  
+    
+    measure_name <- "% Change from 2019 "
+    
+    denom_period <- case_when(input$baseline == "2019" ~ "2019",
+                              input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
+    
+    measure_name <- case_when(diffvar1 == "difference20"  ~ "Percentage(%) Change:",
+                              diffvar1 == "difference20_cum"  ~ "Cumulative Percentage(%) Change:") # ,
+    
+    value1 <- dataset[[diffvar1]]
+    
+    # value2 <- dataset[[diffvar2]]
+    
+    tooltip_1 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
+                          "Age Group: ", dataset$age_group, "<br>",
+                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
+    
+    # Function for verical line at start of lockdown
+    vline <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    #Creating time trend plot for difference
+    
+    plot_ly(data=dataset) %>%
+      
+      add_trace(x=~quarter, 
+                y = ~get(diffvar1),
+                type = 'scatter', 
+                mode = 'line',
+                name = paste0(dataset$depdesc),
+                color = ~dep,
+                colors = pal_cancer_diff,
+                text=tooltip_1, 
+                hoverinfo="text") %>%
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             xaxis = xaxis_plots, yaxis = yaxis_plots,
+             legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+###############################################.
+## Function for DCE overall chart ----
+###############################################.
+
+plot_dce_overall_chart <- function(dce_dataset, dce_var1_chosen, dce_var2_chosen, data_type) {
+  
+  # set plot display if no data  
+  if (is.data.frame(dce_dataset) && nrow(dce_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    # Set y axis label
+    yaxis_title <- "Monthly Total of Individuals"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    # Set x axis label
+    xaxis_title <- "Month"
+    
+    xaxis_plots[["title"]] <- xaxis_title
+    
+    
+    
+    #Text for tooltips  
+    
+    dce_measure_name <- "Number of Individuals"
+    
+    dce_value1 <- dce_dataset[[dce_var1_chosen]]
+    
+    dce_value2 <- dce_dataset[[dce_var2_chosen]]
+    
+    
+    # dce_tooltip_1 <- c(paste0("Month: ", dce_dataset$month),
+    #                    "<br>", dce_measure_name, dce_value1)
+    
+    dce_tooltip_1 <- c(paste0("Month: ", dce_dataset$month,
+                              "<br>", "Year: 2020", 
+                              "<br>", "Number of Individuals: ", dce_dataset$count20,
+                              "<br>", "Area: ", dce_dataset$area))
+    
+    # dce_tooltip_2 <- c(paste0("Month: ", dce_dataset$month),
+    #                    "<br>", dce_measure_name, dce_value2)
+    
+    dce_tooltip_2 <- c(paste0("Month: ", dce_dataset$month,
+                              "<br>", "Year: 2019", 
+                              "<br>", "Number of Individuals: ", dce_dataset$count19,
+                              "<br>", "Area: ", dce_dataset$area))
+    
+    
+    
+    ### layout - test change
+    if (data_type == "Scotland"){ 
+      a <- list(
+        title = "Number of Individuals",
+        autotick = FALSE,
+        ticks = "outside",
+        tick0 = 0,
+        dtick = 20,
+        ticklen = 5,
+        tickwidth = 2,
+        tickcolor = toRGB("blue"),
+        range = c(0, 240)
+      )
+    }else {
+      a <- list(
+        title = "Number of Individuals",
+        autotick = FALSE,
+        ticks = "outside",
+        tick0 = 0,
+        dtick = 10,
+        ticklen = 5,
+        tickwidth = 2,
+        tickcolor = toRGB("blue"),
+        range = c(0, 115)
+      )
+    }
+    ##########################
+    
+    #Creating time trend plot for cumulative totals and incidence
+    plot_ly(data=dce_dataset, x=~month) %>%
+      
+      # 2020 line
+      add_lines(y = ~get(dce_var1_chosen), line = list(color = pal_overall[1]), text=dce_tooltip_1, hoverinfo="text",
+                name = "2020") %>%
+      # 2019 line
+      add_lines(y = ~get(dce_var2_chosen), line = list(color = pal_overall[2], dash = 'dash'), text=dce_tooltip_2, hoverinfo="text", 
+                name = "2019") %>%
+      
+      
+      #Layout 
+      layout(margin = list(b = 80, t=5),xaxis = list(title = "Month"),
+             yaxis = a,
+             # legend = list(title=list(text=paste0("Year")),orientation = 'h', x = 0, y = 1.2)) %>% 
+             legend = list(orientation = 'h', x = 0, y = 1.2)) %>%
+      
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+
+###############################################.
+## Function for DCE difference charts ----
+###############################################.
+
+plot_dce_difference_chart <- function(dce_dataset, dce_var1_chosen) {
+  
+  # # set plot display if no data
+  # if (is.data.frame(dce_dataset) && nrow(dce_dataset) == 0)
+  # { plot_nodata(height = 30, text_nodata = "Chart not available")
+  # } else {
   
   
-# Set y axis label
-  yaxis_title <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals",
-                           data_name == "dif" ~ "% Change from 2019 ",
-                           data_name == "inc" ~ "Weekly Total of Individuals")
+  # Set y axis label
+  yaxis_title <- "Percentage Change"
   
   yaxis_plots[["title"]] <- yaxis_title
   
-
-#Text for tooltips  
+  # Set x axis label
+  xaxis_title <- "Month"
   
-  measure_name <- case_when(data_name == "cum" ~ "Cumulative Total of Individuals: ",
-                            data_name == "dif" ~ "% Change from 2019 : ",
-                            data_name == "inc" ~ "Weekly Total of Individuals: ")
- 
-  value1 <- dataset[[var1_chosen]]
-  
-  value2 <- dataset[[var2_chosen]]
-  
-  value3 <- dataset[[var3_chosen]]
+  xaxis_plots[["title"]] <- xaxis_title
   
   
-  tooltip_1 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
-                            "<br>", measure_name, value1))
+  #Text for tooltips  
   
-  tooltip_2 <- c(paste0("Year:2019", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
-                        "<br>", measure_name, value2))
+  dce_measure_name <- "Percentage Change "
   
-  tooltip_3 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
-                        "<br>", measure_name, value3))
+  dce_value1 <- dce_dataset[[dce_var1_chosen]]
   
-  tooltip_4 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
-                              "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
-                 
-  tooltip_5 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
-                              "<br>", measure_name, paste0(format(round(value3, 2), nsmall = 2), "%")))
   
-  # Function for verical line at start of lockdown
-  vline <- function(x = 0, color = "grey") {
-    list(
-      type = "line",
-      y0 = 0,
-      y1 = 1,
-      yref = "paper",
-      x0 = x,
-      x1 = x,
-      line = list(color = color, dash = 'dash')
-    )
-  }
+  dce_tooltip_3 <- c(paste0("Month: ", dce_dataset$month,
+                            "<br>", "Percentage Change: ", paste0(format(round(dce_value1, 2), nsmall = 2), "%"),
+                            "<br>", "Area: ", dce_dataset$area))
   
-
-if(data_name != "dif") { 
   
-  #Creating time trend plot for cumulative totals and incidence
-  plot_ly(data=dataset, x=~week_ending) %>%
- 
-    # 2021 line
-    add_lines(y = ~get(var3_chosen), line = list(color = "blue", opacity = 0.3, width = 3), text=tooltip_3, hoverinfo="text",
-              name = "2021") %>%
-           
-    # 2020 line
-    add_lines(y = ~get(var1_chosen), line = list(color = "green", opacity = 0.6, width = 2),text=tooltip_1, hoverinfo="text",
-              name = "2020") %>%
-    # 2019 line
-    add_lines(y = ~get(var2_chosen), line = list(color = "black", dash = 'dash', opacity = 3, width = 1),text=tooltip_2, 
-              hoverinfo="text", name = "2019") %>%
- 
-    add_annotations(x = "2020-04-05",
-                    y = max(var1_chosen),
-                    text = "1st lockdown",
-                    xref = "1",
-                    yref = "1",
-                    showarrow = FALSE) %>% 
+  # #Creating time trend plot for difference
+  plot_ly(data=dce_dataset, x=~month, y = ~get(dce_var1_chosen)) %>%
     
-       
+    #Creating time trend plot
+    add_trace(type = 'scatter', mode = 'lines',
+              color = ~area,
+              colors = pal_dce_diff,
+              text = dce_tooltip_3, hoverinfo="text") %>%
+    
     #Layout
     layout(margin = list(b = 80, t=5),
-           shapes = list(vline("2020-03-22")),
-           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000*4),
-           legend = list(x = 100, y = 0.5)) %>% 
+           xaxis = xaxis_plots, yaxis = yaxis_plots,
+           legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
     
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+}
 
-} else {
+###############################################
+plot_dce_difference_chart2 <- function(dce_dataset, dce_var1_chosen) {
   
-  #Creating time trend plot for difference
-  plot_ly(data=dataset, x=~week_ending) %>%
+  # # set plot display if no data
+  # if (is.data.frame(dce_dataset) && nrow(dce_dataset) == 0)
+  # { plot_nodata(height = 30, text_nodata = "Chart not available")
+  # } else {
+  
+  
+  # Set y axis label
+  yaxis_title <- "Ratio - 2020/2019"
+  
+  yaxis_plots[["title"]] <- yaxis_title
+  
+  # Set x axis label
+  xaxis_title <- "Month"
+  
+  xaxis_plots[["title"]] <- xaxis_title
+  
+  
+  #Text for tooltips  
+  
+  dce_measure_name <- "Ratio between 2020/2019 by stage "
+  
+  dce_value1 <- dce_dataset[[dce_var1_chosen]]
+  
+  
+  dce_tooltip_4 <- c(paste0("Month: ", dce_dataset$month,
+                            "<br>", "Ratio: ", paste0(format(round(dce_value1, 2), nsmall = 2)),
+                            "<br>", "Stage: ", dce_dataset$stage))
+  
+  
+  # #Creating time trend plot for difference
+  plot_ly(data=dce_dataset, x=~month, y = ~get(dce_var1_chosen)) %>%
     
-    # 2020 line
-    add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[2]),text=tooltip_4, hoverinfo="text",
-              name = "2020") %>%
-
-    # 2021 line
-    add_lines(y = ~get(var3_chosen), line = list(color = "blue"),text=tooltip_5, hoverinfo="text",
-              name = "2021") %>%
-    
-    add_annotations(x = "2020-04-05",
-                    y = max(var1_chosen),
-                    text = "1st lockdown",
-                    xref = "1",
-                    yref = "1",
-                    showarrow = FALSE) %>% 
+    #Creating time trend plot
+    add_trace(type = 'scatter', mode = 'lines',
+              color = ~stage,
+              colors = pal_dce,
+              text = dce_tooltip_4, hoverinfo="text") %>%
     
     #Layout
     layout(margin = list(b = 80, t=5),
-           shapes = list(vline("2020-03-22")),
-           yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000*4),
-           legend = list(x = 100, y = 0.5, traceorder = 'reversed')) %>% 
+           xaxis = xaxis_plots, yaxis = yaxis_plots,
+           legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
     
     # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+}
+
+
+
+###############################################.
+## Functions for DCE bar charts ----
+###############################################.
+
+## 2019 ##
+
+# 1. Stacked incidence by stage
+plot_dce_inc_bar19 <- function(dce_dataset, dce_var1, data_type) {
+  
+  # Set y axis label
+  yaxis_title <- "Incidence"
+  
+  yaxis_plots[["title"]] <- yaxis_title
+  
+  # Set x axis label
+  xaxis_title <- "Month"
+  
+  xaxis_plots[["title"]] <- xaxis_title
+  
+  #Text for tooltips  
+  
+  dce_tooltip_4 <- c(paste0("Month: ", dce_dataset$month,
+                            "<br>", "Stage: ", dce_dataset$stage,
+                            "<br>", "Monthly Total: ", dce_dataset$count19))
+  
+  if (data_type == "Scotland"){
+    b <- list(
+      title = "Incidence",
+      autotick = FALSE,
+      ticks = "outside",
+      tick0 = 0,
+      dtick = 50,
+      ticklen = 5,
+      tickwidth = 2,
+      tickcolor = toRGB("blue"),
+      range = c(0, 500)
+    )
+  }else {
+    b <- list(
+      title = "Incidence",
+      autotick = FALSE,
+      ticks = "outside",
+      tick0 = 0,
+      dtick = 50,
+      ticklen = 5,
+      tickwidth = 2,
+      tickcolor = toRGB("blue"),
+      range = c(0, 260)
+    )
+  }
+  
+  
+  plot_ly(data=dce_dataset, x = ~month) %>%
+    add_bars(y = ~get(dce_var1), color = ~stage, colors = pal_dce, text = dce_tooltip_4, hoverinfo = "text") %>%
+    add_annotations(x = dce_dataset$month,
+                    y = (dce_dataset$total19)+10,
+                    text = dce_dataset$total19,
+                    xref = "x",
+                    yref = "y",
+                    showarrow = FALSE) %>% 
+    layout(barmode = "stack",
+           xaxis = xaxis_plots, yaxis = b,
+           legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'normal')) %>% 
+    
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+  
+  
+}
+#}
+
+# 2. Stacked incidence by proportion
+
+plot_dce_inc_bar19_2 <- function(dce_dataset) {
+  
+  # Set y axis label
+  yaxis_title <- "Percentage per Stage at Diagnosis"
+  
+  yaxis_plots[["title"]] <- yaxis_title
+  
+  # Set x axis label
+  xaxis_title <- "Month"
+  
+  xaxis_plots[["title"]] <- xaxis_title
+  
+  #Text for tooltips  
+  
+  dce_tooltip_5 <- c(paste0("Month: ", dce_dataset$month,
+                            "<br>", "Stage: ", dce_dataset$stage,
+                            "<br>", "Percentage of Total: ", dce_dataset$percent19, "%"))
+  
+  plot_ly(data=dce_dataset, x = ~month, y = ~percent19, color = ~stage,  colors = pal_dce, text = dce_tooltip_5, hoverinfo = "text" ) %>%
+    add_bars() %>%
+    layout(barmode = "stack", 
+           xaxis = xaxis_plots, yaxis = yaxis_plots,
+           legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'normal')) %>% 
+    
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+  
+}
+
+########################################################################
+
+## 2020 ##
+# 1. Stacked incidence by stage
+
+plot_dce_inc_bar20 <- function(dce_dataset, data_type) {
+  
+  # Set y axis label
+  yaxis_title <- "Incidence"
+  
+  yaxis_plots[["title"]] <- yaxis_title
+  
+  # Set x axis label
+  xaxis_title <- "Month"
+  
+  xaxis_plots[["title"]] <- xaxis_title
+  
+  #Text for tooltips  
+  
+  dce_tooltip_6 <- c(paste0("Month: ", dce_dataset$month,
+                            "<br>", "Stage: ", dce_dataset$stage,
+                            "<br>", "Monthly Total: ", dce_dataset$count20))
+  
+  if (data_type == "Scotland"){
+    c <- list(
+      title = "Incidence",
+      autotick = FALSE,
+      ticks = "outside",
+      tick0 = 0,
+      dtick = 50,
+      ticklen = 5,
+      tickwidth = 2,
+      tickcolor = toRGB("blue"),
+      range = c(0, 500)
+    )
+  }else {
+    c <- list(
+      title = "Incidence",
+      autotick = FALSE,
+      ticks = "outside",
+      tick0 = 0,
+      dtick = 50,
+      ticklen = 5,
+      tickwidth = 2,
+      tickcolor = toRGB("blue"),
+      range = c(0, 260)
+    )
+  }
+  
+  plot_ly(data=dce_dataset, x = ~month) %>% 
+    add_bars(y = ~count20, color = ~stage, colors = pal_dce, text = dce_tooltip_6, hoverinfo = "text") %>%
+    add_annotations(x = dce_dataset$month,
+                    y = (dce_dataset$total20)+10,
+                    text = dce_dataset$total20,
+                    xref = "x",
+                    yref = "y",
+                    showarrow = FALSE) %>% 
+    
+    layout(barmode = "stack", 
+           xaxis = xaxis_plots, yaxis = c,
+           legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'normal')) %>% 
+    
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+  
+}
+#}
+
+# 2. Stacked incidence by proportion
+
+plot_dce_inc_bar20_2 <- function(dce_dataset) {
+  
+  # Set y axis label
+  yaxis_title <- "Percentage per Stage at Diagnosis"
+  
+  yaxis_plots[["title"]] <- yaxis_title
+  
+  # Set x axis label
+  xaxis_title <- "Month"
+  
+  xaxis_plots[["title"]] <- xaxis_title
+  
+  #Text for tooltips  
+  
+  dce_tooltip_7 <- c(paste0("Month: ", dce_dataset$month,
+                            "<br>", "Stage: ", dce_dataset$stage,
+                            "<br>", "Percentage of Total: ", dce_dataset$percent20, "%"))
+  
+  
+  plot_ly(data=dce_dataset, x = ~month, y = ~percent20, color = ~stage, colors = pal_dce, text = dce_tooltip_7, hoverinfo = "text"  ) %>%
+    add_bars() %>%
+    layout(barmode = "stack", 
+           xaxis = xaxis_plots, yaxis = yaxis_plots,
+           legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'normal')) %>% 
+    
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+  
+}
+
+
+
+###############################################.
+## Functions for SACT charts ----
+###############################################.
+
+## 1. MONTHLY INCIDENCE 
+
+plot_sact_incidence_chart <- function(sact_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_dataset) && nrow(sact_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set axis labelS
+    yaxis_title <- "Number of Patients"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    xaxis_title <- "Month"
+    
+    xaxis_plots[["title"]] <- xaxis_title
+    
+    
+    #Text for tooltips  
+    
+    sact_tooltip_mon <- c(paste0("Month: ", sact_dataset$month,
+                                 "<br>", "Number of Patients: ", sact_dataset$count,
+                                 "<br>", "Area: ", sact_dataset$area))
+    
+    # #Creating time trend plot for incidence
+    
+    plot_ly(data=sact_dataset) %>%
+      
+      
+      add_trace(x=~month, 
+                y = ~count,
+                type = 'scatter', 
+                mode = 'line',
+                colors = pal_sact,
+                text = sact_tooltip_mon, 
+                hoverinfo = "text") %>%  
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             xaxis = xaxis_plots, yaxis = yaxis_plots,
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
   }
 }
+
+
+## 2. MONTHLY INCIDENCE - AREA
+
+plot_sact_incidence_chart_area <- function(sact_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_dataset) && nrow(sact_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {    
+    
+    # Set axis labelS
+    yaxis_title <- "Number of Patients"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    xaxis_title <- "Month"
+    
+    xaxis_plots[["title"]] <- xaxis_title
+    
+    
+    #Text for tooltips  
+    
+    sact_tooltip_mon <- c(paste0("Month: ", sact_dataset$month,
+                                 "<br>", "Number of Patients: ", sact_dataset$count,
+                                 "<br>", "Area: ", sact_dataset$area))
+    
+    # #Creating time trend plot for incidence
+    
+    plot_ly(data=sact_dataset) %>%
+      
+      
+      add_trace(x=~month, 
+                y = ~count,
+                type = 'scatter', 
+                mode = 'line',
+                color = ~area,
+                colors = pal_sact,
+                text = sact_tooltip_mon, 
+                hoverinfo = "text") %>%  
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             xaxis = xaxis_plots, yaxis = yaxis_plots,
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+## 3. MONTHLY INCIDENCE - TREATMENTS
+
+plot_sact_incidence_chart_treatment <- function(sact_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_dataset) && nrow(sact_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set axis labelS
+    yaxis_title <- "Number of Patients"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    xaxis_title <- "Month"
+    
+    xaxis_plots[["title"]] <- xaxis_title
+    
+    
+    #Text for tooltips  
+    
+    sact_tooltip_mon <- c(paste0("Month: ", sact_dataset$month,
+                                 "<br>", "Number of Patients: ", sact_dataset$count,
+                                 "<br>", "Administration Route: ", sact_dataset$treatment))
+    
+    # #Creating time trend plot for incidence
+    
+    plot_ly(data=sact_dataset ) %>%
+      
+      
+      add_trace(x=~month, 
+                y = ~count,
+                type = 'scatter', 
+                mode = 'line',
+                color = ~treatment,
+                colors = pal_sact,
+                text = sact_tooltip_mon, 
+                hoverinfo = "text") %>%  
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             xaxis = xaxis_plots, yaxis = yaxis_plots,
+             legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+
+## 2. WEEKLY INCIDENCE
+
+plot_sact_wk_incidence_chart <- function(sact_wk_dataset) {
+  
+  # set plot display if no data  
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- "Number of Appointments"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    #Text for tooltips  
+    
+    sact_tooltip_wk_inc <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>", "Number of Appointments: ", sact_wk_dataset$count,
+                                    "<br>", "Area: ", sact_wk_dataset$area))
+    
+    sact_tooltip_lockdown <- c(paste0("Start of 1st lockdown"))
+    
+    
+    # Function for vertical line at start of lockdown
+    
+    vline1 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    # Function for verical line at 2nd lockdown
+    vline2 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    # #Creating time trend plot for weekly incidence
+    
+    plot_ly(data=sact_wk_dataset) %>%
+      
+      
+      add_trace(x=~week_beginning, 
+                y = ~count, 
+                type = 'scatter', 
+                mode = 'line',
+                colors = pal_sact,
+                text=sact_tooltip_wk_inc, 
+                hoverinfo="text") %>%
+      
+      add_annotations(x = "2020-03-23",
+                      y = 1,
+                      text = "1st lockdown",
+                      xanchor = 'left',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      add_annotations(x = "2020-12-26",
+                      y = 1,
+                      text = "2nd lockdown",
+                      xanchor = 'right',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), 
+                                               tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             # shapes=list(type='line', x0= 13, x1= 13, y0=min(sact_wk_var), y1=max(sact_wk_var), line=list(dash='dot', width=1)),
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+## 2. WEEKLY INCIDENCE - AREA
+
+plot_sact_wk_incidence_chart_area <- function(sact_wk_dataset) {
+  
+  # set plot display if no data  
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- "Number of Appointments"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    #Text for tooltips  
+    
+    sact_tooltip_wk_inc <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>", "Number of Appointments: ", sact_wk_dataset$count,
+                                    "<br>", "Area: ", sact_wk_dataset$area))
+    
+    sact_tooltip_lockdown <- c(paste0("Start of 1st lockdown"))
+    
+    
+    # Function for vertical line at start of lockdown
+    
+    vline1 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    # Function for verical line at 2nd lockdown
+    vline2 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    # #Creating time trend plot for weekly incidence
+    
+    plot_ly(data=sact_wk_dataset) %>%
+      
+      
+      add_trace(x=~week_beginning, 
+                y = ~count, 
+                type = 'scatter', 
+                mode = 'line',
+                color = ~area, 
+                colors = pal_sact,
+                text=sact_tooltip_wk_inc, 
+                hoverinfo="text") %>%
+      
+      add_annotations(x = "2020-03-23",
+                      y = 1,
+                      text = "1st lockdown",
+                      xanchor = 'left',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      add_annotations(x = "2020-12-26",
+                      y = 1,
+                      text = "2nd lockdown",
+                      xanchor = 'right',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), 
+                                               tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             # shapes=list(type='line', x0= 13, x1= 13, y0=min(sact_wk_var), y1=max(sact_wk_var), line=list(dash='dot', width=1)),
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+## 2. WEEKLY INCIDENCE - TREATMENT
+
+plot_sact_wk_incidence_chart_treatment <- function(sact_wk_dataset) {
+  
+  # set plot display if no data  
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- "Number of Appointments"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    #Text for tooltips  
+    
+    sact_tooltip_wk_inc <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>", "Number of Appointments: ", sact_wk_dataset$count,
+                                    "<br>", "Administration Route: ", sact_wk_dataset$treatment))
+    
+    sact_tooltip_lockdown <- c(paste0("Start of 1st lockdown"))
+    
+    
+    # Function for vertical line at start of lockdown
+    
+    vline1 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    # Function for verical line at 2nd lockdown
+    vline2 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    # #Creating time trend plot for weekly incidence
+    
+    plot_ly(data=sact_wk_dataset) %>%
+      
+      
+      add_trace(x=~week_beginning, 
+                y = ~count, 
+                type = 'scatter', 
+                mode = 'line',
+                color = ~treatment,
+                colors = pal_sact,
+                text=sact_tooltip_wk_inc, 
+                hoverinfo="text") %>%
+      
+      add_annotations(x = "2020-03-23",
+                      y = 1,
+                      text = "1st lockdown",
+                      xanchor = 'left',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      add_annotations(x = "2020-12-26",
+                      y = 1,
+                      text = "2nd lockdown",
+                      xanchor = 'right',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), 
+                                               tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             # shapes=list(type='line', x0= 13, x1= 13, y0=min(sact_wk_var), y1=max(sact_wk_var), line=list(dash='dot', width=1)),
+             legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+
+################################################################################
+
+## 3. WEEKLY DIFFERENCE
+
+plot_sact_wk_difference_chart <- function(sact_wk_dataset) {
+  
+  # set plot display if no data  
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- "Percentage Change (%)"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips  
+    
+    sact_tooltip_wk_dif <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>", 
+                                    "Percentage change (%):", paste0(format(round(sact_wk_dataset$week_on_refweek_perc, 2), nsmall = 2), "%"),
+                                    "<br>", 
+                                    "Area: ", sact_wk_dataset$area))
+    
+    # Function for verical line at start of lockdown
+    vline1 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    # Function for verical line at 2nd lockdown
+    vline2 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    # #Creating time trend plot for difference
+    
+    plot_ly(data=sact_wk_dataset) %>%
+      
+      
+      add_trace(x=~week_beginning, y = ~week_on_refweek_perc, type = 'scatter', 
+                mode = 'line',
+                text=sact_tooltip_wk_dif, hoverinfo="text") %>%
+      
+      add_annotations(x = "2020-03-23",
+                      y = 1,
+                      text = "1st lockdown",
+                      xanchor = 'left',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      add_annotations(x = "2020-12-26",
+                      y = 1,
+                      text = "2nd lockdown",
+                      xanchor = 'right',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+## 3. WEEKLY DIFFERENCE - AREA
+
+plot_sact_wk_difference_chart_area <- function(sact_wk_dataset) {
+  
+  # set plot display if no data  
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- "Percentage Change (%)"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips  
+    
+    sact_tooltip_wk_dif <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>", 
+                                    "Percentage change (%):", paste0(format(round(sact_wk_dataset$week_on_refweek_perc, 2), nsmall = 2), "%"),
+                                    "<br>", 
+                                    "Area: ", sact_wk_dataset$area))
+    
+    # Function for verical line at start of lockdown
+    vline1 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    # Function for verical line at 2nd lockdown
+    vline2 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    # #Creating time trend plot for difference
+    
+    plot_ly(data=sact_wk_dataset) %>%
+      
+      
+      add_trace(x=~week_beginning, y = ~week_on_refweek_perc, type = 'scatter', 
+                mode = 'line',
+                color = ~area, 
+                colors = pal_sact,
+                text=sact_tooltip_wk_dif, 
+                hoverinfo="text") %>%
+      
+      add_annotations(x = "2020-03-23",
+                      y = 1,
+                      text = "1st lockdown",
+                      xanchor = 'left',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      add_annotations(x = "2020-12-26",
+                      y = 1,
+                      text = "2nd lockdown",
+                      xanchor = 'right',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+## 3. WEEKLY DIFFERENCE - TREATMENT
+
+plot_sact_wk_difference_chart_treatment <- function(sact_wk_dataset) {
+  
+  # set plot display if no data  
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- "Percentage Change (%)"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips  
+    
+    sact_tooltip_wk_dif <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>", 
+                                    "Percentage change (%):", paste0(format(round(sact_wk_dataset$week_on_refweek_perc, 2), nsmall = 2), "%"),
+                                    "<br>", 
+                                    "Administration Route: ", sact_wk_dataset$treatment))
+    
+    # Function for verical line at start of lockdown
+    vline1 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    # Function for verical line at 2nd lockdown
+    vline2 <- function(x = 0, color = "grey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    # #Creating time trend plot for difference
+    
+    plot_ly(data=sact_wk_dataset) %>%
+      
+      
+      add_trace(x=~week_beginning, 
+                y = ~week_on_refweek_perc, 
+                type = 'scatter', 
+                mode = 'line',
+                color = ~treatment,
+                colors = pal_sact,
+                text=sact_tooltip_wk_dif, 
+                hoverinfo="text") %>%
+      
+      add_annotations(x = "2020-03-23",
+                      y = 1,
+                      text = "1st lockdown",
+                      xanchor = 'left',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      add_annotations(x = "2020-12-26",
+                      y = 1,
+                      text = "2nd lockdown",
+                      xanchor = 'right',
+                      xref = "1",
+                      yref = "paper",
+                      yanchor = 'top',
+                      showarrow = FALSE) %>%
+      
+      
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+###############################################.
+## Function for overall injury charts ----
+###############################################.
+
+plot_overall_injury_chart <- function(dataset, var1_chosen, var2_chosen, data_name) {
+  
+  # set plot display if no data  
+  if (is.data.frame(dataset) && nrow(dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Data not avaiable due to small numbers")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- case_when(data_name == "ui_smr01_all" ~ "Number of Admissions",
+                             data_name == "ui_smr01_rta" ~ "Number of Admissions",
+                             data_name == "ui_smr01_falls" ~ "Number of Admissions",
+                             data_name == "ui_smr01_other" ~ "Number of Admissions",
+                             data_name == "ui_smr01_poison" ~ "Number of Admissions",
+                             data_name == "ui_smr01_assaults" ~ "Number of Admissions")
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips  
+    
+    measure_name <- case_when(data_name == "ui_smr01_all" ~ "All unintentional injuries",
+                              data_name == "ui_smr01_rta" ~ "RTAs",
+                              data_name == "ui_smr01_falls" ~ "Falls",
+                              data_name == "ui_smr01_other" ~ "Other",
+                              data_name == "ui_smr01_poison" ~ "Poisoning",
+                              data_name == "ui_smr01_assaults" ~ "Assaults")
+    
+    value1 <- dataset[[var1_chosen]]
+    
+    value2 <- dataset[[var2_chosen]]
+    
+    
+    tooltip_1 <- c(paste0("Month: ", format(dataset$week_ending, "%b %y"),
+                          "<br>", "Admissions from ",measure_name,": ", value1))
+    tooltip_2 <- c(paste0("Month: ", format(dataset$week_ending, "%b %y"),
+                          "<br>", "Admissions from ",measure_name,": ", value2))
+    
+    tooltip_3 <- c(paste0("Month: ", format(dataset$week_ending, "%b %y"),
+                          "<br>", "Admissions: ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
+    if(data_name != "dif") { 
+      
+      #Creating time trend plot for cumulative totals and incidence
+      plot_ly(data=dataset, x=~week_ending) %>%
+        
+        # 2020 line
+        add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_1, hoverinfo="text",
+                  name = "2020 & 2021") %>%
+        # 2019 line
+        add_lines(y = ~get(var2_chosen), line = list(color = pal_overall[2], dash = 'dash'),text=tooltip_2, 
+                  hoverinfo="text", name = "Average 2018 & 2019") %>%
+        
+        #Layout
+        layout(margin = list(b = 80, t=5), 
+               yaxis = yaxis_plots, xaxis = xaxis_plots,
+               legend = list(x = 100, y = 0.5)) %>% 
+        
+        # leaving only save plot button
+        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+      
+    } else {
+      
+      #Creating time trend plot for difference
+      plot_ly(data=dataset, x=~week_ending) %>%
+        
+        # 2020 line
+        add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_3, hoverinfo="text",
+                  name = "2020") %>%
+        
+        #Layout
+        layout(margin = list(b = 80, t=5), 
+               yaxis = yaxis_plots, xaxis = list(title = "Month", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
+               legend = list(x = 100, y = 0.5)) %>% 
+        
+        # leaving only save plot button
+        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
+  }
+}
+
+# END OF SACT CHARTS
+###############################################.
+
 
 ###############################################.
 ## # Function that creates specialty charts.   ----
@@ -482,9 +1945,9 @@ filter_data <- function(dataset, area = T, op = F) {
       filter(area_name == input$geoname_op &
                category == "All")
   } else if (area == T & op == F) {
-      dataset %>% filter(type == "sex") %>%
-        filter(area_name == input$geoname &
-                 category == "All")
+    dataset %>% filter(type == "sex") %>%
+      filter(area_name == input$geoname &
+               category == "All")
   } else { #this works for cath data
     dataset %>% 
       filter(category == "All")
@@ -508,7 +1971,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
   
   #count the number of distinct months in the dataset - used later to correctly adjust chart
   month_count <- length(unique(imm_simd_data$time_period_eligible))
-
+  
   dataset_name <- deparse(substitute(dataset)) # character name of the data
   
   elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
@@ -546,14 +2009,14 @@ plot_imm_simd <- function(dataset, age_week, dose,
               color=~time_period_eligible,
               colors = pal_immun,
               text= tooltip_scurve, hoverinfo="text")
-
+  
   if (base_var != F) {
     simd_plot <- simd_plot %>% 
       add_trace(type = 'bar', y = ~get(base_var)/month_count, 
                 name = "2019", marker = list(color = "black"),
                 text= tooltip_2019, hoverinfo="text") 
   }
-
+  
   simd_plot %>% #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
            yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -603,62 +2066,62 @@ plot_scurve_child <- function(dataset, age_week) {
     #Create tooltip for scurve
     tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
     
-  if (age_week == "2 weeks")  {
-    
-    #Modifying standard yaxis layout
-    yaxis_plots[["title"]] <- "% of children who have received their review"
-    xaxis_plots[["title"]] <- "Age of children in weeks"
-    # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(14, 126, by = 28))
-    xaxis_plots[["ticktext"]] <- c(0, seq(2, 18, by = 4))
-    # enforcing range from 0 to 100%
-    yaxis_plots[["range"]] <- c(0, 100)
-    
-  } else if (age_week == "6 weeks") {
-    
-    #Modifying standard yaxis layout
-    yaxis_plots[["title"]] <- "% of children who have received their review"
-    xaxis_plots[["title"]] <- "Age of children in weeks"
-    # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(42, 154, by = 28))
-    xaxis_plots[["ticktext"]] <- c(0, seq(6, 22, by = 4))
-    # enforcing range from 0 to 100%
-    yaxis_plots[["range"]] <- c(0, 100)
-    
-  } else if (age_week == "13 months") {
-    
-    #Modifying standard yaxis layout
-    yaxis_plots[["title"]] <- "% of children who have received their review"
-    xaxis_plots[["title"]] <- "Age of children in months"
-    # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(371, 518, by = 29.4))
-    xaxis_plots[["ticktext"]] <- c(0, seq(12, 17, by = 1))
-    # enforcing range from 0 to 100%
-    yaxis_plots[["range"]] <- c(0, 100)
-    
-  } else if (age_week == "27 months") {
-    
-    #Modifying standard yaxis layout
-    yaxis_plots[["title"]] <- "% of children who have received their review"
-    xaxis_plots[["title"]] <- "Age of children in months"
-    # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(791, 945, by = 30.8))
-    xaxis_plots[["ticktext"]] <- c(0, seq(26, 31, by = 1))
-    # enforcing range from 0 to 100%
-    yaxis_plots[["range"]] <- c(0, 100)
-    
-  } else if (age_week == "4 years") {
-    
-    #Modifying standard yaxis layout
-    yaxis_plots[["title"]] <- "% of children who have received their review"
-    xaxis_plots[["title"]] <- "Age of children in months"
-    # For custom tick labels
-    xaxis_plots[["tickvals"]] <- c(0, seq(1428, 1582, by = 30.8))
-    xaxis_plots[["ticktext"]] <- c(0, seq(47, 52, by = 1))
-    # enforcing range from 0 to 100%
-    yaxis_plots[["range"]] <- c(0, 100)
-    
-  }     
+    if (age_week == "2 weeks")  {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in weeks"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(14, 126, by = 28))
+      xaxis_plots[["ticktext"]] <- c(0, seq(2, 18, by = 4))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    } else if (age_week == "6 weeks") {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in weeks"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(42, 154, by = 28))
+      xaxis_plots[["ticktext"]] <- c(0, seq(6, 22, by = 4))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    } else if (age_week == "13 months") {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in months"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(371, 518, by = 29.4))
+      xaxis_plots[["ticktext"]] <- c(0, seq(12, 17, by = 1))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    } else if (age_week == "27 months") {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in months"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(791, 945, by = 30.8))
+      xaxis_plots[["ticktext"]] <- c(0, seq(26, 31, by = 1))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    } else if (age_week == "4 years") {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in months"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(1428, 1582, by = 30.8))
+      xaxis_plots[["ticktext"]] <- c(0, seq(47, 52, by = 1))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    }     
     
     #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
@@ -689,23 +2152,23 @@ child_table <- function(dataset, age_week, age_not_reached) {
   
   if (age_week == "2 weeks") {
     format_col <- c("denominator","coverage_6weeks_num","coverage_18weeks_num","coverage_tot_num")
-
+    
     child_table <- table_data %>%
-    select (time_period_eligible, denominator, coverage_6weeks_num, 
-            coverage_6weeks_percent, coverage_18weeks_num, coverage_18weeks_percent, 
-            coverage_tot_num, coverage_tot_percent) %>%
-    flextable() %>%
-    set_header_labels(coverage_6weeks_num="Children recorded as receiving their health visitor first visit by 6 weeks of age",
-                      coverage_6weeks_percent="Children recorded as receiving their health visitor first visit by 6 weeks of age",
-                      coverage_18weeks_num="Children recorded as receiving their health visitor first visit by 18 weeks of age (or younger if children have not reached 18 weeks of age by the date data was extracted for analysis)",
-                      coverage_18weeks_percent="Children recorded as receiving their health visitor first visit by 18 weeks of age (or younger if children have not reached 18 weeks of age by the date data was extracted for analysis)") %>% 
-    # Italics and colour if not 12 weeks
-    color(i = no_complete_row, j = c("coverage_18weeks_num", "coverage_18weeks_percent"), color="#0033cc")  %>%
-    italic(i = no_complete_row, j = c("coverage_18weeks_num", "coverage_18weeks_percent"))
+      select (time_period_eligible, denominator, coverage_6weeks_num, 
+              coverage_6weeks_percent, coverage_18weeks_num, coverage_18weeks_percent, 
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_6weeks_num="Children recorded as receiving their health visitor first visit by 6 weeks of age",
+                        coverage_6weeks_percent="Children recorded as receiving their health visitor first visit by 6 weeks of age",
+                        coverage_18weeks_num="Children recorded as receiving their health visitor first visit by 18 weeks of age (or younger if children have not reached 18 weeks of age by the date data was extracted for analysis)",
+                        coverage_18weeks_percent="Children recorded as receiving their health visitor first visit by 18 weeks of age (or younger if children have not reached 18 weeks of age by the date data was extracted for analysis)") %>% 
+      # Italics and colour if not 12 weeks
+      color(i = no_complete_row, j = c("coverage_18weeks_num", "coverage_18weeks_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_18weeks_num", "coverage_18weeks_percent"))
   } 
   else if (age_week == "6 weeks") {
     format_col <- c("denominator","coverage_10weeks_num","coverage_22weeks_num","coverage_tot_num")
-
+    
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_10weeks_num, 
               coverage_10weeks_percent, coverage_22weeks_num, coverage_22weeks_percent, 
@@ -721,7 +2184,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   }
   else if (age_week == "13 months") {
     format_col <- c("denominator","coverage_14months_num","coverage_17months_num","coverage_tot_num")
-
+    
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_14months_num, 
               coverage_14months_percent, coverage_17months_num, coverage_17months_percent, 
@@ -737,7 +2200,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   }
   else if (age_week == "27 months") {
     format_col <- c("denominator","coverage_28months_num","coverage_31months_num","coverage_tot_num")
-
+    
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_28months_num, 
               coverage_28months_percent, coverage_31months_num, coverage_31months_percent, 
@@ -753,7 +2216,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
   }
   else if (age_week == "4 years") {
     format_col <- c("denominator","coverage_49months_num","coverage_52months_num","coverage_tot_num")
-
+    
     child_table <- table_data %>%
       select (time_period_eligible, denominator, coverage_49months_num, 
               coverage_49months_percent, coverage_52months_num, coverage_52months_percent, 

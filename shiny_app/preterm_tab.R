@@ -1,4 +1,4 @@
-##Server script for preterm tab
+##Server script for preterm tab..
 
 ###############################################.
 ## Modal ----
@@ -221,6 +221,12 @@ observeEvent(input$switch_to_preterm,{
 output$preterm_commentary <- renderUI({
   tagList(
     bsButton("jump_to_preterm",label = "Go to data"), #this button can only be used once
+    h2("Location of extremely preterm deliveries - 6th October 2021"),
+    p("The ‘location of extremely preterm deliveries’ measure is used to monitor whether babies born at 23-26 weeks gestation are born at a hospital with a neonatal intensive care unit. It is desirable that this percentage is as high as possible, but inevitably some 
+      extremely preterm deliveries occur in other locations, for example, a woman presenting to her local maternity unit may be considered too far advanced in labour to safely transfer to a different hospital before her baby is born. Control charts are used to help 
+      differentiate between expected random variation (which is a particular issue for rare events such as extremely premature births), and substantial changes which warrant further investigation, with expected levels based on previous data.  Last quarter (April-June 2021) 
+      it was noted that the percentage of extremely preterm deliveries occurring in a hospital with a neonatal intensive care unit was lower than expected, with 70.8% of babies delivered at such a site, compared with the warning limit of 71.3%.  However, the value remained 
+      above the lower control limit of 64.1%, indicating that this observation is within the range of expected random variation. The data will continue to be monitored on a quarterly basis."),
     h2("Location of extremely preterm deliveries - April 2021"),
     p("Information on the location of extremely preterm deliveries was included in this tool for the first time on 14 April 2021."),
     p("Babies born preterm (at least 3 weeks before their due date) are at increased risk of neonatal death, neonatal morbidity, and longer term developmental problems compared to babies born at term (around their due date).  The earlier in pregnancy a baby is born, the higher the risks."),

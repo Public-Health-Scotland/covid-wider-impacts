@@ -1,4 +1,4 @@
-#Server side for drugs tab
+#Server side for drugs tab.
 observeEvent(input$btn_drugs_modal, 
              if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
              showModal(modalDialog(

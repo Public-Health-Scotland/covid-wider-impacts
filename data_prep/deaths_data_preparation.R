@@ -17,14 +17,14 @@ create_deaths <- function(last_week) {
 ## Lookups ----
 ###############################################.
 # Bringing  LA and datazone info.
-postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2020_2.rds') %>% 
+postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2021_1.rds') %>% 
   setNames(tolower(names(.))) %>%   #variables to lower case
   select(pc7, datazone2011, hscp2019)
 
 # SIMD quintile to datazone lookup
 dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
   rename(datazone2011 = datazone) %>%
-  select(datazone2011, year, sc_quin) %>% 
+  select(datazone2011, year, sc_quin) %>%
   filter(year>2014)
 
 dep_lookup20 <- dep_lookup %>%  filter(year == 2019) %>% mutate(year = 2020)
