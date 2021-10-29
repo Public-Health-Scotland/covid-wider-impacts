@@ -16,7 +16,7 @@ library(zoo)
 ###############################################.
 
 # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/DrugTreatmentReferrals/Referrals_20210715_breakdown.xlsx", 
+Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/DrugTreatmentReferrals/Referrals_20211026_breakdown.xlsx", 
                                    col_types = c("text", "text", "date", 
                                                  "numeric"))
 
@@ -68,7 +68,7 @@ full<-full[order(full$Week),]
 sub.full<-full[,c(1:3,5,8,11,14)]
 colnames(sub.full)[4:7]<-c('2018','2019','2020','2021')
 
-sub.full$`2021`[(sub.full$Week>28)]<-NA #MUST UPDATE THIS WITH FUTURE UPDATES
+sub.full$`2021`[(sub.full$Week>12)]<-NA #MUST UPDATE THIS WITH FUTURE UPDATES
 sub.full$`2018`[(sub.full$Week==53)]<-sub.full$`2018`[(sub.full$Week==52)] #REPEATING LAST 2018 & 2019 OBSERVATION TO MATCH 2020 DATA
 sub.full$`2019`[(sub.full$Week==53)]<-sub.full$`2019`[(sub.full$Week==52)]
 
@@ -86,7 +86,7 @@ sub.full$Change[is.nan(sub.full$Change)]<-NA
 
 ##### Formatting for long x axis 
 ####MUST UPDATE BLOCK FOR EACH UPDATE OF DATA WITH WEEK NUMBER
-block<-nrow(subset(sub.full,Week<=28))
+block<-nrow(subset(sub.full,Week<=12))
 long.axis<-rbind(sub.full[,c(1:3,8,6)],sub.full[c(1:(block+1)),c(1:3,8,6)])
 long.axis$`2020`[c((nrow(sub.full)+1):nrow(long.axis))]<-sub.full$`2021`[1:(block+1)]
 
@@ -157,12 +157,12 @@ ADP_names<-Hb[grep('ADP',Hb)]
 #SAVING FOR SUBSTANCE USE TEAM
 saveRDS(Health_board,file='Health_board.rds')
 saveRDS(ADP_names,file='ADP_names.rds')
-saveRDS(long.axis,file='DTR_July_update.rds')
+saveRDS(long.axis,file='DTR_data.rds')
 
 #SAVING FOR WIDER IMPACTS TEAM
 saveRDS(Health_board, "shiny_app/data/Health_board.rds")
 saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
-saveRDS(long.axis,file="shiny_app/data/long.axis.rds")
+saveRDS(long.axis,file="shiny_app/data/DTR_data.rds")
 
 ###############################################.
 ## Take Home Naloxone ----

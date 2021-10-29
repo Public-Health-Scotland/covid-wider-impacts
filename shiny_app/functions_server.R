@@ -792,7 +792,7 @@ child_table <- function(dataset, age_week, age_not_reached) {
 ## Function for drug charts ----
 ###############################################.
 
-lockdown<-function(x){
+lockdown<-function(x,col){
   list(
     type = "line",
     y0 = 0,
@@ -800,7 +800,7 @@ lockdown<-function(x){
     yref = "paper",
     x0 = x,
     x1 = x,
-    line = list(color = 'grey', dash = 'dash')
+    line = list(color = col, dash = 'dash')
   )
 }
 annote<-function(loc, x,y){
@@ -809,7 +809,7 @@ annote<-function(loc, x,y){
        text = "1st lockdown",
        xref = "1",
        yref = "1",
-       showarrow = TRUE)
+       showarrow = F)
 }
 
 ### END

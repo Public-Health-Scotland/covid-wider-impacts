@@ -189,7 +189,7 @@ tears_download <- readRDS("data/tears_download_data.rds")
 #Drugs data 
 ADP_names<-readRDS('data/ADP_names.rds')
 Health_board<-readRDS('data/Health_board.rds')
-DTR_July_update<-readRDS('data/DTR_July_update.rds')
+DTR_data<-readRDS('data/DTR_data.rds')
 THN_by_HB<-readRDS('data/THN_by_HB.rds')
 SASdata<-readRDS('data/SASdata.rds')
 OST_paid<-readRDS('data/OST_paid.rds')
@@ -266,8 +266,8 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Cancer" = "cancer",
                         "Take home naloxone kits"="THN_by_HB",
                         "Drug and alchohol treatment referrals"="DTR_July_update",
-                        "OST prescribing"="OST_paid",
-                        "SAS naloxone administration"="SASdata"
+                        "OST prescribing"="OST_paid"
+                      #  "SAS naloxone administration"="SASdata"
                         )
 
 cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
