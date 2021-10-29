@@ -3,7 +3,7 @@
 
 # Cancer, Outpatients, Immunisation and MH datasets still not working this way.
 
-# After running these scripts, update the final script files date and the 
+# After running these scripts, update the final script files date and the
 # relevant bits in the tabs of the app (e.g. update date)
 
 ###############################################.
@@ -32,11 +32,11 @@ create_cardiodrugs(filedate = "2021-09-30", last_week =  "2021-09-26")
 create_oohcardio(filedate = "2021-10-04", last_week =  "2021-09-26")
 
 ############## Remember to change final_app_files script dates
-# Then you need to change the update date in the cardio_tab script 
+# Then you need to change the update date in the cardio_tab script
 file.edit("data_prep/final_app_files.R")
 file.edit("shiny_app/cardio_tab.R")
 
-# This function will need some work if we update again this dataset, but at the 
+# This function will need some work if we update again this dataset, but at the
 # moment it is not updated in any regular basis
 create_cathlab()
 
@@ -44,9 +44,9 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20210927") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "27thSep2021")
-create_breastfeeding(filedate = "27thSep2021")
+create_chreview(ch_date_file = "20211025") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "25thOct2021")
+create_breastfeeding(filedate = "25thOct2021")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
@@ -58,7 +58,7 @@ file.edit("shiny_app/global.R")
 ###############################################.
 source("data_prep/summary_data_prep.R") # This sources the functions for the section
 # Filedate: date on filename for each update, last week = last week of data to be included
-# Change extract to F if you just want to run the data prep and not the extraction 
+# Change extract to F if you just want to run the data prep and not the extraction
 # (quicker once the extraction has been done once)
 create_rapid(last_week =  "2021-09-26", extract = T) # this requires access to the RAPID dataset
 create_ae(filedate = "2021-09-30", last_week =  "2021-09-26")
@@ -74,7 +74,7 @@ source("data_prep/deaths_data_preparation.R") # And the deaths function
 create_deaths(last_week =  "2021-09-26")
 
 ############## Remember to change final_app_files script dates
-# Then you need to change the update date in the summary_tab script 
+# Then you need to change the update date in the summary_tab script
 file.edit("data_prep/final_app_files.R")
 file.edit("shiny_app/summary_tab.R")
 
