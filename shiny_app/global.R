@@ -115,6 +115,20 @@ sact_data_wk_inc <- sact_weekly_data %>%
                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
+# DCE Data
+dce_data <- readRDS("data/dce_data.rds") %>% 
+  mutate(region = factor(region)) %>% 
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
+  mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>% 
+  mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
+
+dce_extract_date <- "8 October 2021"
+
+
 
 #Injuries data
 ui_smr01_all <- readRDS("data/ui_smr01_all.rds")
@@ -446,6 +460,21 @@ pal_cancer_diff <- c("1" = '#000080',
                      "3" = '#D3D3D3',
                      "4" = '#C0C0C0',
                      "5" = '#0000FF')
+
+pal_dce <- c("1" = '#000080',
+             "2" = '#6A5ACD',
+             "3" = '#008B8B',
+             "4" = '#32CD32',
+             "NK" = '#FFD700')
+
+pal_dce_diff <- c("NHS Grampian" = '#000080',  "NHS Greater Glasgow & Clyde" = '#000080',
+                  "NHS Highland" = '#6A5ACD', "NHS Dumfries & Galloway" = '#6A5ACD',
+                  "NCA" = '#008B8B', "NHS Fife" = '#008B8B', "NHS Forth Valley" = '#008B8B',
+                  "SCAN" = '#32CD32',"NHS Orkney" = '#32CD32', "NHS Ayrshire & Arran" = '#32CD32',
+                  "WOSCAN" = '#FFD700', "NHS Shetland" = '#FFD700', "NHS Lothian" = '#FFD700',
+                  "Scotland" = '#FF8C00', "NHS Tayside" = '#FF8C00',
+                  "NHS Western Isles" = '#00FFFF', "NHS Borders" = '#00FFFF',"NHS Lanarkshire" = '#00FFFF')
+
 
 
 # more distinctive colour palette (save for later)
