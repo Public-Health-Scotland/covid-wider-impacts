@@ -201,9 +201,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ## Cancer ----
 ###############################################.
              navbarMenu("Cancer", icon = icon("disease"),
-                        
+
                         # CANCER PATHOLOGY
-                        
+
                         tabPanel(title = "Cancer Pathology", icon = icon("microscope"), value = "cancer",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer2")),
@@ -231,13 +231,13 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                           div(radioButtons("gender", "Select sex",
                                                            list("All","Male","Female"), inline = TRUE,
                                                            selected = "All")))
-                                   
+
                                  ) ,# wellPanel bracket
-                                 
+
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer")
                                  ) ,# wellPanel bracket
-                                 
+
                                  wellPanel(
                                    column(6,
                                           div(radioButtons("cum_baseline", "Select standard/cumulative baseline",
@@ -250,7 +250,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer3"))
                         ) , # tabpanel bracket
-                        
+
                         ###############################################.
                         ## SACT ----
                         ###############################################.
@@ -274,10 +274,10 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            p("Due to differences in recording practice",
                                              em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
-                                           
+
                                            actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle')),
                                            downloadButton('download_sact_monthly_data', 'Download data')), # well panel
-                                 
+
                                  wellPanel(column(7, selectInput("geotype_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_sact"),
@@ -291,16 +291,14 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                                                    list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
                                                                    selected = "Standard graph")))
                                  ), #well panel
-                                 
+
                                  mainPanel(width = 12,
                                            uiOutput("sact_explorer")
                                  )# mainPanel bracket
-                                 
                         ), # tabpanel bracket
                         
-                        
                         #### WEEKLY TAB
-                        
+
                         tabPanel(title = "SACT (Chemotherapy) Weekly Appointments", icon = icon("syringe"), value = "sact",
                                  wellPanel(h4(strong("SACT Treatment Activity in Scotland - Weekly Appointment Data")),
                                            #p(strong("Data from the ChemoCare system in the North Cancer Alliance (NCA) Highland has not
@@ -325,15 +323,15 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
                                            p("Activity data is released two week in arrears. The latest data currently available in the
                                              dashboard is for the week beginning", strong(format(max(sact_weekly_data$week_beginning), "%d %B %Y"))),
-                                           
+
                                            actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle')),
                                            downloadButton('download_sact_weekly_data', 'Download data')), # well panel
-                                 
+
                                  wellPanel(column(7, selectInput("geotype_wk_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_wk_sact"),
                                                   uiOutput("treatment_ui_wk_sact")),
-                                           
+
                                            column(5, selectInput("sact_wk_type", label = "Select all or specific cancer type",
                                                                  choices = c("All","Bone Sarcoma", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
                                                                              "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
@@ -346,7 +344,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                                                    list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
                                                                    selected = "Standard graph")))
                                  ), #well panel
-                                 
+
                                  mainPanel(width = 12,
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
@@ -433,12 +431,12 @@ tabPanel(title = "Injuries", icon = icon("user-injured"), value = "injuries",
            column(4, selectizeInput("area_injuries_select", "Step 2. Select a geography level",
                                     choices = c("Scotland", "Health board", "HSC partnership"), selected = "Scotland"),
                   uiOutput("geoname_injuries_ui")),
-           
+
            column(4,  selectInput("type_select", label = "Step 3. Select type of split",
-                              choices = injury_split_list, selected="Age group")),     
-                     
+                              choices = injury_split_list, selected="Age group")),
+
            # div(radioButtons("type", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "age"))),
-           
+
            column(4,downloadButton("download_injuries_data", "Download data"),
                   fluidRow(br()),
                   actionButton('jump_commentary_injuries','Go to commentary'),
@@ -518,9 +516,9 @@ tabPanel(title = "Termination of pregnancy", value = "terminations",
          )# mainPanel bracket
 ) # tabPanel bracket
  ), # navbar menu bracket
-###############################################.
-## Births and Babies menu ----
 ##############################################.
+# Births and Babies menu ----
+#############################################.
 navbarMenu("Births and babies", icon = icon("baby"),
 ###############################################.
 ## Inductions ----
@@ -565,9 +563,9 @@ tabPanel(title = "Method of delivery", value = "mod",
                   uiOutput("mod_explorer")
         )# mainPanel bracket
 ), # tabPanel bracket
-###############################################.
-## Gestation at delivery ----
-###############################################.
+##############################################.
+# Gestation at delivery ----
+##############################################.
 tabPanel(title = "Gestation at delivery", value = "gestation",
         wellPanel(
           column(4, div(title="Select a breakdown",
@@ -736,9 +734,9 @@ navbarMenu("Child health", icon = icon("child"),
                               uiOutput("child_health_explorer")
                     )# mainPanel bracket
            ), # tabpanel bracket
-           ###############################################.
-           ## Breastfeeding  ----
            ##############################################.
+           # Breastfeeding  ----
+           #############################################.
            tabPanel(title = "Breastfeeding", value = "breastfeeding",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
@@ -799,7 +797,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                                            direction = "vertical", justified = T))),
            column(4,uiOutput('area_drugs_select'),
                   uiOutput("geoname_ui_drugs")),
-           
+
            column(4, uiOutput("types")),
            column(4,downloadButton('download_drugs_data', 'Download data'),
                   actionButton('jump_commentary_drugs','Go to commentary'),
@@ -807,7 +805,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                   actionButton("btn_drugs_modal", "Data source and definitions",
                                                     icon = icon('question-circle')))
          ),#wellPanel bracket
-         
+
 
          mainPanel(width = 12,
                    fluidRow(br()),
@@ -819,13 +817,13 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    fluidRow(br()),
                    fluidRow(br()),
                    uiOutput('Prop_barplot')
-                   
-                   
+
+
          )# mainPanel bracket
 ), # tabpanel bracket
-# ##############################################.
-# # Data ----
-# ##############################################.
+# # ##############################################.
+# # # Data ----
+# # ##############################################.
  tabPanel(title = "Data", icon = icon("table"), value = "table",
           p("This section allows you to view the data in table format.
          You can use the filters to select the data you are interested in.
@@ -841,6 +839,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-# )#secure app
+ #)#secure app
 
 #END
