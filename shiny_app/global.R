@@ -116,17 +116,17 @@ sact_data_wk_inc <- sact_weekly_data %>%
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
 # DCE Data
-dce_data <- readRDS("data/dce_data.rds") %>% 
-  mutate(region = factor(region)) %>% 
-  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
-                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
-                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
-                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
-                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
-  mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>% 
-  mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
-
-dce_extract_date <- "8 October 2021"
+# dce_data <- readRDS("data/dce_data.rds") %>% 
+#   mutate(region = factor(region)) %>% 
+#   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+#                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+#                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+#                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+#                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
+#   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>% 
+#   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
+# 
+# dce_extract_date <- "8 October 2021"
 
 
 

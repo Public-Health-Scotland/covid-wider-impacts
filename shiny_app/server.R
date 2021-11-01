@@ -113,7 +113,7 @@ function(input, output, session) {
   
   ###############################################.
   # DCE tab
-  source(file.path("dce_tab.R"),  local = TRUE)$value
+  # source(file.path("dce_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Drugs tab
