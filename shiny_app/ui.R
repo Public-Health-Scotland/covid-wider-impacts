@@ -793,7 +793,10 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
            column(4, div(title="Select the data you want to explore", # tooltip
                          radioGroupButtons("drug_subcategories",
                                            label= "Step 1 – Select the data you want to explore",
-                                           choices = c('Take home naloxone kits'), status = "primary",
+                                           choices = c('Take home naloxone kits',
+                                                       'Drug and alcohol treatment referrals',
+                                                       'Opioid substitution therapy prescribing'='OST prescribing'), 
+                                           status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,uiOutput('area_drugs_select'),
                   uiOutput("geoname_ui_drugs")),
@@ -808,17 +811,21 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
 
 
          mainPanel(width = 12,
+                   #actionButton('browser','browser'),
+                   fluidRow(br()),                  
+                   uiOutput('Quan_plot'),
+                   fluidRow(br()),
+                   uiOutput('TwoYrComparison'),
                    fluidRow(br()),
                    fluidRow(br()),
-                   plotlyOutput('TwoYrComparison',width='100%'),
+                   uiOutput('Cum_plot'),
                    fluidRow(br()),
                    fluidRow(br()),
+                   uiOutput('Prop_barplot'),
                    uiOutput('PercentChange'),
                    fluidRow(br()),
-                   fluidRow(br()),
-                   uiOutput('Prop_barplot')
-
-
+                   fluidRow(br())
+                  
          )# mainPanel bracket
 ), # tabpanel bracket
 # # ##############################################.

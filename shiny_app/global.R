@@ -250,8 +250,11 @@ tears_download <- readRDS("data/tears_download_data.rds")
 #Drugs data
 ADP_names<-readRDS('data/ADP_names.rds')
 Health_board<-readRDS('data/Health_board.rds')
-DTR_July_update<-readRDS('data/DTR_July_update.rds')
+DTR_data<-readRDS('data/DTR_data.rds')
 THN_by_HB<-readRDS('data/THN_by_HB.rds')
+SASdata<-readRDS('data/SASdata.rds')
+OST_paid<-readRDS('data/OST_paid.rds')
+OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
 
 ###############################################.
 ## Objects, names, lists ----
@@ -322,6 +325,10 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
                         "Cancer" = "cancer",
+                        "Take home naloxone kits"="THN_by_HB",
+                        "Drug and alchohol treatment referrals"="DTR_July_update",
+                        "Opioid substituation therapy prescribing"="OST_paid",
+                      #  "SAS naloxone administration"="SASdata"
                         "Weekly SACT activity" = "sact_weekly",
                         "Monthly SACT activity" = "sact_monthly",
                         "All unintentional injuries" = "ui_smr01_all",
@@ -331,6 +338,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Other" = "ui_smr01_other",
                         "Assaults" = "ui_smr01_assaults"
                         )
+
 injury_data_list <- c("All unintentional injuries" = "ui_smr01_all",
                         "Road traffic accidents" = "ui_smr01_rta",
                         "Poisonings" = "ui_smr01_poison",

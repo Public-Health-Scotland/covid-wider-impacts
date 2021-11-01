@@ -53,7 +53,11 @@ data_table <- reactive({
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "outpats" = outpats %>% 
-          rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average) 
+          rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average),
+        'THN_by_HB'=THN_by_HB,
+        'DTR_data'=DTR_data,
+        'OST_paid'=OST_paid
+       # 'SASdata'=SASdata[,c(1,2,5,6)]
   ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table

@@ -1,23 +1,22 @@
 #Server side for drugs tab.
 observeEvent(input$btn_drugs_modal, 
-             # if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
-             # showModal(modalDialog(
-             #   title = "What is the data source?",
-             #  p('This section of the PHS Covid-19 wider impacts dashboard provides weekly information on the number of 
-             #    referrals to specialist alcohol and drug treatment services in Scotland.'),
-             #  p('These data have been extracted from the Drug and Alcohol Treatment Waiting Times (DATWT) database and the new Drug and Alcohol Information System (DAISy) (both Public Health Scotland) . DAISy is a national system that collects drug and alcohol waiting times and treatment information. 
-             #    This replaced the DATWT database and the Scottish Drug Misuse Database (SDMD) systems.'),
-             #  p('Data from the start of 2020 to the latest available week are shown alongside historical activity data (average from 2018 and 2019) for comparison purposes. Data are available for Scotland and at 
-             #    NHS Board and Alcohol and Drug Partnership levels and are also broken down by client type (Drugs, Alcohol and All). '),
-             #  p('DAISy introduced an additional \'co-dependency\' client type (where the referral relates to treatment for both alcohol and drug use), but this has only been recorded in all NHS Boards since April 2021 so is not available as a separate breakdown here. To ensure completeness, the \'Drugs\' category includes all referrals relating to drugs and co-dependency and the \'Alcohol\' category includes all referrals relating to alcohol and co-dependency. From 1 December 2020 onwards, 
-             #    the sum of referrals in the \'Alcohol\' and \'Drugs\' categories will be higher than the \'All\' data category, due to the inclusion of \'co-dependency\' in both.'),
-             #  p('May 2021 figures may currently be underreported due to late data submissions for the most recent weeks (a dashed line is used to indicate the lower degree of certainty in the figures for this period).'),
-             #  p('For further information, contact',
-             #     tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
-             #   easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-             # }
-             #else
-             if(input$drug_subcategories == 'Take home naloxone kits'){
+             if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
+             showModal(modalDialog(
+               title = "What is the data source?",
+              p('This section of the PHS Covid-19 wider impacts dashboard provides the weekly number of referrals to specialist alcohol and drug treatment services in Scotland delivering tier 3 and 4 interventions (community-based specialised drug assessment and co-ordinated care-planned treatment, and residential specialised drug treatment). These data exclude drug and alcohol treatment services in prisons.'),
+              p('These data have been extracted from the Drug and Alcohol Treatment Waiting Times (DATWT) database and the new',
+                tags$a(href="https://www.isdscotland.org/health-topics/drugs-and-alcohol-misuse/drug-alcohol-information-system/", 
+                       "Drug and Alcohol Information System ",  target="_blank"), 
+                '(DAISy) (both Public Health Scotland) . DAISy is a national system that collects drug and alcohol waiting times and treatment information. This replaced the DATWT database and the Scottish Drug Misuse Database (SDMD) systems. From 1 December 2020 NHS Ayrshire & Arran, NHS Dumfries & Galloway, NHS Grampian and NHS Western Isles began recording waiting times information on DAISy. The remaining NHS Boards transferred to DAISy in April 2021.'),
+              p('Data from the start of 2020 to the end of March 2021 are shown alongside historical activity data (average from 2018 and 2019) for comparison purposes. Data are available for Scotland and at NHS Board and Alcohol and Drug Partnership levels and are also broken down by client type (Drugs, Alcohol and All).'),
+              p('DAISy introduced an additional ‘co-dependency’ client type (where the referral relates to treatment for both alcohol and drug use), but this has only been recorded in all NHS Boards since April 2021 so is not available as a separate breakdown here. To ensure completeness, the ‘Drugs’ category includes all referrals relating to drugs and co-dependency and the ‘Alcohol’ category includes all referrals relating to alcohol and co-dependency. From 1 December 2020 onwards, the sum of referrals in the ‘Alcohol’ and ‘Drugs’ categories will be higher than the ‘All’ data category, due to the inclusion of ‘co-dependency’ in both.'),
+              p('DAISy also introduced a new continuation of care process which affects how referrals are recorded for circumstances when clients move between services. It is anticipated that continuation of care will result in a decrease in the number of new referrals being recorded in DAISy compared to previous processes in place for the DATWT database. Direct comparisons between numbers of referrals recorded in DATWT and DAISy should be interpreted carefully, acknowledging these changes in the recording process.'),
+              p('Services are required to submit accurate and up-to-date information. Alcohol and Drug Partnerships (ADPs) have the responsibility of ensuring services are collecting and submitting data accurately (compliant). Compliance is monitored quarterly, and non-compliant services are excluded from the latest quarter of these data.  The percentage of services submitting data (compliant) across Scotland is typically greater than 95%. '),
+              p('For further information, contact',
+                 tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
+               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             }
+             else if(input$drug_subcategories == 'Take home naloxone kits'){
               showModal(modalDialog(
                  title = "What is the data source?",
               p('Accidental overdose is a common cause of death among users of opioids such as heroin and morphine. 
@@ -37,17 +36,49 @@ observeEvent(input$btn_drugs_modal,
                 tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
+             else if(input$drug_subcategories == 'SAS naloxone administration'){
+               showModal(modalDialog(
+                 title = "What is the data source?",
+                 p('Scottish Ambulance Service (SAS) data on weekly numbers of incidents at which naloxone was administered to a patient have been shared with Public Health Scotland to facilitate the monitoring of drug-related harms and assist in preserving life and informing harm prevention activity. '),
+                 p('These data provide an indication of numbers of suspected opioid overdoses attended by ambulance clinicians before and during the pandemic. This allows trends over time to be monitored and acts as a basis for investigating changes that may be associated with the pandemic.  The figures shown relate to the 3-week central moving average of naloxone incidents per week recorded by SAS in the period from beginning of 2018 to 16 August 2021.'),
+                 p('Naloxone is a medication which is used to prevent fatal opioid overdose. SAS clinicians have been administering naloxone directly to patients experiencing symptoms of an opioid overdose since around 1998. Scotland’s National Naloxone Programme, supplying take-home naloxone kits directly to people at risk of opioid overdose, has been operational since April 2011. In 2020, SAS commenced a pilot study to supply take-home naloxone to those experiencing a non-fatal opioid overdose or present at the scene of an opioid overdose that they attended.'),
+                 p('SAS data on numbers of naloxone incidents are collated from data entered by ambulance clinicians recording medications administered to patients via an electronic tablet in the vehicle. Data recording is typically completed within 30 minutes of the end of an incident. There have been no changes in the guidance given to SAS clinicians regarding the administration of naloxone nor in the recording mechanisms or processes over the time series shown in the analysis.'),
+                 p('In spite of this high degree of consistency, the full reasons for naloxone administration are not known. A small percentage of these administrations will have been due to circumstances other than an illicit opioid overdose (for example, some may relate to prescribed opioid overdoses or to adverse reactions associated with medications administered in the course of emergency treatment). Also, in a small number of cases, naloxone may be administered to someone who is unconscious for unconfirmed reasons, which may be confirmed at a later point not to have been an opioid overdose. '),
+                 p('Prior to agreeing on this specific indicator, a number of other potential overdose measures were discussed with SAS colleagues. In spite of the availability of a specific ‘overdose’ diagnosis group in SAS data, it was felt that a naloxone administration indicator offered the clearest focus on opioid overdoses, which are most commonly associated with drug-related deaths. '),
+                 p('These data relate to the number of incidents at which naloxone was administered. While these data count multiple overdose patients at the same incident separately, multiple naloxone administrations to specific individuals at the same incident are not counted as separate incidents. Under some circumstances, naloxone administration will not successfully reverse an opioid overdose (for example, if administered too late) and these statistics should not be interpreted as equating to numbers of lives saved. Data on interventions in relation to opioid overdose are complex and multi-faceted. '),
+                 p('For further information, contact',
+                   tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             }
+             else if(input$drug_subcategories == 'OST prescribing'){
+               showModal(modalDialog(
+                 title = "What is the data source?",
+                 p('Information on the characteristics of community prescribing for Opioid Substitution Therapy (OST) drugs (methadone and buprenorphine) in Scotland is obtained from the Prescribing Information System. '),
+                 p('These data include all OST prescriptions written by clinicians (doctors, nurses, and pharmacists) in specialist drug treatment clinics or in GP Practices and dispensed in the community.  These data do not include prescriptions dispensed in hospitals or prisons.'),
+                 p('The methadone statistics relate to prescriptions for methadone 1mg/1ml oral solution. The buprenorphine figures relate to prescriptions for 2mg, 8mg and 16mg buprenorphine or buprenorphine & naloxone tablets. Prescribing for long-acting buprenorphine injectables (Buvidal®) are not included in these statistics.  '),
+                 p(strong('Terminology:')),
+                 tags$ul(
+                   tags$li("Item: An item is an individual product written on a prescription, e.g. methadone 1mg/ml oral solution. "),
+                   tags$li("Quantity: The total quantity of the item requested on the prescription, e.g. 500ml."),
+                   tags$li("Quantity per item:  The quantity prescribed per item on a prescription. It is calculated as quantity/number of items.")),
+                 p('Other areas of the Covid Wider Impacts Dashboard i.e. Cardiovascular and Mental Health have presented prescribing information using data from e- messages (generated through GP practices) which provide more real-time data. As a significant amount of OST prescribing is undertaken through non-GP clinic settings, paid data is the most complete and robust and used in this analysis.'),
+                 p('Paid data is presented by month and refers to prescriptions that have been submitted and processed for payment. Since all dispensers must be reimbursed for the drugs they dispense, this data is regarded as complete. '),
+                 p('For further information, contact',
+                   tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             }
                )
+#observeEvent(input$browser, browser())
 
 output$area_drugs_select<-renderUI({
   
-  # if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
-  #   selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
-  #                  choices = c('Scotland','NHS Board','Alcohol and Drug Partnership'), selected = "Scotland")
-  # }
+  if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
+    selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
+                   choices = c('Scotland','NHS Board','Alcohol and Drug Partnership'), selected = "Scotland")
+  }
+
   
-  #else 
-    if (input$drug_subcategories == 'Take home naloxone kits'){
+  else if (input$drug_subcategories == 'Take home naloxone kits'||input$drug_subcategories=='SAS naloxone administration'||input$drug_subcategories == 'OST prescribing'){
     selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
                    choices = c('Scotland','NHS Board'), selected = "Scotland")
   }
@@ -70,117 +101,235 @@ output$geoname_ui_drugs <- renderUI({
 })
 
 output$types<-renderUI({
-  # if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
-  #   column(8,
-  #          radioButtons("types", label="Step 3 - Select type of referral",
-  #                       choices = c('All','Drug','Alcohol'),selected = 'All'))
-  # }
-  
-  #else 
-    if(input$drug_subcategories=='Take home naloxone kits'){
+  if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+    column(8,
+           radioButtons("types", label="Step 3 - Select type of referral",
+                        choices = c('All','Drug','Alcohol'),selected = 'All'))
+  }
+  else if(input$drug_subcategories=='Take home naloxone kits'){
     column(8,
            radioButtons("types", label="Step 3 - Select source of supply",
-                        choices = c('All','Community','Prescribing','Prison'),selected = 'All'))
+                        choices = c('All','Community','Dispensed by community pharmacies'='Prescribing','Prison'),selected = 'All'))
   }
+  else if (input$drug_subcategories=='OST prescribing'){
+    column(8, 
+           radioButtons('types',label='Step 3 - Select type of treatment',
+                        choices=c('Methadone','Buprenorphine'),selected='Methadone'))
+    }
 })
-
-
-
-
-output$TwoYrComparison<-renderPlotly({
-  
-  ###DTR section###
+ 
+location<-reactive({
   
   if (input$area_drugs_select=='Scotland'){
     location<-'Scotland'
   }
-  else if (input$area_drugs_select=='Alcohol and Drug Partnership'){
+  else if (input$area_drugs_select=='Alcohol and Drug Partnership'||input$area_drugs_select=='NHS Board'){
     location<-input$geoname_drugs
   }
-  else if (input$area_drugs_select=='NHS Board'){
-    location<-input$geoname_drugs
-  }
+  }) 
+
+
+plot_data<-reactive({ 
   
-  # if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
-  #   plot_data<-subset(DTR_July_update,(Board==location)& Type==input$types & Date<'2021-06-28')#cutting off in line with most recent covid report
-  #   complete_data<-subset(plot_data,Date<='2021-05-24')
-  #   incomplete_data<-subset(plot_data,Date>='2021-05-24')
-  #   
-  #   trend<-plot_ly(data = complete_data, x = ~Date,y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),
-  #                  text=c(paste0("Date: ", format(complete_data$Date, format = "%b %d, %Y"),
-  #                           "<br>", 'Number of referrals: ', complete_data$`2020 & 2021`,
-  #                           "<br>", "Historic average: ", complete_data$`Average 2018 & 2019`)),hoverinfo='text')
-  #   trend<-trend %>% add_trace(data=incomplete_data, x=~Date,y=~`2020 & 2021`,type='scatter',name='20/21 (Incomplete)',mode='lines',line=list(color=pal_overall[1],dash='dash'),showlegend=FALSE,
-  #                              text=c(paste0("Date: ", format(incomplete_data$Date, format = "%b %d, %Y"),
-  #                                            "<br>", 'Number of referrals: ', incomplete_data$`2020 & 2021`,
-  #                                            "<br>", "Historic average: ", incomplete_data$`Average 2018 & 2019`)),hoverinfo='text')
-  #   trend<-trend %>% add_trace(data=plot_data,x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
-  #                              text=c(paste0("Date: ", format(plot_data$Date, format = "%b %d, %Y"),
-  #                                            "<br>", 'Number of referrals: ', plot_data$`2020 & 2021`,
-  #                                            "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`)),hoverinfo='text')
-  #   trend <- trend %>% layout(
-  #     title = (sprintf("Number of %s treatment referrals in 2020 and 2021 \n compared with 2018-19 average (%s)",tolower(input$types),location)),
-  #     yaxis = list(title = "Number of referrals")
-  #   )
-  #   trend <- trend %>%  config(
-  #     displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
-  #                                                                           'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-  #                                                                           'hoverClosestCartesian', 'zoom2d', 'pan2d'))
-  #   
-  # }
-  # 
-  #else 
-    if(input$drug_subcategories=='Take home naloxone kits'){
-    plot_data<-subset(THN_by_HB,(Board==location) & (Type==input$types))
-    lab_text<-c(paste0("Month: ", c(paste(unique(plot_data$Date),'2020',sep=' '),'Jan 2021','Feb 2021','Mar 2021'),
+  if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+    
+    plot_data<-subset(DTR_data,(Board==location()) & Type==input$types & Date<'2021-04-01')
+  }
+  else if(input$drug_subcategories=='Take home naloxone kits'){
+    plot_data<-subset(THN_by_HB,(Board==location()) )
+  }
+  else if(input$drug_subcategories=='OST prescribing'){
+    plot_data<-subset(OST_paid,(Board==location()) & (Type==input$types))
+  }
+  else if(input$drug_subcategories=='SAS naloxone administration'){
+    plot_data<-subset(SASdata,(Board==location()))
+  }
+  plot_data
+})
+
+
+output$TwoYrComparison<-renderUI({
+  
+  ###DTR section###
+  plot_data<-plot_data()
+  
+  
+  if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+    output$trend<-renderPlotly({
+    lab.text<-c(paste0("Date: ", format(plot_data$Date, format = "%b %d, %Y"),
+                       "<br>", 'Number of referrals: ', plot_data$`2020 & 2021`,
+                       "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
+    trend<-plot_ly(data = plot_data, x = ~Date,y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),
+                   text=lab.text,hoverinfo='text')
+    trend<-trend %>% add_trace(x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
+                               text=lab.text,hoverinfo='text')
+    trend <- trend %>% layout(
+      shapes=lockdown('2020-03-23','grey'),
+      annotations=annote("2020-03-01", plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`),
+      margin=list(t=80),
+      title = (sprintf("Number of %s treatment referrals in 2020 and 2021 \n compared with 2018-19 average (%s)",tolower(input$types),location())),
+      yaxis = list(title = "Number of referrals",
+                   rangemode='tozero',
+                   fixedrange=TRUE),
+      xaxis=list(
+        fixedrange=TRUE)
+    )
+    trend <- trend %>%  config(
+      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+     })
+    plotlyOutput('trend',width='100%')
+    }
+ 
+  
+  else if(input$drug_subcategories=='Take home naloxone kits'){
+    output$trend<-renderPlotly({
+    plot_data<-subset(plot_data(),(Type==input$types))
+    lab_text<-c(paste0("Month: ", unique(plot_data$Date),
                        "<br>", 'Number of THN: ', plot_data$`2020 & 2021`,
                        "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
     trend<-plot_ly(data = plot_data, x =seq(1:nrow(plot_data)))
     trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text,hoverinfo='text')
     trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),text=lab_text,hoverinfo='text')
     trend<-trend %>% layout(
-          xaxis=list(
-          tickmode='array',
-          tickvals=seq(1:nrow(plot_data)),
-          ticktext=c(paste(unique(plot_data$Date),'2020',sep=' '),'Jan 2021','Feb 2021','Mar 2021')
-          
-        )
-        )
+      margin=list(t=80),
+      xaxis=list(
+        tickmode='array',
+        tickvals=seq(1,nrow(plot_data),2),
+        ticktext=as.character(unique(plot_data$Date))[c( TRUE , rep(FALSE, 1)) ],
+        fixedrange=TRUE,
+        title='Date'
+      )
+    )
     trend <- trend %>% layout(
-      title = (sprintf("Number of take home naloxone supplied in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location,input$types)),
-    
-      xaxis=list(title='Date'),          
-      yaxis = list(title = "Number of THN kits")
+      title = (sprintf("Number of take home naloxone supplied in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location(),input$types)),
+      yaxis = list(title = "Number of THN kits",
+                   rangemode='tozero',
+                   fixedrange=TRUE),
+      shapes=lockdown('3.77','grey'),
+      annotations=annote("3.2", plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`)
     )
     trend <- trend %>%  config(
-      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
-                                                                            'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                                                                            'hoverClosestCartesian', 'zoom2d', 'pan2d'))
-    
+      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    })
+    plotlyOutput('trend',width='100%')
   }
+  
+  else if(input$drug_subcategories=='OST prescribing'){
+    output$trend<-renderPlotly({
+    
+      
+      plot_item<-subset(plot_data(),(Measurement=='Items'))
+      plot_qpi<-subset(plot_data(),(Measurement=='Quantity per item'))
+      lab_text<-c(paste0("Month: ", plot_item$Date,
+                         "<br>", 'Number of items: ', plot_item$`2020 & 2021`,
+                         "<br>", "Historic average: ", plot_item$`Average 2018 & 2019`))
+      lab_text1<-c(paste0("Month: ", plot_qpi$Date,
+                          "<br>", 'Quantity per item (mg): ', plot_qpi$`2020 & 2021`,
+                          "<br>", "Historic average: ", plot_qpi$`Average 2018 & 2019`))
+      trend<-plot_ly(data = plot_item,x=seq(1:nrow(plot_item)))
+      trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='Items: 2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1],width=3),text=lab_text,hoverinfo='text')
+      trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Items: Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[1],dash='dot'),text=lab_text,hoverinfo='text')
+      trend<-trend %>% add_trace(data=plot_qpi, x=seq(1:nrow(plot_qpi)),y = ~ `2020 & 2021`,name='QPI: 2020 & 2021',type='scatter',yaxis='y2', mode='lines', line=list(color=pal_overall[2],width=3),text=lab_text1,hoverinfo='text')
+      trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='QPI: Average \n2018-2019',type='scatter', mode='lines',yaxis='y2', line=list(color=pal_overall[2],dash='dot'),text=lab_text1,hoverinfo='text')
+      trend<-trend %>% layout(
+        shapes=lockdown('3.77','grey'),
+        annotations=annote("3.2",plot_item$`Average 2018 & 2019`,plot_item$`2020 & 2021` ),
+        title=(sprintf("%s prescribing (number of items and quantity (mg) per item (QPI)) by month in 2020 and 2021 \n compared with 2018-19 average (%s)",input$types,location())),
+        margin=list(t=140),
+        xaxis=list(
+          title='Date',
+          tickmode='array',
+          tickvals=seq(1,nrow(plot_item),2),
+          ticktext=as.character(plot_item$Date)[c( TRUE , rep(FALSE, 1)) ],
+          fixedrange=TRUE
+          
+        ),
+        yaxis=list(title='Number of items',
+                   rangemode='tozero',
+                   fixedrange=TRUE),
+        yaxis2 = list(overlaying = "y", 
+                      side = "right", 
+                      title='Quantity per item (QPI) (mg)',
+                      automargin=T,
+                      rangemode='tozero'),
+        legend = list(x=1.08,y=1),
+        updatemenus = list(
+          list(
+            type = "buttons",
+            direction = "right",
+            xanchor = 'center',
+            yanchor = "top",
+            x = 0.6,
+            y = 1.15,
+            buttons = list(
+              list(method = "restyle",
+                   args = list('visible', c(TRUE, TRUE, TRUE,TRUE)),
+                   label = "View all"),
+              list(method = "restyle",
+                   args = list('visible', c(TRUE,TRUE, FALSE, FALSE)),
+                   label = "Items"),
+              list(method = "restyle",
+                   args = list('visible', c(FALSE, FALSE, TRUE,TRUE)),
+                   label = "Quantity per item")
+            )
+          )
+        ))
+      
+      trend <- trend %>%  config(
+        displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+      
+    })
+    plotlyOutput('trend',width='100%')
+  }
+  
+  else if(input$drug_subcategories=='SAS naloxone administration'){
+    if(location()=='NHS Shetland'||location()=='NHS Orkney'||location()=='NHS Western Isles'){
+      output$data_message<-renderText('Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total')
+      textOutput('data_message')
+    }
+    else{
+    output$trend<-renderPlotly({
+    
+    lab_text1<-c(paste0("Date: ", plot_data()$Date,
+                        "<br>", 'No. of SAS naloxone incidents: ', plot_data()$`2020 & 2021`,
+                        "<br>", "Historic average: ", plot_data()$`Average 2018 & 2019`))
+    trend<-plot_ly(data = plot_data(),x=plot_data()$Date)
+    trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text1,hoverinfo='text')
+    trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),text=lab_text1,hoverinfo='text')
+    trend<-trend %>% layout(
+      shapes=lockdown('2020-03-23','grey'),
+      annotations=annote("2020-03-01",plot_data()$`Average 2018 & 2019`,plot_data()$`2020 & 2021`),
+      margin=list(t=80),
+      title = (sprintf("Number of SAS incidents where naloxone was administered in 2020 and 2021 \n compared with 2018-19 average (%s)",location())),
+      xaxis=list(
+        title='Date',
+        fixedrange=TRUE
+        
+      ),
+      yaxis=list(title='No. of SAS naloxone incidents',
+                 rangemode='tozero',
+                 fixedrange=TRUE)
+      
+    )
+    trend <- trend %>%  config(
+      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    })
+    plotlyOutput('trend',width='100%')
+  }}
+  
   
 })
 
 
 output$Prop_barplot<-renderUI({
+  
   if(input$drug_subcategories=='Take home naloxone kits'){
-    
-    
-    if (input$area_drugs_select=='Scotland'){
-      location<-'Scotland'
-    }
-    else if (input$area_drugs_select=='Alcohol and Drug Partnership'){
-      location<-input$geoname_drugs
-    }
-    else if (input$area_drugs_select=='NHS Board'){
-      location<-input$geoname_drugs
-    }
     
     output$prop_plot<-renderPlotly({
       
-      plot_data<-subset(THN_by_HB,(Board==location))
+      plot_data<-plot_data()
       prop<-plot_ly(data = plot_data, x =seq(1:15),y = plot_data$`2020 & 2021`[which(plot_data$Type=='Community')],type='bar',name='Community',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Community')],' %'),marker = list(color = pal_drug[1]))
-      prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')], name = 'Prescribing',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prescribing')],' %'),marker = list(color = pal_drug[2]))
+      prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')], name = 'Dispensed by \ncommunity pharmacies',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prescribing')],' %'),marker = list(color = pal_drug[2]))
       prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')], name = 'Prison',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prison')],' %'),marker = list(color = pal_drug[3]))
       prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')], name = 'SAS',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Ambulance')],' %'),marker = list(color = pal_drug[4]))
       prop<-prop %>% add_trace(y = (plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Community')]),
@@ -189,24 +338,23 @@ output$Prop_barplot<-renderUI({
                                marker = list(size = 4,
                                              color = 'rgba(0, 0, 0,0)')) 
       prop <- prop %>% layout(
-        #separators = '.,', 
+        margin=list(t=80),
         barmode = 'stack',
             xaxis=list(
             tickmode='array',
             tickvals=seq(1:nrow(plot_data)),
-            ticktext=c(paste(unique(plot_data$Date),' 2020'),'Jan 2021','Feb 2021','Mar 2021')
+            ticktext=unique(plot_data$Date)
           ))
       prop <- prop %>% layout(
-        title = (sprintf("Percentage of take home naloxone provided by source of supply in 2020 and 2021 (%s)",location)),
-        xaxis=list(title='Date'),
-        yaxis = list(title = "Number of THN kits"),
-                    # hoverformat=',.0%'),
+        title = (sprintf("Percentage of take home naloxone provided by source of supply in 2020 and 2021 (%s)",location())),
+        xaxis=list(title='Date',
+                   fixedrange=TRUE),
+        yaxis = list(title = "Number of THN kits",
+                     fixedrange=TRUE),
         hovermode= 'x unified'
       )
       prop <- prop %>%  config(
-        displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
-                                                                              'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                                                                              'hoverClosestCartesian', 'zoom2d', 'pan2d'))
+        displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     })
     
     plotlyOutput('prop_plot',width='100%')
@@ -215,98 +363,144 @@ output$Prop_barplot<-renderUI({
   
 })
 
+output$Cum_plot<-renderUI({
+  
+  if(input$drug_subcategories=='Take home naloxone kits'){
+    output$cum_plot<-renderPlotly({
+    plot_data<-subset(plot_data(),(Type==input$types))
+    plot_data1<-plot_data[1:12,]
+    plot_21<-plot_data[13:nrow(plot_data),]
+    lab_text<-function(x,y,z){
+      c(paste0("Year: ", x,
+               "<br>", 'Month: ', y,
+               "<br>", "Cumulative number of THN kits: ", z))
+    }
+    trend<-plot_ly(data = plot_data1, x =seq(1:(nrow(plot_data1)+1)))
+    trend<-trend %>% add_trace(y = c(0,cumsum(plot_data1$`Average 2018 & 2019`)),name='Average \n2018-2019',type='scatter', mode='lines',line=list(color='green',dash='dot'),text=lab_text('Average 2018-2019',c('',substr(plot_data1$Date,1,3)),c(0,cumsum(plot_data1$`Average 2018 & 2019`))),hoverinfo='text')
+    trend<-trend %>% add_trace(y = c(0,cumsum(plot_data1$`2020 & 2021`)),name='2020',type='scatter', mode='lines', line=list(color='black'),text=lab_text('2020',c('',substr(plot_data1$Date,1,3)),c(0,cumsum(plot_data1$`2020 & 2021`))),hoverinfo='text')
+    trend<-trend %>% add_trace(data=plot_21, x=seq(1:(nrow(plot_21)+1)),y=c(0,cumsum(plot_21$`2020 & 2021`)), name='2021', type='scatter',mode='lines',line=list(color='blue'),text=lab_text('2021',c('',substr(plot_21$Date,1,3)),c(0,cumsum(plot_21$`2020 & 2021`))),hoverinfo='text')
+    trend<-trend %>% 
+      layout(
+        margin=list(t=80,l=2),
+        title=(sprintf("Cumulative number of take home naloxone supplied in 2020 and 2021 \n compared with 2018-19 average (%s, %s)",location(),input$types)),
+        xaxis=list(
+          tickvals=seq(1:(nrow(plot_data1)+1)),
+          ticktext=c('',substr(plot_data1$Date,1,3)),
+          title='Month',
+          fixedrange=TRUE
+        ),
+        shapes=lockdown('4.77','black'),
+        annotations=annote("4.2",cumsum(plot_data$`2020 & 2021`),cumsum(plot_data$`Average 2018 & 2019`)),
+        yaxis = list(title = "Cumulative number of THN kits",
+                     fixedrange=TRUE))
+      trend <- trend %>%  config(
+      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+      })
+    plotlyOutput('cum_plot')
+    }
+
+
+ else if(input$drug_subcategories=='SAS naloxone administration'){
+   if(location()!='NHS Shetland'&&location()!='NHS Orkney'&&location()!='NHS Western Isles'){
+
+   output$cum_plot<-renderPlotly({
+   plot_data<-plot_data()
+   plot_data<- plot_data %>%
+         mutate(month = format(Date, "%m"), year = format(Date, "%Y")) 
+   plot_data1<-subset(plot_data,Date<'2021-01-04')
+   plot_21<-subset(plot_data,Date>='2021-01-04')
+   #aggregating data by month
+   plot_data1<-aggregate(.~ month + year,data=plot_data1[,c(3,4,7,8)],FUN=sum, na.rm=T)
+   plot_21<-aggregate(.~ month + year,data=plot_21[,c(3,4,7,8)],FUN=sum, na.rm=T)
+   #adding 2019 week to jan 2020 week
+   plot_data1$`Raw 20/21`[2]<-plot_data1$`Raw 20/21`[2]+plot_data1$`Raw 20/21`[1]
+   plot_data1$`Raw 2018/19`[2]<-plot_data1$`Raw 2018/19`[2]+plot_data1$`Raw 2018/19`[1]
+   plot_21$`Raw 20/21`[2]<-plot_21$`Raw 20/21`[2]+plot_21$`Raw 20/21`[1]
+   #removing first row 
+   plot_data1<-plot_data1[-1,]
+   
+   lab_text<-function(x,y,z){
+     c(paste0("Year: ", x,
+              "<br>", 'Month: ', y,
+              "<br>", "Cumulative number of SAS naloxone incidents: ", z))
+   }
+   y_1819<-cumsum(plot_data1$`Raw 2018/19`)
+   y_20<- cumsum(plot_data1$`Raw 20/21`)
+   y_21<-cumsum(plot_21$`Raw 20/21`)
+   trend<-plot_ly(data = plot_data1, x =seq(1:(nrow(plot_data1)+1)))
+   trend<-trend %>% add_trace(y =c(0,y_1819),name='Average \n2018-2019',type='scatter', mode='lines',line=list(color='green', dash='dot'),text=lab_text('Average 2018-2019',c('',month.abb[as.numeric(plot_data1$month)]),c(0,y_1819)),hoverinfo='text')
+   trend<-trend %>% add_trace(y = c(0,y_20),name='2020',type='scatter', mode='lines',line=list(color='black'),text=lab_text('2020',c('',month.abb[as.numeric(plot_data1$month)]),c(0,y_20)),hoverinfo='text')
+   trend<-trend %>% add_trace(data=plot_21,x=seq(1:(nrow(plot_21)+1)), y=c(0,y_21), name='2021', type='scatter',mode='lines',line=list(color='blue'),text=lab_text('2021',c('',month.abb[as.numeric(plot_21$month)]),c(0,y_21)),hoverinfo='text')
+   trend<-trend %>% 
+     layout(
+       margin=list(t=80,l=2),
+       title=(sprintf("Cumulative number of SAS incidents where naloxone was administered in 2020 and 2021 \n compared with 2018-19 average (%s)",location())),
+       xaxis=list(
+         tickvals=seq(1:(nrow(plot_data1)+1)),
+         ticktext=c('',month.abb[as.numeric(plot_data1$month)]),
+         title='Month',
+         fixedrange=TRUE
+       ),
+       shapes=lockdown('4.77','black'),
+       annotations=annote("4.2",y_1819,y_20),
+       yaxis = list(title = "Cumulative number SAS naloxone incidents",
+                    fixedrange=TRUE))
+   
+   trend <- trend %>%  config(
+     displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+   })
+   
+   plotlyOutput('cum_plot')
+   
+  }}
+
+})
+
 
 output$PercentChange<-renderUI({
   
-  if (input$area_drugs_select=='Scotland'){
-    location<-'Scotland'
-  }
-  else if (input$area_drugs_select=='Alcohol and Drug Partnership'){
-    location<-input$geoname_drugs
-  }
-  else if (input$area_drugs_select=='NHS Board'){
-    location<-input$geoname_drugs
-  }
   
-  
-  
-  # if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
-  #   
-  #   plot_data<-subset(DTR_July_update,(Board==location) & Type==input$types  & Date<'2021-06-28')
-  #   
-  #   if(length(which(is.na(plot_data$Change)))==0){
-  #     
-  #     output$change_plot<-renderPlotly({
-  #   
-  #   tooltip_trend<-c(paste0(
-  #                         "Date: ", format(plot_data$Date, format = "%b %d, %Y"),
-  #                         "<br>", "Change from 2018-2019 average: ",ifelse(plot_data$Change >= 0, "+", ""), plot_data$Change, "%"))
-  #   change<-plot_ly(data = plot_data, x = ~Date, y = ~Change,
-  #                   type='scatter', 
-  #                   mode='lines',
-  #                   line=list(color=pal_overall[1]),
-  #                   text=tooltip_trend, 
-  #                   hoverinfo="text")
-  #   
-  #   change <- change %>% layout(
-  #     title = (sprintf("Percentage difference in the number of %s treatment referrals in 2020 and 2021 \n compared with 2018-2019 average (%s)",tolower(input$types),location)),
-  #     yaxis = list(title = "% Change")
-  #   )
-  #   change <- change %>%  config(
-  #     displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
-  #                                                                           'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-  #                                                                         'hoverClosestCartesian', 'zoom2d', 'pan2d'))
-  #     })  
-  #     plotlyOutput('change_plot',width='90%')
-  #   }
-  #   else if(length(which(is.na(plot_data$Change)))!=0){
-  #     
-  #     output$data_message<-renderText('Percent difference plot not shown due to \'not applicable\' values being produced by comparison with 0 values in 2018/2019 average.')
-  #     textOutput('data_message')
-  #   }
-  # }
-  
-  #else 
-    if(input$drug_subcategories=='Take home naloxone kits'){
-    
-    plot_data<-subset(THN_by_HB,(Board==location) & (Type==input$types))
+  if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+
+    plot_data<-plot_data()
+
     if(length(which(is.na(plot_data$Change)))==0){
-    
+
       output$change_plot<-renderPlotly({
-      
+
     tooltip_trend<-c(paste0(
-      "Month: ", c(paste(unique(plot_data$Date),'2020',sep=' '),'Jan 2021','Feb 2021','Mar 2021'),
-      "<br>", "Change from 2018 & 2019 average: ",ifelse(plot_data$Change >= 0, "+", ""), plot_data$Change, "%"))
-    change<-plot_ly(data = plot_data,x =seq(1:nrow(plot_data)), y = ~Change,
-                    type='scatter', 
+                          "Date: ", format(plot_data$Date, format = "%b %d, %Y"),
+                          "<br>", "Change from 2018-2019 average: ",ifelse(plot_data$Change >= 0, "+", ""), plot_data$Change, "%"))
+    change<-plot_ly(data = plot_data, x = ~Date, y = ~Change,
+                    type='scatter',
                     mode='lines',
                     line=list(color=pal_overall[1]),
-                    text=tooltip_trend, 
+                    text=tooltip_trend,
                     hoverinfo="text")
-    change<-change %>% 
-      layout(
-        xaxis=list(
-          tickmode='array',
-          tickvals=seq(1:nrow(plot_data)),
-          ticktext=c(paste(unique(plot_data$Date),'2020',sep=' '),'Jan 2021','Feb 2021','Mar 2021')
-        ))
+
     change <- change %>% layout(
-      title = (sprintf("Percentage difference in supply of take home naloxone in 2020 and 2021 \n compared with 2018-2019 average (%s,%s)",location,input$types)),
-      yaxis = list(title = "% Change"
-                   ),
-      xaxis = list(title = "Date")
+      margin=list(t=80),
+      title = (sprintf("Percentage difference in the number of %s treatment referrals in 2020 and 2021 \n compared with 2018-2019 average (%s)",tolower(input$types),location())),
+      yaxis = list(title = "% Change",
+                   fixedrange=TRUE),
+      xaxis=list(fixedrange=TRUE),
+      shapes=lockdown('2020-03-23','grey'),
+      annotations=list(x = "2020-03-01",
+                       y = max(plot_data$Change),
+                       text = "1st lockdown",
+                       xref = "1",
+                       yref = "1",
+                       showarrow=FALSE,
+                       align='left')
     )
     change <- change %>%  config(
-      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = list('select2d', 'lasso2d', 
-                                                                            'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
-                                                                            'hoverClosestCartesian', 'zoom2d', 'pan2d'))
+      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
       })
-      
-      plotlyOutput('change_plot',width='92%')
+      plotlyOutput('change_plot',width='90%')
     }
-    
     else if(length(which(is.na(plot_data$Change)))!=0){
-      
+
       output$data_message<-renderText('Percent difference plot not shown due to \'not applicable\' values being produced by comparison with 0 values in 2018/2019 average.')
       textOutput('data_message')
     }
@@ -314,53 +508,125 @@ output$PercentChange<-renderUI({
   
 })
 
+output$Quan_plot<-renderUI({
+  if (input$drug_subcategories=='OST prescribing'){
+    
+    output$quan_plot<-renderPlotly({
+      
+      plot_quantity<-subset(OST_paid_quantity,(Board==location()) & (Type==input$types))
+      lab_text<-c(paste0("Month: ", plot_quantity$Date,
+                         "<br>", 'Quantity: ', plot_quantity$Quantity, ' mg'))
+      trend<-plot_ly(data = plot_quantity,x=seq(1:nrow(plot_quantity)))
+      trend<-trend %>% add_trace(y = ~ Quantity,type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text,hoverinfo='text')
+      trend<-trend %>% layout(
+        margin=list(t=80),
+        title=(sprintf('Total quantity (mg) of %s prescribed per month since January 2018 (%s)',tolower(input$types),location())),
+        xaxis=list(
+          title=('Date'),
+          tickmode='array',
+          tickvals=seq(1,nrow(plot_quantity),6),
+          ticktext=as.character(plot_quantity$Date)[c( TRUE , rep(FALSE, 5)) ],
+          fixedrange=TRUE
+        ),
+        yaxis=list(title='Quantity (mg)',
+                   rangemode='tozero',
+                   fixedrange=TRUE),
+        shapes=lockdown('27.77','grey'),
+        annotations=list(x = "27.2",
+                         y = max(plot_quantity$Quantity),
+                         text = "1st lockdown",
+                         xref = "1",
+                         yref = "1",
+                         showarrow=FALSE,
+                         align='left')
+      )
+      trend <- trend %>%  config(
+        displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    })
+    plotlyOutput('quan_plot')
+  }
+  
+})
+  
+  
+
+
 ###############################################.
 ## Commentary ----
 ###############################################.
 output$drug_commentary <- renderUI({
   tagList(
     bsButton("jump_to_drugs",label = "Go to data"),#this button can only be used once
-    # h4(strong("Drug and alcohol treatment referrals")),
-    # p(strong("Information on the number of referrals to specialist drug and 
-    #          alcohol treatment services was included for the first time on 01 September 
+     h2('Take home naloxone kits'),
+        tags$ul(
+          tags$li("Overall THN supply in Scotland showed peaks between March and May 2020 and around December 2020 and January 2021. Most NHS Boards showed either one or both of these increases."),
+          tags$li("Supply by community outlets was the most common source of THN, although this varied between NHS Boards and source distribution has varied over the time period presented here. For example, NHS Dumfries & Galloway showed a large increase in community pharmacy supply between March and May 2020 (25% of all supply in March, 57% in April, and 35% in May, compared with around 6% or lower throughout the rest of time period from January 2020 to March 2021). ")),
+    
+        p(strong('Community')),
+        tags$ul(
+          tags$li("The trend in community outlet supplies per month shows an exceptionally large number of THN kits supplied in April and May 2020 during the initial response to the COVID-19 pandemic (from 961 in March to 2,546 in April and 1,675 in May). Large-scale distributions by NHS Fife and NHS Ayrshire and Arran accounted for the notable increases in supplies observed in April and May 2020 respectively. "),
+          tags$li("Aside from these peaks in April and May 2020, weekly supply numbers in 2020 were broadly the same as the combined 2018 and 2019 average. The two minor exceptions to this were smaller peaks in September and December 2020. Although the December 2020 figure was lower than that for of the 2018 & 2019 average, the regular peak observed at that time of year increase suggests a seasonal increase in THN supply.")),
+        
+        p(strong('Pharmacy')),
+        tags$ul(
+          tags$li("The number of THN kits dispensed by pharmacies on the basis of a community prescription was consistently higher from March 2020 to March 2021 than the average for 2018 & 2019. In particular, two large peaks in supply were observed in April 2020 (from 193 kits in March 2020 to 1,393 in April) and December 2020 (from 241 in October to 1,418 in December).")),
+        
+        p(strong('Prisons')),
+        tags$ul(
+          tags$li("The number of THN supplies issued by prisons per month was consistently higher for the period February 2020 to March 2021 than the corresponding 2018 & 2019 averages. The exception to this was November 2020 when supplies were 21% lower than the 2018 & 2019 average for the same month. "),
+          tags$li("The large peak in May 2020 may partially have been a result of the Scottish Prison Service\'s ",
+                  tags$a(href="https://www.sps.gov.uk/Corporate/Information/covid19/covid-19-information-hub.aspx", 
+                         "COVID Early Release scheme ",  target="_blank"),
+                 "in which the Coronavirus (Scotland) Act 2020 provided new powers for the early release of a specific class of prisoners held in Scottish prisons. Early release was deemed necessary in order to provide the Scottish Prison Service with additional operational capacity including allowing for a greater use of single cell occupancy, keeping prison staff and the people in their care safe. It is understood that that scheme is no longer operational, so subsequent increases may reflect other factors.")),
+           
+    h2('Drug and alcohol treatment referrals'),
+    tags$ul(
+      tags$li('The number of specialist drug and alcohol treatment referrals in January and February 2020 was broadly comparable to the 2018 and 2019 average for the corresponding weeks. Subsequently, a 63% decrease in referrals was observed from week beginning 9 March 2020 (1,156 referrals) to week beginning 23 March 2020 (424 referrals).'),
+      tags$li('Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising from 387 in the week beginning 6 April 2020 to 1,060 in the week beginning 24 August. This figure remained approximately stable until December, when the annual seasonal decrease in treatment referrals occurred in late November and December 2020. This seasonal decrease was broadly comparable with decreases observed in previous years.'),
+      tags$li('From January 2021 to March 2021, weekly drug and alcohol referral numbers remained stable and at a similar level seen in the latter half of 2020 (approximately 20% lower than the 2018 and 2019 average for the corresponding weeks).'),
+      tags$li('A similar pattern was seen for both drug and alcohol referrals over the 15-month time period, although alcohol treatment referrals dropped to a greater extent following the UK lockdown (at their lowest, alcohol referrals were 74% below the 2018 and 2019 average for the week beginning 6 April 2020, compared with 58% lower for drug referrals). However, numbers of both types of referral increased to approximately 20% below the 2018 and 2019 average by 22 June 2020.'),
+      tags$li('The Scotland trends described were observed across many NHS Boards and Alcohol and Drug Partnerships, although there will have been some variation between areas.')
+    ),
+    # h2('SAS naloxone administration'),
+    # tags$ul(
+    #   tags$li("The trends for SAS naloxone administration in 2020 and 2021 are generally in line with the trend seen in the average of 2018 and 2019. The 3-week average in both 2020 and 2021 data and the historic average show considerable variation over time. "),
+    #   tags$li("From January 2020 to the beginning of June 2020 the number of SAS naloxone incidents were roughly similar those seen on average in 2018 and 2019. The biggest difference between the two trend lines can be seen at the end of June to beginning of July where the historic average line peaked at 131 Naloxone incidents compared with 95 incidents in 2020. "),
+    #   tags$li('Following this difference, from August 2020 there was a decreasing trend in the number of SAS naloxone incidents followed by an increase from January 2021. This increase in the number of SAS naloxone incidents reaches a peak of 127 at the beginning of July 2021, followed by a small decrease to around 110 incidents in August 2021. This trend, beginning in January 2021, closely follows the trend seen on average in 2018 and 2019.')),
+    # 
+    #  h2("Drug and alcohol treatment referrals"),
+    # p(strong("Information on the number of referrals to specialist drug and
+    #          alcohol treatment services was included for the first time on 03 November
     #          2021")),
     # p(strong(
-    #   'These data on numbers of referrals to specialist drug and alcohol treatment services during the pandemic can be interpreted as a measure of demand for support with substance use issues and/or the capacity of services to process referrals for treatment. 
-    #  Although these data are sourced from the systems that monitor waiting times for drug and alcohol treatment waiting times, they do not indicate the percentage of waits for specialist treatment where the target was met, nor whether individuals were provided with support that met their needs. 
+    #   'These data on numbers of referrals to specialist drug and alcohol treatment services during the pandemic can be interpreted as a measure of demand for support with substance use issues and/or the capacity of services to process referrals for treatment.
+    #  Although these data are sourced from the systems that monitor waiting times for drug and alcohol treatment waiting times, they do not indicate the percentage of waits for specialist treatment where the target was met, nor whether individuals were provided with support that met their needs.
     #    Information on performance against Scotland\'s Drug and Alcohol Treatment Waiting Time target can be found at',
-    #    tags$a(href="https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/", 
+    #    tags$a(href="https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/",
     #           "https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/",  target="_blank"), '.'
     # )),
     # tags$ul(
-    #   tags$li("The numbers of specialist drug and alcohol treatment referrals in January and February 2020 were broadly comparable to the 2018 and 2019 average for the corresponding weeks. Subsequently, 
+    #   tags$li("The numbers of specialist drug and alcohol treatment referrals in January and February 2020 were broadly comparable to the 2018 and 2019 average for the corresponding weeks. Subsequently,
     #           a 63% decrease in referrals was observed from week beginning 9 March 2020 (1,156 referrals) to week beginning 23 March 2020 (424 referrals). "),
-    #   tags$li("Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising from 387 in the week beginning 6 April 2020 to 1,060 in the week beginning 24 August. This figure remained approximately stable until December, when the annual seasonal decrease in treatment 
+    #   tags$li("Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising from 387 in the week beginning 6 April 2020 to 1,060 in the week beginning 24 August. This figure remained approximately stable until December, when the annual seasonal decrease in treatment
     #           referrals in late November and December 2020 was broadly comparable with decreases observed in previous years. "),
     #   tags$li("From January 2021 to May 2021, referral numbers remained stable and at a similar level seen in the latter half of 2020 (generally around 20% lower than the 2018 and 2019 average for corresponding weeks)."),
     #   tags$li("A similar pattern was seen for both drug and alcohol referrals over the 18-month time period, although alcohol treatment referrals dropped to a greater extent following the UK lockdown (at their lowest, alcohol referrals were 74% below the 2018 and 2019 average for the week beginning 6 April, compared with 58% below observed in drug referrals). However, both referral types increased to around 20% below the 2018 and 2019 average by 22 June. "),
     #   tags$li("The trends described were broadly observed across all NHS Boards and Alcohol and Drug Partnerships.")),
-
-    h4(strong('Take home naloxone kits')),
+    # 
+    # 
+    h2('OST prescribing'),
+    p(strong('Methadone')),
+    p('The total quantity of methadone prescribed has remained fairly consistent since January 2018, at around 40 million mg per month. This suggests that the changes in methadone prescribing observed during the COVID-19 pandemic did not influence the total quantity of methadone prescribed.  However, there has been variation in how this has been prescribed. '),
     tags$ul(
-      tags$li("Overall THN supply in Scotland showed peaks between March and May 2020 and around December 2020 and January 2021. Most NHS Boards showed either one or both of these increases."),
-      tags$li("Supply by community outlets was the most common source of THN, although this varied between NHS Boards and source distribution has varied over the time period presented here. For example, NHS Dumfries & Galloway showed a large increase in community pharmacy supply between March and May 2020 (25% of all supply in March, 57% in April, and 35% in May, compared with around 6% or lower throughout the rest of time period from January 2020 to March 2021). ")),
-
-    p(strong('Community')),
+      tags$li('From January to March 2020 the number of prescribed methadone items per month was similar to the number of items prescribed in the same period for the 2018-2019 average.  After a large decrease from March 2020 to May 2020, the number of prescribed methadone items has remained constantly below the 2018-2019 average.  '),
+      tags$li('The quantity of methadone prescribed per item from January to March 2020 was similar to the 2018-2019 average, but following a large increase in March 2020 has remained higher than the historic average.')
+    ),
+    p(strong('Buprenorphine')),
+    p('There was a clear increase in the total quantity of buprenorphine prescribed, from 1.2 million mg per month in January 2018 to 1.6 million mg per month in July 2020. '),
     tags$ul(
-      tags$li("The trend in community outlet supplies per month shows an exceptionally large number of THN kits supplied in April and May 2020 during the initial response to the COVID-19 pandemic (from 961 in March to 2,546 in April and 1,675 in May). Large-scale distributions by NHS Fife and NHS Ayrshire and Arran accounted for the notable increases in supplies observed in April and May 2020 respectively. "),
-      tags$li("Aside from these peaks in April and May 2020, weekly supply numbers in 2020 were broadly the same as the combined 2018 and 2019 average. The two minor exceptions to this were smaller peaks in September and December 2020. Although the December 2020 figure was lower than that for of the 2018 & 2019 average, the regular peak observed at that time of year increase suggests a seasonal increase in THN supply.")),
-    
-    p(strong('Pharmacy')),
-    tags$ul(
-      tags$li("The number of THN kits dispensed by pharmacies on the basis of a community prescription was consistently higher from March 2020 to March 2021 than the average for 2018 & 2019. In particular, two large peaks in supply were observed in April 2020 (from 193 kits in March 2020 to 1,393 in April) and December 2020 (from 241 in October to 1,418 in December).")),
-    
-    p(strong('Prisons')),
-    tags$ul(
-      tags$li("The number of THN supplies issued by prisons per month was consistently higher for the period February 2020 to March 2021 than the corresponding 2018 & 2019 averages. The exception to this was November 2020 when supplies were 21% lower than the 2018 & 2019 average for the same month. "),
-      tags$li("The large peak in May 2020 may partially have been a result of the Scottish Prison Service\'s ",
-              tags$a(href="https://www.sps.gov.uk/Corporate/Information/covid19/covid-19-information-hub.aspx", 
-                     "COVID Early Release scheme ",  target="_blank"),
-             "in which the Coronavirus (Scotland) Act 2020 provided new powers for the early release of a specific class of prisoners held in Scottish prisons. Early release was deemed necessary in order to provide the Scottish Prison Service with additional operational capacity including allowing for a greater use of single cell occupancy, keeping prison staff and the people in their care safe. It is understood that that scheme is no longer operational, so subsequent increases may reflect other factors.")),
+      tags$li('From January to April 2020, the number of items of buprenorphine prescribed per month was higher than the 2018-2019 average. After peaking in March 2020 the number of items prescribed per month decreased and was similar to the 2018-2019 average in the period from May to October 2020. Since November 2020, the number of items prescribed per month has remained above the 2018-2019 average. '),
+      tags$li('The quantity of buprenorphine prescribed per item in 2020 and 2021 was higher than the 2018-2019 average across the whole time series, in particular from April 2020 onwards. ')
+    ),
     p('For further information, contact ',
       tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.')
   )
@@ -373,18 +639,24 @@ output$drug_commentary <- renderUI({
 output$download_drugs_data <- downloadHandler(
   filename ="drugs_extract.csv",
   content = function(file) {
-    # 
-    # if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
-    #   
-    #   write_csv(DTR_July_update,
-    #             file) } 
-    # 
-    
-    #else 
-      if(input$drug_subcategories=='Take home naloxone kits'){
+
+    if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+      write_csv(DTR_data,
+                file) }
+
+    else if(input$drug_subcategories=='Take home naloxone kits'){
       write_csv(THN_by_HB,
-                file) } 
+                file) }
     
+    else if(input$drug_subcategories=='SAS naloxone administration'){
+      write_csv(SASdata[c(1,2,5,6)],
+                file) }
+    else if(input$drug_subcategories=='OST prescribing'){
+      write_csv(OST_paid,
+                file)
+      write_csv(OST_paid_quantity,
+                file)
+    }
   }
 )
   
