@@ -361,6 +361,8 @@ saveRDS(data, 'SASdata.rds')
 
 # SAVING FOR WIDER IMPACTS TEAM
 saveRDS(data, "shiny_app/data/SASdata.rds")
+saveRDS(data, paste0(data_folder,"final_app_files/SASdata_", 
+                        format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 
 ###############################################.
@@ -536,6 +538,9 @@ paid.quantity$Board<-gsub('Nhs','NHS',str_to_title(paid.quantity$Board))
 
 saveRDS(paid.final,'OST_paid.rds')
 saveRDS(paid.final, "shiny_app/data/OST_paid.rds")
+saveRDS(paid.final, paste0(data_folder,"final_app_files/OST_paid_", 
+                        format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(paid.quantity,'OST_paid_quantity.rds')
 saveRDS(paid.quantity, "shiny_app/data/OST_paid_quantity.rds")
-
+saveRDS(paid.quantity, paste0(data_folder,"final_app_files/OST_paid_quantity_", 
+                        format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
