@@ -439,7 +439,7 @@ output$tears_commentary <- renderUI({
   tagList(
     bsButton("jump_to_tears",label = "Go to data"), #this button can only be used once
     h2("Perineal tears - 3rd November 2021"),
-    p("The percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear has been above the pre-pandemic average for seven successive quarters (including April-June 2021) in both NHS Dumfries & Galloway and NHS Greater Glasgow & Clyde. We are working with these two boards in order to investigate this further."),
+    p("The percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear has been above the pre-pandemic average for seven successive quarters (including April-June 2021) in both NHS Dumfries & Galloway and NHS Greater Glasgow & Clyde. We are working with these two boards in order to investigate this further. NHS Dumfries & Galloway have indicated that their overall numbers of third and fourth degree tears are small. They routinely review all women who have had a third or fourth degree tear at their Clinical Incident Review Group and they have not so far identified any common themes."),
     h2("Perineal tears - 16th June 2021"),
     p("Information on perineal tears was included in this tool for the first time on 16 June 2021."),
     p("When a woman is giving birth, the baby stretches the mother’s vagina and perineum.  Occasionally, the tissues cannot stretch enough, and a tear (called a ",                      
