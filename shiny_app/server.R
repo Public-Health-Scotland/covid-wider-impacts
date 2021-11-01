@@ -25,7 +25,7 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("27 October 2021 - Systemic anti-cancer therapies data update"),
+                   tags$li("3 November 2021 - Systemic anti-cancer therapies data update"),
                    tags$li("6 October 2021 - Monthly update of data (most sections)."),
                    tags$li("6 October 2021 - New data on injury hospital admissions."),
                    tags$li("1 September 2021 - Monthly update of data (most sections)."),
@@ -36,7 +36,7 @@ function(input, output, session) {
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("3 November 2021 - Systemic anti-cancer therapies data update"),
+                   tags$li("10 November 2021 - Systemic anti-cancer therapies data update"),
                    tags$li("3 November 2021 - Cancer staging data"),
                    tags$li("3 November 2021 - Monthly update of data (most sections)."),
                    tags$li("3 November 2021 - New data on opioid substitution therapy,
@@ -103,6 +103,10 @@ function(input, output, session) {
   ###############################################.
   # SACT tab
   source(file.path("sact_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
+  # DCE tab
+  source(file.path("dce_tab.R"),  local = TRUE)$value
   
   ###############################################.
   # Drugs tab

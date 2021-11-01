@@ -130,9 +130,18 @@ output$apgar_explorer <- renderUI({
     tagList(#p("We have used ",                      
               # tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
               #        'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Percentage of births that have a 5 minute Apgar score of <7’ chart above, the dots joined by a solid black line show the percentage of singleton live births at 37-42 weeks gestation with known 5 minute Apgar score that had a score of <7, in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of births with 5 minute Apgar score of <7 over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of births with a 5 minute Apgar score of <7."))
+            p("On the ‘Percentage of births that have a 5 minute Apgar score of <7’ chart above, the dots joined by a solid black line show the percentage of singleton live births at 37-42 weeks gestation with known 5 minute Apgar score that had a score of <7, 
+              in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of births with 5 minute Apgar score of <7 over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). 
+              The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of births with a 5 minute Apgar score of <7."))
+  
+  chart_explanation_quarter <- 
+    tagList(
+      p("On the ‘Percentage of births that have a 5 minute Apgar score of <7’ chart above, the dots joined by a solid black line show the percentage of singleton live births at 37-42 weeks gestation with known 5 minute Apgar score that had a score of <7, 
+              in each quarter from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of births with 5 minute Apgar score of <7 over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). 
+              The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of births with a 5 minute Apgar score of <7."))
   
   # Layout depending if Scotland or HB selected
+  if (input$geotype_apgar == "Health board"){
     tagList(fluidRow(column(12,
                             h4(paste0("Percentage ", apgar_title)),
                             actionButton("btn_apgar_rules", "How do we identify patterns in the data?",
@@ -140,15 +149,27 @@ output$apgar_explorer <- renderUI({
                             withSpinner(plotlyOutput("apgar_trend"))),
                      column(12,
                             p(apgar_data_timeperiod),
-                            p(chart_explanation)),
+                            p(chart_explanation_quarter)),
                      column(12,
                             br(), #spacing
                             h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$geoname_apgar))),
                      column(12,
-                            withSpinner(plotlyOutput("apgar_linechart_number"))),
-                     #only if scotland selected display age and deprivation breakdowns
-                     if (input$geotype_apgar == "Scotland"){
-                       tagList(
+                            withSpinner(plotlyOutput("apgar_linechart_number")))))
+    
+  } else if (input$geotype_apgar == "Scotland"){ #only if scotland selected display age and deprivation breakdowns
+                       tagList(fluidRow(column(12,
+                                               h4(paste0("Percentage ", apgar_title)),
+                                               actionButton("btn_apgar_rules", "How do we identify patterns in the data?",
+                                                            icon = icon('question-circle')),
+                                               withSpinner(plotlyOutput("apgar_trend"))),
+                                        column(12,
+                                               p(apgar_data_timeperiod),
+                                               p(chart_explanation)),
+                                        column(12,
+                                               br(), #spacing
+                                               h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$geoname_apgar))),
+                                        column(12,
+                                               withSpinner(plotlyOutput("apgar_linechart_number")))),
                          fluidRow(column(12,
                                          h4("Singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7 by maternal age group: Scotland"))),
                          fluidRow(column(6,
@@ -170,7 +191,6 @@ output$apgar_explorer <- renderUI({
                                          withSpinner(plotlyOutput("apgar_linechart_dep_p"))))
                        )#tagList from if statement
                      }
-    ))
 })
 
 #############################################.
