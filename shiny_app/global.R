@@ -7,17 +7,17 @@
 
 library(shiny)
 library(plotly) # for charts
-library(shinyWidgets) # for dropdowns  
-library(dplyr) # for data manipulation 
-library(DT) # for data table  
-library(shinycssloaders) #for loading icons, see line below 
+library(shinyWidgets) # for dropdowns
+library(dplyr) # for data manipulation
+library(DT) # for data table
+library(shinycssloaders) #for loading icons, see line below
 # it uses github version devtools::install_github("andrewsali/shinycssloaders")
 # This is to avoid issues with loading symbols behind charts and perhaps with bouncing of app
-library(shinyjs) # for enable/disable functions  
+library(shinyjs) # for enable/disable functions
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
 library(flextable)
-library(shinyBS) #for collapsible panels in commentary 
+library(shinyBS) #for collapsible panels in commentary
 library(zoo)
 library(magrittr)
 library(shinymanager)
@@ -79,8 +79,8 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
 
-cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>% 
-  mutate(dep = factor(dep)) %>% 
+cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>%
+  mutate(dep = factor(dep)) %>%
   mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE))
 
 cancer_extract_date <- "19 August 2021"
@@ -115,6 +115,20 @@ sact_data_wk_inc <- sact_weekly_data %>%
                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
+# DCE Data
+dce_data <- readRDS("data/dce_data.rds") %>% 
+  mutate(region = factor(region)) %>% 
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
+  mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>% 
+  mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
+
+dce_extract_date <- "8 October 2021"
+
+
 
 #Injuries data
 ui_smr01_all <- readRDS("data/ui_smr01_all.rds")
@@ -132,7 +146,7 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "27th September 2021"
+child_extract_date <- "25 October 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
@@ -150,7 +164,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "27 September 2021"
+immunisation_extract_date <- "25 October 2021"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -233,7 +247,7 @@ tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
 tears_download <- readRDS("data/tears_download_data.rds")
 
-#Drugs data 
+#Drugs data
 ADP_names<-readRDS('data/ADP_names.rds')
 Health_board<-readRDS('data/Health_board.rds')
 DTR_July_update<-readRDS('data/DTR_July_update.rds')
@@ -406,38 +420,40 @@ pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine
 pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
-               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
-               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
+               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#0d38b0",
+               "OCT 2020" = "#5959d7", "NOV 2020" = "#42249f", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
                "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
-               "JUL 2021" = "#00cc00") 
+               "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
+               "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141")
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
-               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#081d58",
-               "OCT 2020" = "#080859", "NOV 2020" = "#1c0859", "DEC 2020" = "#660066",
+               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#0d38b0",
+               "OCT 2020" = "#5959d7", "NOV 2020" = "#42249f", "DEC 2020" = "#660066",
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
-               "APR 2021" =  "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
-               "JUL 2021" = "#2d2da1")
+               "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
+               "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
+               "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141")
 
 pal_inj <- list(pal_age,pal_depr,pal_sex)
 
 pal_drug <- c('#e66101','#fdb863','#b2abd2','#5e3c99')
 
-pal_sact <- c('#3F3685', 
-              '#9F9BC2', 
-              '#9B4393', 
-              '#CDA1C9', 
-              '#0078D4', 
-              '#B3D7F2', 
-              '#EE82EE', 
-              '#9CC951', 
-              '#DAEBBE', 
-              '#1E7F84', 
-              '#948DE3', 
-              '#C73918', 
-              '#E39C8C', 
+pal_sact <- c('#3F3685',
+              '#9F9BC2',
+              '#9B4393',
+              '#CDA1C9',
+              '#0078D4',
+              '#B3D7F2',
+              '#EE82EE',
+              '#9CC951',
+              '#DAEBBE',
+              '#1E7F84',
+              '#948DE3',
+              '#C73918',
+              '#E39C8C',
               '#000000' )
 
 
@@ -447,11 +463,19 @@ pal_cancer_diff <- c("1" = '#000080',
                      "4" = '#C0C0C0',
                      "5" = '#0000FF')
 
+pal_dce <- c("1" = '#000080',
+             "2" = '#6A5ACD',
+             "3" = '#008B8B',
+             "4" = '#32CD32',
+             "NK" = '#FFD700')
 
-# more distinctive colour palette (save for later)
-# c("2019" = "#000000", "2020" = "#41b6c4", 
-#   "SEP 2020" = "#edf8b1", "OCT 2020" = "#7fcdbb", "NOV 2020" = "#32CD32", 
-#   "DEC 2020" = "#1d91c0", "JAN 2021" = "#253494", "FEB 2021" = "#990099")
+pal_dce_diff <- c("NHS Grampian" = '#000080',  "NHS Greater Glasgow & Clyde" = '#000080',
+                  "NHS Highland" = '#6A5ACD', "NHS Dumfries & Galloway" = '#6A5ACD',
+                  "NCA" = '#008B8B', "NHS Fife" = '#008B8B', "NHS Forth Valley" = '#008B8B',
+                  "SCAN" = '#32CD32',"NHS Orkney" = '#32CD32', "NHS Ayrshire & Arran" = '#32CD32',
+                  "WOSCAN" = '#FFD700', "NHS Shetland" = '#FFD700', "NHS Lothian" = '#FFD700',
+                  "Scotland" = '#FF8C00', "NHS Tayside" = '#FF8C00',
+                  "NHS Western Isles" = '#00FFFF', "NHS Borders" = '#00FFFF',"NHS Lanarkshire" = '#00FFFF')
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
@@ -461,8 +485,8 @@ yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4
                     tickfont = list(size=14), titlefont = list(size=14))
 
 # Buttons to remove
-bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',  
-                     'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',  
+bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
+                     'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
                      'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
 
 ## END
