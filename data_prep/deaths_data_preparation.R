@@ -27,10 +27,9 @@ dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/depriva
   select(datazone2011, year, sc_quin) %>%
   filter(year>2014)
 
-dep_lookup20 <- dep_lookup %>%  filter(year == 2019) %>% mutate(year = 2020)
 dep_lookup21 <- dep_lookup %>%  filter(year == 2019) %>% mutate(year = 2021)
 
-dep_lookup <- rbind(dep_lookup, dep_lookup20, dep_lookup21)
+dep_lookup <- rbind(dep_lookup, dep_lookup21)
 
 geo_lookup <- left_join(dep_lookup, postcode_lookup)
 
