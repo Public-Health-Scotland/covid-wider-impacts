@@ -60,18 +60,18 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # Filedate: date on filename for each update, last week = last week of data to be included
 # Change extract to F if you just want to run the data prep and not the extraction
 # (quicker once the extraction has been done once)
-create_rapid(last_week =  "2021-09-26", extract = T) # this requires access to the RAPID dataset
-create_ae(filedate = "2021-09-30", last_week =  "2021-09-26")
-create_ooh(filename = "WIDER IMPACT PC OOH Data_53_9202834272022294897", last_week = "2021-09-26")
-create_nhs24(filedate = "2021-10-04", last_week =  "2021-09-26")
-create_sas(filedate = "2021-10-04", last_week =  "2021-09-26")
+create_rapid(last_week =  "2021-10-24", extract = T) # this requires access to the RAPID dataset
+create_ae(filedate = "2021-10-28", last_week =  "2021-10-24")
+create_ooh(filename = "WIDER IMPACT PC OOH Data_60_2106073897391272834", last_week = "2021-10-24")
+create_nhs24(filedate = "2021-11-01", last_week =  "2021-10-24")
+create_sas(filedate = "2021-11-01", last_week =  "2021-10-24")
 
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function
 # Note: there will be a warning from match_area() about a few hundred thousand
 # geography codes not 9 characters in length - this is caused by the "Scotland"
 # rows, and is not a problem.
-create_deaths(last_week =  "2021-09-26")
+create_deaths(last_week =  "2021-10-24")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the summary_tab script
