@@ -561,7 +561,7 @@ output$data_explorer <- renderUI({
             
             #Add ethnicity charts
             fluidRow(column(6,
-                            h4(paste0(total_title, "ethnicity group")))),
+                            h4(paste0("Monthly number of ", dataset, " by ethnicity group")))),
 
             ###Adding adm_type here to make clear what is selected
             fluidRow(column(6,
