@@ -129,9 +129,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           )))
 ), #tab panel
 
-# ###############################################.
-# # Summary trends ----
-# ##############################################.
+###############################################.
+# Summary trends ----
+##############################################.
 tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   wellPanel(
     column(4,
@@ -175,9 +175,9 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
             uiOutput("data_explorer")
   )# mainPanel bracket
 ), # tabpanel bracket
-##############################################.
-## Cardiovascular ----
-##############################################.
+#############################################.
+# Cardiovascular ----
+#############################################.
 tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -448,9 +448,9 @@ tabPanel(title = "Injuries", icon = icon("user-injured"), value = "injuries",
                    uiOutput("injuries_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-##############################################.
+#############################################.
 # Mental Health ----
-##############################################.
+#############################################.
 tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -541,9 +541,9 @@ tabPanel(title = "Induction of labour", value = "inductions",
                    uiOutput("induct_explorer")
         )# mainPanel bracket
 ), # tabPanel bracket
-###############################################.
-## Mode of delivery ----
-###############################################.
+##############################################.
+# Mode of delivery ----
+##############################################.
 tabPanel(title = "Method of delivery", value = "mod",
         wellPanel(
            column(4, div(title="Select a breakdown",
