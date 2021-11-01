@@ -29,6 +29,7 @@ data_table <- reactive({
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
          "cancer" = cancer_data2,
+         "dce" = dce_data,
          "ui_smr01_all" = ui_smr01_all %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation,Month=week_ending),
          "ui_smr01_rta"= ui_smr01_rta %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
          "ui_smr01_poison"=ui_smr01_poison %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation), 
@@ -52,7 +53,11 @@ data_table <- reactive({
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "outpats" = outpats %>% 
-          rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average) 
+          rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average),
+        'THN_by_HB'=THN_by_HB,
+        'DTR_data'=DTR_data,
+        'OST_paid'=OST_paid
+       # 'SASdata'=SASdata[,c(1,2,5,6)]
   ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -252,6 +257,11 @@ data_table <- reactive({
       select(month, region, area, site, treatment, count) %>%
       rename("Month" = month, "Region" = region, "Area name" = area, "Cancer type" = site, 
              "Administration route" = treatment, "Number of patients" = count)
+  } else if (input$data_select %in% "dce") {
+    table_data <- table_data %>%
+      select(area:count20, month) %>%
+      rename("Area name" = area, "Cancer Type" = site, "Stage" = stage, 
+             "No. Patients 2019" = count19, "No. Patients 2020" = count20, "Month" = month)
   } else if (input$data_select %in% "childdev") {
     table_data %<>%
       select(area_name, month_review, review, number_reviews = no_reviews, 

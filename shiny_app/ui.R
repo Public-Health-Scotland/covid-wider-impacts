@@ -1,5 +1,5 @@
 #UI
-#secure_app( #uncomment if needing password protection
+# secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
@@ -129,9 +129,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           )))
 ), #tab panel
 
-# ###############################################.
-# # Summary trends ----
-# ##############################################.
+###############################################.
+# Summary trends ----
+##############################################.
 tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   wellPanel(
     column(4,
@@ -175,9 +175,9 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
             uiOutput("data_explorer")
   )# mainPanel bracket
 ), # tabpanel bracket
-##############################################.
-## Cardiovascular ----
-##############################################.
+#############################################.
+# Cardiovascular ----
+#############################################.
 tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -201,9 +201,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
 ## Cancer ----
 ###############################################.
              navbarMenu("Cancer", icon = icon("disease"),
-                        
+
                         # CANCER PATHOLOGY
-                        
+
                         tabPanel(title = "Cancer Pathology", icon = icon("microscope"), value = "cancer",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer2")),
@@ -231,13 +231,13 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                           div(radioButtons("gender", "Select sex",
                                                            list("All","Male","Female"), inline = TRUE,
                                                            selected = "All")))
-                                   
+
                                  ) ,# wellPanel bracket
-                                 
+
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer")
                                  ) ,# wellPanel bracket
-                                 
+
                                  wellPanel(
                                    column(6,
                                           div(radioButtons("cum_baseline", "Select standard/cumulative baseline",
@@ -250,7 +250,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer3"))
                         ) , # tabpanel bracket
-                        
+
                         ###############################################.
                         ## SACT ----
                         ###############################################.
@@ -274,10 +274,10 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            p("Due to differences in recording practice",
                                              em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
-                                           
+
                                            actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle')),
                                            downloadButton('download_sact_monthly_data', 'Download data')), # well panel
-                                 
+
                                  wellPanel(column(7, selectInput("geotype_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_sact"),
@@ -291,16 +291,14 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                                                    list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
                                                                    selected = "Standard graph")))
                                  ), #well panel
-                                 
+
                                  mainPanel(width = 12,
                                            uiOutput("sact_explorer")
                                  )# mainPanel bracket
-                                 
-                                           ), # tabpanel bracket
-                        
+                        ), # tabpanel bracket
                         
                         #### WEEKLY TAB
-                        
+
                         tabPanel(title = "SACT (Chemotherapy) Weekly Appointments", icon = icon("syringe"), value = "sact",
                                  wellPanel(h4(strong("SACT Treatment Activity in Scotland - Weekly Appointment Data")),
                                            #p(strong("Data from the ChemoCare system in the North Cancer Alliance (NCA) Highland has not
@@ -325,15 +323,15 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
                                            p("Activity data is released two week in arrears. The latest data currently available in the
                                              dashboard is for the week beginning", strong(format(max(sact_weekly_data$week_beginning), "%d %B %Y"))),
-                                           
+
                                            actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle')),
                                            downloadButton('download_sact_weekly_data', 'Download data')), # well panel
-                                 
+
                                  wellPanel(column(7, selectInput("geotype_wk_sact", label = "Select a geography level and then an area of interest",
                                                                  choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
                                                   uiOutput("geoname_ui_wk_sact"),
                                                   uiOutput("treatment_ui_wk_sact")),
-                                           
+
                                            column(5, selectInput("sact_wk_type", label = "Select all or specific cancer type",
                                                                  choices = c("All","Bone Sarcoma", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
                                                                              "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
@@ -346,12 +344,80 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                                                    list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
                                                                    selected = "Standard graph")))
                                  ), #well panel
-                                 
+
                                  mainPanel(width = 12,
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
-                                           ) # tabpanel bracket
-                        ) , # navbar bracket          
+                              ), # tabpanel bracket
+                        
+                        ###############################################.
+                        ## DCE ----
+                        ###############################################.
+                        
+                        tabPanel(title = "Cancer Staging - DCE Data", icon = icon("clock"), value = "dce",
+                                 wellPanel(h4(strong("Cancer Staging - Detect Cancer Early Data (Breast, Colorectal & Lung)")),
+                                   # p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer 
+                                   #    in Scotland and approximately 34,000 people were diagnosed with cancer, excluding non-melanoma 
+                                   #      skin cancer. The most common causes of cancer diagnosis are lung, breast, prostate and colorectal cancer."),
+                                   # p("In February 2012 the Cabinet Secretary for Health and Wellbeing formally launched the Detect Cancer Early 
+                                   #    programme . One aim of the Detect Cancer Early programme was to increase the proportion of people who were 
+                                   #    diagnosed early in the disease process (with stage 1 disease). The programme concentrates on breast, colorectal 
+                                   #    and lung cancers, which collectively account for 42.6% of all cancers diagnosed in Scotland in 2018."),
+                                   p("Cancer staging is the process of determining the extent to which a cancer has developed and spread. 
+                                      For the majority of patients with cancer it is common practice to assign a number from 1 to 4 to a cancer, 
+                                      with 1 indicating the cancer is confined to the original organ in which it occurred and 4 being a cancer 
+                                      which has spread beyond the original organ and its local lymph glands (regional lymph nodes). Patients 
+                                      diagnosed with stage 1 disease tend to have better outcomes and longer survival compared with patients 
+                                      diagnosed with stage 4 disease."),
+                                   p("This dashboard looks at each of breast, colorectal and lung cancer staging data separately to examine the 
+                                     different impacts of the pandemic, and 
+                                     how well cancer services are recovering to the expected pre-pandemic levels."),
+                                   p("The proportion of patients with cancer diagnosed with stage 1 disease can vary because of a number of 
+                                      factors, including the presence and uptake of national screening programmes. On March 30th 2020, the 
+                                      Scottish Government suspended the national screening programmes for breast and colorectal cancer due to 
+                                      COVID-19, restarting gradually from July onwards."),
+                                   p("During the nine months of the pandemic in 2020 (April-December), there were 2,681 patients diagnosed with 
+                                     breast cancer, 1,958 patients diagnosed with colorectal cancer and 3,287 patients diagnosed with lung cancer. 
+                                     These numbers are 19% (breast), 25% (colorectal) and 9% (lung) lower than would have been expected in this 
+                                     period had COVID-19 not happened."),
+                                   tags$ul(
+                                     tags$li("For breast cancer, there were large falls numbers in stages 1 and 2 (35% and 15% respectively). In 
+                                             contrast, there were small increases in stages 3 and 4 (5% and 7%), with the biggest increase seen for 
+                                             those of unknown stage (34%)."),
+                                     
+                                     tags$li("For Colorectal Cancer, there were substantial drops (30% and more) in the numbers diagnosed with 
+                                             stages 1, 2 or 3 colorectal cancer; whereas there was only a 4% drop for metastatic colorectal cancer."),
+                                     
+                                     tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4 
+                                             diagnoses, which was only lower than expected in April 2020.")),
+                                   
+                                   p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
+                                 ),
+                                 wellPanel(
+                                   column(5, selectInput("geotype_dce", label = "Select a geography level",
+                                                         choices= c("Scotland", "Cancer Network"),
+                                                         selected = "Scotland"),
+                                          uiOutput("geoname_ui_dce")),
+                                   
+                                   column(5,  selectInput("dce_type", label = "Select all or specific cancer type",
+                                                          choices = c("Breast", "Colorectal", "Lung"), selected = "Breast")),
+                                   column(2,
+                                          fluidRow(br()),
+                                          actionButton("btn_dce_modal", "Data source: ", icon = icon('question-circle')),
+                                          fluidRow(br()),
+                                          downloadButton('download_dce_data', 'Download data')) #,
+                                          # fluidRow(br()),
+                                          # actionButton('jump_commentary_cancer','Go to commentary'))
+                                 ) , #well panel
+                                 mainPanel(width = 12,
+                                           uiOutput("dce_explorer1"),
+                                           div(radioButtons("dce_stage", "Select stage of cancer (NK - Not Known)",
+                                                            list("1","2","3","4","NK"), inline = TRUE,
+                                                            selected = "1")),
+                                           uiOutput("dce_explorer2")
+                                 )# mainPanel bracket
+                        ) # tabpanel bracket
+                ) , # navbar bracket          
 ###############################################.
 ## Unintentional Injuries ----
 ###############################################.
@@ -365,12 +431,12 @@ tabPanel(title = "Injuries", icon = icon("user-injured"), value = "injuries",
            column(4, selectizeInput("area_injuries_select", "Step 2. Select a geography level",
                                     choices = c("Scotland", "Health board", "HSC partnership"), selected = "Scotland"),
                   uiOutput("geoname_injuries_ui")),
-           
+
            column(4,  selectInput("type_select", label = "Step 3. Select type of split",
-                              choices = injury_split_list, selected="Age group")),     
-                     
+                              choices = injury_split_list, selected="Age group")),
+
            # div(radioButtons("type", "Data Filter", list("Age","SIMD"), inline = TRUE, selected = "age"))),
-           
+
            column(4,downloadButton("download_injuries_data", "Download data"),
                   fluidRow(br()),
                   actionButton('jump_commentary_injuries','Go to commentary'),
@@ -382,9 +448,9 @@ tabPanel(title = "Injuries", icon = icon("user-injured"), value = "injuries",
                    uiOutput("injuries_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
-##############################################.
+#############################################.
 # Mental Health ----
-##############################################.
+#############################################.
 tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -427,32 +493,32 @@ tabPanel(title = "Antenatal booking", value = "booking",
          mainPanel(width = 12,
                    uiOutput("booking_explorer")
          )# mainPanel bracket
-), #tab panel
-###############################################.
-## Termination of pregnancy  ----
-###############################################.
-tabPanel(title = "Termination of pregnancy", value = "terminations",
-         wellPanel(
-           column(4, div(title="Select a breakdown",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_top")),
-           column(4,offset=4,
-                  actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton("download_termination_data", "Download data"),
-                  fluidRow(br()),
-                  actionButton("jump_commentary_top","Go to commentary"))
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("top_explorer")
-         )# mainPanel bracket
+),#, #tab panel
+ ###############################################.
+ ## Termination of pregnancy  ----
+ ###############################################.
+ tabPanel(title = "Termination of pregnancy", value = "terminations",
+          wellPanel(
+            column(4, div(title="Select a breakdown",
+                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                          selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
+                                      selected = "Scotland")),
+                   uiOutput("geoname_ui_top")),
+            column(4,offset=4,
+                   actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
+                   fluidRow(br()),
+                   downloadButton("download_termination_data", "Download data"),
+                   fluidRow(br()),
+                   actionButton("jump_commentary_top","Go to commentary"))
+          ), #well panel
+          mainPanel(width = 12,
+                    uiOutput("top_explorer")
+          )# mainPanel bracket
 ) # tabPanel bracket
  ), # navbar menu bracket
-###############################################.
-## Births and Babies menu ----
 ##############################################.
+# Births and Babies menu ----
+#############################################.
 navbarMenu("Births and babies", icon = icon("baby"),
 ###############################################.
 ## Inductions ----
@@ -475,9 +541,9 @@ tabPanel(title = "Induction of labour", value = "inductions",
                    uiOutput("induct_explorer")
         )# mainPanel bracket
 ), # tabPanel bracket
-###############################################.
-## Mode of delivery ----
-###############################################.
+##############################################.
+# Mode of delivery ----
+##############################################.
 tabPanel(title = "Method of delivery", value = "mod",
         wellPanel(
            column(4, div(title="Select a breakdown",
@@ -497,9 +563,9 @@ tabPanel(title = "Method of delivery", value = "mod",
                   uiOutput("mod_explorer")
         )# mainPanel bracket
 ), # tabPanel bracket
-###############################################.
-## Gestation at delivery ----
-###############################################.
+##############################################.
+# Gestation at delivery ----
+##############################################.
 tabPanel(title = "Gestation at delivery", value = "gestation",
         wellPanel(
           column(4, div(title="Select a breakdown",
@@ -668,9 +734,9 @@ navbarMenu("Child health", icon = icon("child"),
                               uiOutput("child_health_explorer")
                     )# mainPanel bracket
            ), # tabpanel bracket
-           ###############################################.
-           ## Breastfeeding  ----
            ##############################################.
+           # Breastfeeding  ----
+           #############################################.
            tabPanel(title = "Breastfeeding", value = "breastfeeding",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
@@ -727,11 +793,14 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
            column(4, div(title="Select the data you want to explore", # tooltip
                          radioGroupButtons("drug_subcategories",
                                            label= "Step 1 – Select the data you want to explore",
-                                           choices = c('Take home naloxone kits'), status = "primary",
+                                           choices = c('Take home naloxone kits',
+                                                       'Drug and alcohol treatment referrals',
+                                                       'Opioid substitution therapy prescribing'='OST prescribing'), 
+                                           status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,uiOutput('area_drugs_select'),
                   uiOutput("geoname_ui_drugs")),
-           
+
            column(4, uiOutput("types")),
            column(4,downloadButton('download_drugs_data', 'Download data'),
                   actionButton('jump_commentary_drugs','Go to commentary'),
@@ -739,25 +808,29 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                   actionButton("btn_drugs_modal", "Data source and definitions",
                                                     icon = icon('question-circle')))
          ),#wellPanel bracket
-         
+
 
          mainPanel(width = 12,
+                   #actionButton('browser','browser'),
+                   fluidRow(br()),                  
+                   uiOutput('Quan_plot'),
+                   fluidRow(br()),
+                   uiOutput('TwoYrComparison'),
                    fluidRow(br()),
                    fluidRow(br()),
-                   plotlyOutput('TwoYrComparison',width='100%'),
+                   uiOutput('Cum_plot'),
                    fluidRow(br()),
                    fluidRow(br()),
+                   uiOutput('Prop_barplot'),
                    uiOutput('PercentChange'),
                    fluidRow(br()),
-                   fluidRow(br()),
-                   uiOutput('Prop_barplot')
-                   
-                   
+                   fluidRow(br())
+                  
          )# mainPanel bracket
 ), # tabpanel bracket
-# ##############################################.
-# # Data ----
-# ##############################################.
+# # ##############################################.
+# # # Data ----
+# # ##############################################.
  tabPanel(title = "Data", icon = icon("table"), value = "table",
           p("This section allows you to view the data in table format.
          You can use the filters to select the data you are interested in.
@@ -773,6 +846,5 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-# )#secure app
-
+ #)#secure app
 #END
