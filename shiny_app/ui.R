@@ -493,27 +493,27 @@ tabPanel(title = "Antenatal booking", value = "booking",
          mainPanel(width = 12,
                    uiOutput("booking_explorer")
          )# mainPanel bracket
-), #tab panel
-###############################################.
-## Termination of pregnancy  ----
-###############################################.
-tabPanel(title = "Termination of pregnancy", value = "terminations",
-         wellPanel(
-           column(4, div(title="Select a breakdown",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_top")),
-           column(4,offset=4,
-                  actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton("download_termination_data", "Download data"),
-                  fluidRow(br()),
-                  actionButton("jump_commentary_top","Go to commentary"))
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("top_explorer")
-         )# mainPanel bracket
+),#, #tab panel
+ ###############################################.
+ ## Termination of pregnancy  ----
+ ###############################################.
+ tabPanel(title = "Termination of pregnancy", value = "terminations",
+          wellPanel(
+            column(4, div(title="Select a breakdown",
+                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                          selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
+                                      selected = "Scotland")),
+                   uiOutput("geoname_ui_top")),
+            column(4,offset=4,
+                   actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
+                   fluidRow(br()),
+                   downloadButton("download_termination_data", "Download data"),
+                   fluidRow(br()),
+                   actionButton("jump_commentary_top","Go to commentary"))
+          ), #well panel
+          mainPanel(width = 12,
+                    uiOutput("top_explorer")
+          )# mainPanel bracket
 ) # tabPanel bracket
  ), # navbar menu bracket
 ##############################################.
@@ -840,5 +840,4 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
    ) # page bracket
  )# taglist bracket
  #)#secure app
-
 #END
