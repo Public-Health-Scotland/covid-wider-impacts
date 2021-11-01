@@ -276,6 +276,21 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
+    h2("Stillbirths and infant deaths - 3rd November 2021"),
+    p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in September 2021."),
+    p("In September 2021 both the neonatal mortality rate (4.9 per 1,000 live births) and the extended perinatal mortality rate (9.9 per 1,000 live and stillbirths) exceeded their upper control limits of 4.3 and 9.4, respectively. Extended perinatal death rate is a measure which combines stillbirths and neonatal deaths. Examining the data shows that the increase in extended perinatal mortality reflects the higher than expected neonatal deaths, whilst stillbirths that were at, but not lower than, their expected level. The overall infant mortality rate (5.5 per 1,000 live births) exceeded the warning limit (5.0), but not the upper control limit (5.9). This was due to the high number of neonatal deaths. Post-neonatal deaths (those that occur after 4 weeks of age) were not increased."),
+    p("Each of these events is a tragedy for those involved. There are a number of existing processes through which these events, in common with all neonatal deaths, will be reviewed. All child deaths in Scotland are now reviewed to ensure that contributing factors are understood, and that learning is used in ", 
+      tags$a(href="https://www.healthcareimprovementscotland.org/our_work/governance_and_assurance/deaths_of_children_reviews.aspx",
+             "prevention and improving care quality", target="_blank"), ". ", 
+      "Systematic information on deaths occurring in neonatal units is gathered via the ",
+      tags$a(href="https://www.npeu.ox.ac.uk/pmrt", "Perinatal Mortality Review Tool"),
+      " and the UK-wide collaboration, MBRRACE-UK, provides surveillance and investigation of maternal deaths, stillbirths and infant deaths. ",
+      tags$a(href="https://www.gov.scot/publications/maternity-neonatal-perinatal-adverse-event-review-process-scotland/", "A standardised approach"), 
+      "to review of perinatal adverse events has also recently been adopted in Scotland"),
+    p("As the overall number of deaths occurring each month is fortunately small, mortality rates tend to fluctuate from month to month just by chance. Control charts are a tool that help tell the difference between expected chance variation and changes which warrant further investigation. Exceeding the upper control limit indicates there is a higher likelihood that there are factors beyond random variation that may have contributed to the number of deaths that occurred. In view of this, in addition to the processes outlined above, Public Health Scotland is working with the ",
+      tags$a(href="https://www.perinatalnetwork.scot/neonatal/" , "Scottish National Neonatal Network"), ", the ",
+      tags$a(href="https://ihub.scot/improvement-programmes/scottish-patient-safety-programme-spsp/spsp-programmes-of-work/maternity-and-children-quality-improvement-collaborative-mcqic/" , "Maternity and Children Quality Improvement Collaborative"),
+      " and the Scottish Government to understand any possible contributing factors to the most recent infant mortality patterns, and to incorporate findings into existing prevention and improvement work. Further information on the results of this work will be provided in future commentary."),
     h2("Stillbirths and infant deaths - 2nd June 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in April 2021. The rate of stillbirths, and all reported infant death measures, remained within the warning threshold limits this month. The stillbirth rate in April 2021 was 2.4 per 1,000 total births (baseline, pre-pandemic average 3.8 per 1,000 total births), the neonatal death rate was 2.7 per 1,000 live births (average 2.2 per 1,000 live births), and the infant mortality rate was 3.5 per 1,000 live births (average 3.3 per 1,000 live births). "),
     h2("Stillbirths and infant deaths - 5th May 2021"),
