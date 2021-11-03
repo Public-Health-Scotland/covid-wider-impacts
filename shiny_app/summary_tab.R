@@ -66,6 +66,7 @@ spec_modal_op <- modalDialog(
 observeEvent(input$btn_spec_groups_rapid, { showModal(spec_modal_rapid) }) 
 observeEvent(input$btn_spec_groups_op, { showModal(spec_modal_op) }) 
 
+
 ###############################################.
 #modal to describe dataset
 # Link action button click to modal launch 
@@ -344,6 +345,20 @@ observeEvent(input$btn_modal_moc, { showModal(moc_modal) })
 
 
 ###############################################.
+# Modal to explain ethnicity graphs
+eth_modal <- modalDialog(
+  h5(tags$b("Interpretation of this chart")),
+  p("Please note that "),
+  p("More info"),
+  size = "l",
+  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+)
+# Link action button click to modal launch 
+observeEvent(input$btn_modal_eth, { showModal(eth_modal) }) 
+
+
+
+###############################################.
 ## Reactive datasets ----
 ###############################################.
 # Rapid dataset filtered for admission_type, then used to create the admissions charts
@@ -561,6 +576,8 @@ output$data_explorer <- renderUI({
             
             #Add ethnicity charts
             fluidRow(column(6,
+                            h4(paste0(variation_title, "ethnicity group"))),
+                     column(6,
                             h4(paste0("Monthly number of ", dataset, " by ethnicity group")))),
 
             ###Adding adm_type here to make clear what is selected
@@ -568,8 +585,13 @@ output$data_explorer <- renderUI({
                             pickerInput("op_ethnicity", "Select one or more ethnicity groups",
                                         choices = eth_list_op, 
                                         multiple = TRUE,
-                                        selected = eth_list_op))),  
+                                        selected = eth_list_op)),
+                     column(6,
+                            actionButton("btn_modal_eth", "Interpretation of this chart", 
+                                  icon = icon('fas fa-exclamation-circle')))),
             fluidRow(column(6,
+                            withSpinner(plotlyOutput("op_eth_var"))),
+                     column(6,
                             withSpinner(plotlyOutput("op_eth_tot"))))
             
     )
@@ -652,6 +674,10 @@ output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80)})
 
 output$op_eth_tot <- renderPlotly({
   plot_trend_chart(dataset = op_eth(), pal_chose = pal_age, split = "eth", type = "total", 
+                   data_name = "op", period = "monthly")})
+
+output$op_eth_var <- renderPlotly({
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_age, split = "eth", 
                    data_name = "op", period = "monthly")})
 
 
