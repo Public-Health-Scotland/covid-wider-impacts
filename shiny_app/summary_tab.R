@@ -585,7 +585,9 @@ output$data_explorer <- renderUI({
                             pickerInput("op_ethnicity", "Select one or more ethnicity groups",
                                         choices = eth_list_op, 
                                         multiple = TRUE,
-                                        selected = eth_list_op)),
+                                        selected = eth_list_op,
+                                        options = list(
+                                          `actions-box` = TRUE))),
                      column(6,
                             actionButton("btn_modal_eth", "Interpretation of this chart", 
                                   icon = icon('fas fa-exclamation-circle')))),
