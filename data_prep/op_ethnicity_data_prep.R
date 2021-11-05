@@ -1,0 +1,165 @@
+# Original Authors - Catherine Perkins
+# Orginal Date - September 2021
+#
+# Written/run on - RStudio server
+# Version of R - 3.6.1
+#
+# Description - Wider Impacts dashboard - outpatients by ethnicity group 
+#
+# Approximate run time - 2 minutes
+
+# Notes:
+# https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group
+
+# All new and return appointments from consultant-led clinics are included; 
+# A&E and Genitourinary specialties are excluded, as well as Did Not Attend (DNA) appointments;
+# Records with invalid ages are excluded.
+
+# Include only clinic type 1= consultant? Quarterly publication also includes 2= dentist, 
+# but think it might be excluded in WI outpats code.
+
+###############################################.
+## Packages ----
+###############################################.
+library(odbc)          # For accessing SMRA databases
+library(dplyr)         # For data manipulation in the "tidy" way
+library(readr)         # For reading/writing CSVs
+library(janitor)       # For 'cleaning' variable names
+library(magrittr)      # For %<>% operator
+library(lubridate)     # For dates
+library(tidyr)         # For data manipulation in the "tidy" way
+library(phsmethods)    # For a couple of useful functions
+
+
+# Define the database connection with SMRA 
+channel <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
+                                      uid=.rs.askForPassword("SMRA Username:"), 
+                                      pwd=.rs.askForPassword("SMRA Password:")))
+
+WI_data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/"
+
+### read in disclosure script if required - add this to folder
+#source("outpatient_functions.R")
+
+###############################################.
+# Data extraction -- Write SQL query
+smr00  <- as_tibble(dbGetQuery(channel, statement=paste(
+  "SELECT CLINIC_DATE, REFERRAL_TYPE, ETHNIC_GROUP ethnic_code
+  FROM ANALYSIS.SMR00_PI
+  WHERE CLINIC_DATE between '1 January 2018' AND '31 March 2021'
+    AND SEX IN ('1', '2')
+    AND AGE_IN_YEARS >= 0 AND AGE_IN_YEARS is not null
+    AND CLINIC_TYPE = '1'
+    AND CLINIC_ATTENDANCE = '1'
+    AND substr(specialty,1,2) not in ('C2','AA','G6','D1','F1','R8','R9','RD','RG','RK')"))) %>% 
+  setNames(tolower(names(.))) # converting variable names into lower case
+
+
+# Create month & appointment type variables
+smr00 <- smr00 %>%
+  mutate(month_ending = floor_date(as.Date(clinic_date), "month"),
+         admission_type = ifelse(referral_type %in% c(1,2), "New", "Return")) %>%
+  select(-(c("referral_type")))
+
+# Assign ethnic groups based on disaggregated groupings in weekly report data tables
+smr00 <- smr00 %>% 
+  mutate(ethnic_group = case_when(ethnic_code == "1A" ~ "White Scottish",
+                                 ethnic_code == "1B" ~ "White Other British",
+                                 ethnic_code == "1C" ~ "White Irish",
+                                 ethnic_code == "1K" ~ "White Other",
+                                 ethnic_code == "1L" ~ "White Polish",
+                                 ethnic_code == "1Z" ~ "White Other",
+                                 ethnic_code == "2A" ~ "Mixed",
+                                 ethnic_code == "3F" ~ "Pakistani",
+                                 ethnic_code == "3G" ~ "Indian",
+                                 ethnic_code == "3H" ~ "Other Asian",
+                                 ethnic_code == "3J" ~ "Chinese",
+                                 ethnic_code == "3Z" ~ "Other Asian",
+                                 ethnic_code == "4D" ~ "African",
+                                 ethnic_code == "4Y" ~ "African",
+                                 ethnic_code == "5C" ~ "Caribbean or Black",
+                                 ethnic_code == "5D" ~ "Caribbean or Black",
+                                 ethnic_code == "5Y" ~ "Caribbean or Black",
+                                 ethnic_code == "6A" ~ "Other ethnic group",
+                                 ethnic_code == "6Z" ~ "Other ethnic group",
+                                 ethnic_code == "98" ~ "Missing",
+                                 ethnic_code == "99" ~ "Missing",
+                                 is.na(ethnic_code) ~ "Missing"))
+
+
+
+###############################################.
+# Aggregate by month, appointment type, and ethnic group
+
+# create monthly totals by ethnic group - need to split by All, New, Return
+newreturn <- smr00 %>% 
+  group_by(month_ending, admission_type, ethnic_group) %>% 
+  summarise(count=n()) %>% ungroup
+  
+# aggregate for 'All' appointments to add onto New/Return data
+all <- smr00 %>% 
+  group_by(month_ending, ethnic_group) %>% 
+  summarise(count=n()) %>% ungroup %>%
+  mutate(admission_type = "All")
+
+# add data together
+outpats <- rbind(newreturn, all)
+
+# create total  
+outpats <- outpats %>%  
+  group_by(month_ending, admission_type) %>% 
+  mutate(total = sum(count),
+         percent = count/total *100) %>% ungroup %>% 
+  mutate(area_type = "Scotland",
+         area_name = "Scotland",
+         type = "eth",
+         spec = "All") %>% 
+  rename(week_ending = month_ending,
+         category = ethnic_group) %>% 
+  select(week_ending, area_type, area_name, spec, admission_type, type, category, count, percent)
+
+
+# save for checking
+write_csv(outpats, "//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_longer_trend.csv")
+saveRDS(outpats, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_longer_trend.rds"))
+#outpats <- readRDS("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_longer_trend.rds")
+
+# Creating "week" number (to be consistent) to be able to compare pre-covid to covid period ----
+outpats <- outpats %>%
+  mutate(week_no = as.numeric(format(week_ending,"%m")))
+
+# Creating average appts of pre-covid data (2018 & 2019) by month of the year ----
+data_201819 <- outpats %>% 
+  filter(year(week_ending) %in% c("2018", "2019")) %>%
+  group_by(category, type, area_name, area_type, week_no, admission_type, spec) %>%
+  summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>%
+  ungroup()
+
+
+# Joining with 2020/21 data
+data_202021 <- left_join(outpats %>% 
+  filter(year(week_ending) %in% c("2020", "2021")), data_201819) %>% 
+  # Creating %variation from precovid to covid period
+  mutate(count_average = ifelse(is.na(count_average), 0, count_average),
+         variation = round(-1 * ((count_average - count)/count_average * 100), 1),
+         # Dealing with infinite values from historic average = 0
+         variation = case_when(is.na(count) ~ 0,
+                               is.na(count_average) ~ 0,
+                               is.nan(variation) ~ 0,
+                               is.infinite(variation) ~ 0,
+                               TRUE ~ variation))
+
+# add ethnicity data to full outpatients file
+outpats_all <- bind_rows(outpats_24_Mar_21, data_202021) %>% 
+  select(-percent)
+
+#save for checking
+write_csv(outpats_all, "//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_variation.csv")
+saveRDS(outpats_all, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_variation.rds"))
+
+# save final output to shiny folder
+saveRDS(outpats_all, paste0("shiny_app/data/outpats_ethnicity.rds"))
+saveRDS(outpats_all, paste0(WI_data_folder,"final_app_files/outpats_ethnicity_", 
+                        format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+#END OF SCRIPT#
