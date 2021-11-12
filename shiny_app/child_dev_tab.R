@@ -197,7 +197,7 @@ output$childdev_no_concerns <- renderPlotly({
   yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
   xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
 
-  tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+  tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
                             "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
 
   average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
@@ -234,10 +234,10 @@ output$childdev_no_concerns <- renderPlotly({
 
  run_plot %>%
    # adding shifts
-   add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus,
+   add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus, hoverinfo="none",
                marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>%
    # adding trends
-   add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus,
+   add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus, hoverinfo="none",
                marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%
    #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
@@ -261,8 +261,11 @@ output$childdev_depr <- renderPlotly({
     yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
     xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
     
-    tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
-                              "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
+    tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%",
+                              "<br>", "Number of reviews: ", trend_data$no_reviews,
+                              "<br>", "Number of reviews with a concern: ", trend_data$concerns_1_plus,
+                              "<br>", "% meaningful reviews: ", trend_data$pc_meaningful, "%"))
     
     average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
                                  input$measure_select_childdev == "13_15mnth" ~ "Average from May 19 to February 20",
@@ -298,10 +301,10 @@ output$childdev_depr <- renderPlotly({
     
     run_plot %>%
       # adding shifts
-      add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus,
+      add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus, hoverinfo="none",
                   marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>%
       # adding trends
-      add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus,
+      add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus, hoverinfo="none",
                   marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
