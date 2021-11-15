@@ -345,6 +345,10 @@ output$mh_explorer <- renderUI({
                  attendances offer only a very approximate indication of attendances.
                  Additionally, some NHS Boards have moved to a new recording standard which
                  has not been fully consolidated in the A&E datamart as yet."),
+      br(),
+      tags$b(span("An issue has been identified with the number of A&E attendances in NHS Lanarkshire for
+                  the week ending 4 July 2021. We are currently investigating.",
+                  style = "color:red")),
       h3(paste0("Weekly mental health A&E attendances in ", input$geoname_mh)),
       fluidRow(column(6,
                       actionButton("btn_mentalhealth_modal", "Data source and definitions",
@@ -375,6 +379,10 @@ output$mh_explorer <- renderUI({
 
     } else if (input$measure_mh_select == "ooh") {
       tagList(#OOH attendances
+        tags$b(span("New clinical codes have been introduced for out of hours cases, which has had an
+                    impact on the number of mental health cases we report in the latter half of 2021.
+                    We are currently investigating this issue.",
+                    style = "color:red")),
         h3(paste0("Weekly mental health out of hours cases in ", input$geoname_mh)),
         fluidRow(column(6,
                         actionButton("btn_mentalhealth_modal", "Data source and definitions",
