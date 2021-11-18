@@ -1,5 +1,5 @@
 # Original Authors - Catherine Perkins
-# Orginal Date - September 2021
+# Orginal Date - November 2021
 #
 # Written/run on - RStudio server
 # Version of R - 3.6.1
@@ -8,15 +8,10 @@
 #
 # Approximate run time - 2 minutes
 
-# Notes:
-# https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group
-
-# All new and return appointments from consultant-led clinics are included; 
+# All new and return appointments are included; 
 # A&E and Genitourinary specialties are excluded, as well as Did Not Attend (DNA) appointments;
 # Records with invalid ages are excluded.
 
-# Include only clinic type 1= consultant? Quarterly publication also includes 2= dentist, 
-# but think it might be excluded in WI outpats code.
 
 ###############################################.
 ## Packages ----
@@ -49,8 +44,8 @@ smr00  <- as_tibble(dbGetQuery(channel, statement=paste(
   WHERE CLINIC_DATE between '1 January 2018' AND '31 March 2021'
     AND SEX IN ('1', '2')
     AND AGE_IN_YEARS >= 0 AND AGE_IN_YEARS is not null
-    AND CLINIC_TYPE = '1'
-    AND CLINIC_ATTENDANCE = '1'
+    AND CLINIC_TYPE IN ('1', '2')
+    AND CLINIC_ATTENDANCE IN ('1', '5')
     AND substr(specialty,1,2) not in ('C2','AA','G6','D1','F1','R8','R9','RD','RG','RK')"))) %>% 
   setNames(tolower(names(.))) # converting variable names into lower case
 
@@ -61,70 +56,60 @@ smr00 <- smr00 %>%
          admission_type = ifelse(referral_type %in% c(1,2), "New", "Return")) %>%
   select(-(c("referral_type")))
 
-# Assign ethnic groups based on disaggregated groupings in weekly report data tables
+# Assign ethnic groups based on disaggregated groupings in COVID-19 weekly report data tables
 smr00 <- smr00 %>% 
-  mutate(ethnic_group = case_when(ethnic_code == "1A" ~ "White Scottish",
-                                 ethnic_code == "1B" ~ "White Other British",
-                                 ethnic_code == "1C" ~ "White Irish",
-                                 ethnic_code == "1K" ~ "White Other",
-                                 ethnic_code == "1L" ~ "White Polish",
-                                 ethnic_code == "1Z" ~ "White Other",
-                                 ethnic_code == "2A" ~ "Mixed",
-                                 ethnic_code == "3F" ~ "Pakistani",
-                                 ethnic_code == "3G" ~ "Indian",
-                                 ethnic_code == "3H" ~ "Other Asian",
-                                 ethnic_code == "3J" ~ "Chinese",
-                                 ethnic_code == "3Z" ~ "Other Asian",
-                                 ethnic_code == "4D" ~ "African",
-                                 ethnic_code == "4Y" ~ "African",
-                                 ethnic_code == "5C" ~ "Caribbean or Black",
-                                 ethnic_code == "5D" ~ "Caribbean or Black",
-                                 ethnic_code == "5Y" ~ "Caribbean or Black",
-                                 ethnic_code == "6A" ~ "Other ethnic group",
-                                 ethnic_code == "6Z" ~ "Other ethnic group",
-                                 ethnic_code == "98" ~ "Missing",
-                                 ethnic_code == "99" ~ "Missing",
-                                 is.na(ethnic_code) ~ "Missing"))
+  mutate(ethnic_group = case_when(ethnic_code == "1A"~ "White Scottish",
+                                  ethnic_code == "1B" ~ "White Other British",
+                                  ethnic_code == "1C" ~ "White Irish",
+                                  ethnic_code %in% c("1K", "1Z") ~ "White Other",
+                                  ethnic_code == "1L" ~ "White Polish",
+                                  ethnic_code == "2A" ~ "Mixed",
+                                  ethnic_code == "3F" ~ "Pakistani",
+                                  ethnic_code == "3G" ~ "Indian",
+                                  ethnic_code %in% c("3H", "3Z") ~ "Other Asian",
+                                  ethnic_code == "3J" ~ "Chinese",
+                                  ethnic_code %in% c("4D", "4Y") ~ "African",
+                                  ethnic_code %in% c("5C", "5D", "5Y") ~ "Caribbean or Black",
+                                  ethnic_code %in% c("6A", "6Z") ~ "Other ethnic group",
+                                  ethnic_code %in% c("98", "99") ~ "Missing",
+                                  is.na(ethnic_code) ~ "Missing"))
 
 
 
 ###############################################.
-# Aggregate by month, appointment type, and ethnic group
+# Aggregate by month, admission type, and ethnic group
 
-# create monthly totals by ethnic group - need to split by All, New, Return
+# create monthly totals by ethnic group and admission type - New/Return
 newreturn <- smr00 %>% 
   group_by(month_ending, admission_type, ethnic_group) %>% 
   summarise(count=n()) %>% ungroup
   
-# aggregate for 'All' appointments to add onto New/Return data
+# create an 'All' admission type to add onto New/Return data
 all <- smr00 %>% 
   group_by(month_ending, ethnic_group) %>% 
-  summarise(count=n()) %>% ungroup %>%
+  summarise(count=n()) %>% 
+  ungroup %>%
   mutate(admission_type = "All")
 
 # add data together
 outpats <- rbind(newreturn, all)
 
-# create total  
+# create total for each admission type by month 
 outpats <- outpats %>%  
   group_by(month_ending, admission_type) %>% 
   mutate(total = sum(count),
-         percent = count/total *100) %>% ungroup %>% 
+         percent = count/total *100) %>% #not required - just for interest
+  ungroup %>% 
   mutate(area_type = "Scotland",
          area_name = "Scotland",
          type = "eth",
          spec = "All") %>% 
-  rename(week_ending = month_ending,
+  rename(week_ending = month_ending, #rename to be consistent with other outpats data
          category = ethnic_group) %>% 
   select(week_ending, area_type, area_name, spec, admission_type, type, category, count, percent)
 
 
-# save for checking
-write_csv(outpats, "//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_longer_trend.csv")
-saveRDS(outpats, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_longer_trend.rds"))
-#outpats <- readRDS("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_longer_trend.rds")
-
-# Creating "week" number (to be consistent) to be able to compare pre-covid to covid period ----
+# Creating "week" (actually month) number to be able to compare pre-covid to covid period ----
 outpats <- outpats %>%
   mutate(week_no = as.numeric(format(week_ending,"%m")))
 
@@ -135,8 +120,7 @@ data_201819 <- outpats %>%
   summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>%
   ungroup()
 
-
-# Joining with 2020/21 data
+# Join with 2020/21 data
 data_202021 <- left_join(outpats %>% 
   filter(year(week_ending) %in% c("2020", "2021")), data_201819) %>% 
   # Creating %variation from precovid to covid period
@@ -149,17 +133,20 @@ data_202021 <- left_join(outpats %>%
                                is.infinite(variation) ~ 0,
                                TRUE ~ variation))
 
+
+###############################################.
 # add ethnicity data to full outpatients file
+outpats_24_Mar_21 <- readRDS(paste0(WI_data_folder, "outpats_24_Mar_21.rds"))
 outpats_all <- bind_rows(outpats_24_Mar_21, data_202021) %>% 
   select(-percent)
 
-#save for checking
-write_csv(outpats_all, "//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_variation.csv")
-saveRDS(outpats_all, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_variation.rds"))
+# save for checking
+#write_csv(outpats_all, "//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_variation.csv")
+#saveRDS(outpats_all, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_variation.rds"))
 
 # save final output to shiny folder
 saveRDS(outpats_all, paste0("shiny_app/data/outpats_ethnicity.rds"))
-saveRDS(outpats_all, paste0(WI_data_folder,"final_app_files/outpats_ethnicity_", 
+saveRDS(outpats_all, paste0(WI_data_folder,"outpats_ethnicity_", 
                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 #END OF SCRIPT#
