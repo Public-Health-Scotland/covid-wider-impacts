@@ -78,11 +78,11 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
 
   # Text to be updated every month with updated dates
-  last_month_peri <- "September 2021"
-  cutdate_peri <- "17 October 2021"
-  extractdate_peri <- "20 October 2021"
-  nextup_peri <- "December 2021"
-  nextdata_peri <- "October 2021"
+  last_month_peri <- "October 2021"
+  cutdate_peri <- "14 November 2021"
+  extractdate_peri <- "17 November 2021"
+  nextup_peri <- "January 2022"
+  nextdata_peri <- "November 2021"
 
   # Number of deaths and of births used in the text
   no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
@@ -129,7 +129,7 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                     tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies/",
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
                     Whilst each infant death is clearly a tragedy for the family involved, infant deaths are uncommon events in Scotland: ", no_stillperi ," infant deaths (and ", no_births ," live births)
-                    occurring in Scotland ", last_month_peri, " had been registered by ", cutdate_peri, ".")
+                    occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
   }
 
   nrs_commentary <- p("It is important to note that chart data is based on month of occurence rather than month of registration used in NRS publications, and so
