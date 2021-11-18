@@ -62,6 +62,7 @@ spec_modal_op <- modalDialog(
   size = "l", align= "center",
   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
 )
+
 # Link action button click to modal launch 
 observeEvent(input$btn_spec_groups_rapid, { showModal(spec_modal_rapid) }) 
 observeEvent(input$btn_spec_groups_op, { showModal(spec_modal_op) }) 
@@ -348,8 +349,20 @@ observeEvent(input$btn_modal_moc, { showModal(moc_modal) })
 # Modal to explain ethnicity graphs
 eth_modal <- modalDialog(
   h5(tags$b("Interpretation of this chart")),
-  p("Please note that "),
-  p("More info"),
+  p("The ethnic group field in the Scottish Morbidity Record (SMR) 
+  classifies the person according to their own perceived ethnic group and cultural 
+  background. More information can be found ", tags$a(href="https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group", "here.",
+         target="_blank")),
+  p("It became mandatory for NHS Scotland organisations to record ethnic group 
+    on SMR outpatient returns from 1 February 2021."),
+  p("The following list is the current ethnicity classification (2011 Census categories) 
+  used by NHS Scotland organisations for SMR return purposes, and the ethnic groups 
+  that we have used in this dashboard."),
+  renderTable(eth_lookup), 
+  p("The ‘Missing’ ethnic group category includes those where ethnic group was 
+    recorded as 'Not Known', 'Refused/Not Provided by the Patient' or was not recorded at all."),
+  p("It is important to note that the trends for ethnic groups with small populations should be 
+  interpreted with caution as they will be subject to greater variability due to small numbers."),
   size = "l",
   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
 )
@@ -675,11 +688,11 @@ output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80)
 output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80)})
 
 output$op_eth_tot <- renderPlotly({
-  plot_trend_chart(dataset = op_eth(), pal_chose = pal_age, split = "eth", type = "total", 
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_sact, split = "eth", type = "total", 
                    data_name = "op", period = "monthly")})
 
 output$op_eth_var <- renderPlotly({
-  plot_trend_chart(dataset = op_eth(), pal_chose = pal_age, split = "eth", 
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_sact, split = "eth", 
                    data_name = "op", period = "monthly")})
 
 
