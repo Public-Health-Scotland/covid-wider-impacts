@@ -491,7 +491,7 @@ output$data_explorer <- renderUI({
 
   } else if (input$measure_select == "ooh") { #Out of hours cases
     tagList(
-    tags$b(span("Please note that the data in the page excludes individuals coming to
+    tags$b(span("Please note that the data on this page excludes individuals coming to
                 Primary Care Out of Hours services via the COVID Pathway. PHS are
                 investigating this to better reflect Primary Care Out of Hours service
                 provision.", style = "color:red")),
@@ -504,9 +504,6 @@ output$data_explorer <- renderUI({
 
   } else if (input$measure_select == "sas") {
     tagList(# SAS data
-    tags$b(span("The Scottish Ambulance Service submitted duplicate records on 4/9/21, artificially increasing the
-                number of incidents for the week ending 5/9/21. PHS are currently working to delete these duplicate records.",
-                style = "color:red")),
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service",
                source = "PHS Unscheduled Care Datamart", data_name ="sas"))
 
