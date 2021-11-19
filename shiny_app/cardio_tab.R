@@ -457,6 +457,10 @@ output$cardio_explorer <- renderUI({
 
      } else if (input$measure_cardio_select == "ooh_cardiac") {
         tagList(# OOH Attendances
+          tags$b(span("New clinical codes have been introduced for out of hours cases, which has had an
+            impact on the number of cardiovascular cases we report in the latter half of 2021.
+            We are currently investigating this issue.",
+            style = "color:red")),
           h3(paste0("Weekly cardiovascular cases in out of hours services in ", input$geoname_cardio)),
           fluidRow(column(6,
                           actionButton("btn_cardio_modal", "Data source and definitions",
