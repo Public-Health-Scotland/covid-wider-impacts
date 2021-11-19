@@ -13,11 +13,11 @@
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
 
-create_delivery(folderdate = "2021-10-14") # Mode of delivery, induction and gestation data
+create_delivery(folderdate = "2021-11-15") # Mode of delivery, induction and gestation data
 create_perinatal(foldermonth = "nov21") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2021_10_14") # Apgar scores
+create_apgar(folderdate = "2021_11_17") # Apgar scores
 create_preterm(preterm_date = "2021_10_14", max_date = "2021-07-01") # Preterm
-create_tears(tears_date = "2021_10_14", max_date = "2021-07-01") # Perineal tears
+create_tears(tears_date = "2021_11_17", max_date = "2021-08-01") # Perineal tears
 
 # Add here what needs to be changed in the shiny scripts
 
