@@ -136,74 +136,71 @@ child_dev %<>%
 saveRDS(child_dev, paste0(open_data, "child_dev_data.rds"))
 print("Open data file produced and saved")
 
+###############################################.
+## Child dev depr 
+
+child_depr <- rbind(read_excel(paste0(data_folder, "child_development/SIMD_13-15months_Nov21.xlsx")) %>% 
+                     mutate(review = "13-15 month"),
+                   read_excel(paste0(data_folder, "child_development/SIMD_27-30months_Nov21.xlsx")) %>% 
+                     mutate(review = "27-30 month")) %>% 
+  clean_names() %>% 
+  rename(area_name = geography) %>% 
+  mutate(area_type = "Scotland",
+         month_review = as.Date(month_review)) #%>% 
+#filter((year(month_review) %in% c("2019", "2020", "2021"))) 
+
+child_depr %<>% # Dealing with NAs, which are 0s
+  mutate_at(c("pc_1_plus", "concerns_1_plus"), ~replace_na(., 0)) %>% 
+  #Glasgow is incomplete before May19, converting to NA
+  mutate(no_reviews = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                  review == "13-15 month" &
+                                  month_review< as.Date("2019-05-01") ~ NA_real_, T ~ no_reviews),
+         no_meaningful_reviews = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                             review == "13-15 month" &
+                                             month_review< as.Date("2019-05-01") ~ NA_real_, T ~ no_meaningful_reviews),
+         concerns_1_plus = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                       review == "13-15 month" &
+                                       month_review< as.Date("2019-05-01") ~ NA_real_, T ~ concerns_1_plus),
+         pc_1_plus = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
+                                 review == "13-15 month" &
+                                 month_review< as.Date("2019-05-01") ~ NA_real_, T ~ pc_1_plus),
+         pc_meaningful = case_when(area_name == "NHS Greater Glasgow & Clyde" & review == "13-15 month" &
+                                     month_review< as.Date("2019-05-01") ~ NA_real_, T ~ pc_meaningful))
+
+# Calculating centre lines and adding them to child_dev
+child_depr_centreline_2730 <- child_dev %>% 
+  filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-01-01")) %>% 
+  filter(review != "13-15 month") %>% 
+  select(area_name, review, simd,  pc_1_plus) %>% group_by(area_name, review, simd) %>% 
+  mutate(pc_1_plus_centreline = median(pc_1_plus)) %>% ungroup() %>% 
+  select(-pc_1_plus) %>% unique
+
+child_depr_centreline_1315 <- child_dev %>% 
+  filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-05-01")) %>% 
+  filter(review == "13-15 month") %>% 
+  select(area_name, review, simd, pc_1_plus) %>% group_by(area_name, review, simd) %>% 
+  mutate(pc_1_plus_centreline = median(pc_1_plus)) %>% ungroup() %>% 
+  select(-pc_1_plus) %>% unique
+
+child_depr_centreline <- rbind(child_depr_centreline_2730, child_depr_centreline_1315)
+
+child_depr %<>% left_join(child_depr_centreline) 
+
+child_depr %<>% 
+  group_by(area_name, area_type, simd, review) %>% 
+  runchart_flags(shift = "shift", trend = "trend", #shifts and trends for runcharts
+                 value = pc_1_plus, median = pc_1_plus_centreline) %>% ungroup()
+
+saveRDS(child_depr, "shiny_app/data/child_dev_depr.rds")
+saveRDS(child_depr, paste0(data_folder,"final_app_files/child_dev_depr_", 
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+child_depr <<- child_depr
+print("File child_dev_depr_data.rds produced and saved")
+
+
+
 }
-
-create_childdev_depr <- function() {
-  
-  child_dev <- rbind(read_excel(paste0(data_folder, "child_development/SIMD_13-15months_Nov21.xlsx")) %>% 
-                       mutate(review = "13-15 month"),
-                     read_excel(paste0(data_folder, "child_development/SIMD_27-30months_Nov21.xlsx")) %>% 
-                       mutate(review = "27-30 month")) %>% 
-    clean_names() %>% 
-    rename(area_name = geography) %>% 
-    mutate(area_type = "Scotland",
-           month_review = as.Date(month_review)) #%>% 
-    #filter((year(month_review) %in% c("2019", "2020", "2021"))) 
-  
-  child_dev %<>% # Dealing with NAs, which are 0s
-    mutate_at(c("pc_1_plus", "concerns_1_plus"), ~replace_na(., 0)) %>% 
-    #Glasgow is incomplete before May19, converting to NA
-    mutate(no_reviews = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
-                                    review == "13-15 month" &
-                                    month_review< as.Date("2019-05-01") ~ NA_real_, T ~ no_reviews),
-           no_meaningful_reviews = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
-                                               review == "13-15 month" &
-                                               month_review< as.Date("2019-05-01") ~ NA_real_, T ~ no_meaningful_reviews),
-           concerns_1_plus = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
-                                         review == "13-15 month" &
-                                         month_review< as.Date("2019-05-01") ~ NA_real_, T ~ concerns_1_plus),
-           pc_1_plus = case_when(area_name == "NHS Greater Glasgow & Clyde" & 
-                                   review == "13-15 month" &
-                                   month_review< as.Date("2019-05-01") ~ NA_real_, T ~ pc_1_plus),
-           pc_meaningful = case_when(area_name == "NHS Greater Glasgow & Clyde" & review == "13-15 month" &
-                                       month_review< as.Date("2019-05-01") ~ NA_real_, T ~ pc_meaningful))
-  
-  # Calculating centre lines and adding them to child_dev
-  child_dev_centreline_2730 <- child_dev %>% 
-    filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-01-01")) %>% 
-    filter(review != "13-15 month") %>% 
-    select(area_name, review, simd,  pc_1_plus) %>% group_by(area_name, review, simd) %>% 
-    mutate(pc_1_plus_centreline = median(pc_1_plus)) %>% ungroup() %>% 
-    select(-pc_1_plus) %>% unique
-  
-  child_dev_centreline_1315 <- child_dev %>% 
-    filter(month_review< as.Date("2020-03-01") & month_review>= as.Date("2019-05-01")) %>% 
-    filter(review == "13-15 month") %>% 
-    select(area_name, review, simd, pc_1_plus) %>% group_by(area_name, review, simd) %>% 
-    mutate(pc_1_plus_centreline = median(pc_1_plus)) %>% ungroup() %>% 
-    select(-pc_1_plus) %>% unique
-  
-  child_dev_centreline <- rbind(child_dev_centreline_2730, child_dev_centreline_1315)
-  
-  child_dev %<>% left_join(child_dev_centreline) 
-  
-  child_dev %<>% 
-    group_by(area_name, area_type, simd, review) %>% 
-    runchart_flags(shift = "shift", trend = "trend", #shifts and trends for runcharts
-                   value = pc_1_plus, median = pc_1_plus_centreline) %>% ungroup()
-  
-  saveRDS(child_dev, "shiny_app/data/child_dev_depr.rds")
-  saveRDS(child_dev, paste0(data_folder,"final_app_files/child_dev_depr_", 
-                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-  
-  child_dev <<- child_dev
-  print("File child_dev_depr_data.rds produced and saved")
-  
-  
-}
-
-create_childdev_depr()
-
 
 ###############################################.
 ## Breastfeeding ----
