@@ -49,6 +49,15 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                          "COVID-19 report for Scotland.",  target="_blank")),
                 p("Note that some numbers may not sum to the total as disclosure control methods have been applied
                     to the data in order to protect patient confidentiality."),
+         p("Pre-Release Access Under terms of the 'Pre-Release Access to Official Statistics (Scotland) Order 2008', 
+            PHS is obliged to publish information on those receiving Pre-Release Access ('Pre-Release Access' refers to 
+            statistics in their final form prior to publication). Shown below are details of those receiving standard 
+            Pre-Release Access. "),
+         p("Standard Pre-Release Access:"),
+         tags$ul(
+           tags$li("Scottish Government Health Department"), 
+           tags$li("NHS Board Chief Executives"), 
+           tags$li("NHS Board Communication leads")),
                 p("If you have any questions relating to the data presented please contact us at: ",
                   tags$b(tags$a(href="mailto:phs.statsgov@phs.scot", "phs.statsgov@phs.scot",  target="_blank")), "."),
                 p("You can access the code used to produce this tool in this ",
