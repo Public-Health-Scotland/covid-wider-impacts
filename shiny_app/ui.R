@@ -4,16 +4,16 @@ tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
   navbarPage(id = "intabset", # id used for jumping between tabs
-  title = div(tags$a(img(src="phs-logo.png", width=120, alt = "Public Health Scotland logo"), 
+  title = div(tags$a(img(src="phs-logo.png", width=120, alt = "Public Health Scotland logo"),
                      href= "https://www.publichealthscotland.scot/",
                      target = "_blank"),
-              style = "position: relative; top: -10px;"), 
+              style = "position: relative; top: -10px;"),
   windowTitle = "COVID-19 wider impacts", #title for browser tab
   header = tags$head(includeCSS("www/styles.css"), # CSS styles
                      HTML("<html lang='en'>"),
                      tags$link(rel="shortcut icon", href="favicon_phs.ico"), #Icon for browser tab
                      #Including Google analytics
-                     includeScript("google-analytics.js")), 
+                     includeScript("google-analytics.js")),
 ##############################################.
 # Introduction ----
 ##############################################.
@@ -49,15 +49,15 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                          "COVID-19 report for Scotland.",  target="_blank")),
                 p("Note that some numbers may not sum to the total as disclosure control methods have been applied
                     to the data in order to protect patient confidentiality."),
-         p("Pre-Release Access Under terms of the 'Pre-Release Access to Official Statistics (Scotland) Order 2008', 
-            PHS is obliged to publish information on those receiving Pre-Release Access ('Pre-Release Access' refers to 
-            statistics in their final form prior to publication). Shown below are details of those receiving standard 
+         p("Pre-Release Access: under terms of the 'Pre-Release Access to Official Statistics (Scotland) Order 2008',
+            PHS is obliged to publish information on those receiving Pre-Release Access ('Pre-Release Access' refers to
+            statistics in their final form prior to publication). Shown below are details of those receiving standard
             Pre-Release Access. "),
          p("Standard Pre-Release Access:"),
          tags$ul(
-           tags$li("Scottish Government Health Department"), 
-           tags$li("NHS Board Chief Executives"), 
-           tags$li("NHS Board Communication leads")),
+           tags$li("Scottish Government Health Department"),
+           tags$li("NHS Board Chief Executives"),
+           tags$li("NHS Board Communication Leads")),
                 p("If you have any questions relating to the data presented please contact us at: ",
                   tags$b(tags$a(href="mailto:phs.statsgov@phs.scot", "phs.statsgov@phs.scot",  target="_blank")), "."),
                 p("You can access the code used to produce this tool in this ",
@@ -263,10 +263,10 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         ###############################################.
                         ## SACT ----
                         ###############################################.
-                        
-                        
+
+
                         #### MONTHLY TAB
-                        
+
                         tabPanel(title = "SACT (Chemotherapy) Monthly Patients ", icon = icon("syringe"), value = "sact",
                                  wellPanel(h4(strong("SACT Treatment Activity in Scotland - Monthly Patient Data")),
                                            p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
@@ -305,7 +305,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            uiOutput("sact_explorer")
                                  )# mainPanel bracket
                         ), # tabpanel bracket
-                        
+
                         #### WEEKLY TAB
 
                         tabPanel(title = "SACT (Chemotherapy) Weekly Appointments", icon = icon("syringe"), value = "sact",
@@ -358,48 +358,48 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
                               )#, # tabpanel bracket
-                        
+
                         ###############################################.
                         ## DCE ----
                         ###############################################.
-                        
+
                         # tabPanel(title = "Cancer Staging - DCE Data", icon = icon("clock"), value = "dce",
                         #          wellPanel(h4(strong("Cancer Staging - Detect Cancer Early Data (Breast, Colorectal & Lung)")),
-                        #            # p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer 
-                        #            #    in Scotland and approximately 34,000 people were diagnosed with cancer, excluding non-melanoma 
+                        #            # p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer
+                        #            #    in Scotland and approximately 34,000 people were diagnosed with cancer, excluding non-melanoma
                         #            #      skin cancer. The most common causes of cancer diagnosis are lung, breast, prostate and colorectal cancer."),
-                        #            # p("In February 2012 the Cabinet Secretary for Health and Wellbeing formally launched the Detect Cancer Early 
-                        #            #    programme . One aim of the Detect Cancer Early programme was to increase the proportion of people who were 
-                        #            #    diagnosed early in the disease process (with stage 1 disease). The programme concentrates on breast, colorectal 
+                        #            # p("In February 2012 the Cabinet Secretary for Health and Wellbeing formally launched the Detect Cancer Early
+                        #            #    programme . One aim of the Detect Cancer Early programme was to increase the proportion of people who were
+                        #            #    diagnosed early in the disease process (with stage 1 disease). The programme concentrates on breast, colorectal
                         #            #    and lung cancers, which collectively account for 42.6% of all cancers diagnosed in Scotland in 2018."),
-                        #            p("Cancer staging is the process of determining the extent to which a cancer has developed and spread. 
-                        #               For the majority of patients with cancer it is common practice to assign a number from 1 to 4 to a cancer, 
-                        #               with 1 indicating the cancer is confined to the original organ in which it occurred and 4 being a cancer 
-                        #               which has spread beyond the original organ and its local lymph glands (regional lymph nodes). Patients 
-                        #               diagnosed with stage 1 disease tend to have better outcomes and longer survival compared with patients 
+                        #            p("Cancer staging is the process of determining the extent to which a cancer has developed and spread.
+                        #               For the majority of patients with cancer it is common practice to assign a number from 1 to 4 to a cancer,
+                        #               with 1 indicating the cancer is confined to the original organ in which it occurred and 4 being a cancer
+                        #               which has spread beyond the original organ and its local lymph glands (regional lymph nodes). Patients
+                        #               diagnosed with stage 1 disease tend to have better outcomes and longer survival compared with patients
                         #               diagnosed with stage 4 disease."),
-                        #            p("This dashboard looks at each of breast, colorectal and lung cancer staging data separately to examine the 
-                        #              different impacts of the pandemic, and 
+                        #            p("This dashboard looks at each of breast, colorectal and lung cancer staging data separately to examine the
+                        #              different impacts of the pandemic, and
                         #              how well cancer services are recovering to the expected pre-pandemic levels."),
-                        #            p("The proportion of patients with cancer diagnosed with stage 1 disease can vary because of a number of 
-                        #               factors, including the presence and uptake of national screening programmes. On March 30th 2020, the 
-                        #               Scottish Government suspended the national screening programmes for breast and colorectal cancer due to 
+                        #            p("The proportion of patients with cancer diagnosed with stage 1 disease can vary because of a number of
+                        #               factors, including the presence and uptake of national screening programmes. On March 30th 2020, the
+                        #               Scottish Government suspended the national screening programmes for breast and colorectal cancer due to
                         #               COVID-19, restarting gradually from July onwards."),
-                        #            p("During the nine months of the pandemic in 2020 (April-December), there were 2,681 patients diagnosed with 
-                        #              breast cancer, 1,958 patients diagnosed with colorectal cancer and 3,287 patients diagnosed with lung cancer. 
-                        #              These numbers are 19% (breast), 25% (colorectal) and 9% (lung) lower than would have been expected in this 
+                        #            p("During the nine months of the pandemic in 2020 (April-December), there were 2,681 patients diagnosed with
+                        #              breast cancer, 1,958 patients diagnosed with colorectal cancer and 3,287 patients diagnosed with lung cancer.
+                        #              These numbers are 19% (breast), 25% (colorectal) and 9% (lung) lower than would have been expected in this
                         #              period had COVID-19 not happened."),
                         #            tags$ul(
-                        #              tags$li("For breast cancer, there were large falls numbers in stages 1 and 2 (35% and 15% respectively). In 
-                        #                      contrast, there were small increases in stages 3 and 4 (5% and 7%), with the biggest increase seen for 
+                        #              tags$li("For breast cancer, there were large falls numbers in stages 1 and 2 (35% and 15% respectively). In
+                        #                      contrast, there were small increases in stages 3 and 4 (5% and 7%), with the biggest increase seen for
                         #                      those of unknown stage (34%)."),
-                        #              
-                        #              tags$li("For Colorectal Cancer, there were substantial drops (30% and more) in the numbers diagnosed with 
+                        #
+                        #              tags$li("For Colorectal Cancer, there were substantial drops (30% and more) in the numbers diagnosed with
                         #                      stages 1, 2 or 3 colorectal cancer; whereas there was only a 4% drop for metastatic colorectal cancer."),
-                        #              
-                        #              tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4 
+                        #
+                        #              tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
                         #                      diagnoses, which was only lower than expected in April 2020.")),
-                        #            
+                        #
                         #            p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                         #          ),
                         #          wellPanel(
@@ -407,7 +407,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                                  choices= c("Scotland", "Cancer Network"),
                         #                                  selected = "Scotland"),
                         #                   uiOutput("geoname_ui_dce")),
-                        #            
+                        #
                         #            column(5,  selectInput("dce_type", label = "Select all or specific cancer type",
                         #                                   choices = c("Breast", "Colorectal", "Lung"), selected = "Breast")),
                         #            column(2,
@@ -426,7 +426,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                    uiOutput("dce_explorer2")
                         #          )# mainPanel bracket
                         # ) # tabpanel bracket
-                ) , # navbar bracket          
+                ) , # navbar bracket
 ###############################################.
 ## Unintentional Injuries ----
 ###############################################.
@@ -804,7 +804,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                                            label= "Step 1 – Select the data you want to explore",
                                            choices = c('Take home naloxone kits',
                                                        'Drug and alcohol treatment referrals',
-                                                       'Opioid substitution therapy prescribing'='OST prescribing'), 
+                                                       'Opioid substitution therapy prescribing'='OST prescribing'),
                                            status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,uiOutput('area_drugs_select'),
@@ -821,7 +821,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
 
          mainPanel(width = 12,
                    #actionButton('browser','browser'),
-                   fluidRow(br()),                  
+                   fluidRow(br()),
                    uiOutput('Quan_plot'),
                    fluidRow(br()),
                    uiOutput('TwoYrComparison'),
@@ -834,7 +834,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    uiOutput('PercentChange'),
                    fluidRow(br()),
                    fluidRow(br())
-                  
+
          )# mainPanel bracket
 ), # tabpanel bracket
 # # ##############################################.
