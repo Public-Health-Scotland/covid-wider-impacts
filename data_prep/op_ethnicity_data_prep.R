@@ -9,13 +9,15 @@
 # Approximate run time - 2 minutes
 
 # All new and return appointments are included; 
-# A&E and Genitourinary specialties are excluded, as well as Did Not Attend (DNA) appointments;
-# Records with invalid ages are excluded.
+# DNAs are excluded (following full outpatients methodology);
+# A&E and Genitourinary specialties are excluded;
+# Consultant-led appointments included only
 
 
 ###############################################.
-## Packages ----
+## Functions/Packages/filepaths/lookups ----
 ###############################################.
+
 library(odbc)          # For accessing SMRA databases
 library(dplyr)         # For data manipulation in the "tidy" way
 library(readr)         # For reading/writing CSVs
@@ -37,13 +39,14 @@ WI_data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/"
 #source("outpatient_functions.R")
 
 ###############################################.
-# Data extraction -- Write SQL query
+## Data extraction ----
+###############################################.
+
 smr00  <- as_tibble(dbGetQuery(channel, statement=paste(
   "SELECT CLINIC_DATE, REFERRAL_TYPE, ETHNIC_GROUP ethnic_code
   FROM ANALYSIS.SMR00_PI
   WHERE CLINIC_DATE between '1 January 2018' AND '31 March 2021'
     AND SEX IN ('1', '2')
-    AND AGE_IN_YEARS >= 0 AND AGE_IN_YEARS is not null
     AND CLINIC_TYPE IN ('1', '2')
     AND CLINIC_ATTENDANCE IN ('1', '5')
     AND substr(specialty,1,2) not in ('C2','AA','G6','D1','F1','R8','R9','RD','RG','RK')"))) %>% 
@@ -76,9 +79,6 @@ smr00 <- smr00 %>%
 
 
 
-###############################################.
-# Aggregate by month, admission type, and ethnic group
-
 # create monthly totals by ethnic group and admission type - New/Return
 newreturn <- smr00 %>% 
   group_by(month_ending, admission_type, ethnic_group) %>% 
@@ -109,11 +109,11 @@ outpats <- outpats %>%
   select(week_ending, area_type, area_name, spec, admission_type, type, category, count, percent)
 
 
-# Creating "week" (actually month) number to be able to compare pre-covid to covid period ----
+# Creating "week" (actually month) number to be able to compare pre-covid to covid period 
 outpats <- outpats %>%
   mutate(week_no = as.numeric(format(week_ending,"%m")))
 
-# Creating average appts of pre-covid data (2018 & 2019) by month of the year ----
+# Creating average appts of pre-covid data (2018 & 2019) by month of the year 
 data_201819 <- outpats %>% 
   filter(year(week_ending) %in% c("2018", "2019")) %>%
   group_by(category, type, area_name, area_type, week_no, admission_type, spec) %>%
@@ -134,14 +134,13 @@ data_202021 <- left_join(outpats %>%
                                TRUE ~ variation))
 
 
-###############################################.
 # add ethnicity data to full outpatients file
-outpats_24_Mar_21 <- readRDS(paste0(WI_data_folder, "outpats_24_Mar_21.rds"))
-outpats_all <- bind_rows(outpats_24_Mar_21, data_202021) %>% 
+outpats_full <- readRDS(paste0(WI_data_folder, "outpats_17_May_21.rds"))
+outpats_all <- bind_rows(outpats_full, data_202021) %>% 
   select(-percent)
 
 # save for checking
-#write_csv(outpats_all, "//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_variation.csv")
+#write_csv(outpats, "//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_with_consult_only.csv")
 #saveRDS(outpats_all, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_variation.rds"))
 
 # save final output to shiny folder
@@ -149,4 +148,4 @@ saveRDS(outpats_all, paste0("shiny_app/data/outpats_ethnicity.rds"))
 saveRDS(outpats_all, paste0(WI_data_folder,"outpats_ethnicity_", 
                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
-#END OF SCRIPT#
+### END ###.
