@@ -14,9 +14,13 @@ library(zoo)
 ###############################################.
 ## Drug and alcohol treatment referrals ----
 ###############################################.
+#When updating for future updates the following lines must be updated:
+#Line 23: Update filepath to data
+#Line 75: Update number of weeks
+#Line 93: Update number of weeks
 
 # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/DrugTreatmentReferrals/Referrals_20211026_breakdown.xlsx", 
+Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/DrugTreatmentReferrals/Referrals_20211026_breakdown.xlsx", 
                                    col_types = c("text", "text", "date", 
                                                  "numeric"))
 
@@ -174,6 +178,10 @@ saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_",
 ###############################################.
 ## Take Home Naloxone ----
 ###############################################.
+#When updating for future updates the following lines must be updated:
+#Line 187: Update filepath to data
+#Line 211: Update number of months of 2021 data 
+
 
 # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
 dashboard_monthly_data <- readRDS("/PHI_conf/SubstanceMisuse1/Topics/Naloxone/Projects/20200515-COVID19-Naloxone/Temp/dashboard_monthly_data.rds")
@@ -200,7 +208,7 @@ comp.data<-complete(HB_data, Board=hb, Type=types, Date=dates,
 comp.data<-comp.data[order(comp.data$Date),]#Ordering by date
 comp.data<-comp.data[,c(3,1,2,4:8)]#Reordering columns
 
-block<-nrow(subset(comp.data,Date<=3))#CHANGE WHEN UPDATING DATA:replace 3 with number of months of data available
+block<-nrow(subset(comp.data,Date<=6))#CHANGE WHEN UPDATING DATA:replace with number of months of 2021 data available
 comp.data.temp<-rbind(comp.data[,c(1:3,8,6)],comp.data[c(1:block),c(1:3,8,6)])
 comp.data.temp[c((nrow(comp.data)+1):(nrow(comp.data)+block)),5]<-comp.data[c(1:block),7]
 
@@ -252,8 +260,12 @@ saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_",
 ###############################################.
 ## SAS data prep ----
 ###############################################.
+#When updating for future updates the following lines must be updated:
+#Line 268: Update filepath to data
+#Line 353: Update number of weeks of data available
 
-SAS_data<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/SAS/SAS_reformat.xlsx", 
+
+SAS_data<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/SAS/SAS_reformat.xlsx", 
                       sheet = "HB-DATA")
 
 
@@ -368,46 +380,45 @@ saveRDS(data, paste0(data_folder,"final_app_files/SASdata_",
 ###############################################.
 ## OST data prep ----
 ###############################################.
+#When updating for future updates the following lines must be updated:
+#Line 387 Line 391, Line 395, Line 401: Update filepath to data
+#Check formatting code as raw data comes slightly differently every time
 
-raw.meth.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Data/OST/200821/IR2020-00580 - Output Methadone 1mg.ml 200821_LB.xlsx", 
+raw.meth.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Methadone 1mg.ml-1.xlsx", 
                            sheet = "Paid Items", col_types = c("text", 
                                                                "text", "text", "numeric", "numeric", 
                                                                "numeric"))
-scot.raw.meth.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Data/OST/200821/IR2020-00580 - Output Methadone 1mg.ml 200821_LB.xlsx", 
+scot.raw.meth.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Methadone 1mg.ml-1.xlsx", 
                                sheet = "Context ePr Vs Paid", col_types = c("text", 
-                                                                            "date", "text", "numeric", "text", 
-                                                                            "numeric", "numeric", "text", "numeric", 
-                                                                            "numeric", "numeric", "numeric", 
-                                                                            "numeric", "numeric", "numeric", 
-                                                                            "numeric", "numeric", "numeric", 
-                                                                            "numeric", "numeric", "text", "text", 
-                                                                            "numeric"))
+                                                                            "text", "numeric", "text", "numeric"))
 
-raw.bup.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Data/OST/200821/IR2020-00580 - Output Buprenorphine 2MG_8MG_16MG 200821_LB.xlsx", 
+raw.bup.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx", 
                          sheet = "Paid Items", col_types = c("text", 
-                                                             "text", "text", "numeric", "numeric", 
-                                                             "numeric"))
-scot.raw.bup.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Data/OST/200821/IR2020-00580 - Output Buprenorphine 2MG_8MG_16MG 200821_LB.xlsx", 
-                              sheet = "Context ePr Vs Paid", col_types = c("text", 
-                                                                           "date", "text", "text", "numeric", 
-                                                                           "numeric", "text", "numeric", "text", 
-                                                                           "numeric"))
+                                                             "text", "text", "numeric", "text", 
+                                                             "numeric", "text", "numeric"))
+
+
+scot.raw.bup.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx", 
+                               sheet = "Context ePr Vs Paid", col_types = c("text", 
+                                                                            "text", "text", "text", "numeric", 
+                                                                            "text", "numeric", "text", "numeric"))
+
 
 #formatting meth Paid
 raw.meth.paid<-raw.meth.paid[-c(1:6,nrow(raw.meth.paid)),]  #Removing first 6 rows
 colnames(raw.meth.paid)<-c('Board','Year month','Type1','Items','Quantity','Quantity per item')
 
-scot.raw.meth.paid<-scot.raw.meth.paid[-c(1:3,45:46),c(1,2,4,6,9)]#Removing rows and keeping columns for scotland data
+scot.raw.meth.paid<-scot.raw.meth.paid[-c(1:3,(nrow(scot.raw.meth.paid)-1):nrow(scot.raw.meth.paid)),c(1,3,5)]#Removing rows and keeping columns for scotland data
 scot.raw.meth.paid<-data.frame('Board'=rep('Scotland',nrow(scot.raw.meth.paid)),scot.raw.meth.paid)
-colnames(scot.raw.meth.paid)<-c('Board','Year month','Date','Quantity','Items','Quantity per item')
+colnames(scot.raw.meth.paid)<-c('Board','Year month','Quantity','Items')
 
 #formatting bup paid
-raw.bup.paid<-raw.bup.paid[-c(1:6),]
+raw.bup.paid<-raw.bup.paid[-c(1:6),c(1:4,6,8)]
 colnames(raw.bup.paid)<-c('Board','Year month','Type1','Items','Quantity','Quantity per item')
 
-scot.raw.bup.paid<-scot.raw.bup.paid[-c(1:3,45:46),c(1,2,6,8,10)]
+scot.raw.bup.paid<-scot.raw.bup.paid[-c(1:3,(nrow(scot.raw.bup.paid)-1):nrow(scot.raw.bup.paid)),c(1,5,7)]
 scot.raw.bup.paid<-data.frame('Board'=rep('Scotland',nrow(scot.raw.meth.paid)),scot.raw.bup.paid)
-colnames(scot.raw.bup.paid)<-c('Board','Year month','Date','Quantity','Items','Quantity per item')
+colnames(scot.raw.bup.paid)<-c('Board','Year month','Quantity','Items')
 
 
 #Creating new Type variable for Methadone and Buprenorphine
@@ -431,7 +442,7 @@ scot<- scot %>%
 
 Date<-as.character(as.yearmon(paste(paid1$Year, paid1$Month, sep="-")))#Changing year and month into date
 paid1<-data.frame(paid1, 'Date'=Date)
-scot$Date<-as.character(as.yearmon(paste(scot$Year, scot$Month, sep="-")))
+scot$Date<-paste(scot$Month,scot$Year,  sep=" ")
 
 #Getting all variables to create complete data frame
 paid.dates<-unique(Date)
@@ -463,7 +474,7 @@ paid.comp1<-paid.comp1 %>%
 scot<-scot %>% 
   separate(`Date`,c('Month','Year'),' ')
 
-paid.comp1<-rbind(paid.comp1,scot)#Adding scotland level data
+paid.comp1<-rbind(paid.comp1[,-7],scot)#Adding scotland level data
 paid.comp1$Date<-as.yearmon(paste(paid.comp1$Month, paid.comp1$Year)) 
 paid.comp1<-paid.comp1[order(paid.comp1$Date),]
 
@@ -539,8 +550,8 @@ paid.quantity$Board<-gsub('Nhs','NHS',str_to_title(paid.quantity$Board))
 saveRDS(paid.final,'OST_paid.rds')
 saveRDS(paid.final, "shiny_app/data/OST_paid.rds")
 saveRDS(paid.final, paste0(data_folder,"final_app_files/OST_paid_", 
-                        format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(paid.quantity,'OST_paid_quantity.rds')
 saveRDS(paid.quantity, "shiny_app/data/OST_paid_quantity.rds")
 saveRDS(paid.quantity, paste0(data_folder,"final_app_files/OST_paid_quantity_", 
-                        format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
