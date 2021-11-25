@@ -227,6 +227,8 @@ gestation_download <- readRDS("data/gestation_download_data.rds")
 breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
 child_dev <- readRDS("data/child_dev.rds")
+child_dev_depr <- readRDS("data/child_dev_depr.rds")
+
 
 # Apgar (births and babies tab)
 apgar_extract_date <- "14 October 2021"
