@@ -45,24 +45,24 @@ observeEvent(input$btn_childdev_rules,
 child_dev_simd_modal <- modalDialog(
   h5("What is SIMD and deprivation?"),
   p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
-                  target="_blank"), "is the Scottish Government's 
-    official tool for identifying areas in Scotland with concentrations of deprivation 
-    by incorporating several different aspects of deprivation (multiple-deprivations) 
-    and combining them into a single index. Concentrations of deprivation are identified 
-    in SIMD at Data Zone level and can be analysed using this small geographical unit. 
-    The use of data for such small areas helps to identify 'pockets' (or concentrations) 
-    of deprivation that may be missed in analyses based on larger areas such as council 
-    areas. By identifying small areas where there are concentrations of multiple deprivation, 
-    the SIMD can be used to target policies and resources at the places with the greatest need. 
+                  target="_blank"), "is the Scottish Government's
+    official tool for identifying areas in Scotland with concentrations of deprivation
+    by incorporating several different aspects of deprivation (multiple-deprivations)
+    and combining them into a single index. Concentrations of deprivation are identified
+    in SIMD at Data Zone level and can be analysed using this small geographical unit.
+    The use of data for such small areas helps to identify 'pockets' (or concentrations)
+    of deprivation that may be missed in analyses based on larger areas such as council
+    areas. By identifying small areas where there are concentrations of multiple deprivation,
+    the SIMD can be used to target policies and resources at the places with the greatest need.
     The SIMD identifies deprived areas, not deprived individuals."),
-  p("In this tool we use the concept of quintile, which refers to a fifth of the population. 
-    For example when we talk about the most deprived quintile, this means the 20% of the population 
+  p("In this tool we use the concept of quintile, which refers to a fifth of the population.
+    For example when we talk about the most deprived quintile, this means the 20% of the population
     living in the most deprived areas."),
-  size = "l", 
+  size = "l",
   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   )
-# Link action button click to modal launch 
-observeEvent(input$btton_childdev_modal_simd, { showModal(child_dev_simd_modal) }) 
+# Link action button click to modal launch
+observeEvent(input$btton_childdev_modal_simd, { showModal(child_dev_simd_modal) })
 
 ###############################################.
 ## Reactive controls  ----
@@ -92,10 +92,10 @@ child_dev_filt <- reactive({
 })
 
 child_dev_depr_filt <- reactive({
-  
+
   review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
                               input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
-  
+
   child_dev_depr %>% filter(area_name == input$geoname_childdev &
                          simd == input$simd_childdev &
                          review == review_chosen)
@@ -132,13 +132,26 @@ output$childdev_explorer <- renderUI({
                     h4(paste0("Number of ", review_title,
                               " reviews; reviews with full meaningful data on child development recorded; and children with 1 or more developmental concerns recorded")))),
     fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
-    h4(paste0("Percentage of children with 1 or more developmental concerns recorded at the ",
-              review_title, " review by SIMD deprivation quintile")),
-    fluidRow(column(6, selectizeInput("simd_childdev", "Select SIMD deprivation quintile", 
-                   choices = setNames(1:5, c("1 - most deprived", "2", "3", "4", "5 - least deprivation")))),
-    column(6, actionButton("btton_childdev_modal_simd", "What is SIMD and deprivation?", 
-                          icon = icon('question-circle')))),
-    fluidRow(withSpinner(plotlyOutput("childdev_depr")))
+
+    # Only give SIMD breakdown for Scotland
+    if (input$geotype_childdev == "Scotland") {
+      tagList(
+        h4(paste0("Percentage of children with 1 or more developmental concerns recorded at the ",
+                  review_title, " review by SIMD deprivation quintile")),
+        fluidRow(
+          column(6, selectizeInput("simd_childdev",
+                                   "Select SIMD deprivation quintile",
+                                   choices =
+                                     setNames(1:5, c("1 - most deprived",
+                                                     "2", "3", "4",
+                                                     "5 - least deprivation")))),
+          column(6, actionButton("btton_childdev_modal_simd",
+                                 "What is SIMD and deprivation?",
+                                 icon = icon('question-circle')))),
+        fluidRow(withSpinner(plotlyOutput("childdev_depr")))
+
+      ) # tagList from if statement
+    }
     )#tagLIst bracket
 
   }) #close perinatal_explorer function
@@ -249,34 +262,34 @@ output$childdev_no_concerns <- renderPlotly({
 
 output$childdev_depr <- renderPlotly({
   trend_data <- child_dev_depr_filt()
-  
+
   #If no data available for that period then plot message saying data is missing
   if (is.data.frame(trend_data) && nrow(trend_data) == 0)
   {
     plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
   } else {
-    
+
     #Modifying standard layout
     yaxis_plots[["title"]] <- "Percentage of all reviews"
     yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
     xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
-    
+
     tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
                               "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%",
                               "<br>", "Number of reviews: ", trend_data$no_reviews,
                               "<br>", "Number of reviews with a concern: ", trend_data$concerns_1_plus,
                               "<br>", "% meaningful reviews: ", trend_data$pc_meaningful, "%"))
-    
+
     average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
                                  input$measure_select_childdev == "13_15mnth" ~ "Average from May 19 to February 20",
                                T ~ "Average from January 19 to February 20")
-    
+
     #Creating time trend plot
     run_plot <- plot_ly(data=trend_data, x=~month_review) %>%
       add_lines( y = ~pc_1_plus,
                  line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
                  marker = list(color = "black"), name = "% children with developmental concerns")
-    
+
     # Dotted line for projected tails of centreline. It changes depending on area.
     if (input$measure_select_childdev == "13_15mnth") {
       run_plot %<>%
@@ -297,8 +310,8 @@ output$childdev_depr <- renderPlotly({
                   y = ~pc_1_plus_centreline, showlegend = FALSE,
                   line = list(color = "blue", dash = "longdash"), hoverinfo="none")
     }
-    
-    
+
+
     run_plot %>%
       # adding shifts
       add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus, hoverinfo="none",
