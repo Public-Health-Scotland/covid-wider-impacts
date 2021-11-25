@@ -354,7 +354,11 @@ eth_modal <- modalDialog(
   background. More information can be found ", tags$a(href="https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group", "here.",
          target="_blank")),
   p("It became mandatory for NHS Scotland organisations to record ethnic group 
-    on SMR outpatient returns from 1 February 2021."),
+    on SMR outpatient (SMR00) returns from 1 February 2021. There is currently
+  significant variation in the completeness of ethnic group recording in new 
+  outpatient appointment records between NHS Boards. More information can be found 
+    ", tags$a(href="https://www.isdscotland.org/products-and-Services/Data-Support-and-Monitoring/SMR-Ethnic-Group-Recording/",
+              "here.", target="_blank")),
   p("The following list is the current ethnicity classification (2011 Census categories) 
   used by NHS Scotland organisations for SMR return purposes, and the ethnic groups 
   that we have used in this dashboard."),
@@ -688,11 +692,11 @@ output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80)
 output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80)})
 
 output$op_eth_tot <- renderPlotly({
-  plot_trend_chart(dataset = op_eth(), pal_chose = pal_sact, split = "eth", type = "total", 
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_age, split = "eth", type = "total", 
                    data_name = "op", period = "monthly")})
 
 output$op_eth_var <- renderPlotly({
-  plot_trend_chart(dataset = op_eth(), pal_chose = pal_sact, split = "eth", 
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_age, split = "eth", 
                    data_name = "op", period = "monthly")})
 
 
