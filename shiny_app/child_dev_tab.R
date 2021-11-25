@@ -44,7 +44,7 @@ observeEvent(input$btn_childdev_rules,
 # Modal to explain SIMD and deprivation
 child_dev_simd_modal <- modalDialog(
   h5("What is SIMD and deprivation?"),
-  p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+  p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD)",
                   target="_blank"), "is the Scottish Government's
     official tool for identifying areas in Scotland with concentrations of deprivation
     by incorporating several different aspects of deprivation (multiple-deprivations)
