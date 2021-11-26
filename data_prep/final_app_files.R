@@ -26,7 +26,7 @@ save_final_file <- function(dataset, date_saved) {
 ###############################################.
 ###############################################.
 ## Deaths ----
-save_final_file("deaths", "04_Oct_21")
+save_final_file("deaths", "01_Nov_21")
 ##########################################################.
 ## Cancer ----
 save_final_file("cancer_data_2", "10_Sep_21")
@@ -34,13 +34,13 @@ save_final_file("cancer_data_diff", "10_Sep_21")
 
 ##########################################################.
 ## SACT ----
-save_final_file("sact_data", "25_Oct_21")
+save_final_file("sact_data", "22_Nov_21")
 
-save_final_file("sact_weekly_data", "25_Oct_21")
+save_final_file("sact_weekly_data", "22_Nov_21")
 
 ##########################################################.
 ## DCE ----
-save_final_file("dce_data", "18_Oct_21")
+# save_final_file("dce_data", "18_Oct_21")
 
 
 ##########################################################.
@@ -55,17 +55,16 @@ save_final_file("ui_smr01_assaults", "30_Sep_21")
 
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "04_Oct_21")
+save_final_file("rapid", "01_Nov_21")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
-
 ## OOH ----
-save_final_file("ooh", "04_Oct_21")
+save_final_file("ooh", "01_Nov_21")
 ## A&E ----
-save_final_file("ae", "04_Oct_21")
+save_final_file("ae", "01_Nov_21")
 ## NHS24 ----
-save_final_file("nhs24", "04_Oct_21")
+save_final_file("nhs24", "01_Nov_21")
 ## SAS ----
-save_final_file("sas", "04_Oct_21")
+save_final_file("sas", "01_Nov_21")
 ### Outpatients ----
 save_final_file("outpats", "17_May_21")
 save_final_file("spec_lookup_op", "24_Mar_21")
@@ -74,14 +73,14 @@ save_final_file("area_type_op", "24_Mar_21")
 ## Cardio - cath labs ----
 save_final_file("cath_lab", "16_Nov_20")
 ## Cardio - A&E ----
-save_final_file("ae_cardio", "04_Oct_21")
+save_final_file("ae_cardio", "01_Nov_21")
 save_final_file("ae_cardio_codes", "30_Nov_20")
 ## Cardio - OOH ----
-save_final_file("ooh_cardiac", "04_Oct_21")
+save_final_file("ooh_cardiac", "01_Nov_21")
 ## Cardio - SAS ----
-save_final_file("sas_cardiac", "04_Oct_21")
+save_final_file("sas_cardiac", "01_Nov_21")
 ## Cardio - Prescribing ----
-save_final_file("cardio_drugs", "04_Oct_21")
+save_final_file("cardio_drugs", "01_Nov_21")
 ##########################################################.
 ## Immunisations - six in one ----
 save_final_file("six_alldose", "27_Oct_21")
@@ -122,53 +121,54 @@ save_final_file("fourtofive_datatable", "28_Oct_21")
 save_final_file("fourtofive_data", "28_Oct_21")
 ## Child development ----
 save_final_file("child_dev", "28_Oct_21")
+save_final_file("child_dev_depr", "25_Nov_21")
 ## Breastfeeding ----
 save_final_file("breastfeeding", "28_Oct_21")
 ##########################################################.
 ## Pregnancy - Antenatal bookings ----
-save_final_file("ante_booking", "17_Sep_21")
-save_final_file("ante_booking_download", "17_Sep_21")
+save_final_file("ante_booking", "19_Oct_21")
+save_final_file("ante_booking_download", "19_Oct_21")
 ## Pregnancy - Terminations ----
-save_final_file("top", "17_Sep_21")
-save_final_file("top_download", "17_Sep_21")
+save_final_file("top", "26_Oct_21")
+save_final_file("top_download", "26_Oct_21")
 ##########################################################.
 ## B&B - Mode/Method of Delivery ----
-save_final_file("mod_runchart_data", "23_Sep_21")
-save_final_file("mod_scot_data", "23_Sep_21")
-save_final_file("mod_linechart_data", "23_Sep_21")
-save_final_file("mod_download_data", "23_Sep_21")
+save_final_file("mod_runchart_data", "19_Oct_21")
+save_final_file("mod_scot_data", "19_Oct_21")
+save_final_file("mod_linechart_data", "19_Oct_21")
+save_final_file("mod_download_data", "19_Oct_21")
 ## B&B - Inductions ----
-save_final_file("induct_runchart_data", "17_Sep_21")
-save_final_file("induct_scot_data", "17_Sep_21")
-save_final_file("induct_linechart_data", "17_Sep_21")
-save_final_file("induct_download_data", "17_Sep_21")
+save_final_file("induct_runchart_data", "19_Oct_21")
+save_final_file("induct_scot_data", "19_Oct_21")
+save_final_file("induct_linechart_data", "19_Oct_21")
+save_final_file("induct_download_data", "19_Oct_21")
 ## B&B - Gestation at Delivery ----
-save_final_file("gestation_runchart_data", "17_Sep_21")
-save_final_file("gestation_scot_data", "17_Sep_21")
-save_final_file("gestation_linechart_data", "17_Sep_21")
-save_final_file("gestation_download_data", "17_Sep_21")
+save_final_file("gestation_runchart_data", "19_Oct_21")
+save_final_file("gestation_scot_data", "19_Oct_21")
+save_final_file("gestation_linechart_data", "19_Oct_21")
+save_final_file("gestation_download_data", "19_Oct_21")
 ## B&B - Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "23_Sep_21")
+save_final_file("perinatal", "20_Oct_21")
 ## B&B - Apgar ----
-save_final_file("apgar_runchart_data", "17_Sep_21")
-save_final_file("apgar_scot_data", "17_Sep_21")
-save_final_file("apgar_linechart_data", "17_Sep_21")
-save_final_file("apgar_download_data", "17_Sep_21")
+save_final_file("apgar_runchart_data", "19_Oct_21")
+save_final_file("apgar_scot_data", "19_Oct_21")
+save_final_file("apgar_linechart_data", "19_Oct_21")
+save_final_file("apgar_download_data", "19_Oct_21")
 ## B&B - Preterm ----
 save_final_file("preterm_linechart_data", "17_Sep_21")
 save_final_file("preterm", "17_Sep_21")
 ## B&B - Tears ----
-save_final_file("tears_runchart_data", "17_Sep_21")
-save_final_file("tears_scot_data", "17_Sep_21")
-save_final_file("tears_linechart_data", "17_Sep_21")
-save_final_file("tears_download_data", "17_Sep_21")
+save_final_file("tears_runchart_data", "19_Oct_21")
+save_final_file("tears_scot_data", "19_Oct_21")
+save_final_file("tears_linechart_data", "19_Oct_21")
+save_final_file("tears_download_data", "19_Oct_21")
 ##########################################################.
 ## Mental health - Prescribing ----
-save_final_file("mentalhealth_drugs", "04_Oct_21")
+save_final_file("mentalhealth_drugs", "01_Nov_21")
 ## Mental health - A&E ----
-save_final_file("mh_A&E", "04_Oct_21")
+save_final_file("mh_A&E", "01_Nov_21")
 ## Mental health - OOH ----
-save_final_file("mh_ooh", "04_Oct_21")
+save_final_file("mh_ooh", "01_Nov_21")
 ##########################################################.
 ## Drugs - substance use ----
 save_final_file("ADP_names", "26_Nov_21")
@@ -185,5 +185,6 @@ save_final_file("OST_paid_quantity", "26_Nov_21")
 # save_final_file('SASdata_',format(Sys.Date(), format = '%d_%b_%y'))
 # save_final_file('OST_paid_',format(Sys.Date(), format = '%d_%b_%y'))
 # save_final_file('OST_paid_quantity_',format(Sys.Date(), format = '%d_%b_%y'))
+
 
 ##END

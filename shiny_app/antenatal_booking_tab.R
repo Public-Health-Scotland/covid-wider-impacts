@@ -418,6 +418,8 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Antenatal bookings - 3rd November 2021"),
+    p("The average gestation at booking for NHS Forth Valley has been noted to be above the revised (Feb 2021 onwards) average line for the last 6 data points.  We are linking with NHS Forth Valley to investigate this pattern of increased average gestation at booking further."),
     h2("Antenatal bookings - 1st September 2021"),
     p("The average gestation is noted to be higher than usual in the latest week presented for NHS Borders. This is likely to be the effect of small numbers of bookings in NHS Borders. A few later bookings can dramatically alter the average gestation at booking for a particular week (e.g. 26 July). Some of these may be in pregnancies that were originally booked elsewhere. There is no evidence of a sustained pattern of increased average gestation in NHS Borders although we will continue to monitor these data. "),
     h2("Antenatal bookings - 7th July 2021"),
