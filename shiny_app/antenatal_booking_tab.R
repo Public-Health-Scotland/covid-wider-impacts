@@ -93,13 +93,13 @@ output$booking_trend_n <- renderPlotly({
 output$booking_trend_g <- renderPlotly({
   plot_booking_trend(measure="ave_gest", shift = "shift_booked_gest", trend = "trend_booked_gest")})
 
-# # chart outputs for age split numbers and average gestation
-# output$booking_age_n <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("age"), split="age", measure="booking_number")})
-# output$booking_age_g <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("age"), split="age", measure="booking_gestation")})
-#
-# # chart outputs for age split numbers and average gestation
-# output$booking_dep_n <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep", measure="booking_number")})
-# output$booking_dep_g <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep", measure="booking_gestation")})
+# chart outputs for age split numbers and average gestation
+output$booking_age_n <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("age"), split="age", measure="booking_number")})
+output$booking_age_g <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("age"), split="age", measure="booking_gestation")})
+
+# chart outputs for age split numbers and average gestation
+output$booking_dep_n <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep", measure="booking_number")})
+output$booking_dep_g <- renderPlotly({plot_booking_split(dataset=ante_booking_filter_split("dep"), split="dep", measure="booking_gestation")})
 
 ###############################################.
 ##  Reactive layout  ----
@@ -131,11 +131,13 @@ output$booking_explorer <- renderUI({
                      column(6,
                             h4(paste0(booking_title_n)), br(), p(" "),
                             #actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
-                            withSpinner(plotlyOutput("booking_trend_n"))),
+                            withSpinner(plotlyOutput("booking_trend_n",
+                                                     height = height_run_chart))),
                      column(6,
                             h4(paste0(booking_title_g)),
                             p(paste0(booking_title_g2)),
-                            withSpinner(plotlyOutput("booking_trend_g"))),
+                            withSpinner(plotlyOutput("booking_trend_g",
+                                                     height = height_run_chart))),
                      column(12,
                             p(booking_subtitle),
                             p(chart_explanation)))
@@ -146,11 +148,13 @@ output$booking_explorer <- renderUI({
                column(6,
                       h4(paste0(booking_title_n)), br(), p(" "),
                       #actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
-                      withSpinner(plotlyOutput("booking_trend_n"))),
+                      withSpinner(plotlyOutput("booking_trend_n",
+                                               height = height_run_chart))),
                column(6,
                       h4(paste0(booking_title_g)),
                       p(paste0(booking_title_g2)),
-                      withSpinner(plotlyOutput("booking_trend_g"))),
+                      withSpinner(plotlyOutput("booking_trend_g",
+                                               height = height_run_chart))),
                column(12,
                       p(booking_subtitle),
                       p(chart_explanation)))
@@ -162,41 +166,42 @@ output$booking_explorer <- renderUI({
                column(6,
                       h4(paste0(booking_title_n)), br(), p(" "),
                       #actionButton("btn_booking_rules", "How do we identify patterns in the data?"),
-                      withSpinner(plotlyOutput("booking_trend_n"))),
+                      withSpinner(plotlyOutput("booking_trend_n",
+                                               height = height_run_chart))),
                column(6,
                       h4(paste0(booking_title_g)),
                       p(paste0(booking_title_g2)),
-                      withSpinner(plotlyOutput("booking_trend_g"))),
+                      withSpinner(plotlyOutput("booking_trend_g",
+                                               height = height_run_chart))),
                column(12,
                       p(booking_subtitle),
                       p(chart_explanation)))
       },
-            #only if scotland selected display age and deprivation breakdowns
-            # if (input$geotype_booking == "Scotland"){
-            #   tagList(
-            #     fluidRow(column(12,h4("Women booking for antenatal care, by age group: Scotland"))),
-            #     fluidRow(column(6,
-            #                     h4("Number of women booking for antenatal care"),
-            #                     br(),p(" "), #required to balance out alignment of charts in columns
-            #                     withSpinner(plotlyOutput("booking_age_n"))),
-            #              column(6,
-            #                     h4("Average gestation at booking"),
-            #                     p("(based on completed weeks of pregnancy)"),
-            #                     withSpinner(plotlyOutput("booking_age_g"))),
-            #              fluidRow(column(12,h4("Women booking for antenatal care, by deprivation: Scotland"),
-            #                              actionButton("btn_modal_simd_booking", "What is SIMD and deprivation?",
-            #                                           icon = icon('question-circle')))),
-            #              column(6,
-            #                     h4("Number of women booking for antenatal care"),
-            #                     br(),p(" "), #required to balance out alignment of charts in columns
-            #                     withSpinner(plotlyOutput("booking_dep_n"))),
-            #              column(6,
-            #                     h4("Average gestation at booking"),
-            #                     p("(based on completed weeks of pregnancy)"),
-            #                     withSpinner(plotlyOutput("booking_dep_g"))))
-            #   )#tagList from if statement
-            # })#close top taglist
-    )
+            # only if scotland selected display age and deprivation breakdowns
+            if (input$geotype_booking == "Scotland"){
+              tagList(
+                fluidRow(column(12,h4("Women booking for antenatal care, by age group: Scotland"))),
+                fluidRow(column(6,
+                                h4("Number of women booking for antenatal care"),
+                                br(),p(" "), #required to balance out alignment of charts in columns
+                                withSpinner(plotlyOutput("booking_age_n"))),
+                         column(6,
+                                h4("Average gestation at booking"),
+                                p("(based on completed weeks of pregnancy)"),
+                                withSpinner(plotlyOutput("booking_age_g"))),
+                         fluidRow(column(12,h4("Women booking for antenatal care, by deprivation: Scotland"),
+                                         actionButton("btn_modal_simd_booking", "What is SIMD and deprivation?",
+                                                      icon = icon('question-circle')))),
+                         column(6,
+                                h4("Number of women booking for antenatal care"),
+                                br(),p(" "), #required to balance out alignment of charts in columns
+                                withSpinner(plotlyOutput("booking_dep_n"))),
+                         column(6,
+                                h4("Average gestation at booking"),
+                                p("(based on completed weeks of pregnancy)"),
+                                withSpinner(plotlyOutput("booking_dep_g"))))
+              )#tagList from if statement
+            })#close top taglist
   } #close layout function
 
   #link plot functions to layouts
