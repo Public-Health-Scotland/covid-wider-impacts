@@ -2316,17 +2316,44 @@ plot_run_chart =
   # Set up data
 
 
+  # There can be adjacent shifts and trends that should not be connected.
+  # These were marked in the data during prep, now we just need to add
+  # a row with measure = NA between the shifts/trends.
+  #
+  # Arguments
+  # dataset - dataframe of shift or trend data
+  # measure - string with measure column name
+  # split_col_prefix - string prefix for column that identifies split locations
+  add_split_gaps = function(dataset, measure, split_col_prefix){
+    dataset =
+      dataset %>%
+      # How many times should each row be included? Splits should be included
+      # twice, and FALSE + 1 = 1, TRUE + 1 = 2
+      mutate(across(all_of(paste0(split_col_prefix, ".split")),
+                    ~.x + 1, .names = "num_rows")) %>%
+      # If a row should be included more than once, duplicate it
+      uncount(weights = num_rows, .id = "dup_row", .remove = FALSE) %>%
+      # We want measure to be NA for the first row in each split
+      mutate(across(all_of(measure),
+                    ~if_else((num_rows == 2) & (dup_row == 1), NA_real_, .x)))
+  }
+
   # Set up data for trend trace
   # We don't want to use this data to plot anything that is not part of a
   # trend, so just set non-trend data to NA
   trend_data = plot_data
   trend_data[!trend_data[[trend]], measure] = NA
+  trend_data = add_split_gaps(trend_data, measure, trend)
 
   # Set up data for shift trace
   # We don't want to use this data to plot anything that is not part of a
   # shift, so just set non-shift data to NA
-  shift_data = plot_data
+  shift_data =
+    plot_data %>%
+    # So it is the same length if add_split_gaps duplicates any rows
+    mutate(shift_tooltip = tooltip_text)
   shift_data[!shift_data[[shift]], measure] = NA
+  shift_data = add_split_gaps(shift_data, measure, shift)
 
   # Set up data for dummy traces, that will be used to set legend order
   # Plot outside axis limits so that the data doesn't show when markers on
@@ -2388,7 +2415,7 @@ plot_run_chart =
     list(data = shift_data, y = ~get(measure),
          name = shift_text, legendgroup = "shifts",
          type = "scatter", mode = "lines",
-         line = list(color = "orange", width = 2), text = tooltip_text,
+         line = list(color = "orange", width = 2), text = ~shift_tooltip,
          hoverinfo = "text", hoverlabel = list(bgcolor = "black"))
 
 
