@@ -270,7 +270,7 @@ output$childdev_depr <- renderPlotly({
   } else {
 
     #Modifying standard layout
-    yaxis_plots[["title"]] <- "Percentage of all reviews"
+    yaxis_plots[["title"]] <- "Percentage of reviews"
     yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
     xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
 
