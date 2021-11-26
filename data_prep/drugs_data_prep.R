@@ -469,7 +469,10 @@ scot<- scot %>%
 
 Date<-as.character(as.yearmon(paste(paid1$Year, paid1$Month, sep="-")))#Changing year and month into date
 paid1<-data.frame(paid1, 'Date'=Date)
-scot$Date<-paste(scot$Month,scot$Year,  sep=" ")
+# scot$Date<-paste(scot$Month,scot$Year,  sep=" ")
+
+Date_scot<-as.character(as.yearmon(paste(scot$Year, scot$Month, sep="-")))#Changing year and month into date
+scot1<-data.frame(scot, 'Date'=Date_scot)
 
 #Getting all variables to create complete data frame
 paid.dates<-unique(Date)
@@ -498,10 +501,10 @@ colnames(paid.comp1)[c(1:3,6)]<-c('Type','Board','Date','Quantity per item')
 paid.comp1<-paid.comp1 %>% 
   separate(`Date`, c("Month", "Year"),' ')
 
-scot<-scot %>% 
+scot1<-scot1 %>% 
   separate(`Date`,c('Month','Year'),' ')
 
-paid.comp1<-rbind(paid.comp1[,-7],scot)#Adding scotland level data
+paid.comp1<-rbind(paid.comp1[,-7],scot1)#Adding scotland level data
 paid.comp1$Date<-as.yearmon(paste(paid.comp1$Month, paid.comp1$Year)) 
 paid.comp1<-paid.comp1[order(paid.comp1$Date),]
 
