@@ -678,7 +678,6 @@ create_apgar <- function(folderdate) {
   
   ## 4- Apgar DATA DOWNLOAD FILE FOR SHINY APP
   apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_Apgar5_DOWNLOAD_",apgar_date,".rds")) %>%
-    rename(HBRES = NHS_Board_of_Residence, Unknown = UNKNOWN_APGAR5_37plus) %>%
     janitor::clean_names() %>%
     mutate(subgroup = case_when(substr(hbres,1,3) == "NHS" ~ "board",
                                 substr(hbres,1,3) == "Not" ~ "board",
