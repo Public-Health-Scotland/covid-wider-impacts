@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+#secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
@@ -856,4 +856,5 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
    ) # page bracket
  )# taglist bracket
  #)#secure app
+
 #END
