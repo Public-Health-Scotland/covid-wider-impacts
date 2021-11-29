@@ -276,6 +276,62 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
+    h2("Stillbirths and infant deaths - 1st December 2021"),
+    p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in October 2021."),
+    p("In October 2021 all reported measures of perinatal and infant mortality were within expected limits. ",
+      "The neonatal mortality rate, which was raised in September 2021, was 3.3 per 1,000 live births in Oct 2021, ",
+      "and returned to within the warning limit (3.6 per 1,000). The overall infant mortality rate (4.9 per 1,000 live births) ",
+      "in Oct 2021 was close to, but did not breach the upper warning limit (5.0 per 1,000), whereas in September 2021 it was ",
+      "above this (5.5 per 1,000). Stillbirths and post-neonatal deaths (those that occur after 4 weeks of age) were at expected levels in Oct 2021."),
+    
+    p("As referenced in the commentary on September 2021 data, all neonatal deaths are the subject of local and national review processes. ",
+      "In addition to this, the higher than expected numbers that month prompted additional review of available data at national level, in ",
+      "particular with respect to the role of prematurity, and to understand any relationship with COVID-19 infections. Findings from this ",
+      "review are preliminary, as relevant information at national level on the total number of births and gestational age of babies in that ",
+      "period is not yet fully complete, but will be by February 2022 (see below)."),
+    
+    p("Initial findings suggest that, overall, the number of births in September 2021 was at the expected level. Preliminary information ",
+      "on prematurity suggests that the number of babies born at less than 32 weeks gestation in September 2021 was at the upper end of ", 
+      "monthly numbers seen in 2021 to date. This may contribute to the neonatal mortality rate, as prematurity is associated with an ",
+      "increased risk of neonatal death. The relevant dashboard indicators on live births and gestational age will be updated to include ",
+      "September 2021 information, using the most complete data available, in the next dashboard update in February 2022."),
+    
+    p("There is no information at this stage to suggest that any of the neonatal deaths in September 2021 were due to COVID-19 infection ",
+      "of the baby. Likewise, preliminary review does not indicate that maternal COVID-19 infection played a role in these events. Several ",
+      "surveillance programmes focussing on direct impact of COVID-19 on pregnant women and babies are underway. The ",
+      tags$a(href="https://www.ed.ac.uk/usher/eave-ii/covid-19-in-pregnancy-in-scotland", "COVID-19 in Pregnancy in Scotland study (COPS)", target="_blank"), 
+      "has been established to provide population-level monitoring and analysis of the occurrence and outcomes of COVID-19 infection in pregnancy. ",
+      "Monthly reporting of cases is available within the ", tags$a(href="https://publichealthscotland.scot/publications/covid-19-statistical-report/", 
+                                                                    "PHS COVID-19 Statistical Report", target="_blank"),
+      "and will next be updated on the 8th December. At UK-level, surveillance of any complications of COVID-19 among neonates is being undertaken ",
+      "through the ", tags$a(href="https://www.rcpch.ac.uk/work-we-do/bpsu/study-neonatal-complications-coronavirus-disease-covid-19", 
+                             "British Paediatric Surveillance Unit", target="_blank"), "."),
+    
+    p("Whilst COVID-19 does not appear to have played a role in the tragic deaths which occurred in September 2021, there is international ",
+      "evidence which shows that COVID-19 infection during pregnancy is associated with a higher chance of problems for both mother and baby. ",
+      "The Royal College of Obstetricians and Gynaecologists (RCOG) maintains a review of the literature on COVID-19 in pregnancy, with an update ",
+      "published in ", tags$a(href="https://www.rcog.org.uk/en/guidelines-research-services/guidelines/coronavirus-pregnancy/", "November 2021", target="_blank"), ".",
+      "COVID-19 infection during pregnancy has been linked to an increased risk of stillbirth. Symptomatic COVID-19 is associated with an increased ",
+      "likelihood of premature birth due to a need to deliver the baby early for the health of mother or baby. "),
+    
+    p("In view of the small but important risks of COVID-19 infection in pregnancy, pregnant women are encouraged to take up the offer of COVID-19 ",
+      "vaccination. Information on this is available from the ", tags$a(href="https://www.rcog.org.uk/globalassets/documents/guidelines/2021-02-24-combined-info-sheet-and-decision-aid.pdf", 
+                                                                        "RCOG", target="_blank"), ", and from ",
+      tags$a(href="https://www.nhsinform.scot/covid-19-vaccine/the-vaccines/pregnancy-breastfeeding-and-the-coronavirus-vaccine", 
+             "NHS Inform", target="_blank"), ". There is good evidence that it is effective at preventing severe COVID-19 illness. In Scotland, in",
+      tags$a(href="https://publichealthscotland.scot/publications/covid-19-statistical-report/covid-19-statistical-report-3-november-2021/", 
+             "data available", target="_blank"), "to the end of September 2021, 99 women had been admitted to critical care within 21 days of ",
+      " testing positive for COVID-19 during pregnancy, of whom 98 were unvaccinated. Vaccine safety monitoring takes place within ", 
+      tags$a(href="https://publichealthscotland.scot/media/8413/covid-19-vaccine-surveillance-report-oct21-english.pdf", 
+                                                                                                "Scotland", target="_blank"),
+      " and internationally, with more than 200,000 women having received the vaccine during pregnancy across the UK and US, with no concerning 
+      safety signals (see ", tags$a(href="https://www.rcog.org.uk/en/guidelines-research-services/guidelines/coronavirus-pregnancy/", 
+                                      "Coronavirus (COVID-19) Infection in Pregnancy report", target="_blank"), ").", 
+      tags$a(href="https://www.gov.uk/government/news/new-ukhsa-study-provides-more-safety-data-on-covid-19-vaccines-in-pregnancy", 
+                                "Recently published data", target="_blank"), " from England provides further reassurance regarding birth ",
+      "outcomes among vaccinated women."),
+    
+    
     h2("Stillbirths and infant deaths - 3rd November 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in September 2021."),
     p("In September 2021 both the neonatal mortality rate (4.9 per 1,000 live births) and the extended perinatal mortality rate (9.9 per 1,000 live and stillbirths) exceeded their upper control limits of 4.3 and 9.4, respectively. Extended perinatal death rate is a measure which combines stillbirths and neonatal deaths. Examining the data shows that the increase in extended perinatal mortality reflects the higher than expected neonatal deaths, and stillbirths that were at, but not lower than, their expected level. The overall infant mortality rate (5.5 per 1,000 live births) exceeded the warning limit (5.0), but not the upper control limit (5.9). This was due to the high number of neonatal deaths. Post-neonatal deaths (those that occur after 4 weeks of age) were not increased."),
