@@ -13,11 +13,11 @@
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
 
-create_delivery(folderdate = "2021-10-14") # Mode of delivery, induction and gestation data
-create_perinatal(foldermonth = "dec21") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2021_10_14") # Apgar scores
+create_delivery(folderdate = "2021-11-15") # Mode of delivery, induction and gestation data
+create_perinatal(foldermonth = "nov21") # Stillbirths and perinatal mortality
+create_apgar(folderdate = "2021_11_17") # Apgar scores
 create_preterm(preterm_date = "2021_10_14", max_date = "2021-07-01") # Preterm
-create_tears(tears_date = "2021_10_14", max_date = "2021-07-01") # Perineal tears
+create_tears(tears_date = "2021_11_17", max_date = "2021-08-01") # Perineal tears
 
 # Add here what needs to be changed in the shiny scripts
 
@@ -26,10 +26,10 @@ create_tears(tears_date = "2021_10_14", max_date = "2021-07-01") # Perineal tear
 ###############################################.
 source("data_prep/cardio_data_prep.R") # This sources the functions for the section
 # Filedate: date on filename for each update, last week = last week of data to be included
-create_aecardio(filedate = "2021-10-28", last_week =  "2021-10-24")
-create_sascardio(filedate = "2021-11-01", last_week =  "2021-10-24")
-create_cardiodrugs(filedate = "2021-10-28", last_week =  "2021-10-24")
-create_oohcardio(filedate = "2021-11-01", last_week =  "2021-10-24")
+create_aecardio(filedate = "2021-11-25", last_week =  "2021-11-21")
+create_sascardio(filedate = "2021-11-29", last_week =  "2021-11-21")
+create_cardiodrugs(filedate = "2021-11-25", last_week =  "2021-11-21")
+create_oohcardio(filedate = "2021-11-29", last_week =  "2021-11-21")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the cardio_tab script
@@ -85,8 +85,8 @@ file.edit("shiny_app/summary_tab.R")
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
 
-create_antebooking(booking_date = "14102021", max_book_date = "2021-10-10")
-create_terminations(top_date = "2021-10-12")
+create_terminations(top_date = "2021-11-15")
+create_antebooking(booking_date = "11112021", max_book_date = "2021-11-07")
 
 # Add here what needs to be changed in the shiny scripts
 

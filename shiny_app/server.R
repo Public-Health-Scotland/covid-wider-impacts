@@ -25,7 +25,7 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("17 November 2021 - Systemic anti-cancer therapies data update."),
+                   tags$li("1 December 2021 - Systemic anti-cancer therapies data update."),
                    tags$li("3 November 2021 - Monthly update of data (most sections)."),
                    tags$li("3 November 2021 - New data on opioid substitution therapy
                              and drug treatment referrals."),
@@ -39,7 +39,7 @@ function(input, output, session) {
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("24 November 2021 - Systemic anti-cancer therapies data update."),
+                   tags$li("8 December 2021 - Systemic anti-cancer therapies data update."),
                    tags$li("November 2021 - Cancer staging data."),
                    tags$li("November/December 2021 - New data on ambulance administered naloxone."),
                    tags$li("1 December 2021 - Monthly update of data (most sections)."),
