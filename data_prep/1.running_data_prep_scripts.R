@@ -44,9 +44,9 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20211025") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "25thOct2021")
-create_breastfeeding(filedate = "25thOct2021")
+create_chreview(ch_date_file = "20211122") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "22ndNov2021")
+create_breastfeeding(filedate = "22ndNov2021")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")

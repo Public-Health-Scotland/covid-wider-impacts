@@ -116,16 +116,16 @@ sact_data_wk_inc <- sact_weekly_data %>%
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
 # DCE Data
-# dce_data <- readRDS("data/dce_data.rds") %>% 
-#   mutate(region = factor(region)) %>% 
+# dce_data <- readRDS("data/dce_data.rds") %>%
+#   mutate(region = factor(region)) %>%
 #   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
 #                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
 #                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
 #                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
 #                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
-#   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>% 
+#   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
 #   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
-# 
+#
 # dce_extract_date <- "8 October 2021"
 
 
@@ -146,7 +146,7 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "25 October 2021"
+child_extract_date <- "22 November 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
