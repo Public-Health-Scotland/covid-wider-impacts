@@ -94,12 +94,12 @@ create_antebooking(booking_date = "11112021", max_book_date = "2021-11-07")
 ## Mental health datasets ----
 ###############################################.
 source("data_prep/mh_data_prep.R") # This sources the functions for the section
-create_aemh(filedate = "2021-10-31", last_week =  "2021-10-24") #takes a while
-create_oohmh(filedate = "2021-11-01", last_week =  "2021-10-24")
+create_aemh(filedate = "2021-11-29", last_week =  "2021-11-21") #takes a while
+create_oohmh(filedate = "2021-11-29", last_week =  "2021-11-21")
 # There will be a warning about duplicate rows, 63 rows removed - this is fine,
 # Glasgow City HSCP appears with 2 different codes earlier in the data, summing
 # count is correct.
-create_drugsmh(last_week =  "2021-10-24")
+create_drugsmh(last_week =  "2021-11-21")
 
 # Change update date in mental_health_tab.R script
 file.edit("shiny_app/mental_health_tab.R")
