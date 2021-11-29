@@ -412,7 +412,8 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                   uiOutput("geoname_ui_dce")),
 
                         #
-                     #            column(5,  selectInput("dce_type", label = "Select all or specific cancer type",
+                        #            column(5,  selectInput("dce_type", label = "Select all or specific cancer type",
+
                         #                                   choices = c("Breast", "Colorectal", "Lung"), selected = "Breast")),
                         #            column(2,
                         #                   fluidRow(br()),
@@ -678,7 +679,7 @@ tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ) # tabpanel bracket
-  ), # navbar menu bracket
+ ), # navbar menu bracket
 ###############################################.
 ## Child health menu ----
 ###############################################.
@@ -841,9 +842,9 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
 
          )# mainPanel bracket
 ), # tabpanel bracket
-# # ##############################################.
-# # # Data ----
-# # ##############################################.
+##############################################.
+# Data ----
+##############################################.
  tabPanel(title = "Data", icon = icon("table"), value = "table",
           p("This section allows you to view the data in table format.
          You can use the filters to select the data you are interested in.
