@@ -83,10 +83,11 @@ create_aemh <- function(filedate, last_week) {
 # mh_aye_hist <- read_csv(paste0(data_folder, "A&E_mh/A&E_Extract_-_Mental_Health_Wider_impacts.csv"))
 # saveRDS(mh_aye_hist, paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds"))
 mh_aye <- rbind(readRDS(paste0(data_folder, "A&E_mh/A&E_mh_2018to310502020.rds")) %>% 
+                  cbind("Data Zone 2011" = NA) %>% # adds blank column to match new extracts
                   filter(as.Date(`Arrival Date`) < as.Date("2020-06-01")) %>%
                   mutate(`Arrival Date`=as.Date(`Arrival Date`,format="%Y/%m/%d")),
                 read_csv(paste0(data_folder, "A&E_mh/", filedate, "-A&E Extract - Mental Health Wider impacts.csv"),
-                         col_types="nnccccccnnccccccccccccccc")) %>% # col spec needed to avoid parse errors for disease 3 fields
+                         col_types="nnccccccnncccccccccccccccc")) %>% # col spec needed to avoid parse errors for disease 3 fields
   clean_names() 
 
 # List of terms used to identify mh cases
