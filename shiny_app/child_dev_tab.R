@@ -41,6 +41,30 @@ observeEvent(input$btn_childdev_rules,
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 ###############################################.
+# Modal to explain SIMD and deprivation
+child_dev_simd_modal <- modalDialog(
+  h5("What is SIMD and deprivation?"),
+  p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD)",
+                  target="_blank"), "is the Scottish Government's
+    official tool for identifying areas in Scotland with concentrations of deprivation
+    by incorporating several different aspects of deprivation (multiple-deprivations)
+    and combining them into a single index. Concentrations of deprivation are identified
+    in SIMD at Data Zone level and can be analysed using this small geographical unit.
+    The use of data for such small areas helps to identify 'pockets' (or concentrations)
+    of deprivation that may be missed in analyses based on larger areas such as council
+    areas. By identifying small areas where there are concentrations of multiple deprivation,
+    the SIMD can be used to target policies and resources at the places with the greatest need.
+    The SIMD identifies deprived areas, not deprived individuals."),
+  p("In this tool we use the concept of quintile, which refers to a fifth of the population.
+    For example when we talk about the most deprived quintile, this means the 20% of the population
+    living in the most deprived areas."),
+  size = "l",
+  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+  )
+# Link action button click to modal launch
+observeEvent(input$btton_childdev_modal_simd, { showModal(child_dev_simd_modal) })
+
+###############################################.
 ## Reactive controls  ----
 ###############################################.
 
@@ -66,6 +90,17 @@ child_dev_filt <- reactive({
                          area_type == input$geotype_childdev &
                          review == review_chosen)
 })
+
+child_dev_depr_filt <- reactive({
+
+  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
+                              input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
+
+  child_dev_depr %>% filter(area_name == input$geoname_childdev &
+                         simd == input$simd_childdev &
+                         review == review_chosen)
+})
+
 
 ###############################################.
 ##  Reactive layout  ----
@@ -96,7 +131,27 @@ output$childdev_explorer <- renderUI({
     fluidRow(column(12,
                     h4(paste0("Number of ", review_title,
                               " reviews; reviews with full meaningful data on child development recorded; and children with 1 or more developmental concerns recorded")))),
-    fluidRow(withSpinner(plotlyOutput("childdev_no_reviews")))
+    fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
+
+    # Only give SIMD breakdown for Scotland
+    if (input$geotype_childdev == "Scotland") {
+      tagList(
+        h4(paste0("Percentage of children with 1 or more developmental concerns recorded at the ",
+                  review_title, " review by SIMD deprivation quintile")),
+        fluidRow(
+          column(6, selectizeInput("simd_childdev",
+                                   "Select SIMD deprivation quintile",
+                                   choices =
+                                     setNames(1:5, c("1 - most deprived",
+                                                     "2", "3", "4",
+                                                     "5 - least deprivation")))),
+          column(6, actionButton("btton_childdev_modal_simd",
+                                 "What is SIMD and deprivation?",
+                                 icon = icon('question-circle')))),
+        fluidRow(withSpinner(plotlyOutput("childdev_depr")))
+
+      ) # tagList from if statement
+    }
     )#tagLIst bracket
 
   }) #close perinatal_explorer function
@@ -155,7 +210,7 @@ output$childdev_no_concerns <- renderPlotly({
   yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
   xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
 
-  tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
+  tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
                             "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
 
   average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
@@ -192,10 +247,10 @@ output$childdev_no_concerns <- renderPlotly({
 
  run_plot %>%
    # adding shifts
-   add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus,
+   add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus, hoverinfo="none",
                marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>%
    # adding trends
-   add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus,
+   add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus, hoverinfo="none",
                marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%
    #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
@@ -204,6 +259,74 @@ output$childdev_no_concerns <- renderPlotly({
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )}
 })
+
+output$childdev_depr <- renderPlotly({
+  trend_data <- child_dev_depr_filt()
+
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- "Percentage of all reviews in quintile"
+    yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
+    xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
+
+    tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%",
+                              "<br>", "Number of reviews: ", trend_data$no_reviews,
+                              "<br>", "Number of reviews with a concern: ", trend_data$concerns_1_plus,
+                              "<br>", "% meaningful reviews: ", trend_data$pc_meaningful, "%"))
+
+    average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
+                                 input$measure_select_childdev == "13_15mnth" ~ "Average from May 19 to February 20",
+                               T ~ "Average from January 19 to February 20")
+
+    #Creating time trend plot
+    run_plot <- plot_ly(data=trend_data, x=~month_review) %>%
+      add_lines( y = ~pc_1_plus,
+                 line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
+                 marker = list(color = "black"), name = "% children with developmental concerns")
+
+    # Dotted line for projected tails of centreline. It changes depending on area.
+    if (input$measure_select_childdev == "13_15mnth") {
+      run_plot %<>%
+        add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01") &
+                                               as.Date(month_review) >= as.Date("2019-05-01")),
+                  y = ~pc_1_plus_centreline, name = average_title,
+                  line = list(color = "blue", dash = "solid"), hoverinfo="none") %>%
+        add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01") |
+                                               as.Date(month_review) < as.Date("2019-05-01")),
+                  y = ~pc_1_plus_centreline, showlegend = FALSE,
+                  line = list(color = "blue", dash = "longdash"), hoverinfo="none")
+    } else {
+      run_plot %<>%
+        add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01")),
+                  y = ~pc_1_plus_centreline, name = average_title,
+                  line = list(color = "blue", dash = "solid"), hoverinfo="none") %>%
+        add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01")),
+                  y = ~pc_1_plus_centreline, showlegend = FALSE,
+                  line = list(color = "blue", dash = "longdash"), hoverinfo="none")
+    }
+
+
+    run_plot %>%
+      # adding shifts
+      add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus, hoverinfo="none",
+                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>%
+      # adding trends
+      add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus, hoverinfo="none",
+                  marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots,  xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )}
+})
+
 
 ###############################################.
 ## Data downloads ----
@@ -233,6 +356,14 @@ output$download_childdev_data <- downloadHandler(
 output$childdev_commentary <- renderUI({
   tagList(
     bsButton("jump_to_childdev",label = "Go to data"), #this button can only be used once
+    h2("Child development - 1st December 2021"),
+    p("Information on child development has been updated on 1st December 2021 to include information on reviews undertaken up to September 2021. This is based on child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
+    p("As reported last month, the percentage of children who are reported to have a concern in at least one developmental domain remains above the pre-pandemic centreline for both reviews. In September 2021 11.8% of children reviewed at 13-15 months of age had a concern documented, compared with a pre-pandemic baseline of 9.6%. At 27-30 months 18.7% of children reviewed had a concern documented, compared with a pre-pandemic baseline of 14.6%."),
+    p("In this release, information is provided for the first time on the percentage of children with at least one developmental concern, by socioeconomic deprivation (as measured by Scottish Index of Multiple Deprivation (SIMD) of area of residence). ",
+      tags$a(href = "https://publichealthscotland.scot/media/6578/2021-04-27-early-child-development-publication-report.pdf", "Annual reporting", target="_blank"), " of data on child development has previously demonstrated that a higher proportion of children living in more deprived areas are identified as having developmental concerns, than those in less deprived areas.
+      The data in this release show that, at 27-30 months, an increase in the percentage of children with at least one developmental concern has been observed across all deprivation groups. There remains a steep socioeconomic gradient; in September 2021, 27.4% of children in the most deprived areas had a least one concern, compared with 13.7% in the least deprived areas.
+      At 13-15 months the recent changes among deprivation groups are less clear. This is likely, in part, to be due to the adoption, in May 2019, of this review in NHS Greater Glasgow and Clyde, which contains a substantial proportion of children who live in more deprived areas in Scotland."),
+    p("The commentary below includes potential reasons for the recent observed changes; PHS will continue to provide monthly monitoring of these data, and a full annual report with more detailed analysis by developmental domain and population group will be published in April 2022."),
     h2("Child development - 3rd November 2021"),
     p("Information on child development has been updated on 3rd November 2021 to include information on reviews undertaken in August 2021. This is based on child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
     p("This release shows that there has been a recent increase in the percentage of children reviewed who are reported to have a concern in at least one developmental domain. In August 2021 12.6% of children reviewed at 13-15 months of age had a concern documented, compared with a pre-covid baseline of 9.6%. At 27-30 months 19.3% of children reviewed had a concern documented, compared with a pre-covid baseline of 14.6%. Both measures have been consistently above the expected level since February 2021, suggesting that these findings are less likely to be due to chance variation alone."),

@@ -146,7 +146,7 @@ ae_mh <- readRDS("data/mh_A&E.rds")
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "25 October 2021"
+child_extract_date <- "22 November 2021"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
@@ -164,7 +164,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "25 October 2021"
+immunisation_extract_date <- "22 November 2021"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -193,31 +193,31 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "14 October 2021"
+booking_extract_date <- "11 November 2021"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "12 October 2021"
+top_extract_date <- "15 November 2021"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "14 October 2021"
+mod_extract_date <- "15 November 2021"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
 mod_download <- readRDS("data/mod_download_data.rds")
 
 #inductions (pregnanacy tab)
-induct_extract_date <- "14 October 2021"
+induct_extract_date <- "15 November 2021"
 induct_runchart <- readRDS("data/induct_runchart_data.rds")
 induct_scot <- readRDS("data/induct_scot_data.rds")
 induct_linechart <- readRDS("data/induct_linechart_data.rds")
 induct_download <- readRDS("data/induct_download_data.rds")
 
 #gestation at delivery (pregnanacy tab)
-gestation_extract_date <- "14 October 2021"
+gestation_extract_date <- "15 November 2021"
 gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
 gestation_scot <- readRDS("data/gestation_scot_data.rds")
 gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
@@ -227,9 +227,11 @@ gestation_download <- readRDS("data/gestation_download_data.rds")
 breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
 child_dev <- readRDS("data/child_dev.rds")
+child_dev_depr <- readRDS("data/child_dev_depr.rds")
+
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "14 October 2021"
+apgar_extract_date <- "15 November 2021"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
@@ -241,7 +243,7 @@ preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
 
 # Tears (births and babies tab)
-tears_extract_date <- "14 October 2021"
+tears_extract_date <- "15 November 2021"
 tears_runchart <- readRDS("data/tears_runchart_data.rds")
 tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
@@ -252,7 +254,7 @@ ADP_names<-readRDS('data/ADP_names.rds')
 Health_board<-readRDS('data/Health_board.rds')
 DTR_data<-readRDS('data/DTR_data.rds')
 THN_by_HB<-readRDS('data/THN_by_HB.rds')
-SASdata<-readRDS('data/SASdata.rds')
+# SASdata<-readRDS('data/SASdata.rds')
 OST_paid<-readRDS('data/OST_paid.rds')
 OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
 

@@ -1,5 +1,6 @@
 #UI
-# secure_app( #uncomment if needing password protection
+#secure_app( #uncomment if needing password protection
+
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
@@ -393,6 +394,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #              tags$li("For breast cancer, there were large falls numbers in stages 1 and 2 (35% and 15% respectively). In
                         #                      contrast, there were small increases in stages 3 and 4 (5% and 7%), with the biggest increase seen for
                         #                      those of unknown stage (34%)."),
+
                         #
                         #              tags$li("For Colorectal Cancer, there were substantial drops (30% and more) in the numbers diagnosed with
                         #                      stages 1, 2 or 3 colorectal cancer; whereas there was only a 4% drop for metastatic colorectal cancer."),
@@ -400,6 +402,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #              tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
                         #                      diagnoses, which was only lower than expected in April 2020.")),
                         #
+
                         #            p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                         #          ),
                         #          wellPanel(
@@ -407,8 +410,10 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                                  choices= c("Scotland", "Cancer Network"),
                         #                                  selected = "Scotland"),
                         #                   uiOutput("geoname_ui_dce")),
+
                         #
                         #            column(5,  selectInput("dce_type", label = "Select all or specific cancer type",
+
                         #                                   choices = c("Breast", "Colorectal", "Lung"), selected = "Breast")),
                         #            column(2,
                         #                   fluidRow(br()),
@@ -674,7 +679,7 @@ tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ) # tabpanel bracket
-  ), # navbar menu bracket
+ ), # navbar menu bracket
 ###############################################.
 ## Child health menu ----
 ###############################################.
@@ -837,9 +842,9 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
 
          )# mainPanel bracket
 ), # tabpanel bracket
-# # ##############################################.
-# # # Data ----
-# # ##############################################.
+##############################################.
+# Data ----
+##############################################.
  tabPanel(title = "Data", icon = icon("table"), value = "table",
           p("This section allows you to view the data in table format.
          You can use the filters to select the data you are interested in.
@@ -856,4 +861,5 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
    ) # page bracket
  )# taglist bracket
  #)#secure app
+
 #END

@@ -31,7 +31,8 @@ observeEvent(input$btn_drugs_modal,
               p('The data relate to numbers of THN kits distributed rather than individuals. Data can include supplies of multiple kits, repeat supplies and those issued to service workers and family/friends of persons at risk. The supply of THN was expanded to non-drug treatment services (such as homelessness services and mental health services) 
                 at the end of April 2020 to ensure continued supply during the COVID-19 pandemic. Data on supply by these services is included in \'Community\' figures.'),
               p('The distribution of THN supplied by each source is shown in this dashboard (chart titled \'Percentage of take home naloxone kits provided by each source\'). This includes data supplied by the Scottish Ambulance Service (SAS), whose figures are not included in the other charts as data are not available nationally for the pre-COVID period. 
-                SAS undertook a THN supply pilot between February 2020 and June 2020 and have subsequently rolled out this work on a nationwide basis. '),
+                SAS undertook a THN supply pilot between February 2020 and June 2020 and have subsequently rolled out this work on a nationwide basis. 
+                Due to the operational pressures currently being experienced by SAS, data are only available for the period up to May 2021. '),
               p('For further information, contact',
                 tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -172,7 +173,8 @@ output$TwoYrComparison<-renderUI({
                    rangemode='tozero',
                    fixedrange=TRUE),
       xaxis=list(
-        fixedrange=TRUE)
+        fixedrange=TRUE,
+        angle=90)
     )
     trend <- trend %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
@@ -328,7 +330,8 @@ output$Prop_barplot<-renderUI({
     output$prop_plot<-renderPlotly({
       
       plot_data<-plot_data()
-      prop<-plot_ly(data = plot_data, x =seq(1:15),y = plot_data$`2020 & 2021`[which(plot_data$Type=='Community')],type='bar',name='Community',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Community')],' %'),marker = list(color = pal_drug[1]))
+      months<-length(unique(plot_data$Date)) #number of unique dates 
+      prop<-plot_ly(data = plot_data, x =seq(1:months),y = plot_data$`2020 & 2021`[which(plot_data$Type=='Community')],type='bar',name='Community',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Community')],' %'),marker = list(color = pal_drug[1]))
       prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')], name = 'Dispensed by \ncommunity pharmacies',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prescribing')],' %'),marker = list(color = pal_drug[2]))
       prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')], name = 'Prison',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prison')],' %'),marker = list(color = pal_drug[3]))
       prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')], name = 'SAS',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Ambulance')],' %'),marker = list(color = pal_drug[4]))
@@ -338,11 +341,11 @@ output$Prop_barplot<-renderUI({
                                marker = list(size = 4,
                                              color = 'rgba(0, 0, 0,0)')) 
       prop <- prop %>% layout(
-        margin=list(t=80),
+        margin=list(t=80,b=100),
         barmode = 'stack',
             xaxis=list(
             tickmode='array',
-            tickvals=seq(1:nrow(plot_data)),
+            tickvals=seq(1:months),
             ticktext=unique(plot_data$Date)
           ))
       prop <- prop %>% layout(
@@ -351,7 +354,13 @@ output$Prop_barplot<-renderUI({
                    fixedrange=TRUE),
         yaxis = list(title = "Number of THN kits",
                      fixedrange=TRUE),
-        hovermode= 'x unified'
+        hovermode= 'x unified',
+        annotations = 
+          list(x = 1, y = -0.4, text = "Data on take home naloxone provided by SAS is not available for June 2021", 
+               showarrow = F, xref='paper', yref='paper', 
+               xanchor='right', yanchor='auto', xshift=0, yshift=0,
+               font=list(size=13))
+        
       )
       prop <- prop %>%  config(
         displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
@@ -559,21 +568,22 @@ output$drug_commentary <- renderUI({
     bsButton("jump_to_drugs",label = "Go to data"),#this button can only be used once
      h2('Take home naloxone kits'),
         tags$ul(
+          tags$li('Since January 2020 the monthly number of THN kits supplied in Scotland has remained consistently higher than the 2018 & 2019 average. '),
           tags$li("Overall THN supply in Scotland showed peaks between March and May 2020 and around December 2020 and January 2021. Most NHS Boards showed either one or both of these increases."),
-          tags$li("Supply by community outlets was the most common source of THN, although this varied between NHS Boards and source distribution has varied over the time period presented here. For example, NHS Dumfries & Galloway showed a large increase in community pharmacy supply between March and May 2020 (25% of all supply in March, 57% in April, and 35% in May, compared with around 6% or lower throughout the rest of time period from January 2020 to March 2021). ")),
+          tags$li("Supply by community outlets was the most common source of THN, although this varied between NHS Boards and source distribution has varied over the time period presented here. For example, NHS Dumfries & Galloway showed a large increase in community pharmacy supply between March and May 2020 (25% of all this boards' supply in March, 57% in April, and 35% in May, compared with around 12% or lower throughout the rest of time period from January 2020 to June 2021). ")),
     
         p(strong('Community')),
         tags$ul(
           tags$li("The trend in community outlet supplies per month shows an exceptionally large number of THN kits supplied in April and May 2020 during the initial response to the COVID-19 pandemic (from 961 in March to 2,546 in April and 1,675 in May). Large-scale distributions by NHS Fife and NHS Ayrshire and Arran accounted for the notable increases in supplies observed in April and May 2020 respectively. "),
-          tags$li("Aside from these peaks in April and May 2020, weekly supply numbers in 2020 were broadly the same as the combined 2018 and 2019 average. The two minor exceptions to this were smaller peaks in September and December 2020. Although the December 2020 figure was lower than that for of the 2018 & 2019 average, the regular peak observed at that time of year increase suggests a seasonal increase in THN supply.")),
+          tags$li("Aside from these peaks in April and May 2020, monthly supply numbers in 2020 were broadly the same as the combined 2018 and 2019 average until January 2021. The two minor exceptions to this were smaller peaks in September and December 2020. Although the December 2020 figure was lower than that of the 2018 & 2019 average, the regular peak observed at that time of year increase suggests a seasonal increase in THN supply. From January 2021 to June 2021, the number of THN kits provided have been consistently higher than the 2018 & 2019 average. ")),
         
         p(strong('Pharmacy')),
         tags$ul(
-          tags$li("The number of THN kits dispensed by pharmacies on the basis of a community prescription was consistently higher from March 2020 to March 2021 than the average for 2018 & 2019. In particular, two large peaks in supply were observed in April 2020 (from 193 kits in March 2020 to 1,393 in April) and December 2020 (from 241 in October to 1,418 in December).")),
+          tags$li("The number of THN kits dispensed by pharmacies on the basis of a community prescription was consistently higher from March 2020 to June 2021 than the average for 2018 & 2019. In particular, two large peaks in supply were observed in April 2020 and December 2020.")),
         
         p(strong('Prisons')),
         tags$ul(
-          tags$li("The number of THN supplies issued by prisons per month was consistently higher for the period February 2020 to March 2021 than the corresponding 2018 & 2019 averages. The exception to this was November 2020 when supplies were 21% lower than the 2018 & 2019 average for the same month. "),
+          tags$li("The number of THN supplies issued by prisons per month was consistently higher for the period February 2020 to June 2021 than the corresponding 2018 & 2019 averages. The exception to this was November 2020 when supplies were 21% lower than the 2018 & 2019 average for the same month. "),
           tags$li("The large peak in May 2020 may partially have been a result of the Scottish Prison Service\'s ",
                   tags$a(href="https://www.sps.gov.uk/Corporate/Information/covid19/covid-19-information-hub.aspx", 
                          "COVID Early Release scheme ",  target="_blank"),
