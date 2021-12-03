@@ -232,12 +232,14 @@ plot_booking_trend <- function(measure, shift, trend){
 
     #switch y-axis according to which measure is selected
     if(measure == "booked_no"){
-      yaxis_plots[["title"]] <- "Number of women booking"
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
                                   "Number of women booking: ",plot_data$booked_no))
-      dotted_line <-  plot_data$dottedline_no
-      centre_line <-  plot_data$centreline_no
-      yname <- "Number of women booking"
+
+      dottedline_data <-  plot_data$dottedline_no
+      centreline_data <-  plot_data$centreline_no
+
+      y_label <- "Number of women booking"
+      measure_name <- "Number of women booking"
 
     } else if (measure  == "ave_gest") {
       # chart legend labels, for most boards and the different centrelines of Tayside and FV
@@ -250,19 +252,19 @@ plot_booking_trend <- function(measure, shift, trend){
       dottedline_name_ts <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020")
       dottedline_name_fv <- paste0(input$geoname_booking," projected average from Mar 2020 to end Feb 2021")
 
-      yaxis_plots[["title"]] <- "Average gestation at booking"
       yaxis_plots[["range"]] <- c(0, 16)  # forcing range from 0 to 16 weeks to ensure doesn't change when NHS board selected
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
                                   "Average gestation: ",format(plot_data$ave_gest,digits = 1,nsmall=1)," weeks"))
 
-      dotted_line <-  plot_data$dottedline_g
-      centre_line <-  plot_data$centreline_g
+      dottedline_data <-  plot_data$dottedline_g
+      centreline_data <-  plot_data$centreline_g
       dotted_line_t <- plot_data$dottedline_g_t
       centre_line_t <- plot_data$centreline_g_t
       centre_line_v <- plot_data$centreline_g_v
       dotted_line_v <- plot_data$dottedline_g_v
 
-      yname <- "Average gestation"
+      y_label <- "Average gestation at booking"
+      measure_name <- "Average gestation"
     }
 
 
@@ -271,47 +273,40 @@ plot_booking_trend <- function(measure, shift, trend){
 
       main_dottedline_name = dottedline_name_ts
 
-      centre_line_additional = centre_line_t
-      centreline_name_additional = centreline_name_t
-      dotted_line_additional = dotted_line_t
-      dottedline_name_additional = dottedline_name_t
-      line_color_additional = "limegreen"
+      centreline_2_data = centre_line_t
+      centreline_2_name = centreline_name_t
+      dottedline_2_data = dotted_line_t
+      dottedline_2_name = dottedline_name_t
 
     } else if (measure == "ave_gest" & input$geoname_booking == "NHS Forth Valley") {
 
       main_dottedline_name = dottedline_name_fv
 
-      centre_line_additional = centre_line_v
-      centreline_name_additional = centreline_name_v
-      dotted_line_additional = dotted_line_v
-      dottedline_name_additional = dottedline_name_v
-      line_color_additional = "limegreen"
+      centreline_2_data = centre_line_v
+      centreline_2_name = centreline_name_v
+      dottedline_2_data = dotted_line_v
+      dottedline_2_name = dottedline_name_v
 
     } else {
 
       main_dottedline_name = dottedline_name
 
-      centre_line_additional = NULL
-      centreline_name_additional = NULL
-      dotted_line_additional = NULL
-      dottedline_name_additional = NULL
-      line_color_additional = NULL
+      centreline_2_data = NULL
+      centreline_2_name = NULL
+      dottedline_2_data = NULL
+      dottedline_2_name = NULL
 
     }
 
-    x_col = "week_book_starting"
-    x_buffer_days = 7
+    x_dates = "week_book_starting"
 
-    ante_plot = plot_run_chart(plot_data, measure, shift, trend, x_col,
-                               bttn_remove, xaxis_plots, yaxis_plots,
-                               tooltip_booking, yname, x_buffer_days,
-                               centre_line, centreline_name,
-                               dotted_line, main_dottedline_name,
-                               centre_line_additional, centreline_name_additional,
-                               dotted_line_additional, dottedline_name_additional,
-                               line_color_additional)
-
-
+    ante_plot = plot_run_chart(plot_data, measure, measure_name, y_label,
+                               x_dates, shift, trend, tooltip_booking,
+                               xaxis_plots, yaxis_plots, bttn_remove,
+                               centreline_data, centreline_name,
+                               dottedline_data, main_dottedline_name,
+                               centreline_2_data, centreline_2_name,
+                               dottedline_2_data, dottedline_2_name)
   }
 }
 

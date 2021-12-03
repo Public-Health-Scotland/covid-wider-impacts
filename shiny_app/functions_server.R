@@ -2282,34 +2282,65 @@ annote<-function(loc, x,y){
 ## Function for run charts ----
 ###############################################.
 
+
+# x_buffer is multiples of the spacing between data points when x_dates column
+# is type factor, and days otherwise
+# x_factor_space is how often to have an x-tick when x_dates column is type factor
 plot_run_chart =
-  function(plot_data, measure, shift, trend, x_col,
-           bttn_remove, xaxis_plots, yaxis_plots,
-           tooltip_text, yname, x_buffer_days,
-           centre_line, centreline_name,
-           dotted_line, dottedline_name,
-           centre_line_additional = NULL, centreline_name_additional = NULL,
-           dotted_line_additional = NULL, dottedline_name_additional = NULL,
-           line_color_additional = NULL){
+  function(plot_data, measure, measure_name, y_label,
+           x_dates, shift, trend, tooltip_text,
+           xaxis_plots, yaxis_plots, bttn_remove,
+           centreline_data, centreline_name,
+           dottedline_data, dottedline_name,
+           centreline_2_data = NULL, centreline_2_name = NULL,
+           dottedline_2_data = NULL, dottedline_2_name = NULL,
+           x_buffer = NULL, x_factor_space = 6) {
 
 
   # Prep
 
+  # Approach needs to change depending on the type of x-data supplied
+  use_string_xticks = ifelse(is.factor(plot_data[[x_dates]]),
+                             TRUE, FALSE)
+
+  # Different units means this has to be set differently depending on mode
+  if (is.null(x_buffer)) {
+    x_buffer = if (use_string_xticks) 0.25 else 7
+  }
+
+  if (use_string_xticks) {
+
+    # We need the column name for the labels later
+    x_date_labels = x_dates
+
+    # We need to use numerical values for the x-data to avoid an odd issue
+    # when using the factors directly - the x-axis was starting too late when
+    # there were no shifts, and the early measure data plottled in the wrong
+    # place
+    plot_data["x_vals"] = c(1:nrow(plot_data))
+    x_dates = "x_vals"
+
+    # We need to just assume the data is in the right order
+    range_x = c(1 - x_buffer,
+                nrow(plot_data) + x_buffer)
+
+  } else {
+
+    range_x = c(min(plot_data[[x_dates]], na.rm = TRUE) - x_buffer,
+                max(plot_data[[x_dates]], na.rm = TRUE) + x_buffer)
+
+  }
 
   # Need to tweak actions later if we're showing extra centrelines
-  if (is.null(centre_line_additional)) {
-    plot_additional_centreline = FALSE
+  if (is.null(centreline_2_data)) {
+    plot_centreline_2 = FALSE
   } else {
-    plot_additional_centreline = TRUE
+    plot_centreline_2 = TRUE
   }
 
   # Text to put in legend for trends and shifts
   trend_text = "Trends: 5+ consecutively increasing or decreasing points"
   shift_text = "Shifts: 6+ consecutive points above or below centreline"
-
-  # Add padding to range to ensure markers are not cut off
-  range_x = c(min(plot_data[[x_col]]) - x_buffer_days,
-              max(plot_data[[x_col]]) + x_buffer_days)
 
 
 
@@ -2357,13 +2388,52 @@ plot_run_chart =
 
   # Set up data for dummy traces, that will be used to set legend order
   # Plot outside axis limits so that the data doesn't show when markers on
-  dummy_data_leg = list(x = min(plot_data[[x_col]]) - years(5),
-                        y = min(plot_data[[measure]]))
+  dummy_x_buffer = if (use_string_xticks) 100 else years(5)
+  dummy_data_leg = list(x = range_x[1] - dummy_x_buffer,
+                        y = min(plot_data[[measure]], na.rm = TRUE))
 
 
 
   # Set options for each trace
 
+
+  # Solid centreline
+  trace_args_centreline =
+    list(data = plot_data, y = ~centreline_data,
+         name = centreline_name, legendgroup = "centreline",
+         type = "scatter", mode = "lines",
+         line = list(color = "blue"), hoverinfo = "none")
+
+  # Dotted centreline
+  trace_args_dottedline =
+    list(data = plot_data, y = ~dottedline_data,
+         name = dottedline_name, legendgroup = "dottedline",
+         type = "scatter", mode = "lines",
+         line = list(color = "blue", dash = "dash"), hoverinfo = "none")
+
+  # Additional solid centreline
+  trace_args_centreline_additional =
+    list(data = plot_data, y = ~centreline_2_data,
+         name = centreline_2_name, legendgroup = "centreline_additional",
+         type = "scatter", mode = "lines",
+         line = list(color = "limegreen"), hoverinfo = "none")
+
+  # Additional dotted centreline
+  trace_args_dottedline_additional =
+    list(data = plot_data, y = ~dottedline_2_data,
+         name = dottedline_2_name, legendgroup = "dottedline_additional",
+         type = "scatter", mode = "lines",
+         line = list(color = "limegreen", dash = "dash"), hoverinfo = "none")
+
+  # Measure data
+  trace_args_measure =
+    list(data = plot_data, y = ~get(measure),
+         name = measure_name, legendgroup = "measure",
+         type = "scatter", mode = "lines",
+         line = list(color = "black"), text = tooltip_text, hoverinfo = "text")
+
+  # We can only set the marker options when they are on, just store for now
+  measure_marker_opt = list(color = "black", size = 5)
 
   # Trends
   trace_args_trends =
@@ -2371,44 +2441,6 @@ plot_run_chart =
          name = trend_text, legendgroup = "trends",
          type = "scatter", mode = "lines",
          line = list(color = "lightgreen", width = 12), hoverinfo = "none")
-
-  # Solid centreline
-  trace_args_centreline =
-    list(data = plot_data, y = ~centre_line,
-         name = centreline_name, legendgroup = "centreline",
-         type = "scatter", mode = "lines",
-         line = list(color = "blue"), hoverinfo = "none")
-
-  # Dotted centreline
-  trace_args_dottedline =
-    list(data = plot_data, y = ~dotted_line,
-         name = dottedline_name, legendgroup = "dottedline",
-         type = "scatter", mode = "lines",
-         line = list(color = "blue", dash = "dash"), hoverinfo = "none")
-
-  # Additional solid centreline
-  trace_args_centreline_additional =
-    list(data = plot_data, y = ~centre_line_additional,
-         name = centreline_name_additional, legendgroup = "centreline_additional",
-         type = "scatter", mode = "lines",
-         line = list(color = line_color_additional), hoverinfo = "none")
-
-  # Additional dotted centreline
-  trace_args_dottedline_additional =
-    list(data = plot_data, y = ~dotted_line_additional,
-         name = dottedline_name_additional, legendgroup = "dottedline_additional",
-         type = "scatter", mode = "lines",
-         line = list(color = line_color_additional, dash = "dash"), hoverinfo = "none")
-
-  # Measure data
-  trace_args_measure =
-    list(data = plot_data, y = ~get(measure),
-         name = yname, legendgroup = "measure",
-         type = "scatter", mode = "lines",
-         line = list(color = "black"), text = tooltip_text, hoverinfo = "text")
-
-  # We can only set the marker options when they are on, just store for now
-  measure_marker_opt = list(color = "black", size = 5)
 
   # Shifts
   trace_args_shifts =
@@ -2462,7 +2494,7 @@ plot_run_chart =
   }
 
   # Initialise plot
-  run_chart = plot_ly(data = plot_data, x = ~get(x_col))
+  run_chart = plot_ly(data = plot_data, x = ~get(x_dates))
 
   # Add real traces
   # The order here is the order traces will be on the plot, bottom to top
@@ -2472,11 +2504,13 @@ plot_run_chart =
     add_run_trace(trace_args_centreline) %>%
     add_run_trace(trace_args_dottedline) %>%
     add_run_trace(trace_args_centreline_additional,
-                  add_trace = plot_additional_centreline) %>%
+                  add_trace = plot_centreline_2) %>%
     add_run_trace(trace_args_dottedline_additional,
-                  add_trace = plot_additional_centreline) %>%
+                  add_trace = plot_centreline_2) %>%
     add_run_trace(trace_args_measure) %>%
     add_run_trace(trace_args_shifts)
+
+
 
   # Add dummy traces
   # The order here is the order traces will be on the legend, top to bottom
@@ -2489,10 +2523,10 @@ plot_run_chart =
     add_run_trace(trace_args_dottedline,
                   dummy_data = dummy_data_leg) %>%
     add_run_trace(trace_args_centreline_additional,
-                  add_trace = plot_additional_centreline,
+                  add_trace = plot_centreline_2,
                   dummy_data = dummy_data_leg) %>%
     add_run_trace(trace_args_dottedline_additional,
-                  add_trace = plot_additional_centreline,
+                  add_trace = plot_centreline_2,
                   dummy_data = dummy_data_leg) %>%
     add_run_trace(trace_args_trends,
                   dummy_data = dummy_data_leg) %>%
@@ -2505,12 +2539,12 @@ plot_run_chart =
 
 
   # Set how many traces there are, and which of them are the measure trace
-  if (isTRUE(plot_additional_centreline)) {
-    num_traces = 7
-    measure_trace_pos = c(1, 6)
+  if (isTRUE(plot_centreline_2)) {
+    num_traces = 14
+    measure_trace_pos = c(6, 8)
   } else {
-    num_traces = 5
-    measure_trace_pos = c(1, 4)
+    num_traces = 10
+    measure_trace_pos = c(4, 6)
   }
 
   # When marker button is off, markers should be off
@@ -2521,7 +2555,7 @@ plot_run_chart =
   marker_button_mode_on = marker_button_mode_off
   marker_button_marker_on = marker_button_marker_off
   marker_button_mode_on[measure_trace_pos] = "lines+markers"
-  marker_button_marker_on[measure_trace_pos] = measure_marker_opt
+  marker_button_marker_on[measure_trace_pos] = list(measure_marker_opt)
 
   # Add the button
   run_chart =
@@ -2551,6 +2585,8 @@ plot_run_chart =
   # Chart Formatting
 
 
+  yaxis_plots[["title"]] = y_label
+
   # reduces chart jumping around vertically when turning markers on and off
   # (more noticable in some circumstances).
   # Downside: won't automatically make space for wide tick labels, but plotly
@@ -2561,28 +2597,43 @@ plot_run_chart =
   # (would only happen under some circumstances e.g. when I set range 0 - 16 on y axis)
   xaxis_plots[["automargin"]] = FALSE
 
-  # This controls the formatting for the tick labels
-  # Left to its own devices, plotly will swap between one line and two line
-  # labels. So sometimes the rangeslider is pushed down and overlaps the
-  # legend.
-  #
-  # dtickrange sets the distance between the ticks where the specified
-  # format applies. M1 and M12 mean 1 month and 12 months.
-  xaxis_plots[["tickformatstops"]] =
-    list(
-      # Put this one first so it takes priority over the other range with M1
-      list(dtickrange = list("M1", "M12"),
-           value = "%b<br>%Y"),
-      list(dtickrange = list(NULL, "M1"),
-           value = "%-d %b<br>%Y"),
-      # A range of M1 to NULL doesn't seem to work for me, so this is here
-      # so I can have a range of M1 to M12. No idea if M12 to NULL will work.
-      list(dtickrange = list("M12", NULL),
-           value = "%b<br>%Y")
+  # Different approaches needed to x tick labels depending on axis type
+  if (use_string_xticks) {
+
+    xaxis_plots[["tickvals"]] = seq(1, nrow(plot_data), x_factor_space)
+    # Slightly convoluted indexing here to get as.character to return string
+    # instead of factor keys
+    xaxis_plots[["ticktext"]] =
+      as.character(plot_data[[x_date_labels]][xaxis_plots[["tickvals"]]])
+
+  } else {
+
+    # Left to its own devices, plotly will swap between one line and two line
+    # labels. So sometimes the rangeslider is pushed down and overlaps the
+    # legend. Better to make it always 2 lines and add sufficient space.
+    #
+    # dtickrange sets the distance between the ticks where the specified
+    # format applies. M1 and M12 mean 1 month and 12 months.
+    xaxis_plots[["tickformatstops"]] =
+      list(
+        # Put this one first so it takes priority over the other range with M1
+        list(dtickrange = list("M1", "M12"),
+             value = "%b<br>%Y"),
+        list(dtickrange = list(NULL, "M1"),
+             value = "%-d %b<br>%Y"),
+        # A range of M1 to NULL doesn't seem to work for me, so this is here
+        # so I can have a range of M1 to M12. No idea if M12 to NULL will work.
+        list(dtickrange = list("M12", NULL),
+             value = "%b<br>%Y")
     )
+
+  }
 
   # Otherwise the angle will sometimes change and text will be cut off
   xaxis_plots[["tickangle"]] = 0
+
+  # Prevents this line at zero when dates column is factor
+  xaxis_plots[["zeroline"]] = FALSE
 
   xaxis_plots[["rangeslider"]] =
     list(type = "date",
