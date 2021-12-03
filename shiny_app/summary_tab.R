@@ -282,17 +282,17 @@ observeEvent(input$btn_dataset_modal,
                             "Data Dictionary",  target="_blank"), 
                      ". Please note that there is a time lag between the submission of ",
                      "SMR00 to PHS, and the data being validated and ready for release. ",
-                     "Therefore, data up to September 27th are given. For data quality issues, please see the ", 
-                     tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+                     "Therefore, data up to June 27th are given. For data quality issues, please see the ", 
+                     tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
                             "Acute Activity and NHS Beds quarterly publication",  
                             target="_blank"), ". All information presented has been ",
                      "taken from SMR00; this is different from the Acute Activity ",
                      "and NHS Beds publication, so the figures are not comparable."),
                    p("The SMR00 dataset is managed by Public Health Scotland (PHS). ",
                      "For current completeness estimates, please see ",
-                     tags$a(href = "https://www.isdscotland.org/products-and-Services/Data-Support-and-Monitoring/SMR-Completeness/",
+                     tags$a(href = "https://beta.isdscotland.org/products-and-services/data-management-hospital-activity/smr-completeness/",
                             "the PHS website", target = "_blank"), "."),
-                   p(tags$a(href = "https://beta.isdscotland.org/media/4191/public-health-scotland-statistical-disclosure-control-protocol.pdf",
+                   p(tags$a(href = "https://www.publichealthscotland.scot/publications/statistical-disclosure-protocol/statistical-disclosure-protocol/",
                             "Statistical disclosure control", target = "_blank"), 
                      "has been applied to this analysis."),
                    size = "m", 
@@ -412,7 +412,7 @@ output$data_explorer <- renderUI({
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
   
   #update date for outpatients and the rest is different
-  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "16 June 2021",
+  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "15 December 2021",
                              TRUE ~ "3 November 2021")
   
   # Function to create the standard layout for all the different charts/sections
@@ -442,7 +442,7 @@ output$data_explorer <- renderUI({
           Volatility of the trends will be observed in some charts due to small counts."),
         plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else if (input$measure_select == "outpats") {
-          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+          plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         } else {
           plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
@@ -512,7 +512,7 @@ output$data_explorer <- renderUI({
   } else if (input$measure_select == "outpats") { # Outpatients data
     tagList(tags$b(span("Please note that these data are for management information only, and care should",
                         "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
-                        tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+                        tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
                                "Acute Activity and NHS Beds quarterly publication",  
                                target="_blank"), ". Did Not Attend appointments (DNAs) are not included in the figures shown here.",
                         style="color:red")),
@@ -720,37 +720,39 @@ output$download_chart_data <- downloadHandler(
 output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
-    h2("Summary - Outpatient appointments - 16th June 2021"),
+    h2("Summary - Outpatient appointments - 15th December 2021"),
     p("Data are taken from Scottish Morbidity Record (SMR00), and show outpatient appointments
-      to week ending 27th December 2020.
+      to week ending 27th June 2021.
       Further information is available by following the 'Data source: SMR00' links on the dashboard."),
     h4("Initial findings: outpatient appointments"),
     tags$ul(
       tags$li("Outpatient appointments fell from the second week of March 2020; by week ending 19th April 2020,
-              outpatient appointments had fallen by over two-thirds (69%) compared to the average of the same week in 2018-19
-              (from an average of 86,971 in 2018-19 to 27,361 in 2020)."),
-      tags$li("There has been some recovery after 19th April 2020, but by the end of December 2020
-numbers of appointments remain around 19% below the average of the same week in 2018-19."),
+              outpatient appointments had fallen by over two-thirds (68%) compared to the average of the same week in 2018-19
+              (from an average of 87,049 in 2018-19 to 27,506 in 2020)."),
+      tags$li("Outpatient appointments have generally been recovering from end April 2020 onwards,
+               but are still not up to pre-pandemic levels. For example, by the end of June 2021, 
+               the numbers of appointments remain around 16% below the average of the same week in
+               2018-19."),
       tags$li("This impact was similar across sexes, age groups and deprivation groups. 
               However, between April and July 2020, the fall in appointments was 
               greatest in patients aged 85 and over, dropping by almost three-quarters (-73%) 
-              while patients aged 15-44 dropped by two-thirds (-66%)"),
+              while patients aged 15-44 dropped by two-thirds (-66%)."),
       tags$li("There were larger relative falls for surgical (-76%) than medical (-64%) specialties.
-              By week ending 20th December 2020, medical specialties showed a reduction of about a sixth
-              (-17%) while surgical specialties decreased by a quarter (-25%)
+              By week ending 27th June 2021, medical specialties showed a reduction of about an eighth
+              (-13%) while surgical specialties decreased by over a fifth (-22%)
               compared to the same week in 2018-19."),
       tags$li("There were larger decreases and slower recovery in new outpatient appointments
 than in return outpatient appointments."),
       tags$li("There has been a very large increase in the number of appointments carried out remotely through 
-              telephone and videolink. In week ending 20th December 2020, almost a fifth (19%) of appointments
+              telephone and videolink. In week ending 27th June 2021, about a sixth (16%) of appointments
               were conducted via telephone, and 1 in 20 (5%) were by videolink. These types of appointments
-              were uncommon prior to March 2020, but have consistently made up about a quarter of outpatient activity
-			  since then.")
+              were uncommon prior to March 2020, but have consistently made up over a fifth of 
+              outpatient activity since then.")
       ),
     h4("Interpreting these figures"),
     p("Please exercise caution when interpreting these figures, as these data are for management information only. 
       For more information on methodology and data quality please see the ",
-      tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+      tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
              "Acute Activity and NHS Beds quarterly publication.",
              target="_blank"),
     h2("Summary - Revision of baseline OOH - 23rd September 2020"),
