@@ -282,18 +282,20 @@ observeEvent(input$btn_dataset_modal,
                             "Data Dictionary",  target="_blank"),
                      ". Please note that there is a time lag between the submission of ",
                      "SMR00 to PHS, and the data being validated and ready for release. ",
-                     "Therefore, data up to September 27th are given. For data quality issues, please see the ",
-                     tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
-                            "Acute Activity and NHS Beds quarterly publication",
+                     "Therefore, data up to June 27th are given. For data quality issues, please see the ", 
+                     tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+                            "Acute Activity and NHS Beds quarterly publication",  
+
                             target="_blank"), ". All information presented has been ",
                      "taken from SMR00; this is different from the Acute Activity ",
                      "and NHS Beds publication, so the figures are not comparable."),
                    p("The SMR00 dataset is managed by Public Health Scotland (PHS). ",
                      "For current completeness estimates, please see ",
-                     tags$a(href = "https://www.isdscotland.org/products-and-Services/Data-Support-and-Monitoring/SMR-Completeness/",
+                     tags$a(href = "https://beta.isdscotland.org/products-and-services/data-management-hospital-activity/smr-completeness/",
                             "the PHS website", target = "_blank"), "."),
-                   p(tags$a(href = "https://beta.isdscotland.org/media/4191/public-health-scotland-statistical-disclosure-control-protocol.pdf",
-                            "Statistical disclosure control", target = "_blank"),
+                   p(tags$a(href = "https://www.publichealthscotland.scot/publications/statistical-disclosure-protocol/statistical-disclosure-protocol/",
+                            "Statistical disclosure control", target = "_blank"), 
+
                      "has been applied to this analysis."),
                    size = "m",
                    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -367,7 +369,8 @@ op_filt <- reactive({
   outpats %>%
     filter(admission_type == input$appt_type &
              spec == "All" &
-             area_type == input$geotype_op)
+             area_type == input$geotype_op &
+             time_split == input$time_type)
 })
 
 # # Outpatients dataset used for specialty charts
@@ -378,7 +381,9 @@ op_spec <- reactive({
              admission_type == input$appt_type &
              category == "All" &
              spec %in% input$op_specialty &
-             area_type == input$geotype_op)
+             area_type == input$geotype_op &
+             time_split == input$time_type)   
+
 })
 
 ###############################################.
@@ -404,7 +409,18 @@ output$data_explorer <- renderUI({
                               " compared with the corresponding time in 2018-2019 by ")
   }
 
-  total_title <- paste0("Weekly number of ", dataset, " by ")
+  if(input$measure_select == "outpats"){
+    if(input$time_type == "Monthly"){
+      time_period <- "Monthly"
+    } else{
+      time_period <- "Weekly"
+    }
+  } else{
+      time_period <- "Weekly"
+    }
+  
+  total_title <- paste0(time_period, " number of ", dataset, " by ")
+  
 
   # To make sure that both titles take the same space and are lined up doing
   # a bit of a hacky shortcut:
@@ -412,8 +428,9 @@ output$data_explorer <- renderUI({
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
 
   #update date for outpatients and the rest is different
-  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "16 June 2021",
+  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "15 December 2021",
                              TRUE ~ "1 December 2021")
+  
 
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
@@ -442,7 +459,7 @@ output$data_explorer <- renderUI({
           Volatility of the trends will be observed in some charts due to small counts."),
         plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else if (input$measure_select == "outpats") {
-          plot_box(paste0("2020 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+          plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         } else {
           plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
@@ -512,47 +529,93 @@ output$data_explorer <- renderUI({
                source = "NRS Death Registrations", data_name ="deaths")
 
   } else if (input$measure_select == "outpats") { # Outpatients data
-    tagList(tags$b(span("Please note that these data are for management information only, and care should",
-                        "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
-                        tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
-                               "Acute Activity and NHS Beds quarterly publication",
-                               target="_blank"), ". Did Not Attend appointments (DNAs) are not included in the figures shown here.",
-                        style="color:red")),
-            cut_charts(title= "Weekly outpatient appointments",
-                       source = "SMR00", data_name = "op"),
-            fluidRow(column(6,
-                            h4(paste0(variation_title, "specialty group"))),
-                     # Adding adm_type here to make clear what is selected
-                     column(6,
-                            h4(paste0(total_title, "specialty group")))),
-            ###Adding adm_type here to make clear what is selected
-            fluidRow(column(6,
-                            pickerInput("op_specialty", "Select one or more specialty groups",
-                                        choices = spec_list_op,
-                                        multiple = TRUE,
-                                        selected = c("Medical", "Surgery"))),
-                     column(6,
-                            actionButton("btn_spec_groups_op",
-                                         "Specialties and their groups",
-                                         icon = icon('question-circle')))),
-            fluidRow(column(6,
-                            withSpinner(plotlyOutput("op_spec_var"))),
-                     column(6,
-                            withSpinner(plotlyOutput("op_spec_tot")))),
-            fluidRow(column(6,
-                            h4(paste0(variation_title, "mode of clinical interaction"))),
-                     # Adding adm_type here to make clear what is selected
-                     column(6,
-                            h4(paste0(total_title, "mode of clinical interaction")))),
-            fluidRow(actionButton("btn_modal_moc", "Interpretation of this chart",
-                                  icon = icon('fas fa-exclamation-circle'))),
-            fluidRow(column(6,
-                            withSpinner(plotlyOutput("op_moc_var"))),
-                     column(6,
-                            withSpinner(plotlyOutput("op_moc_tot"))))
-    )
+    if(input$time_type == "Weekly"){
+      tagList(tags$b(span("Please note that these data are for management information only, and care should",
+                          "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
+                          tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+                                 "Acute Activity and NHS Beds quarterly publication",  
+                                 target="_blank"), ". Did Not Attend appointments (DNAs) are not included in the figures shown here.",
+                          style="color:red")),
+              cut_charts(title= paste0(time_period, " outpatient appointments"),
+                         source = "SMR00", data_name = "op"),
+              fluidRow(column(6,
+                              h4(paste0(variation_title, "specialty group"))),
+                       # Adding adm_type here to make clear what is selected
+                       column(6,
+                              h4(paste0(total_title, "specialty group")))),
+              ###Adding adm_type here to make clear what is selected
+              fluidRow(column(6,
+                              pickerInput("op_specialty", "Select one or more specialty groups",
+                                          choices = spec_list_op, 
+                                          multiple = TRUE,
+                                          selected = c("Medical", "Surgery"))),
+                       column(6,
+                              actionButton("btn_spec_groups_op", 
+                                           "Specialties and their groups",
+                                           icon = icon('question-circle')))),
+              fluidRow(column(6,
+                              withSpinner(plotlyOutput("op_spec_var"))),
+                       column(6,
+                              withSpinner(plotlyOutput("op_spec_tot")))),
+              fluidRow(column(6,
+                              h4(paste0(variation_title, "mode of clinical interaction"))),
+                       # Adding adm_type here to make clear what is selected
+                       column(6,
+                              h4(paste0(total_title, "mode of clinical interaction")))),
+              fluidRow(actionButton("btn_modal_moc", "Interpretation of this chart", 
+                                    icon = icon('fas fa-exclamation-circle'))),
+              fluidRow(column(6,
+                              withSpinner(plotlyOutput("op_moc_var"))),
+                       column(6,
+                              withSpinner(plotlyOutput("op_moc_tot"))))
+      )
+    } else if(input$time_type == "Monthly"){
+      
+      tagList(tags$b(span("Please note that these data are for management information only, and care should",
+                          "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
+                          tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+                                 "Acute Activity and NHS Beds quarterly publication",  
+                                 target="_blank"), ". Did Not Attend appointments (DNAs) are not included in the figures shown here.",
+                          style="color:red")),
+              cut_charts(title= paste0(time_period, " outpatient appointments"),
+                         source = "SMR00", data_name = "monthly_op"),
+              fluidRow(column(6,
+                              h4(paste0(variation_title, "specialty group"))),
+                       # Adding adm_type here to make clear what is selected
+                       column(6,
+                              h4(paste0(total_title, "specialty group")))),
+              ###Adding adm_type here to make clear what is selected
+              fluidRow(column(6,
+                              pickerInput("op_specialty", "Select one or more specialty groups",
+                                          choices = spec_list_op, 
+                                          multiple = TRUE,
+                                          selected = c("Medical", "Surgery"))),
+                       column(6,
+                              actionButton("btn_spec_groups_op", 
+                                           "Specialties and their groups",
+                                           icon = icon('question-circle')))),
+              fluidRow(column(6,
+                              withSpinner(plotlyOutput("monthly_op_spec_var"))),
+                       column(6,
+                              withSpinner(plotlyOutput("monthly_op_spec_tot")))),
+              fluidRow(column(6,
+                              h4(paste0(variation_title, "mode of clinical interaction"))),
+                       # Adding adm_type here to make clear what is selected
+                       column(6,
+                              h4(paste0(total_title, "mode of clinical interaction")))),
+              fluidRow(actionButton("btn_modal_moc", "Interpretation of this chart", 
+                                    icon = icon('fas fa-exclamation-circle'))),
+              fluidRow(column(6,
+                              withSpinner(plotlyOutput("monthly_op_moc_var"))),
+                       column(6,
+                              withSpinner(plotlyOutput("monthly_op_moc_tot"))))
+      )
+
+    } 
   }
 })
+
+
 
 ###############################################.
 ## Charts ----
@@ -625,8 +688,22 @@ output$op_sex_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", "
 output$op_age_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", "total", "op")})
 output$op_depr_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", "total", "op")})
 output$op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", "total", "op")})
-output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80)})
-output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80)})
+output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80, op = T)})
+output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80, op = T)})
+
+# Monthly Outpatients charts
+output$monthly_op_overall <- renderPlotly({plot_overall_chart(op_filt(), "op", op = T, period = "monthly")})
+output$monthly_op_sex_var <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", data_name = "op", period = "monthly")})
+output$monthly_op_age_var <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", data_name = "op", period = "monthly")})
+output$monthly_op_depr_var <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", data_name = "op", period = "monthly")})
+output$monthly_op_moc_var <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", data_name = "op", period = "monthly")})
+output$monthly_op_sex_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", "total", "op", period = "monthly")})
+output$monthly_op_age_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", "total", "op", period = "monthly")})
+output$monthly_op_depr_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", "total", "op", period = "monthly")})
+output$monthly_op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", "total", "op", period = "monthly")})
+output$monthly_op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80, op = T, period = "monthly")})
+output$monthly_op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80, op = T, period = "monthly")})
+
 
 
 # Palette for specialty
@@ -692,17 +769,31 @@ symbol_spec <- reactive({
 overall_data_download <- reactive({
   switch(
     input$measure_select,
-    "rapid" = filter_data(rapid_filt() %>% rename(average_2018_2019 = count_average)),
-    "aye" = filter_data(aye) %>% rename(average_2018_2019 = count_average),
-    "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average),
-    "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average),
-    "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average),
-    "deaths" = filter_data(deaths) %>% rename(average_2015_2019 = count_average),
-    "outpats" = filter_data(op_filt() %>% rename(average_2018_2019 = count_average),
-                            op = T)
-  ) %>%
-    select(area_name, week_ending, count, starts_with("average")) %>%
-    mutate(week_ending = format(week_ending, "%d %b %y"))
+    "rapid" = filter_data(rapid_filt() %>% rename(average_2018_2019 = count_average)) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>%
+      select(area_name, week_ending, count, starts_with("average")),
+    "aye" = filter_data(aye) %>% rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>%
+      select(area_name, week_ending, count, starts_with("average")),
+    "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>%
+      select(area_name, week_ending, count, starts_with("average")),
+    "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>%
+      select(area_name, week_ending, count, starts_with("average")),
+    "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>%
+      select(area_name, week_ending, count, starts_with("average")),
+    "deaths" = filter_data(deaths) %>% rename(average_2015_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>%
+      select(area_name, week_ending, count, starts_with("average")),
+    "outpats" = filter_data(op_filt() %>% rename(average_2018_2019 = count_average), op = T) %>% 
+      mutate(week_ending = ifelse(time_split == "Monthly", format(week_ending, "%b %y"),
+                                  format(week_ending, "%d %b %y"))) %>%
+      rename(time_ending = week_ending) %>%
+      select(area_name, time_split, time_ending, count, starts_with("average"))
+  )
+
 })
 
 output$download_chart_data <- downloadHandler(
@@ -722,37 +813,42 @@ output$download_chart_data <- downloadHandler(
 output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
-    h2("Summary - Outpatient appointments - 16th June 2021"),
+    h2("Summary - Outpatient appointments - 15th December 2021"),
     p("Data are taken from Scottish Morbidity Record (SMR00), and show outpatient appointments
-      to week ending 27th December 2020.
-      Further information is available by following the 'Data source: SMR00' links on the dashboard."),
+      to week ending 27th June 2021. Outpatient information contained within this dashboard has been 
+      developed further, and monthly information is now available. Further information is available by 
+      following the 'Data source: SMR00' links on the dashboard."),
     h4("Initial findings: outpatient appointments"),
     tags$ul(
       tags$li("Outpatient appointments fell from the second week of March 2020; by week ending 19th April 2020,
-              outpatient appointments had fallen by over two-thirds (69%) compared to the average of the same week in 2018-19
-              (from an average of 86,971 in 2018-19 to 27,361 in 2020)."),
-      tags$li("There has been some recovery after 19th April 2020, but by the end of December 2020
-numbers of appointments remain around 19% below the average of the same week in 2018-19."),
-      tags$li("This impact was similar across sexes, age groups and deprivation groups.
-              However, between April and July 2020, the fall in appointments was
-              greatest in patients aged 85 and over, dropping by almost three-quarters (-73%)
-              while patients aged 15-44 dropped by two-thirds (-66%)"),
+              outpatient appointments had fallen by over two-thirds (68%) compared to the average of the same week in 2018-19
+              (from an average of 87,049 in 2018-19 to 27,506 in 2020)."),
+      tags$li("Outpatient appointments have generally been recovering from end April 2020 onwards,
+               but are still not up to pre-pandemic levels. For example, by the end of June 2021, 
+               the numbers of appointments remain around 16% below the average of the same week in
+               2018-19."),
+      tags$li("This impact was similar across sexes, age groups and deprivation groups. 
+              However, between April and July 2020, the fall in appointments was 
+              greatest in patients aged 85 and over, dropping by almost three-quarters (-73%) 
+              while patients aged 15-44 dropped by two-thirds (-66%)."),
+
       tags$li("There were larger relative falls for surgical (-76%) than medical (-64%) specialties.
-              By week ending 20th December 2020, medical specialties showed a reduction of about a sixth
-              (-17%) while surgical specialties decreased by a quarter (-25%)
+              By week ending 27th June 2021, medical specialties showed a reduction of about an eighth
+              (-13%) while surgical specialties decreased by over a fifth (-22%)
               compared to the same week in 2018-19."),
       tags$li("There were larger decreases and slower recovery in new outpatient appointments
 than in return outpatient appointments."),
-      tags$li("There has been a very large increase in the number of appointments carried out remotely through
-              telephone and videolink. In week ending 20th December 2020, almost a fifth (19%) of appointments
+      tags$li("There has been a very large increase in the number of appointments carried out remotely through 
+              telephone and videolink. In week ending 27th June 2021, about a sixth (16%) of appointments
+
               were conducted via telephone, and 1 in 20 (5%) were by videolink. These types of appointments
-              were uncommon prior to March 2020, but have consistently made up about a quarter of outpatient activity
-			  since then.")
+              were uncommon prior to March 2020, but have consistently made up over a fifth of 
+              outpatient activity since then.")
       ),
     h4("Interpreting these figures"),
     p("Please exercise caution when interpreting these figures, as these data are for management information only.
       For more information on methodology and data quality please see the ",
-      tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/acute-hospital-activity-and-nhs-beds-information-quarterly/",
+      tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
              "Acute Activity and NHS Beds quarterly publication.",
              target="_blank"),
     h2("Summary - Revision of baseline OOH - 23rd September 2020"),

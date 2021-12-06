@@ -176,6 +176,9 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
            conditionalPanel(condition = "input.measure_select == 'outpats' ",
                             selectInput("appt_type", label = "Step 3. Select type of appointment.",
                                         choices = c("All", "New", "Return"), selected = "All")),
+           conditionalPanel(condition = "input.measure_select == 'outpats' ",
+                            selectInput("time_type", label = "Step 4. Select weekly or monthly data.",
+                                        choices = c("Weekly", "Monthly"), selected = "Weekly")),
            downloadButton('download_chart_data', 'Download data'),
            fluidRow(br()),
            actionButton('jump_commentary_summary','Go to commentary')
@@ -395,6 +398,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                      contrast, there were small increases in stages 3 and 4 (5% and 7%), with the biggest increase seen for
                         #                      those of unknown stage (34%)."),
 
+
                         #
                         #              tags$li("For Colorectal Cancer, there were substantial drops (30% and more) in the numbers diagnosed with
                         #                      stages 1, 2 or 3 colorectal cancer; whereas there was only a 4% drop for metastatic colorectal cancer."),
@@ -402,6 +406,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #              tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
                         #                      diagnoses, which was only lower than expected in April 2020.")),
                         #
+
 
                         #            p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                         #          ),
@@ -840,7 +845,8 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    fluidRow(br()),
                    fluidRow(br())
 
-         )# mainPanel bracket
+        )# mainPanel bracket
+
 ), # tabpanel bracket
 ##############################################.
 # Data ----
@@ -860,6 +866,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
- #)#secure app
+#)#secure app
 
 #END
