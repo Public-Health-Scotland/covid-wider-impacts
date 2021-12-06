@@ -321,7 +321,7 @@ output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_depr,
 # The charts and text shown on the app will depend on what the user wants to see
 output$mh_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 3 November 2021"))
+  data_last_updated <- tagList(p("Last updated: 01 December 2021"))
 
   note_average <- p("Please note that to ease interpretation of these charts ",
                     "we are presenting 3-week rolling average figures.",
@@ -345,6 +345,9 @@ output$mh_explorer <- renderUI({
                  attendances offer only a very approximate indication of attendances.
                  Additionally, some NHS Boards have moved to a new recording standard which
                  has not been fully consolidated in the A&E datamart as yet."),
+      br(),
+      tags$em(span("An issue had been identified with the number of A&E attendances in NHS Lanarkshire for
+                  the week ending 4 July 2021. This has been resolved.")),
       h3(paste0("Weekly mental health A&E attendances in ", input$geoname_mh)),
       fluidRow(column(6,
                       actionButton("btn_mentalhealth_modal", "Data source and definitions",
@@ -375,6 +378,10 @@ output$mh_explorer <- renderUI({
 
     } else if (input$measure_mh_select == "ooh") {
       tagList(#OOH attendances
+        tags$b(span("New clinical codes have been introduced for out of hours cases, which has had an
+                    impact on the number of mental health cases we report in the latter half of 2021.
+                    We are currently investigating this issue.",
+                    style = "color:red")),
         h3(paste0("Weekly mental health out of hours cases in ", input$geoname_mh)),
         fluidRow(column(6,
                         actionButton("btn_mentalhealth_modal", "Data source and definitions",

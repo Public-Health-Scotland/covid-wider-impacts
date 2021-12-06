@@ -1,19 +1,20 @@
 #UI
 #secure_app( #uncomment if needing password protection
+
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
   navbarPage(id = "intabset", # id used for jumping between tabs
-  title = div(tags$a(img(src="phs-logo.png", width=120, alt = "Public Health Scotland logo"), 
+  title = div(tags$a(img(src="phs-logo.png", width=120, alt = "Public Health Scotland logo"),
                      href= "https://www.publichealthscotland.scot/",
                      target = "_blank"),
-              style = "position: relative; top: -10px;"), 
+              style = "position: relative; top: -10px;"),
   windowTitle = "COVID-19 wider impacts", #title for browser tab
   header = tags$head(includeCSS("www/styles.css"), # CSS styles
                      HTML("<html lang='en'>"),
                      tags$link(rel="shortcut icon", href="favicon_phs.ico"), #Icon for browser tab
                      #Including Google analytics
-                     includeScript("google-analytics.js")), 
+                     includeScript("google-analytics.js")),
 ##############################################.
 # Introduction ----
 ##############################################.
@@ -49,6 +50,15 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                          "COVID-19 report for Scotland.",  target="_blank")),
                 p("Note that some numbers may not sum to the total as disclosure control methods have been applied
                     to the data in order to protect patient confidentiality."),
+         p("Pre-Release Access: under terms of the 'Pre-Release Access to Official Statistics (Scotland) Order 2008',
+            PHS is obliged to publish information on those receiving Pre-Release Access ('Pre-Release Access' refers to
+            statistics in their final form prior to publication). Shown below are details of those receiving standard
+            Pre-Release Access. "),
+         p("Standard Pre-Release Access:"),
+         tags$ul(
+           tags$li("Scottish Government Health Department"),
+           tags$li("NHS Board Chief Executives"),
+           tags$li("NHS Board Communication Leads")),
                 p("If you have any questions relating to the data presented please contact us at: ",
                   tags$b(tags$a(href="mailto:phs.statsgov@phs.scot", "phs.statsgov@phs.scot",  target="_blank")), "."),
                 p("You can access the code used to produce this tool in this ",
@@ -387,6 +397,8 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #              tags$li("For breast cancer, there were large falls numbers in stages 1 and 2 (35% and 15% respectively). In
                         #                      contrast, there were small increases in stages 3 and 4 (5% and 7%), with the biggest increase seen for
                         #                      those of unknown stage (34%)."),
+
+
                         #
                         #              tags$li("For Colorectal Cancer, there were substantial drops (30% and more) in the numbers diagnosed with
                         #                      stages 1, 2 or 3 colorectal cancer; whereas there was only a 4% drop for metastatic colorectal cancer."),
@@ -394,6 +406,8 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #              tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
                         #                      diagnoses, which was only lower than expected in April 2020.")),
                         #
+
+
                         #            p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                         #          ),
                         #          wellPanel(
@@ -401,8 +415,10 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                                  choices= c("Scotland", "Cancer Network"),
                         #                                  selected = "Scotland"),
                         #                   uiOutput("geoname_ui_dce")),
+
                         #
                         #            column(5,  selectInput("dce_type", label = "Select all or specific cancer type",
+
                         #                                   choices = c("Breast", "Colorectal", "Lung"), selected = "Breast")),
                         #            column(2,
                         #                   fluidRow(br()),
@@ -668,7 +684,7 @@ tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ) # tabpanel bracket
-  ), # navbar menu bracket
+ ), # navbar menu bracket
 ###############################################.
 ## Child health menu ----
 ###############################################.
@@ -830,10 +846,11 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    fluidRow(br())
 
         )# mainPanel bracket
+
 ), # tabpanel bracket
-# # ##############################################.
-# # # Data ----
-# # ##############################################.
+##############################################.
+# Data ----
+##############################################.
  tabPanel(title = "Data", icon = icon("table"), value = "table",
           p("This section allows you to view the data in table format.
          You can use the filters to select the data you are interested in.
@@ -850,4 +867,5 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
    ) # page bracket
  )# taglist bracket
 #)#secure app
+
 #END
