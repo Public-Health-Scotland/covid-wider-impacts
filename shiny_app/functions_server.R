@@ -2307,14 +2307,14 @@ run_chart_description =
   }
 
   if (is.null(chart)) {
-    chart_text = paste0("the chart", pl_on)
+    chart_text = paste0("chart", pl_on)
   } else {
-    chart_text = paste0("the ‘", chart, "’ chart", pl_on)
+    chart_text = paste0("‘", chart, "’ chart", pl_on)
   }
 
   if (text_mode == "main") {
     description_text =
-      paste0("To provide a basis for identifying patterns in the data, ",
+      paste0("To provide a basis for identifying patterns in the data, the ",
               chart_text, " above use", pl_off, " a blue line to show ", centreline,
               ". The blue line is dashed where the average is projected outside
               that time range. A black line shows ", measure, ". The line becomes
