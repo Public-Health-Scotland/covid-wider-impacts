@@ -119,8 +119,20 @@ output$booking_explorer <- renderUI({
     tagList(p("We have used ",
       tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
              'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-      p("On the ‘Number of women booking for antenatal care’ chart above, the dots joined by a solid black line show the number of women booking for antenatal care in each week from the week beginning 1 April 2019 onwards. The solid blue centreline on the chart shows the average (median) number of bookings per week over the period April 2019 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of women booking."),
-      p("The ‘Average gestation at booking’ chart follows a similar format. In this chart, the dots joined by a solid black line show the average (mean) gestation at which women booked for their antenatal care (based on gestation at booking measured in completed weeks of pregnancy)."))
+      p(run_chart_description("Number of women booking for antenatal care",
+                              "the number of women booking for antenatal care
+                              in each week from the week beginning 1 April 2019
+                              onwards",
+                              "the average (median) number of bookings per week
+                              over the period April 2019 to February 2020
+                              inclusive (the period before the COVID-19 pandemic
+                              in Scotland)")),
+      p(run_chart_description("Average gestation at booking",
+                              "the average (mean) gestation at which women
+                              booked for their antenatal care (based on
+                              gestation at booking measured in completed weeks
+                              of pregnancy)",
+                              text_mode = "additional")))
 
   # Function to create common layout to all immunisation charts
   booking_layout <- function(plot_trend_n,plot_trend_g, plot_age_n, plot_age_g, plot_dep_n, plot_dep_g){

@@ -115,8 +115,19 @@ output$top_explorer <- renderUI({
     tagList(p("We have used ",
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Number of terminations of pregnancy’ chart above, the dots joined by a solid black line show the number of terminations of pregnancy in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of terminations of pregnancy over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of terminations of pregnancy."),
-            p("The ‘Average gestation at termination’ chart follows a similar format.  In this chart, the dots joined by a solid black line show the average (mean) gestation at which the terminations of pregnancy occurred (based on gestation at termination measured in completed weeks of pregnancy)."))
+            p(run_chart_description("Number of terminations of pregnancy",
+                                    "the number of terminations of pregnancy in
+                                    each month from January 2018 onwards",
+                                    "the average (median) number of terminations
+                                    of pregnancy over the period January 2018 to
+                                    February 2020 inclusive (the period before
+                                    the COVID-19 pandemic in Scotland)")),
+            p(run_chart_description("Average gestation at termination",
+                                    "the average (mean) gestation at which the
+                                    terminations of pregnancy occurred (based on
+                                    gestation at termination measured in
+                                    completed weeks of pregnancy)",
+                                    text_mode = "additional")))
 
   # Function to create common layout to all immunisation charts
   top_layout <- function(plot_trend_n,plot_trend_g, plot_age_n,plot_age_g,plot_dep_n,plot_dep_g){
@@ -186,7 +197,7 @@ plot_top_trend <- function(measure, shift, trend){
 
     # chart legend labels
     centreline_name <- paste0(input$geoname_top," average up to end Feb 2020")
-    dottedline_name <- paste0(centreline_name, " projected forwards")
+    dottedline_name <- "Projected Average"
 
     #switch y-axis according to which measure is selected
     if (measure == "terminations") {

@@ -151,42 +151,45 @@ output$tears_explorer <- renderUI({
 
   chart_explanation <-
     tagList(
-            p("On the ‘Percentage of women who have a third or fourth degree
-              perineal tear’ chart above, the dots joined by a solid black line
-              show the percentage of women giving birth vaginally to a singleton
-              live or stillborn baby with a cephalic presentation between 37-42
-              weeks gestation who have a third or fourth degree perineal tear,
-              in each month from January 2018 onwards. The solid blue centreline
-              on the chart shows the average (median) percentage of women who
-              have a third or fourth degree perineal tear over the period
-              January 2018 to February 2020 inclusive (the period before the
-              COVID-19 pandemic in Scotland). The dotted blue centreline
-              continues that average to allow determination of whether there has
-              subsequently been a change in the percentage of women who have a
-              third or fourth degree perineal tear."))
+      p(run_chart_description("Percentage of women who have a third or fourth
+                              degree perineal tear",
+                              "the percentage of women giving birth vaginally
+                              to a singleton live or stillborn baby with a
+                              cephalic presentation between 37-42 weeks
+                              gestation who have a third or fourth degree
+                              perineal tear, in each month from January 2018
+                              onwards",
+                              "the average (median) percentage of women who have
+                              a third or fourth degree perineal tear over the
+                              period January 2018 to February 2020 inclusive
+                              (the period before the COVID-19 pandemic in
+                              Scotland)")))
+
 
   chart_explanation_quarter <-
     tagList(
-      p("On the ‘Percentage of women who have a third or fourth degree
-              perineal tear’ chart above, the dots joined by a solid black line
-              show the percentage of women giving birth vaginally to a singleton
-              live or stillborn baby with a cephalic presentation between 37-42
-              weeks gestation who have a third or fourth degree perineal tear,
-              in each quarter from January 2018 onwards. The solid blue centreline
-              on the chart shows the average (median) percentage of women who
-              have a third or fourth degree perineal tear over the period
-              January 2018 to February 2020 inclusive (the period before the
-              COVID-19 pandemic in Scotland). The dotted blue centreline
-              continues that average to allow determination of whether there has
-              subsequently been a change in the percentage of women who have a
-              third or fourth degree perineal tear."))
+      p(run_chart_description("Percentage of women who have a third or fourth
+                              degree perineal tear",
+                              "the percentage of women giving birth vaginally
+                              to a singleton live or stillborn baby with a
+                              cephalic presentation between 37-42 weeks
+                              gestation who have a third or fourth degree
+                              perineal tear, in each quarter from January 2018
+                              onwards",
+                              "the average (median) percentage of women who have
+                              a third or fourth degree perineal tear over the
+                              period January 2018 to February 2020 inclusive
+                              (the period before the COVID-19 pandemic in
+                              Scotland)")))
 
   # Layout depending if Scotland or HB selected
    if (input$geotype_tears == "Health board"){
      tagList(fluidRow(column(12,
                              h4(paste0("Percentage ", tears_title)),
-                             actionButton("btn_tears_rules", "How do we identify patterns in the data?",
-                                          icon = icon('question-circle')),
+                             div(actionButton("btn_tears_rules",
+                                              "How do we identify patterns in the data?",
+                                              icon = icon('question-circle')),
+                                 style = "height:40px;"),
                              withSpinner(plotlyOutput("tears_trend",
                                                       height = height_run_chart))),
                       column(12,
@@ -201,8 +204,10 @@ output$tears_explorer <- renderUI({
     } else if (input$geotype_tears == "Scotland"){
       tagList(fluidRow(column(12,
                                    h4(paste0("Percentage ", tears_title)),
-                                   actionButton("btn_tears_rules", "How do we identify patterns in the data?",
-                                                icon = icon('question-circle')),
+                                   div(actionButton("btn_tears_rules",
+                                                   "How do we identify patterns in the data?",
+                                                   icon = icon('question-circle')),
+                                      style = "height:40px;"),
                                    withSpinner(plotlyOutput("tears_trend"))),
                             column(12,
                                    p(tears_data_timeperiod),
@@ -240,7 +245,6 @@ output$tears_explorer <- renderUI({
 ############################################.
 
 ## RUNCHART trend chart for monthly inductions percentages: Scotland & NHS Board (except island boards)
-## Function could be simplified to run without parameters but copied logic from other pregnancy tabs therefore easier to keep same structure.
 
 plot_tears_trend <- function(measure, shift, trend){
   plot_data <- tears_filter()
@@ -253,7 +257,7 @@ plot_tears_trend <- function(measure, shift, trend){
 
     # chart legend labels
     centreline_name <- paste0(input$geoname_tears," average up to end Feb 2020")
-    dottedline_name <- paste0(centreline_name, " projected forwards")
+    dottedline_name <- "Projected Average"
     centreline_data = plot_data$median_tears_37plus
     dottedline_data = plot_data$ext_median_tears_37plus
 
@@ -276,30 +280,6 @@ plot_tears_trend <- function(measure, shift, trend){
                    dottedline_data, dottedline_name,
                    x_factor_space = tick_freq)
 
-    # #Creating time trend plot
-    # plot_ly(data=plot_data, x=~date_label) %>%
-    #   add_lines(y = ~perc_3rd4th_tears_37plus,
-    #             line = list(color = "black"), text=tooltip_top, hoverinfo="text",
-    #             marker = list(color = "black"), name = yname ) %>%
-    #   add_lines(y = ~ext_median_tears_37plus, name = FALSE,
-    #             line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-    #             name = "Centreline", showlegend = FALSE) %>%
-    #   add_lines(y = ~median_tears_37plus, name = centreline_name,
-    #             line = list(color = "blue"), hoverinfo="none",
-    #             name = "Centreline") %>%
-    #   # adding trends
-    #   add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
-    #               marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
-    #   # adding shifts
-    #   add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
-    #               marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
-    #   #Layout
-    #   layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-    #          yaxis = yaxis_plots,
-    #          xaxis = xaxis_plots,
-    #          legend = list(orientation = 'h')) %>% #position of legend underneath plot
-    #   #leaving only save plot button
-    #   config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }}
 
 #####################################################################################################################.

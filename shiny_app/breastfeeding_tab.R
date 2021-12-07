@@ -76,18 +76,18 @@ output$breastfeeding_explorer <- renderUI({
       fluidRow(
         column(4,
                h4(paste0("Percentage of children recorded as exclusively breastfed at health visitor first visit")),
-               actionButton("btn_breastfed_rules", "How do we identify patterns in the data?",
-                            icon = icon('question-circle')),
+               div(actionButton("btn_breastfed_rules", "How do we identify patterns in the data?",
+                            icon = icon('question-circle')), style = "height:40px;"),
                withSpinner(plotlyOutput("bf_excl_pc",
                                         height = height_run_chart))),
         column(4,
                h4(paste0("Percentage of children recorded as overall breastfed at health visitor first visit")),
-               fluidRow(br(), br()),
+               div(style = "height:40px;"),
                withSpinner(plotlyOutput("bf_over_pc",
                                         height = height_run_chart))),
         column(4,
                h4(paste0("Percentage of children recorded as ever breastfed at health visitor first visit")),
-               fluidRow(br(), br()),
+               div(style = "height:40px;"),
                withSpinner(plotlyOutput("bf_ever_pc",
                                         height = height_run_chart))))
     )
@@ -97,22 +97,31 @@ output$breastfeeding_explorer <- renderUI({
       fluidRow(
         column(6,
                h4(paste0("Percentage of children recorded as exclusively breastfed at the ", tolower(input$measure_select_bf), " review")),
-               actionButton("btn_breastfed_rules", "How do we identify patterns in the data?",
-                            icon = icon('question-circle')),
-               withSpinner(plotlyOutput("bf_excl_pc"))),
+               div(actionButton("btn_breastfed_rules", "How do we identify patterns in the data?",
+                            icon = icon('question-circle')), style = "height:40px;"),
+               withSpinner(plotlyOutput("bf_excl_pc",
+                                        height = height_run_chart))),
         column(6,
                h4(paste0("Percentage of children recorded as overall breastfed at the ", tolower(input$measure_select_bf), " review")),
-               br(),
-               withSpinner(plotlyOutput("bf_over_pc"))))
+               div(style = "height:40px;"),
+               withSpinner(plotlyOutput("bf_over_pc",
+                                        height = height_run_chart))))
     )
   }
 
-  control_chart_commentary <- p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                                                       "‘run charts’",class="externallink", target="_blank"), " to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
-                                "The dots joined by a solid black line in the chart above show the percentage of children receiving a child health review who
-                                were recorded as being breastfed on their review record. Data is shown for each month from January 2019 onwards. ", br(),
-                                "The blue line on the chart, the centreline, is there to help show how unexpected any observed changes are.
-                                The centreline is an average (median) over the time period specified in the legend of the chart.")
+  control_chart_commentary <-
+    tagList(
+      p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
+                                                       "‘run charts’",class="externallink", target="_blank"), " to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
+      p(run_chart_description(NULL,
+                              "the percentage of children receiving a child
+                              health review who were recorded as being breastfed
+                              on their review record. Data is shown for each
+                              month from January 2019 onwards",
+                              "the average (median) percentage of children who
+                              are recorded as breastfed over the time period
+                              specified in the legend of each chart",
+                              charts_plural = TRUE)))
 
   tagList(
     run_charts_bf,
@@ -208,9 +217,9 @@ plot_runchart_bf <- function(var_chosen, centreline, shift, trend) {
       tooltip_trend <- c(paste0("Month:", format(trend_data$month_review, "%b %y"),
                                 "<br>", measure_name, ": ", trend_data$pc_ever, "%"))
     }
-# browser()
+
     centreline_name = "Average up to February 2020"
-    dottedline_name = paste0(centreline_name, " projected forwards")
+    dottedline_name = "Projected Average"
     centreline_end = ymd(20200301)
     centreline_data =
       trend_data %>%
@@ -325,7 +334,8 @@ breast_down <- reactive({
     select(-hscp2019_code,
            -shift_excl, -trend_excl,
            -shift_ever, -trend_ever,
-           -shift_over, -trend_over) %>%
+           -shift_over, -trend_over,
+           -ends_with(".split")) %>%
     mutate(month_review = format(month_review, "%b %y")) %>%
     rename(no_reviews_with_data = no_valid_reviews, pc_with_data = pc_valid,
            pc_with_data_centreline = pc_valid_centreline)

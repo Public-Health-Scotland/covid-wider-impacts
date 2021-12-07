@@ -129,7 +129,17 @@ output$gestation_explorer <- renderUI({
     tagList(p("We have used ",
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Percentage of births at stated gestation’ charts above, the dots joined by a solid black line show the percentage of singleton live births with known gestation (18-44 weeks) that were delivered at the stated gestation in each month from January 2018 onwards. The solid blue centreline on the chart shows the average (median) percentage of births in each gestation group over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the percentage of births in each gestation group."))
+            p(run_chart_description("Percentage of births at stated gestation",
+                                    "the percentage of singleton live births
+                                    with known gestation (18-44 weeks) that were
+                                    delivered at the stated gestation in each
+                                    month from January 2018 onwards",
+                                    "the average (median) percentage of births
+                                    in each gestation group over the period
+                                    January 2018 to February 2020 inclusive (the
+                                    period before the COVID-19 pandemic in
+                                    Scotland)",
+                                    charts_plural = TRUE)))
 
   # Function to create common layout to all immunisation charts
   gest_layout <- function(gest_trend_u32,gest_trend_u37,gest_trend_32_36,gest_trend_42plus,gest_linechart_age_n,gest_linechart_age_p,gest_linechart_dep_n,gest_linechart_dep_p,gest_linechart_number_37_41_all,gest_linechart_number_32_3236_42plus){
@@ -223,7 +233,7 @@ plot_gest_trend <- function(measure, shift, trend){
 
     # chart legend labels
     centreline_name <- paste0(input$geoname_gest," average up to end Feb 2020")
-    dottedline_name = paste0(centreline_name, " projected forwards")
+    dottedline_name = "Projected Average"
 
     # format y axis
     measure_name <- "Percentage of births at stated gestation"

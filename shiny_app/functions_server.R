@@ -2282,10 +2282,87 @@ annote<-function(loc, x,y){
 ## Function for run charts ----
 ###############################################.
 
+# Get a description of a run chart
+#
+# Arguments
+# chart - chart name (set to NULL to use "chart"/"charts")
+# measure - description of measure
+# centreline - description of centreline (required if text_mode == "main")
+# text_mode - "main" for full description,
+#             "additional" for description of another chart to be shown after
+#               main description
+# charts_plural - TRUE if describing multiple charts, FALSE if not
+#
+# Returns character vector with description
+run_chart_description =
+  function(chart, measure, centreline = NULL,
+           text_mode = "main", charts_plural = FALSE) {
 
-# x_buffer is multiples of the spacing between data points when x_dates column
-# is type factor, and days otherwise
-# x_factor_space is how often to have an x-tick when x_dates column is type factor
+  if (isTRUE(charts_plural)) {
+    pl_on = "s"
+    pl_off = ""
+  } else {
+    pl_on = ""
+    pl_off = "s"
+  }
+
+  if (is.null(chart)) {
+    chart_text = paste0("the chart", pl_on)
+  } else {
+    chart_text = paste0("the ‘", chart, "’ chart", pl_on)
+  }
+
+  if (text_mode == "main") {
+    description_text =
+      paste0("To provide a basis for identifying patterns in the data, ",
+              chart_text, " above use", pl_off, " a blue line to show ", centreline,
+              ". The blue line is dashed where the average is projected outside
+              that time range. A black line shows ", measure, ". The line becomes
+              yellow where there are 6 or more consecutive  points above or
+              below the average, and is highlighted in green where there are 5
+             or more consecutively increasing or decreasing points.")
+  } else if (text_mode == "additional") {
+    description_text =
+      paste0("The ", chart_text, " follow", pl_off, " a similar format, and
+             show", pl_off, " the ", measure, ".")
+  } else {
+    stop("text_mode not recognised")
+  }
+
+  return(description_text)
+
+
+}
+
+
+# Plots a run chart
+#
+# Arguments
+# plot_data - dataframe containing the columns to plot
+# measure - name for column with measure data (character vector)
+# measure_name - text to show in legend for measure
+# y_label - text to show as y-axis label
+# x_dates - name for column with date data (character vector)
+#            Column should have a date or factor type.
+# shift - name for column with shift data (character vector)
+# trend - name for column with trend data (character vector)
+# tooltip_text - character vector of text for tooltip at each data point
+# xaxis_plots, yaxis_plots - lists of options for x and y axes
+# bttn_remove - list of standard buttons to remove from chart
+# centreline_data, dottedline_data - vector of data for centrelines
+#                                     (same length as plot_data)
+# centreline_name, dottedline_name - text to show on legend
+# centreline_2_data, dottedline_2_data - for optional extra centrelines
+# centreline_2_name, dottedline_2_name - for optional extra centrelines
+# width_mode - optional, set to "narrow" when the legend is too wide
+# x_buffer - optional, how much space to add at left and right of plot area
+#             If x_dates column contains dates, x_buffer is days (default 7)
+#             If x_dates column contains factors, x_buffer is a multiple of
+#               the x-spacing between data points (default 0.25)
+# x_factor_space - optional, how often to have a tick on x-axis when x_dates
+#                    column is factor. Defaults to every 6 points.
+#
+# Returns plotly object
 plot_run_chart =
   function(plot_data, measure, measure_name, y_label,
            x_dates, shift, trend, tooltip_text,
@@ -2294,7 +2371,8 @@ plot_run_chart =
            dottedline_data, dottedline_name,
            centreline_2_data = NULL, centreline_2_name = NULL,
            dottedline_2_data = NULL, dottedline_2_name = NULL,
-           x_buffer = NULL, x_factor_space = 6) {
+           width_mode = "standard", x_buffer = NULL, x_factor_space = 6) {
+
 
 
   # Prep
@@ -2339,8 +2417,16 @@ plot_run_chart =
   }
 
   # Text to put in legend for trends and shifts
-  trend_text = "Trends: 5+ consecutively increasing or decreasing points"
-  shift_text = "Shifts: 6+ consecutive points above or below centreline"
+  trend_text = "Trends: 5+ increasing or decreasing points in a row"
+  shift_text = "Shifts: 6+ points above or below average in a row"
+
+  if (width_mode == "narrow") {
+    leg_wrap_char = 52
+    leg_pos_y = -0.52
+  } else {
+    leg_wrap_char = 60
+    leg_pos_y = -0.35
+  }
 
 
 
@@ -2400,35 +2486,35 @@ plot_run_chart =
   # Solid centreline
   trace_args_centreline =
     list(data = plot_data, y = ~centreline_data,
-         name = centreline_name, legendgroup = "centreline",
+         name = str_wrap(centreline_name, leg_wrap_char), legendgroup = "centreline",
          type = "scatter", mode = "lines",
          line = list(color = "blue"), hoverinfo = "none")
 
   # Dotted centreline
   trace_args_dottedline =
     list(data = plot_data, y = ~dottedline_data,
-         name = dottedline_name, legendgroup = "dottedline",
+         name = str_wrap(dottedline_name, leg_wrap_char), legendgroup = "dottedline",
          type = "scatter", mode = "lines",
          line = list(color = "blue", dash = "dash"), hoverinfo = "none")
 
   # Additional solid centreline
   trace_args_centreline_additional =
     list(data = plot_data, y = ~centreline_2_data,
-         name = centreline_2_name, legendgroup = "centreline_additional",
+         name = str_wrap(centreline_2_name, leg_wrap_char), legendgroup = "centreline_additional",
          type = "scatter", mode = "lines",
-         line = list(color = "limegreen"), hoverinfo = "none")
+         line = list(color = "#60609f"), hoverinfo = "none")
 
   # Additional dotted centreline
   trace_args_dottedline_additional =
     list(data = plot_data, y = ~dottedline_2_data,
-         name = dottedline_2_name, legendgroup = "dottedline_additional",
+         name = str_wrap(dottedline_2_name, leg_wrap_char), legendgroup = "dottedline_additional",
          type = "scatter", mode = "lines",
-         line = list(color = "limegreen", dash = "dash"), hoverinfo = "none")
+         line = list(color = "#60609f", dash = "dash"), hoverinfo = "none")
 
   # Measure data
   trace_args_measure =
     list(data = plot_data, y = ~get(measure),
-         name = measure_name, legendgroup = "measure",
+         name = str_wrap(measure_name, leg_wrap_char), legendgroup = "measure",
          type = "scatter", mode = "lines",
          line = list(color = "black"), text = tooltip_text, hoverinfo = "text")
 
@@ -2438,14 +2524,14 @@ plot_run_chart =
   # Trends
   trace_args_trends =
     list(data = trend_data, y = ~get(measure),
-         name = trend_text, legendgroup = "trends",
+         name = str_wrap(trend_text, leg_wrap_char), legendgroup = "trends",
          type = "scatter", mode = "lines",
          line = list(color = "lightgreen", width = 12), hoverinfo = "none")
 
   # Shifts
   trace_args_shifts =
     list(data = shift_data, y = ~get(measure),
-         name = shift_text, legendgroup = "shifts",
+         name = str_wrap(shift_text, leg_wrap_char), legendgroup = "shifts",
          type = "scatter", mode = "lines",
          line = list(color = "orange", width = 2), text = ~shift_tooltip,
          hoverinfo = "text", hoverlabel = list(bgcolor = "black"))
@@ -2510,8 +2596,6 @@ plot_run_chart =
     add_run_trace(trace_args_measure) %>%
     add_run_trace(trace_args_shifts)
 
-
-
   # Add dummy traces
   # The order here is the order traces will be on the legend, top to bottom
   run_chart =
@@ -2564,7 +2648,7 @@ plot_run_chart =
              list(
                list(type = "buttons",
                     yanchor = "top",
-                    y = -0.38,
+                    y = -0.37,
                     xanchor = "right",
                     x = 1,
                     bordercolor = "#ccc",
@@ -2650,7 +2734,7 @@ plot_run_chart =
     layout(margin = list(b = 80, t = 5, r = 25), # to avoid labels getting cut off
            xaxis = xaxis_plots, yaxis = yaxis_plots,
            legend = list(traceorder = "normal", # avoids different spacing of grouped legend
-                         yanchor = "top", y = -0.35, x = 0)) %>%
+                         yanchor = "top", y = leg_pos_y, x = 0)) %>%
     #leaving only save plot button
     config(displaylogo = FALSE, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
