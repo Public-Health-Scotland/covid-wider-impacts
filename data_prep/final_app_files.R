@@ -36,7 +36,7 @@ save_final_file("cancer_data_diff", "10_Sep_21")
 ## SACT ----
 save_final_file("sact_data", "06_Dec_21")
 
-save_final_file("sact_weekly_data", "06_Dep_21")
+save_final_file("sact_weekly_data", "06_Dec_21")
 
 ##########################################################.
 ## DCE ----
