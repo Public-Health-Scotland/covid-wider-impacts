@@ -294,6 +294,13 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
            variation =  ifelse(is.infinite(variation), 0, variation)) %>%
     select(-week_no)
 
+  # Disclosure control
+  # Setting < 5 counts to zero
+  data_2020 <- data_2020 %>%
+    mutate(count = if_else(count < 5, 0, count),
+           count_average = if_else(count_average < 5, 0, count_average),
+           variation = if_else(count < 5, 0, variation))
+
   # If comparison_end is supplied, it means data after that date is no longer
   # comparable to the historical data. So set to NA.
   if (!is.null(comparison_end)) {
@@ -304,13 +311,6 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
                                TRUE ~ .x)))
   }
 
-  # Disclosure control
-  # Setting < 5 counts to zero
-  data_2020 <- data_2020 %>%
-    mutate(count = if_else(count < 5, 0, count),
-           count_average = if_else(count_average < 5, 0, count_average),
-           variation = if_else(count < 5, 0, variation))
-
   # Filter week
   data_2020 <- data_2020 %>%
     filter(week_ending <= as.Date(last_week))
@@ -320,7 +320,7 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
   file.remove(paste0(open_data, filename,"_data.rds")) # to avoid permission issues
 
   saveRDS(data_2020, paste0("shiny_app/data/", filename,".rds"))
-  saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_", 
+  saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_",
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
 
