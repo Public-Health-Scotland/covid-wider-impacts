@@ -29,7 +29,10 @@ source("data_prep/cardio_data_prep.R") # This sources the functions for the sect
 create_aecardio(filedate = "2021-11-25", last_week =  "2021-11-21")
 create_sascardio(filedate = "2021-11-29", last_week =  "2021-11-21")
 create_cardiodrugs(filedate = "2021-11-25", last_week =  "2021-11-21")
-create_oohcardio(filedate = "2021-11-29", last_week =  "2021-11-21")
+# Coding changed in July 2021, so earlier and later data isn't comparable.
+# comparison_end removes the comparison to historical data from that date.
+create_oohcardio(filedate = "2021-11-29", last_week =  "2021-11-21",
+                 comparison_end = "2021-07-01")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the cardio_tab script
