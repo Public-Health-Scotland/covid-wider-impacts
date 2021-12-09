@@ -2062,7 +2062,8 @@ plot_imm_simd <- function(dataset, age_week, dose,
 #Function to create plot when no data available
 plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due to small numbers") {
   text_na <- list(x = 5, y = 5, text = text_nodata , size = 20,
-                  xref = "x", yref = "y",  showarrow = FALSE)
+                  xref = "x", yref = "y",  showarrow = FALSE,
+                  name = "_no_data_plot_marker_") # so can check later if plot object has no data
 
   plot_ly(height = height_plot) %>%
     layout(annotations = text_na,
@@ -2339,14 +2340,25 @@ add_vline = function(fig, x, text, text_align = "center", text_y = 1,
                      line_settings = list(color = "grey", dash = "dash"),
                      hovertext = NULL) {
 
-  fig =
-    layout(fig,
-           shapes = list(type = "line", line = line_settings,
-                         y0 = 0, y1 = 1, yref = "paper", x0 = x, x1 = x),
-           annotations = list(text = text, align = text_align, showarrow = FALSE,
-                              x = x, xanchor = text_align, hovertext = hovertext,
-                              y = text_y, yref = "paper", yanchor = text_yanchor),
-           margin = margin)
+  # plot_dodata() inserts the string _no_data_plot_marker_ as the name of the
+  # annotation. So if that's included in the JSON data plotly generates, we
+  # know it's an empty plot saying there's no data
+  no_data_plot =
+    str_detect(plotly_json(fig)[["x"]][["data"]], "_no_data_plot_marker_")
+
+  # Don't add the annotation to an empty plot
+  if (isFALSE(no_data_plot)) {
+    fig =
+      layout(fig,
+             shapes = list(type = "line", line = line_settings,
+                           y0 = 0, y1 = 1, yref = "paper", x0 = x, x1 = x),
+             annotations = list(text = text, align = text_align, showarrow = FALSE,
+                                x = x, xanchor = text_align, hovertext = hovertext,
+                                y = text_y, yref = "paper", yanchor = text_yanchor),
+             margin = margin)
+  }
+
+
 
   return(fig)
 
