@@ -151,6 +151,7 @@ output$booking_explorer <- renderUI({
                             withSpinner(plotlyOutput("booking_trend_g",
                                                      height = height_run_chart))),
                      column(12,
+                            br(), # spacing
                             p(booking_subtitle),
                             p(chart_explanation)))
     } else if (input$geoname_booking == "NHS Forth Valley"){
@@ -168,6 +169,7 @@ output$booking_explorer <- renderUI({
                       withSpinner(plotlyOutput("booking_trend_g",
                                                height = height_run_chart))),
                column(12,
+                      br(), # spacing
                       p(booking_subtitle),
                       p(chart_explanation)))
 
@@ -186,6 +188,7 @@ output$booking_explorer <- renderUI({
                       withSpinner(plotlyOutput("booking_trend_g",
                                                height = height_run_chart))),
                column(12,
+                      br(), # spacing
                       p(booking_subtitle),
                       p(chart_explanation)))
       },

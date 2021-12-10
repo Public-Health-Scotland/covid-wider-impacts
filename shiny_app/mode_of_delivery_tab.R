@@ -149,6 +149,7 @@ output$mod_explorer <- renderUI({
              withSpinner(plotlyOutput("mod_trend_csection_emer",
                                       height = height_run_chart))),
       column(12,
+             br(), # spacing
              p(mod_data_timeperiod),
              p(chart_explanation)),
       column(12,

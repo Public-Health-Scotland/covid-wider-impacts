@@ -182,62 +182,52 @@ output$tears_explorer <- renderUI({
                               (the period before the COVID-19 pandemic in
                               Scotland)")))
 
-  # Layout depending if Scotland or HB selected
-   if (input$geotype_tears == "Health board"){
+   layout_tags =
      tagList(fluidRow(column(12,
-                             h4(paste0("Percentage ", tears_title)),
-                             div(actionButton("btn_tears_rules",
-                                              "How do we identify patterns in the data?",
-                                              icon = icon('question-circle')),
-                                 style = "height:40px;"),
-                             withSpinner(plotlyOutput("tears_trend",
-                                                      height = height_run_chart))),
-                      column(12,
-                             p(tears_data_timeperiod),
-                             p(chart_explanation_quarter)),
-                      column(12,
-                             br(), #spacing
-                             h4(paste0("Number of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear: ",input$geoname_tears))),
-                      column(12,
-                             withSpinner(plotlyOutput("tears_linechart_number")))))
+                    h4(paste0("Percentage ", tears_title)),
+                    div(actionButton("btn_tears_rules",
+                                     "How do we identify patterns in the data?",
+                                     icon = icon('question-circle')),
+                        style = "height:40px;"),
+                    withSpinner(plotlyOutput("tears_trend",
+                                             height = height_run_chart))),
+             column(12,
+                    br(), # spacing
+                    p(tears_data_timeperiod),
+                    p(chart_explanation_quarter)),
+             column(12,
+                    br(), #spacing
+                    h4(paste0("Number of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear: ",input$geoname_tears))),
+             column(12,
+                    withSpinner(plotlyOutput("tears_linechart_number")))))
 
-    } else if (input$geotype_tears == "Scotland"){
-      tagList(fluidRow(column(12,
-                                   h4(paste0("Percentage ", tears_title)),
-                                   div(actionButton("btn_tears_rules",
-                                                   "How do we identify patterns in the data?",
-                                                   icon = icon('question-circle')),
-                                      style = "height:40px;"),
-                                   withSpinner(plotlyOutput("tears_trend"))),
-                            column(12,
-                                   p(tears_data_timeperiod),
-                                   p(chart_explanation)),
-                            column(12,
-                                   br(), #spacing
-                                   h4(paste0("Number of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear: ",input$geoname_tears))),
-                            column(12,
-                                   withSpinner(plotlyOutput("tears_linechart_number")))),
-              fluidRow(column(12,
-                              h4("Women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear by maternal age group: Scotland"))),
-              fluidRow(column(6,
-                              h4("Number of women who have a third or fourth degree perineal tear"),
-                              withSpinner(plotlyOutput("tears_linechart_age_n"))),
-                       column(6,
-                              h4("Percentage of women who have a third or fourth degree perineal tear"),
-                              withSpinner(plotlyOutput("tears_linechart_age_p")))),
-              fluidRow(column(12,
-                              br(), # spacing
-                              h4("Women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear by maternal deprivation level: Scotland"),
-                              actionButton("btn_modal_simd_tears", "What is SIMD and deprivation?",
-                                           icon = icon('question-circle')))),
-              fluidRow(column(6,
-                              h4("Number of women who have a third or fourth degree perineal tear"),
-                              withSpinner(plotlyOutput("tears_linechart_dep_n"))),
-                       column(6,
-                              h4("Percentage of women who have a third or fourth degree perineal tear"),
-                              withSpinner(plotlyOutput("tears_linechart_dep_p"))))
+   # Only include some plots if Scotland selected
+    if (input$geotype_tears == "Scotland") {
+      layout_tags =
+        tagList(layout_tags,
+                tagList(
+                  fluidRow(column(12,
+                                  h4("Women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear by maternal age group: Scotland"))),
+                  fluidRow(column(6,
+                                  h4("Number of women who have a third or fourth degree perineal tear"),
+                                  withSpinner(plotlyOutput("tears_linechart_age_n"))),
+                           column(6,
+                                  h4("Percentage of women who have a third or fourth degree perineal tear"),
+                                  withSpinner(plotlyOutput("tears_linechart_age_p")))),
+                  fluidRow(column(12,
+                                  br(), # spacing
+                                  h4("Women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear by maternal deprivation level: Scotland"),
+                                  actionButton("btn_modal_simd_tears", "What is SIMD and deprivation?",
+                                               icon = icon('question-circle')))),
+                  fluidRow(column(6,
+                                  h4("Number of women who have a third or fourth degree perineal tear"),
+                                  withSpinner(plotlyOutput("tears_linechart_dep_n"))),
+                           column(6,
+                                  h4("Percentage of women who have a third or fourth degree perineal tear"),
+                                  withSpinner(plotlyOutput("tears_linechart_dep_p")))))
       )#tagList from if statement
     }
+   return(layout_tags)
 })
 
 #############################################.

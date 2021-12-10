@@ -135,6 +135,7 @@ output$childdev_explorer <- renderUI({
                  icon = icon('question-circle')),
     fluidRow(withSpinner(plotlyOutput("childdev_no_concerns",
                                       height = height_run_chart))),
+    br(), #spacing
     control_chart_commentary,
     fluidRow(column(12,
                     h4(paste0("Number of ", review_title,

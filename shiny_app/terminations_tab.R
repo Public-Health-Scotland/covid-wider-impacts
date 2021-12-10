@@ -145,6 +145,7 @@ output$top_explorer <- renderUI({
                             withSpinner(plotlyOutput("top_trend_g",
                                                      height = height_run_chart))),
                      column(12,
+                            br(), # spacing
                             p(top_subtitle),
                             p(chart_explanation))),
             #only if scotland selected display age and deprivation breakdowns

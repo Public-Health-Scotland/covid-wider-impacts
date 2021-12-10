@@ -136,6 +136,7 @@ output$induct_explorer <- renderUI({
                             withSpinner(plotlyOutput("induct_trend",
                                                      height = height_run_chart))),
                      column(12,
+                            br(), # spacing
                             p(induct_data_timeperiod),
                             p(chart_explanation)),
                      column(12,

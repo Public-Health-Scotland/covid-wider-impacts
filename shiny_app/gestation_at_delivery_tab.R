@@ -162,6 +162,7 @@ output$gestation_explorer <- renderUI({
                             withSpinner(plotlyOutput("gest_trend_42plus",
                                                      height = height_run_chart))),
                      column(12,
+                            br(), # spacing
                             p(gest_data_timeperiod),
                             p(chart_explanation)),
                      column(12,

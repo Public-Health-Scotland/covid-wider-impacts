@@ -125,6 +125,7 @@ output$breastfeeding_explorer <- renderUI({
 
   tagList(
     run_charts_bf,
+    br(), #spacing
     fluidRow(control_chart_commentary),
     fluidRow(
       h4(paste0("Number of ", review_title, " with data on infant feeding recorded; and children recorded as being breastfed")),

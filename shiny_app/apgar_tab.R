@@ -166,6 +166,7 @@ output$apgar_explorer <- renderUI({
                             withSpinner(plotlyOutput("apgar_trend",
                                         height = height_run_chart))),
                      column(12,
+                            br(), # spacing
                             p(apgar_data_timeperiod),
                             p(chart_explanation_quarter)),
                      column(12,
@@ -181,8 +182,10 @@ output$apgar_explorer <- renderUI({
                                                                 "How do we identify patterns in the data?",
                                                                 icon = icon('question-circle')),
                                                    style = "height:40px;"),
-                                               withSpinner(plotlyOutput("apgar_trend"))),
+                                               withSpinner(plotlyOutput("apgar_trend",
+                                               height = height_run_chart))),
                                         column(12,
+                                               br(), # spacing
                                                p(apgar_data_timeperiod),
                                                p(chart_explanation)),
                                         column(12,
