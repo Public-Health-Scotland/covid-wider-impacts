@@ -201,7 +201,7 @@ plot_runchart_bf <- function(var_chosen, centreline, shift, trend) {
   } else {
 
     #Modifying standard layout
-    y_label <- "Percentage of reviews with feeding data"
+    y_label <- "% of reviews with feeding data"
     yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
 
     measure_name <- case_when(var_chosen == "pc_excl" ~ "% exclusively breastfed",

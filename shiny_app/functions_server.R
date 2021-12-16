@@ -2675,6 +2675,11 @@ plot_run_chart =
 
   yaxis_plots[["title"]] = y_label
 
+  # Setting a specific range stops chart jumping when turning markers on and off
+  if (is.null(yaxis_plots[["range"]])) {
+    yaxis_plots[["range"]] = c(0, 1.05*max(plot_data[[measure]]))
+  }
+
   # reduces chart jumping around vertically when turning markers on and off
   # (more noticable in some circumstances).
   # Downside: won't automatically make space for wide tick labels, but plotly
