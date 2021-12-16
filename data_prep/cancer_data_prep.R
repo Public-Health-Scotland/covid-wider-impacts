@@ -32,7 +32,7 @@ input_folder <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Pr
                        "//20200804-pathology-as-proxy-for-2020-regs//RShiny//CancerPathologyData//")
 cl_out <- "/conf/linkage/output/lookups/Unicode/"
 
-cancer <- read_csv(paste0(input_folder,"Pathology_Data_Aug21.csv"), col_names = T) %>%  
+cancer <- read_csv(paste0(input_folder,"Pathology_Data_Nov21.csv"), col_names = T) %>%  
   clean_names() %>% 
   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
   mutate(incidence_date = dmy(incidence_date)) %>%
@@ -43,7 +43,8 @@ cancer2017_18 <- read_csv(paste0(input_folder,"2017_2018 Covid source data patho
   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
   mutate(incidence_date = dmy(incidence_date)) %>%
   mutate(chi_number = replace_na(chi_number, 0)) %>%
-  mutate(chi_number = as.character(chi_number))
+  mutate(chi_number = as.character(chi_number)) %>% 
+  mutate(derived_upi = as.character(derived_upi))
 
 cancer <- bind_rows(cancer, cancer2017_18)
 
@@ -194,7 +195,7 @@ cancer <- cancer %>%
                                  TRUE ~ week_number)) %>% 
   # mutate(week_number = case_when(year == 2020 & week_number == 53 ~ 52,
   #                                TRUE ~ week_number)) %>%
-  filter(!(year == 2021 & week_number > 24))
+  filter(!(year == 2021 & week_number > 35))
 
 
 # extract invalid age records
@@ -856,12 +857,12 @@ diff_data_base <- base_cancer_cum %>%
   mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1))) 
 
 diff_data_base_24 <- diff_data_base %>% 
-  filter(week_number > 24) %>% 
+  filter(week_number > 35) %>% 
   mutate(count21 = NA,
          cum_count21 = NA)
 
 diff_data_base <- diff_data_base %>% 
-  filter(week_number <= 24)
+  filter(week_number <= 35)
 
 diff_data_base <- bind_rows(diff_data_base, diff_data_base_24)
 
