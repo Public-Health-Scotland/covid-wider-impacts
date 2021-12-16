@@ -2420,12 +2420,16 @@ plot_run_chart =
   trend_text = "Trends: 5+ increasing or decreasing points in a row"
   shift_text = "Shifts: 6+ points above or below average in a row"
 
+  # After changes to layout there's not much difference between modes,
+  # but kept for future use
   if (width_mode == "narrow") {
     leg_wrap_char = 52
-    leg_pos_y = -0.52
+    leg_pos_y = -0.48
+    button_pos_y = -0.35
   } else {
     leg_wrap_char = 60
-    leg_pos_y = -0.35
+    leg_pos_y = -0.48
+    button_pos_y = -0.35
   }
 
 
@@ -2648,7 +2652,7 @@ plot_run_chart =
              list(
                list(type = "buttons",
                     yanchor = "top",
-                    y = -0.37,
+                    y = button_pos_y,
                     xanchor = "right",
                     x = 1,
                     bordercolor = "#ccc",
@@ -2662,7 +2666,7 @@ plot_run_chart =
                            # attributes to set when button deactivated
                            args2 = list(list(mode = marker_button_mode_off,
                                             marker = marker_button_marker_off)),
-                           label = "Show Markers")))))
+                           label = "Show data points")))))
 
 
 
@@ -2728,13 +2732,27 @@ plot_run_chart =
   # Set starting range for x axis
   xaxis_plots[["range"]] = range_x
 
+
+  # For annotation
+  zoom_hover_text =
+    "Drag the markers at either end of<br>the bar to view specific time periods"
+
+  # We need an annotation to show user how to use the rangeslider
+  zoom_annotation =
+    list(text = "Drag to Zoom", borderpad = 2,
+         hovertext = zoom_hover_text,
+         showarrow = TRUE, ax = 0, ay = 18,
+         x = 0, xref = "paper", xanchor = "left",
+         y = button_pos_y, yref = "paper", yanchor = "middle")
+
   # Set the options
   run_chart %>%
     #Layout
     layout(margin = list(b = 80, t = 5, r = 25), # to avoid labels getting cut off
            xaxis = xaxis_plots, yaxis = yaxis_plots,
            legend = list(traceorder = "normal", # avoids different spacing of grouped legend
-                         yanchor = "top", y = leg_pos_y, x = 0)) %>%
+                         yanchor = "top", y = leg_pos_y, x = 0),
+           annotations = zoom_annotation) %>%
     #leaving only save plot button
     config(displaylogo = FALSE, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
