@@ -217,7 +217,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
 plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                                var2020 = "count", var_aver = "count_average",
-                               xvar = "week_ending", filtering = T, op = F) {
+                               xvar = "week_ending", filtering = T, op = F, period = "weekly") {
 
   if (filtering == T) {
     # Filtering dataset to include only overall figures
@@ -266,8 +266,8 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
     hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc",
                                                     "ooh_cardiac", "sas_cardiac",
-                                                    "mentalhealth_drugs", "mh_ooh", "deaths") ~ "2020 & 2021",
-                                   data_name %in% c("cath", "op")  ~ "2020")
+                                                    "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 & 2021",
+                                   data_name %in% c("cath")  ~ "2020")
 
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                               data_name == "aye" ~ "Attendances: ",
@@ -283,8 +283,12 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                               data_name == "mh_ooh" ~ "Consultations: ",
                               data_name == "op" ~ "Appointments: ")
 
+    # Input for tooltip based on weekly/monthly
+    period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))
+    
     #Text for tooltip
-    tooltip_trend <- c(paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+    tooltip_trend <- c(paste0(period_data,
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
 
@@ -1884,14 +1888,18 @@ plot_overall_injury_chart <- function(dataset, var1_chosen, var2_chosen, data_na
 ## # Function that creates specialty charts.   ----
 ###############################################.
 # Potentially could be merge with trend one
-plot_spec <- function(type, dataset, marg = 160) {
+plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
   trend_data <- dataset
 
   if (type == "variation") {
 
+    # Input for tooltip based on weekly/monthly
+    period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))  
+    
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$spec, "<br>",
-                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                              period_data,
                               "<br>", "Change from 2018 - 2019 average: ", trend_data$variation, "%"))
 
     #Modifying standard layout
@@ -1904,13 +1912,23 @@ plot_spec <- function(type, dataset, marg = 160) {
   } else if (type == "total") {
 
     #Modifying standard layout
+    if (op == T){
+      yaxis_plots[["title"]] <- "Number of appointments"
+      
+      measure_name <- "Appointments: "
+    } else{
     yaxis_plots[["title"]] <- "Number of admissions"
 
     measure_name <- "Admissions: "
+    }
+    
+    # Input for tooltip based on weekly/monthly
+    period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))  
 
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$spec, "<br>",
-                              "Week ending: ", format(trend_data$week_ending, "%d %b %y"),
+                              period_data,
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
 
