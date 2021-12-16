@@ -2432,6 +2432,12 @@ plot_run_chart =
     button_pos_y = -0.35
   }
 
+  # Need to adjust spacing when plotting centreline 2 due to taller legend
+  if (plot_centreline_2) {
+    button_pos_y = button_pos_y - 0.03
+    leg_pos_y = leg_pos_y - 0.03
+  }
+
 
 
   # Set up data
