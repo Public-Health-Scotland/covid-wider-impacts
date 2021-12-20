@@ -692,11 +692,11 @@ output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80)
 output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80)})
 
 output$op_eth_tot <- renderPlotly({
-  plot_trend_chart(dataset = op_eth(), pal_chose = pal_age, split = "eth", type = "total", 
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", type = "total", 
                    data_name = "op", period = "monthly")})
-
+ 
 output$op_eth_var <- renderPlotly({
-  plot_trend_chart(dataset = op_eth(), pal_chose = pal_age, split = "eth", 
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", 
                    data_name = "op", period = "monthly")})
 
 

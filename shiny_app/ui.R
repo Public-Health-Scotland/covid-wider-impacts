@@ -1,5 +1,5 @@
 #UI
-secure_app( #uncomment if needing password protection
+#secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
@@ -774,6 +774,6 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
  #      ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
- )#secure app
+# )#secure app
 
 #END

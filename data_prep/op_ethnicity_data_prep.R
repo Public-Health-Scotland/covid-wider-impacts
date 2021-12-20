@@ -45,7 +45,7 @@ WI_data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/"
 smr00  <- as_tibble(dbGetQuery(channel, statement=paste(
   "SELECT CLINIC_DATE, REFERRAL_TYPE, ETHNIC_GROUP ethnic_code
   FROM ANALYSIS.SMR00_PI
-  WHERE CLINIC_DATE between '1 January 2018' AND '31 March 2021'
+  WHERE CLINIC_DATE between '1 January 2018' AND '30 June 2021'
     AND SEX IN ('1', '2')
     AND CLINIC_TYPE IN ('1', '2')
     AND CLINIC_ATTENDANCE IN ('1', '5')
@@ -135,7 +135,7 @@ data_202021 <- left_join(outpats %>%
 
 
 # add ethnicity data to full outpatients file
-outpats_full <- readRDS(paste0(WI_data_folder, "outpats_17_May_21.rds"))
+outpats_full <- readRDS(paste0(WI_data_folder, "outpats_03_Dec_21.rds"))
 outpats_all <- bind_rows(outpats_full, data_202021) %>% 
   select(-percent)
 

@@ -23,6 +23,7 @@ library(magrittr)
 library(shinymanager)
 library(lubridate)
 
+
 ###############################################.
 ## Functions ----
 ###############################################.
@@ -451,6 +452,21 @@ pal_cancer_diff <- c("1" = '#000080',
                      "3" = '#D3D3D3',
                      "4" = '#C0C0C0',
                      "5" = '#0000FF')
+
+pal_eth <- c("#017ca3",
+              "#b9ff35",
+              "#01814e",
+              "#3f002d",
+              "#01f38f",
+              "#ffcbdb",
+              "#da000f",
+              "#f4b7ff",
+              "#6a3e00",
+              "#edd000",
+              "#0053b0",
+              "#ffc393",
+              "#ff8f88",
+              "#686100")
 
 
 # more distinctive colour palette (save for later)
