@@ -382,6 +382,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Mesothelioma" = "Mesothelioma",
                       "Multiple Myeloma and malignant plasma cell neoplasms" = "Multiple Myeloma and malignant plasma cell neoplasms",
                       "Non-Melanoma Skin Cancer" = "Non-Melanoma Skin Cancer",
+                      "Non-Hodgkin Lymphoma" = "Non Hodgkin Lymphoma",
                       "Oesophagus" = "Oesophagus",
                       "Other" = "Other",
                       "Ovary - Females only" = "Ovary - Females only",

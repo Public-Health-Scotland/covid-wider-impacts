@@ -166,7 +166,7 @@ cancer <- cancer %>%
                           siteno == 1420 ~ "Prostate - Males only",
                           siteno == 1430 ~ "Testis - Males only",
                           siteno == 1510 ~ "Multiple Myeloma and malignant plasma cell neoplasms",
-                          siteno == 1610 ~ "Non-Hodgkin lymphoma",
+                          siteno == 1610 ~ "Non-Hodgkin Lymphoma",
                           siteno == 1710 ~ "Oesophagus",
                           siteno == 1810 ~ "Pancreas",
                           siteno == 1910 ~ "Malignant Melanoma of the Skin",
