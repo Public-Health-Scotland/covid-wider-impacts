@@ -198,7 +198,7 @@ plot_top_trend <- function(measure, shift, trend){
 
     # chart legend labels
     centreline_name <- paste0(input$geoname_top," average up to end Feb 2020")
-    dottedline_name <- "Projected Average"
+    dottedline_name <- "Projected average"
 
     #switch y-axis according to which measure is selected
     if (measure == "terminations") {

@@ -220,7 +220,7 @@ plot_runchart_bf <- function(var_chosen, centreline, shift, trend) {
     }
 
     centreline_name = "Average up to February 2020"
-    dottedline_name = "Projected Average"
+    dottedline_name = "Projected average"
     centreline_end = ymd(20200301)
     centreline_data =
       trend_data %>%

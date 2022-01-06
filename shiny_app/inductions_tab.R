@@ -200,7 +200,7 @@ plot_induct_trend <- function(measure, shift, trend){
 
     # centrelines
     centreline_name <- paste0(input$geoname_induct," average up to end Feb 2020")
-    dottedline_name <- "Projected Average"
+    dottedline_name <- "Projected average"
     centreline_data = plot_data$median_ind_37_42
     dottedline_data = plot_data$ext_ind_37_42
 

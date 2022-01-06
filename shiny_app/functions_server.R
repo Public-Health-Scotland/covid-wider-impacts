@@ -2690,7 +2690,7 @@ plot_run_chart =
                            # attributes to set when button deactivated
                            args2 = list(list(mode = marker_button_mode_off,
                                             marker = marker_button_marker_off)),
-                           label = "Show data points")))))
+                           label = "Show/Hide data points")))))
 
 
 
@@ -2768,7 +2768,7 @@ plot_run_chart =
 
   # We need an annotation to show user how to use the rangeslider
   zoom_annotation =
-    list(text = "Drag to Zoom", borderpad = 2,
+    list(text = "Drag to zoom", borderpad = 2,
          hovertext = zoom_hover_text,
          showarrow = TRUE, ax = 0, ay = 18,
          x = 0, xref = "paper", xanchor = "left",

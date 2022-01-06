@@ -247,7 +247,7 @@ plot_tears_trend <- function(measure, shift, trend){
 
     # chart legend labels
     centreline_name <- paste0(input$geoname_tears," average up to end Feb 2020")
-    dottedline_name <- "Projected Average"
+    dottedline_name <- "Projected average"
     centreline_data = plot_data$median_tears_37plus
     dottedline_data = plot_data$ext_median_tears_37plus
 

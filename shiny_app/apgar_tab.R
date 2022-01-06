@@ -233,7 +233,7 @@ plot_apgar_trend <- function(measure, shift, trend){
 
     # centrelines
     centreline_name <- paste0(input$geoname_apgar," average up to end Feb 2020")
-    dottedline_name = "Projected Average"
+    dottedline_name = "Projected average"
     centreline_data = plot_data$median_apgar5_37plus
     dottedline_data = plot_data$ext_median_apgar5_37plus
 

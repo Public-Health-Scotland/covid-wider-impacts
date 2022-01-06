@@ -214,7 +214,7 @@ plot_mod_trend <- function(measure, shift, trend){
 
     # centrelines
     centreline_name <- paste0(input$geoname_mod," average up to end Feb 2020")
-    dottedline_name = "Projected Average"
+    dottedline_name = "Projected average"
 
     # format y axis
     measure_name <- "Percentage of births delivered by caesarean (%)"
