@@ -454,19 +454,20 @@ pal_cancer_diff <- c("1" = '#000080',
                      "5" = '#0000FF')
 
 pal_eth <- c("#017ca3",
-              "#b9ff35",
+              "#f46d43",
               "#01814e",
               "#3f002d",
               "#01f38f",
               "#ffcbdb",
               "#da000f",
               "#f4b7ff",
-              "#6a3e00",
+              "#686100",
               "#edd000",
               "#0053b0",
               "#ffc393",
-              "#ff8f88",
-              "#686100")
+              "#762a83",
+              "#bababa")
+ 
 
 
 # more distinctive colour palette (save for later)
