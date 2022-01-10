@@ -64,7 +64,7 @@ create_rapid(last_week =  "2021-11-21", extract = T) # this requires access to t
 create_ae(filedate = "2021-11-25", last_week =  "2021-11-21")
 create_ooh(filename = "WIDER IMPACT PC OOH Data_57_7301955574653426324", last_week = "2022-01-02")
 create_nhs24(filedate = "2021-11-29", last_week =  "2021-11-21")
-create_sas(filedate = "2022-01-10", last_week =  "2022-01-02")
+create_sas(filedate = "2021-11-29", last_week =  "2021-11-21")
 
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function
