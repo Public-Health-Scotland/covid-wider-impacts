@@ -62,7 +62,7 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # (quicker once the extraction has been done once)
 create_rapid(last_week =  "2021-11-21", extract = T) # this requires access to the RAPID dataset
 create_ae(filedate = "2021-11-25", last_week =  "2021-11-21")
-create_ooh(filename = "WIDER IMPACT PC OOH Data_52_3843723932621185282", last_week = "2021-11-21")
+create_ooh(filename = "WIDER IMPACT PC OOH Data_57_7301955574653426324", last_week = "2022-01-02")
 create_nhs24(filedate = "2021-11-29", last_week =  "2021-11-21")
 create_sas(filedate = "2021-11-29", last_week =  "2021-11-21")
 
@@ -71,7 +71,7 @@ source("data_prep/deaths_data_preparation.R") # And the deaths function
 # Note: there will be a warning from match_area() about a few hundred thousand
 # geography codes not 9 characters in length - this is caused by the "Scotland"
 # rows, and is not a problem.
-create_deaths(last_week =  "2021-11-21")
+create_deaths(last_week =  "2022-01-02")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the summary_tab script
