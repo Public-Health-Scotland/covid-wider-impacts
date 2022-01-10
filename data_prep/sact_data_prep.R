@@ -19,9 +19,9 @@ require(lubridate)||install.packages("lubridate")
 ##########################################
 # Date Input (Monday of data refresh)
 
-year <- "2021"
-month <- "12"
-day <- "20"
+year <- "2022"
+month <- "01"
+day <- "10"
 
 release_date <- paste(year, month, day, sep = "-")
 path_monthly_data <- paste0("////PHI_conf//SCRIS//SACT//Projects//20210205-SACT-dashboard//R Shiny//SACT Dashboard Data//SummaryMonthlyPatients-", release_date, ".csv")

@@ -26,7 +26,7 @@ save_final_file <- function(dataset, date_saved) {
 ###############################################.
 ###############################################.
 ## Deaths ----
-save_final_file("deaths", "29_Nov_21")
+save_final_file("deaths", "10_Jan_22")
 ##########################################################.
 ## Cancer ----
 save_final_file("cancer_data_2", "10_Sep_21")
@@ -34,9 +34,9 @@ save_final_file("cancer_data_diff", "10_Sep_21")
 
 ##########################################################.
 ## SACT ----
-save_final_file("sact_data", "20_Dec_21")
+save_final_file("sact_data", "10_Jan_22")
 
-save_final_file("sact_weekly_data", "20_Dec_21")
+save_final_file("sact_weekly_data", "10_Jan_22")
 
 ##########################################################.
 ## DCE ----
@@ -58,13 +58,13 @@ save_final_file("ui_smr01_assaults", "30_Sep_21")
 save_final_file("rapid", "10_Jan_22")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
-save_final_file("ooh", "29_Nov_21")
+save_final_file("ooh", "10_Jan_22")
 ## A&E ----
 save_final_file("ae", "10_Jan_22")
 ## NHS24 ----
 save_final_file("nhs24", "10_Jan_22")
 ## SAS ----
-save_final_file("sas", "29_Nov_21")
+save_final_file("sas", "10_Jan_22")
 ### Outpatients ----
 save_final_file("outpats", "03_Dec_21")
 save_final_file("spec_lookup_op", "24_Mar_21")
