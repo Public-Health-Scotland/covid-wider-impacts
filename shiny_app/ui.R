@@ -336,7 +336,6 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                              style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
                                            p("Activity data is released two week in arrears. The latest data currently available in the
                                              dashboard is for the week beginning", strong(format(max(sact_weekly_data$week_beginning), "%d %B %Y"))),
-                                           p(strong("Please note that due to the schedule and public holidays over Christmas and New Year the SACT activity dashboard will not be updated on the 29th of December and 5th of January. The next update will take place on the 12th of January 2022."), style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
 
                                            actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle')),
                                            downloadButton('download_sact_weekly_data', 'Download data')), # well panel
