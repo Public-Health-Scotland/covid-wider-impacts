@@ -220,12 +220,6 @@ output$cancer_explorer2 <- renderUI({
   
   
   tagList(
-    p(strong("29/07/21 - Following a quality assurance exercise, a mistake was found in the methodology used to identify 
-             unique patients; this has been corrected.  In addition, additional improvements were made in the identification 
-             of non-residents of Scotland and in the identification of inappropriate cancer type/sex combinations. As such 
-             there have been some revisions made to the numbers reported for the pathological specimens reported to the week 
-             ending 21st February 2021, extracted on 20th May 2021. These revisions are shown in red.",
-             style = "font-family: 'arial'; font-si20pt; color: #DC143C;")),
     p("Cancer services in Scotland have been disrupted since late March 2020 as a result of the coronavirus
       pandemic.  It is important to understand whether fewer patients have been diagnosed with cancer as a
       result of these changes.  The Scottish Cancer Registry will publish its high quality figures on cancer
