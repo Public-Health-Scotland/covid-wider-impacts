@@ -269,8 +269,8 @@ output$cancer_explorer2 <- renderUI({
     br(),
     br(),
     p(paste0("Figures presented based on data extracted on ",cancer_extract_date)),
-    p(strong(paste0("Last updated: - 22/09/2021 ;  date of extraction of data: -",cancer_extract_date, "with pathological records to week ending
-             14/06/2021."))))
+    p(strong(paste0("Last updated: - 19/01/2022 ;  date of extraction of data: -",cancer_extract_date, "with pathological records to week ending
+             30/08/2021."))))
   
   
 })
@@ -404,7 +404,73 @@ output$cancer_commentary <- renderUI({
       the numbers fell by about 40% of those seen in comparable weeks in 2019. Numbers then rose from late April 2020. 
       Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
       pandemic by 26th February 2021, when the latest data were available, although this varied by cancer type."),
+ 
+    #################################################################################################################   
     
+    # UPDATES ----
+    
+    
+    ###################################
+    
+    h4(strong("**DRAFT** Update 19/01/2022: For pathology data to 30th August 2021 (extracted 16/12/2021)")),
+    p("In the first half of 2021 (weeks ending 05 January to 30 August), there was little difference in the total number
+      of individuals with a pathological diagnosis of cancer compared with those in 2019 (16455 and 16569 in 2021 and 2019,
+      respectively, a difference of less than 1%).  However, within cancer sites, some were higher and some lower than
+      expected in 2021 compared with 2019."),
+    
+    p("Among the most common cancer types, comparing January to week ending 14th June in 2021 and 2019:"),
+    tags$ul(
+      tags$li("Lung cancer: 1,102 versus 1,328 pathological diagnoses; a decrease
+              of 226 individuals, or 17% lower."),
+      
+      tags$li("Breast cancer (females): 2,658 versus 2,774 pathological diagnoses; 
+              a decrease of 116 individuals, or 4% lower."),
+      
+      tags$li("Prostate cancer: 1,581 versus 1,544 pathological diagnoses; an increase
+              of 37 individuals, or 2% higher."),
+      
+      tags$li("Colorectal (bowel) cancer: 1,958 versus 2,011 pathological diagnoses; a
+              decrease of 53 individuals, or 3% lower."),
+      
+      tags$li("Liver and intrahepatic bile ducts: 166 versus 147 pathological diagnoses;
+              an increase of 19 individuals, or 11% higher."),
+      
+      tags$li("Oesophagus: 579 versus 473 pathological diagnoses; an increase
+              of 106 individuals, or 22% higher.")),
+    br(),
+    p("A new quarterly chart of cumulative numbers shows that after initial falls in diagnoses, there was some recovery
+      or catching-up.  For all cancers except non-melanoma skin cancers, there had been a drop to -14% of 2019 numbers
+      by the end of Quarter 3 (Q3) but this increased to -12% by the end of 2020.   A similar pattern of maximum fall
+      by the end of Q3 with a small recovery by the end of Q4 was seen for the commonest cancers – lung, breast, colorectal,
+      and prostate."),
+    p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
+             data to the end of December in 2020 compared to 2019:")),
+    h4(strong("Age")),
+    p("For all cancers except non-melanoma skin cancers, the largest proportionate fall in
+      pathologically confirmed cancers were among those aged 50-69 years and the smallest falls were in those under 50 years.
+      This difference is more clearly seen in breast and colorectal cancers, which were both affected by pauses in the screening
+      programmes for people aged 50-70 and 50-74, respectively.  For example, for breast cancer, there was little difference in
+      pathological cancer diagnoses in those aged under 50; and a maximum fall of -24% in those of screening age (50-69) by the
+      end of Q3, with some recovery (to -19%) by the end of the year.  For colorectal cancers, numbers in 50-69 years olds fell
+      -20% by the end of Q3 with little recovery by the end of the year; while the total annual falls in under 50s and 70 and over
+      were -17% and -14%, respectively."),
+    br(),
+    h4(strong("Socio-economic deprivation")),
+    p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
+      skin cancers, these showed the largest decreases in diagnoses were among people from the most deprived areas (a maximum
+      fall of -18% by the end of Q3).The smallest was among the least deprived (-11% by Q3). There was a greater recovery in the most
+      deprived and some narrowing of the deprivation gap by the end of the year.  Nevertheless, the end-of-year differences in
+      numbers of diagnoses were -9% among the least deprived and -14% in the most deprived.  This general pattern – that reductions in
+      diagnoses were greater among people from more deprived areas – were seen across cancer types.  In lung cancer, the most
+      deprived experienced a -24% reduction in diagnoses by the end of 2020 compared with -12% in the least deprived.  For
+      breast cancer in women, the deprivation gap was wider: a fall of -20% in women from the most deprived quintile compared
+      with a fall of -6% from those from the least deprived quintile.  For colorectal cancer, the pattern across socio-economic
+      groups was a little less clear, although the reduction in diagnoses was smallest for those in the least deprived quintile
+      (-11%) and greater for those in the most deprived quintile (-20%), but the greatest was for those in the second most deprived quintile
+      (-25%).  For prostate cancer, the greatest reduction in diagnoses by the end of the year was -23% for those in the most
+      deprived areas; -15% for those in the least deprived areas; and smallest for those in the middle quintile (-12%)."),
+    
+   
     
     ###################################
     
@@ -465,9 +531,9 @@ output$cancer_commentary <- renderUI({
       (-11%) and greater for those in the most deprived quintile (-20%), but the greatest was for those in the second most deprived quintile
       (-25%).  For prostate cancer, the greatest reduction in diagnoses by the end of the year was -23% for those in the most
       deprived areas; -15% for those in the least deprived areas; and smallest for those in the middle quintile (-12%)."),
-    
-    
-    
+  
+ 
+ 
     ###################################
     
     h4(strong("Update 29/7/2021: For pathology data to 26th February 2021 (extracted 20/5/2021)")),
