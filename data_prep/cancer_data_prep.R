@@ -24,9 +24,13 @@ remotes::install_github("Public-Health-Scotland/phsmethods", upgrade = "never")
 library(phsmethods)
 
 
+# Helper function
+`%notin%` <- Negate(`%in%`)
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Import Data and rename variables ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 input_folder <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects",
                        "//20200804-pathology-as-proxy-for-2020-regs//RShiny//CancerPathologyData//")
@@ -944,7 +948,8 @@ base_cancer_counts_dep_quarters <- base_cancer_slim_quarters %>%
   rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(age_group = "All Ages", breakdown = "Deprivation") %>% 
-  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE)) %>%
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), 
+                          ordered = TRUE)) %>%
   arrange(quarter)
 
 
@@ -1025,7 +1030,25 @@ diff_data_base_quarters <- bind_rows(base_cancer_mean_quarters,
                              dep == 2 ~ "2",
                              dep == 3 ~ "3",
                              dep == 4 ~ "4",
-                             dep == 5 ~ "5 - least deprived"))
+                             dep == 5 ~ "5 - least deprived")) %>% 
+  mutate(quarter2 = case_when(quarter == "Oct-Dec 20" ~ "Oct-Dec 21",
+                              quarter == "Jan-Mar 20" ~ "Jan-Mar 21",
+                              quarter == "Apr-Jun 20" ~ "Apr-Jun 21",
+                              quarter == "Jul-Sep 20" ~ "Jul-Sep 21")) %>% 
+  mutate(quarter2 = factor(quarter2, levels = c("Jan-Mar 21", "Apr-Jun 21", "Jul-Sep 21", "Oct-Dec 21"),
+                           ordered = TRUE))
+
+
+diff_data_base_quarters_NA <- diff_data_base_quarters %>%
+  filter(quarter2 %in% c("Jul-Sep 21","Oct-Dec 21")) %>% 
+  mutate(difference21 = NA,
+         difference21_cum = NA)
+
+diff_data_base_quarters_notNA <- diff_data_base_quarters %>%
+  filter(quarter2 %notin% c("Jul-Sep 21","Oct-Dec 21")) 
+
+diff_data_base_quarters <- bind_rows(diff_data_base_quarters_NA, diff_data_base_quarters_notNA) %>% 
+  arrange(quarter)
 
 rm(base_cancer_counts_all_quarters,
    base_cancer_mean_quarters,

@@ -198,6 +198,24 @@ output$cancer_explorer3 <- renderUI({
                       input$geoname_cancer),
                "cancer_split")
     },
+
+    if(input$breakdown == "Age Group") {
+      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
+                      " confirmed on a pathological specimen since January for 2021 against ", input$baseline, 
+                      " by Age Group - ", input$geoname_cancer),
+               "cancer_split_age21")
+      
+    } else if (input$breakdown == "Deprivation") {
+      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
+                      " confirmed on a pathological specimen since January for 2021 against ", input$baseline, 
+                      " by Deprivation - ", input$geoname_cancer),
+               "cancer_split_dep21")
+    } else {
+      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
+                      " confirmed on a pathological specimen since January for 2021 against ", input$baseline, " - ",
+                      input$geoname_cancer),
+               "cancer_split21")
+    },
     
     p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt")),
     br(),
@@ -300,25 +318,48 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
                                                                    var3_chosen = "count21",
                                                                    data_name = "inc")})
 
-output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all(), 
+# 2019/2020 Difference charts
+output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all(), periodvar = "quarter", 
                                                             if(input$cum_baseline == "Standard") {
                                                               diffvar1 = "difference20"
                                                             } else {
                                                               diffvar1 = "difference20_cum"
                                                             })})
 
-output$cancer_split_age <- renderPlotly({plot_diff_cancer_chart_age(cancer_data_diff_age(), 
+output$cancer_split_age <- renderPlotly({plot_diff_cancer_chart_age(cancer_data_diff_age(), periodvar = "quarter", 
                                                                     if(input$cum_baseline == "Standard") {
                                                                       diffvar1 = "difference20"
                                                                     } else {
                                                                       diffvar1 = "difference20_cum"
                                                                     })})
 
-output$cancer_split_dep <- renderPlotly({plot_diff_cancer_chart_dep(cancer_data_diff_dep(), 
+output$cancer_split_dep <- renderPlotly({plot_diff_cancer_chart_dep(cancer_data_diff_dep(), periodvar = "quarter",
                                                                     if(input$cum_baseline == "Standard") {
                                                                       diffvar1 = "difference20"
                                                                     } else {
                                                                       diffvar1 = "difference20_cum"
+                                                                    })})
+
+# 2019/2021 Difference charts
+output$cancer_split21 <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all(), periodvar = "quarter2",
+                                                            if(input$cum_baseline == "Standard") {
+                                                              diffvar1 = "difference21"
+                                                            } else {
+                                                              diffvar1 = "difference21_cum"
+                                                            })})
+
+output$cancer_split_age21 <- renderPlotly({plot_diff_cancer_chart_age(cancer_data_diff_age(), periodvar = "quarter2",
+                                                                    if(input$cum_baseline == "Standard") {
+                                                                      diffvar1 = "difference21"
+                                                                    } else {
+                                                                      diffvar1 = "difference21_cum"
+                                                                    })})
+
+output$cancer_split_dep21 <- renderPlotly({plot_diff_cancer_chart_dep(cancer_data_diff_dep(), periodvar = "quarter2",
+                                                                    if(input$cum_baseline == "Standard") {
+                                                                      diffvar1 = "difference21"
+                                                                    } else {
+                                                                      diffvar1 = "difference21_cum"
                                                                     })})
 
 
@@ -413,30 +454,30 @@ output$cancer_commentary <- renderUI({
     ###################################
     
     h4(strong("**DRAFT** Update 19/01/2022: For pathology data to 30th August 2021 (extracted 16/12/2021)")),
-    p("In the first half of 2021 (weeks ending 05 January to 30 August), there was little difference in the total number
-      of individuals with a pathological diagnosis of cancer compared with those in 2019 (16455 and 16569 in 2021 and 2019,
-      respectively, a difference of less than 1%).  However, within cancer sites, some were higher and some lower than
+    p("In the first half of 2021 (weeks ending 05th January to 30th August), there was little difference in the total number
+      of individuals with a pathological diagnosis of cancer compared with those in 2019 (23114 and 23417 in 2021 and 2019,
+      respectively, a difference of approxinmately 1.3%).  However, within cancer sites, some were higher and some lower than
       expected in 2021 compared with 2019."),
     
-    p("Among the most common cancer types, comparing January to week ending 14th June in 2021 and 2019:"),
+    p("Among the most common cancer types, comparing January to week ending 30th August in 2021 and 2019:"),
     tags$ul(
-      tags$li("Lung cancer: 1,102 versus 1,328 pathological diagnoses; a decrease
-              of 226 individuals, or 17% lower."),
+      tags$li("Lung cancer: 1,626 versus 1,943 pathological diagnoses; a decrease
+              of 317 individuals, or 16% lower."),
       
-      tags$li("Breast cancer (females): 2,658 versus 2,774 pathological diagnoses; 
-              a decrease of 116 individuals, or 4% lower."),
+      tags$li("Breast cancer (females): 3,742 versus 3,869 pathological diagnoses; 
+              a decrease of 127 individuals, or 3% lower."),
       
-      tags$li("Prostate cancer: 1,581 versus 1,544 pathological diagnoses; an increase
-              of 37 individuals, or 2% higher."),
+      tags$li("Prostate cancer: 2,318 versus 2,138 pathological diagnoses; an increase
+              of 180 individuals, or 8% higher."),
       
-      tags$li("Colorectal (bowel) cancer: 1,958 versus 2,011 pathological diagnoses; a
-              decrease of 53 individuals, or 3% lower."),
+      tags$li("Colorectal (bowel) cancer: 2,785 versus 2,834 pathological diagnoses; a
+              decrease of 49 individuals, or 2% lower."),
       
-      tags$li("Liver and intrahepatic bile ducts: 166 versus 147 pathological diagnoses;
-              an increase of 19 individuals, or 11% higher."),
+      tags$li("Liver and intrahepatic bile ducts: 253 versus 215 pathological diagnoses;
+              an increase of 38 individuals, or 1% higher."),
       
-      tags$li("Oesophagus: 579 versus 473 pathological diagnoses; an increase
-              of 106 individuals, or 22% higher.")),
+      tags$li("Oesophagus: 822 versus 699 pathological diagnoses; an increase
+              of 123 individuals, or 17% higher.")),
     br(),
     p("A new quarterly chart of cumulative numbers shows that after initial falls in diagnoses, there was some recovery
       or catching-up.  For all cancers except non-melanoma skin cancers, there had been a drop to -14% of 2019 numbers

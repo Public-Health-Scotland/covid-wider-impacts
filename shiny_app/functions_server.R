@@ -420,7 +420,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
 ##### DIFF PLOT - NO BREAKDOWN ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-plot_diff_cancer_chart <- function(dataset, diffvar1) {
+plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
   
   # set plot display if no data  
   if (is.data.frame(dataset) && nrow(dataset) == 0)
@@ -475,10 +475,9 @@ plot_diff_cancer_chart <- function(dataset, diffvar1) {
     #Creating time trend plot for difference
     
     
-    plot_ly(data=dataset) %>%
+    plot_ly(data=dataset, x = ~get(periodvar)) %>%
       
-      add_trace(x=~quarter, 
-                y = ~get(diffvar1),
+      add_trace(y = ~get(diffvar1),
                 type = 'scatter', 
                 mode = 'line',
                 color = 'purple',
@@ -502,7 +501,7 @@ plot_diff_cancer_chart <- function(dataset, diffvar1) {
 ##### DIFF PLOT - AGE BREAKDOWN ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-plot_diff_cancer_chart_age <- function(dataset, diffvar1) {
+plot_diff_cancer_chart_age <- function(dataset , periodvar, diffvar1) {
   
   # set plot display if no data  
   if (is.data.frame(dataset) && nrow(dataset) == 0)
@@ -533,7 +532,7 @@ plot_diff_cancer_chart_age <- function(dataset, diffvar1) {
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
     
     
-    # Function for verical line at start of lockdown
+    # Function for vertical line at start of lockdown
     vline <- function(x = 0, color = "grey") {
       list(
         type = "line",
@@ -548,10 +547,9 @@ plot_diff_cancer_chart_age <- function(dataset, diffvar1) {
     
     ####Creating time trend plot for difference
     
-    plot_ly(data=dataset) %>%
+    plot_ly(data=dataset, x = ~get(periodvar)) %>%
       
-      add_trace(x=~quarter, 
-                y = ~get(diffvar1),
+      add_trace(y = ~get(diffvar1),
                 type = 'scatter', 
                 mode = 'line',
                 color = ~age_group,
@@ -575,7 +573,7 @@ plot_diff_cancer_chart_age <- function(dataset, diffvar1) {
 ##### DIFF PLOT - DEPRIVATION BREAKDOWN ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-plot_diff_cancer_chart_dep <- function(dataset, diffvar1) {
+plot_diff_cancer_chart_dep <- function(dataset, periodvar, diffvar1) {
   
   # set plot display if no data  
   if (is.data.frame(dataset) && nrow(dataset) == 0)
@@ -624,10 +622,9 @@ plot_diff_cancer_chart_dep <- function(dataset, diffvar1) {
     
     #Creating time trend plot for difference
     
-    plot_ly(data=dataset) %>%
+    plot_ly(data=dataset, x = ~get(periodvar)) %>%
       
-      add_trace(x=~quarter, 
-                y = ~get(diffvar1),
+      add_trace(y = ~get(diffvar1),
                 type = 'scatter', 
                 mode = 'line',
                 name = paste0(dataset$depdesc),
