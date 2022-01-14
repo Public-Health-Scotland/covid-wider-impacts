@@ -481,8 +481,9 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
                 type = 'scatter', 
                 mode = 'line',
                 color = 'purple',
-                text=tooltip_1, 
+                text=tooltip_1,
                 hoverinfo="text") %>%
+      
       
       
       #Layout
@@ -556,7 +557,7 @@ plot_diff_cancer_chart_age <- function(dataset , periodvar, diffvar1) {
                 colors = pal_sact,
                 text=tooltip_1, 
                 hoverinfo="text") %>%
-      
+
       
       #Layout
       layout(margin = list(b = 80, t=5),
@@ -632,6 +633,7 @@ plot_diff_cancer_chart_dep <- function(dataset, periodvar, diffvar1) {
                 colors = pal_cancer_diff,
                 text=tooltip_1, 
                 hoverinfo="text") %>%
+      
       
       #Layout
       layout(margin = list(b = 80, t=5),

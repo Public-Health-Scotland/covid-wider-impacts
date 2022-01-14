@@ -319,14 +319,14 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
                                                                    data_name = "inc")})
 
 # 2019/2020 Difference charts
-output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all(), periodvar = "quarter", 
+output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all(), periodvar = "quarter",
                                                             if(input$cum_baseline == "Standard") {
                                                               diffvar1 = "difference20"
                                                             } else {
                                                               diffvar1 = "difference20_cum"
                                                             })})
 
-output$cancer_split_age <- renderPlotly({plot_diff_cancer_chart_age(cancer_data_diff_age(), periodvar = "quarter", 
+output$cancer_split_age <- renderPlotly({plot_diff_cancer_chart_age(cancer_data_diff_age(), periodvar = "quarter",
                                                                     if(input$cum_baseline == "Standard") {
                                                                       diffvar1 = "difference20"
                                                                     } else {
