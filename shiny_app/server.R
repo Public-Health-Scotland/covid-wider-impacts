@@ -25,7 +25,7 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("12 January 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("19 January 2022 - Systemic anti-cancer therapies data update."),
                    tags$li("12 January 2021 - Monthly update of summary trends section."),
                    tags$li("15 December 2021 - Outpatients data update"),
                    tags$li("1 December 2021 - Monthly update of data (most sections)."),
@@ -37,7 +37,7 @@ function(input, output, session) {
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("19 January 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("26 January 2022 - Systemic anti-cancer therapies data update."),
                    tags$li("2 February 2021 - Monthly update of data (most sections)."),
                    tags$li("2 February 2022 - Monthly update of data (most sections)."),
                    tags$li("TBC 2022 - Cancer staging data."),
