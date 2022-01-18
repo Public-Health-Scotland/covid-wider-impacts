@@ -238,7 +238,7 @@ apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
 apgar_download <- readRDS("data/apgar_download_data.rds")
 
 # Preterm
-preterm_extract_date <- "14 October 2021"
+preterm_extract_date <- "18 January 2022"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
 
