@@ -441,11 +441,9 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
     denom_period <- case_when(input$baseline == "2019" ~ "2019",
                               input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
     
-    measure_name <- case_when(diffvar1 == "difference20"  ~ "Percentage(%) Change:",
-                              diffvar1 == "difference20_cum"  ~ "Cumulative Percentage(%) Change:") # ,
-    # diffvar2 == "difference21"  ~ "Percentage(%) Change:",
-    # diffvar2 == "difference21_cum"  ~ "Cumulative Percentage(%) Change:")
-    
+    measure_name <- case_when(diffvar1 %in% c("difference20", "difference21")  ~ "Percentage(%) Change:",
+                              diffvar1 %in% c("difference20_cum", "difference21_cum")  ~ "Cumulative Percentage(%) Change:") # ,
+
     value1 <- dataset[[diffvar1]]
     
     # value2 <- dataset[[diffvar2]]
@@ -523,8 +521,8 @@ plot_diff_cancer_chart_age <- function(dataset , periodvar, diffvar1) {
     denom_period <- case_when(input$baseline == "2019" ~ "2019",
                               input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
     
-    measure_name <- case_when(diffvar1 == "difference20"  ~ "Percentage(%) Change:",
-                              diffvar1 == "difference20_cum"  ~ "Cumulative Percentage(%) Change:") # ,
+    measure_name <- case_when(diffvar1 %in% c("difference20", "difference21")  ~ "Percentage(%) Change:",
+                              diffvar1 %in% c("difference20_cum", "difference21_cum")  ~ "Cumulative Percentage(%) Change:") # ,
     
     value1 <- dataset[[diffvar1]]
     
@@ -595,8 +593,8 @@ plot_diff_cancer_chart_dep <- function(dataset, periodvar, diffvar1) {
     denom_period <- case_when(input$baseline == "2019" ~ "2019",
                               input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
     
-    measure_name <- case_when(diffvar1 == "difference20"  ~ "Percentage(%) Change:",
-                              diffvar1 == "difference20_cum"  ~ "Cumulative Percentage(%) Change:") # ,
+    measure_name <- case_when(diffvar1 %in% c("difference20", "difference21")  ~ "Percentage(%) Change:",
+                              diffvar1 %in% c("difference20_cum", "difference21_cum")  ~ "Cumulative Percentage(%) Change:") # ,
     
     value1 <- dataset[[diffvar1]]
     
