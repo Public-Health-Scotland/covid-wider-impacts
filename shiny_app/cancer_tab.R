@@ -287,7 +287,7 @@ output$cancer_explorer2 <- renderUI({
     br(),
     br(),
     p(paste0("Figures presented based on data extracted on ",cancer_extract_date)),
-    p(strong(paste0("Last updated: - 19/01/2022 ;  date of extraction of data: -",cancer_extract_date, "with pathological records to week ending
+    p(strong(paste0("Last updated: - 19/01/2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
              30/08/2021."))))
   
   
