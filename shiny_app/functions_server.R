@@ -905,13 +905,14 @@ plot_dce_inc_bar19 <- function(dce_dataset, dce_var1, data_type) {
   
   
   plot_ly(data=dce_dataset, x = ~month) %>%
-    add_bars(y = ~get(dce_var1), color = ~stage, colors = pal_dce, text = dce_tooltip_4, hoverinfo = "text") %>%
+    add_bars(y = ~get(dce_var1), color = ~stage, colors = pal_dce, 
+             text = dce_tooltip_4, hoverinfo = "text", textposition = "none") %>%
     add_annotations(x = dce_dataset$month,
                     y = (dce_dataset$total19)+10,
                     text = dce_dataset$total19,
                     xref = "x",
                     yref = "y",
-                    showarrow = FALSE) %>% 
+                    showarrow = FALSE) %>%
     layout(barmode = "stack",
            xaxis = xaxis_plots, yaxis = b,
            legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'normal')) %>% 
@@ -943,7 +944,8 @@ plot_dce_inc_bar19_2 <- function(dce_dataset) {
                             "<br>", "Stage: ", dce_dataset$stage,
                             "<br>", "Percentage of Total: ", dce_dataset$percent19, "%"))
   
-  plot_ly(data=dce_dataset, x = ~month, y = ~percent19, color = ~stage,  colors = pal_dce, text = dce_tooltip_5, hoverinfo = "text" ) %>%
+  plot_ly(data=dce_dataset, x = ~month, y = ~percent19, color = ~stage,  colors = pal_dce, 
+          text = dce_tooltip_5, hoverinfo = "text", textposition = "none") %>%
     add_bars() %>%
     layout(barmode = "stack", 
            xaxis = xaxis_plots, yaxis = yaxis_plots,
@@ -1004,7 +1006,8 @@ plot_dce_inc_bar20 <- function(dce_dataset, data_type) {
   }
   
   plot_ly(data=dce_dataset, x = ~month) %>% 
-    add_bars(y = ~count20, color = ~stage, colors = pal_dce, text = dce_tooltip_6, hoverinfo = "text") %>%
+    add_bars(y = ~count20, color = ~stage, colors = pal_dce, 
+             text = dce_tooltip_6, hoverinfo = "text", textposition = "none") %>%
     add_annotations(x = dce_dataset$month,
                     y = (dce_dataset$total20)+10,
                     text = dce_dataset$total20,
@@ -1043,7 +1046,8 @@ plot_dce_inc_bar20_2 <- function(dce_dataset) {
                             "<br>", "Percentage of Total: ", dce_dataset$percent20, "%"))
   
   
-  plot_ly(data=dce_dataset, x = ~month, y = ~percent20, color = ~stage, colors = pal_dce, text = dce_tooltip_7, hoverinfo = "text"  ) %>%
+  plot_ly(data=dce_dataset, x = ~month, y = ~percent20, color = ~stage, colors = pal_dce, 
+          text = dce_tooltip_7, hoverinfo = "text", textposition = "none") %>%
     add_bars() %>%
     layout(barmode = "stack", 
            xaxis = xaxis_plots, yaxis = yaxis_plots,

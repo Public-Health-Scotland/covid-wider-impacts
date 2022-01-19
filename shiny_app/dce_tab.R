@@ -9,7 +9,7 @@ observeEvent(input$btn_dce_modal,
                title = "What is the data source?",
                p("Data to support the Detect Cancer Early (DCE) initiative are collected by Cancer Audit staff across 
                  NHS Scotland and are part of the Scottish National Prospective Cancer Audit data sets, which are 
-                 recorded onto the NHS Boards’ prospective cancer audit systems."),
+                 recorded onto the NHS Boards prospective cancer audit systems."),
                p("These data are collected locally by individual NHS Boards using national data standards. The information 
                  is collected as patients progress through their pathway of care from initial referral, investigations and 
                  diagnosis, to staging, treatments and follow-up. Further information on prospective cancer audit data 
@@ -46,7 +46,7 @@ dce_data_main3 <- reactive({
 dce_data_dl <- reactive({
   
   dce_data %>% 
-  select(area:count20, month) %>%
+    select(area:count20, month) %>%
     rename("Area name" = area, "Cancer Type" = site, "Stage" = stage, 
            "No. Patients 2019" = count19, "No. Patients 2020" = count20, "Month" = month)
 })
@@ -78,12 +78,12 @@ output$dce_explorer1 <- renderUI({
                         input$dce_type == "Lung" ~ "Lung"
   )
   
-    tagList(
-      
-      plot_cut_box(paste0("Number of " , dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19",
+  tagList(
+    
+    plot_cut_box(paste0("Number of " , dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19",
                  paste0("Number of " , dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20"),
-      p(em("(Click and drag on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
-      p("NK = Not Known"),
+    p(em("(Click and drag on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
+    p("NK = Not Known"),
     br(),
     plot_cut_box(paste0("Proportion of ", dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19_2",
                  paste0("Proportion of ", dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20_2"),
@@ -108,15 +108,15 @@ output$dce_explorer2 <- renderUI({
     br(),
     plot_box(paste0("Percentage change (2019 to 2020) of individuals with ", dce_site,
                     " cancer - Stage ", input$dce_stage), "dce_split"),
-  
-  p(em("The cancer networks are regional collaborations working together across NHS Boards to improve 
-       patient care and cancer services:", style = "font-family: 'calibri'; font-si15pt")),
-  p(em("NCA (North Cancer Alliance) – NHS Grampian, NHS Highland, NHS Orkney, NHS Shetland, NHS Tayside 
-       and NHS Western Isles.", style = "font-family: 'calibri'; font-si15pt")),
-  p(em("SCAN (South East of Scotland Cancer Network) – NHS Borders, NHS Dumfries & Galloway, NHS Fife and 
-       NHS Lothian.", style = "font-family: 'calibri'; font-si15pt")),
-  p(em("WoSCAN (West of Scotland Cancer Network) – NHS Ayrshire & Arran, NHS Forth Valley, NHS Greater 
-       Glasgow & Clyde and NHS Lanarkshire.", style = "font-family: 'calibri'; font-si15pt")))
+    
+    p(em("The cancer networks are regional collaborations working together across NHS Boards to improve 
+         patient care and cancer services:", style = "font-family: 'calibri'; font-si15pt")),
+    p(em("NCA (North Cancer Alliance) â NHS Grampian, NHS Highland, NHS Orkney, NHS Shetland, NHS Tayside 
+         and NHS Western Isles.", style = "font-family: 'calibri'; font-si15pt")),
+    p(em("SCAN (South East of Scotland Cancer Network) â NHS Borders, NHS Dumfries & Galloway, NHS Fife and 
+         NHS Lothian.", style = "font-family: 'calibri'; font-si15pt")),
+    p(em("WoSCAN (West of Scotland Cancer Network) â NHS Ayrshire & Arran, NHS Forth Valley, NHS Greater 
+         Glasgow & Clyde and NHS Lanarkshire.", style = "font-family: 'calibri'; font-si15pt")))
   
   # plot_box(paste0("Ratio of individuals with ", dce_site,
   #                 " cancer by Stage "), "dce_split2"))

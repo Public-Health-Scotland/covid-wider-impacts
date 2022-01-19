@@ -30,7 +30,7 @@ save_final_file("deaths", "29_Nov_21")
 ##########################################################.
 ## Cancer ----
 save_final_file("cancer_data_2", "19_Jan_22")
-save_final_file("cancer_data_diff", "19_Jan_21")
+save_final_file("cancer_data_diff", "19_Jan_22")
 
 ##########################################################.
 ## SACT ----
@@ -40,7 +40,7 @@ save_final_file("sact_weekly_data", "13_Dec_21")
 
 ##########################################################.
 ## DCE ----
-# save_final_file("dce_data", "18_Oct_21")
+save_final_file("dce_data", "19_Jan_22")
 
 
 ##########################################################.
