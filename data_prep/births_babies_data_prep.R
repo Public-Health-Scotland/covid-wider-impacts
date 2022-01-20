@@ -879,7 +879,7 @@ tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
                           area_name=="Scotland" ~ "Scotland"),
          area_type = type,
          category = "All") %>%
-  filter(date <= max_date) %>% 
+  filter(date < max_date) %>% 
   
   
   # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled

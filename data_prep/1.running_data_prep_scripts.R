@@ -16,7 +16,7 @@ source("data_prep/births_babies_data_prep.R") # This sources the functions for t
 create_delivery(folderdate = "2021-11-15") # Mode of delivery, induction and gestation data
 create_perinatal(foldermonth = "nov21") # Stillbirths and perinatal mortality
 create_apgar(folderdate = "2022_01_12") # Apgar scores
-create_preterm(preterm_date = "2022_01_12", max_date = "2021-11-01") # Preterm
+create_preterm(preterm_date = "2022_01_12", max_date = "2021-10-01") # Preterm
 create_tears(tears_date = "2022_01_12", max_date = "2021-11-01") # Perineal tears
 
 # Add here what needs to be changed in the shiny scripts
