@@ -441,20 +441,15 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
     denom_period <- case_when(input$baseline == "2019" ~ "2019",
                               input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
     
-    measure_name <- case_when(diffvar1 %in% c("difference20", "difference21")  ~ "Percentage(%) Change:",
-                              diffvar1 %in% c("difference20_cum", "difference21_cum")  ~ "Cumulative Percentage(%) Change:") # ,
+    measure_name <- case_when(diffvar1 %in% c("difference")  ~ "Percentage(%) Change:",
+                              diffvar1 %in% c("difference_cum")  ~ "Cumulative Percentage(%) Change:") # ,
 
     value1 <- dataset[[diffvar1]]
     
-    # value2 <- dataset[[diffvar2]]
-    
     tooltip_1 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
-                          "Age Group: ", dataset$age_group, "<br>",
+                          "Age group: ", dataset$age_group, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
     
-    # tooltip_2 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
-    #                       "Age Group: ", dataset$age_group, "<br>",
-    #                       measure_name, " ", paste0(format(round(value2, 2), nsmall = 2), "%")))
     
     # Function for vertical line at start of lockdown
     vline <- function(x = 0, color = "grey") {
@@ -473,156 +468,31 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
     #Creating time trend plot for difference
     
     
-    plot_ly(data=dataset, x = ~get(periodvar)) %>%
-      
-      add_trace(y = ~get(diffvar1),
+   diff_plot <- plot_ly(data=dataset, x = ~get(periodvar)) 
+    
+   if (input$breakdown == "None"){ # DIFF PLOT - No breakdown
+     
+     diff_plot <- diff_plot %>% 
+       add_trace(y = ~get(diffvar1),
                 type = 'scatter', 
                 mode = 'line',
                 color = 'purple',
                 text=tooltip_1,
-                hoverinfo="text") %>%
-      
-      
-      
-      #Layout
-      layout(margin = list(b = 80, t=5),
-             xaxis = xaxis_plots, yaxis = yaxis_plots,
-             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
-      
-      # leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+                hoverinfo="text")
+   } else if (input$breakdown == "Age Group") { # DIFF PLOT - AGE BREAKDOWN
+     
+     diff_plot <- diff_plot %>% 
+       add_trace(y = ~get(diffvar1),
+                 type = 'scatter', 
+                 mode = 'line',
+                 color = ~age_group,
+                 colors = pal_sact,
+                 text=tooltip_1, 
+                 hoverinfo="text")
+     
+   } else if (input$breakdown == "Deprivation") { #DIFF PLOT - Deprivation BREAKDOWN
     
-  }
-}
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##### DIFF PLOT - AGE BREAKDOWN ----
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-plot_diff_cancer_chart_age <- function(dataset , periodvar, diffvar1) {
-  
-  # set plot display if no data  
-  if (is.data.frame(dataset) && nrow(dataset) == 0)
-  { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
-  } else {
-    
-    
-    # Set y axis label
-    yaxis_title <-  "% Change"
-    
-    yaxis_plots[["title"]] <- yaxis_title
-    
-    
-    #Text for tooltips  
-    
-    measure_name <- "% Change from 2019 "
-    
-    denom_period <- case_when(input$baseline == "2019" ~ "2019",
-                              input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
-    
-    measure_name <- case_when(diffvar1 %in% c("difference20", "difference21")  ~ "Percentage(%) Change:",
-                              diffvar1 %in% c("difference20_cum", "difference21_cum")  ~ "Cumulative Percentage(%) Change:") # ,
-    
-    value1 <- dataset[[diffvar1]]
-    
-    tooltip_1 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
-                          "Age Group: ", dataset$age_group, "<br>",
-                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
-    
-    
-    # Function for vertical line at start of lockdown
-    vline <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-    
-    ####Creating time trend plot for difference
-    
-    plot_ly(data=dataset, x = ~get(periodvar)) %>%
-      
-      add_trace(y = ~get(diffvar1),
-                type = 'scatter', 
-                mode = 'line',
-                color = ~age_group,
-                colors = pal_sact,
-                text=tooltip_1, 
-                hoverinfo="text") %>%
-
-      
-      #Layout
-      layout(margin = list(b = 80, t=5),
-             xaxis = xaxis_plots, yaxis = yaxis_plots,
-             legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
-      
-      # leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-    
-  }
-}
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##### DIFF PLOT - DEPRIVATION BREAKDOWN ----
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-plot_diff_cancer_chart_dep <- function(dataset, periodvar, diffvar1) {
-  
-  # set plot display if no data  
-  if (is.data.frame(dataset) && nrow(dataset) == 0)
-  { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
-  } else {
-    
-    
-    # Set y axis label
-    yaxis_title <-  "% Change"
-    
-    yaxis_plots[["title"]] <- yaxis_title
-    
-    
-    #Text for tooltips  
-    
-    measure_name <- "% Change from 2019 "
-    
-    denom_period <- case_when(input$baseline == "2019" ~ "2019",
-                              input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
-    
-    measure_name <- case_when(diffvar1 %in% c("difference20", "difference21")  ~ "Percentage(%) Change:",
-                              diffvar1 %in% c("difference20_cum", "difference21_cum")  ~ "Cumulative Percentage(%) Change:") # ,
-    
-    value1 <- dataset[[diffvar1]]
-    
-    # value2 <- dataset[[diffvar2]]
-    
-    tooltip_1 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
-                          "Age Group: ", dataset$age_group, "<br>",
-                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
-    
-    
-    # Function for verical line at start of lockdown
-    vline <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-    
-    
-    #Creating time trend plot for difference
-    
-    plot_ly(data=dataset, x = ~get(periodvar)) %>%
-      
+     diff_plot <- diff_plot %>% 
       add_trace(y = ~get(diffvar1),
                 type = 'scatter', 
                 mode = 'line',
@@ -630,13 +500,13 @@ plot_diff_cancer_chart_dep <- function(dataset, periodvar, diffvar1) {
                 color = ~dep,
                 colors = pal_cancer_diff,
                 text=tooltip_1, 
-                hoverinfo="text") %>%
-      
+                hoverinfo="text")
+   }
       
       #Layout
-      layout(margin = list(b = 80, t=5),
+       diff_plot %>%  layout(margin = list(b = 80, t=5),
              xaxis = xaxis_plots, yaxis = yaxis_plots,
-             legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
       
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
