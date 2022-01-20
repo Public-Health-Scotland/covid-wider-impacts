@@ -45,45 +45,29 @@ cancer_data_cum_main <- reactive({
   
 })
 
+# Reactive dataset for the diff charts
 cancer_data_diff_all <- reactive({
   
   cancer_data_diff %>% filter(sex == input$gender, 
                               area == input$geoname_cancer, 
                               site == input$cancer_type,
                               denom == input$baseline,
-                              breakdown == "None")
-  
+                              breakdown == input$breakdown) %>% 
+    # Moving from wide to long format
+    pivot_longer(c(difference20:difference21), names_to = "diffn", values_to = "difference") %>%
+    pivot_longer(c(difference20_cum:difference21_cum), names_to = "diffcumn", values_to = "difference_cum") %>%
+    # Filtering spurious combinations
+    filter(substr(diffn, 11, 12) == substr(diffcumn, 11, 12)) %>%
+    mutate(quarter = case_when(substr(diffn, 11, 12) == "20" ~ paste0(quarter),
+                               substr(diffn, 11, 12) == "21" ~ paste0(quarter2))) %>%
+    filter(quarter != "NA") %>% 
+    # Ordering factor so it shows correctly in Plotly
+    mutate(quarter = factor(quarter, 
+                            levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", 
+                                       "Jul-Sep 20", "Oct-Dec 20", "Jan-Mar 21",
+                                       "Apr-Jun 21", "Jul-Sep 21", "Oct-Dec 21"), ordered = TRUE)) %>% 
+    arrange(quarter)
 })
-
-cancer_data_diff_age <- reactive({
-  
-  cancer_data_diff %>% filter(sex == input$gender, 
-                              area == input$geoname_cancer, 
-                              site == input$cancer_type,
-                              denom == input$baseline,
-                              breakdown == "Age Group")
-  
-})
-
-cancer_data_diff_dep <- reactive({
-  
-  cancer_data_diff %>% filter(sex == input$gender, 
-                              area == input$geoname_cancer, 
-                              site == input$cancer_type,
-                              denom == input$baseline,
-                              breakdown == "Deprivation")
-  
-})
-
-
-# cancer_data_cum_main2 <- reactive({
-#   
-#   cancer_data3 %>% filter(sex == input$gender, area == input$geoname_cancer, site == input$cancer_type) %>% 
-#     mutate(dep = factor(dep))
-#   
-# })
-
-
 
 cancer_data_dl <- reactive({
   
@@ -185,36 +169,18 @@ output$cancer_explorer3 <- renderUI({
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
                       " confirmed on a pathological specimen since January for 2020 against ", input$baseline, 
                       " by Age Group - ", input$geoname_cancer),
-               "cancer_split_age")
+               "cancer_split")
       
     } else if (input$breakdown == "Deprivation") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
                       " confirmed on a pathological specimen since January for 2020 against ", input$baseline, 
                       " by Deprivation - ", input$geoname_cancer),
-               "cancer_split_dep")
+               "cancer_split")
     } else {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
                       " confirmed on a pathological specimen since January for 2020 against ", input$baseline, " - ",
                       input$geoname_cancer),
                "cancer_split")
-    },
-
-    if(input$breakdown == "Age Group") {
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January for 2021 against ", input$baseline, 
-                      " by Age Group - ", input$geoname_cancer),
-               "cancer_split_age21")
-      
-    } else if (input$breakdown == "Deprivation") {
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January for 2021 against ", input$baseline, 
-                      " by Deprivation - ", input$geoname_cancer),
-               "cancer_split_dep21")
-    } else {
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January for 2021 against ", input$baseline, " - ",
-                      input$geoname_cancer),
-               "cancer_split21")
     },
     
     p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt")),
@@ -318,53 +284,13 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
                                                                    var3_chosen = "count21",
                                                                    data_name = "inc")})
 
-# 2019/2020 Difference charts
+# Difference charts
 output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all(), periodvar = "quarter",
                                                             if(input$cum_baseline == "Standard") {
-                                                              diffvar1 = "difference20"
+                                                              diffvar1 = "difference"
                                                             } else {
-                                                              diffvar1 = "difference20_cum"
+                                                              diffvar1 = "difference_cum"
                                                             })})
-
-output$cancer_split_age <- renderPlotly({plot_diff_cancer_chart_age(cancer_data_diff_age(), periodvar = "quarter",
-                                                                    if(input$cum_baseline == "Standard") {
-                                                                      diffvar1 = "difference20"
-                                                                    } else {
-                                                                      diffvar1 = "difference20_cum"
-                                                                    })})
-
-output$cancer_split_dep <- renderPlotly({plot_diff_cancer_chart_dep(cancer_data_diff_dep(), periodvar = "quarter",
-                                                                    if(input$cum_baseline == "Standard") {
-                                                                      diffvar1 = "difference20"
-                                                                    } else {
-                                                                      diffvar1 = "difference20_cum"
-                                                                    })})
-
-# 2019/2021 Difference charts
-output$cancer_split21 <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all(), periodvar = "quarter2",
-                                                            if(input$cum_baseline == "Standard") {
-                                                              diffvar1 = "difference21"
-                                                            } else {
-                                                              diffvar1 = "difference21_cum"
-                                                            })})
-
-output$cancer_split_age21 <- renderPlotly({plot_diff_cancer_chart_age(cancer_data_diff_age(), periodvar = "quarter2",
-                                                                    if(input$cum_baseline == "Standard") {
-                                                                      diffvar1 = "difference21"
-                                                                    } else {
-                                                                      diffvar1 = "difference21_cum"
-                                                                    })})
-
-output$cancer_split_dep21 <- renderPlotly({plot_diff_cancer_chart_dep(cancer_data_diff_dep(), periodvar = "quarter2",
-                                                                    if(input$cum_baseline == "Standard") {
-                                                                      diffvar1 = "difference21"
-                                                                    } else {
-                                                                      diffvar1 = "difference21_cum"
-                                                                    })})
-
-
-
-
 
 ###############################################.
 ## Data downloads ----
@@ -446,12 +372,12 @@ output$cancer_commentary <- renderUI({
       Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
       pandemic by 26th February 2021, when the latest data were available, although this varied by cancer type."),
  
-    #################################################################################################################   
+    #################################################################################################################   .
     
     # UPDATES ----
     
     
-    ###################################
+    ###################################.
     
     h4(strong("**DRAFT** Update 19/01/2022: For pathology data to 30th August 2021 (extracted 16/12/2021)")),
     p("In the first half of 2021 (weeks ending 05th January to 30th August), there was little difference in the total number
@@ -513,7 +439,7 @@ output$cancer_commentary <- renderUI({
     
    
     
-    ###################################
+    ###################################.
     
     h4(strong("Update 22/9/2021: For pathology data to 14th June 2021 (extracted 19/8/2021)")),
     p("In the first half of 2021 (weeks ending 05 January to 14 June), there was little difference in the total number
@@ -575,7 +501,7 @@ output$cancer_commentary <- renderUI({
   
  
  
-    ###################################
+    ###################################.
     
     h4(strong("Update 29/7/2021: For pathology data to 26th February 2021 (extracted 20/5/2021)")),
     p(("By the end of 2020 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
@@ -660,7 +586,7 @@ output$cancer_commentary <- renderUI({
     br(),
     
     
-    ###################################
+    ###################################.
     
     h4(strong("Update 10/3/2021: For pathology data to 29/11/2020 (extracted 22/2/2021)")),
     p("By the week ending 29th November 2020, the total number of individuals in Scotland with a pathological confirmation of 
@@ -695,7 +621,7 @@ output$cancer_commentary <- renderUI({
               The cumulative difference from the start of the year was 5223 individuals (-27%).")),
     br(),
     
-    ##############################################
+    ##############################################.
     
     
     h4(strong("Update 23/12/2020: For pathology data to 30/8/2020 (extracted 27/11/2020)")),
