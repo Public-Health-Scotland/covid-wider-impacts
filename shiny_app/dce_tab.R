@@ -102,21 +102,21 @@ output$dce_explorer2 <- renderUI({
   
   tagList(
     p("The below graphs can be filtered by the stage of the cancer when it is detected - choose above."), 
-    plot_box(paste0("Monthly count of individuals with ", dce_site, 
+    plot_box(paste0("Monthly count of individuals with ", dce_site,
                     " cancer - Stage ", input$dce_stage), "dce_incidence") ,
-    p(em("(Click and drag on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
+    p(em("(Click and drag on chart to zoom in)",  style = "font-family: 'calibri'; font-si15pt")),
     br(),
     plot_box(paste0("Percentage change (2019 to 2020) of individuals with ", dce_site,
-                    " cancer - Stage ", input$dce_stage), "dce_split"),
+                    " cancer - Stage ", input$dce_stage), "dce_split") ,
     
-    p(em("The cancer networks are regional collaborations working together across NHS Boards to improve 
+    p(em("The cancer networks are regional collaborations working together across NHS Boards to improve
          patient care and cancer services:", style = "font-family: 'calibri'; font-si15pt")),
-    p(em("NCA (North Cancer Alliance) â NHS Grampian, NHS Highland, NHS Orkney, NHS Shetland, NHS Tayside 
+    p(em("NCA (North Cancer Alliance) NHS Grampian, NHS Highland, NHS Orkney, NHS Shetland, NHS Tayside
          and NHS Western Isles.", style = "font-family: 'calibri'; font-si15pt")),
-    p(em("SCAN (South East of Scotland Cancer Network) â NHS Borders, NHS Dumfries & Galloway, NHS Fife and 
+    p(em("SCAN (South East of Scotland Cancer Network) NHS Borders, NHS Dumfries & Galloway, NHS Fife and
          NHS Lothian.", style = "font-family: 'calibri'; font-si15pt")),
-    p(em("WoSCAN (West of Scotland Cancer Network) â NHS Ayrshire & Arran, NHS Forth Valley, NHS Greater 
-         Glasgow & Clyde and NHS Lanarkshire.", style = "font-family: 'calibri'; font-si15pt")))
+    p(em("WoSCAN (West of Scotland Cancer Network) NHS Ayrshire & Arran, NHS Forth Valley, NHS Greater
+         Glasgow & Clyde and NHS Lanarkshire." , style = "font-family: 'calibri'; font-si15pt")))
   
   # plot_box(paste0("Ratio of individuals with ", dce_site,
   #                 " cancer by Stage "), "dce_split2"))
