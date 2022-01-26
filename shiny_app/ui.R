@@ -1,5 +1,5 @@
 #UI
-# secure_app( #uncomment if needing password protection
+secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -411,7 +411,6 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                                          choices= c("Scotland", "Cancer Network"),
                                                          selected = "Scotland"),
                                           uiOutput("geoname_ui_dce")),
-                                   
                                    column(5,  selectInput("dce_type", label = "Select all or specific cancer type",
                                                           choices = c("Breast", "Colorectal", "Lung"), selected = "Breast")),
                                    column(2,
@@ -419,17 +418,15 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                           actionButton("btn_dce_modal", "Data source: ", icon = icon('question-circle')),
                                           fluidRow(br()),
                                           downloadButton('download_dce_data', 'Download data')) #,
-                                   # fluidRow(br()),
-                                   # actionButton('jump_commentary_cancer','Go to commentary'))
                                  ) , #well panel
                                  mainPanel(width = 12,
-                                           uiOutput("dce_explorer1"),
+                                           uiOutput("dce_explorer1") ,
                                            div(radioButtons("dce_stage", "Select stage of cancer (NK - Not Known)",
                                                             list("1","2","3","4","NK"), inline = TRUE,
                                                             selected = "1")),
                                            uiOutput("dce_explorer2")
                                  )# mainPanel bracket
-                                           ) # tabpanel bracket
+                              ) # tabpanel bracket
                         )  , # navbar bracket          
 
 ###############################################.
@@ -861,6 +858,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-# )#secure app
+)#secure app
 
 #END
