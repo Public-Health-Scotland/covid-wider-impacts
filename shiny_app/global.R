@@ -22,6 +22,7 @@ library(zoo)
 library(magrittr)
 library(shinymanager)
 library(lubridate)
+library(tidyr)
 
 ###############################################.
 ## Functions ----
