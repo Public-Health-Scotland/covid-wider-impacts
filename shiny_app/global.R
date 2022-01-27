@@ -22,6 +22,7 @@ library(zoo)
 library(magrittr)
 library(shinymanager)
 library(lubridate)
+library(tidyr) # for uncount()
 
 ###############################################.
 ## Functions ----
@@ -498,5 +499,8 @@ yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4
 bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
                      'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
                      'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
+
+# Plot heights
+height_run_chart = "35em"
 
 ## END
