@@ -585,16 +585,11 @@ print("deaths_data.rds file prepared and saved, including open data")
 ##END
 
 
-
-check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/ui_smr01_assaults.rds")
-
 check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_smr01_discharges.rds")
 
 check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_deaths.rds")
 
 tabyl(smr01_pi_data$month_ending, sort = TRUE)
 tabyl(smr01_pi_data$type_admission, sort = TRUE)
-
-, area_name, area_type
 
 
