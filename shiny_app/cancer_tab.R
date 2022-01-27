@@ -71,17 +71,18 @@ cancer_data_diff_all <- reactive({
 
 cancer_data_dl <- reactive({
   
-  cancer_data2 %>% 
-    select(area:count21, breakdown) %>% 
+  cancer_data2 %>%
+    filter(sex == "All" & breakdown == "None") %>% 
+    select(area, site, week_number, count19, count20, count21) %>% 
     rename("Area name" = area, "Cancer type" = site,
-           "Sex" = sex,
-           "Age Group" = age_group,
-           "Deprivation Quintile (0=unknown)" = dep,
+           # "Sex" = sex,
+           # "Age Group" = age_group,
+           # "Deprivation Quintile (0=unknown)" = dep,
            "Week Number" = week_number,
            "Count 2019" = count19,
            "Count 2020" = count20,
-           "Count 2021" = count21,
-           "Breakdown" = breakdown)
+           "Count 2021" = count21) #,
+           # "Breakdown" = breakdown)
   
 })
 
@@ -167,18 +168,18 @@ output$cancer_explorer3 <- renderUI({
   tagList(
     if(input$breakdown == "Age Group") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January for 2020 against ", input$baseline, 
+                      " confirmed on a pathological specimen since January for 2020/2021 against ", input$baseline, 
                       " by Age Group - ", input$geoname_cancer),
                "cancer_split")
       
     } else if (input$breakdown == "Deprivation") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January for 2020 against ", input$baseline, 
+                      " confirmed on a pathological specimen since January for 2020/2021 against ", input$baseline, 
                       " by Deprivation - ", input$geoname_cancer),
                "cancer_split")
     } else {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January for 2020 against ", input$baseline, " - ",
+                      " confirmed on a pathological specimen since January for 2020/2021 against ", input$baseline, " - ",
                       input$geoname_cancer),
                "cancer_split")
     },
@@ -406,10 +407,20 @@ output$cancer_commentary <- renderUI({
               of 123 individuals, or 17% higher.")),
     br(),
     p("A new quarterly chart of cumulative numbers shows that after initial falls in diagnoses, there was some recovery
-      or catching-up.  For all cancers except non-melanoma skin cancers, there had been a drop to -14% of 2019 numbers
-      by the end of Quarter 3 (Q3) but this increased to -12% by the end of 2020.   A similar pattern of maximum fall
-      by the end of Q3 with a small recovery by the end of Q4 was seen for the commonest cancers – lung, breast, colorectal,
-      and prostate."),
+      or catching-up."),
+    tags$ul(
+      tags$li("Lung cancer: by August 30th 2021, numbers of diagnoses had recovered to within "),
+      
+      tags$li("Breast cancer: by August 30th 2021, numbers of diagnoses had recovered to "),
+      
+      tags$li("Prostate cancer: by August 30th 2021, numbers of diagnoses had recovered to "),
+      
+      tags$li("Colorectal (bowel) cancer: by August 30th 2021, numbers of diagnoses had recovered to "),
+      
+      tags$li("Liver and intrahepatic bile ducts: by August 30th 2021, numbers of diagnoses had recovered to "),
+      
+      tags$li("Oesophagus: by August 30th 2021, numbers of diagnoses had recovered to ")),
+      
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
              data to the end of December in 2020 compared to 2019:")),
     h4(strong("Age")),
