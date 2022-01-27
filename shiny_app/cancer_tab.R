@@ -407,46 +407,48 @@ output$cancer_commentary <- renderUI({
               of 123 individuals, or 17% higher.")),
     br(),
     p("A new quarterly chart of cumulative numbers shows that after initial falls in diagnoses, there was some recovery
-      or catching-up."),
+      or catching-up. The absolute totals of diagnoses from the start of 2019 and 2020 to August 30th of the following year:"),
     tags$ul(
-      tags$li("Lung cancer: by August 30th 2021, numbers of diagnoses had recovered to within "),
+      tags$li("Lung cancer: by August 30th 2021, total numbers of diagnoses since the start of the previous year were 10% lower
+              than the same figure for August 30th 2020."),
       
-      tags$li("Breast cancer: by August 30th 2021, numbers of diagnoses had recovered to "),
+      tags$li("Breast cancer: by August 30th 2021, total numbers of diagnoses since the start of the previous year were 0.8% lower
+              than the same figure for August 30th 2020."),
       
-      tags$li("Prostate cancer: by August 30th 2021, numbers of diagnoses had recovered to "),
+      tags$li("Prostate cancer: by August 30th 2021, total numbers of diagnoses since the start of the previous year were 1.5% higher
+              than the same figure for August 30th 2020."),
       
-      tags$li("Colorectal (bowel) cancer: by August 30th 2021, numbers of diagnoses had recovered to "),
+      tags$li("Colorectal (bowel) cancer: by August 30th 2021, total numbers of diagnoses since the start of the previous year were 3.1% lower
+              than the same figure for August 30th 2020."),
       
-      tags$li("Liver and intrahepatic bile ducts: by August 30th 2021, numbers of diagnoses had recovered to "),
+      tags$li("Liver and intrahepatic bile ducts: by August 30th 2021, total numbers of diagnoses since the start of the previous year were 7.7% higher
+              than the same figure for August 30th 2020."),
       
-      tags$li("Oesophagus: by August 30th 2021, numbers of diagnoses had recovered to ")),
+      tags$li("Oesophagus: by August 30th 2021, total numbers of diagnoses since the start of the previous year were 9.6% higher
+              than the same figure for August 30th 2020."),
+    
+      tags$li("Cervical: by August 30th 2021, total numbers of diagnoses since the start of the previous year were 2.8% lower
+              than the same figure for August 30th 2020.")),
       
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
-             data to the end of December in 2020 compared to 2019:")),
+             data to the end of July 2021 compared to 2019:")),
+    
     h4(strong("Age")),
-    p("For all cancers except non-melanoma skin cancers, the largest proportionate fall in
-      pathologically confirmed cancers were among those aged 50-69 years and the smallest falls were in those under 50 years.
-      This difference is more clearly seen in breast and colorectal cancers, which were both affected by pauses in the screening
-      programmes for people aged 50-70 and 50-74, respectively.  For example, for breast cancer, there was little difference in
-      pathological cancer diagnoses in those aged under 50; and a maximum fall of -24% in those of screening age (50-69) by the
-      end of Q3, with some recovery (to -19%) by the end of the year.  For colorectal cancers, numbers in 50-69 years olds fell
-      -20% by the end of Q3 with little recovery by the end of the year; while the total annual falls in under 50s and 70 and over
-      were -17% and -14%, respectively."),
-    br(),
+    p("For all cancers except non-melanoma skin cancers, the proportionate fall in pathologically confirmed cancers by July 2021 were
+      much smaller than at the end of 2020, and there was less difference between age groups.
+      The reduction in breast and colorectal cancer diagnoses, which were both affected by pauses in the screening
+      programmes for people aged 50-69, were much smaller by July 2021. For example, for breast cancer, 
+      pathological cancer diagnoses in those aged 50-69 showed a similar shortfall to those under 50; and a maximum fall of 3.31% 
+      in those of screening age (50-69) by the end of Q2 2021.
+      For colorectal cancers, numbers in 50-69 years olds fell only
+      3.47% by the end of Q2 2021; however, the total falls in under 50s had shown less improvement, from a fall of 16.91%
+      in Dec 2020 to a fall of 14.63% by the end of July 2021."),
     h4(strong("Socio-economic deprivation")),
     p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
-      skin cancers, these showed the largest decreases in diagnoses were among people from the most deprived areas (a maximum
-      fall of -18% by the end of Q3).The smallest was among the least deprived (-11% by Q3). There was a greater recovery in the most
-      deprived and some narrowing of the deprivation gap by the end of the year.  Nevertheless, the end-of-year differences in
-      numbers of diagnoses were -9% among the least deprived and -14% in the most deprived.  This general pattern – that reductions in
-      diagnoses were greater among people from more deprived areas – were seen across cancer types.  In lung cancer, the most
-      deprived experienced a -24% reduction in diagnoses by the end of 2020 compared with -12% in the least deprived.  For
-      breast cancer in women, the deprivation gap was wider: a fall of -20% in women from the most deprived quintile compared
-      with a fall of -6% from those from the least deprived quintile.  For colorectal cancer, the pattern across socio-economic
-      groups was a little less clear, although the reduction in diagnoses was smallest for those in the least deprived quintile
-      (-11%) and greater for those in the most deprived quintile (-20%), but the greatest was for those in the second most deprived quintile
-      (-25%).  For prostate cancer, the greatest reduction in diagnoses by the end of the year was -23% for those in the most
-      deprived areas; -15% for those in the least deprived areas; and smallest for those in the middle quintile (-12%)."),
+      skin cancers, these showed the largest decreases in diagnoses remained among people from the most deprived areas, showing a maximum
+      fall of 11.22% by the end of Q2 2021.The least deprived were down 7.55% by the same period."),
+    p("---------------------------------------------------------------------------------------------------------------------"),
+    br(),
     
    
     
