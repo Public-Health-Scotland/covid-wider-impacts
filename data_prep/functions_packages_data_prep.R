@@ -138,8 +138,8 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, 
     historic_data %<>% rbind(week_53)
   } else if (aver == 5) {
     # Creating average admissions of pre-covid data (2015-2019) by day of the year
-    historic_data <- dataset %>% filter(!(year(week_ending) %in% c("2020", "2021"))) %>%
-      group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>%
+    historic_data <- dataset %>% filter(!(year(week_ending) %in% c("2020", "2021", "2022"))) %>% 
+      group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
       # Not using mean to avoid issues with missing data for some weeks
       summarise(count_average = round((sum(count, na.rm = T))/5, 1)) %>%
       ungroup() %>%
@@ -150,9 +150,9 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, 
 
   # Joining with 2020 and 2021 data
   # Filtering weeks with incomplete week too!! Temporary
-  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020", "2021")),
-                         historic_data,
-                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>%
+  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020", "2021", "2022")), 
+                         historic_data, 
+                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
     filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
                is.na(area_name) |
@@ -204,9 +204,9 @@ prepare_final_data_m <- function(dataset, filename, last_month, extra_vars = NUL
   }
   # Joining with 2020 and 2021 data
   # Filtering weeks with incomplete week too!! Temporary
-  data_2020 <- left_join(dataset %>% filter(year(month_ending) %in% c("2020", "2021")),
-                         historic_data,
-                         by = c("category", "type", "area_name", "area_type", "month_no", extra_vars)) %>%
+  data_2020 <- left_join(dataset %>% filter(year(month_ending) %in% c("2020", "2021", "2022")), 
+                         historic_data, 
+                         by = c("category", "type", "area_name", "area_type", "month_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
     filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
                is.na(area_name) |
@@ -278,9 +278,9 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
 
   # Joining with 2020 and 2021 data
   # Filtering weeks with incomplete week too!! Temporary
-  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020", "2021")),
-                         historic_data,
-                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>%
+  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020", "2021", "2022")), 
+                         historic_data, 
+                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
     filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
                is.na(area_name) |
