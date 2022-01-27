@@ -142,7 +142,8 @@ output$preterm_chart <- renderPlotly({
     add_markers(data = trend_data %>% filter(outer == T), y = ~ percentage_NICU_site,
                 marker = list(color = "orange", size = 10, symbol = "star"), name = "Outer one-third") %>% 
     layout( #to avoid labels getting cut out
-      yaxis = yaxis_plots, xaxis = xaxis_plots) %>% #position of legend
+      yaxis = yaxis_plots, xaxis = xaxis_plots,
+      legend = list(orientation = 'h')) %>% #position of legend
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
   
