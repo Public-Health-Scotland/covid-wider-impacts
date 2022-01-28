@@ -879,7 +879,7 @@ tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
                           area_name=="Scotland" ~ "Scotland"),
          area_type = type,
          category = "All") %>%
-  filter(date <= max_date) %>% 
+  filter(date < max_date) %>% 
   
   
   # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
@@ -918,8 +918,8 @@ tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/
                               category == "40+" ~ "40 and over",
                               category == "1 - Most deprived" ~ "1 - most deprived",
                               category == "5 - Least deprived" ~ "5 - least deprived",
-                              TRUE ~ as.character(category))) %>% 
-  filter(quarter <= max_date)
+                              TRUE ~ as.character(category))) #%>% 
+  #filter(quarter <= "2021-09-01")
 
 saveRDS(tears_scot, "shiny_app/data/tears_scot_data.rds")
 saveRDS(tears_scot, paste0(data_folder,"final_app_files/tears_scot_data_", 
@@ -967,8 +967,8 @@ tears_linechart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_fold
   filter(area_name != "NHS Orkney", 
          area_name != "NHS Shetland",
          area_name != "NHS Western Isles") %>% 
-  select(-ext_median_tears_37plus) %>% 
-  filter(date <= max_date)
+  select(-ext_median_tears_37plus) #%>% 
+  #filter(date <= "2021-09-01")
 
 saveRDS(tears_linechart, "shiny_app/data/tears_linechart_data.rds") 
 saveRDS(tears_linechart, paste0(data_folder,"final_app_files/tears_linechart_data_", 

@@ -29,6 +29,7 @@ data_table <- reactive({
          "twentyseven_visit" = twentyseventable,
          "fourtofive_visit" = fourtofivetable,
          "cancer" = cancer_data2,
+         # "dce" = dce_data,
          "ui_smr01_all" = ui_smr01_all %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation,Month=week_ending),
          "ui_smr01_rta"= ui_smr01_rta %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
          "ui_smr01_poison"=ui_smr01_poison %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation), 
@@ -52,7 +53,11 @@ data_table <- reactive({
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "outpats" = outpats %>% 
-          rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average) 
+          rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average),
+        'THN_by_HB'=THN_by_HB,
+        'DTR_data'=DTR_data,
+        'OST_paid'=OST_paid
+       # 'SASdata'=SASdata[,c(1,2,5,6)]
   ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -60,7 +65,7 @@ data_table <- reactive({
     mutate_if(is.character, as.factor) 
   
   if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths",
-                               "ooh_cardiac", "sas_cardiac", "outpats")) {
+                               "ooh_cardiac", "sas_cardiac")) {
     table_data %<>%
     # Formatting to a "nicer" style
     # select(-type) %>% 
@@ -79,6 +84,25 @@ data_table <- reactive({
                                 "dep" = "Deprivation",
                                 "moc" = "Mode of Clinical Interaction"),
            week_ending = format(week_ending, "%d %b %y"))
+  }  else if (input$data_select %in% "outpats") { 
+    table_data %<>%
+      # Formatting to a "nicer" style
+      # select(-type) %>% 
+      rename("Variation (%)" = variation, time_ending = week_ending) %>% 
+      mutate(category = recode_factor(category, "All" = "All", "Female" = "Female", "Male" = "Male",
+                                      "1 - most deprived" = "Quintile 1 - most deprived",
+                                      "2" = "Quintile 2", "3" = "Quintile 3", "4" = "Quintile 4",
+                                      "5 - least deprived" = "Quintile 5 - least deprived",
+                                      "Under 5" = "Aged under 5", "5 - 14"= "Aged 5 to 14",
+                                      "15 - 44" = "Aged 15 to 44","45 - 64" = "Aged 45 to 64",
+                                      "65 - 74" = "Aged 65 to 74", "75 - 84" = "Aged 75 to 84", 
+                                      "85 and over" = "Aged 85 and over",
+                                      "Under 65" = "Aged under 65",
+                                      "65 and over" = "Aged 65 and over"),
+             type = recode_factor(type, "sex" = "Sex", "age" = "Age Group", 
+                                  "dep" = "Deprivation",
+                                  "moc" = "Mode of Clinical Interaction"),
+             time_ending = ifelse(time_split == "Monthly", format(time_ending, "%b %y"), format(time_ending, "%d %b %y")))
   } else if (input$data_select %in% "first_visit") { 
     table_data %<>%
       select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
@@ -229,17 +253,17 @@ data_table <- reactive({
              "Type" = type)
   } else if (input$data_select %in% "cancer") {
     table_data <- table_data %>%
-      select(area, site, sex, week_ending, count19, count20, count21, difference20, difference21) %>%
-      mutate(difference20 = format(round(difference20, 2), nsmall = 2),
-             difference21 = format(round(difference21, 2), nsmall = 2)) %>% 
+      select(area:count21, breakdown) %>%
+      filter(breakdown != "None") %>% 
       rename("Area name" = area, "Cancer type" = site,
              "Sex" = sex,
-             "Week ending" = week_ending,
+             "Age Group" = age_group,
+             "Deprivation Quintile (0=unknown)" = dep,
+             "Week Number" = week_number,
              "Count 2019" = count19,
              "Count 2020" = count20,
              "Count 2021" = count21,
-             "Variation (%) 2020 vs 2019" = difference20,
-             "Variation (%) 2021 vs 2019" = difference21)
+             "Breakdown" = breakdown)
   } else if (input$data_select %in% "sact_weekly") {
     table_data <- table_data %>%
       select(week_beginning, region, area, site, appt_reg, treatment, count, week_on_refweek_perc) %>%
@@ -252,6 +276,11 @@ data_table <- reactive({
       select(month, region, area, site, treatment, count) %>%
       rename("Month" = month, "Region" = region, "Area name" = area, "Cancer type" = site, 
              "Administration route" = treatment, "Number of patients" = count)
+  # } else if (input$data_select %in% "dce") {
+  #   table_data <- table_data %>%
+  #     select(area:count20, month) %>%
+  #     rename("Area name" = area, "Cancer Type" = site, "Stage" = stage, 
+  #            "No. Patients 2019" = count19, "No. Patients 2020" = count20, "Month" = month)
   } else if (input$data_select %in% "childdev") {
     table_data %<>%
       select(area_name, month_review, review, number_reviews = no_reviews, 
