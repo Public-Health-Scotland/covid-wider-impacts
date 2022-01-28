@@ -437,18 +437,18 @@ smr01_piv <- smr01_pi_data %>%
                    "hscp2019name" = "HSC partnership", "scot" = "Scotland")) %>% 
   # Aggregating to make it faster to work with
   mutate(all="All") %>%
-  group_by(year, month_ending, all, sex, dep, age, diagnosis, area_type, area_name) %>% 
+  group_by(year, month_ending, all, sex, dep, age, diagnosis, type_admission, area_type, area_name) %>% 
   summarise(count = sum(count))
   
 smr01_piv2 <- smr01_piv %>%
   pivot_longer(cols = c(all, sex, dep, age), names_to="type", values_to="category") %>% 
-  group_by(month_ending, diagnosis, area_type, area_name, type, category) %>% 
+  group_by(month_ending, diagnosis, type_admission, area_type, area_name, type, category) %>% 
   filter(!(area_type != "Scotland" & area_type != "Health board" & type == "dep")) %>% #SIMD only at HB/Scotland level
   summarise(count= sum(count))
 
 # Using function for monthly data from injuries_data_preparation script
-prepare_final_data_m(dataset = smr01_piv2, filename = "cardio_smr01_discharges", 
-                     last_month = "2021-05-01", aver = 3)
+prepare_final_data_m_cardiac(dataset = smr01_piv2, filename = "cardio_discharges", 
+                             last_month = "2021-05-01", extra_vars = "diagnosis", extra_vars2 = "type_admission", aver = 3)
 
 final_cardio_SMR01 <- final_data %>% 
   rename (week_ending=month_ending) %>%
@@ -457,22 +457,22 @@ final_cardio_SMR01 <- final_data %>%
          variation =  case_when(count_average == 0 & count == 0 ~ 0, T ~ variation),
          variation =  ifelse(is.infinite(variation), NA_integer_, variation))
 
-saveRDS(final_cardio_SMR01, paste0("shiny_app/data/cardio_smr01_discharges.rds"))
-saveRDS(final_cardio_SMR01, paste0(data_folder,"final_app_files/cardio_smr01_discharges_", 
+saveRDS(final_cardio_SMR01, paste0("shiny_app/data/cardio_discharges.rds"))
+saveRDS(final_cardio_SMR01, paste0(data_folder,"final_app_files/cardio_discharges_", 
                                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-saveRDS(final_cardio_SMR01, paste0(open_data, "cardio_smr01_discharges.rds"))
+saveRDS(final_cardio_SMR01, paste0(open_data, "cardio_discharges_data.rds"))
 
 
 ###############################################.
 ## Deaths Data Cardiac ----
 ###############################################.
 
-last_week <- "2021-09-25"
+last_month <- "2021-09-25"
 
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
 agg_cut_cardiac <- function(dataset, grouper) {
   dataset %>%
-    group_by_at(c("week_ending","diagnosis","area_name", "area_type", grouper)) %>%
+    group_by_at(c("month_ending","diagnosis","area_name", "area_type", grouper)) %>%
     summarise(count = sum(count)) %>% ungroup() %>% 
     mutate(type = grouper) 
 }
@@ -494,10 +494,13 @@ cardio_data_deaths <- as_tibble(dbGetQuery(channel, statement=
     FROM ANALYSIS.GRO_DEATHS_WEEKLY_C")) %>%
   setNames(tolower(names(.))) %>% 
   # Formatting variables - using month keeping variable name week_ending to use functions
-  mutate(week_ending = ceiling_date(as.Date(date_of_registration), "month")) %>% 
+  mutate(month_ending = ceiling_date(as.Date(date_of_registration), "month")) %>% 
   mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          age = case_when(between(age, 0,64) ~ "Under 65", T ~ "65 and over"),
-         year = year(week_ending)) #to allow merging
+         year = year(month_ending)) #to allow merging
+
+#cardio_data_deaths <- cardio_data_deaths %>%
+#  filter(date_of_registration <= as.Date(last_week))
 
 cardio_data_deaths$mc3 <- substr(cardio_data_deaths$underlying_cause_of_death, 0,3)
 cardio_data_deaths$mc1 <- substr(cardio_data_deaths$underlying_cause_of_death, 0,1)
@@ -535,7 +538,7 @@ cardio_data_deaths %<>%
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
                                TRUE~area_name)) %>% 
   # Aggregating to make it faster to work with
-  group_by(week_ending, sex, dep, age, diagnosis, area_name, area_type) %>% 
+  group_by(month_ending, sex, dep, age, diagnosis, area_name, area_type) %>% 
   summarise(count = n())  %>% ungroup()
 
 # Create aggregations for each split
@@ -551,7 +554,7 @@ cardio_data_deaths <- rbind(deaths_all, deaths_age, deaths_sex, deaths_dep) %>%
 # This step is to make sure we have rows for all weeks for all areas/category
 # even those with zeroes. It's a bit convoluted but it works
 cardio_data_deaths %<>%
-  #pivot_wider(id_cols = c(area_type, diagnosis, category, type, week_ending), 
+  #pivot_wider(id_cols = c(area_type, diagnosis, category, type, month_ending), 
   #            names_from = area_name, values_from = count, values_fill = list(count = 0)) %>% 
   #pivot_longer(c(`Aberdeen City`:`Western Isles`), values_to = "count", names_to = "area_name") %>% 
   # This is to get rid of combinations that don't exist (e.g. Scotland - Fife)
@@ -561,12 +564,13 @@ cardio_data_deaths %<>%
   filter(area_name != "NHS Unknown residency")
 
 # Running final functions
-prepare_final_data(dataset = cardio_data_deaths, filename = "cardio_deaths", 
-                   last_week = last_week, extra_vars = "diagnosis", aver = 5)
+prepare_final_data_m_cardiac(dataset = cardio_data_deaths, filename = "cardio_deaths", 
+                             last_month, extra_vars = "diagnosis", aver = 5)
 
 # Dealing with variation to replicate previous output. 
 # This might not be needed in future if we set a standard way of dealing with this.
 final_cardio_deaths <- final_data %>% 
+  rename (week_ending=month_ending) %>%
   mutate(variation = round(-1 * ((count_average - count)/count_average * 100), 1),
          # Dealing with infinite values from historic average = 0
          variation =  case_when(count_average == 0 & count == 0 ~ 0, T ~ variation),
@@ -584,12 +588,12 @@ print("deaths_data.rds file prepared and saved, including open data")
 
 ##END
 
-
 check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_smr01_discharges.rds")
-
 check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_deaths.rds")
 
 tabyl(smr01_pi_data$month_ending, sort = TRUE)
 tabyl(smr01_pi_data$type_admission, sort = TRUE)
+
+
 
 
