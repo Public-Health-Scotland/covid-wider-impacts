@@ -35,8 +35,6 @@ channel <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
 
 WI_data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/"
 
-### read in disclosure script if required - add this to folder
-#source("outpatient_functions.R")
 
 ###############################################.
 ## Data extraction ----
@@ -44,7 +42,7 @@ WI_data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/"
 
 smr00  <- as_tibble(dbGetQuery(channel, statement=paste(
   "SELECT CLINIC_DATE, REFERRAL_TYPE, ETHNIC_GROUP ethnic_code
-  FROM ANALYSIS.SMR00_PI
+  FROM ANALYSIS.SMR00_PI_OCT2021
   WHERE CLINIC_DATE between '1 January 2018' AND '30 June 2021'
     AND SEX IN ('1', '2')
     AND CLINIC_TYPE IN ('1', '2')
@@ -97,8 +95,7 @@ outpats <- rbind(newreturn, all)
 # create total for each admission type by month 
 outpats <- outpats %>%  
   group_by(month_ending, admission_type) %>% 
-  mutate(total = sum(count),
-         percent = count/total *100) %>% #not required - just for interest
+  mutate(total = sum(count)) %>%
   ungroup %>% 
   mutate(area_type = "Scotland",
          area_name = "Scotland",
@@ -106,7 +103,7 @@ outpats <- outpats %>%
          spec = "All") %>% 
   rename(week_ending = month_ending, #rename to be consistent with other outpats data
          category = ethnic_group) %>% 
-  select(week_ending, area_type, area_name, spec, admission_type, type, category, count, percent)
+  select(week_ending, area_type, area_name, spec, admission_type, type, category, count)
 
 
 # Creating "week" (actually month) number to be able to compare pre-covid to covid period 
@@ -131,16 +128,17 @@ data_202021 <- left_join(outpats %>%
                                is.na(count_average) ~ 0,
                                is.nan(variation) ~ 0,
                                is.infinite(variation) ~ 0,
-                               TRUE ~ variation))
+                               TRUE ~ variation),
+         time_split = "Monthly") %>% 
+  select(-week_no)
 
 
 # add ethnicity data to full outpatients file
 outpats_full <- readRDS(paste0(WI_data_folder, "outpats_03_Dec_21.rds"))
-outpats_all <- bind_rows(outpats_full, data_202021) %>% 
-  select(-percent)
+outpats_all <- bind_rows(outpats_full, data_202021) 
 
 # save for checking
-#write_csv(outpats, "//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_with_consult_only.csv")
+#write_csv(outpats_all, "//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/2022-01-28-outpats-ethnicity.csv")
 #saveRDS(outpats_all, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wider-impacts-ethnicity/outpats_ethnicity_variation.rds"))
 
 # save final output to shiny folder
