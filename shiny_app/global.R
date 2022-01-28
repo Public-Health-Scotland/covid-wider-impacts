@@ -165,7 +165,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "22 November 2021"
+immunisation_extract_date <- "24 January 2022"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
