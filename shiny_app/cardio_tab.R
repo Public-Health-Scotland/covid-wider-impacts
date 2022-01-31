@@ -481,6 +481,8 @@ output$cardio_explorer <- renderUI({
         )
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# SAS incidents
+         tags$em("Please note that there is currently an issue with duplicates in the SAS dataset and therefore the data was not
+                  updated in February 2022. This is currently being investigated by PHS and the data will be updated as soon as possible."),
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$geoname_cardio)),
          fluidRow(column(6,
                          actionButton("btn_cardio_modal", "Data source and definitions",
