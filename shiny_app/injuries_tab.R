@@ -265,7 +265,7 @@ output$download_injuries_data <- downloadHandler(
 ###############################################.
 output$injuries_commentary <- renderUI({
   tagList(bsButton("jump_to_injuries",label = "Go to data"), #this button can only be used once
-           h2("Unintentional Injuries and Assaults - Extracted 01st February 2022"), 
+           h2("Unintentional Injuries and Assaults - Extracted 31st January 2022"), 
            h3("Background"),
           p("The response to the COVID-19 pandemic has had the potential to influence both the occurrence
                    of unintentional injuries and assaults, and how people receive care after such events. Within
