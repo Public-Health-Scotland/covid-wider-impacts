@@ -429,7 +429,7 @@ output$data_explorer <- renderUI({
 
   #update date for outpatients and the rest is different
   upd_date_summ <- case_when(input$measure_select == "outpats" ~ "15 December 2021",
-                             TRUE ~ "12 January 2022")
+                             TRUE ~ "2 February 2022")
   
 
   # Function to create the standard layout for all the different charts/sections
@@ -521,6 +521,9 @@ output$data_explorer <- renderUI({
 
   } else if (input$measure_select == "sas") {
     tagList(# SAS data
+      tags$em("Please note that there is currently an issue with duplicates in the SAS dataset and
+              therefore the data was not updated in February 2022. This is currently being 
+              investigated by PHS and the data will be updated as soon as possible."),
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service",
                source = "PHS Unscheduled Care Datamart", data_name ="sas"))
 
