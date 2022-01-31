@@ -25,21 +25,22 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("19 January 2022 - Systemic anti-cancer therapies data update."),
-                   tags$li("12 January 2021 - Monthly update of summary trends section."),
+                   tags$li("2 February 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("2 February 2022 - Monthly update of data (most sections)."),
+                   tags$li("2 February 2022 - Improvements to visualisations in pregnancy, births and babies, and child health section."),
                    tags$li("15 December 2021 - Outpatients data update"),
                    tags$li("1 December 2021 - Monthly update of data (most sections)."),
                    tags$li("3 November 2021 - New data on opioid substitution therapy
-                             and drug treatment referrals."),
-                   tags$li("6 October 2021 - New data on injury hospital admissions."),
-                   tags$li("1 September 2021 - New data on substance misuse.")
+                             and drug treatment referrals.")
                    ),
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("26 January 2022 - Systemic anti-cancer therapies data update."),
-                   tags$li("2 February 2021 - Monthly update of data (most sections)."),
-                   tags$li("2 February 2022 - Monthly update of data (most sections)."),
+                   tags$li("9 February 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("February 2022 - Adding ethnicity data to the outpatients activity dataset."),
+                   tags$li("2 March 2022 - Monthly update of data (most sections)."),
+                   tags$li("9 March 2022 - Outpatien activity data update."),
+                   tags$li("6 April 2022 - Monthly update of data (most sections)."),
                    tags$li("TBC 2022 - Cancer staging data."),
                    tags$li("TBC 2022 - New data on ambulance administered naloxone.")
                  ),

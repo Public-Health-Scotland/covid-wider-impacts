@@ -12,12 +12,11 @@
 
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
-
 create_delivery(folderdate = "2021-11-15") # Mode of delivery, induction and gestation data
 create_perinatal(foldermonth = "feb22") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2021_11_17") # Apgar scores
-create_preterm(preterm_date = "2021_10_14", max_date = "2021-07-01") # Preterm
-create_tears(tears_date = "2021_11_17", max_date = "2021-08-01") # Perineal tears
+create_apgar(folderdate = "2022_01_12") # Apgar scores
+create_preterm(preterm_date = "2022_01_12", max_date = "2021-10-01") # Preterm
+create_tears(tears_date = "2022_01_12", max_date = "2021-11-01") # Perineal tears
 
 # Add here what needs to be changed in the shiny scripts
 
@@ -44,9 +43,9 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20211122") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "22ndNov2021")
-create_breastfeeding(filedate = "22ndNov2021")
+create_chreview(ch_date_file = "20220124") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "24thJan2022")
+create_breastfeeding(filedate = "24thJan2022")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
@@ -86,7 +85,7 @@ file.edit("shiny_app/summary_tab.R")
 source("data_prep/pregnancy_data_prep.R") # functions for section
 
 create_terminations(top_date = "2021-11-15")
-create_antebooking(booking_date = "11112021", max_book_date = "2021-11-07")
+create_antebooking(booking_date = "13012022", max_book_date = "2022-01-09")
 
 # Add here what needs to be changed in the shiny scripts
 
