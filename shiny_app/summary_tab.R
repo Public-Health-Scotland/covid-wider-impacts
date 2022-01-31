@@ -521,6 +521,9 @@ output$data_explorer <- renderUI({
 
   } else if (input$measure_select == "sas") {
     tagList(# SAS data
+      tags$em("Please note that there is currently an issue with duplicates in the SAS dataset and
+              therefore the data was not updated in February 2022. This is currently being 
+              investigated by PHS and the data will be updated as soon as possible."),
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service",
                source = "PHS Unscheduled Care Datamart", data_name ="sas"))
 
