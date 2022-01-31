@@ -387,7 +387,7 @@ cath_lab_type <- reactive({
 # The charts and text shown on the app will depend on what the user wants to see
 output$cardio_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 1 December 2021"))
+  data_last_updated <- tagList(p("Last updated: 2 February 2022"))
 
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
@@ -481,6 +481,8 @@ output$cardio_explorer <- renderUI({
         )
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# SAS incidents
+         tags$em("Please note that there is currently an issue with duplicates in the SAS dataset and therefore the data was not
+                  updated in February 2022. This is currently being investigated by PHS and the data will be updated as soon as possible."),
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$geoname_cardio)),
          fluidRow(column(6,
                          actionButton("btn_cardio_modal", "Data source and definitions",
