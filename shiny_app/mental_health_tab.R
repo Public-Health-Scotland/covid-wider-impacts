@@ -321,7 +321,7 @@ output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_depr,
 # The charts and text shown on the app will depend on what the user wants to see
 output$mh_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 01 December 2021"))
+  data_last_updated <- tagList(p("Last updated: 2 February 2022"))
 
   note_average <- p("Please note that to ease interpretation of these charts ",
                     "we are presenting 3-week rolling average figures.",
@@ -334,7 +334,7 @@ output$mh_explorer <- renderUI({
                       actionButton("btn_mentalhealth_modal", "Data source and definitions",
                                    icon = icon('question-circle'))),
                column(6,data_last_updated)),
-      plot_box("2020 and 2021 compared with 2018-2019 average", "mh_prescribing_all"),
+      plot_box("2020, 2021 and 2022 compared with 2018-2019 average", "mh_prescribing_all"),
       plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh,
                           " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
                    paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
@@ -353,7 +353,7 @@ output$mh_explorer <- renderUI({
                       actionButton("btn_mentalhealth_modal", "Data source and definitions",
                                    icon = icon('question-circle'))),
                column(6,data_last_updated)),
-      plot_box("2020 and 2021 compared with 2018-2019 average", "ae_mh_overall"),
+      plot_box("2020, 2021 and 2022 compared with 2018-2019 average", "ae_mh_overall"),
     if (input$geoname_mh == "Scotland") {
       tagList(
         plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
@@ -387,7 +387,7 @@ output$mh_explorer <- renderUI({
                         actionButton("btn_mentalhealth_modal", "Data source and definitions",
                                      icon = icon('question-circle'))),
                  column(6,data_last_updated)),
-        plot_box("2020 and 2021 compared with 2018-2019 average", "mh_ooh_overall"),
+        plot_box("2020, 2021 and 2022 compared with 2018-2019 average", "mh_ooh_overall"),
         if (input$geoname_mh == "Scotland") {
           tagList(
             plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
