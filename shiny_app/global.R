@@ -138,7 +138,7 @@ ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
 ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
 ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
 ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
-injuries_extract_date <- "13 September 2021"
+injuries_extract_date <- "01 February 2022"
 
 
 # mental health data
