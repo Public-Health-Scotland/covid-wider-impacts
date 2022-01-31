@@ -46,12 +46,12 @@ save_final_file("sact_weekly_data", "24_Jan_22")
 ##########################################################.
 ##########################################################.
 ## Injuries ----
-save_final_file("ui_smr01_all", "01_Feb_22")
-save_final_file("ui_smr01_rta", "01_Feb_22")
-save_final_file("ui_smr01_poison", "01_Feb_22")
-save_final_file("ui_smr01_other", "01_Feb_22")
-save_final_file("ui_smr01_falls", "01_Feb_22")
-save_final_file("ui_smr01_assaults", "01_Feb_22")
+save_final_file("ui_smr01_all", "31_Jan_22")
+save_final_file("ui_smr01_rta", "31_Jan_22")
+save_final_file("ui_smr01_poison", "31_Jan_22")
+save_final_file("ui_smr01_other", "31_Jan_22")
+save_final_file("ui_smr01_falls", "31_Jan_22")
+save_final_file("ui_smr01_assaults", "31_Jan_22")
 
 ##########################################################.
 ## RAPID ----
