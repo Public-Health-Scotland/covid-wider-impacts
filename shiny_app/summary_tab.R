@@ -573,9 +573,11 @@ output$data_explorer <- renderUI({
   } else if (input$measure_select == "outpats") { # Outpatients data
       eth_op_ui <- tagList(#Add ethnicity charts
         fluidRow(column(6,
-                        h4(paste0(variation_title, "ethnic group"))),
+                        h4(paste0(variation_title, "ethnic group")),
+                        tags$em("Please note that this data is only available by month.")),
                  column(6,
-                        h4(paste0("Monthly number of ", dataset, " by ethnic group")))),
+                        h4(paste0("Monthly number of ", dataset, " by ethnic group")),
+                        tags$em("Please note that this data is only available by month."))),
         
         ###Adding adm_type here to make clear what is selected
         fluidRow(column(6,
@@ -774,8 +776,16 @@ output$monthly_op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg =
 
 
 output$op_eth_tot <- renderPlotly({
+  
+  plot_nodata(text_nodata = "Data is only available for Scotland")
   plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", type = "total", 
                    data_name = "op", period = "monthly")})
+
+
+# plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due to small numbers") {
+#   text_na <- list(x = 5, y = 5, text = text_nodata , size = 20,
+#                   xref = "x", yref = "y",  showarrow = FALSE)
+
  
 output$op_eth_var <- renderPlotly({
   plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", 
