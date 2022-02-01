@@ -573,13 +573,13 @@ output$data_explorer <- renderUI({
   } else if (input$measure_select == "outpats") { # Outpatients data
       eth_op_ui <- tagList(#Add ethnicity charts
         fluidRow(column(6,
-                        h4(paste0(variation_title, "ethnicity group"))),
+                        h4(paste0(variation_title, "ethnic group"))),
                  column(6,
-                        h4(paste0("Monthly number of ", dataset, " by ethnicity group")))),
+                        h4(paste0("Monthly number of ", dataset, " by ethnic group")))),
         
         ###Adding adm_type here to make clear what is selected
         fluidRow(column(6,
-                        pickerInput("op_ethnicity", "Select one or more ethnicity groups",
+                        pickerInput("op_ethnicity", "Select one or more ethnic groups",
                                     choices = eth_list_op, 
                                     multiple = TRUE,
                                     selected = eth_list_op,
