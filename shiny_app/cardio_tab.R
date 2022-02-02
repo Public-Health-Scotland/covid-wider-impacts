@@ -299,7 +299,15 @@ observeEvent(input$btn_cardio_modal,
                    relate to incidents for chest pain and heart problems concerning both COVID-19 and non-COVID issues. Please note that the source of this data is the Unscheduled Care
                    Datamart and represents a sub-set of the total Scottish Ambulance service activity. Figures include emergencies, where a vehicle arrived
                    at the scene of the incident, and excludes both data from resources which were cleared as ‘dealt with by another vehicle’ and air ambulance data."),
-                 p("Chest Pain or Heart Problems defined as below:"),
+                 p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
+                tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
+                       "Unscheduled Care Operational Statistics", target="_blank"), ". This details unscheduled care demand, 
+                   response times and turnaround times. Please note that the data published by SAS is sourced from a 
+                   different operational system than that used for the PHS reporting. This means that the data published 
+                   by SAS will at times be slightly different to that reported by PHS source. The data published by PHS 
+                   is less timely than the data used for the SAS publication, however allows for data to be linked in order 
+                   to gain further insight into patient flow through unscheduled care."),
+                 p(tags$b("Chest Pain or Heart Problems defined as below:")),
                  p("Chest Pain or Heart Problems defined as below:
                    Chest Pain (non-traumatic), Chest Pain with Abnormal Breathing,
                    Chest Pain and Breathing Normally (age > 35 years), Chest Pain with Nausea or Vomitting,
@@ -481,8 +489,13 @@ output$cardio_explorer <- renderUI({
         )
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# SAS incidents
-         tags$em("Please note that there is currently an issue with duplicates in the SAS dataset and therefore the data was not
+         tags$em(p("Please note that there is currently an issue with duplicates in the SAS dataset and therefore the data was not
                   updated in February 2022. This is currently being investigated by PHS and the data will be updated as soon as possible."),
+                 p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
+                tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
+                       "Unscheduled Care Operational Statistics", target="_blank"), ". The data published by SAS is sourced from a 
+                        different operational system than that used for the PHS reporting. This means that the data published 
+                        by SAS will at times be slightly different to that reported by PHS source.")),
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$geoname_cardio)),
          fluidRow(column(6,
                          actionButton("btn_cardio_modal", "Data source and definitions",
