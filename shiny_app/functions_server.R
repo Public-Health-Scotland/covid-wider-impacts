@@ -563,7 +563,6 @@ plot_dce_overall_chart <- function(dce_dataset, dce_var1_chosen, dce_var2_chosen
                               "<br>", "Area: ", dce_dataset$area))
     
     
-    
     ### layout - test change
     if (data_type == "Scotland"){ 
       a <- list(
@@ -592,6 +591,22 @@ plot_dce_overall_chart <- function(dce_dataset, dce_var1_chosen, dce_var2_chosen
     }
     ##########################
     
+    # Function for horizontal line showing monthly expected
+    hline <- function(y = 0, color = "lightgrey") {
+      list(
+        type = "line",
+        y0 = y,
+        y1 = y,
+        # yref = "paper",
+        x0 = 0,
+        x1 = 1,
+        xref = "paper",
+        line = list(color = color, dash = 'dash')
+      )
+    }
+    
+    
+    
     #Creating time trend plot for cumulative totals and incidence
     plot_ly(data=dce_dataset, x=~month) %>%
       
@@ -602,9 +617,17 @@ plot_dce_overall_chart <- function(dce_dataset, dce_var1_chosen, dce_var2_chosen
       add_lines(y = ~get(dce_var2_chosen), line = list(color = pal_overall[2], dash = 'dash'), text=dce_tooltip_2, hoverinfo="text", 
                 name = "2019") %>%
       
+      add_annotations(x = 0,
+                      y = 188,
+                      text = "Expected diagnoses",
+                      xref = "1",
+                      yref = "1",
+                      showarrow = FALSE) %>% 
       
       #Layout 
-      layout(margin = list(b = 80, t=5),xaxis = list(title = "Month"),
+      layout(margin = list(b = 80, t=5),
+             shapes = list(hline(180)),
+             xaxis = list(title = "Month"),
              yaxis = a,
              # legend = list(title=list(text=paste0("Year")),orientation = 'h', x = 0, y = 1.2)) %>% 
              legend = list(orientation = 'h', x = 0, y = 1.2)) %>%
@@ -746,6 +769,7 @@ plot_dce_inc_bar19 <- function(dce_dataset, dce_var1, data_type) {
   dce_tooltip_4 <- c(paste0("Month: ", dce_dataset$month,
                             "<br>", "Stage: ", dce_dataset$stage,
                             "<br>", "Monthly Total: ", dce_dataset$count19))
+  
   
   if (data_type == "Scotland"){
     b <- list(
