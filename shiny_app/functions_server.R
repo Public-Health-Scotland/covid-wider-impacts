@@ -35,7 +35,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
   #If no data available for that period then plot message saying data is missing
   if (split == "eth" & is.data.frame(trend_data) && nrow(trend_data) == 0) 
-  {plot_nodata(text_nodata = "Data is only available for Scotland") }
+  {plot_nodata(text_nodata = "Data is only available at Scotland level") }
   
   else if (split != "eth" & is.data.frame(trend_data) && nrow(trend_data) == 0)
   {
