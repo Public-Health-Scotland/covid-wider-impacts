@@ -592,8 +592,8 @@ check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/c
 check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_deaths.rds")
 
 tabyl(smr01_pi_data$month_ending, sort = TRUE)
-tabyl(smr01_pi_data$type_admission, sort = TRUE)
-
+tabyl(cardio_discharges$type_admission, sort = TRUE)
+tabyl(cardio_discharges$diagnosis, sort = TRUE)
 
 
 

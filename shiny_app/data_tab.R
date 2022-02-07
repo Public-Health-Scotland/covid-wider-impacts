@@ -18,6 +18,8 @@ data_table <- reactive({
          "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average),
         "ooh_cardiac" = ooh_cardiac %>% rename(average_2018_2019 = count_average),
         "sas_cardiac" = sas_cardiac %>% rename(average_2018_2019 = count_average),
+        "cardio_discharges" = cardio_discharges %>% rename(average_2018_2019 = count_average),        
+        "cardio_deaths" = cardio_deaths %>% rename(average_2015_2019 = count_average),       
          "sixin_8wks" = sixtable %>% filter(immunisation == "six-in-one dose 1"),
          "sixin_8wks_second" = sixtable %>% filter(immunisation == "six-in-one dose 2"),
          "sixin_8wks_third" = sixtable %>% filter(immunisation == "six-in-one dose 3"),

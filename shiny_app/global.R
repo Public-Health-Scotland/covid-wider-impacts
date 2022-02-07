@@ -75,6 +75,8 @@ cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
 ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
 sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
+cardio_discharges <- readRDS("data/cardio_discharges.rds") # cardio discharges data
+cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
 
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
@@ -304,6 +306,8 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Cardiac procedures" = "cath_lab",
                         "Cardiovascular OOH cases" = "ooh_cardiac",
                         "Cardiovascular SAS incidents" = "sas_cardiac",
+                        "Cardiovascular hospital discharges" = "cardio_discharges",
+                        "Cardiovascular deaths" = "cardio_deaths",
                         "6-in-1 first dose"  = "sixin_8wks",
                         "6-in-1 second dose" = "sixin_8wks_second",
                         "6-in-1 third dose" = "sixin_8wks_third",
@@ -398,7 +402,8 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
                  "Out of hours cases" = "ooh_cardiac",
-                 "Scottish Ambulance Service" = "sas_cardiac", "Cardiac procedures" = "cath")
+                 "Scottish Ambulance Service" = "sas_cardiac", "Cardiac procedures" = "cath",
+                 "Hospital discharges" = "cardio_discharges", "Excess mortality" = "cardio_deaths")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Stillbirths"="stillbirths",

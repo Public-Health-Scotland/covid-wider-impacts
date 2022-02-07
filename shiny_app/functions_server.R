@@ -109,8 +109,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                                      "mentalhealth_drugs", "mh_ooh",
                                                      "ooh_cardiac", "sas_cardiac", "ui_smr01_all", "ui_smr01_assaults",
                                                      "ui_smr01_falls", "ui_smr01_other", "ui_smr01_poison",
-                                                     "ui_smr01_rta","op") ~ "2018-2019",
-                             data_name == "deaths" ~ "2015-2019"))
+                                                     "ui_smr01_rta","op","cardio_discharges") ~ "2018-2019",
+                             data_name %in% c("deaths","cardio_deaths") ~ "2015-2019"))
       
     if (aver_week == T) {
       #Text for tooltip
@@ -253,7 +253,9 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                              data_name == "ui_smr01_falls" ~ "Number of admissions",
                              data_name == "ui_smr01_other" ~ "Number of admissions",
                              data_name == "ui_smr01_poison" ~ "Number of admissions",
-                             data_name == "ui_smr01_rta" ~ "Number of admissions")
+                             data_name == "ui_smr01_rta" ~ "Number of admissions",
+                             data_name == "cardio_discharges" ~ "Number of discharges",
+                             data_name == "cardio_deaths" ~ "Number of deaths")
     
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
@@ -261,8 +263,8 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
                                                        "ooh_cardiac", "sas_cardiac",
                                                        "cath", "mentalhealth_drugs", "mh_ooh",
-                                                       "op") ~ "Average 2018-2019",
-                                      data_name == "deaths" ~ "Average 2015-2019")
+                                                       "op","cardio_discharges") ~ "Average 2018-2019",
+                                      data_name %in% c("deaths","cardio_deaths") ~ "Average 2015-2019")
     
     hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
                                                     "ooh_cardiac", "sas_cardiac",
@@ -281,7 +283,9 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                               data_name == "deaths" ~ "Deaths: ",
                               data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
                               data_name == "mh_ooh" ~ "Consultations: ",
-                              data_name == "op" ~ "Appointments: ")
+                              data_name == "op" ~ "Appointments: ",
+                              data_name == "cardio_discharges" ~ "Discharges: ",
+                              data_name == "cardio_deaths" ~ "Deaths: ")
     
     # Input for tooltip based on weekly/monthly
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
