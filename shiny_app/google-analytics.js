@@ -8,3 +8,9 @@
   ga('create', 'UA-170882650-1', 'auto');
   ga('set', 'anonymizeIp', true);
   ga('send', 'pageview');
+     $(document).on('click', 'a', function(e) {
+    ga('send', 'event', 'TabsetPanel', 'Tab Viewed', $(this).attr('data-value'));
+  });
+  
+
+
