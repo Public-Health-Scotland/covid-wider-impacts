@@ -899,6 +899,24 @@ output$download_chart_data <- downloadHandler(
 output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
+    h2("Outpatient appointments by ethnic group - 16th February 2022"),
+    p("New analyses by ethnic group have now been added. The COVID-19 pandemic has 
+      highlighted the need for ongoing monitoring of health data by ethnicity. Reporting 
+      analyses by ethnic group supports efforts to achieve equity in health care provision.
+      Please note that the rest of the outpatients data remains unchanged from the last update
+      on 15th December 2021."),
+    tags$ul(
+      tags$li("The impact of the pandemic on outpatient appointments was similar across ethnic 
+              groups; however, interpretation by ethnic group is complicated by the mandating of 
+              recording of ethnic group on SMR outpatient (SMR00) returns from 1 February 2021. 
+              This is reflected in the fall in the number of appointments with missing ethnic 
+              group which by June 2021 were 20% lower than the corresponding time in 2018-19."),
+      tags$li("In June 2021, appointments for patients with White Scottish ethnic group recorded 
+              were around 5% lower than the corresponding time in 2018-19; the number of 
+              appointments in other ethic groups vary between 18% higher (African), and 
+              14% lower (Chinese). It is important to note that the trends for ethnic 
+              groups with small populations should be interpreted with caution as they 
+              will be subject to greater variability due to small numbers.")),
     h2("Summary - Outpatient appointments - 15th December 2021"),
     p("Data are taken from Scottish Morbidity Record (SMR00), and show outpatient appointments
       to week ending 27th June 2021. Outpatient information contained within this dashboard has been 
