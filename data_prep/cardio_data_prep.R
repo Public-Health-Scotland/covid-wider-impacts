@@ -330,7 +330,15 @@ filedate <- "2021-11-29"
 smr_start_date <- ymd(20180101)
 
 # SMR End Date
-smr_end_date <- ymd(20210331)
+smr_end_date <- ymd(20210630)
+
+# Speed up aggregations of different data cuts (A&E,NHS24,OOH)
+agg_cut_cardiac_dis <- function(dataset, grouper) {
+  dataset %>%
+    group_by_at(c("month_ending","diagnosis","type_admission","area_name", "area_type", grouper)) %>%
+    summarise(count = sum(count)) %>% ungroup() %>% 
+    mutate(type = grouper) 
+}
 
 ###############################################.
 ## Lookups ---- from deaths_data_preparation.R
@@ -341,7 +349,8 @@ postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scott
   select(pc7, datazone2011, hscp2019, hscp2019name)
 
 # SIMD quintile to datazone lookup
-dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
+#dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
+dep_lookup <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact-data/colin/lookups/deprivation_geography.rds") %>%
   rename(datazone2011 = datazone) %>%
   select(datazone2011, year, sc_quin) %>%
   filter(year>2014)
@@ -393,7 +402,7 @@ smr01_pi_data <- smr01_pi_data %>%
   filter(smr01_pi_data$diagnosis %in% c("Coronary Heart Disease","Cerebrovascular Disease"))
 
 smr01_pi_data <- smr01_pi_data %>%
-mutate(month_ending = floor_date(as.Date(discharge_date), "month")) %>% 
+mutate(month_ending = ceiling_date(as.Date(discharge_date), "month")) %>% 
     mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          year = year(month_ending)) #to allow merging
 
@@ -434,21 +443,40 @@ smr01_piv <- smr01_pi_data %>%
   mutate(scot = "Scotland") %>%
   pivot_longer(cols = c(hbname, hscp2019name, scot), names_to="area_type", values_to="area_name") %>% 
     mutate (area_type = recode(area_type, "hbname" = "Health board", 
-                   "hscp2019name" = "HSC partnership", "scot" = "Scotland")) %>% 
-  # Aggregating to make it faster to work with
-  mutate(all="All") %>%
-  group_by(year, month_ending, all, sex, dep, age, diagnosis, type_admission, area_type, area_name) %>% 
+                   "hscp2019name" = "HSC partnership", "scot" = "Scotland")) %>%
+  mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
+                               TRUE~area_name))  %>%
+  # Aggregating to make it faster to work with (removed all year)
+  #mutate(all="All") %>%
+  # remove type admission
+  group_by(month_ending, sex, dep, age, diagnosis, type_admission, area_name, area_type) %>% 
   summarise(count = sum(count))
-  
-smr01_piv2 <- smr01_piv %>%
-  pivot_longer(cols = c(all, sex, dep, age), names_to="type", values_to="category") %>% 
-  group_by(month_ending, diagnosis, type_admission, area_type, area_name, type, category) %>% 
-  filter(!(area_type != "Scotland" & area_type != "Health board" & type == "dep")) %>% #SIMD only at HB/Scotland level
-  summarise(count= sum(count))
+
+# Create aggregations for each split
+dis_all <- smr01_piv %>% agg_cut_cardiac_dis(grouper=NULL) %>% mutate(type = "sex", category = "All")
+dis_sex <- smr01_piv %>% agg_cut_cardiac_dis(grouper="sex") %>% rename(category = sex)
+dis_dep <- smr01_piv %>% agg_cut_cardiac_dis(grouper="dep") %>% rename(category = dep)
+dis_age <- smr01_piv %>% agg_cut_cardiac_dis(grouper="age") %>% rename(category = age)
+
+cardio_data_dis <- rbind(dis_all, dis_age, dis_sex, dis_dep) #%>% 
+  #filter(!(area_type != "Scotland" & type == "dep")) # %>% #SIMD only at Scotland level - only req for weekly data
+  #mutate(area_id = paste(area_type, "-", area_name)) # this helps with the next step
+
+# remove all from pivot  
+#smr01_piv2 <- smr01_piv %>%
+#  pivot_longer(cols = c(sex, dep, age, all), names_to="type", values_to="category") %>% 
+#  group_by(month_ending, diagnosis, type_admission, area_type, area_name, type, category) %>% 
+#  filter(!(area_type != "Scotland" & area_type != "Health board" & type == "dep")) %>% #SIMD only at HB/Scotland level
+#  summarise(count= sum(count))
+
+#smr01_piv2 <- smr01_piv2 %>% mutate(type = recode(type, "all" = "sex")) 
 
 # Using function for monthly data from injuries_data_preparation script
-prepare_final_data_m_cardiac(dataset = smr01_piv2, filename = "cardio_discharges", 
-                             last_month = "2021-05-01", extra_vars = "diagnosis", extra_vars2 = "type_admission", aver = 3)
+# remove extra_vars2 = "type_admission", 
+prepare_final_data_m_cardiac(dataset = cardio_data_dis, filename = "cardio_discharges", 
+                             last_month = "2021-06-30", extra_vars = "diagnosis", aver = 3)
+
+#final_data <- final_data %>% replace_na(list(variation = 0))
 
 final_cardio_SMR01 <- final_data %>% 
   rename (week_ending=month_ending) %>%
@@ -467,7 +495,7 @@ saveRDS(final_cardio_SMR01, paste0(open_data, "cardio_discharges_data.rds"))
 ## Deaths Data Cardiac ----
 ###############################################.
 
-last_month <- "2021-09-25"
+last_month <- "2021-09-01"
 
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
 agg_cut_cardiac <- function(dataset, grouper) {
@@ -548,7 +576,7 @@ deaths_dep <- cardio_data_deaths %>% agg_cut_cardiac(grouper="dep") %>% rename(c
 deaths_age <- cardio_data_deaths %>% agg_cut_cardiac(grouper="age") %>% rename(category = age)
 
 cardio_data_deaths <- rbind(deaths_all, deaths_age, deaths_sex, deaths_dep) %>% 
-  filter(!(area_type != "Scotland" & type == "dep")) %>% #SIMD only at Scotland level
+  #filter(!(area_type != "Scotland" & type == "dep")) %>% #SIMD only at Scotland level - only req for weekly data
   mutate(area_id = paste(area_type, "-", area_name)) # this helps with the next step
 
 # This step is to make sure we have rows for all weeks for all areas/category

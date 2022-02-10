@@ -166,6 +166,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                 data_name == "drug_presc" ~ "Items prescribed: ",
                                 data_name == "cancer" ~ "Referrals: ",
                                 data_name == "deaths" ~ "Deaths: ",
+                                data_name == "cardio_deaths" ~ "Deaths: ",
+                                data_name == "cardio_discharges" ~ "Disscharges: ",
                                 data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
                                 data_name == "mh_ooh" ~ "Consultations: ",
                                 data_name == "op" ~ "Appointments: ",
@@ -267,7 +269,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                                       data_name %in% c("deaths","cardio_deaths") ~ "Average 2015-2019")
     
     hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
-                                                    "ooh_cardiac", "sas_cardiac",
+                                                    "ooh_cardiac", "sas_cardiac","cardio_discharges","cardio_deaths",
                                                     "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 & 2021",
                                    data_name %in% c("cath")  ~ "2020")
     

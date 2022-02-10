@@ -67,7 +67,7 @@ data_table <- reactive({
     mutate_if(is.character, as.factor) 
   
   if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths",
-                               "ooh_cardiac", "sas_cardiac")) {
+                               "ooh_cardiac", "sas_cardiac","cardio_discharges","cardio_deaths")) {
     table_data %<>%
     # Formatting to a "nicer" style
     # select(-type) %>% 

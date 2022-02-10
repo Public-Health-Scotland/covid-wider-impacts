@@ -24,6 +24,8 @@ observeEvent(input$measure_cardio_select, {
   if (x == "cath") {
     cardio_label = "Step 2 - Select a cardiac catheterisation lab"
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
+    shinyjs::hide("diagnosis_select")
+    shinyjs::hide("type_adm_select")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -31,6 +33,8 @@ observeEvent(input$measure_cardio_select, {
   if (x == "aye") {
     cardio_label = "Step 2 - Select geography level for cardiovascular A&E attendances"
     cardio_choices = c("Scotland")
+    shinyjs::hide("diagnosis_select")
+    shinyjs::hide("type_adm_select")
     hide("geoname_cardio_ui")
     disable("area_cardio_select")
   }
@@ -38,6 +42,8 @@ observeEvent(input$measure_cardio_select, {
   if (x == "drug_presc") {
     cardio_label = "Step 2 - Select geography level for cardiovascular medicine prescriptions"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::hide("diagnosis_select")
+    shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -45,6 +51,8 @@ observeEvent(input$measure_cardio_select, {
   if (x == "ooh_cardiac") {
     cardio_label = "Step 2 - Select geography level for cardiovascular OOH cases"
     cardio_choices = c("Scotland", "Health board")
+    shinyjs::hide("diagnosis_select")
+    shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -52,6 +60,8 @@ observeEvent(input$measure_cardio_select, {
   if (x == "sas_cardiac") {
     cardio_label = "Step 2 - Select geography level for cardiovascular Scottish Ambulance Service incidents"
     cardio_choices = c("Scotland", "Health board")
+    shinyjs::hide("diagnosis_select")
+    shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -59,6 +69,8 @@ observeEvent(input$measure_cardio_select, {
   if (x == "cardio_discharges") {
     cardio_label = "Step 2 - Select geography level for cardiovascular hospital discharges"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::show("diagnosis_select")
+    shinyjs::show("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -66,6 +78,7 @@ observeEvent(input$measure_cardio_select, {
   if (x == "cardio_deaths") {
     cardio_label = "Step 2 - Select geography level for cardiovascular mortality"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -342,55 +355,53 @@ observeEvent(input$btn_cardio_modal,
                showModal(modalDialog(
                  title = "What is the data source?",
                  p("Cardiovascular discharges"),
-                 p("Chest Pain or Heart Problems defined as below:"),
-                 p("Chest Pain or Heart Problems defined as below:
-                   Chest Pain (non-traumatic), Chest Pain with Abnormal Breathing,
-                   Chest Pain and Breathing Normally (age > 35 years), Chest Pain with Nausea or Vomitting,
-                   Difficulty Speaking between Breaths, Changing Colour, Clammy or Cold Sweats with Chest Pains,
-                   Heart Attack or Angina History with Chest Pains, Heart Problem with Abnormal Breathing,
-                   Heart Problems with Chest Pain/discomfort (age > 35 years), Heart Problems with Cardiac History,
-                   Heart Problems/Difficulty Speaking between Breaths, Heart Problems and Changing Colour,
-                   Heart Problems and Clammy or Cold Sweats, Just Resuscitated and/or Defibrillated"),
-                 p("Activity", week_standard),
-                 p("If required, more detailed analysis of SAS activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
-                          class="externallink"), "."),
-                 p("The SAS dataset is managed by ",
-                   tags$a(href="https://publichealthscotland.scot/",
-                          "Public Health Scotland", class="externallink"), "and ",
-                   tags$a(href="https://www.scottishambulance.com/",
-                          "Scottish Ambulance Service", class="externallink"), ".",
-                   "This analysis is drawn from the ",
-                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
-                 ),
+                 p("These data provide a monthly summary of the number of admissions to hospital as a result of an
+                    cardiovascular condition since Jan 2020, with data from 2018-2019 for comparison purposes.
+                    The recent trend data is shown by age group, sex, diagnosis, admission type and deprivation category (SIMD)."),
+                 p("The source of data is the Scottish Morbidity Record 01 (SMR01) database, which holds information on
+                    discharges from non-obstetric and non-psychiatric acute hospitals in Scotland."),
+                 #p("Activity", week_standard),
+                 p("Further information relating to the cardiovascular hospital activity is available from the ",
+                   tags$a(href="https://beta.isdscotland.org/topics/heart-disease-and-stroke/",
+                          "Scottish Heart disease and stroke publications.",
+                          target="_blank")),
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))               
              }else if (input$measure_cardio_select == "cardio_deaths") { #CARDIAC DEATHS MODAL
                showModal(modalDialog(
                  title = "What is the data source?",
-                 p("Cardiovascular mortality"),
-                 p("Chest Pain or Heart Problems defined as below:"),
-                 p("Chest Pain or Heart Problems defined as below:
-                   Chest Pain (non-traumatic), Chest Pain with Abnormal Breathing,
-                   Chest Pain and Breathing Normally (age > 35 years), Chest Pain with Nausea or Vomitting,
-                   Difficulty Speaking between Breaths, Changing Colour, Clammy or Cold Sweats with Chest Pains,
-                   Heart Attack or Angina History with Chest Pains, Heart Problem with Abnormal Breathing,
-                   Heart Problems with Chest Pain/discomfort (age > 35 years), Heart Problems with Cardiac History,
-                   Heart Problems/Difficulty Speaking between Breaths, Heart Problems and Changing Colour,
-                   Heart Problems and Clammy or Cold Sweats, Just Resuscitated and/or Defibrillated"),
-                 p("Activity", week_standard),
-                 p("If required, more detailed analysis of SAS activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
-                          class="externallink"), "."),
-                 p("The SAS dataset is managed by ",
-                   tags$a(href="https://publichealthscotland.scot/",
-                          "Public Health Scotland", class="externallink"), "and ",
-                   tags$a(href="https://www.scottishambulance.com/",
-                          "Scottish Ambulance Service", class="externallink"), ".",
-                   "This analysis is drawn from the ",
-                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
-                 ),
+                 p("The analyses shown here are derived from weekly deaths registration data, and show recent trends in deaths (2020),
+                   whether COVID or non-COVID related, and historic trends for comparison (five-year average, 2015-2019).
+                   The recent trend data are shown by age group and sex, and the national data are also shown by broad area
+                   deprivation category (Scottish Index of Multiple Deprivation, SIMD).
+                   Volatility of the trends will be observed in some charts due to small counts.
+                   SIMD trends are not shown for Health Boards or Health
+                   and Social Care Partnerships because of the small numbers involved and the possibility for misinterpretation."),
+                 p("The deaths data are derived from the National Records of Scotland (NRS) ",
+                   tags$a(href="https://www.nrscotland.gov.uk/covid19stats",
+                          "weekly deaths",  target="_blank"), " dataset. Deaths related to COVID-19 are included in totals.
+                   Data are provisional and subject to revision."),
+                 p("The figures are based on the date a death was registered rather than the date the death occurred. When someone dies,
+                   their family (or a representative) have to make an appointment with a registrar to register the death.
+                   Legally this must be done within 8 days, although in practice there is, on average, a 3 day gap between a
+                   death occurring and being registered. More information on days between occurrence and registration can be be found on the ",
+                   tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-background-information/births-and-deaths-days-until-registration",
+                          "NRS website", target="_blank"),"."),
+                 p("The figures are reported by week, with each week running from Monday to Sunday (the ISO8601 standard week).
+                   Moveable public holidays, when registration offices are closed, affect the number of registrations made in the
+                   published weeks and in the corresponding weeks in previous years."),
+                 p("Figures include non-residents.  Deaths are allocated to area based on the usual residence of the deceased.
+                   If the deceased was not a Scottish resident, the death is allocated to the area where the death occurred."),
+                 p("Deaths are allocated to weeks . The last week of 2020 is week 53 according to this standard.
+          Between 2015 and 2019 only 2015 also had a week 53, so the ‘historic average’ figure that the 2020 deaths are compared with in
+          this week is the 2015 count, rather than the 2015-19 average."),
+                 p("The weekly deaths dataset is managed by ",
+                   tags$a(href= "https://www.nrscotland.gov.uk/",
+                          "National Records of Scotland (NRS).",  target="_blank")),
+                 p("For more information on deaths and health inequalities during the pandemic, please read ",
+                   tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-weekly-excess-deaths/",
+                          "this report.",  target="_blank")),
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))          
@@ -571,47 +582,71 @@ output$cardio_explorer <- renderUI({
                                                    icon = icon('question-circle')))
        )
      } else if (input$measure_cardio_select == "cardio_discharges") {
-       tagList(# SAS incidents
-         h3(paste0("Monthly cardiovascular discharges in ", input$geoname_cardio)),
+       tagList(# cardio_discharges
+         h3(paste0("Monthly ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio)),
          fluidRow(column(6,
                          actionButton("btn_cardio_modal", "Data source and definitions",
                                       icon = icon('question-circle'))),
                   column(6,data_last_updated)),
          plot_box("2020 and 2021 compared with 2018-2019 average", "cardio_discharges_all"),
-         plot_cut_box(paste0("Percentage change in cardiovascular discharges in ", input$geoname_cardio, " compared with the corresponding
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "cardio_discharges_sex_var",
-                      paste0("Monthly number of cardiovascular discharges in ", input$geoname_cardio, " by sex"), "cardio_discharges_sex_tot"),
-         plot_cut_box(paste0("Percentage change in cardiovascular discharges ", input$geoname_cardio, " compared with the corresponding
+                      paste0("Monthly number of ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " by sex"), "cardio_discharges_sex_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", input$type_adm_select, " discharges ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by age group"), "cardio_discharges_age_var",
-                      paste0("Monthly number of cardiovascular discharges in ", input$geoname_cardio, " by age group"), "cardio_discharges_age_tot"),
-         plot_cut_box(paste0("Percentage change in cardiovascular discharges in ", input$geoname_cardio, " compared with the corresponding
+                      paste0("Monthly number of ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " by age group"), "cardio_discharges_age_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by SIMD quintile"), "cardio_discharges_depr_var",
-                      paste0("Monthly number of cardiovascular discharges in ", input$geoname_cardio, " by SIMD quintile"), "cardio_discharges_depr_tot",
+                      paste0("Monthly number of ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " by SIMD quintile"), "cardio_discharges_depr_tot",
                       extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
                                                    icon = icon('question-circle')))
        )
      } else if (input$measure_cardio_select == "cardio_deaths") {
-       tagList(# SAS incidents
-         h3(paste0("Monthly cardiovascular deaths in ", input$geoname_cardio)),
+       tagList(# cardio_deaths
+         h3(paste0("Monthly ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio)),
          fluidRow(column(6,
                          actionButton("btn_cardio_modal", "Data source and definitions",
                                       icon = icon('question-circle'))),
                   column(6,data_last_updated)),
          plot_box("2020 and 2021 compared with 2018-2019 average", "cardio_deaths_all"),
-         plot_cut_box(paste0("Percentage change in cardiovascular deaths in ", input$geoname_cardio, " compared with the corresponding
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "cardio_deaths_sex_var",
-                      paste0("Monthly number of cardiovascular deaths in ", input$geoname_cardio, " by sex"), "cardio_deaths_sex_tot"),
-         plot_cut_box(paste0("Percentage change in cardiovascular deaths ", input$geoname_cardio, " compared with the corresponding
+                      paste0("Monthly number of ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " by sex"), "cardio_deaths_sex_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by age group"), "cardio_deaths_age_var",
-                      paste0("Monthly number of cardiovascular deaths in ", input$geoname_cardio, " by age group"), "cardio_deaths_age_tot"),
-         plot_cut_box(paste0("Percentage change in cardiovascular deaths in ", input$geoname_cardio, " compared with the corresponding
+                      paste0("Monthly number of ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " by age group"), "cardio_deaths_age_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by SIMD quintile"), "cardio_deaths_depr_var",
-                      paste0("Monthly number of cardiovascular deaths in ", input$geoname_cardio, " by SIMD quintile"), "cardio_deaths_depr_tot",
+                      paste0("Monthly number of ", input$diagnosis_select, " ", " deaths in ", input$geoname_cardio, " by SIMD quintile"), "cardio_deaths_depr_tot",
                       extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
                                                    icon = icon('question-circle')))
        )       
     }
 })
+
+
+###############################################.
+## Reactive datasets ----
+###############################################.
+
+# Cardio deaths area/diagnosis reactive filter
+# remove  & type_admission == input$type_adm_select
+cardio_disch_filter <- reactive({
+  cardio_discharges %>% 
+    filter(area_name == input$geoname_cardio &
+             diagnosis == input$diagnosis_select & 
+             type_admission == input$type_adm_select)
+  
+})
+
+# Cardio deaths area/diagnosis reactive filter
+cardio_dth_filter <- reactive({
+  cardio_deaths %>% 
+    filter(area_name == input$geoname_cardio &
+             diagnosis == input$diagnosis_select)
+  
+})
+
 
 ###############################################.
 ## Charts ----
@@ -685,39 +720,39 @@ output$sas_cardio_depr_tot <- renderPlotly({plot_trend_chart(sas_cardiac %>% fil
 
 ###############################################.
 # Discharges charts
-output$cardio_discharges_all <- renderPlotly({plot_overall_chart(cardio_discharges %>% filter(area_name == input$geoname_cardio),
-                                                          data_name = "cardio_discharges", area = "All")})
-output$cardio_discharges_sex_var <- renderPlotly({plot_trend_chart(cardio_discharges %>% filter(area_name == input$geoname_cardio),
-                                                            pal_sex, split = "sex", type = "variation", data_name = "cardio_discharges", tab = "cardio")})
-output$cardio_discharges_sex_tot <- renderPlotly({plot_trend_chart(cardio_discharges %>% filter(area_name == input$geoname_cardio),
-                                                            pal_sex, split = "sex", type = "total", data_name = "cardio_discharges", tab = "cardio")})
-output$cardio_discharges_age_var <- renderPlotly({plot_trend_chart(cardio_discharges %>% filter(area_name == input$geoname_cardio),
-                                                            pal_age, split = "age", type = "variation", data_name = "cardio_discharges", tab = "cardio")})
-output$cardio_discharges_age_tot <- renderPlotly({plot_trend_chart(cardio_discharges %>% filter(area_name == input$geoname_cardio),
-                                                            pal_age, split = "age", type = "total", data_name = "cardio_discharges", tab = "cardio")})
-output$cardio_discharges_depr_var <- renderPlotly({plot_trend_chart(cardio_discharges %>% filter(area_name == input$geoname_cardio),
-                                                             pal_depr, split = "dep", type = "variation",data_name = "cardio_discharges", tab = "cardio")})
-output$cardio_discharges_depr_tot <- renderPlotly({plot_trend_chart(cardio_discharges %>% filter(area_name == input$geoname_cardio),
-                                                             pal_depr, split = "dep", type = "total",data_name = "cardio_discharges", tab = "cardio")})
+output$cardio_discharges_all <- renderPlotly({plot_overall_chart(cardio_disch_filter(),
+                                                          data_name = "cardio_discharges", area = "All", period = "monthly")})
+output$cardio_discharges_sex_var <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                            pal_sex, split = "sex", type = "variation", data_name = "cardio_discharges", tab = "cardio", period = "monthly")})
+output$cardio_discharges_sex_tot <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                            pal_sex, split = "sex", type = "total", data_name = "cardio_discharges", tab = "cardio", period = "monthly")})
+output$cardio_discharges_age_var <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                            pal_age, split = "age", type = "variation", data_name = "cardio_discharges", tab = "cardio", period = "monthly")})
+output$cardio_discharges_age_tot <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                            pal_age, split = "age", type = "total", data_name = "cardio_discharges", tab = "cardio", period = "monthly")})
+output$cardio_discharges_depr_var <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                             pal_depr, split = "dep", type = "variation",data_name = "cardio_discharges", tab = "cardio", period = "monthly")})
+output$cardio_discharges_depr_tot <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                             pal_depr, split = "dep", type = "total",data_name = "cardio_discharges", tab = "cardio", period = "monthly")})
 ###############################################.
 
 
 ###############################################.
 # Deaths charts
-output$cardio_deaths_all <- renderPlotly({plot_overall_chart(cardio_deaths %>% filter(area_name == input$geoname_cardio),
-                                                                 data_name = "cardio_deaths", area = "All")})
-output$cardio_deaths_sex_var <- renderPlotly({plot_trend_chart(cardio_deaths %>% filter(area_name == input$geoname_cardio),
-                                                                   pal_sex, split = "sex", type = "variation", data_name = "cardio_deaths", tab = "cardio")})
-output$cardio_deaths_sex_tot <- renderPlotly({plot_trend_chart(cardio_deaths %>% filter(area_name == input$geoname_cardio),
-                                                                   pal_sex, split = "sex", type = "total", data_name = "cardio_deaths", tab = "cardio")})
-output$cardio_deaths_age_var <- renderPlotly({plot_trend_chart(cardio_deaths %>% filter(area_name == input$geoname_cardio),
-                                                                   pal_age, split = "age", type = "variation", data_name = "cardio_deaths", tab = "cardio")})
-output$cardio_deaths_age_tot <- renderPlotly({plot_trend_chart(cardio_deaths %>% filter(area_name == input$geoname_cardio),
-                                                                   pal_age, split = "age", type = "total", data_name = "cardio_deaths", tab = "cardio")})
-output$cardio_deaths_depr_var <- renderPlotly({plot_trend_chart(cardio_deaths %>% filter(area_name == input$geoname_cardio),
-                                                                    pal_depr, split = "dep", type = "variation",data_name = "cardio_deaths", tab = "cardio")})
-output$cardio_deaths_depr_tot <- renderPlotly({plot_trend_chart(cardio_deaths %>% filter(area_name == input$geoname_cardio),
-                                                                    pal_depr, split = "dep", type = "total",data_name = "cardio_deaths", tab = "cardio")})
+output$cardio_deaths_all <- renderPlotly({plot_overall_chart(cardio_dth_filter(),
+                                                                 data_name = "cardio_deaths", area = "All", period = "monthly")})
+output$cardio_deaths_sex_var <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                   pal_sex, split = "sex", type = "variation", data_name = "cardio_deaths", tab = "cardio", period = "monthly")})
+output$cardio_deaths_sex_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                   pal_sex, split = "sex", type = "total", data_name = "cardio_deaths", tab = "cardio", period = "monthly")})
+output$cardio_deaths_age_var <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                   pal_age, split = "age", type = "variation", data_name = "cardio_deaths", tab = "cardio", period = "monthly")})
+output$cardio_deaths_age_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                   pal_age, split = "age", type = "total", data_name = "cardio_deaths", tab = "cardio", period = "monthly")})
+output$cardio_deaths_depr_var <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                    pal_depr, split = "dep", type = "variation",data_name = "cardio_deaths", tab = "cardio", period = "monthly")})
+output$cardio_deaths_depr_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                    pal_depr, split = "dep", type = "total",data_name = "cardio_deaths", tab = "cardio", period = "monthly")})
 ###############################################.
 
 ## Data downloads ----
@@ -756,7 +791,7 @@ overall_cardio_download <- reactive({
 
   # Discharges
   if (input$measure_cardio_select == "cardio_discharges") {
-    selection <- c("Month_ending", "area_name", "count", "count_average", "variation")
+    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
     new_var_name <- "average_2018_2019"
   }  
 
@@ -775,7 +810,7 @@ overall_cardio_download <- reactive({
     "ooh_cardiac" = filter_data(ooh_cardiac, area = F),
     "sas_cardiac" = filter_data(sas_cardiac, area = F),
     "cardio_discharges" = filter_data(cardio_discharges, area = F),
-    "cardiac_deaths" = filter_data(cardiac_deaths, area = F)
+    "cardio_deaths" = filter_data(cardio_deaths, area = F)
   ) %>%
     select_at(selection) %>%
     rename(!!new_var_name := count_average) %>%
