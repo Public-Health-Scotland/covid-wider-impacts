@@ -24,6 +24,7 @@ library(shinymanager)
 library(lubridate)
 library(tidyr) # for uncount()
 
+
 ###############################################.
 ## Functions ----
 ###############################################.
@@ -61,6 +62,7 @@ area_type_op <- readRDS("data/area_type_op.rds")
 spec_lookup_rapid <- readRDS("data/spec_lookup_rapid.rds")
 spec_lookup_op <- readRDS("data/spec_lookup_op.rds")
 ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
+eth_lookup <- readRDS("data/ethnicity_lookup.rds")
 
 rapid <- readRDS("data/rapid.rds") #RAPID data
 aye <- readRDS("data/ae.rds") #A&E data
@@ -68,7 +70,8 @@ ooh <- readRDS("data/ooh.rds") # OOH data
 nhs24 <- readRDS("data/nhs24.rds") # OOH data
 sas <- readRDS("data/sas.rds") # OOH data
 deaths <- readRDS("data/deaths.rds") # deaths data
-outpats <- readRDS("data/outpats.rds") # outpatients data
+outpats <- readRDS("data/outpats_ethnicity.rds") # outpatients data
+outpats_ethnicity <- readRDS("data/outpats_ethnicity.rds")
 
 #Cardiovascular data
 ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
@@ -267,6 +270,11 @@ spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
                           "Medical (incl. Cardiology & Cancer)",
                           "Paediatrics (medical & surgical)")) # specialty list
 spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
+
+#List of ethnic groups included in the outpatients by ethnicity section
+eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "White Other", "White Polish", 
+                      "Mixed", "Pakistani", "Indian", "Other Asian", "Chinese", "African",
+                      "Caribbean or Black", "Other ethnic group", "Missing"))
 
 data_list <- c(
   "Hospital admissions" = "rapid", "A&E attendances" = "aye",
@@ -474,11 +482,29 @@ pal_cancer_diff <- c("1" = '#000080',
                      "4" = '#C0C0C0',
                      "5" = '#0000FF')
 
+
+pal_eth <- c('#E39C8C',
+             '#d4d3d5',
+             '#83BB26',
+             '#80BCEA',
+             '#3F3685',
+             '#8FBFC2',
+             '#6B5C85',
+             '#0078D4',
+             '#C1DD93',
+             '#9B4393',
+             '#948DA3',
+             '#C73918',
+             '#1E7F84',
+             '#CDA1C9')
+ 
+
 pal_dce <- c("1" = '#000080',
              "2" = '#6A5ACD',
              "3" = '#008B8B',
              "4" = '#32CD32',
              "NK" = '#FFD700')
+
 
 pal_dce_diff <- c("NHS Grampian" = '#000080',  "NHS Greater Glasgow & Clyde" = '#000080',
                   "NHS Highland" = '#6A5ACD', "NHS Dumfries & Galloway" = '#6A5ACD',

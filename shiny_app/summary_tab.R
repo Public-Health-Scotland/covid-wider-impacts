@@ -62,9 +62,12 @@ spec_modal_op <- modalDialog(
   size = "l", align= "center",
   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
 )
+
 # Link action button click to modal launch
 observeEvent(input$btn_spec_groups_rapid, { showModal(spec_modal_rapid) })
 observeEvent(input$btn_spec_groups_op, { showModal(spec_modal_op) })
+
+
 
 ###############################################.
 #modal to describe dataset
@@ -354,6 +357,36 @@ observeEvent(input$btn_modal_moc, { showModal(moc_modal) })
 
 
 ###############################################.
+# Modal to explain ethnicity graphs
+eth_modal <- modalDialog(
+  h5(tags$b("Interpretation of this chart")),
+  p("The ethnic group field in the Scottish Morbidity Record (SMR) 
+  classifies the person according to their own perceived ethnic group and cultural 
+  background. More information can be found ", tags$a(href="https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group", "here.",
+         target="_blank")),
+  p("It became mandatory for NHS Scotland organisations to record ethnic group 
+    on SMR outpatient (SMR00) returns from 1 February 2021. There is currently
+  significant variation in the completeness of ethnic group recording in new 
+  outpatient appointment records between NHS Boards. More information can be found 
+    ", tags$a(href="https://www.isdscotland.org/products-and-Services/Data-Support-and-Monitoring/SMR-Ethnic-Group-Recording/",
+              "here.", target="_blank")),
+  p("The following list is the current ethnicity classification (2011 Census categories) 
+  used by NHS Scotland organisations for SMR return purposes, and the ethnic groups 
+  that we have used in this dashboard."),
+  renderTable(eth_lookup), 
+  p("The ‘Missing’ ethnic group category includes those where ethnic group was 
+    recorded as 'Not Known', 'Refused/Not Provided by the Patient' or was not recorded at all."),
+  p("It is important to note that the trends for ethnic groups with small populations should be 
+  interpreted with caution as they will be subject to greater variability due to small numbers."),
+  size = "l",
+  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+)
+# Link action button click to modal launch 
+observeEvent(input$btn_modal_eth, { showModal(eth_modal) }) 
+
+
+
+###############################################.
 ## Reactive datasets ----
 ###############################################.
 # Rapid dataset filtered for admission_type, then used to create the admissions charts
@@ -392,6 +425,15 @@ op_spec <- reactive({
              area_type == input$geotype_op &
              time_split == input$time_type)   
 
+})
+
+# # Outpatients dataset used for ethnicity charts
+op_eth <- reactive({
+  outpats_ethnicity %>%
+    filter(type == "eth" & 
+             area_type == "Scotland" &
+             admission_type == input$appt_type &
+             category %in% input$op_ethnicity)   
 })
 
 ###############################################.
@@ -545,6 +587,31 @@ output$data_explorer <- renderUI({
                source = "NRS Death Registrations", data_name ="deaths")
 
   } else if (input$measure_select == "outpats") { # Outpatients data
+      eth_op_ui <- tagList(#Add ethnicity charts
+        fluidRow(column(6,
+                        h4(paste0(variation_title, "ethnic group")),
+                        tags$em("Please note that this data is only available by month.")),
+                 column(6,
+                        h4(paste0("Monthly number of ", dataset, " by ethnic group")),
+                        tags$em("Please note that this data is only available by month."))),
+        
+        ###Adding adm_type here to make clear what is selected
+        fluidRow(column(6,
+                        pickerInput("op_ethnicity", "Select one or more ethnic groups",
+                                    choices = eth_list_op, 
+                                    multiple = TRUE,
+                                    selected = eth_list_op,
+                                    options = list(
+                                      `actions-box` = TRUE))),
+                 column(6,
+                        actionButton("btn_modal_eth", "Interpretation of this chart", 
+                                     icon = icon('fas fa-exclamation-circle')))),
+        fluidRow(column(6,
+                        withSpinner(plotlyOutput("op_eth_var"))),
+                 column(6,
+                        withSpinner(plotlyOutput("op_eth_tot"))))
+      )
+      
     if(input$time_type == "Weekly"){
       tagList(tags$b(span("Please note that these data are for management information only, and care should",
                           "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
@@ -583,7 +650,9 @@ output$data_explorer <- renderUI({
               fluidRow(column(6,
                               withSpinner(plotlyOutput("op_moc_var"))),
                        column(6,
-                              withSpinner(plotlyOutput("op_moc_tot"))))
+                              withSpinner(plotlyOutput("op_moc_tot")))),
+              eth_op_ui
+                                          
       )
     } else if(input$time_type == "Monthly"){
       
@@ -624,7 +693,8 @@ output$data_explorer <- renderUI({
               fluidRow(column(6,
                               withSpinner(plotlyOutput("monthly_op_moc_var"))),
                        column(6,
-                              withSpinner(plotlyOutput("monthly_op_moc_tot"))))
+                              withSpinner(plotlyOutput("monthly_op_moc_tot")))),
+              eth_op_ui
       )
 
     } 
@@ -720,6 +790,22 @@ output$monthly_op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, 
 output$monthly_op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80, op = T, period = "monthly")})
 output$monthly_op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80, op = T, period = "monthly")})
 
+
+output$op_eth_tot <- renderPlotly({
+  
+  plot_nodata(text_nodata = "Data is only available for Scotland")
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", type = "total", 
+                   data_name = "op", period = "monthly")})
+
+
+# plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due to small numbers") {
+#   text_na <- list(x = 5, y = 5, text = text_nodata , size = 20,
+#                   xref = "x", yref = "y",  showarrow = FALSE)
+
+ 
+output$op_eth_var <- renderPlotly({
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", 
+                   data_name = "op", period = "monthly")})
 
 
 # Palette for specialty
@@ -829,6 +915,24 @@ output$download_chart_data <- downloadHandler(
 output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
+    h2("Outpatient appointments by ethnic group - 16th February 2022"),
+    p("New analyses by ethnic group have now been added. The COVID-19 pandemic has 
+      highlighted the need for ongoing monitoring of health data by ethnicity. Reporting 
+      analyses by ethnic group supports efforts to achieve equity in health care provision.
+      Please note that the rest of the outpatients data remains unchanged from the last update
+      on 15th December 2021."),
+    tags$ul(
+      tags$li("The impact of the pandemic on outpatient appointments was similar across ethnic 
+              groups; however, interpretation by ethnic group is complicated by the mandating of 
+              recording of ethnic group on SMR outpatient (SMR00) returns from 1 February 2021. 
+              This is reflected in the fall in the number of appointments with missing ethnic 
+              group which by June 2021 were 20% lower than the corresponding time in 2018-19."),
+      tags$li("In June 2021, appointments for patients with White Scottish ethnic group recorded 
+              were around 5% lower than the corresponding time in 2018-19; the number of 
+              appointments in other ethic groups vary between 18% higher (African), and 
+              14% lower (Chinese). It is important to note that the trends for ethnic 
+              groups with small populations should be interpreted with caution as they 
+              will be subject to greater variability due to small numbers.")),
     h2("Summary - Outpatient appointments - 15th December 2021"),
     p("Data are taken from Scottish Morbidity Record (SMR00), and show outpatient appointments
       to week ending 27th June 2021. Outpatient information contained within this dashboard has been 

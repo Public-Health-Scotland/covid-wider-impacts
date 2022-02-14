@@ -101,7 +101,8 @@ data_table <- reactive({
                                       "65 and over" = "Aged 65 and over"),
              type = recode_factor(type, "sex" = "Sex", "age" = "Age Group", 
                                   "dep" = "Deprivation",
-                                  "moc" = "Mode of Clinical Interaction"),
+                                  "moc" = "Mode of Clinical Interaction",
+                                  "eth" = "Ethnic Group"),
              time_ending = ifelse(time_split == "Monthly", format(time_ending, "%b %y"), format(time_ending, "%d %b %y")))
   } else if (input$data_select %in% "first_visit") { 
     table_data %<>%

@@ -34,7 +34,10 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   }
 
   #If no data available for that period then plot message saying data is missing
-  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  if (split == "eth" & is.data.frame(trend_data) && nrow(trend_data) == 0) 
+  {plot_nodata(text_nodata = "Data is only available at Scotland level") }
+  
+  else if (split != "eth" & is.data.frame(trend_data) && nrow(trend_data) == 0)
   {
     plot_nodata(height = 50)
   } else {
@@ -182,6 +185,12 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                   "<br>", measure_name, trend_data$count,
                                   "<br>", "Historic average: ",
                                   trend_data$count_average))
+
+        
+      } else if (split == "eth"){
+        tooltip_trend <- c(paste0(trend_data$category, "<br>",
+                                  period_data, 
+                                  "<br>", measure_name, trend_data$count))
 
       } else {
         tooltip_trend <- c(paste0(trend_data$category, "<br>",

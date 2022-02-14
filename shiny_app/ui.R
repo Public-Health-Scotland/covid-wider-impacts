@@ -143,7 +143,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 # Summary trends ----
 ##############################################.
 tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
-  wellPanel(
+  wellPanel(#actionButton("browser", "browser"),
     column(4,
            conditionalPanel(condition = "input.measure_select != 'outpats' ",
            div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -187,6 +187,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   mainPanel(width = 12,
             uiOutput("data_explorer")
   )# mainPanel bracket
+
 ), # tabpanel bracket
 #############################################.
 # Cardiovascular ----
