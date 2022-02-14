@@ -10,7 +10,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all immunisation data files prepared
-imms_date <- "20211122"
+imms_date <- "20220124"
 
 six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/", imms_date, "/six_in_one_dashboard_",imms_date,".csv"), 
                         col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
@@ -89,7 +89,7 @@ age_defs_imm_mmr <- age_defs_imm_mmr %>% flextable() %>%
 
 age_defs_imm_mmr # checking
 
-saveRDS(age_defs_imm_mmr, "shiny_app/data/age_elig_mmr.rds")
+saveRDS(age_defs_imm_mmr, "shiny_app/data/age_defs_imm_mmr.rds")
 saveRDS(age_defs_imm_mmr, paste0(data_folder,"final_app_files/age_defs_imm_mmr_", 
                                  format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
@@ -106,7 +106,7 @@ age_defs_imm_6inone <- age_defs_imm_6inone %>% flextable() %>%
   bold(i =1) %>% bold(i =6) %>% bold(i = 11) 
 age_defs_imm_6inone #checking
 
-saveRDS(age_defs_imm_6inone, "shiny_app/data/age_elig_6inone.rds")
+saveRDS(age_defs_imm_6inone, "shiny_app/data/age_defs_imm_6inone.rds")
 saveRDS(age_defs_imm_6inone, paste0(data_folder,"final_app_files/age_defs_imm_6inone_", 
                                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 

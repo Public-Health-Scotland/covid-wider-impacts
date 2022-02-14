@@ -78,11 +78,11 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
 
   # Text to be updated every month with updated dates
-  last_month_peri <- "October 2021"
-  cutdate_peri <- "14 November 2021"
-  extractdate_peri <- "17 November 2021"
-  nextup_peri <- "January 2022"
-  nextdata_peri <- "November 2021"
+  last_month_peri <- "December 2021"
+  cutdate_peri <- "16 January 2022"
+  extractdate_peri <- "19 January 2022"
+  nextup_peri <- "March 2022"
+  nextdata_peri <- "January 2022"
 
   # Number of deaths and of births used in the text
   no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
@@ -276,6 +276,26 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
+    
+    h2("Stillbirths and infant deaths - 2nd February 2022"),
+    p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in ",
+      "November and December 2021. In these months all reported measures of perinatal and infant mortality were within expected limits."),
+    p("In addition, in this dashboard release information on gestation at delivery has been updated under the ‘Births and babies’ tab, ",
+      "to include births in September and October 2021, which is of interest in follow up to the commentary below on neonatal mortality ",
+      "in September 2021. These data show that in September 2021, 0.8% of singleton live births occurred at under 32 weeks gestation, and ",
+      "5.5% at 32-36 weeks gestation. Both of these figures are close to the expected level based on the average over the period January ",
+      "2018 to February 2020. As these data are based on singleton births only, data were also reviewed separately to assess the total number ",
+      "and percentage of premature babies, including those from multiple births. This showed that the total number of babies born at under 32 ",
+      "weeks gestation in September 2021 was relatively high, and in the upper quartile for monthly values in January to October 2021, however ",
+      "it was not exceptional in comparison to the observed values in this period."),
+    p("Further information on COVID-19 infection and vaccination in pregnancy in Scotland, including data on neonatal infections and extended ",
+      "perinatal mortality rate have also been published recently (see ", tags$a(href="https://www.nature.com/articles/s41591-021-01666-2", 
+      "SARS-CoV-2 infection and COVID-19 vaccination rates in pregnant women in Scotland", target="_blank"), " and ", 
+      tags$a(href="https://www.publichealthscotland.scot/publications/show-all-releases?id=20580", "Public Health Scotland publications", 
+      target="_blank"), "). The information in these publications provides further reassurance regarding the safety of vaccination in pregnancy, ",
+      "and highlights the effective protection it provides for pregnant women and their babies."),
+    
+    
     h2("Stillbirths and infant deaths - 1st December 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in October 2021."),
     p("In October 2021 all reported measures of perinatal and infant mortality were within expected limits. ",

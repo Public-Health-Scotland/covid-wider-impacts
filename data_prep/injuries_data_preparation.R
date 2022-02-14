@@ -22,12 +22,12 @@ smra_connect <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
 # SIMD quintile to datazone lookup
 cl_out <- "/conf/linkage/output/lookups/Unicode/"
 # import deprivation lookup
-SIMD_lookup <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_1_simd2020v2.rds")) %>% 
+SIMD_lookup <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_2_simd2020v2.rds")) %>% 
   clean_names() %>% 
   select(pc7, hb2019name, simd2020v2_sc_quintile) %>% 
   rename(dep = simd2020v2_sc_quintile)
 # hscp lookup with datazone2011
-hscp <- readRDS(paste0(cl_out, "Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2021_1.rds")) %>%
+hscp <- readRDS(paste0(cl_out, "Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2021_2.rds")) %>%
   clean_names() %>%
   select(pc7, hscp2019name) %>%
   rename(hscp = hscp2019name)
@@ -67,7 +67,7 @@ Query_SMR01 <- paste("SELECT LINK_NO, DR_POSTCODE, SEX, ADMISSION_DATE, ADMISSIO
 
 data_UI_SMR01 <- as_tibble(dbGetQuery(smra_connect, Query_SMR01)) %>%
   setNames(tolower(names(.))) %>% 
-  filter(discharge_date >= lubridate::dmy(01012018) & discharge_date < lubridate::dmy(01042021),
+  filter(discharge_date >= lubridate::dmy(01012018) & discharge_date < lubridate::dmy(01072021),
          hbres_currentdate != "S27000001", hbres_currentdate != "S08100001", hbres_currentdate != "S08200001",
          hbres_currentdate != "S08200002", hbres_currentdate != "S08200003", hbres_currentdate != "S08200004") %>%
   rename(pc7=dr_postcode)  %>%
@@ -265,7 +265,7 @@ ui_other <- Tab4 %>%
 
 # Running final functions
 prepare_final_data_m(dataset = ui_all, filename = "ui_smr01_all", 
-                   last_month = "2021-05-01", aver = 3)
+                   last_month = "2021-07-01", aver = 3)
 
 # Dealing with variation to replicate previous output. 
 # This might not be needed in future if we set a standard way of dealing with this.
@@ -285,7 +285,7 @@ saveRDS(final_UI_SMR01, paste0(open_data, "ui_smr01_data.rds"))
 #filter only on rta
 # Running final functions
 prepare_final_data_m(dataset = ui_rta, filename = "ui_smr01_rta", 
-                   last_month = "2021-05-01", aver = 3)
+                   last_month = "2021-07-01", aver = 3)
 
 final_rta_SMR01 <- final_data %>% 
   rename (week_ending=month_ending) %>%
@@ -303,7 +303,7 @@ saveRDS(final_rta_SMR01, paste0(open_data, "ui_smr01_rta.rds"))
 #filter only on poison
 # Running final functions
 prepare_final_data_m(dataset = ui_poison, filename = "ui_smr01_poison", 
-                   last_month = "2021-05-01", aver = 3)
+                   last_month = "2021-07-01", aver = 3)
 
 final_poison_SMR01 <- final_data %>% 
   rename (week_ending=month_ending) %>%
@@ -321,7 +321,7 @@ saveRDS(final_poison_SMR01, paste0(open_data, "ui_smr01_poison.rds"))
 #filter only on falls
 # Running final functions
 prepare_final_data_m(dataset = ui_falls, filename = "ui_smr01_falls", 
-                   last_month = "2021-05-01", aver = 3)
+                   last_month = "2021-07-01", aver = 3)
 
 final_falls_SMR01 <- final_data %>% 
   rename (week_ending=month_ending) %>%
@@ -339,7 +339,7 @@ saveRDS(final_falls_SMR01, paste0(open_data, "ui_smr01_falls.rds"))
 #filter only on other
 # Running final functions
 prepare_final_data_m(dataset = ui_other, filename = "ui_smr01_other", 
-                   last_month = "2021-05-01", aver = 3)
+                   last_month = "2021-07-01", aver = 3)
 
 final_other_SMR01 <- final_data %>% 
   rename (week_ending=month_ending) %>%
@@ -379,7 +379,7 @@ saveRDS(final_other_SMR01, paste0(open_data, "ui_smr01_other.rds"))
 #filter only on assault
 # Running final functions
 prepare_final_data_m(dataset = ui_assault, filename = "ui_smr01_assaults", 
-                   last_month = "2021-05-01", aver = 3)
+                   last_month = "2021-07-01", aver = 3)
 
 final_assault_SMR01 <- final_data %>% 
   rename (week_ending=month_ending) %>%

@@ -141,7 +141,7 @@ ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
 ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
 ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
 ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
-injuries_extract_date <- "13 September 2021"
+injuries_extract_date <- "01 February 2022"
 
 
 # mental health data
@@ -168,7 +168,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "22 November 2021"
+immunisation_extract_date <- "24 January 2022"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -202,7 +202,7 @@ booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "15 November 2021"
+top_extract_date <- "18 January 2022"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 

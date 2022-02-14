@@ -201,6 +201,14 @@ observeEvent(input$btn_dataset_modal,
                    relate to incidents concerning both COVID-19 and non-COVID issues. Please note that the source of this data is the Unscheduled Care
                    Datamart and represents a sub-set of the total Scottish Ambulance service activity. Figures include emergencies, where a vehicle arrived
                    at the scene of the incident, and excludes both data from resources which were cleared as ‘dealt with by another vehicle’ and air ambulance data."),
+                 p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
+                   tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
+                          "Unscheduled Care Operational Statistics", target="_blank"), ". This details unscheduled care demand, 
+                   response times and turnaround times. Please note that the data published by SAS is sourced from a 
+                   different operational system than that used for the PHS reporting. This means that the data published 
+                   by SAS will at times be slightly different to that reported by PHS source. The data published by PHS 
+                   is less timely than the data used for the SAS publication, however allows for data to be linked in order 
+                   to gain further insight into patient flow through unscheduled care."),
                  p("Calls are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of SAS activity may be available on request to ",
                    tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
@@ -471,7 +479,7 @@ output$data_explorer <- renderUI({
 
   #update date for outpatients and the rest is different
   upd_date_summ <- case_when(input$measure_select == "outpats" ~ "15 December 2021",
-                             TRUE ~ "12 January 2022")
+                             TRUE ~ "2 February 2022")
   
 
   # Function to create the standard layout for all the different charts/sections
@@ -563,6 +571,14 @@ output$data_explorer <- renderUI({
 
   } else if (input$measure_select == "sas") {
     tagList(# SAS data
+      tags$em(p("Please note that there is currently an issue with duplicates in the SAS dataset and
+              therefore the data was not updated in February 2022. This is currently being 
+              investigated by PHS and the data will be updated as soon as possible."),
+              p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
+        tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
+               "Unscheduled Care Operational Statistics", target="_blank"), ". The data published by SAS is sourced from a 
+        different operational system than that used for the PHS reporting. This means that the data published 
+        by SAS will at times be slightly different to that reported by PHS source.")),
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service",
                source = "PHS Unscheduled Care Datamart", data_name ="sas"))
 
