@@ -1,0 +1,133 @@
+---
+title: "Covid wider impacts dashboard - Google analytics report"
+author: "PHS"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r TODO}
+#add annotation to mark where monthly updates start in main chart
+# add sliders - see run charts
+#add palettes
+# WHat do we want in the report
+# Weekly or monthly number of visits to the dashboard
+# Weekly or monthly number of visits to each tab - chart + table?
+# Schedule it to run every month
+
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F) # prevents code to be shown in report
+
+#Packages
+library(dplyr)
+library(plotly)
+
+```
+
+```{r env}
+data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/google_analytics/"
+
+sessions <- readRDS(paste0(data_folder, "sessions.rds"))
+tabvisits <- readRDS(paste0(data_folder, "tabvisits.rds"))
+
+```
+
+```{r plot_parameter}
+
+# Style of x and y axis
+xaxis_plots <- list(title = FALSE, tickfont = list(size=14), 
+                    titlefont = list(size=14),
+                    showline = TRUE, fixedrange=TRUE,
+                    rangeslider = list(type = "date", thickness = 0.075
+         # Without this, range will change when adding/removing markers
+                                       ))
+
+yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
+                    tickfont = list(size=14), titlefont = list(size=14))
+
+# Buttons to remove
+bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
+                     'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
+                     'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d') 
+
+  # For annotation
+  zoom_hover_text =
+    "Drag the markers at either end of<br>the bar to view specific time periods"
+
+  # We need an annotation to show user how to use the rangeslider
+  zoom_annotation =
+    list(text = "Drag to zoom", borderpad = 2,
+         hovertext = zoom_hover_text,
+         showarrow = TRUE, ax = 0, ay = 18,
+         x = 0, xref = "paper", xanchor = "left",
+         y = -0.35, yref = "paper", yanchor = "middle")
+```
+
+```{r plot_function}
+plot_tab <- function(x) {
+  plot_ly(x, x = ~week_ending) %>% 
+    add_lines(y = ~count, color = ~tabname) %>% 
+      #Layout
+      layout(yaxis = yaxis_plots, xaxis = xaxis_plots,
+             margin = list(b = 80, t = 5, r = 25), # to avoid labels getting cut off
+             annotations = zoom_annotation) %>% 
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, 
+             modeBarButtonsToRemove = bttn_remove )
+#legend = list(x = 100, y = 0.5)
+}
+
+
+```
+
+This reports shows the visits to the Covid wider impacts dashboard and each one
+of their tabs.
+
+## Overall visits to the dashboard
+
+```{r sessions}
+plot_ly(sessions) %>% 
+  add_lines(x = ~week_ending, y = ~count) %>% 
+  layout(yaxis = yaxis_plots, xaxis = xaxis_plots,
+         margin = list(b = 80, t = 5, r = 25), # to avoid labels getting cut off
+         annotations = zoom_annotation) %>% 
+  # leaving only save plot button
+  config(displaylogo = F, displayModeBar = TRUE, 
+             modeBarButtonsToRemove = bttn_remove )
+```
+
+## Visits to pregnancy, births and babies tabs
+
+```{r pregbirthbaby}
+plot_tab(tabvisits[["Pregnancy/births/babies"]])
+```
+
+## Visits to child health tabs
+
+```{r childhealth}
+plot_tab(tabvisits[["Child health"]])
+```
+
+## Visits to cancer tabs
+
+```{r cancer}
+plot_tab(tabvisits[["Cancer"]])
+```
+
+## Visits to substance use tab
+
+```{r subst}
+plot_tab(tabvisits[["Substance use"]])
+```
+
+## Visits to other tabs
+
+```{r others}
+plot_tab(tabvisits[["Others"]])
+```
+
