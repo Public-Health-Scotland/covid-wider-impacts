@@ -91,7 +91,7 @@ events <- left_join(events_ga, list_events)
 # Filtering out tab menus and not sets (these are internal links with no value)
 events %<>% 
   filter(!eventlabel %in% c("(not set)", "Births and babies", "Cancer",
-                            "Child health", "Pregnancy"))
+                            "Child health", "Pregnancy", "intro"))
 
 # Calculating week ending and aggregating to obtain totals
 events %<>% 
@@ -104,27 +104,4 @@ events <- split.data.frame(events, events$tabarea)
 
 saveRDS(events, paste0(data_folder, "tabvisits.rds"))
 
-###############################################.
-## Plotting data ----
-###############################################.
-plot_ly(sessions) %>% 
-  add_lines(x = ~week_ending, y = ~count)
-
-plot_ly(events, x = ~week_ending) %>% 
-  add_lines(y = ~count, color = ~tabname)
-
-plot_ev <- function(x) {
-  plot_ly(x, x = ~week_ending) %>% 
-    add_lines(y = ~count, color = ~tabname)
-}
-
-plot_ev(test[[1]])
-
-lapply(test, plot_ev)
-
-
-# WHat do we want in the report
-# Weekly or monthly number of visits to the dashboard
-# Weekly or monthly number of visits to each tab - chart + table?
-# Schedule it to run every month
-
+## END
