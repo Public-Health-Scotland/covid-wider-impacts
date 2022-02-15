@@ -10,6 +10,7 @@ library(plotly) # for charts
 library(dplyr) #for data manipulation
 library(magrittr) # for pipe operators
 library(lubridate) #for date operations
+library(rmarkdown) # for running report
 
 ###############################################.
 ## Lookups/filepaths ----
@@ -103,5 +104,10 @@ events %<>%
 events <- split.data.frame(events, events$tabarea)
 
 saveRDS(events, paste0(data_folder, "tabvisits.rds"))
+
+###############################################.
+## Creating report ----
+###############################################.
+rmarkdown::run("google_analytics/ga_report.Rmd")
 
 ## END

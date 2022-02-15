@@ -8,8 +8,7 @@ output:
     toc_float: true
 ---
 
-```{r TODO}
-#add annotation to mark where monthly updates start in main chart
+```{r TODO, include = FALSE}
 # Add tables/downloadable data?
 # Anything else to add to report
 # Schedule it to run every month
