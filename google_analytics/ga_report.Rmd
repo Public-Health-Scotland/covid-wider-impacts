@@ -10,11 +10,8 @@ output:
 
 ```{r TODO}
 #add annotation to mark where monthly updates start in main chart
-# add sliders - see run charts
-#add palettes
-# WHat do we want in the report
-# Weekly or monthly number of visits to the dashboard
-# Weekly or monthly number of visits to each tab - chart + table?
+# Add tables/downloadable data?
+# Anything else to add to report
 # Schedule it to run every month
 
 ```
@@ -47,7 +44,8 @@ xaxis_plots <- list(title = FALSE, tickfont = list(size=14),
          # Without this, range will change when adding/removing markers
                                        ))
 
-yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
+yaxis_plots <- list(title = "Number of visits", rangemode="tozero", 
+                    fixedrange=TRUE, size = 4,
                     tickfont = list(size=14), titlefont = list(size=14))
 
 # Buttons to remove
@@ -66,12 +64,57 @@ bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
          showarrow = TRUE, ax = 0, ay = 18,
          x = 0, xref = "paper", xanchor = "left",
          y = -0.35, yref = "paper", yanchor = "middle")
+  
+    # Annotation to mark when 
+  monthly_annotation =
+    list(text = "Drag to zoom", borderpad = 2,
+         hovertext = zoom_hover_text,
+         showarrow = TRUE, ax = 0, ay = 18,
+         x = 0, xref = "paper", xanchor = "left",
+         y = -0.35, yref = "paper", yanchor = "middle")
+  
+      # Function for verical line at start of lockdown
+    vline <- function(x = 0, color = "lightgrey") {
+      list(
+        type = "line",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        x0 = x,
+        x1 = x,
+        line = list(color = color, dash = 'dash')
+      )
+    }
+  
+###############################################.
+# Palettes 
+  
+pal_pregbab <- c('#E39C8C', '#d4d3d5', '#83BB26', '#80BCEA', '#3F3685', '#8FBFC2',
+             '#6B5C85', '#0078D4', '#C1DD93')  
+# , '#9B4393', '#948DA3',
+#              '#C73918','#1E7F84', '#CDA1C9'
+pal_cancer <- c('#4da6ff','#ffa64d') 
+pal_ch <- c('#000000', '#4da6ff','#ffa64d')
+pal_other <- c('#4da6ff','#ffa64d', '#2c7fb8', '#7fcdbb', '#a3a3c2', '#FF0000')
+
+
+
+
 ```
 
 ```{r plot_function}
-plot_tab <- function(x) {
+#Plot function for tabs data
+plot_tab <- function(x, pal_chose) {
+  
+  tooltip_plot <- c(paste0(x$tabname, "<br>",
+                            x$week_ending, "<br>",
+                            "Visits: ", x$count))
+  
   plot_ly(x, x = ~week_ending) %>% 
-    add_lines(y = ~count, color = ~tabname) %>% 
+    add_trace(y = ~count, color = ~tabname,
+              colors = pal_chose,
+              type = "scatter", mode = "lines+markers",
+              text=tooltip_plot, hoverinfo="text") %>% 
       #Layout
       layout(yaxis = yaxis_plots, xaxis = xaxis_plots,
              margin = list(b = 80, t = 5, r = 25), # to avoid labels getting cut off
@@ -79,55 +122,66 @@ plot_tab <- function(x) {
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, 
              modeBarButtonsToRemove = bttn_remove )
-#legend = list(x = 100, y = 0.5)
 }
-
 
 ```
 
 This reports shows the visits to the Covid wider impacts dashboard and each one
-of their tabs.
+of their tabs. Tab visits data is only available from 4 February 2022 onwards. Overall visits data is available from 26 June 2020.
 
 ## Overall visits to the dashboard
 
 ```{r sessions}
+#Tooltip for the sessions chart
+tooltip_sess <- c(paste0(sessions$week_ending, "<br>",
+                         "Visits: ", sessions$count))
+
+# Plot for the overall visits
 plot_ly(sessions) %>% 
-  add_lines(x = ~week_ending, y = ~count) %>% 
+  add_lines(x = ~week_ending, y = ~count,
+            text=tooltip_sess, hoverinfo="text") %>% 
+  # Annotation to mark
+      add_annotations(x = "2020-11-01",
+                      y = ~max(count),
+                      text = "Move from weekly to monthly updates",
+                      xref = "1", yref = "1", showarrow = F) %>% 
   layout(yaxis = yaxis_plots, xaxis = xaxis_plots,
+          shapes = list(vline("2020-11-01")), #for annotation
          margin = list(b = 80, t = 5, r = 25), # to avoid labels getting cut off
          annotations = zoom_annotation) %>% 
   # leaving only save plot button
   config(displaylogo = F, displayModeBar = TRUE, 
              modeBarButtonsToRemove = bttn_remove )
+
 ```
 
-## Visits to pregnancy, births and babies tabs
+## Pregnancy, births and babies tabs
 
 ```{r pregbirthbaby}
-plot_tab(tabvisits[["Pregnancy/births/babies"]])
+plot_tab(tabvisits[["Pregnancy/births/babies"]], pal_chose = pal_pregbab)
 ```
 
-## Visits to child health tabs
+## Child health tabs
 
 ```{r childhealth}
-plot_tab(tabvisits[["Child health"]])
+plot_tab(tabvisits[["Child health"]], pal_chose = pal_ch)
 ```
 
-## Visits to cancer tabs
+## Cancer tabs
 
 ```{r cancer}
-plot_tab(tabvisits[["Cancer"]])
+plot_tab(tabvisits[["Cancer"]], pal_chose = pal_cancer)
 ```
 
-## Visits to substance use tab
+## Substance use tab
 
 ```{r subst}
-plot_tab(tabvisits[["Substance use"]])
+plot_tab(tabvisits[["Substance use"]], pal_chose = c("blue"))
 ```
 
-## Visits to other tabs
+## Other tabs
 
 ```{r others}
-plot_tab(tabvisits[["Others"]])
+plot_tab(tabvisits[["Others"]], pal_chose = pal_other)
 ```
 
