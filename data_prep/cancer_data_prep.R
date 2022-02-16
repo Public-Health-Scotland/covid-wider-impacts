@@ -1089,7 +1089,7 @@ base_cancer_slim_cont <- base_cancer_slim %>%
   select(-c(quarter2, year2))
 ##################################
 
-
+#######################################################################################
 # counts broken down quarter, area, sex and cancer type - no deprivation or age groups
 # 2019/20
 base_cancer_slim_cont_1920 <- base_cancer_slim_cont %>% 
@@ -1138,3 +1138,130 @@ base_cancer_slim_2021 <- base_cancer_slim_cont_2021 %>%
   group_by(region, hbres, site, sex) %>% 
   mutate(cum_count2021 = cumsum(count2021)) %>% 
   ungroup()
+
+base_cancer_diff <- left_join(base_cancer_slim_2021, base_cancer_slim_1920) %>% 
+  mutate(dif = 100*(count2021-count1920)/count1920,
+         cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
+         age_group = "All", dep = "All", breakdown = "None") %>% 
+  select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
+######################################################################################
+
+#######################################################################################
+# counts broken down quarter, area, sex, cancer type and deprivation - no age groups
+# 2019/20
+base_cancer_slim_cont_1920_dep <- base_cancer_slim_cont %>% 
+  filter(incidence_date <= "2020-06-30") %>% 
+  group_by(quarter, region, hbres, site, sex, dep) %>% 
+  summarise(count1920 = n()) %>% 
+  ungroup() %>% 
+  complete(quarter, nesting(region, hbres, site, sex, dep), fill = list(count1920 = 0))
+
+base_cancer_slim_1920_dep <- base_cancer_slim_cont_1920_dep %>%
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 18", "Jan-Mar 19",
+                                              "Apr-Jun 19", "Jul-Sep 19",
+                                              "Oct-Dec 19", "Jan-Mar 20",
+                                              "Apr-Jun 20"), ordered = TRUE)) %>%
+  arrange(quarter) %>% 
+  group_by(region, hbres, site, sex, dep) %>% 
+  mutate(cum_count1920 = cumsum(count1920)) %>%
+  ungroup() %>% 
+  mutate(quarter = case_when(quarter == "Oct-Dec 18" ~ "Oct-Dec 19",
+                             quarter == "Jan-Mar 19" ~ "Jan-Mar 20",
+                             quarter == "Apr-Jun 19" ~ "Apr-Jun 20",
+                             quarter == "Jul-Sep 19" ~ "Jul-Sep 20",
+                             quarter == "Oct-Dec 19" ~ "Oct-Dec 20",
+                             quarter == "Jan-Mar 20" ~ "Jan-Mar 21",
+                             quarter == "Apr-Jun 20" ~ "Apr-Jun 21")) %>% 
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20",
+                                              "Apr-Jun 20", "Jul-Sep 20",
+                                              "Oct-Dec 20", "Jan-Mar 21",
+                                              "Apr-Jun 21"), ordered = TRUE))
+
+# counts broken down quarter, area, sex, cancer type and deprivation - no age groups
+# 2020/21
+base_cancer_slim_cont_2021_dep <- base_cancer_slim_cont %>% 
+  filter((incidence_date >= "2019-10-01") & (incidence_date <= "2021-06-30")) %>% 
+  group_by(quarter, region, hbres, site, sex, dep) %>% 
+  summarise(count2021 = n()) %>% 
+  ungroup() %>% 
+  complete(quarter, nesting(region, hbres, site, sex, dep), fill = list(count2021 = 0))
+
+base_cancer_slim_2021_dep <- base_cancer_slim_cont_2021_dep %>%
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20",
+                                              "Apr-Jun 20", "Jul-Sep 20",
+                                              "Oct-Dec 20", "Jan-Mar 21",
+                                              "Apr-Jun 21"), ordered = TRUE)) %>%
+  arrange(quarter) %>% 
+  group_by(region, hbres, site, sex, dep) %>% 
+  mutate(cum_count2021 = cumsum(count2021)) %>% 
+  ungroup()
+
+base_cancer_diff_dep <- left_join(base_cancer_slim_2021_dep, base_cancer_slim_1920_dep) %>% 
+  mutate(dif = 100*(count2021-count1920)/count1920,
+         cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
+         age_group = "All", breakdown = "Deprivation") %>% 
+  select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
+#######################################################################################
+
+
+#######################################################################################
+# counts broken down quarter, area, sex, cancer type and age groups - no deprivation
+# 2019/20
+base_cancer_slim_cont_1920_age <- base_cancer_slim_cont %>% 
+  filter(incidence_date <= "2020-06-30") %>% 
+  group_by(quarter, region, hbres, site, sex, age_group) %>% 
+  summarise(count1920 = n()) %>% 
+  ungroup() %>% 
+  complete(quarter, nesting(region, hbres, site, sex, age_group), fill = list(count1920 = 0))
+
+base_cancer_slim_1920_age <- base_cancer_slim_cont_1920_age %>%
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 18", "Jan-Mar 19",
+                                              "Apr-Jun 19", "Jul-Sep 19",
+                                              "Oct-Dec 19", "Jan-Mar 20",
+                                              "Apr-Jun 20"), ordered = TRUE)) %>%
+  arrange(quarter) %>% 
+  group_by(region, hbres, site, sex, age_group) %>% 
+  mutate(cum_count1920 = cumsum(count1920)) %>%
+  ungroup() %>% 
+  mutate(quarter = case_when(quarter == "Oct-Dec 18" ~ "Oct-Dec 19",
+                             quarter == "Jan-Mar 19" ~ "Jan-Mar 20",
+                             quarter == "Apr-Jun 19" ~ "Apr-Jun 20",
+                             quarter == "Jul-Sep 19" ~ "Jul-Sep 20",
+                             quarter == "Oct-Dec 19" ~ "Oct-Dec 20",
+                             quarter == "Jan-Mar 20" ~ "Jan-Mar 21",
+                             quarter == "Apr-Jun 20" ~ "Apr-Jun 21")) %>% 
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20",
+                                              "Apr-Jun 20", "Jul-Sep 20",
+                                              "Oct-Dec 20", "Jan-Mar 21",
+                                              "Apr-Jun 21"), ordered = TRUE))
+
+# counts broken down quarter, area, sex, cancer type and age groups - no deprivation
+# 2020/21
+base_cancer_slim_cont_2021_age <- base_cancer_slim_cont %>% 
+  filter((incidence_date >= "2019-10-01") & (incidence_date <= "2021-06-30")) %>% 
+  group_by(quarter, region, hbres, site, sex, age_group) %>% 
+  summarise(count2021 = n()) %>% 
+  ungroup() %>% 
+  complete(quarter, nesting(region, hbres, site, sex, age_group), fill = list(count2021 = 0))
+
+base_cancer_slim_2021_age <- base_cancer_slim_cont_2021_age %>%
+  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20",
+                                              "Apr-Jun 20", "Jul-Sep 20",
+                                              "Oct-Dec 20", "Jan-Mar 21",
+                                              "Apr-Jun 21"), ordered = TRUE)) %>%
+  arrange(quarter) %>% 
+  group_by(region, hbres, site, sex, age_group) %>% 
+  mutate(cum_count2021 = cumsum(count2021)) %>% 
+  ungroup()
+
+base_cancer_diff_age <- left_join(base_cancer_slim_2021_age, base_cancer_slim_1920_age) %>% 
+  mutate(dif = 100*(count2021-count1920)/count1920,
+         cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
+         dep = "All", breakdown = "Age") %>% 
+  select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
+#######################################################################################
+
+# final dataset for use in dashboard??
+cancer_diff_cumulative <- bind_rows(base_cancer_diff,base_cancer_diff_age,base_cancer_diff_dep)
+                                    
+                                    
