@@ -32,3 +32,4 @@ ad_hoc_requests.R
 colin
 outpatient_functions.R
 deploy.R
+google_analytics/ga_report.html
