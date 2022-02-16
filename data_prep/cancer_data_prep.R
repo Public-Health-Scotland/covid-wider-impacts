@@ -1142,7 +1142,7 @@ base_cancer_slim_2021 <- base_cancer_slim_cont_2021 %>%
 base_cancer_diff <- left_join(base_cancer_slim_2021, base_cancer_slim_1920) %>% 
   mutate(dif = 100*(count2021-count1920)/count1920,
          cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
-         age_group = "All", dep = "All", breakdown = "None") %>% 
+         age_group = "All Ages", dep = 0, breakdown = "None") %>% 
   select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
 ######################################################################################
 
@@ -1199,7 +1199,7 @@ base_cancer_slim_2021_dep <- base_cancer_slim_cont_2021_dep %>%
 base_cancer_diff_dep <- left_join(base_cancer_slim_2021_dep, base_cancer_slim_1920_dep) %>% 
   mutate(dif = 100*(count2021-count1920)/count1920,
          cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
-         age_group = "All", breakdown = "Deprivation") %>% 
+         age_group = "All Ages", breakdown = "Deprivation") %>% 
   select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
 #######################################################################################
 
@@ -1257,7 +1257,7 @@ base_cancer_slim_2021_age <- base_cancer_slim_cont_2021_age %>%
 base_cancer_diff_age <- left_join(base_cancer_slim_2021_age, base_cancer_slim_1920_age) %>% 
   mutate(dif = 100*(count2021-count1920)/count1920,
          cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
-         dep = "All", breakdown = "Age") %>% 
+         dep = 0, breakdown = "Age Group") %>% 
   select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
 #######################################################################################
 
