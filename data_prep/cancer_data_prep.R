@@ -15,13 +15,21 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 require(tidyverse)||install.packages("tidyverse")
+require(remotes)||install.packages("remotes")
 require(janitor)||install.packages("janitor")
 require(lubridate)||install.packages("lubridate")
 require(writexl)||install.packages("writexl")
 require(tidylog)||install.packages("tidylog")
 require(naniar)||install.packages("naniar")
-remotes::install_github("Public-Health-Scotland/phsmethods", upgrade = "never")
+
+remotes::install_local("/PHI_conf/CancerGroup1/Topics/CancerStatistics/Projects/20200804-pathology-as-proxy-for-2020-regs/RShiny/CancerPathologyDashboard/Cancer Pathology Jan 22 update/phsmethods-master.zip",
+                       upgrade = "never"
+)
+
+# remotes::install_github("Public-Health-Scotland/phsmethods", upgrade = "never")
 library(phsmethods)
+
+
 
 
 # Helper function
@@ -725,7 +733,7 @@ base_cancer_counts <- base_cancer_slim %>%
   complete(week_number, nesting(year,  region, hbres, site, sex), fill = list(count = 0)) %>%
   pivot_wider(names_from = year, 
               values_from = count,
-              values_fill = 0) %>% 
+              values_fill = list(count = 0)) %>% 
   rename(area = hbres, count17 = "2017",count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(age_group = "All Ages", dep = 0, breakdown = "None") 
@@ -753,7 +761,7 @@ base_cancer_counts_agegroups <- base_cancer_slim %>%
            fill = list(count = 0)) %>%
   pivot_wider(names_from = year, 
               values_from = count,
-              values_fill = 0) %>% 
+              values_fill = list(count = 0)) %>% 
   rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(dep = 0, breakdown = "Age Group")
@@ -783,7 +791,7 @@ base_cancer_counts_dep <- base_cancer_slim %>%
            fill = list(count = 0)) %>%
   pivot_wider(names_from = year, 
               values_from = count,
-              values_fill = 0) %>% 
+              values_fill = list(count = 0)) %>% 
   rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(age_group = "All Ages", breakdown = "Deprivation")
@@ -1064,3 +1072,19 @@ saveRDS(diff_data_base_quarters, paste0("/conf/PHSCOVID19_Analysis/shiny_input_f
 saveRDS(diff_data_base_quarters, "shiny_app/data/cancer_data_diff.rds")
 
 # END
+
+#######################################################################
+# EXTRA SECTION TO GENERATE CUMULATIVE TOTALS OVER 6 QUARTERS ---- 
+# Dec2018-Jun2020 v Dec2019-Jun2021
+#######################################################################
+
+base_cancer_slim_cont <- base_cancer_slim %>%
+  mutate(quarter2 = qtr(incidence_date)) %>% 
+  filter((year > 2018) | (year = 2018 & quarter2 == "October to December 2018")) %>% 
+  mutate(year2 = substr(year, 3, 4)) %>% 
+  mutate(quarter = case_when(str_detect(quarter2, "January") ~ paste0("Jan-Mar ", year2),
+                             str_detect(quarter2, "April") ~ paste0("Apr-Jun ", year2),
+                             str_detect(quarter2, "July") ~ paste0("Jul-Sep ", year2),
+                             str_detect(quarter2, "October") ~ paste0("Oct-Dec ", year2))) %>% 
+  select(-c(quarter2, year2))
+
