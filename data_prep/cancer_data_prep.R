@@ -1258,19 +1258,20 @@ base_cancer_diff_age <- left_join(base_cancer_slim_2021_age, base_cancer_slim_19
   mutate(dif = 100*(count2021-count1920)/count1920,
          cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
          dep = 0, breakdown = "Age Group") %>% 
-  rename(area = hbres) %>% 
-  select(quarter, region, area, site, sex, age_group, dep, dif, cum_dif, breakdown)
+  select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
 #######################################################################################
 
 # final dataset for use in dashboard??
-cancer_diff_cumulative <- bind_rows(base_cancer_diff,base_cancer_diff_age,base_cancer_diff_dep)
+cancer_diff_cumulative <- bind_rows(base_cancer_diff,base_cancer_diff_age,base_cancer_diff_dep) %>% 
+  rename(area = hbres)
 
 rm(base_cancer_diff, base_cancer_diff_age, base_cancer_diff_dep,
    base_cancer_slim_cont, base_cancer_slim_cont_1920, base_cancer_slim_cont_2021,
    base_cancer_slim_cont_1920_dep, base_cancer_slim_cont_1920_age,
    base_cancer_slim_cont_2021_dep, base_cancer_slim_cont_2021_age,
    base_cancer_slim_1920, base_cancer_slim_2021, base_cancer_slim_1920_age,
-   base_cancer_slim_1920_dep, base_cancer_slim_2021_dep, base_cancer_slim_2021_age)
+   base_cancer_slim_1920_dep, base_cancer_slim_2021_dep, base_cancer_slim_2021_age,
+   base_cancer_slim, diff_data_base_quarters, diff_data_base_quarters_NA, diff_data_base_quarters_notNA)
                  
 
 saveRDS(cancer_diff_cumulative, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_diff_", 
