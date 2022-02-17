@@ -1255,8 +1255,12 @@ base_cancer_slim_2021_age <- base_cancer_slim_cont_2021_age %>%
   ungroup()
 
 base_cancer_diff_age <- left_join(base_cancer_slim_2021_age, base_cancer_slim_1920_age) %>% 
-  mutate(dif = 100*(count2021-count1920)/count1920,
-         cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
+  mutate(dif = case_when(count1920 > 0 ~ 100*(count2021-count1920)/count1920,
+                         count1920 == 0 & count2021 != 0 ~ 100*(count2021-count1920)/1,
+                         TRUE ~ 0),
+         cum_dif = case_when(cum_count1920 > 0 ~ 100*(cum_count2021-cum_count1920)/cum_count1920,
+                             cum_count1920 == 0 & cum_count2021 != 0 ~ 100*(cum_count2021-cum_count1920)/1,
+                             TRUE ~ 0),
          dep = 0, breakdown = "Age Group") %>% 
   select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
 #######################################################################################

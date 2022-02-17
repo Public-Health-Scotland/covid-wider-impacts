@@ -51,7 +51,7 @@ cancer_data_diff_all <- reactive({
   cancer_data_diff %>% filter(sex == input$gender, 
                               area == input$geoname_cancer, 
                               site == input$cancer_type,
-                              breakdown == input$breakdown) %>% 
+                              breakdown == input$breakdown) %>%
     # Ordering factor so it shows correctly in Plotly
     mutate(quarter = factor(quarter, 
                             levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", 
