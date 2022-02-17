@@ -436,17 +436,12 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
     
     #Text for tooltips  
     
-    measure_name <- "% Change from 2019 "
-    
-    denom_period <- case_when(input$baseline == "2019" ~ "2019",
-                              input$baseline == "Mean 2017-2019" ~ "Mean 2017-2019")
-    
-    measure_name <- case_when(diffvar1 %in% c("difference")  ~ "Percentage(%) Change:",
-                              diffvar1 %in% c("difference_cum")  ~ "Cumulative Percentage(%) Change:") # ,
+    measure_name <- case_when(diffvar1 %in% c("dif")  ~ "Percentage(%) Change:",
+                              diffvar1 %in% c("dif_cum")  ~ "Cumulative Percentage(%) Change:") # ,
 
     value1 <- dataset[[diffvar1]]
     
-    tooltip_1 <- c(paste0("Year: ", denom_period, "<br>", "Quarter: ", dataset$quarter, "<br>", 
+    tooltip_1 <- c(paste0("Quarter: ", dataset$quarter, "<br>", 
                           "Age group: ", dataset$age_group, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
     
@@ -496,7 +491,6 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
       add_trace(y = ~get(diffvar1),
                 type = 'scatter', 
                 mode = 'line',
-                name = paste0(dataset$depdesc),
                 color = ~dep,
                 colors = pal_cancer_diff,
                 text=tooltip_1, 

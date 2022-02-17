@@ -51,21 +51,12 @@ cancer_data_diff_all <- reactive({
   cancer_data_diff %>% filter(sex == input$gender, 
                               area == input$geoname_cancer, 
                               site == input$cancer_type,
-                              denom == input$baseline,
                               breakdown == input$breakdown) %>% 
-    # Moving from wide to long format
-    pivot_longer(c(difference20:difference21), names_to = "diffn", values_to = "difference") %>%
-    pivot_longer(c(difference20_cum:difference21_cum), names_to = "diffcumn", values_to = "difference_cum") %>%
-    # Filtering spurious combinations
-    filter(substr(diffn, 11, 12) == substr(diffcumn, 11, 12)) %>%
-    mutate(quarter = case_when(substr(diffn, 11, 12) == "20" ~ paste0(quarter),
-                               substr(diffn, 11, 12) == "21" ~ paste0(quarter2))) %>%
-    filter(quarter != "NA") %>% 
     # Ordering factor so it shows correctly in Plotly
     mutate(quarter = factor(quarter, 
                             levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", 
                                        "Jul-Sep 20", "Oct-Dec 20", "Jan-Mar 21",
-                                       "Apr-Jun 21", "Jul-Sep 21", "Oct-Dec 21"), ordered = TRUE)) %>% 
+                                       "Apr-Jun 21"), ordered = TRUE)) %>% 
     arrange(quarter)
 })
 
@@ -168,20 +159,17 @@ output$cancer_explorer3 <- renderUI({
   tagList(
     if(input$breakdown == "Age Group") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January for 2020/2021 against ", input$baseline, 
-                      " by Age Group - ", input$geoname_cancer),
-               "cancer_split")
+                      " confirmed on a pathological specimen since January 2020 against the previous year by Age Group - ", 
+                      input$geoname_cancer), "cancer_split")
       
     } else if (input$breakdown == "Deprivation") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January for 2020/2021 against ", input$baseline, 
-                      " by Deprivation - ", input$geoname_cancer),
-               "cancer_split")
+                      " confirmed on a pathological specimen since January 2020 against the previous year by Deprivation - ",
+                       input$geoname_cancer), "cancer_split")
     } else {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January for 2020/2021 against ", input$baseline, " - ",
-                      input$geoname_cancer),
-               "cancer_split")
+                      " confirmed on a pathological specimen since January 2020 against the previous year - ",
+                      input$geoname_cancer), "cancer_split")
     },
     
     p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt")),
@@ -288,9 +276,9 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
 # Difference charts
 output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all(), periodvar = "quarter",
                                                             if(input$cum_baseline == "Standard") {
-                                                              diffvar1 = "difference"
+                                                              diffvar1 = "dif"
                                                             } else {
-                                                              diffvar1 = "difference_cum"
+                                                              diffvar1 = "dif_cum"
                                                             })})
 
 ###############################################.

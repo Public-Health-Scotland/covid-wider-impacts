@@ -1065,11 +1065,11 @@ rm(base_cancer_counts_all_quarters,
    base_cancer_slim_quarters)
 
 
-saveRDS(diff_data_base_quarters, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_diff_", 
-                                        format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-
-
-saveRDS(diff_data_base_quarters, "shiny_app/data/cancer_data_diff.rds")
+# saveRDS(diff_data_base_quarters, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_diff_", 
+#                                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# 
+# 
+# saveRDS(diff_data_base_quarters, "shiny_app/data/cancer_data_diff.rds")
 
 # END
 
@@ -1258,10 +1258,25 @@ base_cancer_diff_age <- left_join(base_cancer_slim_2021_age, base_cancer_slim_19
   mutate(dif = 100*(count2021-count1920)/count1920,
          cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
          dep = 0, breakdown = "Age Group") %>% 
-  select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
+  rename(area = hbres) %>% 
+  select(quarter, region, area, site, sex, age_group, dep, dif, cum_dif, breakdown)
 #######################################################################################
 
 # final dataset for use in dashboard??
 cancer_diff_cumulative <- bind_rows(base_cancer_diff,base_cancer_diff_age,base_cancer_diff_dep)
-                                    
+
+rm(base_cancer_diff, base_cancer_diff_age, base_cancer_diff_dep,
+   base_cancer_slim_cont, base_cancer_slim_cont_1920, base_cancer_slim_cont_2021,
+   base_cancer_slim_cont_1920_dep, base_cancer_slim_cont_1920_age,
+   base_cancer_slim_cont_2021_dep, base_cancer_slim_cont_2021_age,
+   base_cancer_slim_1920, base_cancer_slim_2021, base_cancer_slim_1920_age,
+   base_cancer_slim_1920_dep, base_cancer_slim_2021_dep, base_cancer_slim_2021_age)
+                 
+
+saveRDS(cancer_diff_cumulative, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_diff_", 
+                                        format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+
+saveRDS(cancer_diff_cumulative, "shiny_app/data/cancer_data_diff.rds")
+
                                     
