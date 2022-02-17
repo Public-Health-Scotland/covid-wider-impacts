@@ -1086,7 +1086,7 @@ base_cancer_slim_cont <- base_cancer_slim %>%
                              str_detect(quarter2, "April") ~ paste0("Apr-Jun ", year2),
                              str_detect(quarter2, "July") ~ paste0("Jul-Sep ", year2),
                              str_detect(quarter2, "October") ~ paste0("Oct-Dec ", year2))) %>% 
-  select(-c(quarter2, year2))
+  select(-c(derived_upi, quarter2, year2))
 ##################################
 
 #######################################################################################
@@ -1140,8 +1140,12 @@ base_cancer_slim_2021 <- base_cancer_slim_cont_2021 %>%
   ungroup()
 
 base_cancer_diff <- left_join(base_cancer_slim_2021, base_cancer_slim_1920) %>% 
-  mutate(dif = 100*(count2021-count1920)/count1920,
-         cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
+  mutate(dif = case_when(count1920 > 0 ~ 100*(count2021-count1920)/count1920,
+                         count1920 == 0 & count2021 != 0 ~ 100*(count2021-count1920)/1,
+                         TRUE ~ 0),
+         cum_dif = case_when(cum_count1920 > 0 ~ 100*(cum_count2021-cum_count1920)/cum_count1920,
+                             cum_count1920 == 0 & cum_count2021 != 0 ~ 100*(cum_count2021-cum_count1920)/1,
+                             TRUE ~ 0),
          age_group = "All Ages", dep = 0, breakdown = "None") %>% 
   select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
 ######################################################################################
@@ -1197,8 +1201,12 @@ base_cancer_slim_2021_dep <- base_cancer_slim_cont_2021_dep %>%
   ungroup()
 
 base_cancer_diff_dep <- left_join(base_cancer_slim_2021_dep, base_cancer_slim_1920_dep) %>% 
-  mutate(dif = 100*(count2021-count1920)/count1920,
-         cum_dif = 100*(cum_count2021-cum_count1920)/cum_count1920,
+  mutate(dif = case_when(count1920 > 0 ~ 100*(count2021-count1920)/count1920,
+                         count1920 == 0 & count2021 != 0 ~ 100*(count2021-count1920)/1,
+                         TRUE ~ 0),
+         cum_dif = case_when(cum_count1920 > 0 ~ 100*(cum_count2021-cum_count1920)/cum_count1920,
+                             cum_count1920 == 0 & cum_count2021 != 0 ~ 100*(cum_count2021-cum_count1920)/1,
+                             TRUE ~ 0),
          age_group = "All Ages", breakdown = "Deprivation") %>% 
   select(quarter, region, hbres, site, sex, age_group, dep, dif, cum_dif, breakdown)
 #######################################################################################
