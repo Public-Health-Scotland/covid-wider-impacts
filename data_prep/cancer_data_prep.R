@@ -73,7 +73,7 @@ cancer <- cancer %>%
 
 
 # import deprivation lookup
-depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_1_simd2020v2.rds")) %>%
+depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_2_simd2020v2.rds")) %>%
   clean_names() %>%
   select(pc8, hb2019name, simd2020v2_sc_quintile) %>%
   rename(postcode = pc8, hbres = hb2019name, dep = simd2020v2_sc_quintile) %>% 
@@ -107,7 +107,6 @@ cancer <- cancer %>%
                             str_detect(site10, "C45")  ~ 1320,
                             str_detect(site10, "C60")  ~ 1410,
                             str_detect(site10, "C61")  ~ 1420,
-                            str_detect(site10, "C63.8")  ~ 1420, # not needed from Aug update on
                             str_detect(site10, "C62")  ~ 1430,
                             str_detect(site10, "C90")  ~ 1510,
                             str_detect(site10, "C15")  ~ 1710,

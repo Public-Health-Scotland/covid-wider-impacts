@@ -278,7 +278,7 @@ output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all
                                                             if(input$cum_baseline == "Standard") {
                                                               diffvar1 = "dif"
                                                             } else {
-                                                              diffvar1 = "dif_cum"
+                                                              diffvar1 = "cum_dif"
                                                             })})
 
 ###############################################.
