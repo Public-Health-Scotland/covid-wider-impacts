@@ -130,8 +130,8 @@ save_final_file("breastfeeding", "27_Jan_22")
 save_final_file("ante_booking", "02_Feb_22")
 save_final_file("ante_booking_download", "02_Feb_22")
 ## Pregnancy - Terminations ----
-save_final_file("top", "02_Feb_22")
-save_final_file("top_download", "02_Feb_22")
+save_final_file("top", "21_Feb_22")
+save_final_file("top_download", "21_Feb_22")
 ##########################################################.
 ## B&B - Mode/Method of Delivery ----
 save_final_file("mod_runchart_data", "02_Feb_22")
@@ -149,7 +149,7 @@ save_final_file("gestation_scot_data", "02_Feb_22")
 save_final_file("gestation_linechart_data", "02_Feb_22")
 save_final_file("gestation_download_data", "02_Feb_22")
 ## B&B - Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "24_Jan_22")
+save_final_file("perinatal", "21_Feb_22")
 ## B&B - Apgar ----
 save_final_file("apgar_runchart_data", "02_Feb_22")
 save_final_file("apgar_scot_data", "02_Feb_22")
