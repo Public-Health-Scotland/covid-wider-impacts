@@ -101,9 +101,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           # actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
                           # actionLink("breastfeeding_button", "Breastfeeding", width="150px"), br(),
                           # actionLink("childdev_button", "Child development", width="150px"), br(),
-                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
+                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br()
                           # actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
-                          actionLink("top_button", "Termination of pregnancy", width="150px"),br()
+                          # actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
                           # actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
                           # actionLink("mod_button", "Method of delivery", width="150px"), br(),
                           # actionLink("induction_button", "Induction of labour", width="150px"),br(),
@@ -123,10 +123,10 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      # bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
                                      # bsCollapsePanel("Breastfeeding", uiOutput("breastfeeding_commentary")),
                                      # bsCollapsePanel("Child development", uiOutput("childdev_commentary")),
-                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
+                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary"))
                                      # bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
                                      # bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
-                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary"))
+                                     # bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
                                      # bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
                                      # bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
                                      # bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
@@ -488,10 +488,10 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 #                    uiOutput("mh_explorer")
 #          )# mainPanel bracket
 # ),#tabPanel bracket
-###############################################.
-## Pregnancy menu ----
-##############################################.
-navbarMenu("Pregnancy", icon = icon("venus"),
+# ###############################################.
+# ## Pregnancy menu ----
+# ##############################################.
+# navbarMenu("Pregnancy", icon = icon("venus"),
 # ###############################################.
 # ## Antenatal booking ----
 # ###############################################.
@@ -514,28 +514,28 @@ navbarMenu("Pregnancy", icon = icon("venus"),
 #                    uiOutput("booking_explorer")
 #          )# mainPanel bracket
 # ), #tab panel
-###############################################.
-## Termination of pregnancy  ----
-###############################################.
-tabPanel(title = "Termination of pregnancy", value = "terminations",
-         wellPanel(
-           column(4, div(title="Select a breakdown",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_top")),
-           column(4,offset=4,
-                  actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton("download_termination_data", "Download data"),
-                  fluidRow(br()),
-                  actionButton("jump_commentary_top","Go to commentary"))
-         ), #well panel
-         mainPanel(width = 12,
-                   uiOutput("top_explorer")
-         )# mainPanel bracket
-) # tabPanel bracket
- ), # navbar menu bracket
+# ###############################################.
+# ## Termination of pregnancy  ----
+# ###############################################.
+# tabPanel(title = "Termination of pregnancy", value = "terminations",
+#          wellPanel(
+#            column(4, div(title="Select a breakdown",
+#                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+#                          selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
+#                                      selected = "Scotland")),
+#                   uiOutput("geoname_ui_top")),
+#            column(4,offset=4,
+#                   actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
+#                   fluidRow(br()),
+#                   downloadButton("download_termination_data", "Download data"),
+#                   fluidRow(br()),
+#                   actionButton("jump_commentary_top","Go to commentary"))
+#          ), #well panel
+#          mainPanel(width = 12,
+#                    uiOutput("top_explorer")
+#          )# mainPanel bracket
+# ) # tabPanel bracket
+#  ) # navbar menu bracket
 ##############################################.
 # Births and Babies menu ----
 #############################################.
