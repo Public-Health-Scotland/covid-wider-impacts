@@ -82,12 +82,8 @@ output$dce_explorer1 <- renderUI({
     
     plot_cut_box(paste0("Number of " , dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19",
                  paste0("Number of " , dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20"),
-    p(em("(Click and drag on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
-    p("NK = Not Known"),
-    br(),
-    plot_cut_box(paste0("Proportion of ", dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19_2",
-                 paste0("Proportion of ", dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20_2"),
-    p("NK = Not Known"))
+    p(em("(NK = Not Known; click and drag on chart to zoom in)", style = "font-family: 'calibri'; font-si15pt")),
+    br())
   
 })
 
@@ -101,21 +97,21 @@ output$dce_explorer2 <- renderUI({
   )
   
   tagList(
-    p("The below graphs can be filtered by the stage of the cancer when it is detected - choose above."), 
+    p("The below graphs can be filtered by the stage of the cancer when it is detected - choose below."),
     plot_box(paste0("Monthly count of individuals with ", dce_site,
                     " cancer - Stage ", input$dce_stage), "dce_incidence") ,
-    p(em("(Click and drag on chart to zoom in)",  style = "font-family: 'calibri'; font-si15pt")),
-    br(),
     plot_box(paste0("Percentage change (2019 to 2020) of individuals with ", dce_site,
                     " cancer - Stage ", input$dce_stage), "dce_split") ,
-    
+    plot_cut_box(paste0("Proportion of ", dce_site, " cancer diagnoses in 2019 by stage: "), "dce_inc_bar19_2",
+                 paste0("Proportion of ", dce_site, " cancer diagnoses in 2020 by stage: "), "dce_inc_bar20_2"),
+    br(),
     p(em("The cancer networks are regional collaborations working together across NHS Boards to improve
          patient care and cancer services:", style = "font-family: 'calibri'; font-si15pt")),
-    p(em("NCA (North Cancer Alliance) NHS Grampian, NHS Highland, NHS Orkney, NHS Shetland, NHS Tayside
+    p(em("NCA (North Cancer Alliance) - NHS Grampian, NHS Highland, NHS Orkney, NHS Shetland, NHS Tayside
          and NHS Western Isles.", style = "font-family: 'calibri'; font-si15pt")),
-    p(em("SCAN (South East of Scotland Cancer Network) NHS Borders, NHS Dumfries & Galloway, NHS Fife and
+    p(em("SCAN (South East of Scotland Cancer Network) - NHS Borders, NHS Dumfries & Galloway, NHS Fife and
          NHS Lothian.", style = "font-family: 'calibri'; font-si15pt")),
-    p(em("WoSCAN (West of Scotland Cancer Network) NHS Ayrshire & Arran, NHS Forth Valley, NHS Greater
+    p(em("WoSCAN (West of Scotland Cancer Network) - NHS Ayrshire & Arran, NHS Forth Valley, NHS Greater
          Glasgow & Clyde and NHS Lanarkshire." , style = "font-family: 'calibri'; font-si15pt")))
   
   # plot_box(paste0("Ratio of individuals with ", dce_site,
