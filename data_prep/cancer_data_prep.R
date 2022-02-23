@@ -55,7 +55,8 @@ cancer2017_18 <- read_csv(paste0(input_folder,"2017_2018 Covid source data patho
   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
   mutate(incidence_date = dmy(incidence_date)) %>%
   mutate(chi_number = replace_na(chi_number, 0)) %>%
-  mutate(chi_number = as.character(chi_number)) %>% 
+  mutate(chi_number = as.character(chi_number)) %>%
+  mutate(chi_number = chi_pad(chi_number)) %>% 
   mutate(derived_upi = as.character(derived_upi))
 
 cancer <- bind_rows(cancer, cancer2017_18)
