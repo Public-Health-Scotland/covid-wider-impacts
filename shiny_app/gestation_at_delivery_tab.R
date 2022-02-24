@@ -472,6 +472,8 @@ observeEvent(input$switch_to_gestation,{
 output$gestation_commentary <- renderUI({
   tagList(
     bsButton("jump_to_gestation",label = "Go to data"), #this button can only be used once
+    h2("Gestation at Delivery – 2nd March 2022"),
+    p("The percentage of singleton live births delivered at or over 42 weeks (‘post-term’) in NHS Grampian has been increasing and has remained above the pre-pandemic average for the last 8 consecutive months, although it should be noted that numbers of post-term births delivered each month are very small.  NHS Grampian have been made aware of the data and PHS will continue to monitor."),
     h2("Gestation at delivery - 1st December 2021"),
     p("NHS Tayside have shown a recent drop in their proportion of births delivered at 32-36 weeks gestation, however, numbers involved are very small and so are likely to fluctuate from month to month. "),
     h2("Gestation at delivery - 3rd November 2021"),
