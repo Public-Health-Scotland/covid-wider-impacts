@@ -1,6 +1,6 @@
 # they include API keys
 cookie-control.js
-deploying_app.R
+*deploy*.R
 create_credentials.R
 #Not needed
 rsconnect
@@ -31,5 +31,4 @@ john
 ad_hoc_requests.R
 colin
 outpatient_functions.R
-deploy.R
 google_analytics/ga_report.html
