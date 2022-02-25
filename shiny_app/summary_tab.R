@@ -285,7 +285,7 @@ observeEvent(input$btn_dataset_modal,
                             "Data Dictionary",  target="_blank"),
                      ". Please note that there is a time lag between the submission of ",
                      "SMR00 to PHS, and the data being validated and ready for release. ",
-                     "Therefore, data up to June 27th are given. For data quality issues, please see the ", 
+                     "Therefore, weekly data up to 26th September 2021 and monthly data up to 30th September 2021 are given. For data quality issues, please see the ", 
                      tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
                             "Acute Activity and NHS Beds quarterly publication",  
 
@@ -470,7 +470,7 @@ output$data_explorer <- renderUI({
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
 
   #update date for outpatients and the rest is different
-  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "15 December 2021",
+  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "9th March 2022",
                              TRUE ~ "12 January 2022")
   
 
@@ -899,41 +899,46 @@ output$download_chart_data <- downloadHandler(
 output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
-    h2("Summary - Outpatient appointments - 15th December 2021"),
-    p("Data are taken from Scottish Morbidity Record (SMR00), and show outpatient appointments
-      to week ending 27th June 2021. Outpatient information contained within this dashboard has been 
-      developed further, and monthly information is now available. Further information is available by 
-      following the 'Data source: SMR00' links on the dashboard."),
+    h2("Summary - Outpatient appointments - 9th March 2022"),
+    p("Data are taken from Scottish Morbidity Record (SMR00) and show weekly outpatient appointments to
+      week ending 26th September 2021, with monthly information shown to 30th September 2021. Further information
+      is available by following the 'Data source: SMR00' links on the dashboard."),
     h4("Initial findings: outpatient appointments"),
     tags$ul(
-      tags$li("Outpatient appointments fell from the second week of March 2020; by week ending 19th April 2020,
-              outpatient appointments had fallen by over two-thirds (68%) compared to the average of the same week in 2018-19
-              (from an average of 87,049 in 2018-19 to 27,506 in 2020)."),
-      tags$li("Outpatient appointments have generally been recovering from end April 2020 onwards,
-               but are still not up to pre-pandemic levels. For example, by the end of June 2021, 
-               the numbers of appointments remain around 16% below the average of the same week in
-               2018-19."),
+      tags$li("Outpatient appointments fell from the second week of March 2020 onwards: by week ending 19th April 2020,
+              all outpatient appointments had fallen by over two-thirds (-68%) compared to the average of the same week in 2018-19
+              (from an average of 87,049 in 2018-19 to 27,510 in 2020)."),
       tags$li("This impact was similar across sexes, age groups and deprivation groups. 
-              However, between April and July 2020, the fall in appointments was 
-              greatest in patients aged 85 and over, dropping by almost three-quarters (-73%) 
-              while patients aged 15-44 dropped by two-thirds (-66%)."),
-
-      tags$li("There were larger relative falls for surgical (-76%) than medical (-64%) specialties.
-              By week ending 27th June 2021, medical specialties showed a reduction of about an eighth
-              (-13%) while surgical specialties decreased by over a fifth (-22%)
-              compared to the same week in 2018-19."),
-      tags$li("There were larger decreases and slower recovery in new outpatient appointments
-than in return outpatient appointments."),
-      tags$li("There has been a very large increase in the number of appointments carried out remotely through 
-              telephone and videolink. In week ending 27th June 2021, about a sixth (16%) of appointments
-
-              were conducted via telephone, and 1 in 20 (5%) were by videolink. These types of appointments
-              were uncommon prior to March 2020, but have consistently made up over a fifth of 
-              outpatient activity since then.")
+              For example, the fall in all appointments was greatest in patients aged 85 and over, dropping by almost three-quarters (-73%), 
+              while appointments for patients aged 15-44 dropped by two-thirds (-66%). However, by the week ending 26th September 2021,
+              these reductions were 10% for patients aged 85 and over and 13% for patients aged 15-44."),
+      tags$li("There were larger relative falls for surgical (-76%) than medical (-64%) specialties in the early stages
+              of the pandemic. However, by week ending 26th September 2021, medical specialties showed a reduction of over an eighth
+              (-13%), while surgical specialties showed a reduction of around one fifth (-21%)
+              compared to average values for the same week in 2018-19."),
+      tags$li("There were larger decreases and a slower recovery in new outpatient appointments
+              than in return outpatient appointments."),
+      tags$li("Outpatient appointments have generally been recovering from the end of April 2020 onwards
+               but are still not up to pre-pandemic levels. For example, for the week ending 26th September 2021, 
+               the total number of appointments remains at around 16% below the average of the same week in
+               2018-19."),
+      tags$li("There has been a very large increase in the number of appointments carried out remotely via 
+              telephone and videolink. In week ending 26th September 2021, just under one sixth (16%) of all
+              appointments was conducted by telephone, and 1 in 25 (4%) was by videolink. These modes of clinical
+              interaction were uncommon prior to March 2020 but have consistently made up around one fifth of 
+              outpatient activity since then."),
+      tags$li("The impact of the pandemic on outpatient appointments was similar across ethnic groups; however,
+              interpretation by ethnic group is complicated by the mandating of recording of ethnic group on SMR outpatient (SMR00)
+              returns from 1st February 2021. This is reflected in the fall in the number of appointments with a missing ethnic group, which
+              were 22% lower by September 2021 than the corresponding time in 2018-19."),
+      tags$li("In September 2021, appointments for patients with the 'White Scottish' ethnic group recorded were around 5% lower than the
+              corresponding time in 2018-19; the number of appointments in other ethnic groups varies between 23% higher (African) and 6%
+              lower (Chinese). It is important to note that the trends for ethnic groups with small populations should be interpreted with
+              caution as they will be subject to greater variability due to small numbers.")
       ),
     h4("Interpreting these figures"),
     p("Please exercise caution when interpreting these figures, as these data are for management information only.
-      For more information on methodology and data quality please see the ",
+      For more information on methodology and data quality, please see the ",
       tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
              "Acute Activity and NHS Beds quarterly publication.",
              target="_blank"),
