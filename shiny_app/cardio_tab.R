@@ -490,7 +490,7 @@ output$cardio_explorer <- renderUI({
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# SAS incidents
          tags$em(p("Please note that there is currently an issue with duplicates in the SAS dataset and therefore the data was not
-                  updated in February 2022. This is currently being investigated by PHS and the data will be updated as soon as possible."),
+                  updated this month. This is currently being investigated by PHS and the data will be updated as soon as possible."),
                  p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
                 tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
                        "Unscheduled Care Operational Statistics", target="_blank"), ". The data published by SAS is sourced from a 
