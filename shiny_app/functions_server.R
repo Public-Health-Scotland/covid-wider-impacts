@@ -2025,7 +2025,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
     yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
 
   } else {
-    yaxis_plots[["range"]] <- c(-10, 30)
+    yaxis_plots[["range"]] <- c(-30, 30) # some baseline changes are lower than -10
     yaxis_plots[["title"]] <- paste0("Change in % uptake by ", elig)
 
   }

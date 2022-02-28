@@ -31,7 +31,7 @@ list_events <- data.frame( stringsAsFactors = F,
               "Mental health", "Mode of delivery", "Stillbirths and infant deaths",
               "Location of extremely preterm deliveries", "SACT", "Summary trends",
               "Data", "Perineal tears", "Termination of pregnancy"),
-  tabarea = c("Pregnancy/births/babies", "Pregnancy/births/babies", "Pregnancy/births/babies", 
+  tabarea = c("Pregnancy/births/babies", "Pregnancy/births/babies", "Child health", 
               "Cancer", "Others", "Child health", "Child health", "Others",
               "Substance use", "Child health", "Pregnancy/births/babies", "Others", "Others",
               "Others", "Pregnancy/births/babies", "Pregnancy/births/babies",
@@ -108,6 +108,6 @@ saveRDS(events, paste0(data_folder, "tabvisits.rds"))
 ###############################################.
 ## Creating report ----
 ###############################################.
-rmarkdown::run("google_analytics/ga_report.Rmd")
+rmarkdown::render("google_analytics/ga_report.Rmd")
 
 ## END
