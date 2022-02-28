@@ -421,7 +421,7 @@ op_spec <- reactive({
 
 # # Outpatients dataset used for ethnicity charts
 op_eth <- reactive({
-  outpats_ethnicity %>%
+  outpats %>%
     filter(type == "eth" & 
              area_type == "Scotland" &
              admission_type == input$appt_type &
