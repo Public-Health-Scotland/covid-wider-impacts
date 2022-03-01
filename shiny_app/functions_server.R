@@ -275,7 +275,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
     hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc",
                                                     "ooh_cardiac", "sas_cardiac",
-                                                    "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 & 2021",
+                                                    "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 - 2022",
                                    data_name %in% c("cath")  ~ "2020")
 
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
@@ -2025,7 +2025,7 @@ plot_imm_simd <- function(dataset, age_week, dose,
     yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
 
   } else {
-    yaxis_plots[["range"]] <- c(-10, 30)
+    yaxis_plots[["range"]] <- c(-30, 30) # some baseline changes are lower than -10
     yaxis_plots[["title"]] <- paste0("Change in % uptake by ", elig)
 
   }
@@ -2034,14 +2034,14 @@ plot_imm_simd <- function(dataset, age_week, dose,
   simd_plot <- plot_ly(data=imm_simd_data, x = ~simdq) %>%
     add_trace(type = 'bar', y = ~get(var_plot), split = ~time_period_eligible,
               color=~time_period_eligible,
-              colors = pal_immun,
+              colors = pal_immun, textposition="none",
               text= tooltip_scurve, hoverinfo="text")
 
   if (base_var != F) {
     simd_plot <- simd_plot %>%
       add_trace(type = 'bar', y = ~get(base_var)/month_count,
                 name = "2019", marker = list(color = "black"),
-                text= tooltip_2019, hoverinfo="text")
+                text= tooltip_2019, hoverinfo="text", textposition="none")
   }
 
   simd_plot %>% #Layout
