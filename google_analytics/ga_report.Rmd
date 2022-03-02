@@ -160,6 +160,38 @@ plot_ly(sessions) %>%
 
 ```
 
+## Visits per tab
+
+### Pregnancy, births and babies tabs
+
+```{r pregbirthbaby}
+plot_tab(tabvisits[["Pregnancy/births/babies"]], pal_chose = pal_pregbab)
+```
+
+### Child health tabs
+
+```{r childhealth}
+plot_tab(tabvisits[["Child health"]], pal_chose = pal_ch)
+```
+
+### Cancer tabs
+
+```{r cancer}
+plot_tab(tabvisits[["Cancer"]], pal_chose = pal_cancer)
+```
+
+### Substance use tab
+
+```{r subst}
+plot_tab(tabvisits[["Substance use"]], pal_chose = c("blue"))
+```
+
+### Other tabs
+
+```{r others}
+plot_tab(tabvisits[["Others"]], pal_chose = pal_other)
+```
+
 ## Average session time
 
 ```{r ave_sess}
@@ -186,36 +218,6 @@ plot_ly(sessions) %>%
   config(displaylogo = F, displayModeBar = TRUE, 
              modeBarButtonsToRemove = bttn_remove )
 
-```
-
-## Pregnancy, births and babies tabs
-
-```{r pregbirthbaby}
-plot_tab(tabvisits[["Pregnancy/births/babies"]], pal_chose = pal_pregbab)
-```
-
-## Child health tabs
-
-```{r childhealth}
-plot_tab(tabvisits[["Child health"]], pal_chose = pal_ch)
-```
-
-## Cancer tabs
-
-```{r cancer}
-plot_tab(tabvisits[["Cancer"]], pal_chose = pal_cancer)
-```
-
-## Substance use tab
-
-```{r subst}
-plot_tab(tabvisits[["Substance use"]], pal_chose = c("blue"))
-```
-
-## Other tabs
-
-```{r others}
-plot_tab(tabvisits[["Others"]], pal_chose = pal_other)
 ```
 
 ## Top 20 sources of visits over the last year
