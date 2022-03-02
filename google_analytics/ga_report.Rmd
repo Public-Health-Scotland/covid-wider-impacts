@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = F, warning = F) # prevents code to be shown in repo
 #Packages
 library(dplyr)
 library(plotly)
-
+library(knitr)
 ```
 
 ```{r env}
@@ -30,6 +30,8 @@ data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/google_analytics/"
 
 sessions <- readRDS(paste0(data_folder, "sessions.rds"))
 tabvisits <- readRDS(paste0(data_folder, "tabvisits.rds"))
+device <- readRDS(paste0(data_folder, "device.rds"))
+source <- readRDS(paste0(data_folder, "source.rds"))
 
 ```
 
@@ -90,8 +92,6 @@ bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
   
 pal_pregbab <- c('#E39C8C', '#d4d3d5', '#83BB26', '#80BCEA', '#3F3685', '#8FBFC2',
              '#6B5C85', '#0078D4', '#C1DD93')  
-# , '#9B4393', '#948DA3',
-#              '#C73918','#1E7F84', '#CDA1C9'
 pal_cancer <- c('#4da6ff','#ffa64d') 
 pal_ch <- c('#000000', '#4da6ff','#ffa64d')
 pal_other <- c('#4da6ff','#ffa64d', '#2c7fb8', '#7fcdbb', '#a3a3c2', '#FF0000')
@@ -128,6 +128,12 @@ plot_tab <- function(x, pal_chose) {
 This reports shows the visits to the Covid wider impacts dashboard and each one
 of their tabs. Tab visits data is only available from 4 February 2022 onwards. Overall visits data is available from 26 June 2020.
 
+## Number of sessions over the last year
+
+```{r overall}
+kable(device)
+```
+
 ## Overall visits to the dashboard
 
 ```{r sessions}
@@ -154,33 +160,69 @@ plot_ly(sessions) %>%
 
 ```
 
-## Pregnancy, births and babies tabs
+## Visits per tab
+
+### Pregnancy, births and babies tabs
 
 ```{r pregbirthbaby}
 plot_tab(tabvisits[["Pregnancy/births/babies"]], pal_chose = pal_pregbab)
 ```
 
-## Child health tabs
+### Child health tabs
 
 ```{r childhealth}
 plot_tab(tabvisits[["Child health"]], pal_chose = pal_ch)
 ```
 
-## Cancer tabs
+### Cancer tabs
 
 ```{r cancer}
 plot_tab(tabvisits[["Cancer"]], pal_chose = pal_cancer)
 ```
 
-## Substance use tab
+### Substance use tab
 
 ```{r subst}
 plot_tab(tabvisits[["Substance use"]], pal_chose = c("blue"))
 ```
 
-## Other tabs
+### Other tabs
 
 ```{r others}
 plot_tab(tabvisits[["Others"]], pal_chose = pal_other)
+```
+
+## Average session time
+
+```{r ave_sess}
+
+
+#Tooltip for the sessions chart
+tooltip_sess <- c(paste0(sessions$week_ending, "<br>",
+                         "Average minutes: ", sessions$session_ave))
+
+# Plot for the overall visits
+plot_ly(sessions) %>% 
+  add_lines(x = ~week_ending, y = ~session_ave,
+            text=tooltip_sess, hoverinfo="text") %>% 
+  # Annotation to mark
+      add_annotations(x = "2020-11-01",
+                      y = ~max(session_ave),
+                      text = "Move from weekly to monthly updates",
+                      xref = "1", yref = "1", showarrow = F) %>% 
+  layout(yaxis = list(yaxis_plots, title = "Average minutes"), xaxis = xaxis_plots,
+          shapes = list(vline("2020-11-01")), #for annotation
+         margin = list(b = 80, t = 5, r = 25), # to avoid labels getting cut off
+         annotations = zoom_annotation) %>% 
+  # leaving only save plot button
+  config(displaylogo = F, displayModeBar = TRUE, 
+             modeBarButtonsToRemove = bttn_remove )
+
+```
+
+## Top 20 sources of visits over the last year
+
+```{r source}
+kable(source)
 ```
 

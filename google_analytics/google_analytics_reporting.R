@@ -1,5 +1,6 @@
 # Extracting google analytics data for wider impacts
 # From https://code.markedmondson.me/googleAnalyticsR/articles/setup.html
+# Google Analytics API guide: https://ga-dev-tools.web.app/dimensions-metrics-explorer/
 
 ###############################################.
 ## Packages ----
@@ -11,6 +12,7 @@ library(dplyr) #for data manipulation
 library(magrittr) # for pipe operators
 library(lubridate) #for date operations
 library(rmarkdown) # for running report
+library(janitor) #to clean names
 
 ###############################################.
 ## Lookups/filepaths ----
@@ -55,13 +57,35 @@ View(ga_account_list())
 ## View account_list and pick the viewId you want to extract data from. 
 ga_id <- 222359188
 last_date <- paste0(Sys.Date())
+last_year <- paste0(Sys.Date() - 365)
 
 ## Query getting sessions data from first day we got data from to today
 sessions_ga <- google_analytics(ga_id,
                  date_range = c("2020-06-26", last_date),
-                 metrics = c("sessions"),
+                 metrics = c("sessions", "sessionDuration"),
                  dimensions = c("date"),
                  max = -1) # this brings all results
+
+## Query to obtain where people comes from and what they use
+source_ga <- google_analytics(ga_id,
+                                date_range = c(last_year, last_date),
+                                metrics = c("sessions", "sessionDuration"),
+                                dimensions = c('source','medium', "deviceCategory"),
+                                max = -1) # this brings all results
+
+## Query to obtain where people comes from
+source_ga <- google_analytics(ga_id,
+                              date_range = c(last_year, last_date),
+                              metrics = c("sessions"),
+                              dimensions = c('source','medium'),
+                              max = -1) # this brings all results
+
+## Query to obtain country/city of users
+geo_ga <- google_analytics(ga_id,
+                              date_range = c(last_year, last_date),
+                              metrics = c("sessions", "sessionDuration"),
+                              dimensions = c('city','region', 'metro', 'country'),
+                              max = -1) # this brings all results
 
 ## Query getting events data from first day we got data from to today
 events_ga <- google_analytics(ga_id,
@@ -79,7 +103,9 @@ events_ga <- google_analytics(ga_id,
 sessions <- sessions_ga %>% 
   mutate(week_ending = ceiling_date(date, "week", change_on_boundary = F)) %>% 
   group_by(week_ending) %>% 
-  summarise(count = sum(sessions, na.rm = T)) %>% ungroup()
+  summarise(count = sum(sessions, na.rm = T),
+            sessionDuration = sum(sessionDuration)) %>% ungroup() %>% 
+  mutate(session_ave = round(sessionDuration/count/60, 1))
 
 saveRDS(sessions, paste0(data_folder, "sessions.rds"))
 
@@ -104,6 +130,55 @@ events %<>%
 events <- split.data.frame(events, events$tabarea)
 
 saveRDS(events, paste0(data_folder, "tabvisits.rds"))
+
+###############################################.
+# Source data
+source_agg <- source_ga %>% 
+  group_by(source, medium) %>% 
+  summarise(count = sum(sessions),
+            sessionDuration = sum(sessionDuration)) %>% ungroup() %>% 
+  mutate(session_ave = round(sessionDuration/count/60, 1)) %>% 
+  slice_max(count, n = 20) %>% 
+  select(Source = source, Sessions = count, 
+         "Average session length (minutes)" = session_ave)
+
+saveRDS(source_agg, paste0(data_folder, "source.rds"))
+
+###############################################.
+# Device + session duration 
+device <- source_ga %>% 
+  group_by(deviceCategory) %>% 
+  summarise(count = sum(sessions),
+            sessionDuration = sum(sessionDuration)) %>% ungroup() %>% 
+  mutate(session_ave = round(sessionDuration/count/60, 1),
+         device = make_clean_names(deviceCategory, case = "title")) 
+
+tot <- device %>%
+  mutate(device = "Total") %>% 
+  group_by(device) %>% 
+  summarise(count = sum(count),
+            sessionDuration = sum(sessionDuration)) %>% ungroup() %>% 
+  mutate(session_ave = round(sessionDuration/count/60, 1))
+
+device <- bind_rows(tot, device) %>% 
+  select(Device = device, Sessions = count, 
+         "Average session length (minutes)" = session_ave)
+
+saveRDS(device, paste0(data_folder, "device.rds"))
+
+###############################################.
+# Geography of users - Not adding this at the moment to the report
+city_top <- geo_ga %>% 
+  group_by(city) %>% 
+  summarise(count = sum(sessions),
+            sessionDuration = sum(sessionDuration)) %>% ungroup() %>% 
+  mutate(session_ave = round(sessionDuration/count/60, 1)) 
+
+country_top <- geo_ga %>% 
+  group_by(country) %>% 
+  summarise(count = sum(sessions),
+            sessionDuration = sum(sessionDuration)) %>% ungroup() %>% 
+  mutate(session_ave = round(sessionDuration/count/60, 1)) 
 
 ###############################################.
 ## Creating report ----
