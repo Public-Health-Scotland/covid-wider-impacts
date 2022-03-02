@@ -1,5 +1,6 @@
 # Extracting google analytics data for wider impacts
 # From https://code.markedmondson.me/googleAnalyticsR/articles/setup.html
+# Google Analytics API guide: https://ga-dev-tools.web.app/dimensions-metrics-explorer/
 
 ###############################################.
 ## Packages ----
