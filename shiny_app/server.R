@@ -271,7 +271,7 @@ observeEvent(input$summary_button, ({
     updateCollapse(session, "collapse_commentary", open = "Injuries")}))
 
   observeEvent(input$drug_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Substance Use")}))
+    updateCollapse(session, "collapse_commentary", open = "Substance use")}))
 
 } # server end
 
