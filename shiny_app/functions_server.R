@@ -417,7 +417,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##### DIFF PLOT - NO BREAKDOWN ----
+##### CANCER DIFF PLOT - NO BREAKDOWN ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
@@ -427,7 +427,12 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
   { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
   } else {
     
+    # Set x axis label
+    xaxis_title <-  "Incidence"
     
+    xaxis_plots[["title"]] <- xaxis_title
+    
+        
     # Set y axis label
     yaxis_title <-  "% Change"
     
