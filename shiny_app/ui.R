@@ -1,5 +1,6 @@
 #UI
-#secure_app( #uncomment if needing password protection
+
+# secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -867,6 +868,7 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
      ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
+
 #)#secure app
 
 #END
