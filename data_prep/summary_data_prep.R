@@ -40,10 +40,10 @@ create_rapid <- function(last_week, extract = T) {
     }
   }
     
-  date_on_filename <<- format(Sys.Date(), format = '%d-%b')
+  date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
   
 # Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_", date_on_filename, ".rds")) %>% 
+rap_adm <- readRDS(paste0(data_folder, "rapid/", date_on_filename, "-admissions-by-category.rds")) %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
   filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
