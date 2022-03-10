@@ -727,6 +727,7 @@ base_cancer_slim_q0 <- base_cancer_slim %>%
                           year == 2020 ~ 2021)) %>% 
   mutate(quarter = "Oct-Dec 19")
 
+
 base_cancer_slim_quarters <- bind_rows(base_cancer_slim, base_cancer_slim_q0) 
 
 
@@ -1110,7 +1111,7 @@ rm(base_cancer_diff, base_cancer_diff_age, base_cancer_diff_dep,
    base_cancer_slim_cont_2021_dep, base_cancer_slim_cont_2021_age,
    base_cancer_slim_1920, base_cancer_slim_2021, base_cancer_slim_1920_age,
    base_cancer_slim_1920_dep, base_cancer_slim_2021_dep, base_cancer_slim_2021_age,
-   base_cancer_slim, diff_data_base_quarters, diff_data_base_quarters_NA, diff_data_base_quarters_notNA)
+   base_cancer_slim_quarters, diff_data_base_quarters, diff_data_base_quarters_NA, diff_data_base_quarters_notNA)
                  
 
 saveRDS(cancer_diff_cumulative, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_diff_", 
@@ -1119,4 +1120,10 @@ saveRDS(cancer_diff_cumulative, paste0("/conf/PHSCOVID19_Analysis/shiny_input_fi
 
 saveRDS(cancer_diff_cumulative, "shiny_app/data/cancer_data_diff.rds")
 
-                                    
+#### END ---- ######
+
+# Extra checks
+# Check how many cells show difference or cumulative difference of over/under 1000/-1000
+
+cancer_diff_cum_outliers <- cancer_diff_cumulative %>% 
+  filter(((dif > 1000)|(dif < -1000)) | ((cum_dif > 1000)|(cum_dif < -1000))) 
