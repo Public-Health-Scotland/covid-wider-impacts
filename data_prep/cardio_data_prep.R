@@ -389,17 +389,46 @@ smr01_pi_data$mc3 <- substr(smr01_pi_data$main_condition, 0,3)
 smr01_pi_data$mc1 <- substr(smr01_pi_data$main_condition, 0,1)
 smr01_pi_data$mc2 <- as.numeric(substr(smr01_pi_data$main_condition, 2,3))
 
-# IHD and CVD diagnosis
+# Create blank diagnosis field to avoid ifelse NA issue
 smr01_pi_data <- mutate(smr01_pi_data, diagnosis = "")
-smr01_pi_data$diagnosis <- ifelse(smr01_pi_data$mc3 %in% c("I20","I21","I22","I23","I24","I25"), 
-                               "Coronary Heart Disease", smr01_pi_data$diagnosis)
-smr01_pi_data$diagnosis <- ifelse(smr01_pi_data$mc1 == "I" & smr01_pi_data$mc2 %in% 60:69 | (smr01_pi_data$mc3 == "G45"),
-                               "Cerebrovascular Disease", smr01_pi_data$diagnosis)
+
+# CHD
+smr01_ihd <- smr01_pi_data %>% filter(mc3 %in% c("I20","I21","I22","I23","I24","I25")) %>%
+  mutate(diagnosis = "Coronary Heart Disease")
+
+smr01_ami <- smr01_pi_data %>% filter(mc3 %in% c("I21","I22")) %>%
+  mutate(diagnosis = "Heart Attack")
+
+smr01_hf <- smr01_pi_data %>% filter(mc3 %in% c("I50")) %>%
+  mutate(diagnosis = "Heart Failure")
+
+smr01_ang <- smr01_pi_data %>% filter(mc3 %in% c("I20")) %>%
+  mutate(diagnosis = "Angina")
+
+# Stroke
+
+smr01_cvd <- smr01_pi_data %>% filter(mc1 == "I" & mc2 %in% 60:69 | (mc3 == "G45")) %>%
+  mutate(diagnosis = "Cerebrovascular Disease")
+
+smr01_str <- smr01_pi_data %>% filter(mc3 %in% c("I61","I63","I64")) %>%
+  mutate(diagnosis = "Stroke")
+
+smr01_subch <- smr01_pi_data %>% filter(mc3 %in% c("I60")) %>%
+  mutate(diagnosis = "Subarachnoid Haemorrhage")
+
+smr01_tia <- smr01_pi_data %>% filter(mc3 %in% c("G45")) %>%
+  mutate(diagnosis = "TIAs and related syndromes")
+
+remove(smr01_pi_data)
+#remove(smr01_ihd)
+
+smr01_pi_data <- bind_rows(smr01_ihd, smr01_ami, smr01_hf, smr01_ang,
+                           smr01_cvd, smr01_str, smr01_subch, smr01_tia)
 
 #tabyl(smr01_pi_data$diagnosis, sort = TRUE)
 
-smr01_pi_data <- smr01_pi_data %>%
-  filter(smr01_pi_data$diagnosis %in% c("Coronary Heart Disease","Cerebrovascular Disease"))
+#smr01_pi_data <- smr01_pi_data %>%
+#  filter(smr01_pi_data$diagnosis %in% c("Coronary Heart Disease","Cerebrovascular Disease"))
 
 smr01_pi_data <- smr01_pi_data %>%
 mutate(month_ending = ceiling_date(as.Date(discharge_date), "month")) %>% 
@@ -493,6 +522,8 @@ saveRDS(final_cardio_SMR01, paste0(open_data, "cardio_discharges_data.rds"))
 
 ###############################################.
 ## Deaths Data Cardiac ----
+## Provisional calendar year will be finalised summer 2022
+## https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/births-deaths-and-other-vital-events-quarterly-figures/
 ###############################################.
 
 last_month <- "2021-09-01"
@@ -534,17 +565,36 @@ cardio_data_deaths$mc3 <- substr(cardio_data_deaths$underlying_cause_of_death, 0
 cardio_data_deaths$mc1 <- substr(cardio_data_deaths$underlying_cause_of_death, 0,1)
 cardio_data_deaths$mc2 <- as.numeric(substr(cardio_data_deaths$underlying_cause_of_death, 2,3))
 
-# IHD and CVD diagnosis
+
+
+# Create blank diagnosis field to avoid ifelse NA issue
 cardio_data_deaths <- mutate(cardio_data_deaths, diagnosis = "")
-cardio_data_deaths$diagnosis <- ifelse(cardio_data_deaths$mc3 %in% c("I20","I21","I22","I23","I24","I25"), 
-                                  "Coronary Heart Disease", cardio_data_deaths$diagnosis)
-cardio_data_deaths$diagnosis <- ifelse(cardio_data_deaths$mc1 == "I" & cardio_data_deaths$mc2 %in% 60:69 | (cardio_data_deaths$mc3 == "G45"),
-                                  "Cerebrovascular Disease", cardio_data_deaths$diagnosis)
 
-#tabyl(smr01_pi_data$diagnosis, sort = TRUE)
+# CHD
+deaths_ihd <- cardio_data_deaths %>% filter(mc3 %in% c("I20","I21","I22","I23","I24","I25")) %>%
+  mutate(diagnosis = "Coronary Heart Disease")
 
-cardio_data_deaths <- cardio_data_deaths %>%
-  filter(cardio_data_deaths$diagnosis %in% c("Coronary Heart Disease","Cerebrovascular Disease"))
+deaths_ami <- cardio_data_deaths %>% filter(mc3 %in% c("I21","I22")) %>%
+  mutate(diagnosis = "Heart Attack")
+
+deaths_hf <- cardio_data_deaths %>% filter(mc3 %in% c("I50")) %>%
+  mutate(diagnosis = "Heart Failure")
+
+# Stroke
+
+deaths_cvd <- cardio_data_deaths %>% filter(mc1 == "I" & mc2 %in% 60:69 | (mc3 == "G45")) %>%
+  mutate(diagnosis = "Cerebrovascular Disease")
+
+deaths_str <- cardio_data_deaths %>% filter(mc3 %in% c("I61","I63","I64")) %>%
+  mutate(diagnosis = "Stroke")
+
+deaths_subch <- cardio_data_deaths %>% filter(mc3 %in% c("I60")) %>%
+  mutate(diagnosis = "Subarachnoid Haemorrhage")
+
+remove(cardio_data_deaths)
+
+cardio_data_deaths <- bind_rows(deaths_ihd, deaths_ami, deaths_hf,
+                           deaths_cvd, deaths_str, deaths_subch)
 
 #Merging with deprivation and geography lookup
 cardio_data_deaths <- left_join(cardio_data_deaths, geo_lookup) %>% select(-datazone2011) 

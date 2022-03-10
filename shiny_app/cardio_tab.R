@@ -70,6 +70,9 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular hospital discharges"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
     shinyjs::show("diagnosis_select")
+    updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
+                      choices = c("Angina","Cerebrovascular Disease", "Coronary Heart Disease","Heart Attack",
+                                  "Heart Failure","Stroke","Subarachnoid Haemorrhage","TIAs and related syndromes"), selected = "Angina")
     shinyjs::show("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
@@ -78,6 +81,10 @@ observeEvent(input$measure_cardio_select, {
   if (x == "cardio_deaths") {
     cardio_label = "Step 2 - Select geography level for cardiovascular mortality"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::show("diagnosis_select")
+    updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
+                choices = c("Cerebrovascular Disease", "Coronary Heart Disease","Heart Attack",
+                            "Heart Failure","Stroke","Subarachnoid Haemorrhage"), selected = "Cerebrovascular Disease")
     shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
@@ -791,13 +798,13 @@ overall_cardio_download <- reactive({
 
   # Discharges
   if (input$measure_cardio_select == "cardio_discharges") {
-    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
+    selection <- c("week_ending", "area_name", "diagnosis", "type_admission", "count", "count_average", "variation")
     new_var_name <- "average_2018_2019"
   }  
 
   # Deaths
   if (input$measure_cardio_select == "cardio_deaths") {
-    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
+    selection <- c("week_ending", "area_name", "diagnosis", "count", "count_average", "variation")
     new_var_name <- "average_2018_2019"
   }  
   
