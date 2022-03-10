@@ -7,7 +7,7 @@
 # Notes:
 # Discard records belonging to Hospitals G303H in Glasgow (Mearnskirk House) and W106H in Western Isles (St Brendans Cot Hosp).
 # Only include inpatient cases (no day cases). Day cases data quality is problematic as not all boards submitted this data until recently.
-# Exclude specialties G1,G3,G4,and G5 - psychiatric care specialties. Have added G2 also which seemed to be missing before.
+# Exclude specialties G1,G3,G4,and G5 - psychiatric care specialties. Have also added G2 which seemed to be missing before.
     # G1	General Psychiatry (Mental Illness)
     # G1A	Community Psychiatry
     # G2	Child & Adolescent Psychiatry
@@ -31,7 +31,7 @@
 #Load packages.
 library(odbc)
 library(dplyr)
-library(tidyr)
+library(readr)
 
 
 #Make connection to the RAPID Database through the Denodo Virtualisation Platform.
@@ -129,38 +129,41 @@ combined_records <- rbind(all_locations, hb_totals, scot_totals) #Merge all thre
 ## Determining Start and End Dates ----
 ###############################################.
 
-# CP up to here
 # I'm guessing RAPID should be good until 4 years from the present, this will have to be checked however.
 combined_records <- combined_records %>% filter(date_adm >= paste0(year(Sys.Date()) - 4, '-01-01'))
 
-
-recent_admissions_by_hosp <- rapid %>% filter(date_adm %in% Sys.Date():(Sys.Date() - 100)) %>% 
-  group_by(hosp, hb) %>% #Get the count of admissions for each hospital within the last 100 days
-  summarise(mean_adm_per_day = n()/101, end = max(date_adm)) #as well as the last date of admission for each one.
-
-hb_end_dates <- recent_admissions_by_hosp %>% 
-  filter(mean_adm_per_day >= 2.5) %>% #A board should only wait for a hospital if it has more than about 2.5 admissions per day.
-  select(hosp, hb, end) %>% group_by(hb) %>% 
-  summarise(end = min(end)) #Only take the earliest hospital end dates within each health board.
-
-# Here we are removing a set number of days (either 1 or 2) from the end dates.  
-# These days to cut off of the end have tradionally been used in System Watch to ensure we have complete data from each board.
-hb_end_dates$end = hb_end_dates$end - hb_trim[hb_end_dates$hb] 
-
-lookup_end_date_by_hb <- hb_end_dates$end
-names(lookup_end_date_by_hb) <- hb_end_dates$hb
-
-# The end date for Scotland is the earliest end from all of the health boards.
-# This ensures that the Scotland totals won't be missing records from any health boards.
-lookup_end_date_by_hb['X'] <- min(lookup_end_date_by_hb) 
-
-# Remove any records where the date of admission is after the date for which we are sure a HB has complete data.
-combined_records <- combined_records %>% filter(date_adm <= lookup_end_date_by_hb[combined_records$hb])
+### DOES THIS SECTION NEED TO BE INCLUDED? I THINK WE SPECIFY LAST_WEEK DATE IN THE DATA PREP SCRIPT?
+# recent_admissions_by_hosp <- rapid %>% filter(date_adm %in% Sys.Date():(Sys.Date() - 100)) %>% 
+#   group_by(hosp, hb) %>% #Get the count of admissions for each hospital within the last 100 days
+#   summarise(mean_adm_per_day = n()/101, 
+#             end = max(date_adm)) #as well as the last date of admission for each one.
+# 
+# hb_end_dates <- recent_admissions_by_hosp %>% 
+#   filter(mean_adm_per_day >= 2.5) %>% #A board should only wait for a hospital if it has more than about 2.5 admissions per day.
+#   select(hosp, hb, end) %>% group_by(hb) %>% 
+#   summarise(end = min(end)) #Only take the earliest hospital end dates within each health board.
+# 
+# # Here we are removing a set number of days (either 1 or 2) from the end dates.  
+# # These days to cut off of the end have tradionally been used in System Watch to ensure we have complete data from each board.
+# hb_end_dates$end = hb_end_dates$end - hb_trim[hb_end_dates$hb] 
+# 
+# lookup_end_date_by_hb <- hb_end_dates$end
+# names(lookup_end_date_by_hb) <- hb_end_dates$hb
+# 
+# # The end date for Scotland is the earliest end from all of the health boards.
+# # This ensures that the Scotland totals won't be missing records from any health boards.
+# lookup_end_date_by_hb['X'] <- min(lookup_end_date_by_hb) 
+# 
+# # Remove any records where the date of admission is after the date for which we are sure a HB has complete data.
+# combined_records <- combined_records %>% filter(date_adm <= lookup_end_date_by_hb[combined_records$hb])
 
 
 # Save file with date
 date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
 saveRDS(combined_records, paste0(data_folder, 'rapid/', date_on_filename, '-admissions-by-category.rds') ) 
+
+#temp save for checking
+#write_csv(combined_records, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wid-rapid-update/", date_on_filename, "-admissions-by-category.csv"))
 
 
 ##END
