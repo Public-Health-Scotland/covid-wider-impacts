@@ -66,7 +66,10 @@ rapid_extract <- rapid_extract %>%
   filter(!spec %in% c('G1', 'G1A', 'G2', 'G21', 'G22', 'G3', 'G4', 'G5')) %>%
   mutate(admission_type = case_when(emergency_admission_flag == 'Y' ~ 'emergency',
                                     TRUE ~ 'elective'),
+         sex = case_when(sex == '1' ~ 'male',
+                         sex == '2' ~ 'female'),
          age = as.numeric(age),
+         date_adm = as.Date(date_adm),
          # create age groups
          age_group = case_when(
            age   >= 85    ~ '85+',
@@ -160,7 +163,7 @@ combined_records <- combined_records %>% filter(date_adm >= paste0(year(Sys.Date
 
 # Save file with date
 date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
-saveRDS(combined_records, paste0(data_folder, 'rapid/', date_on_filename, '-admissions-by-category.rds') ) 
+saveRDS(combined_records, paste0(data_folder, 'rapid/', date_on_filename, '-admissions-by-category.rds')) 
 
 #temp save for checking
 #write_csv(combined_records, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wid-rapid-update/", date_on_filename, "-admissions-by-category.csv"))
