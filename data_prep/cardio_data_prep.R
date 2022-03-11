@@ -6,6 +6,29 @@
 source("data_prep/functions_packages_data_prep.R")
 
 ###############################################.
+## Lookups ---- from deaths_data_preparation.R 
+## for Hospital Discharges / deaths Cardiac
+## May need adapted
+###############################################.
+# Bringing  LA and datazone info.
+postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2021_2.rds') %>% 
+  setNames(tolower(names(.))) %>%   #variables to lower case
+  select(pc7, datazone2011, hscp2019, hscp2019name)
+
+# SIMD quintile to datazone lookup
+#dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
+dep_lookup <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact-data/colin/lookups/deprivation_geography.rds") %>%
+  rename(datazone2011 = datazone) %>%
+  select(datazone2011, year, sc_quin) %>%
+  filter(year>2014)
+
+dep_lookup21 <- dep_lookup %>%  filter(year == 2019) %>% mutate(year = 2021)
+
+dep_lookup <- rbind(dep_lookup, dep_lookup21)
+
+geo_lookup <- left_join(dep_lookup, postcode_lookup)
+
+###############################################.
 ## Cath labs - cardiac procedures ----
 ###############################################.
 create_cathlab <- function() {
@@ -316,54 +339,25 @@ create_cardiodrugs <- function(filedate, last_week) {
   
 }
 
-###############################################.
-## Hospital Discharges Cardiac ----
-###############################################.
+#########################################################################
+# SMR01_PI DATA April 1997 Onwards
+#########################################################################
 
-### 1 - Load packages ----
-library(odbc)       # for accessing SMRA
-library(glue)       # For SQL date parameters
-
-filedate <- "2021-11-29"
-
-# SMR Start Date
-smr_start_date <- ymd(20180101)
-
-# SMR End Date
-smr_end_date <- ymd(20210630)
+create_cardiodischarges <- function(filedate, last_week) {
 
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
+# Adapted for cardiac discharges data
 agg_cut_cardiac_dis <- function(dataset, grouper) {
   dataset %>%
     group_by_at(c("month_ending","diagnosis","type_admission","area_name", "area_type", grouper)) %>%
     summarise(count = sum(count)) %>% ungroup() %>% 
     mutate(type = grouper) 
-}
+}  
 
-###############################################.
-## Lookups ---- from deaths_data_preparation.R
-###############################################.
-# Bringing  LA and datazone info.
-postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2021_2.rds') %>% 
-  setNames(tolower(names(.))) %>%   #variables to lower case
-  select(pc7, datazone2011, hscp2019, hscp2019name)
-
-# SIMD quintile to datazone lookup
-#dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
-dep_lookup <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact-data/colin/lookups/deprivation_geography.rds") %>%
-  rename(datazone2011 = datazone) %>%
-  select(datazone2011, year, sc_quin) %>%
-  filter(year>2014)
-
-dep_lookup21 <- dep_lookup %>%  filter(year == 2019) %>% mutate(year = 2021)
-
-dep_lookup <- rbind(dep_lookup, dep_lookup21)
-
-geo_lookup <- left_join(dep_lookup, postcode_lookup)
-
-#########################################################################
-# SMR01_PI DATA April 1997 Onwards
-#########################################################################
+# SMR start and end dates
+smr_start_date <- ymd(20180101)
+#last_week <- "2021-06-30" #just for testing not using function
+smr_end_date <- ymd(last_week)
 
 SMRA_connect <- dbConnect(odbc(), 
                           dsn="SMRA",
@@ -475,9 +469,6 @@ smr01_piv <- smr01_pi_data %>%
                    "hscp2019name" = "HSC partnership", "scot" = "Scotland")) %>%
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
                                TRUE~area_name))  %>%
-  # Aggregating to make it faster to work with (removed all year)
-  #mutate(all="All") %>%
-  # remove type admission
   group_by(month_ending, sex, dep, age, diagnosis, type_admission, area_name, area_type) %>% 
   summarise(count = sum(count))
 
@@ -488,22 +479,9 @@ dis_dep <- smr01_piv %>% agg_cut_cardiac_dis(grouper="dep") %>% rename(category 
 dis_age <- smr01_piv %>% agg_cut_cardiac_dis(grouper="age") %>% rename(category = age)
 
 cardio_data_dis <- rbind(dis_all, dis_age, dis_sex, dis_dep) #%>% 
-  #filter(!(area_type != "Scotland" & type == "dep")) # %>% #SIMD only at Scotland level - only req for weekly data
-  #mutate(area_id = paste(area_type, "-", area_name)) # this helps with the next step
 
-# remove all from pivot  
-#smr01_piv2 <- smr01_piv %>%
-#  pivot_longer(cols = c(sex, dep, age, all), names_to="type", values_to="category") %>% 
-#  group_by(month_ending, diagnosis, type_admission, area_type, area_name, type, category) %>% 
-#  filter(!(area_type != "Scotland" & area_type != "Health board" & type == "dep")) %>% #SIMD only at HB/Scotland level
-#  summarise(count= sum(count))
-
-#smr01_piv2 <- smr01_piv2 %>% mutate(type = recode(type, "all" = "sex")) 
-
-# Using function for monthly data from injuries_data_preparation script
-# remove extra_vars2 = "type_admission", 
 prepare_final_data_m_cardiac(dataset = cardio_data_dis, filename = "cardio_discharges", 
-                             last_month = "2021-06-30", extra_vars = "diagnosis", aver = 3)
+                             last_month = last_week, extra_vars = "diagnosis", aver = 3)
 
 #final_data <- final_data %>% replace_na(list(variation = 0))
 
@@ -519,6 +497,7 @@ saveRDS(final_cardio_SMR01, paste0(data_folder,"final_app_files/cardio_discharge
                                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(final_cardio_SMR01, paste0(open_data, "cardio_discharges_data.rds"))
 
+}
 
 ###############################################.
 ## Deaths Data Cardiac ----
@@ -526,7 +505,10 @@ saveRDS(final_cardio_SMR01, paste0(open_data, "cardio_discharges_data.rds"))
 ## https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/births-deaths-and-other-vital-events-quarterly-figures/
 ###############################################.
 
-last_month <- "2021-09-01"
+create_cardiodeaths <- function(filedate, last_week) {
+
+#last_week <- "2021-09-30" #just for testing not using function
+last_month <- ymd(last_week)
 
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
 agg_cut_cardiac <- function(dataset, grouper) {
@@ -558,14 +540,9 @@ cardio_data_deaths <- as_tibble(dbGetQuery(channel, statement=
          age = case_when(between(age, 0,64) ~ "Under 65", T ~ "65 and over"),
          year = year(month_ending)) #to allow merging
 
-#cardio_data_deaths <- cardio_data_deaths %>%
-#  filter(date_of_registration <= as.Date(last_week))
-
 cardio_data_deaths$mc3 <- substr(cardio_data_deaths$underlying_cause_of_death, 0,3)
 cardio_data_deaths$mc1 <- substr(cardio_data_deaths$underlying_cause_of_death, 0,1)
 cardio_data_deaths$mc2 <- as.numeric(substr(cardio_data_deaths$underlying_cause_of_death, 2,3))
-
-
 
 # Create blank diagnosis field to avoid ifelse NA issue
 cardio_data_deaths <- mutate(cardio_data_deaths, diagnosis = "")
@@ -629,13 +606,7 @@ cardio_data_deaths <- rbind(deaths_all, deaths_age, deaths_sex, deaths_dep) %>%
   #filter(!(area_type != "Scotland" & type == "dep")) %>% #SIMD only at Scotland level - only req for weekly data
   mutate(area_id = paste(area_type, "-", area_name)) # this helps with the next step
 
-# This step is to make sure we have rows for all weeks for all areas/category
-# even those with zeroes. It's a bit convoluted but it works
 cardio_data_deaths %<>%
-  #pivot_wider(id_cols = c(area_type, diagnosis, category, type, month_ending), 
-  #            names_from = area_name, values_from = count, values_fill = list(count = 0)) %>% 
-  #pivot_longer(c(`Aberdeen City`:`Western Isles`), values_to = "count", names_to = "area_name") %>% 
-  # This is to get rid of combinations that don't exist (e.g. Scotland - Fife)
   mutate(area_id = paste(area_type, "-", area_name)) %>% 
   filter(area_id %in% unique(cardio_data_deaths$area_id)) %>% 
   select(-area_id) %>% 
@@ -659,19 +630,20 @@ saveRDS(final_cardio_deaths, paste0(data_folder,"final_app_files/cardio_deaths_"
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(final_cardio_deaths, paste0(open_data, "cardio_deaths_data.rds"))
 
+}
 #final_cardio_deaths <<- final_cardio_deaths
 
-print("deaths_data.rds file prepared and saved, including open data")
+#print("deaths_data.rds file prepared and saved, including open data")
 
 
 ##END
 
-check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_smr01_discharges.rds")
-check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_deaths.rds")
+#check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_smr01_discharges.rds")
+#check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_deaths.rds")
 
-tabyl(smr01_pi_data$month_ending, sort = TRUE)
-tabyl(cardio_discharges$type_admission, sort = TRUE)
-tabyl(cardio_discharges$diagnosis, sort = TRUE)
-
+#tabyl(smr01_pi_data$month_ending, sort = TRUE)
+#tabyl(cardio_discharges$type_admission, sort = TRUE)
+#tabyl(cardio_discharges$diagnosis, sort = TRUE)
+#tabyl(final_cardio_SMR01$week_ending, sort = TRUE)
 
 

@@ -16,6 +16,8 @@ library(flextable)
 library(magrittr)
 library(haven)
 library(readxl)
+library(odbc) # for accessing SMRA
+library(glue) # For SQL date parameters
 
 ###############################################.
 ## Filepaths ----
