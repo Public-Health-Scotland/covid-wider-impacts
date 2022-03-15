@@ -203,6 +203,32 @@ print("File child_dev_depr_data.rds produced and saved")
 }
 
 ###############################################.
+## Child development - developmental domains ----
+###############################################.
+create_childdev_domains <- function(filedate) {
+  
+  child_dev_domains <- rbind(read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 13-15m_Domain.xlsx")) %>%
+                       mutate(review = "13-15 month"),
+                     read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 27-30m_Domain.xlsx")) %>%
+                       mutate(review = "27-30 month")) %>%
+    clean_names() %>%
+    rename(area_name = geography) %>%
+    mutate(area_type = "Scotland",
+           month_review = as.Date(month_review)) #%>%
+  #filter((year(month_review) %in% c("2019", "2020", "2021")))
+  
+  child_dev_domains %<>% # Dealing with NAs, which are 0s
+    mutate_at(c("SLC_%", "Prob_solv_%", "Gross_motor_%", "Per_soc_%","Fine_motor_%","Emot_Beh_%","Vision_%","Hearing_%"), ~replace_na(., 0)) 
+  
+  saveRDS(child_dev_domains, "shiny_app/data/child_dev_domains.rds")
+  saveRDS(child_dev_domains, paste0(data_folder,"final_app_files/child_dev_domains_",
+                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  child_dev_domains <<- child_dev_domains
+  print("File child_dev_domains_data.rds produced and saved")
+}
+
+###############################################.
 ## Breastfeeding ----
 ###############################################.
 create_breastfeeding <- function(filedate) {
