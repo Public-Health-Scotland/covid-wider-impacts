@@ -101,6 +101,16 @@ child_dev_depr_filt <- reactive({
                          review == review_chosen)
 })
 
+child_dev_domains_filt <- reactive({
+  
+  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
+                              input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
+  
+  child_dev_domains %>% filter(area_name == input$geoname_childdev &
+                                 area_type == input$geotype_childdev &
+                                 review == review_chosen)
+})
+
 
 ###############################################.
 ##  Reactive layout  ----
