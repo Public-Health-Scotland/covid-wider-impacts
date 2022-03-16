@@ -46,6 +46,7 @@ source("data_prep/childhealth_data_prep.R") # This sources the functions for the
 create_chreview(ch_date_file = "20220221") # Child health reviews. #date included in filepath name
 create_childdev(filedate = "21stFeb2022")
 create_breastfeeding(filedate = "21stFeb2022")
+create_childdev_domains(filedate="21stFeb2022")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
