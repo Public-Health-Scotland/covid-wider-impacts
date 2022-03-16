@@ -32,6 +32,7 @@
 library(odbc)
 library(dplyr)
 library(readr)
+library(lubridate)
 
 
 #Make connection to the RAPID Database through the Denodo Virtualisation Platform.
@@ -50,7 +51,7 @@ rapid_extract <- as_tibble(dbGetQuery(RAPID_connection, statement=paste0(
                       FROM rapid.syswatch_hosp_stay      #name of RAPID Stay Table 
                       WHERE ADMISSION_DATE >= '2017-01-01' 
                       AND inpatient_daycase_identifier_code ='IP'
-                      AND hospital_of_treatment_location_code NOT IN ('W106H', 'G303H')
+                      AND hospital_of_treatment_location_code NOT IN ('W106H', 'G303H', 'D102H')
                       CONTEXT ('i18n'='gb', 'cache_wait_for_load'='true');")))  #Not sure if the CONTEXT line is needed.
 
 
@@ -90,10 +91,7 @@ simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcod
 
 # Add SIMD to rapid dataset
 rapid <- left_join(rapid_extract, simd_lookup, "postcode") %>% 
-  select(-postcode)
-
-rapid <- rapid %>% 
-  select(-crn, -chi, -emergency_admission_flag, -discharge_date) %>% 
+  select(-postcode, -crn, -chi, -emergency_admission_flag, -discharge_date) %>% 
   arrange(admission_type, hb, hosp, hscp_code, spec, sex, simd_quintile, date_adm)
 
 ###############################################.
@@ -167,6 +165,7 @@ saveRDS(combined_records, paste0(data_folder, 'rapid/', date_on_filename, '-admi
 
 #temp save for checking
 #write_csv(combined_records, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wid-rapid-update/", date_on_filename, "-admissions-by-category.csv"))
+
 
 
 ##END
