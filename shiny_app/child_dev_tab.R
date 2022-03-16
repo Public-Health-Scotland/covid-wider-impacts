@@ -380,6 +380,59 @@ output$childdev_depr <- renderPlotly({
 })
 
 
+output$childdev_domains <- renderPlotly({
+  
+  trend_data <- child_dev_domains_filt() %>% mutate(dummy = 0)
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- "Percentage of children reviewed"
+    
+    tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% with speech, language & communication concern: ", trend_data$slc_perc,
+                              "<br>", "% with problem solving concern:  ", trend_data$prob_solv_perc,
+                              "<br>", "% with gross motor concern ", trend_data$gross_motor_perc,
+                              "<br>", "% with personal/social concern: ", trend_data$per_soc_perc,
+                              "<br>", "% with fine motor concern:  ", trend_data$fine_motor_perc,
+                              "<br>", "% with emotional/behavioural concern ", trend_data$emot_beh_perc,
+                              "<br>", "% with vision concern:  ", trend_data$vision_perc,
+                              "<br>", "% with hearing concern:  ", trend_data$hearing_perc))
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~month_review) %>%
+      add_lines(y = ~slc_perc, name = "Speech, language & communication",
+                line = list(color = "#bf812d"), text=tooltip_trend, hoverinfo="text") %>%
+      add_lines(y = ~prob_solv_perc, name = "Problem solving",
+                line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>%
+      add_lines(y = ~gross_motor_perc, name = "Gross motor",
+                line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>%
+      add_lines(y = ~per_soc_perc, name = "Personal/Social",
+                line = list(color = "#bf812d"), text=tooltip_trend, hoverinfo="text") %>%
+      add_lines(y = ~fine_motor_perc, name = "Fine motor",
+                line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>%
+      add_lines(y = ~emot_beh_perc, name = "Emotional/Behavioural",
+                line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>%
+      add_lines(y = ~vision_perc, name = "Vision",
+                line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>%
+      add_lines(y = ~hearing_perc, name = "Hearing",
+                line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>%
+      
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+    
+  }
+})
+
+
 ###############################################.
 ## Data downloads ----
 ###############################################.
