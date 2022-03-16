@@ -1,6 +1,6 @@
 ---
 title: "Covid wider impacts dashboard - Google analytics report"
-author: "PHS"
+author: "Public Health Scotland"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document:
@@ -10,7 +10,7 @@ output:
 
 ```{r TODO, include = FALSE}
 # Add tables/downloadable data?
-# Anything else to add to report
+# Anything else to add to report? (geography?)
 # Schedule it to run every month
 
 ```
@@ -106,7 +106,7 @@ pal_other <- c('#4da6ff','#ffa64d', '#2c7fb8', '#7fcdbb', '#a3a3c2', '#FF0000')
 plot_tab <- function(x, pal_chose) {
   
   tooltip_plot <- c(paste0(x$tabname, "<br>",
-                            x$week_ending, "<br>",
+                            "Week ending": format(x$week_ending, "%d %B %Y"), "<br>",
                             "Visits: ", x$count))
   
   plot_ly(x, x = ~week_ending) %>% 
@@ -138,7 +138,7 @@ kable(device)
 
 ```{r sessions}
 #Tooltip for the sessions chart
-tooltip_sess <- c(paste0(sessions$week_ending, "<br>",
+tooltip_sess <- c(paste0("Week ending": format(sessions$week_ending, "%d %B %Y"), "<br>",
                          "Visits: ", sessions$count))
 
 # Plot for the overall visits
@@ -160,27 +160,27 @@ plot_ly(sessions) %>%
 
 ```
 
-## Visits per tab
+## Visits to each tab
 
-### Pregnancy, births and babies tabs
+### Pregnancy, births and babies
 
 ```{r pregbirthbaby}
 plot_tab(tabvisits[["Pregnancy/births/babies"]], pal_chose = pal_pregbab)
 ```
 
-### Child health tabs
+### Child health
 
 ```{r childhealth}
 plot_tab(tabvisits[["Child health"]], pal_chose = pal_ch)
 ```
 
-### Cancer tabs
+### Cancer
 
 ```{r cancer}
 plot_tab(tabvisits[["Cancer"]], pal_chose = pal_cancer)
 ```
 
-### Substance use tab
+### Substance use
 
 ```{r subst}
 plot_tab(tabvisits[["Substance use"]], pal_chose = c("blue"))
@@ -192,13 +192,13 @@ plot_tab(tabvisits[["Substance use"]], pal_chose = c("blue"))
 plot_tab(tabvisits[["Others"]], pal_chose = pal_other)
 ```
 
-## Average session time
+## Average session length
 
 ```{r ave_sess}
 
 
 #Tooltip for the sessions chart
-tooltip_sess <- c(paste0(sessions$week_ending, "<br>",
+tooltip_sess <- c(paste0("Week ending": format(sessions$week_ending, "%d %B %Y"), "<br>",
                          "Average minutes: ", sessions$session_ave))
 
 # Plot for the overall visits
@@ -210,8 +210,9 @@ plot_ly(sessions) %>%
                       y = ~max(session_ave),
                       text = "Move from weekly to monthly updates",
                       xref = "1", yref = "1", showarrow = F) %>% 
-  layout(yaxis = list(yaxis_plots, title = "Average minutes"), xaxis = xaxis_plots,
-          shapes = list(vline("2020-11-01")), #for annotation
+  layout(yaxis = list(yaxis_plots, title = "Average minutes spent in website"), 
+         xaxis = xaxis_plots,
+         shapes = list(vline("2020-11-01")), #for annotation
          margin = list(b = 80, t = 5, r = 25), # to avoid labels getting cut off
          annotations = zoom_annotation) %>% 
   # leaving only save plot button

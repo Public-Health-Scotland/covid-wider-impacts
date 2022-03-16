@@ -73,13 +73,6 @@ source_ga <- google_analytics(ga_id,
                                 dimensions = c('source','medium', "deviceCategory"),
                                 max = -1) # this brings all results
 
-## Query to obtain where people comes from
-source_ga <- google_analytics(ga_id,
-                              date_range = c(last_year, last_date),
-                              metrics = c("sessions"),
-                              dimensions = c('source','medium'),
-                              max = -1) # this brings all results
-
 ## Query to obtain country/city of users
 geo_ga <- google_analytics(ga_id,
                               date_range = c(last_year, last_date),
