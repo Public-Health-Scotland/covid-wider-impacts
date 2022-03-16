@@ -354,12 +354,12 @@ output$Prop_barplot<-renderUI({
                    fixedrange=TRUE),
         yaxis = list(title = "Number of THN kits",
                      fixedrange=TRUE),
-        hovermode= 'x unified',
-        annotations = 
-          list(x = 1, y = -0.4, text = "Data on take home naloxone provided by SAS is not available for June 2021", 
-               showarrow = F, xref='paper', yref='paper', 
-               xanchor='right', yanchor='auto', xshift=0, yshift=0,
-               font=list(size=13))
+        hovermode= 'x unified'#,
+        # annotations = 
+        #   list(x = 1, y = -0.4, text = "Data on take home naloxone provided by SAS is not available for June 2021", 
+        #        showarrow = F, xref='paper', yref='paper', 
+        #        xanchor='right', yanchor='auto', xshift=0, yshift=0,
+        #        font=list(size=13))
         
       )
       prop <- prop %>%  config(
@@ -418,10 +418,12 @@ output$Cum_plot<-renderUI({
    plot_data<- plot_data %>%
          mutate(month = format(Date, "%m"), year = format(Date, "%Y")) 
    plot_data1<-subset(plot_data,Date<'2021-01-04')
-   plot_21<-subset(plot_data,Date>='2021-01-04')
+   plot_21<-subset(plot_data,(Date>='2021-01-04'& Date <='2022-03-01'))
+   plot_22<-subset(plot_data,Date>='2022-01-03')
    #aggregating data by month
    plot_data1<-aggregate(.~ month + year,data=plot_data1[,c(3,4,7,8)],FUN=sum, na.rm=T)
    plot_21<-aggregate(.~ month + year,data=plot_21[,c(3,4,7,8)],FUN=sum, na.rm=T)
+   plot_22<-aggregate(.~ month + year,data=plot_22[,c(3,4,7,8)],FUN=sum, na.rm=T)
    #adding 2019 week to jan 2020 week
    plot_data1$`Raw 20/21`[2]<-plot_data1$`Raw 20/21`[2]+plot_data1$`Raw 20/21`[1]
    plot_data1$`Raw 2018/19`[2]<-plot_data1$`Raw 2018/19`[2]+plot_data1$`Raw 2018/19`[1]
@@ -437,10 +439,12 @@ output$Cum_plot<-renderUI({
    y_1819<-cumsum(plot_data1$`Raw 2018/19`)
    y_20<- cumsum(plot_data1$`Raw 20/21`)
    y_21<-cumsum(plot_21$`Raw 20/21`)
+   y_22<-cumsum(plot_22$`Raw 20/21`)
    trend<-plot_ly(data = plot_data1, x =seq(1:(nrow(plot_data1)+1)))
    trend<-trend %>% add_trace(y =c(0,y_1819),name='Average \n2018-2019',type='scatter', mode='lines',line=list(color='green', dash='dot'),text=lab_text('Average 2018-2019',c('',month.abb[as.numeric(plot_data1$month)]),c(0,y_1819)),hoverinfo='text')
    trend<-trend %>% add_trace(y = c(0,y_20),name='2020',type='scatter', mode='lines',line=list(color='black'),text=lab_text('2020',c('',month.abb[as.numeric(plot_data1$month)]),c(0,y_20)),hoverinfo='text')
    trend<-trend %>% add_trace(data=plot_21,x=seq(1:(nrow(plot_21)+1)), y=c(0,y_21), name='2021', type='scatter',mode='lines',line=list(color='blue'),text=lab_text('2021',c('',month.abb[as.numeric(plot_21$month)]),c(0,y_21)),hoverinfo='text')
+   trend<-trend %>% add_trace(data=plot_22,x=seq(1:(nrow(plot_22)+1)), y=c(0,y_22), name='2021', type='scatter',mode='lines',line=list(color='orange'),text=lab_text('2022',c('',month.abb[as.numeric(plot_22$month)]),c(0,y_22)),hoverinfo='text')
    trend<-trend %>% 
      layout(
        margin=list(t=80,l=2),
@@ -575,15 +579,25 @@ output$drug_commentary <- renderUI({
         p(strong('Community')),
         tags$ul(
           tags$li("The trend in community outlet supplies per month shows an exceptionally large number of THN kits supplied in April and May 2020 during the initial response to the COVID-19 pandemic (from 961 in March to 2,546 in April and 1,675 in May). Large-scale distributions by NHS Fife and NHS Ayrshire and Arran accounted for the notable increases in supplies observed in April and May 2020 respectively. "),
-          tags$li("Aside from these peaks in April and May 2020, monthly supply numbers in 2020 were broadly the same as the combined 2018 and 2019 average until January 2021. The two minor exceptions to this were smaller peaks in September and December 2020. Although the December 2020 figure was lower than that of the 2018 & 2019 average, the regular peak observed at that time of year increase suggests a seasonal increase in THN supply. From January 2021 to June 2021, the number of THN kits provided have been consistently higher than the 2018 & 2019 average. ")),
+          tags$li("Monthly supply numbers in 2020 were broadly the same as the combined 2018 and 2019 average until January 2021.
+                  The two minor exceptions to this were smaller peaks in September and December 2020. Although the December 2020 figure
+                  was lower than that of the 2018 & 2019 average, the regular peak observed at that time of year increase suggests
+                  a seasonal increase in THN supply."),
+          tags$li("From January 2021 to September 2021, the number of THN kits provided have been consistently higher than the 
+                  2018 & 2019 average, with a notable increase observed from August 2021 onwards. This is a result of a new 
+                  Scottish Government campaign to increase the supply of THN kits to members of the public. ")),
         
         p(strong('Pharmacy')),
         tags$ul(
-          tags$li("The number of THN kits dispensed by pharmacies on the basis of a community prescription was consistently higher from March 2020 to June 2021 than the average for 2018 & 2019. In particular, two large peaks in supply were observed in April 2020 and December 2020.")),
+          tags$li("The number of THN kits dispensed by pharmacies on the basis of a community prescription was consistently higher from March
+                  2020 to September 2021 than the average for 2018 & 2019. In particular, two large peaks in supply were observed in April 2020
+                  and December 2020.")),
         
         p(strong('Prisons')),
         tags$ul(
-          tags$li("The number of THN supplies issued by prisons per month was consistently higher for the period February 2020 to June 2021 than the corresponding 2018 & 2019 averages. The exception to this was November 2020 when supplies were 21% lower than the 2018 & 2019 average for the same month. "),
+          tags$li("The number of THN supplies issued by prisons per month was consistently higher for the period February 2020 to September
+                  2021 than the corresponding 2018 & 2019 averages. The exception to this was November 2020 when supplies 
+                  were 21% lower than the 2018 & 2019 average for the same month. "),
           tags$li("The large peak in May 2020 may partially have been a result of the Scottish Prison Service\'s ",
                   tags$a(href="https://www.sps.gov.uk/Corporate/Information/covid19/covid-19-information-hub.aspx", 
                          "COVID Early Release scheme ",  target="_blank"),
@@ -597,33 +611,33 @@ output$drug_commentary <- renderUI({
       tags$li('A similar pattern was seen for both drug and alcohol referrals over the 15-month time period, although alcohol treatment referrals dropped to a greater extent following the UK lockdown (at their lowest, alcohol referrals were 74% below the 2018 and 2019 average for the week beginning 6 April 2020, compared with 58% lower for drug referrals). However, numbers of both types of referral increased to approximately 20% below the 2018 and 2019 average by 22 June 2020.'),
       tags$li('The Scotland trends described were observed across many NHS Boards and Alcohol and Drug Partnerships, although there will have been some variation between areas.')
     ),
-    # h2('SAS naloxone administration'),
-    # tags$ul(
-    #   tags$li("The trends for SAS naloxone administration in 2020 and 2021 are generally in line with the trend seen in the average of 2018 and 2019. The 3-week average in both 2020 and 2021 data and the historic average show considerable variation over time. "),
-    #   tags$li("From January 2020 to the beginning of June 2020 the number of SAS naloxone incidents were roughly similar those seen on average in 2018 and 2019. The biggest difference between the two trend lines can be seen at the end of June to beginning of July where the historic average line peaked at 131 Naloxone incidents compared with 95 incidents in 2020. "),
-    #   tags$li('Following this difference, from August 2020 there was a decreasing trend in the number of SAS naloxone incidents followed by an increase from January 2021. This increase in the number of SAS naloxone incidents reaches a peak of 127 at the beginning of July 2021, followed by a small decrease to around 110 incidents in August 2021. This trend, beginning in January 2021, closely follows the trend seen on average in 2018 and 2019.')),
-    # 
-    #  h2("Drug and alcohol treatment referrals"),
-    # p(strong("Information on the number of referrals to specialist drug and
-    #          alcohol treatment services was included for the first time on 03 November
-    #          2021")),
-    # p(strong(
-    #   'These data on numbers of referrals to specialist drug and alcohol treatment services during the pandemic can be interpreted as a measure of demand for support with substance use issues and/or the capacity of services to process referrals for treatment.
-    #  Although these data are sourced from the systems that monitor waiting times for drug and alcohol treatment waiting times, they do not indicate the percentage of waits for specialist treatment where the target was met, nor whether individuals were provided with support that met their needs.
-    #    Information on performance against Scotland\'s Drug and Alcohol Treatment Waiting Time target can be found at',
-    #    tags$a(href="https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/",
-    #           "https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/",  target="_blank"), '.'
-    # )),
-    # tags$ul(
-    #   tags$li("The numbers of specialist drug and alcohol treatment referrals in January and February 2020 were broadly comparable to the 2018 and 2019 average for the corresponding weeks. Subsequently,
-    #           a 63% decrease in referrals was observed from week beginning 9 March 2020 (1,156 referrals) to week beginning 23 March 2020 (424 referrals). "),
-    #   tags$li("Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising from 387 in the week beginning 6 April 2020 to 1,060 in the week beginning 24 August. This figure remained approximately stable until December, when the annual seasonal decrease in treatment
-    #           referrals in late November and December 2020 was broadly comparable with decreases observed in previous years. "),
-    #   tags$li("From January 2021 to May 2021, referral numbers remained stable and at a similar level seen in the latter half of 2020 (generally around 20% lower than the 2018 and 2019 average for corresponding weeks)."),
-    #   tags$li("A similar pattern was seen for both drug and alcohol referrals over the 18-month time period, although alcohol treatment referrals dropped to a greater extent following the UK lockdown (at their lowest, alcohol referrals were 74% below the 2018 and 2019 average for the week beginning 6 April, compared with 58% below observed in drug referrals). However, both referral types increased to around 20% below the 2018 and 2019 average by 22 June. "),
-    #   tags$li("The trends described were broadly observed across all NHS Boards and Alcohol and Drug Partnerships.")),
-    # 
-    # 
+    h2('SAS naloxone administration'),
+    tags$ul(
+      tags$li("The trends for SAS naloxone administration in 2020 and 2021 are generally in line with the trend seen in the average of 2018 and 2019. The 3-week average in both 2020 and 2021 data and the historic average show considerable variation over time. "),
+      tags$li("From January 2020 to the beginning of June 2020 the number of SAS naloxone incidents were roughly similar those seen on average in 2018 and 2019. The biggest difference between the two trend lines can be seen at the end of June to beginning of July where the historic average line peaked at 131 Naloxone incidents compared with 95 incidents in 2020. "),
+      tags$li('Following this difference, from August 2020 there was a decreasing trend in the number of SAS naloxone incidents followed by an increase from January 2021. This increase in the number of SAS naloxone incidents reaches a peak of 127 at the beginning of July 2021, followed by a small decrease to around 110 incidents in August 2021. This trend, beginning in January 2021, closely follows the trend seen on average in 2018 and 2019.')),
+
+     h2("Drug and alcohol treatment referrals"),
+    p(strong("Information on the number of referrals to specialist drug and
+             alcohol treatment services was included for the first time on 03 November
+             2021")),
+    p(strong(
+      'These data on numbers of referrals to specialist drug and alcohol treatment services during the pandemic can be interpreted as a measure of demand for support with substance use issues and/or the capacity of services to process referrals for treatment.
+     Although these data are sourced from the systems that monitor waiting times for drug and alcohol treatment waiting times, they do not indicate the percentage of waits for specialist treatment where the target was met, nor whether individuals were provided with support that met their needs.
+       Information on performance against Scotland\'s Drug and Alcohol Treatment Waiting Time target can be found at',
+       tags$a(href="https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/",
+              "https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/",  target="_blank"), '.'
+    )),
+    tags$ul(
+      tags$li("The numbers of specialist drug and alcohol treatment referrals in January and February 2020 were broadly comparable to the 2018 and 2019 average for the corresponding weeks. Subsequently,
+              a 63% decrease in referrals was observed from week beginning 9 March 2020 (1,156 referrals) to week beginning 23 March 2020 (424 referrals). "),
+      tags$li("Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising from 387 in the week beginning 6 April 2020 to 1,060 in the week beginning 24 August. This figure remained approximately stable until December, when the annual seasonal decrease in treatment
+              referrals in late November and December 2020 was broadly comparable with decreases observed in previous years. "),
+      tags$li("From January 2021 to May 2021, referral numbers remained stable and at a similar level seen in the latter half of 2020 (generally around 20% lower than the 2018 and 2019 average for corresponding weeks)."),
+      tags$li("A similar pattern was seen for both drug and alcohol referrals over the 18-month time period, although alcohol treatment referrals dropped to a greater extent following the UK lockdown (at their lowest, alcohol referrals were 74% below the 2018 and 2019 average for the week beginning 6 April, compared with 58% below observed in drug referrals). However, both referral types increased to around 20% below the 2018 and 2019 average by 22 June. "),
+      tags$li("The trends described were broadly observed across all NHS Boards and Alcohol and Drug Partnerships.")),
+
+
     h2('OST prescribing'),
     p(strong('Methadone')),
     p('The total quantity of methadone prescribed has remained fairly consistent since January 2018, at around 40 million mg per month. This suggests that the changes in methadone prescribing observed during the COVID-19 pandemic did not influence the total quantity of methadone prescribed.  However, there has been variation in how this has been prescribed. '),

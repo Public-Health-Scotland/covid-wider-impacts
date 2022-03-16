@@ -1,5 +1,5 @@
 #UI
-#secure_app( #uncomment if needing password protection
+secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -808,6 +808,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                          radioGroupButtons("drug_subcategories",
                                            label= "Step 1 – Select the data you want to explore",
                                            choices = c('Take home naloxone kits',
+                                                       'Scottish Ambulance Service naloxone administration'= 'SAS naloxone administration',
                                                        'Drug and alcohol treatment referrals',
                                                        'Opioid substitution therapy prescribing'='OST prescribing'),
                                            status = "primary",
@@ -860,6 +861,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
- #)#secure app
+ )#secure app
 
 #END

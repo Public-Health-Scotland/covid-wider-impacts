@@ -184,10 +184,10 @@ saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_",
 
 
 # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# dashboard_monthly_data <- readRDS("/PHI_conf/SubstanceMisuse1/Topics/Naloxone/Projects/20200515-COVID19-Naloxone/Temp/dashboard_monthly_data.rds")
+dashboard_monthly_data <- readRDS("/PHI_conf/SubstanceMisuse1/Topics/Naloxone/Projects/20200515-COVID19-Naloxone/Temp/dashboard_monthly_data.rds")
 
 # FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-dashboard_monthly_data <- readRDS(paste0(data_folder, "drugs/dashboard_monthly_data.rds"))
+#dashboard_monthly_data <- readRDS(paste0(data_folder, "drugs/dashboard_monthly_data.rds"))
 
 HB_data<-dashboard_monthly_data[order(dashboard_monthly_data$month),] #ordering by date
 
@@ -208,7 +208,7 @@ comp.data<-complete(HB_data, Board=hb, Type=types, Date=dates,
 comp.data<-comp.data[order(comp.data$Date),]#Ordering by date
 comp.data<-comp.data[,c(3,1,2,4:8)]#Reordering columns
 
-block<-nrow(subset(comp.data,Date<=6))#CHANGE WHEN UPDATING DATA:replace with number of months of 2021 data available
+block<-nrow(subset(comp.data,Date<=9))#CHANGE WHEN UPDATING DATA:replace with number of months of 2021 data available
 comp.data.temp<-rbind(comp.data[,c(1:3,8,6)],comp.data[c(1:block),c(1:3,8,6)])
 comp.data.temp[c((nrow(comp.data)+1):(nrow(comp.data)+block)),5]<-comp.data[c(1:block),7]
 
@@ -249,12 +249,12 @@ new_THN$`Proportion 20/21`<-as.numeric(format(round(new_THN$`Proportion 20/21` ,
 
 
 #SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(new_THN,'THN_by_HB.rds')
+saveRDS(new_THN,'shiny_app/data/THN_by_HB.rds')
 
-# SAVING FOR WIDER IMPACTS TEAM
-saveRDS(new_THN, "shiny_app/data/THN_by_HB.rds")
-saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_", 
-                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# # SAVING FOR WIDER IMPACTS TEAM
+# saveRDS(new_THN, "shiny_app/data/THN_by_HB.rds")
+# saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_", 
+#                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 
 ###############################################.
@@ -265,115 +265,125 @@ saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_",
 #Line 353: Update number of weeks of data available
 
 
-# SAS_data<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/SAS/SAS_reformat.xlsx", 
-#                       sheet = "HB-DATA")
-# 
-# 
-# SAS_data<- SAS_data %>% 
-#   rename(Date='Week Commencing') 
-# 
-# #Gathering board names into NHS board column
-# SAS_long<-melt(SAS_data,
-#                id.vars= c('Date'),
-#                measure.vars=c(2:17),
-#                variable.name = 'Board',
-#                value.name='Number')
-# 
-# SAS_long<- SAS_long %>% 
-#   mutate('Year'=isoyear(SAS_long$Date))
-# 
-# SAS_long<-SAS_long[order(SAS_long$Date),]#Ordering by date
-# SAS_long$Number<-as.numeric(SAS_long$Number)#Changing to numeric format
-# SepYears<-split(SAS_long, SAS_long$Year)#Separating by year
-# 
-# data.2018<-SepYears$`2018`
-# data.2019<-SepYears$`2019`
-# data.2020<-SepYears$`2020`
-# data.2021<-SepYears$`2021`
-# 
-# #Variable for length of a weeks worth of data as have to repeat last week of 2018/19 data to 
-# #Match up with 2020 data
-# diff<-nrow(data.2020)-nrow(data.2018)
-# 
-# #Repeating last week of 2018
-# data.2018<-rbind(data.2018,data.2018[c((nrow(data.2018)-diff+1):nrow(data.2018)),])
-# data.2019<-rbind(data.2019,data.2019[c((nrow(data.2019)-diff+1):nrow(data.2019)),])
-# 
-# #Adding 2021 block to end of all data frames
-# data.2018<-rbind(data.2018, data.2018[c(1:nrow(data.2021)),])
-# data.2019<-rbind(data.2019, data.2019[c(1:nrow(data.2021)),])
-# data.2020.2021<-rbind(data.2020,data.2021)
-# 
-# #0 data comes in as NA from excel so needs to be changed to 0
-# data.2020.2021$Number[which(is.na(data.2020.2021$Number))]<-0
-# data.2018$Number[which(is.na(data.2018$Number))]<-0
-# data.2019$Number[which(is.na(data.2019$Number))]<-0
-# 
-# #Calculating 2018 and 2019 Average 
-# average.1819<-(data.2018$Number+data.2019$Number)/2
-# 
-# data<- data.2020.2021 %>% 
-#   mutate(average= average.1819)
-# 
-# data<-data[,-4]#Removing Year column
-# 
-# data<- data %>% 
-#   rename(`2020 & 2021`=Number,
-#          `Average 2018 & 2019`=average)
-# 
-# #Adding NHS to the beginning of health board names
-# levels(data$Board)<-c('NHS Ayrshire & Arran',
-#                       'NHS Borders',
-#                       'NHS Dumfries & Galloway',
-#                       'NHS Fife',
-#                       'NHS Forth Valley',
-#                       'NHS Grampian',
-#                       'NHS Greater Glasgow & Clyde',
-#                       'NHS Highland',
-#                       'NHS Lanarkshire',
-#                       'NHS Lothian',
-#                       'NHS Orkney',
-#                       'NHS Shetland',
-#                       'NHS Tayside',
-#                       'NHS Western Isles',
-#                       'Unassigned',
-#                       'Scotland')
-# 
-# data<-data[order(data$Board),]#Ordering by board
-# 
-# #Rounding to 1dp
-# data$`2020 & 2021`<-round(data$`2020 & 2021`,1)
-# data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
-# 
-# #Creating variables for rolling average
-# rolling.18.19<-rep(0,nrow(data))
-# rolling.20.21<-rep(0,nrow(data))
-# 
-# 
-# section<-78 #number of weeks that data is collected for:MUST BE CHANGED MANUALLY WHEN DATA IS UPDATES
-# loop<-seq(1,nrow(data),section) #For applying rolling average to each section
-# 
-# for (i in loop){
-#   'Loop for 3 week rolling average'
-#   'Using roll apply function from zoo package: Carries out rolling average on each NHS board '
-#   rolling.18.19[i:(i+section-1)]<-rollapply(data$`Average 2018 & 2019`[i:(i+section-1)], width= 3, fill = NA,FUN=function(x) mean(x,na.rm=T))
-#   rolling.20.21[i:(i+section-1)]<-rollapply(data$`2020 & 2021`[i:(i+section-1)], width= 3, fill = NA,FUN=function(x) mean(x,na.rm=T))
-# }
-# 
-# data<-data.frame(data, rolling1819=rolling.18.19, rolling2021=rolling.20.21)
-# data <- data %>% 
-#   rename(`2020 & 2021`=rolling2021,
-#          `Average 2018 & 2019`=rolling1819,
-#          `Raw 20/21`= X2020...2021,
-#          `Raw 2018/19`= Average.2018...2019)
-# data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
-# data$`2020 & 2021`<- round(data$`2020 & 2021`,1)
-# 
-# saveRDS(data, 'SASdata.rds')
-# 
-# # SAVING FOR WIDER IMPACTS TEAM
+
+# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
+SAS_data<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/SAS/2022_1_SAS_reformat_January.xlsx")
+
+# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+#SAS_data <- read_excel(paste0(data_folder, "drugs/SAS_reformat_November.xlsx"))
+
+
+SAS_data<- SAS_data %>%
+  rename(Date='Week Commencing')
+
+#Gathering board names into NHS board column
+SAS_long<-melt(SAS_data,
+               id.vars= c('Date'),
+               measure.vars=c(2:17),
+               variable.name = 'Board',
+               value.name='Number')
+
+SAS_long<- SAS_long %>%
+  mutate('Year'=isoyear(SAS_long$Date))
+
+SAS_long<-SAS_long[order(SAS_long$Date),]#Ordering by date
+SAS_long$Number<-as.numeric(SAS_long$Number)#Changing to numeric format
+SepYears<-split(SAS_long, SAS_long$Year)#Separating by year
+
+data.2018<-SepYears$`2018`
+data.2019<-SepYears$`2019`
+data.2020<-SepYears$`2020`
+data.2021<-SepYears$`2021`
+data.2022<-SepYears$`2022`
+#Variable for length of a weeks worth of data as have to repeat last week of 2018/19 data to
+#Match up with 2020 data
+diff<-nrow(data.2020)-nrow(data.2018)
+
+#Repeating last week of 2018
+data.2018<-rbind(data.2018,data.2018[c((nrow(data.2018)-diff+1):nrow(data.2018)),])
+data.2019<-rbind(data.2019,data.2019[c((nrow(data.2019)-diff+1):nrow(data.2019)),])
+
+#Adding 2021 and 2022 block to end of all data frames
+data.2018<-rbind(data.2018, data.2018[c(1:nrow(data.2021)),],data.2018[c(1:nrow(data.2022)),])
+data.2019<-rbind(data.2019, data.2019[c(1:nrow(data.2021)),],data.2019[c(1:nrow(data.2022)),])
+data.2020.2021<-rbind(data.2020,data.2021,data.2022)
+
+#0 data comes in as NA from excel so needs to be changed to 0
+data.2020.2021$Number[which(is.na(data.2020.2021$Number))]<-0
+data.2018$Number[which(is.na(data.2018$Number))]<-0
+data.2019$Number[which(is.na(data.2019$Number))]<-0
+
+#Calculating 2018 and 2019 Average
+average.1819<-(data.2018$Number+data.2019$Number)/2
+ 
+
+data<- data.2020.2021 %>%
+  mutate(average= average.1819)
+
+data<-data %>% 
+  select(-Year)#Removing Year column
+
+data<- data %>%
+  rename(`2020 & 2021`=Number,
+         `Average 2018 & 2019`=average)
+
+#Adding NHS to the beginning of health board names
+levels(data$Board)<-c('NHS Ayrshire & Arran',
+                      'NHS Borders',
+                      'NHS Dumfries & Galloway',
+                      'NHS Fife',
+                      'NHS Forth Valley',
+                      'NHS Grampian',
+                      'NHS Greater Glasgow & Clyde',
+                      'NHS Highland',
+                      'NHS Lanarkshire',
+                      'NHS Lothian',
+                      'NHS Orkney',
+                      'NHS Shetland',
+                      'NHS Tayside',
+                      'NHS Western Isles',
+                      'Unassigned',
+                      'Scotland')
+
+data<-data %>%  
+  arrange(Board)#Ordering by board
+
+#Rounding to 1dp
+data$`2020 & 2021`<-round(data$`2020 & 2021`,1)
+data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
+
+#Removed 'unassigned' group of observations 
+data<- data %>%  
+  filter(Board!='Unassigned')
+#Creating variables for rolling average
+rolling.18.19<-rep(0,nrow(data))
+rolling.20.21<-rep(0,nrow(data))
+
+
+section<-nrow(data)/15 #number of weeks that data is collected for= total number of observations/number of locations(15)
+loop<-seq(1,nrow(data),section) #For applying rolling average to each section
+
+for (i in loop){
+  'Loop for 3 week rolling average'
+  'Using roll apply function from zoo package: Carries out rolling average on each NHS board '
+  rolling.18.19[i:(i+section-1)]<-rollapply(data$`Average 2018 & 2019`[i:(i+section-1)], width= 3, fill = NA,FUN=function(x) mean(x,na.rm=T))
+  rolling.20.21[i:(i+section-1)]<-rollapply(data$`2020 & 2021`[i:(i+section-1)], width= 3, fill = NA,FUN=function(x) mean(x,na.rm=T))
+}
+
+data<-data.frame(data, rolling1819=rolling.18.19, rolling2021=rolling.20.21)
+data <- data %>%
+  rename(`2020 & 2021`=rolling2021,
+         `Average 2018 & 2019`=rolling1819,
+         `Raw 20/21`= X2020...2021,
+         `Raw 2018/19`= Average.2018...2019)
+data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
+data$`2020 & 2021`<- round(data$`2020 & 2021`,1)
+
+saveRDS(data, 'shiny_app/data/SASdata.rds')
+
+# SAVING FOR WIDER IMPACTS TEAM
 # saveRDS(data, "shiny_app/data/SASdata.rds")
-# saveRDS(data, paste0(data_folder,"final_app_files/SASdata_", 
+# saveRDS(data, paste0(data_folder,"final_app_files/SASdata_",
 #                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 
@@ -385,50 +395,53 @@ saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_",
 #Check formatting code as raw data comes slightly differently every time
 
 # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# raw.meth.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Methadone 1mg.ml-1.xlsx", 
-#                            sheet = "Paid Items", col_types = c("text", 
-#                                                                "text", "text", "numeric", "numeric", 
-#                                                                "numeric"))
 
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Methadone 1mg.ml-1.xlsx"),
-                                   sheet = "Paid Items", col_types = c("text", 
-                                                                       "text", "text", "numeric", "numeric", 
-                                                                       "numeric"))
+raw.meth.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/OST/we02012022_Methadone 1mg.ml-1.xlsx",
+                           sheet = "Paid Items", col_types = c("text",
+                                                               "text", "text", "numeric", "numeric",
+                                                               "numeric"))
 
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# scot.raw.meth.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Methadone 1mg.ml-1.xlsx", 
-#                                sheet = "Context ePr Vs Paid", col_types = c("text", 
-#                                                                             "text", "numeric", "text", "numeric"))
 
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-scot.raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Methadone 1mg.ml-1.xlsx"),
-                                        sheet = "Context ePr Vs Paid", col_types = c("text", 
-                                                                                     "text", "numeric", "text", "numeric"))
+# # FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Methadone 1mg.ml-1.xlsx"),
+#                                    sheet = "Paid Items", col_types = c("text", 
+#                                                                        "text", "text", "numeric", "numeric", 
+#                                                                        "numeric"))
 
 # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# raw.bup.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx", 
-#                          sheet = "Paid Items", col_types = c("text", 
-#                                                              "text", "text", "numeric", "text", 
-#                                                              "numeric", "text", "numeric"))
+scot.raw.meth.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/OST/we02012022_Methadone 1mg.ml-1.xlsx",
+                               sheet = "Context ePr Vs Paid", col_types = c("text",
+                                                                            "text", "numeric", "text", "numeric"))
 
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx"),
-                                  sheet = "Paid Items", col_types = c("text", 
-                                                                      "text", "text", "numeric", "text", 
-                                                                      "numeric", "text", "numeric"))
+# # FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# scot.raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Methadone 1mg.ml-1.xlsx"),
+#                                         sheet = "Context ePr Vs Paid", col_types = c("text", 
+#                                                                                      "text", "numeric", "text", "numeric"))
 
 # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# scot.raw.bup.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx", 
-#                                sheet = "Context ePr Vs Paid", col_types = c("text", 
-#                                                                             "text", "text", "text", "numeric", 
-#                                                                             "text", "numeric", "text", "numeric"))
 
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-scot.raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx"),
-                                       sheet = "Context ePr Vs Paid", col_types = c("text", 
-                                                                                    "text", "text", "text", "numeric", 
-                                                                                    "text", "numeric", "text", "numeric"))
+raw.bup.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/OST/we02012022 Buprenorphine_2MG_8MG_16MG.xlsx",
+                         sheet = "Paid Items", col_types = c("text",
+                                                             "text", "text", "numeric", "text",
+                                                             "numeric", "text", "numeric"))
+
+# # FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx"),
+#                                   sheet = "Paid Items", col_types = c("text", 
+#                                                                       "text", "text", "numeric", "text", 
+#                                                                       "numeric", "text", "numeric"))
+
+# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
+scot.raw.bup.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/OST/we02012022 Buprenorphine_2MG_8MG_16MG.xlsx",
+                               sheet = "Context ePr Vs Paid", col_types = c("text",
+                                                                            "text", "text", "text", "numeric",
+                                                                            "text", "numeric", "text", "numeric"))
+
+# # FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# scot.raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx"),
+#                                        sheet = "Context ePr Vs Paid", col_types = c("text", 
+#                                                                                     "text", "text", "text", "numeric", 
+#                                                                                     "text", "numeric", "text", "numeric"))
 
 
 #formatting meth Paid
@@ -515,6 +528,7 @@ paid.2018<-sep.paid$`2018`
 paid.2019<-sep.paid$`2019`
 paid.2020<-sep.paid$`2020`
 paid.2021<-sep.paid$`2021`
+# paid.2022<-sep.paid$`2022`
 
 paid.2020.2021<-rbind(paid.2020,paid.2021)#Adding 2020 and 2021 data
 extended.paid.2018<-rbind(paid.2018,paid.2018[c(1:nrow(paid.2021)),])#Repeating 2018 data to match length of 2020/21 data
@@ -577,17 +591,17 @@ paid.quantity$Quantity<-round(paid.quantity$Quantity)
 paid.quantity$Board<-gsub('Nhs','NHS',str_to_title(paid.quantity$Board))
 
 # SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(paid.final,'OST_paid.rds')
+saveRDS(paid.final,'shiny_app/data/OST_paid.rds')
 
 # SAVING FOR WIDER IMPACTS TEAM
-saveRDS(paid.final, "shiny_app/data/OST_paid.rds")
-saveRDS(paid.final, paste0(data_folder,"final_app_files/OST_paid_", 
-                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# saveRDS(paid.final, "shiny_app/data/OST_paid.rds")
+# saveRDS(paid.final, paste0(data_folder,"final_app_files/OST_paid_", 
+#                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 #SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(paid.quantity,'OST_paid_quantity.rds')
+ saveRDS(paid.quantity,'shiny_app/data/OST_paid_quantity.rds')
 
 #SAVING FOR WIDER IMPACTS TEAM
-saveRDS(paid.quantity, "shiny_app/data/OST_paid_quantity.rds")
-saveRDS(paid.quantity, paste0(data_folder,"final_app_files/OST_paid_quantity_", 
-                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# saveRDS(paid.quantity, "shiny_app/data/OST_paid_quantity.rds")
+# saveRDS(paid.quantity, paste0(data_folder,"final_app_files/OST_paid_quantity_", 
+#                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
