@@ -406,21 +406,21 @@ output$childdev_domains <- renderPlotly({
     #Creating time trend plot
     plot_ly(data=trend_data, x=~month_review) %>%
       add_lines(y = ~slc_perc, name = "Speech, language & communication",
-                line = list(color = "#bf812d"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#2d2da1"), text=tooltip_trend, hoverinfo="text") %>%
       add_lines(y = ~prob_solv_perc, name = "Problem solving",
-                line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#9999ff"), text=tooltip_trend, hoverinfo="text") %>%
       add_lines(y = ~gross_motor_perc, name = "Gross motor",
-                line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#8e23a0"), text=tooltip_trend, hoverinfo="text") %>%
       add_lines(y = ~per_soc_perc, name = "Personal/Social",
-                line = list(color = "#bf812d"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#a81141"), text=tooltip_trend, hoverinfo="text") %>%
       add_lines(y = ~fine_motor_perc, name = "Fine motor",
-                line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#e3b419"), text=tooltip_trend, hoverinfo="text") %>%
       add_lines(y = ~emot_beh_perc, name = "Emotional/Behavioural",
-                line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#1d91c0"), text=tooltip_trend, hoverinfo="text") %>%
       add_lines(y = ~vision_perc, name = "Vision",
-                line = list(color = "#74add1"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#edf8b1"), text=tooltip_trend, hoverinfo="text") %>%
       add_lines(y = ~hearing_perc, name = "Hearing",
-                line = list(color = "black"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#7fcdbb"), text=tooltip_trend, hoverinfo="text") %>%
       
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
