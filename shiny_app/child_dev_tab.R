@@ -151,7 +151,14 @@ output$childdev_explorer <- renderUI({
                     h4(paste0("Number of ", review_title,
                               " reviews; reviews with full meaningful data on child development recorded; and children with 1 or more developmental concerns recorded")))),
     fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
-
+    br(), #spacing
+    # Only give domain breakdown for Scotland
+    if (input$geotype_childdev == "Scotland") {
+      tagList(
+        h4(paste0("Percentage of ", review_title,
+                  " reviews with a new or previous concern recorded by developmental domain")),
+      fluidRow(withSpinner(plotlyOutput("childdev_domains"))),
+      br(), #spacing
     # Only give SIMD breakdown for Scotland
     if (input$geotype_childdev == "Scotland") {
       tagList(
