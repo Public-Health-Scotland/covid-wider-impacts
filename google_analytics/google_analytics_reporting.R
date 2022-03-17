@@ -61,7 +61,7 @@ last_year <- paste0(Sys.Date() - 365)
 
 ## Query getting sessions data from first day we got data from to today
 sessions_ga <- google_analytics(ga_id,
-                 date_range = c("2020-06-26", last_date),
+                 date_range = c("2020-06-29", last_date),
                  metrics = c("sessions", "sessionDuration"),
                  dimensions = c("date"),
                  max = -1) # this brings all results
@@ -82,7 +82,7 @@ geo_ga <- google_analytics(ga_id,
 
 ## Query getting events data from first day we got data from to today
 events_ga <- google_analytics(ga_id,
-                 date_range = c("2022-02-04", last_date),
+                 date_range = c("2022-02-07", last_date),
                  metrics = c("totalEvents"),
                  dimensions = c("date", "eventlabel"),
                  max = -1) # this brings all results
