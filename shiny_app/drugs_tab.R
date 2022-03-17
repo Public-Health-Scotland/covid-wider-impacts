@@ -3,15 +3,34 @@ observeEvent(input$btn_drugs_modal,
              if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
              showModal(modalDialog(
                title = "What is the data source?",
-              p('This section of the PHS Covid-19 wider impacts dashboard provides the weekly number of referrals to specialist alcohol and drug treatment services in Scotland delivering tier 3 and 4 interventions (community-based specialised drug assessment and co-ordinated care-planned treatment, and residential specialised drug treatment). These data exclude drug and alcohol treatment services in prisons.'),
+              p('This section of the PHS Covid-19 wider impacts dashboard provides the weekly number of referrals to specialist alcohol and 
+                drug treatment services in Scotland delivering tier 3 and 4 interventions (community-based specialised drug assessment and
+                co-ordinated care-planned treatment, and residential specialised drug treatment). These data exclude drug and alcohol treatment
+                services in prisons.'),
               p('These data have been extracted from the Drug and Alcohol Treatment Waiting Times (DATWT) database and the new',
                 tags$a(href="https://www.isdscotland.org/health-topics/drugs-and-alcohol-misuse/drug-alcohol-information-system/", 
                        "Drug and Alcohol Information System ",  target="_blank"), 
-                '(DAISy) (both Public Health Scotland) . DAISy is a national system that collects drug and alcohol waiting times and treatment information. This replaced the DATWT database and the Scottish Drug Misuse Database (SDMD) systems. From 1 December 2020 NHS Ayrshire & Arran, NHS Dumfries & Galloway, NHS Grampian and NHS Western Isles began recording waiting times information on DAISy. The remaining NHS Boards transferred to DAISy in April 2021.'),
-              p('Data from the start of 2020 to the end of March 2021 are shown alongside historical activity data (average from 2018 and 2019) for comparison purposes. Data are available for Scotland and at NHS Board and Alcohol and Drug Partnership levels and are also broken down by client type (Drugs, Alcohol and All).'),
-              p('DAISy introduced an additional ‘co-dependency’ client type (where the referral relates to treatment for both alcohol and drug use), but this has only been recorded in all NHS Boards since April 2021 so is not available as a separate breakdown here. To ensure completeness, the ‘Drugs’ category includes all referrals relating to drugs and co-dependency and the ‘Alcohol’ category includes all referrals relating to alcohol and co-dependency. From 1 December 2020 onwards, the sum of referrals in the ‘Alcohol’ and ‘Drugs’ categories will be higher than the ‘All’ data category, due to the inclusion of ‘co-dependency’ in both.'),
-              p('DAISy also introduced a new continuation of care process which affects how referrals are recorded for circumstances when clients move between services. It is anticipated that continuation of care will result in a decrease in the number of new referrals being recorded in DAISy compared to previous processes in place for the DATWT database. Direct comparisons between numbers of referrals recorded in DATWT and DAISy should be interpreted carefully, acknowledging these changes in the recording process.'),
-              p('Services are required to submit accurate and up-to-date information. Alcohol and Drug Partnerships (ADPs) have the responsibility of ensuring services are collecting and submitting data accurately (compliant). Compliance is monitored quarterly, and non-compliant services are excluded from the latest quarter of these data.  The percentage of services submitting data (compliant) across Scotland is typically greater than 95%. '),
+                '(DAISy) (both Public Health Scotland) . DAISy is a national system that collects drug and alcohol waiting times
+                and treatment information. This replaced the DATWT database and the Scottish Drug Misuse Database (SDMD) systems.
+                From 1 December 2020 NHS Ayrshire & Arran, NHS Dumfries & Galloway, NHS Grampian and NHS Western Isles began recording
+                waiting times information on DAISy. The remaining NHS Boards transferred to DAISy in April 2021.'),
+              p('Drug and Alcohol referral data from the start of 2020 to the end of December 2021 are shown alongside historical activity data
+                (average from 2018 and 2019) for comparison purposes. Data are available for Scotland and at NHS Board and Alcohol and Drug Partnership
+                levels and are also broken down by client type (Drugs, Alcohol and All).'),
+              p('Direct comparisons between numbers of referrals recorded in DATWT and DAISy should be interpreted carefully,
+                with consideration of the following changes in the recording process:'),
+              tags$ul(
+                tags$li('DAISy introduced an additional ‘co-dependency’ client type (where the referral relates to treatment for both
+                        alcohol and drug use), but this has only been recorded in all NHS Boards since April 2021 so is not available 
+                        as a separate breakdown in the earlier years.'),
+                tags$li('DAISy also introduced a new continuation of care process which affects how referrals are recorded when people 
+                        move between services after starting treatment. Whereas in the previous data system a move between services would
+                        have been recorded as two separate referrals (a referral for each service), in DAISy, the referral is only entered 
+                        once for the initial service and then a move between services is recorded as a continuation of care transfer to the
+                        second service, rather than a referral. This change is expected to result in a decrease in the number of new
+                        referrals being recorded in DAISy compared to the previous data system. ')),
+              p('Services are required to submit accurate and up-to-date waiting times information to PHS. These referrals data is 
+                management information and includes all services entering data on DAISy and its predecessor, the DATWT database.'),
               p('For further information, contact',
                  tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -105,7 +124,7 @@ output$types<-renderUI({
   if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
     column(8,
            radioButtons("types", label="Step 3 - Select type of referral",
-                        choices = c('All','Drug','Alcohol'),selected = 'All'))
+                        choices = c('All','Drug','Alcohol', 'Co-dependency'),selected = 'All'))
   }
   else if(input$drug_subcategories=='Take home naloxone kits'){
     column(8,
@@ -134,7 +153,7 @@ plot_data<-reactive({
   
   if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
     
-    plot_data<-subset(DTR_data,(Board==location()) & Type==input$types & Date<'2021-04-01')
+    plot_data<-subset(DTR_data,(Board==location()) & Type==input$types & Date<'2021-12-31')
   }
   else if(input$drug_subcategories=='Take home naloxone kits'){
     plot_data<-subset(THN_by_HB,(Board==location()) )
@@ -151,7 +170,7 @@ plot_data<-reactive({
 
 output$TwoYrComparison<-renderUI({
   
-  ###DTR section###
+  ####DTR section####
   plot_data<-plot_data()
   
   
@@ -182,6 +201,7 @@ output$TwoYrComparison<-renderUI({
     plotlyOutput('trend',width='100%')
     }
  
+  #### Naloxone Section ####
   
   else if(input$drug_subcategories=='Take home naloxone kits'){
     output$trend<-renderPlotly({
@@ -215,6 +235,8 @@ output$TwoYrComparison<-renderUI({
     })
     plotlyOutput('trend',width='100%')
   }
+  
+  #### OST prescribing section ####
   
   else if(input$drug_subcategories=='OST prescribing'){
     output$trend<-renderPlotly({
@@ -283,7 +305,7 @@ output$TwoYrComparison<-renderUI({
     })
     plotlyOutput('trend',width='100%')
   }
-  
+  #### SAS Naloxone section ####
   else if(input$drug_subcategories=='SAS naloxone administration'){
     if(location()=='NHS Shetland'||location()=='NHS Orkney'||location()=='NHS Western Isles'){
       output$data_message<-renderText('Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total')
@@ -418,7 +440,7 @@ output$Cum_plot<-renderUI({
    plot_data<- plot_data %>%
          mutate(month = format(Date, "%m"), year = format(Date, "%Y")) 
    plot_data1<-subset(plot_data,Date<'2021-01-04')
-   plot_21<-subset(plot_data,(Date>='2021-01-04'& Date <='2022-03-01'))
+   plot_21<-subset(plot_data,(Date>='2021-01-04'& Date <='2022-01-02'))
    plot_22<-subset(plot_data,Date>='2022-01-03')
    #aggregating data by month
    plot_data1<-aggregate(.~ month + year,data=plot_data1[,c(3,4,7,8)],FUN=sum, na.rm=T)
@@ -605,11 +627,21 @@ output$drug_commentary <- renderUI({
            
     h2('Drug and alcohol treatment referrals'),
     tags$ul(
-      tags$li('The number of specialist drug and alcohol treatment referrals in January and February 2020 was broadly comparable to the 2018 and 2019 average for the corresponding weeks. Subsequently, a 63% decrease in referrals was observed from week beginning 9 March 2020 (1,156 referrals) to week beginning 23 March 2020 (424 referrals).'),
-      tags$li('Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising from 387 in the week beginning 6 April 2020 to 1,060 in the week beginning 24 August. This figure remained approximately stable until December, when the annual seasonal decrease in treatment referrals occurred in late November and December 2020. This seasonal decrease was broadly comparable with decreases observed in previous years.'),
-      tags$li('From January 2021 to March 2021, weekly drug and alcohol referral numbers remained stable and at a similar level seen in the latter half of 2020 (approximately 20% lower than the 2018 and 2019 average for the corresponding weeks).'),
-      tags$li('A similar pattern was seen for both drug and alcohol referrals over the 15-month time period, although alcohol treatment referrals dropped to a greater extent following the UK lockdown (at their lowest, alcohol referrals were 74% below the 2018 and 2019 average for the week beginning 6 April 2020, compared with 58% lower for drug referrals). However, numbers of both types of referral increased to approximately 20% below the 2018 and 2019 average by 22 June 2020.'),
-      tags$li('The Scotland trends described were observed across many NHS Boards and Alcohol and Drug Partnerships, although there will have been some variation between areas.')
+      tags$li('The number of specialist drug and alcohol treatment referrals in January and February 2020 was broadly comparable to the 
+              2018 and 2019 average for the corresponding weeks. Subsequently, a 63% decrease in referrals was observed from week beginning 9 March 
+              2020 (1, 156 referrals) to week beginning 23 March 2020 (424 referrals).'),
+      tags$li('Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently 
+              lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising to a broadly 
+              stable average of just below 1,000 referrals per week between August and December 2020.  A seasonal decrease in treatment referrals 
+              occurred in late November and December 2020 broadly comparable with the decreases observed in previous years.'),
+      tags$li('During 2021, weekly drug and alcohol referral numbers remained at a similar level seen in the latter half of 2020, at 
+              just below 1,00 referrals per week, approximately 20% lower than the 2018 and 2019 weekly average.'),
+      tags$li('A similar pattern was seen for both drug and alcohol referrals. In the latter half of 2021, the number of drug referrals fall
+              below the 2020 levels for the corresponding weeks. However, combined with the co-dependency referrals, the combined number of 
+              referrals are broadly similar to the 2020 drug referral levels.  This apparent fall in drug referrals is possibly an artifact of
+              the introduction of DAISy (the new data system) and the new co-dependency category.'),
+      tags$li('The Scotland trends described were observed across many NHS Boards and Alcohol and Drug Partnerships, although
+              there will have been some variation between areas.')
     ),
     h2('SAS naloxone administration'),
     tags$ul(

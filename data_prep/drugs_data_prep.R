@@ -20,14 +20,14 @@ library(zoo)
 #Line 93: Update number of weeks
 
 # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/DrugTreatmentReferrals/Referrals_20211026_breakdown.xlsx", 
-#                                    col_types = c("text", "text", "date", 
-#                                                  "numeric"))
+Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/DrugTreatmentReferrals/Referrals_25022022_breakdown.xlsx",
+                                   col_types = c("text", "text", "date",
+                                                 "numeric"))
 
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-Referrals_breakdown <- read_excel(paste0(data_folder,"drugs/Referrals_20211026_breakdown.xlsx"),
-                                         col_types = c("text", "text", "date",
-                                                       "numeric"))
+# # FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# Referrals_breakdown <- read_excel(paste0(data_folder,"drugs/Referrals_25022022_breakdown.xlsx"),
+#                                          col_types = c("text", "text", "date",
+#                                                        "numeric"))
 
 
 
@@ -64,15 +64,15 @@ comp.2021<-complete(data.2021, Board=Hb, Type=type, Week=dates,
 
 #Merging the all years into one data set
 full<-merge(comp.2018,comp.2019,by=c('Week','Board','Type'))
-full<-merge(full,comp.2020,by=c('Week','Board','Type'))
-full<-merge(full,comp.2021,by=c('Week','Board','Type'))
+full<-merge(full1,comp.2020,by=c('Week','Board','Type'))
+full<-merge(full2,comp.2021,by=c('Week','Board','Type'))
 
 
 full<-full[order(full$Week),]
 sub.full<-full[,c(1:3,5,8,11,14)]
 colnames(sub.full)[4:7]<-c('2018','2019','2020','2021')
 
-sub.full$`2021`[(sub.full$Week>12)]<-NA #MUST UPDATE THIS WITH FUTURE UPDATES
+sub.full$`2021`[(sub.full$Week>51)]<-NA #MUST UPDATE THIS WITH FUTURE UPDATES
 sub.full$`2018`[(sub.full$Week==53)]<-sub.full$`2018`[(sub.full$Week==52)] #REPEATING LAST 2018 & 2019 OBSERVATION TO MATCH 2020 DATA
 sub.full$`2019`[(sub.full$Week==53)]<-sub.full$`2019`[(sub.full$Week==52)]
 
@@ -90,7 +90,7 @@ sub.full$Change[is.nan(sub.full$Change)]<-NA
 
 ##### Formatting for long x axis 
 ####MUST UPDATE BLOCK FOR EACH UPDATE OF DATA WITH WEEK NUMBER
-block<-nrow(subset(sub.full,Week<=12))
+block<-nrow(subset(sub.full,Week<=51))
 long.axis<-rbind(sub.full[,c(1:3,8,6)],sub.full[c(1:(block+1)),c(1:3,8,6)])
 long.axis$`2020`[c((nrow(sub.full)+1):nrow(long.axis))]<-sub.full$`2021`[1:(block+1)]
 
@@ -119,20 +119,20 @@ for(i in iter){
   long.axis$`2020 & 2021`[i]<-sum(long.axis$`2020 & 2021`[i-1],long.axis$`2020 & 2021`[i+1],long.axis$`2020 & 2021`[i+2],na.rm=T)
 }
 
-iter2<-seq(1,(nrow(long.axis)-3),4)
-for (i in iter2){
-  'This loop adds codependency values to both the alcohol and drug values'
-  'Co-dependency will not be shown as an option'
-  short.subset<-long.axis[c(i:(i+3)),]
-  a<-which(short.subset$Type=='Alcohol')
-  d<-which(short.subset$Type=='Drug')
-  c<-which(short.subset$Type=='Co-dependency')
-  short.subset$`Average 2018 & 2019`[a]<-short.subset$`Average 2018 & 2019`[a]+short.subset$`Average 2018 & 2019`[c]
-  short.subset$`Average 2018 & 2019`[d]<-short.subset$`Average 2018 & 2019`[d]+short.subset$`Average 2018 & 2019`[c]
-  short.subset$`2020 & 2021`[a]<-short.subset$`2020 & 2021`[a]+short.subset$`2020 & 2021`[c]
-  short.subset$`2020 & 2021`[d]<-short.subset$`2020 & 2021`[d]+short.subset$`2020 & 2021`[c]
-  long.axis[c(i:(i+3)),]<-short.subset
-}
+# iter2<-seq(1,(nrow(long.axis)-3),4)
+# for (i in iter2){
+#   'This loop adds codependency values to both the alcohol and drug values'
+#   'Co-dependency will not be shown as an option'
+#   short.subset<-long.axis[c(i:(i+3)),]
+#   a<-which(short.subset$Type=='Alcohol')
+#   d<-which(short.subset$Type=='Drug')
+#   c<-which(short.subset$Type=='Co-dependency')
+#   short.subset$`Average 2018 & 2019`[a]<-short.subset$`Average 2018 & 2019`[a]+short.subset$`Average 2018 & 2019`[c]
+#   short.subset$`Average 2018 & 2019`[d]<-short.subset$`Average 2018 & 2019`[d]+short.subset$`Average 2018 & 2019`[c]
+#   short.subset$`2020 & 2021`[a]<-short.subset$`2020 & 2021`[a]+short.subset$`2020 & 2021`[c]
+#   short.subset$`2020 & 2021`[d]<-short.subset$`2020 & 2021`[d]+short.subset$`2020 & 2021`[c]
+#   long.axis[c(i:(i+3)),]<-short.subset
+# }
 
 #calculating percent change
 long.axis<-cbind(long.axis,(long.axis$`2020 & 2021`- long.axis$`Average 2018 & 2019`)/long.axis$`Average 2018 & 2019`*100)
@@ -148,32 +148,32 @@ long.axis<-long.axis %>%
   mutate(`Average 2018 & 2019` = replace(`Average 2018 & 2019`, Type=='Co-dependency', NA))
 
 long.axis<-long.axis %>% 
-  mutate(`2020 & 2021` = replace(`2020 & 2021`,Date<'2020-10-12' & Type=='Co-dependency', NA))
+  mutate(`2020 & 2021` = replace(`2020 & 2021`,Date<'2020-12-01' & Type=='Co-dependency', NA))
 
 
-long.axis<-long.axis[which(long.axis$Type != 'Co-dependency'),] #removing co-dependency 
+# long.axis<-long.axis[which(long.axis$Type != 'Co-dependency'),] #removing co-dependency 
 
 ###making a file for names of health boards and names of ADPs###
 Health_board<-Hb[grep('NHS',Hb)]
 ADP_names<-Hb[grep('ADP',Hb)]
 
 #SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(Health_board,file='Health_board.rds')
-# saveRDS(ADP_names,file='ADP_names.rds')
-# saveRDS(long.axis,file='DTR_data.rds')
+saveRDS(Health_board,file='shiny_app/data/Health_board.rds')
+saveRDS(ADP_names,file='shiny_app/data/ADP_names.rds')
+saveRDS(long.axis,file='shiny_app/data/DTR_data.rds')
 
 #SAVING FOR WIDER IMPACTS TEAM
-saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
-saveRDS(ADP_names, paste0(data_folder,"final_app_files/ADP_names_", 
-                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-
-saveRDS(Health_board, "shiny_app/data/Health_board.rds")
-saveRDS(Health_board, paste0(data_folder,"final_app_files/Health_board_", 
-                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-
-saveRDS(long.axis,file="shiny_app/data/DTR_data.rds")
-saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_", 
-                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
+# saveRDS(ADP_names, paste0(data_folder,"final_app_files/ADP_names_", 
+#                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# 
+# saveRDS(Health_board, "shiny_app/data/Health_board.rds")
+# saveRDS(Health_board, paste0(data_folder,"final_app_files/Health_board_", 
+#                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# 
+# saveRDS(long.axis,file="shiny_app/data/DTR_data.rds")
+# saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_", 
+#                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Take Home Naloxone ----
