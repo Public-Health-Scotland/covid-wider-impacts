@@ -10,13 +10,13 @@ observeEvent(input$btn_drugs_modal,
               p('These data have been extracted from the Drug and Alcohol Treatment Waiting Times (DATWT) database and the new',
                 tags$a(href="https://www.isdscotland.org/health-topics/drugs-and-alcohol-misuse/drug-alcohol-information-system/", 
                        "Drug and Alcohol Information System ",  target="_blank"), 
-                '(DAISy) (both Public Health Scotland) . DAISy is a national system that collects drug and alcohol waiting times
+                '(DAISy) (both Public Health Scotland). DAISy is a national system that collects drug and alcohol waiting times
                 and treatment information. This replaced the DATWT database and the Scottish Drug Misuse Database (SDMD) systems.
                 From 1 December 2020 NHS Ayrshire & Arran, NHS Dumfries & Galloway, NHS Grampian and NHS Western Isles began recording
                 waiting times information on DAISy. The remaining NHS Boards transferred to DAISy in April 2021.'),
               p('Drug and Alcohol referral data from the start of 2020 to the end of December 2021 are shown alongside historical activity data
                 (average from 2018 and 2019) for comparison purposes. Data are available for Scotland and at NHS Board and Alcohol and Drug Partnership
-                levels and are also broken down by client type (Drugs, Alcohol and All).'),
+                levels and are also broken down by client type (Drugs, Alcohol, Co-dependency and All).'),
               p('Direct comparisons between numbers of referrals recorded in DATWT and DAISy should be interpreted carefully,
                 with consideration of the following changes in the recording process:'),
               tags$ul(
@@ -187,7 +187,10 @@ output$TwoYrComparison<-renderUI({
       shapes=lockdown('2020-03-23','grey'),
       annotations=annote("2020-03-01", plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`),
       margin=list(t=80),
-      title = (sprintf("Number of %s treatment referrals in 2020 and 2021 \n compared with 2018-19 average (%s)",tolower(input$types),location())),
+      title = (ifelse(test = input$types == 'Co-dependency',
+                      yes = 'Number of co-dependency treatment referrals in 2020 & 2021.',
+                      no = sprintf("Number of %s treatment referrals in 2020 and 2021 \n compared with 2018-19 average (%s)",
+                                   tolower(input$types),location()))),
       yaxis = list(title = "Number of referrals",
                    rangemode='tozero',
                    fixedrange=TRUE),
@@ -533,7 +536,15 @@ output$PercentChange<-renderUI({
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
       })
       plotlyOutput('change_plot',width='90%')
-    }
+    }  
+    
+   
+        else if( input$types == 'Co-dependency'){
+
+      output$data_message<-renderText('Percentage difference plot not shown due to the ‘co-dependency’ client type not being available as a separate breakdown in the earlier years.')
+textOutput('data_message')
+  }
+    
     else if(length(which(is.na(plot_data$Change)))!=0){
 
       output$data_message<-renderText('Percent difference plot not shown due to \'not applicable\' values being produced by comparison with 0 values in 2018/2019 average.')
@@ -629,13 +640,13 @@ output$drug_commentary <- renderUI({
     tags$ul(
       tags$li('The number of specialist drug and alcohol treatment referrals in January and February 2020 was broadly comparable to the 
               2018 and 2019 average for the corresponding weeks. Subsequently, a 63% decrease in referrals was observed from week beginning 9 March 
-              2020 (1, 156 referrals) to week beginning 23 March 2020 (424 referrals).'),
+              2020 (1,156 referrals) to week beginning 23 March 2020 (424 referrals).'),
       tags$li('Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently 
               lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising to a broadly 
               stable average of just below 1,000 referrals per week between August and December 2020.  A seasonal decrease in treatment referrals 
               occurred in late November and December 2020 broadly comparable with the decreases observed in previous years.'),
       tags$li('During 2021, weekly drug and alcohol referral numbers remained at a similar level seen in the latter half of 2020, at 
-              just below 1,00 referrals per week, approximately 20% lower than the 2018 and 2019 weekly average.'),
+              just below 1,000 referrals per week, approximately 20% lower than the 2018 and 2019 weekly average.'),
       tags$li('A similar pattern was seen for both drug and alcohol referrals. In the latter half of 2021, the number of drug referrals fall
               below the 2020 levels for the corresponding weeks. However, combined with the co-dependency referrals, the combined number of 
               referrals are broadly similar to the 2020 drug referral levels.  This apparent fall in drug referrals is possibly an artifact of
