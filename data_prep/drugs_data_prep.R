@@ -497,111 +497,209 @@ types1<-unique(paid1$Type1)#Form type code: to be removed later
 paid.comp<-complete(paid1,Date=paid.dates,Board=locations,Type=types,Type1=types1,
                     fill=list(Items=0,Quantity=0,`Quantity per item`=0))
 
-remove.types1<-data.frame(matrix(nrow=nrow(paid.comp)/length(types1),ncol=3))#Making new data frame to remove form type code
-colnames(remove.types1)<-c('Items','Quantity','Quantity per item')
+# New Aggregating method
 
-#Aggregating data over the form type codes
-remove.types1$Items<-colSums(matrix(paid.comp$Items, nrow=length(types1)))
-remove.types1$Quantity<-colSums(matrix(paid.comp$Quantity, nrow=length(types1)))
-remove.types1$`Quantity per item`<-colSums(matrix(paid.comp$Quantity.per.item, nrow=length(types1)),na.rm=TRUE)
 
-#Making skeleton with all combinations of variables
-skel<-expand.grid(types,locations,paid.dates)
+# 4a) Quantity/Items with two year average
 
-paid.comp1<-data.frame(skel,remove.types1)
-colnames(paid.comp1)[c(1:3,6)]<-c('Type','Board','Date','Quantity per item')
+# Health Board Level
+HB_Level <- paid.comp %>% 
+  filter(!is.na(Year)) %>% 
+  group_by(Board, Date, Month,Year, Type) %>% 
+  summarise(Items = sum(Items),
+            Quantity= sum(Quantity)) %>% 
+  ungroup()
 
-paid.comp1<-paid.comp1 %>% 
-  separate(`Date`, c("Month", "Year"),' ')
+# Pivot and calulate two year average for items
 
-scot1<-scot1 %>% 
-  separate(`Date`,c('Month','Year'),' ')
+Items_Average <- HB_Level %>%  
+  select(-Date,-Quantity) %>% 
+  pivot_wider(names_from = Year, values_from = Items) %>% 
+  mutate(across(c(`2018`:`2020`), ~replace_na(.x, 0))) %>% 
+  rowwise() %>% 
+  mutate('Average 2018 & 2019' = mean(c(`2018`,`2019`))) %>% 
+  # pivot back to years
+  pivot_longer(cols = c('2020':'Average 2018 & 2019'), names_to = 'Year', values_to = 'Items' ) %>% 
+  select(-'2018',-'2019')
 
-paid.comp1<-rbind(paid.comp1[,-7],scot1)#Adding scotland level data
-paid.comp1$Date<-as.yearmon(paste(paid.comp1$Month, paid.comp1$Year)) 
-paid.comp1<-paid.comp1[order(paid.comp1$Date),]
+# Pivot and calulate two year average for quantity
+Quantity_Average <- HB_Level %>%  
+  select(-Date,-Items) %>% 
+  pivot_wider(names_from = Year, values_from = Quantity) %>% 
+  mutate(across(c(`2018`:`2020`), ~replace_na(.x, 0))) %>% 
+  rowwise() %>% 
+  mutate('Average 2018 & 2019' = mean(c(`2018`,`2019`))) %>% 
+  # pivot back to years
+  pivot_longer(cols = c('2020':'Average 2018 & 2019'), names_to = 'Year', values_to = 'Quantity' ) %>% 
+  select(-'2018',-'2019')
 
-#Splitting up into years
-sep.paid<-split(paid.comp1,paid.comp1$Year)
+# Match them back together
 
-paid.2018<-sep.paid$`2018`
-paid.2019<-sep.paid$`2019`
-paid.2020<-sep.paid$`2020`
-paid.2021<-sep.paid$`2021`
-# paid.2022<-sep.paid$`2022`
+HB_Level <- full_join(Items_Average,Quantity_Average)
 
-paid.2020.2021<-rbind(paid.2020,paid.2021)#Adding 2020 and 2021 data
-extended.paid.2018<-rbind(paid.2018,paid.2018[c(1:nrow(paid.2021)),])#Repeating 2018 data to match length of 2020/21 data
-extended.paid.2019<-rbind(paid.2019,paid.2019[c(1:nrow(paid.2021)),])
+# Calculate quantity per item
+HB_Level <- HB_Level %>% 
+  mutate('Quantity per item' = Quantity/Items)
 
-extended.paid.average<-data.frame(extended.paid.2018[,1:4],
-                                  'Items'=(extended.paid.2018$Items+extended.paid.2019$Items)/2,
-                                  'Quantity'=(extended.paid.2018$Quantity+extended.paid.2019$Quantity)/2)
+# Pivot to correct format
+HB_Level <- HB_Level %>% 
+  pivot_longer(cols = c('Items':'Quantity per item'), names_to = 'Measurement', values_to = 'Number' ) %>% 
+  # pivot out all years
+  pivot_wider(names_from ='Year', values_from = 'Number') %>% 
+  # pivot back 2020 and 2021 only
+  pivot_longer(cols = c('2020':'2021'), names_to = 'Year', values_to = '2020 & 2021' )
 
-extended.paid.average<-data.frame(extended.paid.average,  #Calculating quantity per item 
-                                  'Quantity per item'=extended.paid.average$Quantity/extended.paid.average$Items)
+# Create date variable
+HB_Level <- HB_Level %>% 
+  arrange(Board,Type,Measurement,Year,Month) %>% 
+  mutate(Date = str_c(month.abb[as.numeric(Month)],' ', Year)) %>% 
+  select(-Year,-Month)
 
-paid.2020.2021$`Quantity per item` <-paid.2020.2021$Quantity/paid.2020.2021$Items #Calculating quantity per item
+# Check structure
+str(HB_Level)
+# Change to factors were necessary
+HB_Level <- HB_Level %>% 
+  mutate(Date = factor(Date),
+         Measurement = factor(Measurement))
+str(HB_Level)
+# So this is seeming OK for HB level at the moment. 
 
-extended.paid.average$Quantity.per.item[which(is.nan(extended.paid.average$Quantity.per.item))]<-0
-paid.2020.2021$`Quantity per item`[which(is.nan(paid.2020.2021$`Quantity per item`))]<-0
+# Scotland level
 
-Date<-paste(paid.2020.2021$Month,paid.2020.2021$Year,  sep=" ")
-paid.2020.2021<-data.frame(paid.2020.2021,Date)
-extended.paid.average<-data.frame(extended.paid.average,Date)
+# Pivot and calulate two year average for items
 
-#Ordering data sets correctly for matching up
-sorted.average<-extended.paid.average[
-  with(extended.paid.average, order(Board,Type)),
-  ]
+Items_Average <- scot %>%  
+  select(-Quantity) %>% 
+  pivot_wider(names_from = Year, values_from = Items) %>% 
+  mutate(across(c(`2018`:`2020`), ~replace_na(.x, 0))) %>% 
+  rowwise() %>% 
+  mutate('Average 2018 & 2019' = mean(c(`2018`,`2019`))) %>% 
+  # pivot back to years
+  pivot_longer(cols = c('2020':'Average 2018 & 2019'), names_to = 'Year', values_to = 'Items' ) %>% 
+  select(-'2018',-'2019')
 
-sorted.20.21<-paid.2020.2021[
-  with(paid.2020.2021, order(Board,Type)),
-  ]
+# Pivot and calulate two year average for quantity
+Quantity_Average <- scot %>%  
+  select(-Items) %>% 
+  pivot_wider(names_from = Year, values_from = Quantity) %>% 
+  mutate(across(c(`2018`:`2020`), ~replace_na(.x, 0))) %>% 
+  rowwise() %>% 
+  mutate('Average 2018 & 2019' = mean(c(`2018`,`2019`))) %>% 
+  # pivot back to years
+  pivot_longer(cols = c('2020':'Average 2018 & 2019'), names_to = 'Year', values_to = 'Quantity' ) %>% 
+  select(-'2018',-'2019')
 
-rownames(sorted.average)<-seq(1:nrow(sorted.average))
-rownames(sorted.20.21)<-seq(1:nrow(sorted.20.21))
+# Match them back together
 
-ave.long<-melt(data=sorted.average,
-               id.vars=c('Date','Board','Type'),
-               measure.vars=c('Items','Quantity','Quantity.per.item'),
-               variable.name = 'Measurement',
-               value.name='Value') 
+Scotland_Level <- full_join(Items_Average,Quantity_Average)
 
-pres.long<-melt(data=sorted.20.21,
-                id.vars=c('Date.1','Board','Type'),
-                measure.vars=c('Items','Quantity','Quantity.per.item'),
-                variable.name = 'Measurement',
-                value.name='Value')
+# Calculate quantity per item
+Scotland_Level <- Scotland_Level %>% 
+  mutate('Quantity per item' = Quantity/Items)
 
-paid.final<-data.frame(pres.long,ave.long$Value)
-colnames(paid.final)[c(5,6)]<-c('2020 & 2021','Average 2018 & 2019')
-levels(paid.final$Measurement)<-c('Items','Quantity','Quantity per item')
-paid.final$Board<-gsub('Nhs','NHS',str_to_title(paid.final$Board)) #changing the case of the Board names
+# Pivot to correct format
+Scotland_Level <- Scotland_Level %>% 
+  pivot_longer(cols = c('Items':'Quantity per item'), names_to = 'Measurement', values_to = 'Number' ) %>% 
+  # pivot out all years
+  pivot_wider(names_from ='Year', values_from = 'Number') %>% 
+  # pivot back 2020 and 2021 only
+  pivot_longer(cols = c('2020':'2021'), names_to = 'Year', values_to = '2020 & 2021' )
 
-paid.final$`2020 & 2021`<-round(paid.final$`2020 & 2021`,1)
-paid.final$`Average 2018 & 2019`<-round(paid.final$`Average 2018 & 2019`,1)
+# Create date variable
+Scotland_Level <- Scotland_Level %>% 
+  arrange(Board,Type,Measurement,Year,Month) %>% 
+  mutate(Date = str_c(month.abb[as.numeric(Month)],' ', Year)) %>% 
+  select(-Year,-Month)
 
-paid.quantity<- paid.comp1 %>% 
-  select(Date, 
-         Board, 
-         Type, 
-         Quantity)
-paid.quantity$Quantity<-round(paid.quantity$Quantity)
-paid.quantity$Board<-gsub('Nhs','NHS',str_to_title(paid.quantity$Board))
+# Check structure
+str(Scotland_Level)
+# Change to factors were necessary
+Scotland_Level <- Scotland_Level %>% 
+  mutate(Date = factor(Date),
+         Measurement = factor(Measurement)) %>% 
+  select(-'2022')
+str(Scotland_Level)
 
-# SAVING FOR SUBSTANCE USE TEAM
-saveRDS(paid.final,'shiny_app/data/OST_paid.rds')
+# Add Scotland and HB together
 
-# SAVING FOR WIDER IMPACTS TEAM
-# saveRDS(paid.final, "shiny_app/data/OST_paid.rds")
-# saveRDS(paid.final, paste0(data_folder,"final_app_files/OST_paid_", 
-#                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+Totals <- rbind(Scotland_Level,HB_Level)
 
-#SAVING FOR SUBSTANCE USE TEAM
- saveRDS(paid.quantity,'shiny_app/data/OST_paid_quantity.rds')
+str(Totals)
+# Some final changes to this file
+Totals <- Totals %>% 
+  mutate(Board =str_to_title(Board)) %>% 
+  mutate(Board = str_replace(Board,'Nhs','NHS')) %>% 
+  mutate(across(c(`Average 2018 & 2019`:`2020 & 2021`), ~replace_na(.x, 0))) %>% 
+  mutate(`Average 2018 & 2019` = round_half_up(`Average 2018 & 2019`, 2),
+         `2020 & 2021` = round_half_up(`2020 & 2021`, 1)) %>% 
+  select(Date,Board,Type,Measurement,'2020 & 2021',	'Average 2018 & 2019')
 
-#SAVING FOR WIDER IMPACTS TEAM
-# saveRDS(paid.quantity, "shiny_app/data/OST_paid_quantity.rds")
-# saveRDS(paid.quantity, paste0(data_folder,"final_app_files/OST_paid_quantity_", 
-#                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+str(Totals)
+
+
+
+# 4b) Quantity over time from January 2018. 
+
+# Health Board Level
+HB_Level_Quant <- paid.comp %>% 
+  filter(!is.na(Year)) %>% 
+  group_by(Board, Date, Month,Year, Type) %>% 
+  summarise(Items = sum(Items),
+            Quantity= sum(Quantity)) %>% 
+  ungroup() %>% 
+  select(Date,Board,Type,Quantity)
+
+# Scotland level is available in scot file already created. 
+Scot_Level_Quant <- scot %>% 
+  mutate( Date = str_c(month.abb[as.numeric(Month)],' ', Year)) %>% 
+  select(Date,Board,Type,Quantity) %>% 
+  filter(!is.na(Quantity))
+
+# Combine
+Total_Quant <- rbind(Scot_Level_Quant,HB_Level_Quant)
+str(Total_Quant)
+
+
+Total_Quant <- Total_Quant %>% 
+  mutate(Board =str_to_title(Board)) %>% 
+  mutate(Board = str_replace(Board,'Nhs','NHS')) %>% 
+  mutate(Date = factor(Date))  
+
+# Create skeleton to match on data to
+skeleton <- expand.grid(Date = factor(unique(Total_Quant$Date)),
+                        Board = unique(Total_Quant$Board),
+                        Type = factor(unique(Total_Quant$Type)))
+
+str(skeleton)
+unique(skeleton$Date)
+# Correct levels of factors
+skeleton <- skeleton %>% 
+  mutate(Date = fct_relevel(Date,c(as.character(unique(Total_Quant$Date)))))
+
+unique(skeleton$Date)
+
+Total_Quant <- full_join(skeleton,Total_Quant)
+
+str(Total_Quant)
+
+Total_Quant <- Total_Quant %>% 
+  mutate(across(c(Quantity), ~replace_na(.x, 0)))
+
+
+# # SAVING FOR SUBSTANCE USE TEAM
+saveRDS(Totals,'shiny_app/data/OST_paid.rds')
+
+# # SAVING FOR WIDER IMPACTS TEAM
+# # saveRDS(paid.final, "shiny_app/data/OST_paid.rds")
+# # saveRDS(paid.final, paste0(data_folder,"final_app_files/OST_paid_", 
+# #                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# 
+# #SAVING FOR SUBSTANCE USE TEAM
+saveRDS(Total_Quant,'shiny_app/data/OST_paid_quantity.rds')
+# 
+# #SAVING FOR WIDER IMPACTS TEAM
+# # saveRDS(paid.quantity, "shiny_app/data/OST_paid_quantity.rds")
+# # saveRDS(paid.quantity, paste0(data_folder,"final_app_files/OST_paid_quantity_", 
+# #                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+
