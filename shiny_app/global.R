@@ -231,6 +231,7 @@ breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
 child_dev <- readRDS("data/child_dev.rds")
 child_dev_depr <- readRDS("data/child_dev_depr.rds")
+child_dev_domains <- readRDS("data/child_dev_domains.rds")
 
 
 # Apgar (births and babies tab)
