@@ -218,7 +218,7 @@ create_childdev_domains <- function(filedate) {
   #filter((year(month_review) %in% c("2019", "2020", "2021")))
   
   child_dev_domains %<>% # Dealing with NAs, which are 0s
-    mutate_at(c("SLC_%", "Prob_solv_%", "Gross_motor_%", "Per_soc_%","Fine_motor_%","Emot_Beh_%","Vision_%","Hearing_%"), ~replace_na(., 0)) 
+    mutate_at(c("slc_perc", "prob_solv_perc", "gross_motor_perc", "per_soc_perc","fine_motor_perc","emot_beh_perc","vision_perc","hearing_perc"), ~replace_na(., 0)) 
   
   saveRDS(child_dev_domains, "shiny_app/data/child_dev_domains.rds")
   saveRDS(child_dev_domains, paste0(data_folder,"final_app_files/child_dev_domains_",
