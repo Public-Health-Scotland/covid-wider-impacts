@@ -17,16 +17,15 @@
     # G4	Psychiatry of Old Age
     # G5	Learning Disability
 
+# In WID notes, it says: Exclusions from the RAPID dataset are day cases, neonatal, maternity and 
+# psychiatric care admissions. Admissions to the Golden Jubilee National Hospital are also not included. 
+
 # Approximate run time: 5 minutes
 ###
 
 ###############################################.
 ## Section 1: Setup ----
 ###############################################.
-
-#Install/Load Packages
-# library(data.table) #Uses functions fread() and rbindlist()
-# library(dplyr)
 
 #Load packages.
 library(odbc)
@@ -62,9 +61,13 @@ data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/" # folder for files
 ## Data manipulation ----
 ###############################################.
 
-# Exclude psychiatric care specialties. CP - I couldn't get the regexp_like to work in the SQL  
+# Exclude psychiatric care specialties. 
+# Exclude maternity and neonatal specialties?
 rapid_extract <- rapid_extract %>% 
-  filter(!spec %in% c('G1', 'G1A', 'G2', 'G21', 'G22', 'G3', 'G4', 'G5')) %>%
+  filter(!spec %in% c('G1', 'G1A', 'G2', 'G21', 'G22', 'G3', 'G4', 'G5'
+                     # , 'F1', 'F1A', 'F1B', 'F2', 'F3', 'F31', 'F32', 'F4'
+                      )) %>%
+  
   mutate(admission_type = case_when(emergency_admission_flag == 'Y' ~ 'emergency',
                                     TRUE ~ 'elective'),
          sex = case_when(sex == '1' ~ 'male',
