@@ -106,7 +106,7 @@ pal_other <- c('#4da6ff','#ffa64d', '#2c7fb8', '#7fcdbb', '#a3a3c2', '#FF0000')
 plot_tab <- function(x, pal_chose) {
   
   tooltip_plot <- c(paste0(x$tabname, "<br>",
-                            "Week ending": format(x$week_ending, "%d %B %Y"), "<br>",
+                            "Week ending: ", format(x$week_ending, "%d %B %Y"), "<br>",
                             "Visits: ", x$count))
   
   plot_ly(x, x = ~week_ending) %>% 
@@ -138,7 +138,7 @@ kable(device)
 
 ```{r sessions}
 #Tooltip for the sessions chart
-tooltip_sess <- c(paste0("Week ending": format(sessions$week_ending, "%d %B %Y"), "<br>",
+tooltip_sess <- c(paste0("Week ending: ", format(sessions$week_ending, "%d %B %Y"), "<br>",
                          "Visits: ", sessions$count))
 
 # Plot for the overall visits
@@ -198,7 +198,7 @@ plot_tab(tabvisits[["Others"]], pal_chose = pal_other)
 
 
 #Tooltip for the sessions chart
-tooltip_sess <- c(paste0("Week ending": format(sessions$week_ending, "%d %B %Y"), "<br>",
+tooltip_sess <- c(paste0("Week ending: ", format(sessions$week_ending, "%d %B %Y"), "<br>",
                          "Average minutes: ", sessions$session_ave))
 
 # Plot for the overall visits
