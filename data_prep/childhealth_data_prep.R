@@ -207,9 +207,9 @@ print("File child_dev_depr_data.rds produced and saved")
 ###############################################.
 create_childdev_domains <- function(filedate) {
   
-  child_dev_domains <- rbind(read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 13-15m_Domain.xlsx")) %>%
+  child_dev_domains <- rbind(read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 13-15m_Domains.xlsx")) %>%
                        mutate(review = "13-15 month"),
-                     read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 27-30m_Domain.xlsx")) %>%
+                     read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 27-30m_Domains.xlsx")) %>%
                        mutate(review = "27-30 month")) %>%
     clean_names() %>%
     rename(area_name = geography) %>%
