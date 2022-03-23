@@ -44,7 +44,7 @@ RAPID_connection <- dbConnect(odbc(),
 rapid_extract <- as_tibble(dbGetQuery(RAPID_connection, statement=paste0(
                         "SELECT crn, chi, patient_gender_code sex, hospital_of_treatment_location_code hosp, 
                       emergency_admission_flag, hospital_of_treatment_nhs_board_code_current hb, admission_date date_adm,
-                      discharge_date, specialty spec, age_on_admission age, 
+                      discharge_date, specialty spec, specialty_group, age_on_admission age, 
                       postcode, inpatient_daycase_identifier_code ipdc, hscp_of_residence_code_current hscp_code, 
                       hscp_of_residence_name_current hscp_name, ethnic_group_code, ethnic_group_description
                       FROM rapid.syswatch_hosp_stay      #name of RAPID Stay Table 
@@ -95,13 +95,20 @@ convert_spec_to_spec_grouping <- function(spec, return_spec_group_lists = FALSE)
 ## Data manipulation ----
 ###############################################.
 
+# Create a medsur variable to exclude the specialties that we do not report on
+rapid_extract$medsur <- convert_spec_to_spec_grouping(spec = rapid_extract$spec)
+
+
+
+#This line excludes any specialties where medsur = 0 so that they won't be included anymore in the 'adm' or 'bed'
+#stay types which used to sum any specialty group.
+rapid_extract <- rapid_extract %>% filter(medsur != 0)
+
+
 # Exclude psychiatric care specialties. 
 # Exclude maternity and neonatal specialties?
 rapid_extract <- rapid_extract %>% 
-  filter(!spec %in% c('G1', 'G1A', 'G2', 'G21', 'G22', 'G3', 'G4', 'G5'
-                     # , 'F1', 'F1A', 'F1B', 'F2', 'F3', 'F31', 'F32', 'F4'
-                      )) %>%
-  
+  filter(!spec %in% c('G1', 'G1A', 'G2', 'G21', 'G22', 'G3', 'G4', 'G5')) %>%
   mutate(admission_type = case_when(emergency_admission_flag == 'Y' ~ 'emergency',
                                     TRUE ~ 'elective'),
          sex = case_when(sex == '1' ~ 'male',
