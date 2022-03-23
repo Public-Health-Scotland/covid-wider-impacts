@@ -7,18 +7,12 @@
 # Notes:
 # Discard records belonging to Hospitals G303H in Glasgow (Mearnskirk House) and W106H in Western Isles (St Brendans Cot Hosp).
 # Only include inpatient cases (no day cases). Day cases data quality is problematic as not all boards submitted this data until recently.
-# Exclude specialties G1,G3,G4,and G5 - psychiatric care specialties. Have also added G2 which seemed to be missing before.
+# Exclude specialties G1,G3,G4,and G5 - psychiatric care specialties. 
     # G1	General Psychiatry (Mental Illness)
-    # G1A	Community Psychiatry
-    # G2	Child & Adolescent Psychiatry
-    # G21	Child Psychiatry
-    # G22	Adolescent Psychiatry
     # G3	Forensic Psychiatry
     # G4	Psychiatry of Old Age
     # G5	Learning Disability
 
-# In WID notes, it says: Exclusions from the RAPID dataset are day cases, neonatal, maternity and 
-# psychiatric care admissions. Admissions to the Golden Jubilee National Hospital are also not included. 
 
 # Approximate run time: 5 minutes
 ###
@@ -56,6 +50,7 @@ rapid_extract <- as_tibble(dbGetQuery(RAPID_connection, statement=paste0(
 
 data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/" # folder for files
 
+# Create a function to exclude specialties that are not reported in Systemwatch
 convert_spec_to_spec_grouping <- function(spec, return_spec_group_lists = FALSE) {
   
   spec_group_1_surgical <- c('C1', 'C11', 'C12', 'C13', 
@@ -72,14 +67,14 @@ convert_spec_to_spec_grouping <- function(spec, return_spec_group_lists = FALSE)
   
   spec_group_3_paediatric <- c('A21', 'AF', 'CA')
   
-  #This is if return_spec_group_lists == TRUE, which essentially makes it another function that now just 
+# This is if return_spec_group_lists == TRUE, which essentially makes it another function that now just 
   if(return_spec_group_lists == TRUE) {  # returns all of the included specialties instead of returning the specialty groupings.
     return(list(spec_group_1_surgical   = spec_group_1_surgical, 
                 spec_group_2_medical    = spec_group_2_medical, 
                 spec_group_3_paediatric = spec_group_3_paediatric) )
-  } #end if statement
+  } # end if statement
   
-  #Create a vector for the specialty groupings and set them to what they should be.
+# Create a vector for the specialty groupings and set them to what they should be.
   spec_grouping <- numeric(length(spec))
   spec_grouping[ spec %in% spec_group_1_surgical ]   <- 1L
   spec_grouping[ spec %in% spec_group_2_medical ]    <- 2L
@@ -87,7 +82,7 @@ convert_spec_to_spec_grouping <- function(spec, return_spec_group_lists = FALSE)
   
   return(spec_grouping)
   
-} #end function convert_spec_to_spec_grouping().
+} # end function convert_spec_to_spec_grouping().
 
 
 
@@ -95,20 +90,15 @@ convert_spec_to_spec_grouping <- function(spec, return_spec_group_lists = FALSE)
 ## Data manipulation ----
 ###############################################.
 
-# Create a medsur variable to exclude the specialties that we do not report on
+# Exclude the specialties by creating medsur variable
 rapid_extract$medsur <- convert_spec_to_spec_grouping(spec = rapid_extract$spec)
 
-
-
-#This line excludes any specialties where medsur = 0 so that they won't be included anymore in the 'adm' or 'bed'
-#stay types which used to sum any specialty group.
 rapid_extract <- rapid_extract %>% filter(medsur != 0)
 
 
-# Exclude psychiatric care specialties. 
-# Exclude maternity and neonatal specialties?
+# Exclude psychiatric care specialties, recode variables. 
 rapid_extract <- rapid_extract %>% 
-  filter(!spec %in% c('G1', 'G1A', 'G2', 'G21', 'G22', 'G3', 'G4', 'G5')) %>%
+  filter(!spec %in% c('G1', 'G3', 'G4', 'G5')) %>%
   mutate(admission_type = case_when(emergency_admission_flag == 'Y' ~ 'emergency',
                                     TRUE ~ 'elective'),
          sex = case_when(sex == '1' ~ 'male',
@@ -127,7 +117,7 @@ rapid_extract <- rapid_extract %>%
            TRUE ~ 'missing'))
 
 
-### Add SIMD from lookup by postcode.
+# Add SIMD from lookup by postcode.
 simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2021_2_simd2020v2.rds') %>% 
   select(pc7, simd2020v2_sc_quintile) %>% 
   rename(postcode = pc7,
@@ -135,7 +125,7 @@ simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcod
 
 # Add SIMD to rapid dataset
 rapid <- left_join(rapid_extract, simd_lookup, "postcode") %>% 
-  select(-postcode, -crn, -chi, -emergency_admission_flag, -discharge_date) %>% 
+  select(-postcode, -crn, -chi, -emergency_admission_flag, -discharge_date, -medsur, -specialty_group) %>% 
   arrange(admission_type, hb, hosp, hscp_code, spec, sex, simd_quintile, date_adm)
 
 ###############################################.
@@ -174,42 +164,13 @@ combined_records <- rbind(all_locations, hb_totals, scot_totals) #Merge all thre
 ## Determining Start and End Dates ----
 ###############################################.
 
-# I'm guessing RAPID should be good until 4 years from the present, this will have to be checked however.
+# Filter 4 years data from the present.
 combined_records <- combined_records %>% filter(date_adm >= paste0(year(Sys.Date()) - 4, '-01-01'))
-
-### DOES THIS SECTION NEED TO BE INCLUDED? I THINK WE SPECIFY LAST_WEEK DATE IN THE DATA PREP SCRIPT?
-# recent_admissions_by_hosp <- rapid %>% filter(date_adm %in% Sys.Date():(Sys.Date() - 100)) %>% 
-#   group_by(hosp, hb) %>% #Get the count of admissions for each hospital within the last 100 days
-#   summarise(mean_adm_per_day = n()/101, 
-#             end = max(date_adm)) #as well as the last date of admission for each one.
-# 
-# hb_end_dates <- recent_admissions_by_hosp %>% 
-#   filter(mean_adm_per_day >= 2.5) %>% #A board should only wait for a hospital if it has more than about 2.5 admissions per day.
-#   select(hosp, hb, end) %>% group_by(hb) %>% 
-#   summarise(end = min(end)) #Only take the earliest hospital end dates within each health board.
-# 
-# # Here we are removing a set number of days (either 1 or 2) from the end dates.  
-# # These days to cut off of the end have tradionally been used in System Watch to ensure we have complete data from each board.
-# hb_end_dates$end = hb_end_dates$end - hb_trim[hb_end_dates$hb] 
-# 
-# lookup_end_date_by_hb <- hb_end_dates$end
-# names(lookup_end_date_by_hb) <- hb_end_dates$hb
-# 
-# # The end date for Scotland is the earliest end from all of the health boards.
-# # This ensures that the Scotland totals won't be missing records from any health boards.
-# lookup_end_date_by_hb['X'] <- min(lookup_end_date_by_hb) 
-# 
-# # Remove any records where the date of admission is after the date for which we are sure a HB has complete data.
-# combined_records <- combined_records %>% filter(date_adm <= lookup_end_date_by_hb[combined_records$hb])
 
 
 # Save file with date
 date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
 saveRDS(combined_records, paste0(data_folder, 'rapid/', date_on_filename, '-admissions-by-category.rds')) 
-
-#temp save for checking
-#write_csv(combined_records, paste0("//PHI_conf/ScotPHO/1.Analysts_space/Catherine/wid-rapid-update/", date_on_filename, "-admissions-by-category.csv"))
-
 
 
 ##END
