@@ -12,13 +12,14 @@
 
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
-create_delivery(folderdate = "2022-02-14") # Mode of delivery, induction and gestation data
+create_delivery(folderdate = "2022-03-21") # Mode of delivery, induction and gestation data
 create_perinatal(foldermonth = "mar22") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2022_02_14") # Apgar scores
-create_preterm(preterm_date = "2022_01_12", max_date = "2021-10-01") # Preterm
-create_tears(tears_date = "2022_02_14", max_date = "2021-12-01") # Perineal tears
+create_apgar(folderdate = "2022_03_16", max_date = "2021-12-01") # Apgar scores
+create_preterm(preterm_date = "2022_03_16", max_date = "2021-12-01") # Preterm
+create_tears(tears_date = "2022_03_16", max_date = "2021-12-01") # Perineal tears
 
-# Add here what needs to be changed in the shiny scripts
+# For delivery, apgar, preterm, tears and antenatal change dates in global script
+# For perinatal change dates in perinatal_tab script
 
 ###############################################.
 ## Cardiovascular datasets ----
