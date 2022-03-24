@@ -93,7 +93,7 @@ available_time_periods_immun =
 
 # Set the default time periods for plotting
 # Assumes that the months are listed in ascending order in available_time_periods_immun, followed by the years
-default_time_periods_immun = tail(available_time_periods_immun, 6)
+default_time_periods_immun = tail(available_time_periods_immun, 7)
 
 # Immunisation reactive drop-down control showing list of time periods
 output$dates_ui_immun <- renderUI({
@@ -245,8 +245,8 @@ output$immun_table <- renderUI({
                         imm_type == "mmr" & dose == "dose 2" ~ 3)
   
   #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
-  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("AUG 2021", "SEP 2021"))
-  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("JUL 2021", "AUG 2021", "SEP 2021"))
+  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("2021", "NOV 2021", "DEC 2021"))
+  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("2021","OCT 2021", "NOV 2021", "DEC 2021"))
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
@@ -636,6 +636,10 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 2nd March 2022"),
+    p("When a cohort becomes eligible for any of the immunisations reported this data will now only be refreshed for the next 12 months; as the data becomes more complete, uptake rates for these cohorts stabilise within this period. 
+      Only minor changes to uptake rates are observed if the data is updated monthly beyond 12 months and this is mainly driven by movements into or out of the cohort, such as a child leaving Scotland.
+      Older data will continue to be reported but will no longer be refreshed."),
     h2("Immunisations - 6th October 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 6 October and includes information on cohorts eligible for their immunisations to week beginning 9 August 2021. 
       It should be noted that the data recorded for the most recent eligible cohorts will not be fully complete at this stage. 

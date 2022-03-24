@@ -12,12 +12,11 @@
 
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
-
-create_delivery(folderdate = "2021-11-15") # Mode of delivery, induction and gestation data
-create_perinatal(foldermonth = "nov21") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2021_11_17") # Apgar scores
-create_preterm(preterm_date = "2021_10_14", max_date = "2021-07-01") # Preterm
-create_tears(tears_date = "2021_11_17", max_date = "2021-08-01") # Perineal tears
+create_delivery(folderdate = "2022-02-14") # Mode of delivery, induction and gestation data
+create_perinatal(foldermonth = "mar22") # Stillbirths and perinatal mortality
+create_apgar(folderdate = "2022_02_14") # Apgar scores
+create_preterm(preterm_date = "2022_01_12", max_date = "2021-10-01") # Preterm
+create_tears(tears_date = "2022_02_14", max_date = "2021-12-01") # Perineal tears
 
 # Add here what needs to be changed in the shiny scripts
 
@@ -26,10 +25,10 @@ create_tears(tears_date = "2021_11_17", max_date = "2021-08-01") # Perineal tear
 ###############################################.
 source("data_prep/cardio_data_prep.R") # This sources the functions for the section
 # Filedate: date on filename for each update, last week = last week of data to be included
-create_aecardio(filedate = "2021-11-25", last_week =  "2021-11-21")
-create_sascardio(filedate = "2021-11-29", last_week =  "2021-11-21")
-create_cardiodrugs(filedate = "2021-11-25", last_week =  "2021-11-21")
-create_oohcardio(filedate = "2021-11-29", last_week =  "2021-11-21")
+create_aecardio(filedate = "2022-02-24", last_week =  "2022-02-20")
+create_sascardio(filedate = "2021-11-29", last_week =  "2021-11-21") #there is currently a duplicates issue with this data so it is not being updated until resolved.
+create_cardiodrugs(filedate = "2022-02-24", last_week =  "2022-02-20")
+create_oohcardio(filedate = "2022-02-28", last_week =  "2022-02-20")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the cardio_tab script
@@ -44,9 +43,9 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20211122") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "22ndNov2021")
-create_breastfeeding(filedate = "22ndNov2021")
+create_chreview(ch_date_file = "20220221") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "21stFeb2022")
+create_breastfeeding(filedate = "21stFeb2022")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
@@ -60,10 +59,10 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # Filedate: date on filename for each update, last week = last week of data to be included
 # Change extract to F if you just want to run the data prep and not the extraction
 # (quicker once the extraction has been done once)
-create_rapid(last_week =  "2021-11-21", extract = T) # this requires access to the RAPID dataset
-create_ae(filedate = "2021-11-25", last_week =  "2021-11-21")
-create_ooh(filename = "WIDER IMPACT PC OOH Data_52_3843723932621185282", last_week = "2021-11-21")
-create_nhs24(filedate = "2021-11-29", last_week =  "2021-11-21")
+create_rapid(last_week =  "2022-02-20", extract = T) # this requires access to the RAPID dataset
+create_ae(filedate = "2022-02-24", last_week =  "2022-02-20")
+create_ooh(filename = "WIDER IMPACT PC OOH Data_65_2342711571226673707", last_week = "2022-02-13")
+create_nhs24(filedate = "2022-02-28", last_week =  "2022-02-20")
 create_sas(filedate = "2021-11-29", last_week =  "2021-11-21")
 
 # Deaths require access to deaths catalogue
@@ -71,7 +70,7 @@ source("data_prep/deaths_data_preparation.R") # And the deaths function
 # Note: there will be a warning from match_area() about a few hundred thousand
 # geography codes not 9 characters in length - this is caused by the "Scotland"
 # rows, and is not a problem.
-create_deaths(last_week =  "2021-11-21")
+create_deaths(last_week =  "2022-02-20")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the summary_tab script
@@ -84,9 +83,8 @@ file.edit("shiny_app/summary_tab.R")
 ## Pregnancy datasets ----
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
-
-create_terminations(top_date = "2021-11-15")
-create_antebooking(booking_date = "11112021", max_book_date = "2021-11-07")
+create_terminations(top_date = "2022-02-10")
+create_antebooking(booking_date = "10022022", max_book_date = "2022-02-06")
 
 # Add here what needs to be changed in the shiny scripts
 
@@ -94,14 +92,14 @@ create_antebooking(booking_date = "11112021", max_book_date = "2021-11-07")
 ## Mental health datasets ----
 ###############################################.
 source("data_prep/mh_data_prep.R") # This sources the functions for the section
-create_aemh(filedate = "2021-11-29", last_week =  "2021-11-21") #takes a while
-create_oohmh(filedate = "2021-11-29", last_week =  "2021-11-21")
+create_aemh(filedate = "2022-02-27", last_week =  "2022-02-20") #takes a while
+create_oohmh(filedate = "2022-02-28", last_week =  "2022-02-20") #file generated on monday of update - last week should be 2 sundays previous (as in 8 days prior)
 # There will be a warning about duplicate rows, 63 rows removed - this is fine,
 # Glasgow City HSCP appears with 2 different codes earlier in the data, summing
 # count is correct.
-create_drugsmh(last_week =  "2021-11-21")
+create_drugsmh(last_week =  "2022-02-20") #last week should be sunday before date file created
 
-# Change update date in mental_health_tab.R script
+# Change update date in mental_health_tab.R script - approx line 324 in code
 file.edit("shiny_app/mental_health_tab.R")
 
 ###############################################.

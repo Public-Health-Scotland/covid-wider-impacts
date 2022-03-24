@@ -1,7 +1,7 @@
 ##Server script for terminations tab..
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_top_modal, 
+observeEvent(input$btn_top_modal,
              showModal(modalDialog(#Maternal HEALTH MODAL
                title = "What is the data source?",
                p("These data are derived from the Notifications of Abortion to the Chief Medical Officer for Scotland (CMO) under the Abortion (Scotland) Regulations 1991."),
@@ -24,30 +24,30 @@ observeEvent(input$btn_top_rules,
                        tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
                        tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
                        tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
-               p("Further information on these methods of presenting data can be found in the ",                      
+               p("Further information on these methods of presenting data can be found in the ",
                  tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                         'PHS guide to statistical process control charts', target="_blank"),"."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain SIMD and deprivation
-# Link action button click to modal launch 
+# Link action button click to modal launch
 observeEvent(input$btn_modal_simd_top, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
-    p("Women have been allocated to different levels of deprivation based on the small area (data zone) 
+    p("Women have been allocated to different levels of deprivation based on the small area (data zone)
       in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
-                                          class="externallink"), "score for that area. 
-      SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: 
-      income; employment; health; education, skills and training; housing; geographic access; and crime. 
-      In this tool we have presented results for women living in different SIMD ‘quintiles’. 
-      To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) 
-      of the overall population of Scotland are identified. Women living in the most and least deprived areas 
+                                          class="externallink"), "score for that area.
+      SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains:
+      income; employment; health; education, skills and training; housing; geographic access; and crime.
+      In this tool we have presented results for women living in different SIMD ‘quintiles’.
+      To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%)
+      of the overall population of Scotland are identified. Women living in the most and least deprived areas
       that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
-    size = "l", 
+    size = "l",
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   )
-) }) 
+) })
 
 ###############################################.
 ## ToP Reactive controls  ----
@@ -55,7 +55,7 @@ observeEvent(input$btn_modal_simd_top, { showModal(
 
 # Pregnancy reactive drop-down control showing list of area names depending on areatype selected
 output$geoname_ui_top <- renderUI({
-  #Lists areas available in   
+  #Lists areas available in
   areas_summary_top <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_top])
   selectizeInput("geoname_top", label = NULL, choices = areas_summary_top, selected = "")
 })
@@ -66,7 +66,7 @@ output$geoname_ui_top <- renderUI({
 
 #Dataset behind trend plot (available at scotland and NHS board level)
 top_filter <- function(){
-  
+
   top %>% filter(area_name == input$geoname_top &
                        area_type == input$geotype_top &
                        type %in% c("Scotland","Health board"))
@@ -74,7 +74,7 @@ top_filter <- function(){
 
 #Dataset behind deprivation/age plots (only available at scotland level)
 top_filter_split <- function(split){
-  
+
   top %>% filter(area_name == "Scotland" &
                        area_type == "Scotland" &
                        type==split) %>%
@@ -103,21 +103,32 @@ output$top_dep_g <- renderPlotly({plot_top_split(dataset=top_filter_split("dep")
 output$top_explorer <- renderUI({
 
   data_last_updated <- tagList(p("Last updated: 15th November 2021"))
-  
+
   # text for titles of cut charts
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
   top_trend_title <- paste0("Termination of pregnancy: ",input$geoname_top)
   top_title_n <-  paste0("Number of terminations of pregnancy")
   top_title_g <-   paste0("Average gestation at termination")
   top_title_g2 <-   paste0("(based on completed weeks of pregnancy)")
-  
-  chart_explanation <- 
-    tagList(p("We have used ",                      
+
+  chart_explanation <-
+    tagList(p("We have used ",
               tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
                      'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p("On the ‘Number of terminations of pregnancy’ chart above, the dots joined by a solid black line show the number of terminations of pregnancy in each month from January 2018 onwards.  The solid blue centreline on the chart shows the average (median) number of terminations of pregnancy over the period January 2018 to February 2020 inclusive (the period before the COVID-19 pandemic in Scotland). The dotted blue centreline continues that average to allow determination of whether there has subsequently been a change in the number of terminations of pregnancy."),
-            p("The ‘Average gestation at termination’ chart follows a similar format.  In this chart, the dots joined by a solid black line show the average (mean) gestation at which the terminations of pregnancy occurred (based on gestation at termination measured in completed weeks of pregnancy)."))
-  
+            p(run_chart_description("Number of terminations of pregnancy",
+                                    "the number of terminations of pregnancy in
+                                    each month from January 2018 onwards",
+                                    "the average (median) number of terminations
+                                    of pregnancy over the period January 2018 to
+                                    February 2020 inclusive (the period before
+                                    the COVID-19 pandemic in Scotland)")),
+            p(run_chart_description("Average gestation at termination",
+                                    "the average (mean) gestation at which the
+                                    terminations of pregnancy occurred (based on
+                                    gestation at termination measured in
+                                    completed weeks of pregnancy)",
+                                    text_mode = "additional")))
+
   # Function to create common layout to all immunisation charts
   top_layout <- function(plot_trend_n,plot_trend_g, plot_age_n,plot_age_g,plot_dep_n,plot_dep_g){
     tagList(fluidRow(column(12,
@@ -126,12 +137,15 @@ output$top_explorer <- renderUI({
                      column(6,
                             h4(paste0(top_title_n)), br(),p(" "),
                             #actionButton("btn_top_rules", "How do we identify patterns in the data?"),
-                            withSpinner(plotlyOutput("top_trend_n"))),
+                            withSpinner(plotlyOutput("top_trend_n",
+                                                     height = height_run_chart))),
                      column(6,
                             h4(paste0(top_title_g)),
                             p(paste0(top_title_g2)),
-                            withSpinner(plotlyOutput("top_trend_g"))),
+                            withSpinner(plotlyOutput("top_trend_g",
+                                                     height = height_run_chart))),
                      column(12,
+                            br(), # spacing
                             p(top_subtitle),
                             p(chart_explanation))),
             #only if scotland selected display age and deprivation breakdowns
@@ -149,7 +163,7 @@ output$top_explorer <- renderUI({
                                 actionButton("btn_modal_simd_top", "What is SIMD and deprivation?",
                                              icon = icon('question-circle')))),
                 fluidRow(column(6,
-                                h4("Number of terminations of pregnancy"),br(),p(" "), 
+                                h4("Number of terminations of pregnancy"),br(),p(" "),
                                 withSpinner(plotlyOutput("top_dep_n"))),
                          column(6,
                                 h4("Average gestation at termination"),
@@ -158,7 +172,7 @@ output$top_explorer <- renderUI({
               )#tagList from if statement
             })
   }
-  
+
   #link plot functions to layouts
   top_layout(plot_trend_n="top_trend_n", plot_trend_g="top_trend_g",
              plot_age_n="top_age_n", plot_age_g="top_age_g",
@@ -169,74 +183,60 @@ output$top_explorer <- renderUI({
 ## Termination chart functions ----
 ############################################.
 
-## Trend plot for monthly TOP numbers and average gestation 
-plot_top_trend <- function(measure, shift, trend){  
-  
+## Trend plot for monthly TOP numbers and average gestation
+plot_top_trend <- function(measure, shift, trend){
+
   plot_data <- top_filter()
-  
+
+
   if (is.data.frame(plot_data) && nrow(plot_data) == 0)
-  { plot_nodata(height = 50, 
-              text_nodata = "Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total")
+  { plot_nodata(height = 50,
+                text_nodata = "Data not shown due to small numbers.
+                               Data for the Island Boards is included in the
+                               Scotland total")
   } else {
-    
-  # chart legend labels  
-  centreline_name <- paste0(input$geoname_top," average up to end Feb 2020")    
 
-  # chart x-axis range with some extra spacing so that markers are not cut in half at start and end of chart  
-  xaxis_plots[["range"]] <- c(min(plot_data$month)-20, max(plot_data$month)+20)
-    
-  #switch y-axis according to which measure is selected
-  if(measure == "terminations"){
-    yaxis_plots[["title"]] <- "Number of terminations"
-    
-    tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
-                            "Number of terminations: ",plot_data$terminations))
-    dotted_line <-  plot_data$dottedline_no
-    centre_line <-  plot_data$centreline_no
-    yname <- "Number of terminations"
-  } else if (measure  == "av_gest") {
-    #yaxis_measure <- plot_data$av_gest
-    yaxis_plots[["title"]] <- "Average gestation at termination"
-    yaxis_plots[["range"]] <- c(0, 11.5)  # forcing range from 0 to 10 weeks
-    tooltip_top <- c(paste0("Month: ",format(plot_data$month,"%B %Y"),"<br>",
-                            "Average gestation at termination: ",format(plot_data$av_gest,digits = 1,nsmall=1)," weeks"))                           
-        dotted_line <-  plot_data$dottedline_g
-    centre_line <-  plot_data$centreline_g
-    yname <- "Average gestation"
+    # chart legend labels
+    centreline_name <- paste0(input$geoname_top," average up to end Feb 2020")
+    dottedline_name <- "Projected average"
+
+    #switch y-axis according to which measure is selected
+    if (measure == "terminations") {
+      y_label <- "Number of terminations"
+      tooltip_top <- c(paste0("Month: ",format(plot_data$month, "%B %Y"),"<br>",
+                              "Number of terminations: ",plot_data$terminations))
+      dottedline_data <-  plot_data$dottedline_no
+      centreline_data <-  plot_data$centreline_no
+      measure_name <- "Number of terminations"
+    } else if (measure  == "av_gest") {
+      #yaxis_measure <- plot_data$av_gest
+      y_label <- "Average gestation at termination"
+      yaxis_plots[["range"]] <- c(0, 11.5)  # forcing range from 0 to 10 weeks
+      tooltip_top <- c(paste0("Month: ",format(plot_data$month,"%B %Y"),"<br>",
+                              "Average gestation at termination: ",format(plot_data$av_gest,digits = 1,nsmall=1)," weeks"))
+      dottedline_data <-  plot_data$dottedline_g
+      centreline_data <-  plot_data$centreline_g
+      measure_name <- "Average gestation"
+    }
+
+    x_dates = "month"
+
+    plot_run_chart(plot_data, measure, measure_name, y_label,
+               x_dates, shift, trend, tooltip_top,
+               xaxis_plots, yaxis_plots, bttn_remove,
+               centreline_data, centreline_name,
+               dottedline_data, dottedline_name,
+               x_buffer = 20)
   }
-  
-  #Creating time trend plot
-  plot_ly(data=plot_data, x=~month) %>%
-    add_lines(y = ~get(measure),  
-              line = list(color = "black"), text=tooltip_top, hoverinfo="text",
-              marker = list(color = "black"), name = yname ) %>% 
-    add_lines(y = ~dotted_line, name = FALSE,
-              line = list(color = "blue", dash = "longdash"), hoverinfo="none",
-              name = "Centreline", showlegend = FALSE) %>%
-    add_lines(y = ~centre_line, name = centreline_name,
-              line = list(color = "blue"), hoverinfo="none",
-              name = "Centreline") %>%
-    # adding trends
-    add_markers(data = plot_data %>% filter_at(trend, all_vars(. == T)), y = ~get(measure),
-                marker = list(color = "green", size = 10, symbol = "square"), name = "Trends", hoverinfo="none") %>%
-    # adding shifts - add these last so that shifts are always visible on top of trends
-    add_markers(data = plot_data %>% filter_at(shift, all_vars(. == T)), y = ~get(measure),
-                marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts", hoverinfo="none") %>%
-    #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots,  xaxis = xaxis_plots,
-           legend = list(orientation = 'h')) %>% #position of legend underneath plot
-           #legend = list(x = 0.1, y = 0.1)) %>% #position of legend
-    #leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-  }}
+}
 
-## Trend plot for monthly termination numbers and average gestation at booking split by age group and simd quintile 
+
+## Trend plot for monthly termination numbers and average gestation at booking split by age group and simd quintile
 plot_top_split <- function(dataset, split, measure){
-  
+
   #improve grammar of label to appear in tool tip
   tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"), split=="dep" ~ paste0("Deprivation group:"))
-  
+
   #switch y-axis according to which measure is selected
   if(measure == "top_number"){
     yaxis_measure <- dataset$terminations
@@ -244,7 +244,7 @@ plot_top_split <- function(dataset, split, measure){
     tooltip_top <- c(paste0(tool_tip_split,dataset$category,"<br>",
                             "Month: ",format(dataset$month,"%B %y"),"<br>",
                             "Number of terminations: ",dataset$terminations))
-    
+
   } else if (measure  == "top_gestation") {
     yaxis_measure <- dataset$av_gest
     yaxis_plots[["title"]] <- "Average gestation at termination"
@@ -259,18 +259,18 @@ plot_top_split <- function(dataset, split, measure){
     dataset <- dataset %>%
       mutate(category = factor(category, levels = c("Under 20", "20-24", "25-29","30-34","35-39", "40 and over")))
     pallette <- pal_age}
-  
+
   if(split == "dep"){
-    dataset <- dataset %>% 
+    dataset <- dataset %>%
       mutate(category = factor(category, levels = c("1 - most deprived", "2", "3","4", "5 - least deprived")))
     pallette <- pal_depr}
-  
+
   #Creating time trend plot
   plot_ly(data=dataset, x=~month, y = ~yaxis_measure) %>%
     add_trace(type = 'scatter', mode = 'lines',
-              color = ~category, 
+              color = ~category,
               colors = pallette,
-              text= tooltip_top, 
+              text= tooltip_top,
               hoverinfo="text") %>%
     #Layout
     layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
@@ -292,7 +292,7 @@ output$download_termination_data <- downloadHandler(
   filename ="terminations_extract.csv",
   content = function(file) {
     write_csv(termination_down_data(),
-              file) } 
+              file) }
 )
 
 ###############################################.

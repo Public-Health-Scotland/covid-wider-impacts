@@ -19,13 +19,13 @@ require(lubridate)||install.packages("lubridate")
 ##########################################
 # Date Input (Monday of data refresh)
 
-year <- "2021"
-month <- "11"
-day <- "29"
+year <- "2022"
+month <- "03"
+day <- "21"
 
 release_date <- paste(year, month, day, sep = "-")
-path_monthly_data <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects//20210205-SACT-dashboard//R Shiny//SACT Dashboard Data//SummaryMonthlyPatients-", release_date, ".csv")
-path_weekly_data <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects//20210205-SACT-dashboard//R Shiny//SACT Dashboard Data//WeeklySACTActivityDashboard-", release_date, ".csv")
+path_monthly_data <- paste0("////PHI_conf//SCRIS//SACT//Projects//20210205-SACT-dashboard//R Shiny//SACT Dashboard Data//SummaryMonthlyPatients-", release_date, ".csv")
+path_weekly_data <- paste0("////PHI_conf//SCRIS//SACT//Projects//20210205-SACT-dashboard//R Shiny//SACT Dashboard Data//WeeklySACTActivityDashboard-", release_date, ".csv")
 
 rm(year, month, day, release_date)
 
