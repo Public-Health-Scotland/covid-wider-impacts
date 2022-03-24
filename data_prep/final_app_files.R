@@ -171,20 +171,12 @@ save_final_file("mh_A&E", "29_Nov_21")
 save_final_file("mh_ooh", "29_Nov_21")
 ##########################################################.
 ## Drugs - substance use ----
-save_final_file("ADP_names", "26_Nov_21")
-save_final_file("Health_board", "26_Nov_21")
-save_final_file("DTR_data", "26_Nov_21")
+save_final_file("ADP_names", "14_Feb_22")
+save_final_file("Health_board", "14_Feb_22")
+save_final_file("DTR_data", "14_Feb_22")
 save_final_file("THN_by_HB", "26_Nov_21")
 save_final_file("OST_paid", "26_Nov_21")
 save_final_file("OST_paid_quantity", "26_Nov_21")
-
-# save_final_file("ADP_names_", format(Sys.Date(), format = '%d_%b_%y'))
-# save_final_file("Health_board_", format(Sys.Date(), format = '%d_%b_%y'))
-# save_final_file("DTR_data_", format(Sys.Date(), format = '%d_%b_%y'))
-# save_final_file("THN_by_HB_", format(Sys.Date(), format = '%d_%b_%y'))
-# save_final_file('SASdata_',format(Sys.Date(), format = '%d_%b_%y'))
-# save_final_file('OST_paid_',format(Sys.Date(), format = '%d_%b_%y'))
-# save_final_file('OST_paid_quantity_',format(Sys.Date(), format = '%d_%b_%y'))
-
+save_final_file('SASdata', "07_Dec_21") 
 
 ##END
