@@ -398,34 +398,49 @@ output$childdev_domains <- renderPlotly({
     #Modifying standard layout
     yaxis_plots[["title"]] <- "Percentage of children reviewed"
     
-    tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+    tooltip_1 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
                               "<br>", "% with speech, language & communication concern: ", trend_data$slc_perc,
+                                "<br>", "Number with speech, language & communication concern: ", trend_data$no_slc))
+    tooltip_2 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),               
                               "<br>", "% with problem solving concern:  ", trend_data$prob_solv_perc,
+                                "<br>", "Number with problem solving concern:  ", trend_data$no_prob_solv))
+    tooltip_3 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),     
                               "<br>", "% with gross motor concern ", trend_data$gross_motor_perc,
+                                "<br>", "Number with gross motor concern ", trend_data$no_gross_motor))
+    tooltip_4 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),     
                               "<br>", "% with personal/social concern: ", trend_data$per_soc_perc,
+                                "<br>", "Number with personal/social concern: ", trend_data$no_per_soc))
+    tooltip_5 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
                               "<br>", "% with fine motor concern:  ", trend_data$fine_motor_perc,
+                                "<br>", "Number with fine motor concern:  ", trend_data$no_fine_motor))
+    tooltip_6 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
                               "<br>", "% with emotional/behavioural concern ", trend_data$emot_beh_perc,
+                                "<br>", "Number with emotional/behavioural concern ", trend_data$no_emot_beh))
+    tooltip_7 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
                               "<br>", "% with vision concern:  ", trend_data$vision_perc,
-                              "<br>", "% with hearing concern:  ", trend_data$hearing_perc))
+                          "<br>", "Number with vision concern:  ", trend_data$no_vision))
+    tooltip_8 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% with hearing concern:  ", trend_data$hearing_perc,
+                          "<br>", "Number with hearing concern:  ", trend_data$no_hearing))
     
     #Creating time trend plot
     plot_ly(data=trend_data, x=~month_review) %>%
       add_lines(y = ~slc_perc, name = "Speech, language & communication",
-                line = list(color = "#2d2da1"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#2d2da1"), text=tooltip_1, hoverinfo="text") %>%
       add_lines(y = ~prob_solv_perc, name = "Problem solving",
-                line = list(color = "#9999ff"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#9999ff"), text=tooltip_2, hoverinfo="text") %>%
       add_lines(y = ~gross_motor_perc, name = "Gross motor",
-                line = list(color = "#8e23a0"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#8e23a0"), text=tooltip_3, hoverinfo="text") %>%
       add_lines(y = ~per_soc_perc, name = "Personal/Social",
-                line = list(color = "#a81141"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#a81141"), text=tooltip_4, hoverinfo="text") %>%
       add_lines(y = ~fine_motor_perc, name = "Fine motor",
-                line = list(color = "#e3b419"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#e3b419"), text=tooltip_5, hoverinfo="text") %>%
       add_lines(y = ~emot_beh_perc, name = "Emotional/Behavioural",
-                line = list(color = "#1d91c0"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#1d91c0"), text=tooltip_6, hoverinfo="text") %>%
       add_lines(y = ~vision_perc, name = "Vision",
-                line = list(color = "#edf8b1"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#edf8b1"), text=tooltip_7, hoverinfo="text") %>%
       add_lines(y = ~hearing_perc, name = "Hearing",
-                line = list(color = "#7fcdbb"), text=tooltip_trend, hoverinfo="text") %>%
+                line = list(color = "#7fcdbb"), text=tooltip_8, hoverinfo="text") %>%
       
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
