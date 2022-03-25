@@ -78,11 +78,11 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic.", target="_blank")
 
   # Text to be updated every month with updated dates
-  last_month_peri <- "October 2021"
-  cutdate_peri <- "14 November 2021"
-  extractdate_peri <- "17 November 2021"
-  nextup_peri <- "January 2022"
-  nextdata_peri <- "November 2021"
+  last_month_peri <- "January 2022"
+  cutdate_peri <- "13 February 2022"
+  extractdate_peri <- "16 February 2022"
+  nextup_peri <- "April 2022"
+  nextdata_peri <- "February 2022"
 
   # Number of deaths and of births used in the text
   no_stillperi <- peri_filt() %>% pull(number_of_deaths_in_month)
@@ -182,7 +182,12 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
     yaxis_plots[["title"]] <- case_when(input$measure_select_perinatal %in% c("pnnd", "nnd", "infantdeaths") ~ "Rate per 1,000 live births",
                                         input$measure_select_perinatal %in% c("extperi", "stillbirths") ~ "Rate per 1,000 (live + still) births")
     xaxis_plots[["title"]] <- "Month"
-
+    
+    xaxis_plots[["ticktext"]] <- list("Jul 2017", "Jan 2018", "Jul 2018", "Jan 2019", "Jul 2019", "Jan 2020",
+                                      "Jul 2020", "Jan 2021", "Jul 2021", "Jan 2022")
+    
+    xaxis_plots[["tickvals"]] <- list("2017-07-01", "2018-01-01", "2018-07-01", "2019-01-01", "2019-07-01", "2020-01-01",
+                                      "2020-07-01", "2021-01-01", "2021-07-01", "2022-01-01")
     # Tooltip
     measure_selected <- case_when(input$measure_select_perinatal == "stillbirths" ~ "Still births",
                                   input$measure_select_perinatal ==   "pnnd" ~ "Post-neonatal deaths",
@@ -213,14 +218,15 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
                 hoverinfo= "none", name = "Warning limits") %>%
       add_lines(y = ~lower_wl_2_std_dev, line = list(color = "#33ccff", dash = "dot"),
                 hoverinfo= "none", showlegend = FALSE) %>%
+      # adding shifts
+      add_markers(data = trend_data %>% filter(shift == T), y = ~ rate,
+                  marker = list(color = "blue", size = 12, symbol = "circle"),
+                  name = "Shifts", hoverinfo= "text") %>%
       # adding outliers
       add_markers(data = trend_data %>% filter(outlier == T), y = ~ rate,
                   marker = list(color = "red", size = 10, symbol = "diamond"),
                   name = "Outliers", hoverinfo= "text") %>%
-      # adding shifts
-      add_markers(data = trend_data %>% filter(shift == T), y = ~ rate,
-                  marker = list(color = "blue", size = 10, symbol = "circle"),
-                  name = "Shifts", hoverinfo= "text") %>%
+    
       # adding shifts
       add_markers(data = trend_data %>% filter(trend == T), y = ~ rate,
                   marker = list(color = "green", size = 10, symbol = "square"),
@@ -276,6 +282,52 @@ output$download_perinatal_data <- downloadHandler(
 output$perinatal_commentary <- renderUI({
   tagList(
     bsButton("jump_to_perinatal_mortality",label = "Go to data"), #this button can only be used once
+    
+    h2("Stillbirths and infant deaths - 2nd March 2022"),
+    p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in January 2022, 
+      when all reported measures of perinatal and infant mortality were within expected limits."),
+    p("As described in the dashboard information box ‘How do we identify patterns in the data?’, control charts are used to provide an indication 
+      of when changes in these data are less likely to be due to chance alone. In refreshed data now available for 2021, the months March to October 
+      are identified as a ‘shift’ in the neonatal mortality rate, and the months April to November as a ‘shift’ in the infant mortality rate. A ‘shift’ 
+      describes when there is a sequence of 8 or more months of data that are above (or below) the average level, which here is based on the pre-pandemic 
+      mortality rates from 2017 to 2019. These ‘shifts’ are indicated by the blue markers on the chart for the relevant sequence of months. 
+      This pattern suggests there was a sustained period in the middle part of 2021 when neonatal and infant mortality rates were higher than pre-pandemic 
+      levels, rather than fluctuating around this level as would be expected with random variation. In the most recent months, the rates for both measures 
+      have been below the average level. No shifts are noted for stillbirths, extended perinatal mortality or post-neonatal deaths."),
+    
+    p("As noted below, neonatal and infant deaths are subject to a number of review and learning processes to identify and mitigate any contributing factors. 
+      Systematic information on deaths occurring in neonatal units is gathered via the", 
+      tags$a(href = "https://www.npeu.ox.ac.uk/pmrt", "Perinatal Mortality Review Tool;", target = "_blank"), 
+      "the UK-wide collaboration,", tags$a(href = "https://www.npeu.ox.ac.uk/mbrrace-uk", "MBRRACE-UK,", target = "_blank"), " provides surveillance and 
+      investigation of maternal deaths, stillbirths and infant deaths, and there is a", 
+      tags$a(href = "https://www.gov.scot/publications/maternity-neonatal-perinatal-adverse-event-review-process-scotland/", "standardised approach to review of perinatal adverse events in Scotland.", target = "_blank"),
+      " All child deaths in Scotland are now reviewed to ensure that contributing factors are understood, and that learning is used in ", tags$a(href = "https://www.healthcareimprovementscotland.org/our_work/governance_and_assurance/deaths_of_children_reviews.aspx", "prevention and improving care quality.", target = "_blank"), " 
+      A number of agencies consider the outcomes of these review processes, including the", tags$a(href = "https://www.perinatalnetwork.scot/neonatal/", "Scottish National Neonatal Network,", target = "_blank"), 
+      "the ", tags$a(href = "https://ihub.scot/improvement-programmes/scottish-patient-safety-programme-spsp/spsp-programmes-of-work/maternity-and-children-quality-improvement-collaborative-mcqic/", "Maternity and Children Quality Improvement Collaborative", target = "_blank"), " and the Scottish Government."),
+    
+    p("Annual data on stillbirths and infant deaths are produced by ", tags$a(href = "https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/vital-events-reference-tables", "National Records of Scotland ", target = "_blank"), 
+      "and information for 2021 is scheduled to be published in June 2022."),
+    
+    
+    h2("Stillbirths and infant deaths - 2nd February 2022"),
+    p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in ",
+      "November and December 2021. In these months all reported measures of perinatal and infant mortality were within expected limits."),
+    p("In addition, in this dashboard release information on gestation at delivery has been updated under the ‘Births and babies’ tab, ",
+      "to include births in September and October 2021, which is of interest in follow up to the commentary below on neonatal mortality ",
+      "in September 2021. These data show that in September 2021, 0.8% of singleton live births occurred at under 32 weeks gestation, and ",
+      "5.5% at 32-36 weeks gestation. Both of these figures are close to the expected level based on the average over the period January ",
+      "2018 to February 2020. As these data are based on singleton births only, data were also reviewed separately to assess the total number ",
+      "and percentage of premature babies, including those from multiple births. This showed that the total number of babies born at under 32 ",
+      "weeks gestation in September 2021 was relatively high, and in the upper quartile for monthly values in January to October 2021, however ",
+      "it was not exceptional in comparison to the observed values in this period."),
+    p("Further information on COVID-19 infection and vaccination in pregnancy in Scotland, including data on neonatal infections and extended ",
+      "perinatal mortality rate have also been published recently (see ", tags$a(href="https://www.nature.com/articles/s41591-021-01666-2", 
+      "SARS-CoV-2 infection and COVID-19 vaccination rates in pregnant women in Scotland", target="_blank"), " and ", 
+      tags$a(href="https://www.publichealthscotland.scot/publications/show-all-releases?id=20580", "Public Health Scotland publications", 
+      target="_blank"), "). The information in these publications provides further reassurance regarding the safety of vaccination in pregnancy, ",
+      "and highlights the effective protection it provides for pregnant women and their babies."),
+    
+    
     h2("Stillbirths and infant deaths - 1st December 2021"),
     p("In this release of information on stillbirths and infant deaths, data have been updated to include events that occurred in October 2021."),
     p("In October 2021 all reported measures of perinatal and infant mortality were within expected limits. ",

@@ -1,4 +1,5 @@
 #UI
+
 # secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
@@ -143,7 +144,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 # Summary trends ----
 ##############################################.
 tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
-  wellPanel(
+  wellPanel(#actionButton("browser", "browser"),
     column(4,
            conditionalPanel(condition = "input.measure_select != 'outpats' ",
            div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -176,6 +177,9 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
            conditionalPanel(condition = "input.measure_select == 'outpats' ",
                             selectInput("appt_type", label = "Step 3. Select type of appointment.",
                                         choices = c("All", "New", "Return"), selected = "All")),
+           conditionalPanel(condition = "input.measure_select == 'outpats' ",
+                            selectInput("time_type", label = "Step 4. Select weekly or monthly data.",
+                                        choices = c("Weekly", "Monthly"), selected = "Weekly")),
            downloadButton('download_chart_data', 'Download data'),
            fluidRow(br()),
            actionButton('jump_commentary_summary','Go to commentary')
@@ -184,6 +188,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   mainPanel(width = 12,
             uiOutput("data_explorer")
   )# mainPanel bracket
+
 ), # tabpanel bracket
 #############################################.
 # Cardiovascular ----
@@ -395,6 +400,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                      contrast, there were small increases in stages 3 and 4 (5% and 7%), with the biggest increase seen for
                         #                      those of unknown stage (34%)."),
 
+
                         #
                         #              tags$li("For Colorectal Cancer, there were substantial drops (30% and more) in the numbers diagnosed with
                         #                      stages 1, 2 or 3 colorectal cancer; whereas there was only a 4% drop for metastatic colorectal cancer."),
@@ -402,6 +408,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #              tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
                         #                      diagnoses, which was only lower than expected in April 2020.")),
                         #
+
 
                         #            p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                         #          ),
@@ -507,27 +514,27 @@ tabPanel(title = "Antenatal booking", value = "booking",
          mainPanel(width = 12,
                    uiOutput("booking_explorer")
          )# mainPanel bracket
-),#, #tab panel
- ###############################################.
- ## Termination of pregnancy  ----
- ###############################################.
- tabPanel(title = "Termination of pregnancy", value = "terminations",
-          wellPanel(
-            column(4, div(title="Select a breakdown",
-                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                          selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
-                                      selected = "Scotland")),
-                   uiOutput("geoname_ui_top")),
-            column(4,offset=4,
-                   actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
-                   fluidRow(br()),
-                   downloadButton("download_termination_data", "Download data"),
-                   fluidRow(br()),
-                   actionButton("jump_commentary_top","Go to commentary"))
-          ), #well panel
-          mainPanel(width = 12,
-                    uiOutput("top_explorer")
-          )# mainPanel bracket
+), #tab panel
+###############################################.
+## Termination of pregnancy  ----
+###############################################.
+tabPanel(title = "Termination of pregnancy", value = "terminations",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_top")),
+           column(4,offset=4,
+                  actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_termination_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_top","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("top_explorer")
+         )# mainPanel bracket
 ) # tabPanel bracket
  ), # navbar menu bracket
 ##############################################.
@@ -841,26 +848,30 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    fluidRow(br()),
                    fluidRow(br())
 
-         )# mainPanel bracket
+        )# mainPanel bracket
+
 ), # tabpanel bracket
-##############################################.
-# Data ----
-##############################################.
- tabPanel(title = "Data", icon = icon("table"), value = "table",
-          p("This section allows you to view the data in table format.
-         You can use the filters to select the data you are interested in.
-         You can also download the data as a csv using the download button.
-         Some of the data is also hosted in the",
-            tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
-                   "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
-          column(6, selectInput("data_select", "Select the data you want to explore.",
-                                choices = data_list_data_tab)),
-          column(6, downloadButton('download_table_csv', 'Download data')),
-          mainPanel(width = 12,
-                    DT::dataTableOutput("table_filtered"))
-      ) # tabpanel bracket
+#############################################.
+## Data ----
+#############################################.
+tabPanel(title = "Data", icon = icon("table"), value = "table",
+         p("This section allows you to view the data in table format.
+        You can use the filters to select the data you are interested in.
+        You can also download the data as a csv using the download button.
+        Some of the data is also hosted in the",
+           tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
+                  "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
+         column(6, selectInput("data_select", "Select the data you want to explore.",
+                               choices = data_list_data_tab)),
+         column(6, downloadButton('download_table_csv', 'Download data')),
+         mainPanel(width = 12,
+                   DT::dataTableOutput("table_filtered"))
+     ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
+
  # )#secure app
+
+
 
 #END

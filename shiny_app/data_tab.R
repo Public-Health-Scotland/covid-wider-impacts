@@ -65,7 +65,7 @@ data_table <- reactive({
     mutate_if(is.character, as.factor) 
   
   if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths",
-                               "ooh_cardiac", "sas_cardiac", "outpats")) {
+                               "ooh_cardiac", "sas_cardiac")) {
     table_data %<>%
     # Formatting to a "nicer" style
     # select(-type) %>% 
@@ -84,6 +84,26 @@ data_table <- reactive({
                                 "dep" = "Deprivation",
                                 "moc" = "Mode of Clinical Interaction"),
            week_ending = format(week_ending, "%d %b %y"))
+  }  else if (input$data_select %in% "outpats") { 
+    table_data %<>%
+      # Formatting to a "nicer" style
+      # select(-type) %>% 
+      rename("Variation (%)" = variation, time_ending = week_ending) %>% 
+      mutate(category = recode_factor(category, "All" = "All", "Female" = "Female", "Male" = "Male",
+                                      "1 - most deprived" = "Quintile 1 - most deprived",
+                                      "2" = "Quintile 2", "3" = "Quintile 3", "4" = "Quintile 4",
+                                      "5 - least deprived" = "Quintile 5 - least deprived",
+                                      "Under 5" = "Aged under 5", "5 - 14"= "Aged 5 to 14",
+                                      "15 - 44" = "Aged 15 to 44","45 - 64" = "Aged 45 to 64",
+                                      "65 - 74" = "Aged 65 to 74", "75 - 84" = "Aged 75 to 84", 
+                                      "85 and over" = "Aged 85 and over",
+                                      "Under 65" = "Aged under 65",
+                                      "65 and over" = "Aged 65 and over"),
+             type = recode_factor(type, "sex" = "Sex", "age" = "Age Group", 
+                                  "dep" = "Deprivation",
+                                  "moc" = "Mode of Clinical Interaction",
+                                  "eth" = "Ethnic Group"),
+             time_ending = ifelse(time_split == "Monthly", format(time_ending, "%b %y"), format(time_ending, "%d %b %y")))
   } else if (input$data_select %in% "first_visit") { 
     table_data %<>%
       select(area_name, time_period_eligible, denominator, starts_with("coverage"), cohort) %>% 
