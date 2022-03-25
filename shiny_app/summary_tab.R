@@ -494,10 +494,15 @@ output$data_explorer <- renderUI({
       if (input$measure_select == "nhs24"){
         tagList(
         p("The data used in this chart are taken from the Unscheduled Care Datamart.
-          As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/",
+          As mentioned in the", tags$a(href="https://publichealthscotland.scot/publications/covid-19-statistical-report",
                                                                                                                    "COVID-19 weekly report for Scotland",  target="_blank"),
-          "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020
-          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time."))
+          "NHS 24 made changes to their service delivery to respond to COVID-19. The data from March 2020
+          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time.
+          As of the 31st of March 2022 the COVID-19 Community Pathway will be closed. 
+          From this date patients who contact NHS 24 with Covid symptoms during the in-hours period will be 
+          advised to contact their own GP practice. For the out of hours period, the Out of Hours services will 
+          continue to manage Covid patients directed by NHS 24 as a matter of course. This will have an impact on 
+          the NHS 24 data contained in the dashboard. "))
         },
       if (input$measure_select == "deaths"){
         tagList(
