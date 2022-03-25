@@ -257,7 +257,7 @@ ADP_names<-readRDS('data/ADP_names.rds')
 Health_board<-readRDS('data/Health_board.rds')
 DTR_data<-readRDS('data/DTR_data.rds')
 THN_by_HB<-readRDS('data/THN_by_HB.rds')
-# SASdata<-readRDS('data/SASdata.rds')
+SASdata<-readRDS('data/SASdata.rds')
 OST_paid<-readRDS('data/OST_paid.rds')
 OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
 
@@ -338,7 +338,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Take home naloxone kits"="THN_by_HB",
                         "Drug and alcohol treatment referrals"="DTR_data",
                         "Opioid substituation therapy prescribing"="OST_paid",
-                      #  "SAS naloxone administration"="SASdata"
+                        "SAS naloxone administration"="SASdata",
                         "Weekly SACT activity" = "sact_weekly",
                         "Monthly SACT activity" = "sact_monthly",
                         "All unintentional injuries" = "ui_smr01_all",

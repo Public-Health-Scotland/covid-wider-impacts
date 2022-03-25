@@ -815,6 +815,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                          radioGroupButtons("drug_subcategories",
                                            label= "Step 1 – Select the data you want to explore",
                                            choices = c('Take home naloxone kits',
+                                                       'Scottish Ambulance Service naloxone administration'= 'SAS naloxone administration',
                                                        'Drug and alcohol treatment referrals',
                                                        'Opioid substitution therapy prescribing'='OST prescribing'),
                                            status = "primary",
@@ -869,6 +870,8 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
    ) # page bracket
  )# taglist bracket
 
-#)#secure app
+ # )#secure app
+
+
 
 #END
