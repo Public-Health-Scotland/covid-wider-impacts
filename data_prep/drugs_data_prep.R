@@ -15,84 +15,59 @@ library(zoo)
 ## Drug and alcohol treatment referrals ----
 ###############################################.
 #When updating for future updates the following lines must be updated:
-#Line 23: Update filepath to data
-#Line 75: Update number of weeks
-#Line 93: Update number of weeks
+#Line 22: Update filepath to data
+#Line 52 and 68: Update number of weeks
 
-# # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/DrugTreatmentReferrals/Referrals_25022022_breakdown.xlsx",
-#                                    col_types = c("text", "text", "date",
-#                                                  "numeric"))
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# Reading data
 Referrals_breakdown <- read_excel(paste0(data_folder,"drugs/Referrals_25022022_breakdown.xlsx"),
-                                         col_types = c("text", "text", "date",
-                                                       "numeric"))
-
-
-
-#Extracting isoweek and year from date
-Week<-isoweek(Referrals_breakdown$DateReferralReceived)
-Year<-isoyear(Referrals_breakdown$DateReferralReceived)
-Referrals_breakdown<-data.frame(Referrals_breakdown,'Week'=Week,'Year'=Year)
+                                  col_types = c("text", "text", "date", "numeric")) %>% 
+  #Extracting isoweek and year from date
+  mutate(Week = isoweek(DateReferralReceived),
+         Year = isoyear(DateReferralReceived))
 
 colnames(Referrals_breakdown)[1:4]<-c('Type','Board','Date','DTR')
 
 #Splitting data frame by years 
 SepYears<-split(Referrals_breakdown, Year)
-data.2018<-SepYears$`2018`
-data.2019<-SepYears$`2019`
-data.2020<-SepYears$`2020`
-data.2021<-SepYears$`2021`
-
 
 #Using all combinations of NHS board, type of treatment and date to make complete data frames
-Hb<-unique(data.2018$Board)#using 2018 data as 2015/2016 has NA as an option for health board
-type<-c(unique(data.2021$Type), 'All')#want to include co-dependency
-dates<-unique(data.2020$Week)#want to include leap year
-
+Hb<-unique(SepYears$`2018`$Board)#using 2018 data as 2015/2016 has NA as an option for health board
+type<-c(unique(SepYears$`2021`$Type), 'All')#want to include co-dependency
+dates<-unique(SepYears$`2020`$Week)#want to include leap year
 
 #Forming complete data frames for each year
-comp.2018<-complete(data.2018, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0))
-comp.2019<-complete(data.2019, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0))
-comp.2020<-complete(data.2020, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0))
-comp.2021<-complete(data.2021, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0))
+comp.2018<-complete(SepYears$`2018`, Board=Hb, Type=type, Week=dates,
+                    fill=list(DTR=0)) %>% select(Week, Board, Type, `2018` = DTR)
+comp.2019<-complete(SepYears$`2019`, Board=Hb, Type=type, Week=dates,
+                    fill=list(DTR=0)) %>% select(`2019` = DTR)
+comp.2020<-complete(SepYears$`2020`, Board=Hb, Type=type, Week=dates,
+                    fill=list(DTR=0)) %>% select (`2020` = DTR)
+comp.2021<-complete(SepYears$`2021`, Board=Hb, Type=type, Week=dates,
+                    fill=list(DTR=0)) %>% select(`2021` = DTR)
 
 #Merging the all years into one data set
-full<-merge(comp.2018,comp.2019,by=c('Week','Board','Type'))
-full<-merge(full1,comp.2020,by=c('Week','Board','Type'))
-full<-merge(full2,comp.2021,by=c('Week','Board','Type'))
+full <- cbind(comp.2018, comp.2019, comp.2020, comp.2021) %>% 
+  arrange(Week)
 
+full$`2021`[(full$Week>51)]<-NA #MUST UPDATE THIS WITH FUTURE UPDATES
+full$`2018`[(full$Week==53)]<-full$`2018`[(full$Week==52)] #REPEATING LAST 2018 & 2019 OBSERVATION TO MATCH 2020 DATA
+full$`2019`[(full$Week==53)]<-full$`2019`[(full$Week==52)]
 
-full<-full[order(full$Week),]
-sub.full<-full[,c(1:3,5,8,11,14)]
-colnames(sub.full)[4:7]<-c('2018','2019','2020','2021')
-
-sub.full$`2021`[(sub.full$Week>51)]<-NA #MUST UPDATE THIS WITH FUTURE UPDATES
-sub.full$`2018`[(sub.full$Week==53)]<-sub.full$`2018`[(sub.full$Week==52)] #REPEATING LAST 2018 & 2019 OBSERVATION TO MATCH 2020 DATA
-sub.full$`2019`[(sub.full$Week==53)]<-sub.full$`2019`[(sub.full$Week==52)]
-
-rownames(sub.full)<-seq(1:nrow(sub.full))#Row names get jumbled up when data is reordered so just ordering it again here
-
-average<-(sub.full$`2018`+sub.full$`2019`)/2 #Taking 2018/19 average
-sub.full<-cbind(sub.full,average)
-colnames(sub.full)[8]<-'Average 2018 & 2019'
+# rownames(full)<-seq(1:nrow(full))#Row names get jumbled up when data is reordered so just ordering it again here
+full <- full %>% #Taking 2018/19 average
+  mutate('Average 2018 & 2019' = (`2018`+`2019`)/2)
 
 ###adding % change column 
-sub.full<-cbind(sub.full,(sub.full$`2020`- sub.full$`Average 2018 & 2019`)/sub.full$`Average 2018 & 2019`*100)
-colnames(sub.full)[9]<-'Change'
-sub.full$Change[is.nan(sub.full$Change)]<-NA
+full <- full %>%
+  mutate('Change' = (`2020` - `Average 2018 & 2019`)/`Average 2018 & 2019`*100)
 
+full$Change[is.nan(full$Change)]<-NA # NaNs to NA
 
 ##### Formatting for long x axis 
 ####MUST UPDATE BLOCK FOR EACH UPDATE OF DATA WITH WEEK NUMBER
-block<-nrow(subset(sub.full,Week<=51))
-long.axis<-rbind(sub.full[,c(1:3,8,6)],sub.full[c(1:(block+1)),c(1:3,8,6)])
-long.axis$`2020`[c((nrow(sub.full)+1):nrow(long.axis))]<-sub.full$`2021`[1:(block+1)]
+block <- nrow(subset(full, Week<=51))
+long.axis <- rbind(full[,c(1:3,8,6)],full[c(1:(block+1)),c(1:3,8,6)])
+long.axis$`2020`[c((nrow(full)+1):nrow(long.axis))]<-full$`2021`[1:(block+1)]
 
 
 date_in_week <- function(year, week, weekday){
@@ -101,13 +76,13 @@ date_in_week <- function(year, week, weekday){
   ISOweek2date(w)
 }
 
-Date<-date_in_week(2020,sub.full[,1],1)
-Date2<-date_in_week(2021,sub.full[1:(block+1),1],1)
+Date <- date_in_week(2020,sub.full[,1],1)
+Date2 <- date_in_week(2021,sub.full[1:(block+1),1],1)
 Date<-append(Date,Date2)
 
 long.axis$Week<-Date
 
-colnames(long.axis)[c(1,5)]<-c('Date','2020 & 2021')
+long.axis <- long.axis %>% rename(Date = Week, `2020 & 2021` = `2020`)
 long.axis<-long.axis[-nrow(long.axis),]#removing last row 
 #######Edit to add 'All' option###
 
