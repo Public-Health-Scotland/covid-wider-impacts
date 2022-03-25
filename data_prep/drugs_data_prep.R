@@ -132,12 +132,7 @@ long.axis<-long.axis %>%
 Health_board<-Hb[grep('NHS',Hb)]
 ADP_names<-Hb[grep('ADP',Hb)]
 
-#SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(Health_board,file='shiny_app/data/Health_board.rds')
-# saveRDS(ADP_names,file='shiny_app/data/ADP_names.rds')
-# saveRDS(long.axis,file='shiny_app/data/DTR_data.rds')
-
-#SAVING FOR WIDER IMPACTS TEAM
+#SAVING FILES
 saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
 saveRDS(ADP_names, paste0(data_folder,"final_app_files/ADP_names_",
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
@@ -154,14 +149,10 @@ saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_",
 ## Take Home Naloxone ----
 ###############################################.
 #When updating for future updates the following lines must be updated:
-#Line 187: Update filepath to data
-#Line 211: Update number of months of 2021 data 
+#Line 156: Update filepath to data
+#Line 177: Update number of months of 2021 data 
 
-
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# dashboard_monthly_data <- readRDS("/PHI_conf/SubstanceMisuse1/Topics/Naloxone/Projects/20200515-COVID19-Naloxone/Temp/dashboard_monthly_data.rds")
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# Reading file
 dashboard_monthly_data <- readRDS(paste0(data_folder, "drugs/dashboard_monthly_data_2021_Q2.rds"))
 
 HB_data<-dashboard_monthly_data[order(dashboard_monthly_data$month),] #ordering by date
@@ -222,11 +213,7 @@ new_THN<-cbind(THN_by_Hb,'Proportion 20/21'=proportion_current)
 new_THN$Change<-as.numeric(format(round(new_THN$Change, 1), nsmall = 1) )
 new_THN$`Proportion 20/21`<-as.numeric(format(round(new_THN$`Proportion 20/21` ,1),nsmall=1))
 
-
-#SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(new_THN,'shiny_app/data/THN_by_HB.rds')
-
-# # SAVING FOR WIDER IMPACTS TEAM
+# # SAVING files
 saveRDS(new_THN, "shiny_app/data/THN_by_HB.rds")
 saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_",
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
@@ -236,17 +223,11 @@ saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_",
 ## SAS data prep ----
 ###############################################.
 #When updating for future updates the following lines must be updated:
-#Line 268: Update filepath to data
-#Line 353: Update number of weeks of data available
+#Line 230: Update filepath to data
+#Line 319: Update number of weeks of data available
 
-
-
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# SAS_data<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/SAS/2022_1_SAS_reformat_January.xlsx")
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# Reading file
 SAS_data <- read_excel(paste0(data_folder, "drugs/2022_1_SAS_reformat_January.xlsx"))
-
 
 SAS_data<- SAS_data %>%
   rename(Date='Week Commencing')
@@ -354,9 +335,7 @@ data <- data %>%
 data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
 data$`2020 & 2021`<- round(data$`2020 & 2021`,1)
 
-# saveRDS(data, 'shiny_app/data/SASdata.rds')
-
-# SAVING FOR WIDER IMPACTS TEAM
+# SAVING Files
 saveRDS(data, "shiny_app/data/SASdata.rds")
 saveRDS(data, paste0(data_folder,"final_app_files/SASdata_",
                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
@@ -366,58 +345,30 @@ saveRDS(data, paste0(data_folder,"final_app_files/SASdata_",
 ## OST data prep ----
 ###############################################.
 #When updating for future updates the following lines must be updated:
-#Line 387 Line 391, Line 395, Line 401: Update filepath to data
+#Line 352 to line 368: Update filepaths to data
 #Check formatting code as raw data comes slightly differently every time
 
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-
-# raw.meth.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/OST/we06032022_Methadone 1mg.ml-1.xlsx",
-#                            sheet = "Paid Items", col_types = c("text",
-#                                                                "text", "text", "numeric", "numeric",
-#                                                                "numeric"))
-
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# Methadone HB data
 raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we06032022_Methadone 1mg.ml-1.xlsx"),
-                                   sheet = "Paid Items", col_types = c("text",
-                                                                       "text", "text", "numeric", "numeric",
-                                                                       "numeric"))
+                                   sheet = "Paid Items", 
+                            col_types = c("text","text", "text", "numeric", "numeric", "numeric"))                                                                           
 
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# scot.raw.meth.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/OST/we06032022_Methadone 1mg.ml-1.xlsx",
-#                                sheet = "Context ePr Vs Paid", col_types = c("text",
-#                                                                             "text", "numeric", "text", "numeric"))
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# Methadone scot data
 scot.raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we06032022_Methadone 1mg.ml-1.xlsx"),
                                         sheet = "Context ePr Vs Paid", col_types = c("text",
                                                                                      "text", "numeric", "text", "numeric"))
 
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-
-# raw.bup.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/OST/we06032022 Buprenorphine_2MG_8MG_16MG.xlsx",
-#                          sheet = "Paid Items", col_types = c("text",
-#                                                              "text", "text", "numeric", "text",
-#                                                              "numeric", "text", "numeric"))
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# Buprenorphine HB data
 raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we06032022 Buprenorphine_2MG_8MG_16MG.xlsx"),
                                   sheet = "Paid Items", col_types = c("text",
                                                                       "text", "text", "numeric", "text",
                                                                       "numeric", "text", "numeric"))
 
-# # FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# scot.raw.bup.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/OST/we06032022 Buprenorphine_2MG_8MG_16MG.xlsx",
-#                                sheet = "Context ePr Vs Paid", col_types = c("text",
-#                                                                             "text", "text", "text", "numeric",
-#                                                                             "text", "numeric", "text", "numeric"))
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
+# Buprenorphine scot data
 scot.raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we06032022 Buprenorphine_2MG_8MG_16MG.xlsx"),
                                        sheet = "Context ePr Vs Paid", col_types = c("text",
                                                                                     "text", "text", "text", "numeric",
                                                                                     "text", "numeric", "text", "numeric"))
-
 
 #formatting meth Paid
 raw.meth.paid<-raw.meth.paid[-c(1:6,nrow(raw.meth.paid)),]  #Removing first 6 rows
@@ -660,21 +611,13 @@ str(Total_Quant)
 Total_Quant <- Total_Quant %>% 
   mutate(across(c(Quantity), ~replace_na(.x, 0)))
 
-
-# # SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(Totals,'shiny_app/data/OST_paid.rds')
-
-# SAVING FOR WIDER IMPACTS TEAM
+# SAVING files
 saveRDS(Totals, "shiny_app/data/OST_paid.rds")
 saveRDS(Totals, paste0(data_folder,"final_app_files/OST_paid_", 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# 
-# #SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(Total_Quant,'shiny_app/data/OST_paid_quantity.rds')
-# 
-#SAVING FOR WIDER IMPACTS TEAM
+
 saveRDS(Total_Quant, "shiny_app/data/OST_paid_quantity.rds")
 saveRDS(Total_Quant, paste0(data_folder,"final_app_files/OST_paid_quantity_",
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
-
+## END
