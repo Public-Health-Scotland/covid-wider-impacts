@@ -320,11 +320,13 @@ output$TwoYrComparison<-renderUI({
     lab_text1<-c(paste0("Date: ", plot_data()$Date,
                         "<br>", 'No. of SAS naloxone incidents: ', plot_data()$`2020 & 2021`,
                         "<br>", "Historic average: ", plot_data()$`Average 2018 & 2019`))
-    trend<-plot_ly(data = plot_data(),x=plot_data()$Date)
-    trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text1,hoverinfo='text')
-    trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),text=lab_text1,hoverinfo='text')
-    trend<-trend %>% layout(
-      shapes=lockdown('2020-03-23','grey'),
+    trend <- plot_ly(data = plot_data(),x=plot_data()$Date) %>% 
+      add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', 
+                line=list(color=pal_overall[1]),text=lab_text1,hoverinfo='text') %>% 
+      add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',
+                type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
+                text=lab_text1,hoverinfo='text') %>% 
+      layout(shapes=lockdown('2020-03-23','grey'),
       annotations=annote("2020-03-01",plot_data()$`Average 2018 & 2019`,plot_data()$`2020 & 2021`),
       margin=list(t=80),
       title = (sprintf("Number of SAS incidents where naloxone was administered in 2020 and 2021 \n compared with 2018-19 average (%s)",location())),
@@ -356,36 +358,36 @@ output$Prop_barplot<-renderUI({
       
       plot_data<-plot_data()
       months<-length(unique(plot_data$Date)) #number of unique dates 
-      prop<-plot_ly(data = plot_data, x =seq(1:months),y = plot_data$`2020 & 2021`[which(plot_data$Type=='Community')],type='bar',name='Community',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Community')],' %'),marker = list(color = pal_drug[1]))
-      prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')], name = 'Dispensed by \ncommunity pharmacies',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prescribing')],' %'),marker = list(color = pal_drug[2]))
-      prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')], name = 'Prison',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prison')],' %'),marker = list(color = pal_drug[3]))
-      prop<-prop %>% add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')], name = 'SAS',hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Ambulance')],' %'),marker = list(color = pal_drug[4]))
-      prop<-prop %>% add_trace(y = (plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Community')]),
-                                       name = 'Total',type='scatter',mode='markers',colors='black',showlegend=F,
-                               hovertemplate = paste0((plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Community')]),''),
-                               marker = list(size = 4,
-                                             color = 'rgba(0, 0, 0,0)')) 
-      prop <- prop %>% layout(
-        margin=list(t=80,b=100),
-        barmode = 'stack',
-            xaxis=list(
-            tickmode='array',
-            tickvals=seq(1:months),
-            ticktext=unique(plot_data$Date)
-          ))
-      prop <- prop %>% layout(
-        title = (sprintf("Percentage of take home naloxone provided by source of supply in 2020 and 2021 (%s)",location())),
-        xaxis=list(title='Date',
-                   fixedrange=TRUE),
-        yaxis = list(title = "Number of THN kits",
-                     fixedrange=TRUE),
-        hovermode= 'x unified'
-      )
-      prop <- prop %>%  config(
-        displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+      prop <- plot_ly(data = plot_data, x =seq(1:months),
+                      y = plot_data$`2020 & 2021`[which(plot_data$Type=='Community')],
+                      type='bar',name='Community',
+                      hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Community')],' %'),
+                      marker = list(color = pal_drug[1])) %>% 
+        add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')], 
+                  name = 'Dispensed by \ncommunity pharmacies',
+                  hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prescribing')],' %'),
+                  marker = list(color = pal_drug[2])) %>% 
+        add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')], name = 'Prison',
+                  hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prison')],' %'),
+                  marker = list(color = pal_drug[3]))
+        add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')], name = 'SAS',
+                  hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Ambulance')],' %')
+                  ,marker = list(color = pal_drug[4]))
+        add_trace(y = (plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Community')]),
+                  name = 'Total', type='scatter', mode='markers',
+                  colors='black',showlegend=F,
+                  hovertemplate = paste0((plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Community')]),''),
+                  marker = list(size = 4,color = 'rgba(0, 0, 0,0)'))  %>% 
+          layout(margin=list(t=80,b=100),  barmode = 'stack',
+            xaxis= list( tickmode='array', tickvals=seq(1:months),
+            ticktext=unique(plot_data$Date), title='Date', fixedrange=TRUE),
+            title = (sprintf("Percentage of take home naloxone provided by source of supply in 2020 and 2021 (%s)",location())),
+            yaxis = list(title = "Number of THN kits",fixedrange=TRUE),
+            hovermode= 'x unified') %>%  
+          config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     })
     
-    plotlyOutput('prop_plot',width='100%')
+    plotlyOutput('prop_plot', width='100%')
     
   }
   
@@ -459,12 +461,24 @@ output$Cum_plot<-renderUI({
    y_20<- cumsum(plot_data1$`Raw 20/21`)
    y_21<-cumsum(plot_21$`Raw 20/21`)
    y_22<-cumsum(plot_22$`Raw 20/21`)
-   trend<-plot_ly(data = plot_data1, x =seq(1:(nrow(plot_data1)+1)))
-   trend<-trend %>% add_trace(y =c(0,y_1819),name='Average \n2018-2019',type='scatter', mode='lines',line=list(color='green', dash='dot'),text=lab_text('Average 2018-2019',c('',month.abb[as.numeric(plot_data1$month)]),c(0,y_1819)),hoverinfo='text')
-   trend<-trend %>% add_trace(y = c(0,y_20),name='2020',type='scatter', mode='lines',line=list(color='black'),text=lab_text('2020',c('',month.abb[as.numeric(plot_data1$month)]),c(0,y_20)),hoverinfo='text')
-   trend<-trend %>% add_trace(data=plot_21,x=seq(1:(nrow(plot_21)+1)), y=c(0,y_21), name='2021', type='scatter',mode='lines',line=list(color='blue'),text=lab_text('2021',c('',month.abb[as.numeric(plot_21$month)]),c(0,y_21)),hoverinfo='text')
-   trend<-trend %>% add_trace(data=plot_22,x=seq(1:(nrow(plot_22)+1)), y=c(0,y_22), name='2021', type='scatter',mode='lines',line=list(color='orange'),text=lab_text('2022',c('',month.abb[as.numeric(plot_22$month)]),c(0,y_22)),hoverinfo='text')
-   trend<-trend %>% 
+   
+   trend<-plot_ly(data = plot_data1, x =seq(1:(nrow(plot_data1)+1))) %>% 
+     add_trace(y =c(0,y_1819),name='Average \n2018-2019',type='scatter', 
+               mode='lines',line=list(color='green', dash='dot'),
+               text=lab_text('Average 2018-2019',c('',month.abb[as.numeric(plot_data1$month)]),c(0,y_1819)),
+               hoverinfo='text') %>% 
+    add_trace(y = c(0,y_20),name='2020',type='scatter', mode='lines',
+              line=list(color='black'),
+              text=lab_text('2020',c('',month.abb[as.numeric(plot_data1$month)]),c(0,y_20)),
+              hoverinfo='text') %>% 
+    add_trace(data=plot_21,x=seq(1:(nrow(plot_21)+1)), y=c(0,y_21), name='2021', 
+              type='scatter',mode='lines',line=list(color='blue'),
+              text=lab_text('2021',c('',month.abb[as.numeric(plot_21$month)]),c(0,y_21)),
+              hoverinfo='text') %>% 
+    add_trace(data=plot_22,x=seq(1:(nrow(plot_22)+1)), y=c(0,y_22), name='2022', 
+              type='scatter',mode='lines',line=list(color='orange'),
+              text=lab_text('2022',c('',month.abb[as.numeric(plot_22$month)]),c(0,y_22)),
+              hoverinfo='text') %>% 
      layout(
        margin=list(t=80,l=2),
        title=(sprintf("Cumulative number of SAS incidents where naloxone was administered in 2020 and 2021 \n compared with 2018-19 average (%s)",location())),
@@ -477,10 +491,8 @@ output$Cum_plot<-renderUI({
        shapes=lockdown('4.77','black'),
        annotations=annote("4.2",y_1819,y_20),
        yaxis = list(title = "Cumulative number SAS naloxone incidents",
-                    fixedrange=TRUE))
-   
-   trend <- trend %>%  config(
-     displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+                    fixedrange=TRUE)) %>% 
+     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
    })
    
    plotlyOutput('cum_plot')
