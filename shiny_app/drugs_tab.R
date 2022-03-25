@@ -153,7 +153,7 @@ plot_data<-reactive({
   
   if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
     
-    plot_data<-subset(DTR_data,(Board==location()) & Type==input$types & Date<'2021-12-31')
+    plot_data<-subset(DTR_data,(Board==location()) & Type==input$types)
   }
   else if(input$drug_subcategories=='Take home naloxone kits'){
     plot_data<-subset(THN_by_HB,(Board==location()) )
@@ -379,13 +379,7 @@ output$Prop_barplot<-renderUI({
                    fixedrange=TRUE),
         yaxis = list(title = "Number of THN kits",
                      fixedrange=TRUE),
-        hovermode= 'x unified'#,
-        # annotations = 
-        #   list(x = 1, y = -0.4, text = "Data on take home naloxone provided by SAS is not available for June 2021", 
-        #        showarrow = F, xref='paper', yref='paper', 
-        #        xanchor='right', yanchor='auto', xshift=0, yshift=0,
-        #        font=list(size=13))
-        
+        hovermode= 'x unified'
       )
       prop <- prop %>%  config(
         displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
