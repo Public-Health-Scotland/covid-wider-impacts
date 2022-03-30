@@ -1,5 +1,5 @@
 #UI
-#secure_app( #uncomment if needing password protection
+secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -202,10 +202,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                     choices = c("Scotland"), selected = "Scotland"),
                   uiOutput("geoname_cardio_ui")),
            column(4,  selectInput("diagnosis_select", label = "Step 3. Select diagnosis",
-                                  choices = c("Angina","Cerebrovascular Disease", "Coronary Heart Disease","Heart Attack",
-                                              "Heart Failure","Stroke","Subarachnoid Haemorrhage","TIAs and related syndromes"), selected = "Angina")),
-                      column(4,  selectInput("type_adm_select", label = "Step 4. Select type of admission",
-                                  choices = c("Elective", "Emergency", "Transfer"), selected = "Emergency")),
+                                  choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")),
+                      #column(4,  selectInput("type_adm_select", label = "Step 4. Select type of admission",
+                      #            choices = c("Elective", "Emergency", "Transfer"), selected = "Emergency")),
            column(4, downloadButton('download_cardio_data', 'Download data'),
                   fluidRow(br()),
                   actionButton('jump_commentary_cardio','Go to commentary'))
@@ -871,6 +870,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-#)#secure app
+)#secure app
 
 #END

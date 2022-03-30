@@ -25,7 +25,7 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select a cardiac catheterisation lab"
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
     shinyjs::hide("diagnosis_select")
-    shinyjs::hide("type_adm_select")
+    #shinyjs::hide("type_adm_select")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -34,7 +34,7 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular A&E attendances"
     cardio_choices = c("Scotland")
     shinyjs::hide("diagnosis_select")
-    shinyjs::hide("type_adm_select")
+    #shinyjs::hide("type_adm_select")
     hide("geoname_cardio_ui")
     disable("area_cardio_select")
   }
@@ -43,7 +43,7 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular medicine prescriptions"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
     shinyjs::hide("diagnosis_select")
-    shinyjs::hide("type_adm_select")
+    #shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -52,7 +52,7 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular OOH cases"
     cardio_choices = c("Scotland", "Health board")
     shinyjs::hide("diagnosis_select")
-    shinyjs::hide("type_adm_select")
+    #shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -61,7 +61,7 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular Scottish Ambulance Service incidents"
     cardio_choices = c("Scotland", "Health board")
     shinyjs::hide("diagnosis_select")
-    shinyjs::hide("type_adm_select")
+    #shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -71,9 +71,8 @@ observeEvent(input$measure_cardio_select, {
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
     shinyjs::show("diagnosis_select")
     updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
-                      choices = c("Angina","Cerebrovascular Disease", "Coronary Heart Disease","Heart Attack",
-                                  "Heart Failure","Stroke","Subarachnoid Haemorrhage","TIAs and related syndromes"), selected = "Angina")
-    shinyjs::show("type_adm_select")
+                      choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")
+    #shinyjs::show("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -83,9 +82,8 @@ observeEvent(input$measure_cardio_select, {
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
     shinyjs::show("diagnosis_select")
     updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
-                choices = c("Cerebrovascular Disease", "Coronary Heart Disease","Heart Attack",
-                            "Heart Failure","Stroke","Subarachnoid Haemorrhage"), selected = "Cerebrovascular Disease")
-    shinyjs::hide("type_adm_select")
+                choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")
+    #shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -588,23 +586,24 @@ output$cardio_explorer <- renderUI({
                       extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
                                                    icon = icon('question-circle')))
        )
+       # Removed input$type_adm_select and added text emergency "Percentage change in ", input$diagnosis_select, " ", input$type_adm_select, " discharges in "
      } else if (input$measure_cardio_select == "cardio_discharges") {
        tagList(# cardio_discharges
-         h3(paste0("Monthly ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio)),
+         h3(paste0("Monthly ", input$diagnosis_select, " ", "Emergency discharges in ", input$geoname_cardio)),
          fluidRow(column(6,
                          actionButton("btn_cardio_modal", "Data source and definitions",
                                       icon = icon('question-circle'))),
                   column(6,data_last_updated)),
          plot_box("2020 and 2021 compared with 2018-2019 average", "cardio_discharges_all"),
-         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " compared with the corresponding
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "Emergency discharges in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "cardio_discharges_sex_var",
-                      paste0("Monthly number of ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " by sex"), "cardio_discharges_sex_tot"),
-         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", input$type_adm_select, " discharges ", input$geoname_cardio, " compared with the corresponding
+                      paste0("Monthly number of ", input$diagnosis_select, " ", "Emergency discharges in ", input$geoname_cardio, " by sex"), "cardio_discharges_sex_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "Emergency discharges ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by age group"), "cardio_discharges_age_var",
-                      paste0("Monthly number of ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " by age group"), "cardio_discharges_age_tot"),
-         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " compared with the corresponding
+                      paste0("Monthly number of ", input$diagnosis_select, " ", "Emergency discharges in ", input$geoname_cardio, " by age group"), "cardio_discharges_age_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "Emergency discharges in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by SIMD quintile"), "cardio_discharges_depr_var",
-                      paste0("Monthly number of ", input$diagnosis_select, " ", input$type_adm_select, " discharges in ", input$geoname_cardio, " by SIMD quintile"), "cardio_discharges_depr_tot",
+                      paste0("Monthly number of ", input$diagnosis_select, " ", "Emergency discharges in ", input$geoname_cardio, " by SIMD quintile"), "cardio_discharges_depr_tot",
                       extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
                                                    icon = icon('question-circle')))
        )
@@ -641,8 +640,7 @@ output$cardio_explorer <- renderUI({
 cardio_disch_filter <- reactive({
   cardio_discharges %>% 
     filter(area_name == input$geoname_cardio &
-             diagnosis == input$diagnosis_select & 
-             type_admission == input$type_adm_select)
+             diagnosis == input$diagnosis_select)
   
 })
 

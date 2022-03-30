@@ -17,6 +17,8 @@ postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scott
 
 # SIMD quintile to datazone lookup
 #dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
+# Sourced from "/conf/linkage/output/lookups/Unicode/Populations/Estimates/DataZone2011_pop_est_5year_agegroups_2011_2020.rds"
+# See HD lookup code
 dep_lookup <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact-data/colin/lookups/deprivation_geography.rds") %>%
   rename(datazone2011 = datazone) %>%
   select(datazone2011, year, sc_quin) %>%
@@ -416,8 +418,11 @@ smr01_tia <- smr01_pi_data %>% filter(mc3 %in% c("G45")) %>%
 remove(smr01_pi_data)
 #remove(smr01_ihd)
 
-smr01_pi_data <- bind_rows(smr01_ihd, smr01_ami, smr01_hf, smr01_ang,
-                           smr01_cvd, smr01_str, smr01_subch, smr01_tia)
+# Filter to just include heart attack, stroke and heart failure
+smr01_pi_data <- bind_rows(smr01_ami, smr01_hf, smr01_str)
+
+#smr01_pi_data <- bind_rows(smr01_ihd, smr01_ami, smr01_hf, smr01_ang,
+#                           smr01_cvd, smr01_str, smr01_subch, smr01_tia)
 
 #tabyl(smr01_pi_data$diagnosis, sort = TRUE)
 
@@ -425,7 +430,7 @@ smr01_pi_data <- bind_rows(smr01_ihd, smr01_ami, smr01_hf, smr01_ang,
 #  filter(smr01_pi_data$diagnosis %in% c("Coronary Heart Disease","Cerebrovascular Disease"))
 
 smr01_pi_data <- smr01_pi_data %>%
-mutate(month_ending = ceiling_date(as.Date(discharge_date), "month")) %>% 
+mutate(month_ending = floor_date(as.Date(discharge_date), "month")) %>% 
     mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          year = year(month_ending)) #to allow merging
 
@@ -455,6 +460,8 @@ smr01_pi_data = smr01_pi_data %>%
     between(admission_type, 40, 40) ~ "Other",
     between(admission_type, 42, 42) ~ "Other",
     between(admission_type, 48, 48) ~ "Other"))
+
+smr01_pi_data = smr01_pi_data %>% filter(type_admission == "Emergency")
 
 smr01_pi_data <- smr01_pi_data %>%
 group_by(year, month_ending, hbname, hscp2019name, diagnosis, type_admission, sex, dep, age) %>% 
@@ -535,7 +542,7 @@ cardio_data_deaths <- as_tibble(dbGetQuery(channel, statement=
     FROM ANALYSIS.GRO_DEATHS_WEEKLY_C")) %>%
   setNames(tolower(names(.))) %>% 
   # Formatting variables - using month keeping variable name week_ending to use functions
-  mutate(month_ending = ceiling_date(as.Date(date_of_registration), "month")) %>% 
+  mutate(month_ending = floor_date(as.Date(date_of_registration), "month")) %>% 
   mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          age = case_when(between(age, 0,64) ~ "Under 65", T ~ "65 and over"),
          year = year(month_ending)) #to allow merging
@@ -570,8 +577,11 @@ deaths_subch <- cardio_data_deaths %>% filter(mc3 %in% c("I60")) %>%
 
 remove(cardio_data_deaths)
 
-cardio_data_deaths <- bind_rows(deaths_ihd, deaths_ami, deaths_hf,
-                           deaths_cvd, deaths_str, deaths_subch)
+#cardio_data_deaths <- bind_rows(deaths_ihd, deaths_ami, deaths_hf,
+#                           deaths_cvd, deaths_str, deaths_subch)
+
+# Filter to just include heart attack, stroke and heart failure
+cardio_data_deaths <- bind_rows(deaths_ami, deaths_hf, deaths_str)
 
 #Merging with deprivation and geography lookup
 cardio_data_deaths <- left_join(cardio_data_deaths, geo_lookup) %>% select(-datazone2011) 
