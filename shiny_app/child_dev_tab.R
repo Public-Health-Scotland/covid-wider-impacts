@@ -113,12 +113,19 @@ output$childdev_explorer <- renderUI({
                             input$measure_select_childdev == "27_30mnth" ~
                               "27-30 month")
 
-  control_chart_commentary <-  p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                                                        "‘run charts’",class="externallink", target="_blank"), " to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’", br(),
-                                "The dots joined by a solid black line in the chart above show the percentage of children receiving a child health review who had 1 or more developmental concern recorded on their review record.
-                                Data is shown for each month from January 2019 onwards. ", br(),
-                                "The blue line on the chart, the centreline, is there to help show how unexpected any observed changes are.
-                                  The centreline is an average (median) over the time period specified in the legend of the chart.")
+  control_chart_commentary <-
+    tagList(
+      p("We have used", tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
+                                                        "‘run charts’",class="externallink", target="_blank"), " to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
+      p(run_chart_description(NULL,
+                              "the percentage of children receiving a child
+                              health review who had 1 or more developmental
+                              concern recorded on their review record. Data is
+                              shown for each month from January 2019 onwards",
+                              "the average (median) percentage of children who
+                              are recorded as having 1 or more developmental
+                              concern over the time period specified in the
+                              legend of the chart")))
 
   tagList(
     fluidRow(column(12,
@@ -126,7 +133,9 @@ output$childdev_explorer <- renderUI({
                               review_title, " review")))),
     actionButton("btn_childdev_rules", "How do we identify patterns in the data?",
                  icon = icon('question-circle')),
-    fluidRow(withSpinner(plotlyOutput("childdev_no_concerns"))),
+    fluidRow(withSpinner(plotlyOutput("childdev_no_concerns",
+                                      height = height_run_chart))),
+    br(), #spacing
     control_chart_commentary,
     fluidRow(column(12,
                     h4(paste0("Number of ", review_title,
@@ -148,7 +157,8 @@ output$childdev_explorer <- renderUI({
           column(6, actionButton("btton_childdev_modal_simd",
                                  "What is SIMD and deprivation?",
                                  icon = icon('question-circle')))),
-        fluidRow(withSpinner(plotlyOutput("childdev_depr")))
+        fluidRow(withSpinner(plotlyOutput("childdev_depr",
+                                          height = height_run_chart)))
 
       ) # tagList from if statement
     }
@@ -205,59 +215,75 @@ output$childdev_no_concerns <- renderPlotly({
     plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
   } else {
 
-  #Modifying standard layout
-  yaxis_plots[["title"]] <- "Percentage of all reviews"
-  yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
-  xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
+    #Modifying standard layout
+    y_label <- "Percentage of all reviews"
+    yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
 
-  tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
-                            "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
+    tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                          "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
 
-  average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
-                               input$measure_select_childdev == "13_15mnth" ~ "Average from May 19 to February 20",
-                             T ~ "Average from January 19 to February 20")
+    # Dotted line for projected tails of centreline. It changes depending on area.
+    if (input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
+        input$measure_select_childdev == "13_15mnth") {
 
-  #Creating time trend plot
-  run_plot <- plot_ly(data=trend_data, x=~month_review) %>%
-    add_lines( y = ~pc_1_plus,
-              line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
-              marker = list(color = "black"), name = "% children with developmental concerns")
+      centreline_name = "Average from May 19 to February 20"
+      centreline_start = ymd(20190501)
+      centreline_end = ymd(20200301)
 
-  # Dotted line for projected tails of centreline. It changes depending on area.
-  if (input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") & input$measure_select_childdev == "13_15mnth") {
-    run_plot %<>%
-      add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01") &
-                                             as.Date(month_review) >= as.Date("2019-05-01")),
-                                y = ~pc_1_plus_centreline, name = average_title,
-                                line = list(color = "blue", dash = "solid"), hoverinfo="none") %>%
-      add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01") |
-                                             as.Date(month_review) < as.Date("2019-05-01")),
-                y = ~pc_1_plus_centreline, showlegend = FALSE,
-                line = list(color = "blue", dash = "longdash"), hoverinfo="none")
-  } else {
-    run_plot %<>%
-      add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01")),
-                y = ~pc_1_plus_centreline, name = average_title,
-                line = list(color = "blue", dash = "solid"), hoverinfo="none") %>%
-      add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01")),
-                y = ~pc_1_plus_centreline, showlegend = FALSE,
-                line = list(color = "blue", dash = "longdash"), hoverinfo="none")
+      centreline_data =
+        trend_data %>%
+        mutate(across(pc_1_plus_centreline,
+                      ~case_when(month_review < centreline_start ~ NA_real_,
+                                 month_review > centreline_end ~ NA_real_,
+                                 TRUE ~ .x))) %>%
+        pull(pc_1_plus_centreline)
+
+      dottedline_data =
+        trend_data %>%
+        mutate(across(pc_1_plus_centreline,
+                      ~case_when((month_review > centreline_start) &
+                                  (month_review < centreline_end) ~ NA_real_,
+                                 TRUE ~ .x))) %>%
+      pull(pc_1_plus_centreline)
+
+    } else {
+
+      centreline_name = "Average from January 19 to February 20"
+      centreline_start = ymd(20190101)
+      centreline_end = ymd(20200301)
+
+      centreline_data =
+        trend_data %>%
+        mutate(across(pc_1_plus_centreline,
+                      ~case_when(month_review < centreline_start ~ NA_real_,
+                                 month_review > centreline_end ~ NA_real_,
+                                 TRUE ~ .x))) %>%
+        pull(pc_1_plus_centreline)
+
+      dottedline_data =
+        trend_data %>%
+        mutate(across(pc_1_plus_centreline,
+                      ~case_when((month_review > centreline_start) &
+                                  (month_review < centreline_end) ~ NA_real_,
+                                 TRUE ~ .x))) %>%
+      pull(pc_1_plus_centreline)
+
+    }
+
+    dottedline_name = "Projected average"
+
+    measure = "pc_1_plus"
+    measure_name = "% children with developmental concerns"
+    x_dates = "month_review"
+
+    plot_run_chart(trend_data, measure, measure_name, y_label,
+                   x_dates, "shift", "trend", tooltip_trend,
+                   xaxis_plots, yaxis_plots, bttn_remove,
+                   centreline_data, centreline_name,
+                   dottedline_data, dottedline_name,
+                   x_buffer = 0)
   }
 
-
- run_plot %>%
-   # adding shifts
-   add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus, hoverinfo="none",
-               marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>%
-   # adding trends
-   add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus, hoverinfo="none",
-               marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%
-   #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots,  xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.5)) %>% #position of legend
-    # leaving only save plot button
-    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )}
 })
 
 output$childdev_depr <- renderPlotly({
@@ -269,62 +295,78 @@ output$childdev_depr <- renderPlotly({
     plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
   } else {
 
+
     #Modifying standard layout
-    yaxis_plots[["title"]] <- "Percentage of all reviews in quintile"
+    y_label <- "Percentage of all reviews in quintile"
     yaxis_plots[["range"]] <- c(0, 43)  # forcing range from 0 to 100%
-    xaxis_plots[["range"]] <- c(min(trend_data$month_review), max(trend_data$month_review))
 
     tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
-                              "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%",
-                              "<br>", "Number of reviews: ", trend_data$no_reviews,
-                              "<br>", "Number of reviews with a concern: ", trend_data$concerns_1_plus,
-                              "<br>", "% meaningful reviews: ", trend_data$pc_meaningful, "%"))
-
-    average_title <- case_when(input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
-                                 input$measure_select_childdev == "13_15mnth" ~ "Average from May 19 to February 20",
-                               T ~ "Average from January 19 to February 20")
-
-    #Creating time trend plot
-    run_plot <- plot_ly(data=trend_data, x=~month_review) %>%
-      add_lines( y = ~pc_1_plus,
-                 line = list(color = "black"), text=tooltip_trend, hoverinfo="text",
-                 marker = list(color = "black"), name = "% children with developmental concerns")
+                          "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%",
+                          "<br>", "Number of reviews: ", trend_data$no_reviews,
+                          "<br>", "Number of reviews with a concern: ", trend_data$concerns_1_plus,
+                          "<br>", "% meaningful reviews: ", trend_data$pc_meaningful, "%"))
 
     # Dotted line for projected tails of centreline. It changes depending on area.
-    if (input$measure_select_childdev == "13_15mnth") {
-      run_plot %<>%
-        add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01") &
-                                               as.Date(month_review) >= as.Date("2019-05-01")),
-                  y = ~pc_1_plus_centreline, name = average_title,
-                  line = list(color = "blue", dash = "solid"), hoverinfo="none") %>%
-        add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01") |
-                                               as.Date(month_review) < as.Date("2019-05-01")),
-                  y = ~pc_1_plus_centreline, showlegend = FALSE,
-                  line = list(color = "blue", dash = "longdash"), hoverinfo="none")
+    if (input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
+        input$measure_select_childdev == "13_15mnth") {
+
+      centreline_name = "Average from May 19 to February 20"
+      centreline_start = ymd(20190501)
+      centreline_end = ymd(20200301)
+
+      centreline_data =
+        trend_data %>%
+        mutate(across(pc_1_plus_centreline,
+                      ~case_when(month_review < centreline_start ~ NA_real_,
+                                 month_review > centreline_end ~ NA_real_,
+                                 TRUE ~ .x))) %>%
+        pull(pc_1_plus_centreline)
+
+      dottedline_data =
+        trend_data %>%
+        mutate(across(pc_1_plus_centreline,
+                      ~case_when((month_review > centreline_start) &
+                                  (month_review < centreline_end) ~ NA_real_,
+                                 TRUE ~ .x))) %>%
+      pull(pc_1_plus_centreline)
+
     } else {
-      run_plot %<>%
-        add_lines(data=trend_data %>% filter(as.Date(month_review) < as.Date("2020-03-01")),
-                  y = ~pc_1_plus_centreline, name = average_title,
-                  line = list(color = "blue", dash = "solid"), hoverinfo="none") %>%
-        add_lines(data=trend_data %>% filter(as.Date(month_review) >= as.Date("2020-02-01")),
-                  y = ~pc_1_plus_centreline, showlegend = FALSE,
-                  line = list(color = "blue", dash = "longdash"), hoverinfo="none")
+
+      centreline_name = "Average from January 19 to February 20"
+      centreline_start = ymd(20190101)
+      centreline_end = ymd(20200301)
+
+      centreline_data =
+        trend_data %>%
+        mutate(across(pc_1_plus_centreline,
+                      ~case_when(month_review < centreline_start ~ NA_real_,
+                                 month_review > centreline_end ~ NA_real_,
+                                 TRUE ~ .x))) %>%
+        pull(pc_1_plus_centreline)
+
+      dottedline_data =
+        trend_data %>%
+        mutate(across(pc_1_plus_centreline,
+                      ~case_when((month_review > centreline_start) &
+                                  (month_review < centreline_end) ~ NA_real_,
+                                 TRUE ~ .x))) %>%
+      pull(pc_1_plus_centreline)
+
     }
 
+    dottedline_name = "Projected average"
 
-    run_plot %>%
-      # adding shifts
-      add_markers(data = trend_data %>% filter(shift == T), y = ~ pc_1_plus, hoverinfo="none",
-                  marker = list(color = "orange", size = 10, symbol = "circle"), name = "Shifts") %>%
-      # adding trends
-      add_markers(data = trend_data %>% filter(trend == T), y = ~ pc_1_plus, hoverinfo="none",
-                  marker = list(color = "green", size = 10, symbol = "square"), name = "Trends") %>%
-      #Layout
-      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots,  xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
-      # leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )}
+    measure = "pc_1_plus"
+    measure_name = "% children with developmental concerns"
+    x_dates = "month_review"
+
+    plot_run_chart(trend_data, measure, measure_name, y_label,
+                   x_dates, "shift", "trend", tooltip_trend,
+                   xaxis_plots, yaxis_plots, bttn_remove,
+                   centreline_data, centreline_name,
+                   dottedline_data, dottedline_name,
+                   x_buffer = 0)
+  }
 })
 
 
@@ -338,7 +380,7 @@ childdev_down <- reactive({
 
   child_dev %>%
     filter(review == review_chosen) %>%
-    select(-hscp2019_code, -shift, -trend) %>%
+    select(-hscp2019_code, -shift, -trend, -ends_with(".split")) %>%
     mutate(month_review = format(month_review, "%b %y")) %>%
     rename(no_reviews_meaningful_data = no_meaningful_reviews, pc_meaningful_data = pc_meaningful)
 })

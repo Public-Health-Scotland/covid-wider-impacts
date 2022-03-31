@@ -19,7 +19,7 @@ observeEvent(input$btn_injuries_modal,
                  p("Injury location and type is determined by the admission type and ICD-10 codes applied to the SMR01 record.
                     Details of the included codes for each category are provided in Appendix 1 of the annual PHS publication
                    ‘Unintentional Injuries in Scotland’",
-                   tags$a(href="https://www.publichealthscotland.scot/media/5838/2021-03-23-ui-2021-report.pdf","Appendix 1",  target="_blank")),
+                   tags$a(href="https://publichealthscotland.scot/media/9854/2021-10-26-ui-2021-report.pdf","Appendix 1",  target="_blank")),
                    p("Note the category ‘Assaults’ is an independent category, and is not included in the data on ‘All unintentional injuries’."),
                     p("The term ‘unintentional injury’ is used in preference to ‘accidents’ as the latter implies that events are inevitable
                     and unavoidable whereas a high proportion of these incidents are now regarded as being preventable. The data shown here
@@ -265,7 +265,7 @@ output$download_injuries_data <- downloadHandler(
 ###############################################.
 output$injuries_commentary <- renderUI({
   tagList(bsButton("jump_to_injuries",label = "Go to data"), #this button can only be used once
-           h2("Unintentional Injuries and Assaults - Extracted 29th September 2021"), 
+           h2("Unintentional Injuries and Assaults - Extracted 31st January 2022"), 
            h3("Background"),
           p("The response to the COVID-19 pandemic has had the potential to influence both the occurrence
                    of unintentional injuries and assaults, and how people receive care after such events. Within
@@ -282,7 +282,7 @@ output$injuries_commentary <- renderUI({
                    number of injury events, but may also reflect changes in how injuries are cared for, for example,
                    more people may seek to treat themselves, or may have been less likely to be admitted for less severe
                    injuries at particular times."),
-          p("Description of key findings for months in the period January 2020 to May 2021, compared with
+          p("Description of key findings for months in the period January 2020 to June 2021, compared with
                    average admissions for the same months in 2018-2019"),
           p("There was a substantial fall in the number of admissions for unintentional injury in April 2020, with around
                    one-third fewer admissions compared with the average for the same period in 2018-2019. In the subsequent months,
@@ -305,7 +305,7 @@ output$injuries_commentary <- renderUI({
              From December 2020 there has been a larger number of admissions among women, and these have been similar to or higher than previous years, most notably in January 2021, when they were 19% higher
              among women, which was largely attributable to an increase in falls. For men there was a change in the number of admissions for poisoning in May and June 2020, when they were around 20% higher
              than previous years."),
-          p("Across the period from May 2020 to May 2021 there was around a 10% to 25% increase in admissions due to injuries occurring in the home, and a reduction in admissions for injuries in other
+          p("Across the period from May 2020 to June 2021 there was around a 10% to 25% increase in admissions due to injuries occurring in the home, and a reduction in admissions for injuries in other
              and undisclosed locations, compared with 2018-2019. ")
           
           )})
