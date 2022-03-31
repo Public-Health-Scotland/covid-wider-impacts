@@ -15,84 +15,59 @@ library(zoo)
 ## Drug and alcohol treatment referrals ----
 ###############################################.
 #When updating for future updates the following lines must be updated:
-#Line 23: Update filepath to data
-#Line 75: Update number of weeks
-#Line 93: Update number of weeks
+#Line 22: Update filepath to data
+#Line 52 and 68: Update number of weeks
 
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# Referrals_breakdown <- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/DrugTreatmentReferrals/Referrals_20211026_breakdown.xlsx", 
-#                                    col_types = c("text", "text", "date", 
-#                                                  "numeric"))
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-Referrals_breakdown <- read_excel(paste0(data_folder,"drugs/Referrals_20211026_breakdown.xlsx"),
-                                         col_types = c("text", "text", "date",
-                                                       "numeric"))
-
-
-
-#Extracting isoweek and year from date
-Week<-isoweek(Referrals_breakdown$DateReferralReceived)
-Year<-isoyear(Referrals_breakdown$DateReferralReceived)
-Referrals_breakdown<-data.frame(Referrals_breakdown,'Week'=Week,'Year'=Year)
+# Reading data
+Referrals_breakdown <- read_excel(paste0(data_folder,"drugs/Referrals_25022022_breakdown.xlsx"),
+                                  col_types = c("text", "text", "date", "numeric")) %>% 
+  #Extracting isoweek and year from date
+  mutate(Week = isoweek(DateReferralReceived),
+         Year = isoyear(DateReferralReceived))
 
 colnames(Referrals_breakdown)[1:4]<-c('Type','Board','Date','DTR')
 
 #Splitting data frame by years 
 SepYears<-split(Referrals_breakdown, Year)
-data.2018<-SepYears$`2018`
-data.2019<-SepYears$`2019`
-data.2020<-SepYears$`2020`
-data.2021<-SepYears$`2021`
-
 
 #Using all combinations of NHS board, type of treatment and date to make complete data frames
-Hb<-unique(data.2018$Board)#using 2018 data as 2015/2016 has NA as an option for health board
-type<-c(unique(data.2021$Type), 'All')#want to include co-dependency
-dates<-unique(data.2020$Week)#want to include leap year
-
+Hb<-unique(SepYears$`2018`$Board)#using 2018 data as 2015/2016 has NA as an option for health board
+type<-c(unique(SepYears$`2021`$Type), 'All')#want to include co-dependency
+dates<-unique(SepYears$`2020`$Week)#want to include leap year
 
 #Forming complete data frames for each year
-comp.2018<-complete(data.2018, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0))
-comp.2019<-complete(data.2019, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0))
-comp.2020<-complete(data.2020, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0))
-comp.2021<-complete(data.2021, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0))
+comp.2018<-complete(SepYears$`2018`, Board=Hb, Type=type, Week=dates,
+                    fill=list(DTR=0)) %>% select(Week, Board, Type, `2018` = DTR)
+comp.2019<-complete(SepYears$`2019`, Board=Hb, Type=type, Week=dates,
+                    fill=list(DTR=0)) %>% select(`2019` = DTR)
+comp.2020<-complete(SepYears$`2020`, Board=Hb, Type=type, Week=dates,
+                    fill=list(DTR=0)) %>% select (`2020` = DTR)
+comp.2021<-complete(SepYears$`2021`, Board=Hb, Type=type, Week=dates,
+                    fill=list(DTR=0)) %>% select(`2021` = DTR)
 
 #Merging the all years into one data set
-full<-merge(comp.2018,comp.2019,by=c('Week','Board','Type'))
-full<-merge(full,comp.2020,by=c('Week','Board','Type'))
-full<-merge(full,comp.2021,by=c('Week','Board','Type'))
+full <- cbind(comp.2018, comp.2019, comp.2020, comp.2021) %>% 
+  arrange(Week)
 
+full$`2021`[(full$Week>51)]<-NA #MUST UPDATE THIS WITH FUTURE UPDATES
+full$`2018`[(full$Week==53)]<-full$`2018`[(full$Week==52)] #REPEATING LAST 2018 & 2019 OBSERVATION TO MATCH 2020 DATA
+full$`2019`[(full$Week==53)]<-full$`2019`[(full$Week==52)]
 
-full<-full[order(full$Week),]
-sub.full<-full[,c(1:3,5,8,11,14)]
-colnames(sub.full)[4:7]<-c('2018','2019','2020','2021')
-
-sub.full$`2021`[(sub.full$Week>12)]<-NA #MUST UPDATE THIS WITH FUTURE UPDATES
-sub.full$`2018`[(sub.full$Week==53)]<-sub.full$`2018`[(sub.full$Week==52)] #REPEATING LAST 2018 & 2019 OBSERVATION TO MATCH 2020 DATA
-sub.full$`2019`[(sub.full$Week==53)]<-sub.full$`2019`[(sub.full$Week==52)]
-
-rownames(sub.full)<-seq(1:nrow(sub.full))#Row names get jumbled up when data is reordered so just ordering it again here
-
-average<-(sub.full$`2018`+sub.full$`2019`)/2 #Taking 2018/19 average
-sub.full<-cbind(sub.full,average)
-colnames(sub.full)[8]<-'Average 2018 & 2019'
+# rownames(full)<-seq(1:nrow(full))#Row names get jumbled up when data is reordered so just ordering it again here
+full <- full %>% #Taking 2018/19 average
+  mutate('Average 2018 & 2019' = (`2018`+`2019`)/2)
 
 ###adding % change column 
-sub.full<-cbind(sub.full,(sub.full$`2020`- sub.full$`Average 2018 & 2019`)/sub.full$`Average 2018 & 2019`*100)
-colnames(sub.full)[9]<-'Change'
-sub.full$Change[is.nan(sub.full$Change)]<-NA
+full <- full %>%
+  mutate('Change' = (`2020` - `Average 2018 & 2019`)/`Average 2018 & 2019`*100)
 
+full$Change[is.nan(full$Change)]<-NA # NaNs to NA
 
 ##### Formatting for long x axis 
 ####MUST UPDATE BLOCK FOR EACH UPDATE OF DATA WITH WEEK NUMBER
-block<-nrow(subset(sub.full,Week<=12))
-long.axis<-rbind(sub.full[,c(1:3,8,6)],sub.full[c(1:(block+1)),c(1:3,8,6)])
-long.axis$`2020`[c((nrow(sub.full)+1):nrow(long.axis))]<-sub.full$`2021`[1:(block+1)]
+block <- nrow(subset(full, Week<=51))
+long.axis <- rbind(full[,c(1:3,8,6)],full[c(1:(block+1)),c(1:3,8,6)])
+long.axis$`2020`[c((nrow(full)+1):nrow(long.axis))]<-full$`2021`[1:(block+1)]
 
 
 date_in_week <- function(year, week, weekday){
@@ -101,16 +76,16 @@ date_in_week <- function(year, week, weekday){
   ISOweek2date(w)
 }
 
-Date<-date_in_week(2020,sub.full[,1],1)
-Date2<-date_in_week(2021,sub.full[1:(block+1),1],1)
+Date <- date_in_week(2020,sub.full[,1],1)
+Date2 <- date_in_week(2021,sub.full[1:(block+1),1],1)
 Date<-append(Date,Date2)
 
 long.axis$Week<-Date
 
-colnames(long.axis)[c(1,5)]<-c('Date','2020 & 2021')
+long.axis <- long.axis %>% rename(Date = Week, `2020 & 2021` = `2020`)
 long.axis<-long.axis[-nrow(long.axis),]#removing last row 
 #######Edit to add 'All' option###
-#Want to add codependency to alcohol and drug after all has been calculated
+
 iter<-seq(2,(nrow(long.axis)-2),4)
 
 for(i in iter){
@@ -119,20 +94,20 @@ for(i in iter){
   long.axis$`2020 & 2021`[i]<-sum(long.axis$`2020 & 2021`[i-1],long.axis$`2020 & 2021`[i+1],long.axis$`2020 & 2021`[i+2],na.rm=T)
 }
 
-iter2<-seq(1,(nrow(long.axis)-3),4)
-for (i in iter2){
-  'This loop adds codependency values to both the alcohol and drug values'
-  'Co-dependency will not be shown as an option'
-  short.subset<-long.axis[c(i:(i+3)),]
-  a<-which(short.subset$Type=='Alcohol')
-  d<-which(short.subset$Type=='Drug')
-  c<-which(short.subset$Type=='Co-dependency')
-  short.subset$`Average 2018 & 2019`[a]<-short.subset$`Average 2018 & 2019`[a]+short.subset$`Average 2018 & 2019`[c]
-  short.subset$`Average 2018 & 2019`[d]<-short.subset$`Average 2018 & 2019`[d]+short.subset$`Average 2018 & 2019`[c]
-  short.subset$`2020 & 2021`[a]<-short.subset$`2020 & 2021`[a]+short.subset$`2020 & 2021`[c]
-  short.subset$`2020 & 2021`[d]<-short.subset$`2020 & 2021`[d]+short.subset$`2020 & 2021`[c]
-  long.axis[c(i:(i+3)),]<-short.subset
-}
+# iter2<-seq(1,(nrow(long.axis)-3),4)
+# for (i in iter2){
+#   'This loop adds codependency values to both the alcohol and drug values'
+#   'Co-dependency will not be shown as an option'
+#   short.subset<-long.axis[c(i:(i+3)),]
+#   a<-which(short.subset$Type=='Alcohol')
+#   d<-which(short.subset$Type=='Drug')
+#   c<-which(short.subset$Type=='Co-dependency')
+#   short.subset$`Average 2018 & 2019`[a]<-short.subset$`Average 2018 & 2019`[a]+short.subset$`Average 2018 & 2019`[c]
+#   short.subset$`Average 2018 & 2019`[d]<-short.subset$`Average 2018 & 2019`[d]+short.subset$`Average 2018 & 2019`[c]
+#   short.subset$`2020 & 2021`[a]<-short.subset$`2020 & 2021`[a]+short.subset$`2020 & 2021`[c]
+#   short.subset$`2020 & 2021`[d]<-short.subset$`2020 & 2021`[d]+short.subset$`2020 & 2021`[c]
+#   long.axis[c(i:(i+3)),]<-short.subset
+# }
 
 #calculating percent change
 long.axis<-cbind(long.axis,(long.axis$`2020 & 2021`- long.axis$`Average 2018 & 2019`)/long.axis$`Average 2018 & 2019`*100)
@@ -148,46 +123,37 @@ long.axis<-long.axis %>%
   mutate(`Average 2018 & 2019` = replace(`Average 2018 & 2019`, Type=='Co-dependency', NA))
 
 long.axis<-long.axis %>% 
-  mutate(`2020 & 2021` = replace(`2020 & 2021`,Date<'2020-10-12' & Type=='Co-dependency', NA))
+  mutate(`2020 & 2021` = replace(`2020 & 2021`,Date<'2020-12-01' & Type=='Co-dependency', NA))
 
 
-long.axis<-long.axis[which(long.axis$Type != 'Co-dependency'),] #removing co-dependency 
+# long.axis<-long.axis[which(long.axis$Type != 'Co-dependency'),] #removing co-dependency 
 
 ###making a file for names of health boards and names of ADPs###
 Health_board<-Hb[grep('NHS',Hb)]
 ADP_names<-Hb[grep('ADP',Hb)]
 
-#SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(Health_board,file='Health_board.rds')
-# saveRDS(ADP_names,file='ADP_names.rds')
-# saveRDS(long.axis,file='DTR_data.rds')
-
-#SAVING FOR WIDER IMPACTS TEAM
+#SAVING FILES
 saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
-saveRDS(ADP_names, paste0(data_folder,"final_app_files/ADP_names_", 
+saveRDS(ADP_names, paste0(data_folder,"final_app_files/ADP_names_",
                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 saveRDS(Health_board, "shiny_app/data/Health_board.rds")
-saveRDS(Health_board, paste0(data_folder,"final_app_files/Health_board_", 
+saveRDS(Health_board, paste0(data_folder,"final_app_files/Health_board_",
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 saveRDS(long.axis,file="shiny_app/data/DTR_data.rds")
-saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_", 
+saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_",
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Take Home Naloxone ----
 ###############################################.
 #When updating for future updates the following lines must be updated:
-#Line 187: Update filepath to data
-#Line 211: Update number of months of 2021 data 
+#Line 156: Update filepath to data
+#Line 177: Update number of months of 2021 data 
 
-
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# dashboard_monthly_data <- readRDS("/PHI_conf/SubstanceMisuse1/Topics/Naloxone/Projects/20200515-COVID19-Naloxone/Temp/dashboard_monthly_data.rds")
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-dashboard_monthly_data <- readRDS(paste0(data_folder, "drugs/dashboard_monthly_data.rds"))
+# Reading file
+dashboard_monthly_data <- readRDS(paste0(data_folder, "drugs/dashboard_monthly_data_2021_Q2.rds"))
 
 HB_data<-dashboard_monthly_data[order(dashboard_monthly_data$month),] #ordering by date
 
@@ -208,7 +174,7 @@ comp.data<-complete(HB_data, Board=hb, Type=types, Date=dates,
 comp.data<-comp.data[order(comp.data$Date),]#Ordering by date
 comp.data<-comp.data[,c(3,1,2,4:8)]#Reordering columns
 
-block<-nrow(subset(comp.data,Date<=6))#CHANGE WHEN UPDATING DATA:replace with number of months of 2021 data available
+block<-nrow(subset(comp.data,Date<=9))#CHANGE WHEN UPDATING DATA:replace with number of months of 2021 data available
 comp.data.temp<-rbind(comp.data[,c(1:3,8,6)],comp.data[c(1:block),c(1:3,8,6)])
 comp.data.temp[c((nrow(comp.data)+1):(nrow(comp.data)+block)),5]<-comp.data[c(1:block),7]
 
@@ -247,13 +213,9 @@ new_THN<-cbind(THN_by_Hb,'Proportion 20/21'=proportion_current)
 new_THN$Change<-as.numeric(format(round(new_THN$Change, 1), nsmall = 1) )
 new_THN$`Proportion 20/21`<-as.numeric(format(round(new_THN$`Proportion 20/21` ,1),nsmall=1))
 
-
-#SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(new_THN,'THN_by_HB.rds')
-
-# SAVING FOR WIDER IMPACTS TEAM
+# # SAVING files
 saveRDS(new_THN, "shiny_app/data/THN_by_HB.rds")
-saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_", 
+saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_",
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 
@@ -261,175 +223,152 @@ saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_",
 ## SAS data prep ----
 ###############################################.
 #When updating for future updates the following lines must be updated:
-#Line 268: Update filepath to data
-#Line 353: Update number of weeks of data available
+#Line 230: Update filepath to data
+#Line 319: Update number of weeks of data available
+
+# Reading file
+SAS_data <- read_excel(paste0(data_folder, "drugs/2022_1_SAS_reformat_January.xlsx"))
+
+SAS_data<- SAS_data %>%
+  rename(Date='Week Commencing')
+
+#Gathering board names into NHS board column
+SAS_long<-melt(SAS_data,
+               id.vars= c('Date'),
+               measure.vars=c(2:17),
+               variable.name = 'Board',
+               value.name='Number')
+
+SAS_long<- SAS_long %>%
+  mutate('Year'=isoyear(SAS_long$Date))
+
+SAS_long<-SAS_long[order(SAS_long$Date),]#Ordering by date
+SAS_long$Number<-as.numeric(SAS_long$Number)#Changing to numeric format
+SepYears<-split(SAS_long, SAS_long$Year)#Separating by year
+
+data.2018<-SepYears$`2018`
+data.2019<-SepYears$`2019`
+data.2020<-SepYears$`2020`
+data.2021<-SepYears$`2021`
+data.2022<-SepYears$`2022`
+#Variable for length of a weeks worth of data as have to repeat last week of 2018/19 data to
+#Match up with 2020 data
+diff<-nrow(data.2020)-nrow(data.2018)
+
+#Repeating last week of 2018
+data.2018<-rbind(data.2018,data.2018[c((nrow(data.2018)-diff+1):nrow(data.2018)),])
+data.2019<-rbind(data.2019,data.2019[c((nrow(data.2019)-diff+1):nrow(data.2019)),])
+
+#Adding 2021 and 2022 block to end of all data frames
+data.2018<-rbind(data.2018, data.2018[c(1:nrow(data.2021)),],data.2018[c(1:nrow(data.2022)),])
+data.2019<-rbind(data.2019, data.2019[c(1:nrow(data.2021)),],data.2019[c(1:nrow(data.2022)),])
+data.2020.2021<-rbind(data.2020,data.2021,data.2022)
+
+#0 data comes in as NA from excel so needs to be changed to 0
+data.2020.2021$Number[which(is.na(data.2020.2021$Number))]<-0
+data.2018$Number[which(is.na(data.2018$Number))]<-0
+data.2019$Number[which(is.na(data.2019$Number))]<-0
+
+#Calculating 2018 and 2019 Average
+average.1819<-(data.2018$Number+data.2019$Number)/2
+ 
+
+data<- data.2020.2021 %>%
+  mutate(average= average.1819)
+
+data<-data %>% 
+  select(-Year)#Removing Year column
+
+data<- data %>%
+  rename(`2020 & 2021`=Number,
+         `Average 2018 & 2019`=average)
+
+#Adding NHS to the beginning of health board names
+levels(data$Board)<-c('NHS Ayrshire & Arran',
+                      'NHS Borders',
+                      'NHS Dumfries & Galloway',
+                      'NHS Fife',
+                      'NHS Forth Valley',
+                      'NHS Grampian',
+                      'NHS Greater Glasgow & Clyde',
+                      'NHS Highland',
+                      'NHS Lanarkshire',
+                      'NHS Lothian',
+                      'NHS Orkney',
+                      'NHS Shetland',
+                      'NHS Tayside',
+                      'NHS Western Isles',
+                      'Unassigned',
+                      'Scotland')
+
+data<-data %>%  
+  arrange(Board)#Ordering by board
+
+#Rounding to 1dp
+data$`2020 & 2021`<-round(data$`2020 & 2021`,1)
+data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
+
+#Removed 'unassigned' group of observations 
+data<- data %>%  
+  filter(Board!='Unassigned')
+#Creating variables for rolling average
+rolling.18.19<-rep(0,nrow(data))
+rolling.20.21<-rep(0,nrow(data))
 
 
-# SAS_data<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/SAS/SAS_reformat.xlsx", 
-#                       sheet = "HB-DATA")
-# 
-# 
-# SAS_data<- SAS_data %>% 
-#   rename(Date='Week Commencing') 
-# 
-# #Gathering board names into NHS board column
-# SAS_long<-melt(SAS_data,
-#                id.vars= c('Date'),
-#                measure.vars=c(2:17),
-#                variable.name = 'Board',
-#                value.name='Number')
-# 
-# SAS_long<- SAS_long %>% 
-#   mutate('Year'=isoyear(SAS_long$Date))
-# 
-# SAS_long<-SAS_long[order(SAS_long$Date),]#Ordering by date
-# SAS_long$Number<-as.numeric(SAS_long$Number)#Changing to numeric format
-# SepYears<-split(SAS_long, SAS_long$Year)#Separating by year
-# 
-# data.2018<-SepYears$`2018`
-# data.2019<-SepYears$`2019`
-# data.2020<-SepYears$`2020`
-# data.2021<-SepYears$`2021`
-# 
-# #Variable for length of a weeks worth of data as have to repeat last week of 2018/19 data to 
-# #Match up with 2020 data
-# diff<-nrow(data.2020)-nrow(data.2018)
-# 
-# #Repeating last week of 2018
-# data.2018<-rbind(data.2018,data.2018[c((nrow(data.2018)-diff+1):nrow(data.2018)),])
-# data.2019<-rbind(data.2019,data.2019[c((nrow(data.2019)-diff+1):nrow(data.2019)),])
-# 
-# #Adding 2021 block to end of all data frames
-# data.2018<-rbind(data.2018, data.2018[c(1:nrow(data.2021)),])
-# data.2019<-rbind(data.2019, data.2019[c(1:nrow(data.2021)),])
-# data.2020.2021<-rbind(data.2020,data.2021)
-# 
-# #0 data comes in as NA from excel so needs to be changed to 0
-# data.2020.2021$Number[which(is.na(data.2020.2021$Number))]<-0
-# data.2018$Number[which(is.na(data.2018$Number))]<-0
-# data.2019$Number[which(is.na(data.2019$Number))]<-0
-# 
-# #Calculating 2018 and 2019 Average 
-# average.1819<-(data.2018$Number+data.2019$Number)/2
-# 
-# data<- data.2020.2021 %>% 
-#   mutate(average= average.1819)
-# 
-# data<-data[,-4]#Removing Year column
-# 
-# data<- data %>% 
-#   rename(`2020 & 2021`=Number,
-#          `Average 2018 & 2019`=average)
-# 
-# #Adding NHS to the beginning of health board names
-# levels(data$Board)<-c('NHS Ayrshire & Arran',
-#                       'NHS Borders',
-#                       'NHS Dumfries & Galloway',
-#                       'NHS Fife',
-#                       'NHS Forth Valley',
-#                       'NHS Grampian',
-#                       'NHS Greater Glasgow & Clyde',
-#                       'NHS Highland',
-#                       'NHS Lanarkshire',
-#                       'NHS Lothian',
-#                       'NHS Orkney',
-#                       'NHS Shetland',
-#                       'NHS Tayside',
-#                       'NHS Western Isles',
-#                       'Unassigned',
-#                       'Scotland')
-# 
-# data<-data[order(data$Board),]#Ordering by board
-# 
-# #Rounding to 1dp
-# data$`2020 & 2021`<-round(data$`2020 & 2021`,1)
-# data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
-# 
-# #Creating variables for rolling average
-# rolling.18.19<-rep(0,nrow(data))
-# rolling.20.21<-rep(0,nrow(data))
-# 
-# 
-# section<-78 #number of weeks that data is collected for:MUST BE CHANGED MANUALLY WHEN DATA IS UPDATES
-# loop<-seq(1,nrow(data),section) #For applying rolling average to each section
-# 
-# for (i in loop){
-#   'Loop for 3 week rolling average'
-#   'Using roll apply function from zoo package: Carries out rolling average on each NHS board '
-#   rolling.18.19[i:(i+section-1)]<-rollapply(data$`Average 2018 & 2019`[i:(i+section-1)], width= 3, fill = NA,FUN=function(x) mean(x,na.rm=T))
-#   rolling.20.21[i:(i+section-1)]<-rollapply(data$`2020 & 2021`[i:(i+section-1)], width= 3, fill = NA,FUN=function(x) mean(x,na.rm=T))
-# }
-# 
-# data<-data.frame(data, rolling1819=rolling.18.19, rolling2021=rolling.20.21)
-# data <- data %>% 
-#   rename(`2020 & 2021`=rolling2021,
-#          `Average 2018 & 2019`=rolling1819,
-#          `Raw 20/21`= X2020...2021,
-#          `Raw 2018/19`= Average.2018...2019)
-# data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
-# data$`2020 & 2021`<- round(data$`2020 & 2021`,1)
-# 
-# saveRDS(data, 'SASdata.rds')
-# 
-# # SAVING FOR WIDER IMPACTS TEAM
-# saveRDS(data, "shiny_app/data/SASdata.rds")
-# saveRDS(data, paste0(data_folder,"final_app_files/SASdata_", 
-#                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+section<-nrow(data)/15 #number of weeks that data is collected for= total number of observations/number of locations(15)
+loop<-seq(1,nrow(data),section) #For applying rolling average to each section
+
+for (i in loop){
+  'Loop for 3 week rolling average'
+  'Using roll apply function from zoo package: Carries out rolling average on each NHS board '
+  rolling.18.19[i:(i+section-1)]<-rollapply(data$`Average 2018 & 2019`[i:(i+section-1)], width= 3, fill = NA,FUN=function(x) mean(x,na.rm=T))
+  rolling.20.21[i:(i+section-1)]<-rollapply(data$`2020 & 2021`[i:(i+section-1)], width= 3, fill = NA,FUN=function(x) mean(x,na.rm=T))
+}
+
+data<-data.frame(data, rolling1819=rolling.18.19, rolling2021=rolling.20.21)
+data <- data %>%
+  rename(`2020 & 2021`=rolling2021,
+         `Average 2018 & 2019`=rolling1819,
+         `Raw 20/21`= X2020...2021,
+         `Raw 2018/19`= Average.2018...2019)
+data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
+data$`2020 & 2021`<- round(data$`2020 & 2021`,1)
+
+# SAVING Files
+saveRDS(data, "shiny_app/data/SASdata.rds")
+saveRDS(data, paste0(data_folder,"final_app_files/SASdata_",
+                        format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 
 ###############################################.
 ## OST data prep ----
 ###############################################.
 #When updating for future updates the following lines must be updated:
-#Line 387 Line 391, Line 395, Line 401: Update filepath to data
+#Line 352 to line 368: Update filepaths to data
 #Check formatting code as raw data comes slightly differently every time
 
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# raw.meth.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Methadone 1mg.ml-1.xlsx", 
-#                            sheet = "Paid Items", col_types = c("text", 
-#                                                                "text", "text", "numeric", "numeric", 
-#                                                                "numeric"))
+# Methadone HB data
+raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we06032022_Methadone 1mg.ml-1.xlsx"),
+                                   sheet = "Paid Items", 
+                            col_types = c("text","text", "text", "numeric", "numeric", "numeric"))                                                                           
 
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Methadone 1mg.ml-1.xlsx"),
-                                   sheet = "Paid Items", col_types = c("text", 
-                                                                       "text", "text", "numeric", "numeric", 
-                                                                       "numeric"))
-
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# scot.raw.meth.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Methadone 1mg.ml-1.xlsx", 
-#                                sheet = "Context ePr Vs Paid", col_types = c("text", 
-#                                                                             "text", "numeric", "text", "numeric"))
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-scot.raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Methadone 1mg.ml-1.xlsx"),
-                                        sheet = "Context ePr Vs Paid", col_types = c("text", 
+# Methadone scot data
+scot.raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we06032022_Methadone 1mg.ml-1.xlsx"),
+                                        sheet = "Context ePr Vs Paid", col_types = c("text",
                                                                                      "text", "numeric", "text", "numeric"))
 
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# raw.bup.paid<-read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx", 
-#                          sheet = "Paid Items", col_types = c("text", 
-#                                                              "text", "text", "numeric", "text", 
-#                                                              "numeric", "text", "numeric"))
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx"),
-                                  sheet = "Paid Items", col_types = c("text", 
-                                                                      "text", "text", "numeric", "text", 
+# Buprenorphine HB data
+raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we06032022 Buprenorphine_2MG_8MG_16MG.xlsx"),
+                                  sheet = "Paid Items", col_types = c("text",
+                                                                      "text", "text", "numeric", "text",
                                                                       "numeric", "text", "numeric"))
 
-# FOR SUBSTANCE USE TEAM TO RUN SCRIPT
-# scot.raw.bup.paid<- read_excel("/PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Niamh/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx", 
-#                                sheet = "Context ePr Vs Paid", col_types = c("text", 
-#                                                                             "text", "text", "text", "numeric", 
-#                                                                             "text", "numeric", "text", "numeric"))
-
-# FOR WIDER IMPACTS TEAM TO RUN SCRIPT
-scot.raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we31102021_Buprenorphine 2MG_8MG_16MG.xlsx"),
-                                       sheet = "Context ePr Vs Paid", col_types = c("text", 
-                                                                                    "text", "text", "text", "numeric", 
+# Buprenorphine scot data
+scot.raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we06032022 Buprenorphine_2MG_8MG_16MG.xlsx"),
+                                       sheet = "Context ePr Vs Paid", col_types = c("text",
+                                                                                    "text", "text", "text", "numeric",
                                                                                     "text", "numeric", "text", "numeric"))
-
 
 #formatting meth Paid
 raw.meth.paid<-raw.meth.paid[-c(1:6,nrow(raw.meth.paid)),]  #Removing first 6 rows
@@ -484,110 +423,201 @@ types1<-unique(paid1$Type1)#Form type code: to be removed later
 paid.comp<-complete(paid1,Date=paid.dates,Board=locations,Type=types,Type1=types1,
                     fill=list(Items=0,Quantity=0,`Quantity per item`=0))
 
-remove.types1<-data.frame(matrix(nrow=nrow(paid.comp)/length(types1),ncol=3))#Making new data frame to remove form type code
-colnames(remove.types1)<-c('Items','Quantity','Quantity per item')
+# New Aggregating method
 
-#Aggregating data over the form type codes
-remove.types1$Items<-colSums(matrix(paid.comp$Items, nrow=length(types1)))
-remove.types1$Quantity<-colSums(matrix(paid.comp$Quantity, nrow=length(types1)))
-remove.types1$`Quantity per item`<-colSums(matrix(paid.comp$Quantity.per.item, nrow=length(types1)),na.rm=TRUE)
 
-#Making skeleton with all combinations of variables
-skel<-expand.grid(types,locations,paid.dates)
+# 4a) Quantity/Items with two year average
 
-paid.comp1<-data.frame(skel,remove.types1)
-colnames(paid.comp1)[c(1:3,6)]<-c('Type','Board','Date','Quantity per item')
+# Health Board Level
+HB_Level <- paid.comp %>% 
+  filter(!is.na(Year)) %>% 
+  group_by(Board, Date, Month,Year, Type) %>% 
+  summarise(Items = sum(Items),
+            Quantity= sum(Quantity)) %>% 
+  ungroup()
 
-paid.comp1<-paid.comp1 %>% 
-  separate(`Date`, c("Month", "Year"),' ')
+# Pivot and calulate two year average for items
 
-scot1<-scot1 %>% 
-  separate(`Date`,c('Month','Year'),' ')
+Items_Average <- HB_Level %>%  
+  select(-Date,-Quantity) %>% 
+  pivot_wider(names_from = Year, values_from = Items) %>% 
+  mutate(across(c(`2018`:`2020`), ~replace_na(.x, 0))) %>% 
+  rowwise() %>% 
+  mutate('Average 2018 & 2019' = mean(c(`2018`,`2019`))) %>% 
+  # pivot back to years
+  pivot_longer(cols = c('2020':'Average 2018 & 2019'), names_to = 'Year', values_to = 'Items' ) %>% 
+  select(-'2018',-'2019')
 
-paid.comp1<-rbind(paid.comp1[,-7],scot1)#Adding scotland level data
-paid.comp1$Date<-as.yearmon(paste(paid.comp1$Month, paid.comp1$Year)) 
-paid.comp1<-paid.comp1[order(paid.comp1$Date),]
+# Pivot and calulate two year average for quantity
+Quantity_Average <- HB_Level %>%  
+  select(-Date,-Items) %>% 
+  pivot_wider(names_from = Year, values_from = Quantity) %>% 
+  mutate(across(c(`2018`:`2020`), ~replace_na(.x, 0))) %>% 
+  rowwise() %>% 
+  mutate('Average 2018 & 2019' = mean(c(`2018`,`2019`))) %>% 
+  # pivot back to years
+  pivot_longer(cols = c('2020':'Average 2018 & 2019'), names_to = 'Year', values_to = 'Quantity' ) %>% 
+  select(-'2018',-'2019')
 
-#Splitting up into years
-sep.paid<-split(paid.comp1,paid.comp1$Year)
+# Match them back together
 
-paid.2018<-sep.paid$`2018`
-paid.2019<-sep.paid$`2019`
-paid.2020<-sep.paid$`2020`
-paid.2021<-sep.paid$`2021`
+HB_Level <- full_join(Items_Average,Quantity_Average)
 
-paid.2020.2021<-rbind(paid.2020,paid.2021)#Adding 2020 and 2021 data
-extended.paid.2018<-rbind(paid.2018,paid.2018[c(1:nrow(paid.2021)),])#Repeating 2018 data to match length of 2020/21 data
-extended.paid.2019<-rbind(paid.2019,paid.2019[c(1:nrow(paid.2021)),])
+# Calculate quantity per item
+HB_Level <- HB_Level %>% 
+  mutate('Quantity per item' = Quantity/Items)
 
-extended.paid.average<-data.frame(extended.paid.2018[,1:4],
-                                  'Items'=(extended.paid.2018$Items+extended.paid.2019$Items)/2,
-                                  'Quantity'=(extended.paid.2018$Quantity+extended.paid.2019$Quantity)/2)
+# Pivot to correct format
+HB_Level <- HB_Level %>% 
+  pivot_longer(cols = c('Items':'Quantity per item'), names_to = 'Measurement', values_to = 'Number' ) %>% 
+  # pivot out all years
+  pivot_wider(names_from ='Year', values_from = 'Number') %>% 
+  # pivot back 2020 and 2021 only
+  pivot_longer(cols = c('2020':'2021'), names_to = 'Year', values_to = '2020 & 2021' )
 
-extended.paid.average<-data.frame(extended.paid.average,  #Calculating quantity per item 
-                                  'Quantity per item'=extended.paid.average$Quantity/extended.paid.average$Items)
+# Create date variable
+HB_Level <- HB_Level %>% 
+  arrange(Board,Type,Measurement,Year,Month) %>% 
+  mutate(Date = str_c(month.abb[as.numeric(Month)],' ', Year)) %>% 
+  select(-Year,-Month)
 
-paid.2020.2021$`Quantity per item` <-paid.2020.2021$Quantity/paid.2020.2021$Items #Calculating quantity per item
+# Check structure
+str(HB_Level)
+# Change to factors were necessary
+HB_Level <- HB_Level %>% 
+  mutate(Date = factor(Date),
+         Measurement = factor(Measurement))
+str(HB_Level)
+# So this is seeming OK for HB level at the moment. 
 
-extended.paid.average$Quantity.per.item[which(is.nan(extended.paid.average$Quantity.per.item))]<-0
-paid.2020.2021$`Quantity per item`[which(is.nan(paid.2020.2021$`Quantity per item`))]<-0
+# Scotland level
 
-Date<-paste(paid.2020.2021$Month,paid.2020.2021$Year,  sep=" ")
-paid.2020.2021<-data.frame(paid.2020.2021,Date)
-extended.paid.average<-data.frame(extended.paid.average,Date)
+# Pivot and calulate two year average for items
 
-#Ordering data sets correctly for matching up
-sorted.average<-extended.paid.average[
-  with(extended.paid.average, order(Board,Type)),
-  ]
+Items_Average <- scot %>%  
+  select(-Quantity) %>% 
+  pivot_wider(names_from = Year, values_from = Items) %>% 
+  mutate(across(c(`2018`:`2020`), ~replace_na(.x, 0))) %>% 
+  rowwise() %>% 
+  mutate('Average 2018 & 2019' = mean(c(`2018`,`2019`))) %>% 
+  # pivot back to years
+  pivot_longer(cols = c('2020':'Average 2018 & 2019'), names_to = 'Year', values_to = 'Items' ) %>% 
+  select(-'2018',-'2019')
 
-sorted.20.21<-paid.2020.2021[
-  with(paid.2020.2021, order(Board,Type)),
-  ]
+# Pivot and calulate two year average for quantity
+Quantity_Average <- scot %>%  
+  select(-Items) %>% 
+  pivot_wider(names_from = Year, values_from = Quantity) %>% 
+  mutate(across(c(`2018`:`2020`), ~replace_na(.x, 0))) %>% 
+  rowwise() %>% 
+  mutate('Average 2018 & 2019' = mean(c(`2018`,`2019`))) %>% 
+  # pivot back to years
+  pivot_longer(cols = c('2020':'Average 2018 & 2019'), names_to = 'Year', values_to = 'Quantity' ) %>% 
+  select(-'2018',-'2019')
 
-rownames(sorted.average)<-seq(1:nrow(sorted.average))
-rownames(sorted.20.21)<-seq(1:nrow(sorted.20.21))
+# Match them back together
 
-ave.long<-melt(data=sorted.average,
-               id.vars=c('Date','Board','Type'),
-               measure.vars=c('Items','Quantity','Quantity.per.item'),
-               variable.name = 'Measurement',
-               value.name='Value') 
+Scotland_Level <- full_join(Items_Average,Quantity_Average)
 
-pres.long<-melt(data=sorted.20.21,
-                id.vars=c('Date.1','Board','Type'),
-                measure.vars=c('Items','Quantity','Quantity.per.item'),
-                variable.name = 'Measurement',
-                value.name='Value')
+# Calculate quantity per item
+Scotland_Level <- Scotland_Level %>% 
+  mutate('Quantity per item' = Quantity/Items)
 
-paid.final<-data.frame(pres.long,ave.long$Value)
-colnames(paid.final)[c(5,6)]<-c('2020 & 2021','Average 2018 & 2019')
-levels(paid.final$Measurement)<-c('Items','Quantity','Quantity per item')
-paid.final$Board<-gsub('Nhs','NHS',str_to_title(paid.final$Board)) #changing the case of the Board names
+# Pivot to correct format
+Scotland_Level <- Scotland_Level %>% 
+  pivot_longer(cols = c('Items':'Quantity per item'), names_to = 'Measurement', values_to = 'Number' ) %>% 
+  # pivot out all years
+  pivot_wider(names_from ='Year', values_from = 'Number') %>% 
+  # pivot back 2020 and 2021 only
+  pivot_longer(cols = c('2020':'2021'), names_to = 'Year', values_to = '2020 & 2021' )
 
-paid.final$`2020 & 2021`<-round(paid.final$`2020 & 2021`,1)
-paid.final$`Average 2018 & 2019`<-round(paid.final$`Average 2018 & 2019`,1)
+# Create date variable
+Scotland_Level <- Scotland_Level %>% 
+  arrange(Board,Type,Measurement,Year,Month) %>% 
+  mutate(Date = str_c(month.abb[as.numeric(Month)],' ', Year)) %>% 
+  select(-Year,-Month)
 
-paid.quantity<- paid.comp1 %>% 
-  select(Date, 
-         Board, 
-         Type, 
-         Quantity)
-paid.quantity$Quantity<-round(paid.quantity$Quantity)
-paid.quantity$Board<-gsub('Nhs','NHS',str_to_title(paid.quantity$Board))
+# Check structure
+str(Scotland_Level)
+# Change to factors were necessary
+Scotland_Level <- Scotland_Level %>% 
+  mutate(Date = factor(Date),
+         Measurement = factor(Measurement)) %>% 
+  select(-'2022')
+str(Scotland_Level)
 
-# SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(paid.final,'OST_paid.rds')
+# Add Scotland and HB together
 
-# SAVING FOR WIDER IMPACTS TEAM
-saveRDS(paid.final, "shiny_app/data/OST_paid.rds")
-saveRDS(paid.final, paste0(data_folder,"final_app_files/OST_paid_", 
-                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+Totals <- rbind(Scotland_Level,HB_Level)
 
-#SAVING FOR SUBSTANCE USE TEAM
-# saveRDS(paid.quantity,'OST_paid_quantity.rds')
+str(Totals)
+# Some final changes to this file
+Totals <- Totals %>% 
+  mutate(Board =str_to_title(Board)) %>% 
+  mutate(Board = str_replace(Board,'Nhs','NHS')) %>% 
+  mutate(across(c(`Average 2018 & 2019`:`2020 & 2021`), ~replace_na(.x, 0))) %>% 
+  mutate(`Average 2018 & 2019` = round_half_up(`Average 2018 & 2019`, 2),
+         `2020 & 2021` = round_half_up(`2020 & 2021`, 1)) %>% 
+  select(Date,Board,Type,Measurement,'2020 & 2021',	'Average 2018 & 2019')
 
-#SAVING FOR WIDER IMPACTS TEAM
-saveRDS(paid.quantity, "shiny_app/data/OST_paid_quantity.rds")
-saveRDS(paid.quantity, paste0(data_folder,"final_app_files/OST_paid_quantity_", 
-                              format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+str(Totals)
+
+
+
+# 4b) Quantity over time from January 2018. 
+
+# Health Board Level
+HB_Level_Quant <- paid.comp %>% 
+  filter(!is.na(Year)) %>% 
+  group_by(Board, Date, Month,Year, Type) %>% 
+  summarise(Items = sum(Items),
+            Quantity= sum(Quantity)) %>% 
+  ungroup() %>% 
+  select(Date,Board,Type,Quantity)
+
+# Scotland level is available in scot file already created. 
+Scot_Level_Quant <- scot %>% 
+  mutate( Date = str_c(month.abb[as.numeric(Month)],' ', Year)) %>% 
+  select(Date,Board,Type,Quantity) %>% 
+  filter(!is.na(Quantity))
+
+# Combine
+Total_Quant <- rbind(Scot_Level_Quant,HB_Level_Quant)
+str(Total_Quant)
+
+
+Total_Quant <- Total_Quant %>% 
+  mutate(Board =str_to_title(Board)) %>% 
+  mutate(Board = str_replace(Board,'Nhs','NHS')) %>% 
+  mutate(Date = factor(Date))  
+
+# Create skeleton to match on data to
+skeleton <- expand.grid(Date = factor(unique(Total_Quant$Date)),
+                        Board = unique(Total_Quant$Board),
+                        Type = factor(unique(Total_Quant$Type)))
+
+str(skeleton)
+unique(skeleton$Date)
+# Correct levels of factors
+skeleton <- skeleton %>% 
+  mutate(Date = fct_relevel(Date,c(as.character(unique(Total_Quant$Date)))))
+
+unique(skeleton$Date)
+
+Total_Quant <- full_join(skeleton,Total_Quant)
+
+str(Total_Quant)
+
+Total_Quant <- Total_Quant %>% 
+  mutate(across(c(Quantity), ~replace_na(.x, 0)))
+
+# SAVING files
+saveRDS(Totals, "shiny_app/data/OST_paid.rds")
+saveRDS(Totals, paste0(data_folder,"final_app_files/OST_paid_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+saveRDS(Total_Quant, "shiny_app/data/OST_paid_quantity.rds")
+saveRDS(Total_Quant, paste0(data_folder,"final_app_files/OST_paid_quantity_",
+                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+## END
