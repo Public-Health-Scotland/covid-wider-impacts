@@ -13,7 +13,6 @@
     # G4	Psychiatry of Old Age
     # G5	Learning Disability
 
-
 # Approximate run time: 5 minutes
 ###
 
@@ -44,6 +43,7 @@ rapid_extract <- as_tibble(dbGetQuery(RAPID_connection, statement=paste0(
                       FROM rapid.syswatch_hosp_stay      #name of RAPID Stay Table 
                       WHERE ADMISSION_DATE >= '2017-01-01' 
                       AND inpatient_daycase_identifier_code ='IP'
+                      AND hospital_of_treatment_nhs_board_code_current IN ('A', 'B', 'F', 'G', 'H', 'L', 'N','R', 'S', 'T', 'V', 'W', 'Y', 'Z')
                       AND hospital_of_treatment_location_code NOT IN ('W106H', 'G303H', 'D102H')
                       CONTEXT ('i18n'='gb', 'cache_wait_for_load'='true');")))  #Not sure if the CONTEXT line is needed.
 
@@ -56,11 +56,9 @@ convert_spec_to_spec_grouping <- function(spec, return_spec_group_lists = FALSE)
   spec_group_1_surgical <- c('C1', 'C11', 'C12', 'C13', 
                              'C14', #new on 01-Dec-2021.
                              'C4', 'C41', 'C42', 'C5', 'C51', 'C6', 'C7', 'C8', 
-                             #'C9', 'CB', 'D3', 'D4', 'D5', 'D6', 'D8', 'F2') 
                              'C9', 'C91', 'CB', 'CC', 'D3', 'D4', 'D5', 'D6', 'D8', 'F2') #modified by RM on 29-Sep-2020.
   
   spec_group_2_medical <- c('A1', 'A11', 'A2', 'A3', 'A6', 'A7', 'A8', 'A81', 'A82', 'A9',
-                            # 'AA', 'AB', 'AC', 'AD', 'AG', 'AH', 'AM', 'AP', 'AQ', 'AR', 'AV', #This is the old line.
                             'AA', 'AB', 'AC', 'AD', 'AG', 'AH', 'AJ', 'AM', 'AP', 'AQ', 'AR', 'AV', #This is the new line as of July 26, 2017.
                             'AW', 'C2', 'C3', 'C31', 'D1', 'E12', 'H1', 'H2', 'J3', 'J4', 
                             'J5', 'R1', 'R11')
