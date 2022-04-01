@@ -91,9 +91,8 @@ rapid_extract$medsur <- convert_spec_to_spec_grouping(spec = rapid_extract$spec)
 rapid_extract <- rapid_extract %>% filter(medsur != 0)
 
 
-# Exclude psychiatric care specialties, recode variables. 
-rapid_extract <- rapid_extract %>% 
-  filter(!spec %in% c('G1', 'G3', 'G4', 'G5')) %>%
+# Recode variables
+rapid_extract <- rapid_extract %>%
   mutate(admission_type = case_when(emergency_admission_flag == 'Y' ~ 'emergency',
                                     TRUE ~ 'elective'),
          sex = case_when(sex == '1' ~ 'male',
