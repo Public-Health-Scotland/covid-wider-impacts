@@ -22,11 +22,11 @@ require(writexl)||install.packages("writexl")
 require(tidylog)||install.packages("tidylog")
 require(naniar)||install.packages("naniar")
 
-remotes::install_local("/PHI_conf/CancerGroup1/Topics/CancerStatistics/Projects/20200804-pathology-as-proxy-for-2020-regs/RShiny/CancerPathologyDashboard/Cancer Pathology Jan 22 update/phsmethods-master.zip",
-                       upgrade = "never"
-)
+#remotes::install_local("/PHI_conf/CancerGroup1/Topics/CancerStatistics/Projects/20200804-pathology-as-proxy-for-2020-regs/RShiny/CancerPathologyDashboard/Cancer Pathology Jan 22 update/phsmethods-master.zip",
+ #                      upgrade = "never"
+#)
 
-# remotes::install_github("Public-Health-Scotland/phsmethods", upgrade = "never")
+remotes::install_github("Public-Health-Scotland/phsmethods", upgrade = "never")
 library(phsmethods)
 
 

@@ -29,8 +29,8 @@ save_final_file <- function(dataset, date_saved) {
 save_final_file("deaths", "28_Feb_22")
 ##########################################################.
 ## Cancer ----
-save_final_file("cancer_data_2", "20_Mar_22")
-save_final_file("cancer_data_diff", "20_Mar_22")
+save_final_file("cancer_data_2", "01_Apr_22")
+save_final_file("cancer_data_diff", "01_Apr_22")
 
 ##########################################################.
 ## SACT ----
