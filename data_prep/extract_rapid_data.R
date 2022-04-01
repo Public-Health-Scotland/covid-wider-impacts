@@ -6,12 +6,9 @@
 # 
 # Notes:
 # Discard records belonging to Hospitals G303H in Glasgow (Mearnskirk House) and W106H in Western Isles (St Brendans Cot Hosp).
-# Only include inpatient cases (no day cases). Day cases data quality is problematic as not all boards submitted this data until recently.
-# Exclude specialties G1,G3,G4,and G5 - psychiatric care specialties. 
-    # G1	General Psychiatry (Mental Illness)
-    # G3	Forensic Psychiatry
-    # G4	Psychiatry of Old Age
-    # G5	Learning Disability
+# Admissions to the Golden Jubilee National Hospital (D102H) are also not included.
+# Exclusions from the RAPID dataset are day cases, neonatal, maternity and psychiatric care admissions. 
+
 
 # Approximate run time: 5 minutes
 ###
@@ -162,7 +159,7 @@ combined_records <- rbind(all_locations, hb_totals, scot_totals) #Merge all thre
 ## Determining Start and End Dates ----
 ###############################################.
 
-# Filter 4 years data from the present.
+# Filter 4 years data from the present - further date filters will be applied in the data_prep script.
 combined_records <- combined_records %>% filter(date_adm >= paste0(year(Sys.Date()) - 4, '-01-01'))
 
 
