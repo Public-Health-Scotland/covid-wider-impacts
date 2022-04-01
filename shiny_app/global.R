@@ -253,13 +253,13 @@ tears_linechart <- readRDS("data/tears_linechart_data.rds")
 tears_download <- readRDS("data/tears_download_data.rds")
 
 #Drugs data
-# ADP_names<-readRDS('data/ADP_names.rds')
-# Health_board<-readRDS('data/Health_board.rds')
-# DTR_data<-readRDS('data/DTR_data.rds')
-# THN_by_HB<-readRDS('data/THN_by_HB.rds')
-# SASdata<-readRDS('data/SASdata.rds')
-# OST_paid<-readRDS('data/OST_paid.rds')
-# OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
+ ADP_names<-readRDS('data/ADP_names.rds')
+ Health_board<-readRDS('data/Health_board.rds')
+ DTR_data<-readRDS('data/DTR_data.rds')
+ THN_by_HB<-readRDS('data/THN_by_HB.rds')
+ SASdata<-readRDS('data/SASdata.rds')
+ OST_paid<-readRDS('data/OST_paid.rds')
+ OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
 
 ###############################################.
 ## Objects, names, lists ----
