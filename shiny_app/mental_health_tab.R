@@ -321,7 +321,7 @@ output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_depr,
 # The charts and text shown on the app will depend on what the user wants to see
 output$mh_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 2 March 2022"))
+  data_last_updated <- tagList(p("Last updated: 6 April 2022"))
 
   note_average <- p("Please note that to ease interpretation of these charts ",
                     "we are presenting 3-week rolling average figures.",
