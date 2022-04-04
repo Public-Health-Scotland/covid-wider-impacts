@@ -74,8 +74,8 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/", filedate
                                T ~ "Health board"),
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),
                                TRUE ~ area_name),
-         month_review = as.Date(month_review)) %>%
-  filter((year(month_review) %in% c("2019", "2020", "2021")))
+         month_review = as.Date(month_review)) #%>%
+  #filter((year(month_review) %in% c("2019", "2020", "2021")))
 
 child_dev %<>% # Dealing with NAs, which are 0s
   mutate_at(c("pc_1_plus", "concerns_1_plus"), ~replace_na(., 0)) %>%
@@ -203,6 +203,32 @@ print("File child_dev_depr_data.rds produced and saved")
 }
 
 ###############################################.
+## Child development - developmental domains ----
+###############################################.
+create_childdev_domains <- function(filedate) {
+  
+  child_dev_domains <- rbind(read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 13-15m_Domains.xlsx")) %>%
+                       mutate(review = "13-15 month"),
+                     read_excel(paste0(data_folder, "child_development/", filedate, "Dashboard - 27-30m_Domains.xlsx")) %>%
+                       mutate(review = "27-30 month")) %>%
+    clean_names() %>%
+    rename(area_name = geography) %>%
+    mutate(area_type = "Scotland",
+           month_review = as.Date(month_review)) #%>%
+  #filter((year(month_review) %in% c("2019", "2020", "2021")))
+  
+  child_dev_domains %<>% # Dealing with NAs, which are 0s
+    mutate_at(c("slc_perc", "prob_solv_perc", "gross_motor_perc", "per_soc_perc","fine_motor_perc","emot_beh_perc","vision_perc","hearing_perc"), ~replace_na(., 0)) 
+  
+  saveRDS(child_dev_domains, "shiny_app/data/child_dev_domains.rds")
+  saveRDS(child_dev_domains, paste0(data_folder,"final_app_files/child_dev_domains_",
+                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  
+  child_dev_domains <<- child_dev_domains
+  print("File child_dev_domains_data.rds produced and saved")
+}
+
+###############################################.
 ## Breastfeeding ----
 ###############################################.
 create_breastfeeding <- function(filedate) {
@@ -220,8 +246,8 @@ breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/", file
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),
                                area_name == "Clackmannanshire and Stirling" ~ "Clackmannanshire and Stirling HSCP",
                                TRUE ~ area_name),
-         month_review = as.Date(month_review)) %>%
-  filter((year(month_review) %in% c("2019", "2020", "2021")))
+         month_review = as.Date(month_review)) #%>%
+  #filter((year(month_review) %in% c("2019", "2020", "2021")))
 
 # Calculating centre lines and adding them to breastfeeding
 breastfeeding_centreline <- breastfeeding %>%
