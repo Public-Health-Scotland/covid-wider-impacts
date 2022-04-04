@@ -104,7 +104,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("childdev_button", "Child development", width="150px"), br(),
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
                           actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
-                          actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
+                           actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
                           actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
                           actionLink("mod_button", "Method of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
@@ -127,7 +127,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
                                      bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
                                      bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
-                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
+                                      bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
                                      bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
                                      bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
@@ -870,7 +870,7 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
    ) # page bracket
  )# taglist bracket
 
- # )#secure app
+#  )#secure app
 
 
 
