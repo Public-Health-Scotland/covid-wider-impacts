@@ -74,8 +74,8 @@ child_dev <- rbind(read_excel(paste0(data_folder, "child_development/", filedate
                                T ~ "Health board"),
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),
                                TRUE ~ area_name),
-         month_review = as.Date(month_review)) %>%
-  filter((year(month_review) %in% c("2019", "2020", "2021")))
+         month_review = as.Date(month_review)) #%>%
+  #filter((year(month_review) %in% c("2019", "2020", "2021")))
 
 child_dev %<>% # Dealing with NAs, which are 0s
   mutate_at(c("pc_1_plus", "concerns_1_plus"), ~replace_na(., 0)) %>%
@@ -246,8 +246,8 @@ breastfeeding <- bind_rows(read_xlsx(paste0(data_folder, "/breastfeeding/", file
          area_name = case_when(area_type=="Health board" ~ paste0("NHS ", area_name),
                                area_name == "Clackmannanshire and Stirling" ~ "Clackmannanshire and Stirling HSCP",
                                TRUE ~ area_name),
-         month_review = as.Date(month_review)) %>%
-  filter((year(month_review) %in% c("2019", "2020", "2021")))
+         month_review = as.Date(month_review)) #%>%
+  #filter((year(month_review) %in% c("2019", "2020", "2021")))
 
 # Calculating centre lines and adding them to breastfeeding
 breastfeeding_centreline <- breastfeeding %>%
