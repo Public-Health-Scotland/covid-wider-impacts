@@ -389,6 +389,8 @@ observeEvent(input$switch_to_mod,{
 output$mod_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mod",label = "Go to data"), #this button can only be used once
+    h2("Method of delivery - 6th April 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley for December 2021 so the proportion of births that are delivered by elective caesarean section, which appears lower than that for most other NHS Boards, is likely to change in future releases of the dashboard"),
     h2("Method of delivery - 6th October 2021"),
     p("The proportion of all caesarean sections in Scotland has risen and remains higher than the pre-pandemic average for a number of consecutive months with the proportion approaching 40%.
       Over the last five months the proportions of births recorded as caesarean sections in NHS Greater Glasgow & Clyde have been consistently above 40%. We are linking with NHS Greater Glasgow & Clyde to investigate this further."),

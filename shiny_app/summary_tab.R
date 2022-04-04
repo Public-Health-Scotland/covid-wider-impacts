@@ -479,7 +479,7 @@ output$data_explorer <- renderUI({
 
   #update date for outpatients and the rest is different
   upd_date_summ <- case_when(input$measure_select == "outpats" ~ "9 March 2022",
-                             TRUE ~ "04 April 2022")
+                             TRUE ~ "6 April 2022")
 
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
@@ -502,7 +502,7 @@ output$data_explorer <- renderUI({
           From this date patients who contact NHS 24 with Covid symptoms during the in-hours period will be 
           advised to contact their own GP practice. For the out of hours period, the Out of Hours services will 
           continue to manage Covid patients directed by NHS 24 as a matter of course. This will have an impact on 
-          the NHS 24 data contained in the dashboard. "))
+          the NHS 24 and the Out of Hours data data contained in the dashboard. "))
         },
       if (input$measure_select == "deaths"){
         tagList(
@@ -567,9 +567,7 @@ output$data_explorer <- renderUI({
                 investigating this to better reflect Primary Care Out of Hours service
                 provision.", style = "color:red")),
     br(),
-    tags$em("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH)
-           data was identified and was corrected on 23/09/2020– for more details please see ",
-                actionLink("jump_commentary_oohissue_sum", "commentary"), "."),
+
     cut_charts(title= "Weekly cases in out of hours services",
                source = "PHS GP OOH Datamart", data_name ="ooh"))
 
