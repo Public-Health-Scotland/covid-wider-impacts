@@ -479,7 +479,7 @@ output$data_explorer <- renderUI({
 
   #update date for outpatients and the rest is different
   upd_date_summ <- case_when(input$measure_select == "outpats" ~ "9 March 2022",
-                             TRUE ~ "2 March 2022")
+                             TRUE ~ "6 April 2022")
 
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
