@@ -56,7 +56,7 @@ cancer_data_diff_all <- reactive({
     mutate(quarter = factor(quarter, 
                             levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", 
                                        "Jul-Sep 20", "Oct-Dec 20", "Jan-Mar 21",
-                                       "Apr-Jun 21", "Jul-Sep 21"), ordered = TRUE)) %>% 
+                                       "Apr-Jun 21", "Jul-Sep 21", "Oct-Dec 21"), ordered = TRUE)) %>% 
     arrange(quarter)
 })
 
