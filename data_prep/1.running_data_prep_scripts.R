@@ -26,10 +26,10 @@ create_tears(tears_date = "2022_03_16", max_date = "2021-12-01") # Perineal tear
 ###############################################.
 source("data_prep/cardio_data_prep.R") # This sources the functions for the section
 # Filedate: date on filename for each update, last week = last week of data to be included
-create_aecardio(filedate = "2022-02-24", last_week =  "2022-02-20")
+create_aecardio(filedate = "2022-03-31", last_week =  "2022-03-27")
 create_sascardio(filedate = "2021-11-29", last_week =  "2021-11-21") #there is currently a duplicates issue with this data so it is not being updated until resolved.
-create_cardiodrugs(filedate = "2022-02-24", last_week =  "2022-02-20")
-create_oohcardio(filedate = "2022-02-28", last_week =  "2022-02-20")
+create_cardiodrugs(filedate = "2022-03-31", last_week =  "2022-03-27")
+create_oohcardio(filedate = "2022-04-04", last_week =  "2022-03-27")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the cardio_tab script
