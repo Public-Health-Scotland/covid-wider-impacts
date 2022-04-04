@@ -55,16 +55,16 @@ save_final_file("ui_smr01_assaults", "31_Jan_22")
 
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "28_Feb_22")
+save_final_file("rapid", "04_Apr_22")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
-save_final_file("ooh", "28_Feb_22")
+save_final_file("ooh", "04_Apr_22")
 ## A&E ----
-save_final_file("ae", "28_Feb_22")
+save_final_file("ae", "04_Apr_22")
 ## NHS24 ----
-save_final_file("nhs24", "28_Feb_22")
+save_final_file("nhs24", "04_Apr_22")
 ## SAS ----
-save_final_file("sas", "28_Feb_22")
+save_final_file("sas", "04_Apr_22")
 ### Outpatients ----
 save_final_file("outpats", "09_Feb_22")
 save_final_file("ethnicity_lookup", "14_Feb_22")

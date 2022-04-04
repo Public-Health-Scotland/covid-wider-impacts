@@ -574,7 +574,7 @@ output$data_explorer <- renderUI({
   } else if (input$measure_select == "sas") {
     tagList(# SAS data
       tags$em(p("Please note that there is currently an issue with duplicates in the SAS dataset and
-              therefore the data was not updated in March 2022. This is currently being 
+              therefore the data was not updated in April 2022. This is currently being 
               investigated by PHS and the data will be updated as soon as possible."),
               p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
         tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
