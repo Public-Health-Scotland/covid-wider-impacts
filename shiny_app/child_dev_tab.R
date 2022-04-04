@@ -438,7 +438,7 @@ output$childdev_domains <- renderPlotly({
       add_lines(y = ~emot_beh_perc, name = "Emotional/Behavioural",
                 line = list(color = "#1d91c0"), text=tooltip_6, hoverinfo="text") %>%
       add_lines(y = ~vision_perc, name = "Vision",
-                line = list(color = "#edf8b1"), text=tooltip_7, hoverinfo="text") %>%
+                line = list(color = "#f28650"), text=tooltip_7, hoverinfo="text") %>%
       add_lines(y = ~hearing_perc, name = "Hearing",
                 line = list(color = "#7fcdbb"), text=tooltip_8, hoverinfo="text") %>%
       
