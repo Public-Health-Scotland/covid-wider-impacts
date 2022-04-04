@@ -546,7 +546,7 @@ create_perinatal <- function(foldermonth) {
 ## Apgar ----
 ###############################################.
 
-create_apgar <- function(folderdate) {
+create_apgar <- function(folderdate, max_date) {
   
   apgar_folder <- gsub("_", "", folderdate)
   apgar_date <- folderdate
@@ -577,6 +577,7 @@ create_apgar <- function(folderdate) {
                             area_name=="Scotland" ~ "Scotland"),
            area_type = type,
            category = "All") %>%
+    filter(date <= max_date) %>% 
     # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
     # ext_ columns (don't exist in data file) are extended median which are blank before projection time period
     # group_by(area_name) %>%
@@ -593,9 +594,7 @@ create_apgar <- function(folderdate) {
     runchart_flags(shift="apgar_shift", trend="apgar_trend",
                    value=perc_low_apgar5_37plus, median=ext_median_apgar5_37plus) %>%
     ungroup() %>%
-    filter(area_name != "NHS Orkney",
-           area_name != "NHS Shetland",
-           area_name != "NHS Western Isles")
+    filter(!(area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles")))
   
   saveRDS(apgar_runchart, "shiny_app/data/apgar_runchart_data.rds")
   saveRDS(apgar_runchart, paste0(data_folder,"final_app_files/apgar_runchart_data_",
@@ -641,7 +640,8 @@ create_apgar <- function(folderdate) {
            # date_label = as.Date(date, format="%b %Y"),
            # date_label = as.character(date_label),
            area_name = area,
-           date_type = "Month")
+           date_type = "Month") %>% 
+    filter(date <= max_date)
   
   
   apgar_linechart <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_DELIVERIES_LINECHART_Apgar5_",apgar_date,".rds")) %>%
@@ -675,7 +675,7 @@ create_apgar <- function(folderdate) {
                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   
   print("File apgar_linechart_data.rds produced and saved")
-  
+
   ## 4- Apgar DATA DOWNLOAD FILE FOR SHINY APP
   apgar_download <- readRDS(paste0(data_folder, "births_babies/apgar/",apgar_folder,"/WI_Apgar5_DOWNLOAD_",apgar_date,".rds")) %>%
     janitor::clean_names() %>%
@@ -687,6 +687,7 @@ create_apgar <- function(folderdate) {
            date_of_discharge=case_when(subgroup == "scotland" ~ as.character(format(month_of_discharge, "%B %Y")),
                                           T ~ phsmethods::qtr(month_of_discharge, format="short")
            )) %>%
+    filter(month_of_discharge <= max_date) %>% 
     rename(area_name=hbres,
            centreline_apgar5_37plus = median_apgar5_37plus,
            dottedline_apgar5_37plus = ext_median_apgar5_37plus) %>%
@@ -696,7 +697,6 @@ create_apgar <- function(folderdate) {
            chart_type= area_type,
            births_37_42 = total_exc_unknown + unknown,
            perc_denominator = "births_37_42_apgar5_known") %>%
-    select(-month_of_discharge) %>%
     select(indicator, subgroup, variable, area_name, date_of_discharge,
            births_37_42_apgar5_0_6 = low_apgar5_37plus,
            births_37_42_apgar5_7_10 = high_apgar5_37plus,
@@ -727,8 +727,11 @@ create_apgar <- function(folderdate) {
 ###############################################.
 
 create_preterm <- function(preterm_date, max_date) {
+  preterm_folder <- gsub("_", "", preterm_date)
+  
   # P CHART PRETERM DATA
-  preterm <- read_excel(paste0(data_folder,"births_babies/preterm/Table_SMR02_WIDI_02_Subset_Neonate_p-chart_",preterm_date,".xlsx"),
+  preterm <- read_excel(paste0(data_folder,"births_babies/preterm/", preterm_folder,
+                               "/Table_SMR02_WIDI_02_Subset_Neonate_p-chart_Qtr_", preterm_date, ".xlsx"),
                                       sheet = "P_Chart", skip = 102) %>%
     janitor::clean_names() %>%
     select(quarter_of_year=sample_2, N_deliveries_23_26_NICU_site=observation, N_deliveries_23_26=sample_size, rate, centreline, stdev = binomial_st_dev_16,
@@ -818,7 +821,8 @@ create_preterm <- function(preterm_date, max_date) {
   preterm <<- preterm
 
     ## 2- LINECHART DATA preterm for Scotland
-  preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/WI_DELIVERIES_LINECHART_Neonate_",preterm_date,".rds")) %>%
+  preterm_linechart <- readRDS(paste0(data_folder, "births_babies/preterm/", preterm_folder, 
+                                      "/WI_DELIVERIES_LINECHART_Neonate_", preterm_date,".rds")) %>%
     rename(area_name=HBRES, quarter=DATE) %>%
     janitor::clean_names() %>%
     mutate(tot_neonate_23_26=neonate_23_26) %>%
@@ -864,7 +868,6 @@ tears_runchart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_
          area_name = area,
          date_type = "Month")
 
-
 tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_RUNCHART_Tears_",tears_date,".rds")) %>%
   rename(area = HBRES) %>%
   mutate(area_name = case_when(area == "NHS Forth valley" ~ "NHS Forth Valley",
@@ -879,9 +882,7 @@ tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
                           area_name=="Scotland" ~ "Scotland"),
          area_type = type,
          category = "All") %>%
-  filter(date < max_date) %>% 
-  
-  
+  filter(date <= max_date) %>% 
   # the median column is used to assess shifts or trends - dataset contains NA cells which need to filled
   mutate(ext_median_tears_37plus = case_when(is.na(ext_median_tears_37plus) ~ median_tears_37plus,
                                               TRUE ~ ext_median_tears_37plus)) %>%
@@ -894,9 +895,8 @@ tears_runchart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folde
   runchart_flags(shift="tears_shift", trend="tears_trend", 
                  value=perc_3rd4th_tears_37plus, median=ext_median_tears_37plus) %>%
   ungroup() %>% 
-  filter(area_name != "NHS Orkney", 
-         area_name != "NHS Shetland",
-         area_name != "NHS Western Isles")
+  filter(!(area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles")))
+
 
 saveRDS(tears_runchart, "shiny_app/data/tears_runchart_data.rds")
 saveRDS(tears_runchart, paste0(data_folder,"final_app_files/tears_runchart_data_", 
@@ -918,8 +918,7 @@ tears_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/
                               category == "40+" ~ "40 and over",
                               category == "1 - Most deprived" ~ "1 - most deprived",
                               category == "5 - Least deprived" ~ "5 - least deprived",
-                              TRUE ~ as.character(category))) #%>% 
-  #filter(quarter <= "2021-09-01")
+                              TRUE ~ as.character(category))) 
 
 saveRDS(tears_scot, "shiny_app/data/tears_scot_data.rds")
 saveRDS(tears_scot, paste0(data_folder,"final_app_files/tears_scot_data_", 
@@ -942,7 +941,6 @@ tears_linechart_scot <- readRDS(paste0(data_folder, "births_babies/tears/",tears
          area_name = area,
          date_type = "Month") 
 
-
 tears_linechart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_folder,"/WI_DELIVERIES_LINECHART_Tears_",tears_date,".rds")) %>% 
   rename(area=HBRES) %>%
   janitor::clean_names() %>% ungroup %>% 
@@ -964,12 +962,10 @@ tears_linechart <- readRDS(paste0(data_folder, "births_babies/tears/",tears_fold
          ind=case_when(ind=="nbr_3_4_degree_tear_37plus" ~ "Women who have a 3rd or 4th degree perineal tear",
                        ind=="total_exc_unknown" ~ "Women with known perineal tear status",
                        TRUE~as.character(ind))) %>% 
-  filter(area_name != "NHS Orkney", 
-         area_name != "NHS Shetland",
-         area_name != "NHS Western Isles") %>% 
-  select(-ext_median_tears_37plus) #%>% 
-  #filter(date <= "2021-09-01")
-
+  filter(!(area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles"))) %>% 
+  select(-ext_median_tears_37plus) %>% 
+  filter(date <= max_date) 
+  
 saveRDS(tears_linechart, "shiny_app/data/tears_linechart_data.rds") 
 saveRDS(tears_linechart, paste0(data_folder,"final_app_files/tears_linechart_data_", 
                                 format(Sys.Date(), format = '%d_%b_%y'), ".rds"))

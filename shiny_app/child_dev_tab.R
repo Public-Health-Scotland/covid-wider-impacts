@@ -101,6 +101,16 @@ child_dev_depr_filt <- reactive({
                          review == review_chosen)
 })
 
+child_dev_domains_filt <- reactive({
+  
+  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
+                              input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
+  
+  child_dev_domains %>% filter(area_name == input$geoname_childdev &
+                                 area_type == input$geotype_childdev &
+                                 review == review_chosen)
+})
+
 
 ###############################################.
 ##  Reactive layout  ----
@@ -141,10 +151,15 @@ output$childdev_explorer <- renderUI({
                     h4(paste0("Number of ", review_title,
                               " reviews; reviews with full meaningful data on child development recorded; and children with 1 or more developmental concerns recorded")))),
     fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
-
-    # Only give SIMD breakdown for Scotland
+    br(), #spacing
+    # Only give domain breakdown for Scotland
     if (input$geotype_childdev == "Scotland") {
       tagList(
+        h4(paste0("Percentage of ", review_title,
+                  " reviews with a new or previous concern recorded by developmental domain")),
+      fluidRow(withSpinner(plotlyOutput("childdev_domains"))),
+      br(), #spacing
+    # Only give SIMD breakdown for Scotland
         h4(paste0("Percentage of children with 1 or more developmental concerns recorded at the ",
                   review_title, " review by SIMD deprivation quintile")),
         fluidRow(
@@ -370,6 +385,74 @@ output$childdev_depr <- renderPlotly({
 })
 
 
+output$childdev_domains <- renderPlotly({
+  
+  trend_data <- child_dev_domains_filt() %>% mutate(dummy = 0)
+  
+  #If no data available for that period then plot message saying data is missing
+  if (is.data.frame(trend_data) && nrow(trend_data) == 0)
+  {
+    plot_nodata(height = 50, text_nodata = "Data not available due to data quality issues")
+  } else {
+    
+    #Modifying standard layout
+    yaxis_plots[["title"]] <- "Percentage of children reviewed"
+    
+    tooltip_1 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% with speech, language & communication concern: ", trend_data$slc_perc,
+                                "<br>", "Number with speech, language & communication concern: ", trend_data$no_slc))
+    tooltip_2 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),               
+                              "<br>", "% with problem solving concern:  ", trend_data$prob_solv_perc,
+                                "<br>", "Number with problem solving concern:  ", trend_data$no_prob_solv))
+    tooltip_3 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),     
+                              "<br>", "% with gross motor concern ", trend_data$gross_motor_perc,
+                                "<br>", "Number with gross motor concern ", trend_data$no_gross_motor))
+    tooltip_4 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),     
+                              "<br>", "% with personal/social concern: ", trend_data$per_soc_perc,
+                                "<br>", "Number with personal/social concern: ", trend_data$no_per_soc))
+    tooltip_5 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% with fine motor concern:  ", trend_data$fine_motor_perc,
+                                "<br>", "Number with fine motor concern:  ", trend_data$no_fine_motor))
+    tooltip_6 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% with emotional/behavioural concern ", trend_data$emot_beh_perc,
+                                "<br>", "Number with emotional/behavioural concern ", trend_data$no_emot_beh))
+    tooltip_7 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% with vision concern:  ", trend_data$vision_perc,
+                          "<br>", "Number with vision concern:  ", trend_data$no_vision))
+    tooltip_8 <- c(paste0("Month: ", format(trend_data$month_review, "%b %y"),
+                              "<br>", "% with hearing concern:  ", trend_data$hearing_perc,
+                          "<br>", "Number with hearing concern:  ", trend_data$no_hearing))
+    
+    #Creating time trend plot
+    plot_ly(data=trend_data, x=~month_review) %>%
+      add_lines(y = ~slc_perc, name = "Speech, language & communication",
+                line = list(color = "#2d2da1"), text=tooltip_1, hoverinfo="text") %>%
+      add_lines(y = ~prob_solv_perc, name = "Problem solving",
+                line = list(color = "#9999ff"), text=tooltip_2, hoverinfo="text") %>%
+      add_lines(y = ~gross_motor_perc, name = "Gross motor",
+                line = list(color = "#8e23a0"), text=tooltip_3, hoverinfo="text") %>%
+      add_lines(y = ~per_soc_perc, name = "Personal/Social",
+                line = list(color = "#a81141"), text=tooltip_4, hoverinfo="text") %>%
+      add_lines(y = ~fine_motor_perc, name = "Fine motor",
+                line = list(color = "#e3b419"), text=tooltip_5, hoverinfo="text") %>%
+      add_lines(y = ~emot_beh_perc, name = "Emotional/Behavioural",
+                line = list(color = "#1d91c0"), text=tooltip_6, hoverinfo="text") %>%
+      add_lines(y = ~vision_perc, name = "Vision",
+                line = list(color = "#f28650"), text=tooltip_7, hoverinfo="text") %>%
+      add_lines(y = ~hearing_perc, name = "Hearing",
+                line = list(color = "#7fcdbb"), text=tooltip_8, hoverinfo="text") %>%
+      
+      #Layout
+      layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(x = 100, y = 0.5)) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+    
+  }
+})
+
+
 ###############################################.
 ## Data downloads ----
 ###############################################.
@@ -398,6 +481,12 @@ output$download_childdev_data <- downloadHandler(
 output$childdev_commentary <- renderUI({
   tagList(
     bsButton("jump_to_childdev",label = "Go to data"), #this button can only be used once
+    h2("Child development - 6th April 2022"),
+    p("Information on child development has been updated on 6th April 2022 to include information on reviews undertaken up to January 2022. This is based on child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
+    p("In this release, information is provided for the first time on the percentage of children with developmental concerns by developmental domain (examples of development domains include vision, fine motor skills and personal/social development). This information has been added in response to the rise in the percentage of children with one or more developmental concerns observed in 2021, as noted in the commentary below for November and December 2021. These data are provided at Scotland level only due to small numbers in some domains in individual Health Boards. More information on developmental domains and how they are assessed is provided in the annual,",
+    tags$a(href = "https://publichealthscotland.scot/media/6578/2021-04-27-early-child-development-publication-report.pdf", "Early Child Development", target="_blank"), "report produced by PHS."),
+    p("In January 2022 the most frequent domain in which there was a concern about development at 13-15 months was gross motor skills (5.6% of children reviewed), and at 27-30 months was speech, language and communication (12.0% of children reviewed). Formal analysis of trends and change is not presented here, however the proportion of children at 13-15 months with a documented concern about speech, language and communication in 2021 appears higher than that observed in 2019 and 2020. Likewise at 27-30 months the proportion of children identified with concerns about development in the speech, language & communication, emotional/behavioural, personal/social, and problem solving domains appears higher in 2021 than in the previous two years. "),
+    p("PHS will continue to provide monthly monitoring of these data, and the next annual report with detailed analysis by developmental domain and population group for children eligible for review in 2020/21 will be published on 26th April 2022."),
     h2("Child development - 1st December 2021"),
     p("Information on child development has been updated on 1st December 2021 to include information on reviews undertaken up to September 2021. This is based on child health reviews undertaken by health visiting teams when children are 13-15 months and 27-30 months old. Background information on interpreting the data is provided in the commentary for 30 September 2020 below."),
     p("As reported last month, the percentage of children who are reported to have a concern in at least one developmental domain remains above the pre-pandemic centreline for both reviews. In September 2021 11.8% of children reviewed at 13-15 months of age had a concern documented, compared with a pre-pandemic baseline of 9.6%. At 27-30 months 18.7% of children reviewed had a concern documented, compared with a pre-pandemic baseline of 14.6%."),
