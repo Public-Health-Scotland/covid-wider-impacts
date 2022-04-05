@@ -14,16 +14,13 @@
 ###
 
 ###############################################.
-## Section 1: Setup ----
+## Section 1: Setup and functions ----
 ###############################################.
 
-#Load packages.
+# For functions and file paths
+source("data_prep/functions_packages_data_prep.R")
+
 library(odbc)
-library(dplyr)
-library(readr)
-library(lubridate)
-
-
 #Make connection to the RAPID Database through the Denodo Virtualisation Platform.
 RAPID_connection <- dbConnect(odbc(),
                               dsn="DVPROD",
@@ -32,31 +29,30 @@ RAPID_connection <- dbConnect(odbc(),
 
 
 rapid_extract <- as_tibble(dbGetQuery(RAPID_connection, statement=paste0(
-                        "SELECT crn, chi, patient_gender_code sex, hospital_of_treatment_location_code hosp, 
-                      emergency_admission_flag, hospital_of_treatment_nhs_board_code_current hb, admission_date date_adm,
-                      discharge_date, specialty spec, specialty_group, age_on_admission age, 
-                      postcode, inpatient_daycase_identifier_code ipdc, hscp_of_residence_code_current hscp_code, 
-                      hscp_of_residence_name_current hscp_name, ethnic_group_code, ethnic_group_description
+                        "SELECT hospital_of_treatment_nhs_board_code_current, admission_date, 
+                      emergency_admission_flag, specialty, patient_gender_code, 
+                      age_on_admission, postcode, hscp_of_residence_code_current, 
+                      hscp_of_residence_name_current, 
+                      ethnic_group_code, ethnic_group_description
                       FROM rapid.syswatch_hosp_stay      #name of RAPID Stay Table 
-                      WHERE ADMISSION_DATE >= '2017-01-01' 
+                      WHERE ADMISSION_DATE >= '2018-01-01' 
                       AND inpatient_daycase_identifier_code ='IP'
                       AND hospital_of_treatment_nhs_board_code_current IN ('A', 'B', 'F', 'G', 'H', 'L', 'N','R', 'S', 'T', 'V', 'W', 'Y', 'Z')
                       AND hospital_of_treatment_location_code NOT IN ('W106H', 'G303H', 'D102H')
-                      CONTEXT ('i18n'='gb', 'cache_wait_for_load'='true');")))  #Not sure if the CONTEXT line is needed.
+                      CONTEXT ('i18n'='gb', 'cache_wait_for_load'='true');"))) 
+                      # i18: Internationalization configuration for the results of the query.
+                      # cache: the query does not finish until the data is completely stored in cache.
 
-
-data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/" # folder for files
 
 # Create a function to exclude specialties that are not reported in Systemwatch
 convert_spec_to_spec_grouping <- function(spec, return_spec_group_lists = FALSE) {
   
-  spec_group_1_surgical <- c('C1', 'C11', 'C12', 'C13', 
-                             'C14', #new on 01-Dec-2021.
+  spec_group_1_surgical <- c('C1', 'C11', 'C12', 'C13', 'C14', 
                              'C4', 'C41', 'C42', 'C5', 'C51', 'C6', 'C7', 'C8', 
-                             'C9', 'C91', 'CB', 'CC', 'D3', 'D4', 'D5', 'D6', 'D8', 'F2') #modified by RM on 29-Sep-2020.
+                             'C9', 'C91', 'CB', 'CC', 'D3', 'D4', 'D5', 'D6', 'D8', 'F2')
   
   spec_group_2_medical <- c('A1', 'A11', 'A2', 'A3', 'A6', 'A7', 'A8', 'A81', 'A82', 'A9',
-                            'AA', 'AB', 'AC', 'AD', 'AG', 'AH', 'AJ', 'AM', 'AP', 'AQ', 'AR', 'AV', #This is the new line as of July 26, 2017.
+                            'AA', 'AB', 'AC', 'AD', 'AG', 'AH', 'AJ', 'AM', 'AP', 'AQ', 'AR', 'AV', 
                             'AW', 'C2', 'C3', 'C31', 'D1', 'E12', 'H1', 'H2', 'J3', 'J4', 
                             'J5', 'R1', 'R11')
   
@@ -85,87 +81,70 @@ convert_spec_to_spec_grouping <- function(spec, return_spec_group_lists = FALSE)
 ## Data manipulation ----
 ###############################################.
 
+# Rename and format variables
+rapid_extract <- rapid_extract %>% 
+  rename(hb = hospital_of_treatment_nhs_board_code_current,
+         date_adm = admission_date,
+         spec = specialty,
+         sex = patient_gender_code,
+         age = age_on_admission,
+         hscp_code = hscp_of_residence_code_current,
+         hscp_name = hscp_of_residence_name_current) %>% 
+  mutate(age = as.numeric(age),
+         date_adm = as.Date(date_adm))
+
 # Exclude the specialties by creating medsur variable
 rapid_extract$medsur <- convert_spec_to_spec_grouping(spec = rapid_extract$spec)
 
 rapid_extract <- rapid_extract %>% filter(medsur != 0)
 
-
-# Recode variables
-rapid_extract <- rapid_extract %>%
-  mutate(admission_type = case_when(emergency_admission_flag == 'Y' ~ 'emergency',
-                                    TRUE ~ 'elective'),
-         sex = case_when(sex == '1' ~ 'male',
-                         sex == '2' ~ 'female'),
-         age = as.numeric(age),
-         date_adm = as.Date(date_adm),
-         # create age groups
-         age_group = case_when(
-           age   >= 85    ~ '85+',
-           age %in% 75:84 ~ '75_thru_84',
-           age %in% 65:74 ~ '65_thru_74',
-           age %in% 45:64 ~ '45_thru_64',
-           age %in% 15:44 ~ '15_thru_44', 
-           age %in% 5:14  ~ '5_thru_14',
-           age %in% 0:4   ~ 'Under_5',
-           TRUE ~ 'missing'))
-
-
 # Add SIMD from lookup by postcode.
 simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2021_2_simd2020v2.rds') %>% 
   select(pc7, simd2020v2_sc_quintile) %>% 
   rename(postcode = pc7,
-         simd_quintile = simd2020v2_sc_quintile)
+         dep = simd2020v2_sc_quintile)
 
 # Add SIMD to rapid dataset
-rapid <- left_join(rapid_extract, simd_lookup, "postcode") %>% 
-  select(-postcode, -crn, -chi, -emergency_admission_flag, -discharge_date, -medsur, -specialty_group) %>% 
-  arrange(admission_type, hb, hosp, hscp_code, spec, sex, simd_quintile, date_adm)
+rapid <- left_join(rapid_extract, simd_lookup, "postcode")
+
+# Recode variables into agegroups, sexes, deprivation groups and admission types
+rapid %<>%
+  mutate(admission_type = case_when(emergency_admission_flag == 'Y' ~ 'Emergency',
+                                    TRUE ~ 'Planned')) %>% 
+  create_agegroups() %>% 
+  create_sexgroups () %>% 
+  create_depgroups() %>% 
+  select(-age, -age_grp1, -postcode, -emergency_admission_flag, -medsur) %>% 
+  rename(age = age_grp)
+
 
 ###############################################.
 ## Create totals for Scotland, each board, and each location ----
 ###############################################.
 
-# Scotland totals - by admission_type, spec, SIMD_quintile, age_group, sex, and date_adm.
-scot_totals <- rapid %>% 
-    group_by(admission_type, spec, simd_quintile, age_group, sex, date_adm) %>% 
-    summarise(count = n()) %>% 
-    ungroup() %>% 
-    mutate(hb = 'X', hosp = 'X_All', hscp_code = '', hscp_name = 'All_Scotland') %>% 
-    select(hb, hosp, hscp_code, hscp_name, admission_type, spec, #put the columns in the proper order.
-           simd_quintile, age_group, sex, date_adm, count)
+# # Scotland totals - by admission_type, spec, dep, age, sex, and date_adm.
+# scot_totals <- rapid %>% 
+#     group_by(admission_type, spec, dep, age, sex, date_adm) %>% 
+#     summarise(count = n()) %>% 
+#     ungroup() %>% 
+#     mutate(hb = 'X', hscp_code = '', hscp_name = 'All_Scotland') %>% 
+#     select(hb, hscp_code, hscp_name, admission_type, spec, #put the columns in the proper order.
+#            dep, age, sex, date_adm, count)
 
-# Health Board totals - by admission_type, spec, SIMD_quintile, age_group, sex, and date_adm.
-hb_totals <- rapid %>% 
-    group_by(hb, admission_type, spec, simd_quintile, age_group, sex, date_adm) %>% 
-    summarise(count = n()) %>% 
-    ungroup() %>% 
-    mutate(hosp = paste0(hb, '_All'), hscp_code = '', hscp_name = paste0(hb, '_All')) %>% 
-    select(hb, hosp, hscp_code, hscp_name, admission_type, spec,  #put the columns in the proper order.
-           simd_quintile, age_group, sex, date_adm, count)
-
-# Hosp and hscp totals - by admission_type, spec, SIMD_quintile, age_group, sex, and date_adm.
+# Hscp totals - by admission_type, spec, dep, age, sex, and date_adm.
 all_locations <- rapid %>% 
-    group_by(hb, hosp, hscp_code, hscp_name, admission_type, spec, simd_quintile, age_group, sex, date_adm) %>% 
+    group_by(hb, hscp_code, hscp_name, admission_type, spec, dep, age, sex, date_adm) %>% 
     summarise(count = n()) %>% 
     ungroup() %>%  
-    select(hb, hosp, hscp_code, hscp_name, admission_type,  #put the columns in the proper order.
-           spec, simd_quintile, age_group, sex, date_adm, count)
+    select(hb, hscp_code, hscp_name, admission_type,  #put the columns in the proper order.
+           spec, dep, age, sex, date_adm, count)
 
-combined_records <- rbind(all_locations, hb_totals, scot_totals) #Merge all three data frames into one.
+#Merge all three data frames into one and filter data.
+#combined_records <- rbind(all_locations, scot_totals)
 
-###############################################.
-## Determining Start and End Dates ----
-###############################################.
-
-# Filter 4 years data from the present - further date filters will be applied in the data_prep script.
-combined_records <- combined_records %>% filter(date_adm >= paste0(year(Sys.Date()) - 4, '-01-01'))
-
-
-# Save file with date
+# Save file with today's date
 date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
-saveRDS(combined_records, paste0(data_folder, 'rapid/', date_on_filename, '-admissions-by-category.rds')) 
+saveRDS(all_locations, paste0(data_folder, 'rapid/', date_on_filename, '-admissions-by-category.rds')) 
 
 
 ##END
-
