@@ -50,7 +50,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       } else if (tab == "cardio") {
         trend_data <- trend_data %>% 
           mutate(category = factor(category, levels = c("All", "Under 5", "5 - 14", "Under 65", "15 - 24", "15 - 44", "25 - 44",
-                                                        "45 - 64", "<65", "65 - 74", "65+","65 and over", 
+                                                        "45 - 64", "<65", "65 - 74", "65+","65 and over", "Under 75","75 and over",
                                                         "75 - 84", "85 and over"))) 
         
       } else if (tab == "cancer") {
@@ -99,7 +99,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     
     
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
-                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))  
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")),
+                             period == "quarterly" ~ paste0("Quarter: ", format(trend_data$week_ending, "%b %y")))  
     
   # If variation selected different values
   if (type == "variation") {
@@ -109,7 +110,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                                      "mentalhealth_drugs", "mh_ooh",
                                                      "ooh_cardiac", "sas_cardiac", "ui_smr01_all", "ui_smr01_assaults",
                                                      "ui_smr01_falls", "ui_smr01_other", "ui_smr01_poison",
-                                                     "ui_smr01_rta","op","cardio_discharges") ~ "2018-2019",
+                                                     "ui_smr01_rta","op","cardio_admissions") ~ "2018-2019",
                              data_name %in% c("deaths","cardio_deaths") ~ "2015-2019"))
       
     if (aver_week == T) {
@@ -167,7 +168,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                 data_name == "cancer" ~ "Referrals: ",
                                 data_name == "deaths" ~ "Deaths: ",
                                 data_name == "cardio_deaths" ~ "Deaths: ",
-                                data_name == "cardio_discharges" ~ "Disscharges: ",
+                                data_name == "cardio_admissions" ~ "Admissions: ",
                                 data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
                                 data_name == "mh_ooh" ~ "Consultations: ",
                                 data_name == "op" ~ "Appointments: ",
@@ -256,7 +257,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                              data_name == "ui_smr01_other" ~ "Number of admissions",
                              data_name == "ui_smr01_poison" ~ "Number of admissions",
                              data_name == "ui_smr01_rta" ~ "Number of admissions",
-                             data_name == "cardio_discharges" ~ "Number of discharges",
+                             data_name == "cardio_admissions" ~ "Number of admissions",
                              data_name == "cardio_deaths" ~ "Number of deaths")
     
     #Modifying standard layout
@@ -265,11 +266,11 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
                                                        "ooh_cardiac", "sas_cardiac",
                                                        "cath", "mentalhealth_drugs", "mh_ooh",
-                                                       "op","cardio_discharges") ~ "Average 2018-2019",
+                                                       "op","cardio_admissions") ~ "Average 2018-2019",
                                       data_name %in% c("deaths","cardio_deaths") ~ "Average 2015-2019")
     
     hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
-                                                    "ooh_cardiac", "sas_cardiac","cardio_discharges","cardio_deaths",
+                                                    "ooh_cardiac", "sas_cardiac","cardio_admissions","cardio_deaths",
                                                     "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 & 2021",
                                    data_name %in% c("cath")  ~ "2020")
     
@@ -286,12 +287,13 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                               data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
                               data_name == "mh_ooh" ~ "Consultations: ",
                               data_name == "op" ~ "Appointments: ",
-                              data_name == "cardio_discharges" ~ "Discharges: ",
+                              data_name == "cardio_admissions" ~ "Admissions: ",
                               data_name == "cardio_deaths" ~ "Deaths: ")
     
     # Input for tooltip based on weekly/monthly
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
-                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")),
+                             period == "quarterly" ~ paste0("Quarter: ", format(trend_data$week_ending, "%b %y")))
     
     #Text for tooltip
     tooltip_trend <- c(paste0(period_data,

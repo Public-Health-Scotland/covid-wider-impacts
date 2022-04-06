@@ -30,8 +30,8 @@ create_aecardio(filedate = "2021-11-25", last_week =  "2021-11-21")
 create_sascardio(filedate = "2021-11-29", last_week =  "2021-11-21")
 create_cardiodrugs(filedate = "2021-11-25", last_week =  "2021-11-21")
 create_oohcardio(filedate = "2021-11-29", last_week =  "2021-11-21")
-create_cardiodischarges(filedate = "2021-11-29", last_week =  "2021-06-30")
-create_cardiodeaths(filedate = "2021-11-29", last_week =  "2021-09-30")
+create_cardioadmissions(filedate = "2021-11-29", last_week =  "2021-09-30")
+create_cardiodeaths(filedate = "2021-11-29", last_week =  "2021-12-31")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the cardio_tab script

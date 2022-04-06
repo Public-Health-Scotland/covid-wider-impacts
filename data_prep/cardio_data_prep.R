@@ -11,24 +11,24 @@ source("data_prep/functions_packages_data_prep.R")
 ## May need adapted
 ###############################################.
 # Bringing  LA and datazone info.
-postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2021_2.rds') %>% 
-  setNames(tolower(names(.))) %>%   #variables to lower case
-  select(pc7, datazone2011, hscp2019, hscp2019name)
+#postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2021_2.rds') %>% 
+#  setNames(tolower(names(.))) %>%   #variables to lower case
+#  select(pc7, datazone2011, hscp2019, hscp2019name)
 
 # SIMD quintile to datazone lookup
 #dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
 # Sourced from "/conf/linkage/output/lookups/Unicode/Populations/Estimates/DataZone2011_pop_est_5year_agegroups_2011_2020.rds"
 # See HD lookup code
 dep_lookup <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact-data/colin/lookups/deprivation_geography.rds") %>%
-  rename(datazone2011 = datazone) %>%
-  select(datazone2011, year, sc_quin) %>%
+  rename(datazone_2011 = datazone) %>%
+  select(datazone_2011, year, sc_quin) %>%
   filter(year>2014)
 
 dep_lookup21 <- dep_lookup %>%  filter(year == 2019) %>% mutate(year = 2021)
 
 dep_lookup <- rbind(dep_lookup, dep_lookup21)
 
-geo_lookup <- left_join(dep_lookup, postcode_lookup)
+#geo_lookup <- left_join(dep_lookup, postcode_lookup)
 
 ###############################################.
 ## Cath labs - cardiac procedures ----
@@ -345,7 +345,7 @@ create_cardiodrugs <- function(filedate, last_week) {
 # SMR01_PI DATA April 1997 Onwards
 #########################################################################
 
-create_cardiodischarges <- function(filedate, last_week) {
+create_cardioadmissions <- function(filedate, last_week) {
 
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
 # Adapted for cardiac discharges data
@@ -370,10 +370,10 @@ SMRA_connect <- dbConnect(odbc(),
                           SVC = "SMRA.nss.scot.nhs.uk")
 
 query_smr01 <- 
-  glue("select LINK_NO, CIS_MARKER, DISCHARGE_DATE, HBTREAT_CURRENTDATE, MAIN_CONDITION, AGE_IN_YEARS,
-  SEX, ADMISSION_TYPE, INPATIENT_DAYCASE_IDENTIFIER, POSTCODE, DR_POSTCODE
-  from SMR01_PI WHERE DISCHARGE_DATE >= TO_DATE({shQuote(smr_start_date, type = 'sh')}, 'yyyy-mm-dd') AND 
-  DISCHARGE_DATE <= TO_DATE({shQuote(smr_end_date, type = 'sh')}, 'yyyy-mm-dd')
+  glue("select LINK_NO, CIS_MARKER, ADMISSION_DATE, DISCHARGE_DATE, HBTREAT_CURRENTDATE, MAIN_CONDITION, AGE_IN_YEARS,
+  SEX, ADMISSION_TYPE, INPATIENT_DAYCASE_IDENTIFIER, POSTCODE, DATAZONE_2011, DR_POSTCODE
+  from SMR01_PI WHERE ADMISSION_DATE >= TO_DATE({shQuote(smr_start_date, type = 'sh')}, 'yyyy-mm-dd') AND 
+  ADMISSION_DATE <= TO_DATE({shQuote(smr_end_date, type = 'sh')}, 'yyyy-mm-dd')
   ORDER BY LINK_NO, ADMISSION_DATE, DISCHARGE_DATE")
 
 smr01_pi_data <- as_tibble(dbGetQuery(SMRA_connect, query_smr01)) %>%
@@ -389,49 +389,27 @@ smr01_pi_data$mc2 <- as.numeric(substr(smr01_pi_data$main_condition, 2,3))
 smr01_pi_data <- mutate(smr01_pi_data, diagnosis = "")
 
 # CHD
-smr01_ihd <- smr01_pi_data %>% filter(mc3 %in% c("I20","I21","I22","I23","I24","I25")) %>%
-  mutate(diagnosis = "Coronary Heart Disease")
-
 smr01_ami <- smr01_pi_data %>% filter(mc3 %in% c("I21","I22")) %>%
   mutate(diagnosis = "Heart Attack")
 
 smr01_hf <- smr01_pi_data %>% filter(mc3 %in% c("I50")) %>%
   mutate(diagnosis = "Heart Failure")
 
-smr01_ang <- smr01_pi_data %>% filter(mc3 %in% c("I20")) %>%
-  mutate(diagnosis = "Angina")
-
 # Stroke
-
-smr01_cvd <- smr01_pi_data %>% filter(mc1 == "I" & mc2 %in% 60:69 | (mc3 == "G45")) %>%
-  mutate(diagnosis = "Cerebrovascular Disease")
-
-smr01_str <- smr01_pi_data %>% filter(mc3 %in% c("I61","I63","I64")) %>%
+# Includes Subarachnoid Haemorrhage
+smr01_str <- smr01_pi_data %>% filter(mc3 %in% c("I60","I61","I63","I64")) %>%
   mutate(diagnosis = "Stroke")
 
-smr01_subch <- smr01_pi_data %>% filter(mc3 %in% c("I60")) %>%
-  mutate(diagnosis = "Subarachnoid Haemorrhage")
-
-smr01_tia <- smr01_pi_data %>% filter(mc3 %in% c("G45")) %>%
-  mutate(diagnosis = "TIAs and related syndromes")
-
 remove(smr01_pi_data)
-#remove(smr01_ihd)
 
 # Filter to just include heart attack, stroke and heart failure
 smr01_pi_data <- bind_rows(smr01_ami, smr01_hf, smr01_str)
 
-#smr01_pi_data <- bind_rows(smr01_ihd, smr01_ami, smr01_hf, smr01_ang,
-#                           smr01_cvd, smr01_str, smr01_subch, smr01_tia)
-
-#tabyl(smr01_pi_data$diagnosis, sort = TRUE)
-
-#smr01_pi_data <- smr01_pi_data %>%
-#  filter(smr01_pi_data$diagnosis %in% c("Coronary Heart Disease","Cerebrovascular Disease"))
-
+# Note was issue with ceiling date creating wrong dates
 smr01_pi_data <- smr01_pi_data %>%
-mutate(month_ending = floor_date(as.Date(discharge_date), "month")) %>% 
-    mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
+  mutate(month_ending = quarter(as.Date(discharge_date), type = "date_last", fiscal_start = 1)) %>%
+  mutate(month_ending = floor_date(as.Date(month_ending), "month")) %>%
+  mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          year = year(month_ending)) #to allow merging
 
 smr01_pi_data <- smr01_pi_data %>% rename(pc7 = dr_postcode)
@@ -440,7 +418,7 @@ smr01_pi_data <- smr01_pi_data %>% rename(age = age_in_years)
 smr01_pi_data <- smr01_pi_data %>% mutate(hbname = match_area(hbtreat_currentdate))
                                             
 #Merging with deprivation and geography lookup
-smr01_pi_data <- left_join(smr01_pi_data, geo_lookup) %>% select(-datazone2011) 
+smr01_pi_data <- left_join(smr01_pi_data, dep_lookup) 
 smr01_pi_data <- smr01_pi_data %>% rename(dep = sc_quin)
 
 smr01_pi_data <- smr01_pi_data %>% create_agegroups() # Age Bands
@@ -464,16 +442,16 @@ smr01_pi_data = smr01_pi_data %>%
 smr01_pi_data = smr01_pi_data %>% filter(type_admission == "Emergency")
 
 smr01_pi_data <- smr01_pi_data %>%
-group_by(year, month_ending, hbname, hscp2019name, diagnosis, type_admission, sex, dep, age) %>% 
+group_by(year, month_ending, hbname, diagnosis, type_admission, sex, dep, age) %>% 
   summarise(count = n())
 
 smr01_pi_data <- smr01_pi_data %>% mutate(scot = "Scotland")
 
 smr01_piv <- smr01_pi_data %>%
   mutate(scot = "Scotland") %>%
-  pivot_longer(cols = c(hbname, hscp2019name, scot), names_to="area_type", values_to="area_name") %>% 
+  pivot_longer(cols = c(hbname, scot), names_to="area_type", values_to="area_name") %>% 
     mutate (area_type = recode(area_type, "hbname" = "Health board", 
-                   "hscp2019name" = "HSC partnership", "scot" = "Scotland")) %>%
+                   "scot" = "Scotland")) %>%
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
                                TRUE~area_name))  %>%
   group_by(month_ending, sex, dep, age, diagnosis, type_admission, area_name, area_type) %>% 
@@ -487,10 +465,12 @@ dis_age <- smr01_piv %>% agg_cut_cardiac_dis(grouper="age") %>% rename(category 
 
 cardio_data_dis <- rbind(dis_all, dis_age, dis_sex, dis_dep) #%>% 
 
-prepare_final_data_m_cardiac(dataset = cardio_data_dis, filename = "cardio_discharges", 
-                             last_month = last_week, extra_vars = "diagnosis", aver = 3)
+cardio_data_dis %<>% # Filter graphs that look odd due to small numbers
+  filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles") | !type %in% c("age","dep")) %>% 
+  filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles") | !category %in% c("Female","Male"))
 
-#final_data <- final_data %>% replace_na(list(variation = 0))
+prepare_final_data_m_cardiac(dataset = cardio_data_dis, filename = "cardio_admissions", 
+                             last_month = last_week, extra_vars = "diagnosis", aver = 3)
 
 final_cardio_SMR01 <- final_data %>% 
   rename (week_ending=month_ending) %>%
@@ -499,10 +479,10 @@ final_cardio_SMR01 <- final_data %>%
          variation =  case_when(count_average == 0 & count == 0 ~ 0, T ~ variation),
          variation =  ifelse(is.infinite(variation), NA_integer_, variation))
 
-saveRDS(final_cardio_SMR01, paste0("shiny_app/data/cardio_discharges.rds"))
-saveRDS(final_cardio_SMR01, paste0(data_folder,"final_app_files/cardio_discharges_", 
+saveRDS(final_cardio_SMR01, paste0("shiny_app/data/cardio_admissions.rds"))
+saveRDS(final_cardio_SMR01, paste0(data_folder,"final_app_files/cardio_admissions_", 
                                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-saveRDS(final_cardio_SMR01, paste0(open_data, "cardio_discharges_data.rds"))
+saveRDS(final_cardio_SMR01, paste0(open_data, "cardio_admissions_data.rds"))
 
 }
 
@@ -517,6 +497,9 @@ create_cardiodeaths <- function(filedate, last_week) {
 #last_week <- "2021-09-30" #just for testing not using function
 last_month <- ymd(last_week)
 
+# NRS Start Date Fixed
+nrs_start_date <- ymd(20141229)
+
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
 agg_cut_cardiac <- function(dataset, grouper) {
   dataset %>%
@@ -525,26 +508,30 @@ agg_cut_cardiac <- function(dataset, grouper) {
     mutate(type = grouper) 
 }
 
-library(odbc)
-# SMR login details
-channel <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
-                                      uid=.rs.askForPassword("SMRA Username:"), 
-                                      pwd=.rs.askForPassword("SMRA Password:")))
+SMRA_connect <- dbConnect(odbc(), 
+                          dsn="SMRA",
+                          uid=.rs.askForPassword("SMRA Username:"),
+                          pwd=.rs.askForPassword("SMRA Password:"),
+                          port = "1527",
+                          host = "nssstats01.csa.scot.nhs.uk",
+                          SVC = "SMRA.nss.scot.nhs.uk")
 
-cardio_data_deaths <- as_tibble(dbGetQuery(channel, statement=
-   "SELECT date_of_registration, age, sex, UNDERLYING_CAUSE_OF_DEATH, 
-    HBRES_CURRENTDATE hb, POSTCODE pc7
-    FROM ANALYSIS.GRO_DEATHS_C
-    WHERE date_of_registration >= '29 December 2014'
-  UNION ALL
-    SELECT date_of_registration, age, sex, UNDERLYING_CAUSE_OF_DEATH, 
-        HB9 hb, POSTCODE pc7
-    FROM ANALYSIS.GRO_DEATHS_WEEKLY_C")) %>%
-  setNames(tolower(names(.))) %>% 
-  # Formatting variables - using month keeping variable name week_ending to use functions
-  mutate(month_ending = floor_date(as.Date(date_of_registration), "month")) %>% 
+Query_Deaths <- 
+  glue("select DATE_OF_REGISTRATION, AGE, SEX, UNDERLYING_CAUSE_OF_DEATH, DATAZONE_2011, HBRES_CURRENTDATE hb, POSTCODE pc7 
+       from ANALYSIS.GRO_DEATHS_C WHERE DATE_OF_REGISTRATION >= TO_DATE({shQuote(nrs_start_date, type = 'sh')}, 'yyyy-mm-dd')")
+
+# Extract data from database using SQL query above
+cardio_data_deaths <- as_tibble(dbGetQuery(SMRA_connect, Query_Deaths)) %>%
+  clean_names()
+
+# Close connection
+dbDisconnect(SMRA_connect)
+
+cardio_data_deaths <- cardio_data_deaths %>%
+  mutate(month_ending = quarter(as.Date(date_of_registration), type = "date_last", fiscal_start = 1)) %>%
+  mutate(month_ending = floor_date(as.Date(month_ending), "month")) %>%
   mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
-         age = case_when(between(age, 0,64) ~ "Under 65", T ~ "65 and over"),
+         age = case_when(between(age, 0,74) ~ "Under 75", T ~ "75 and over"),
          year = year(month_ending)) #to allow merging
 
 cardio_data_deaths$mc3 <- substr(cardio_data_deaths$underlying_cause_of_death, 0,3)
@@ -555,9 +542,6 @@ cardio_data_deaths$mc2 <- as.numeric(substr(cardio_data_deaths$underlying_cause_
 cardio_data_deaths <- mutate(cardio_data_deaths, diagnosis = "")
 
 # CHD
-deaths_ihd <- cardio_data_deaths %>% filter(mc3 %in% c("I20","I21","I22","I23","I24","I25")) %>%
-  mutate(diagnosis = "Coronary Heart Disease")
-
 deaths_ami <- cardio_data_deaths %>% filter(mc3 %in% c("I21","I22")) %>%
   mutate(diagnosis = "Heart Attack")
 
@@ -565,31 +549,21 @@ deaths_hf <- cardio_data_deaths %>% filter(mc3 %in% c("I50")) %>%
   mutate(diagnosis = "Heart Failure")
 
 # Stroke
-
-deaths_cvd <- cardio_data_deaths %>% filter(mc1 == "I" & mc2 %in% 60:69 | (mc3 == "G45")) %>%
-  mutate(diagnosis = "Cerebrovascular Disease")
-
-deaths_str <- cardio_data_deaths %>% filter(mc3 %in% c("I61","I63","I64")) %>%
+deaths_str <- cardio_data_deaths %>% filter(mc3 %in% c("I60","I61","I63","I64")) %>%
   mutate(diagnosis = "Stroke")
 
-deaths_subch <- cardio_data_deaths %>% filter(mc3 %in% c("I60")) %>%
-  mutate(diagnosis = "Subarachnoid Haemorrhage")
-
 remove(cardio_data_deaths)
-
-#cardio_data_deaths <- bind_rows(deaths_ihd, deaths_ami, deaths_hf,
-#                           deaths_cvd, deaths_str, deaths_subch)
 
 # Filter to just include heart attack, stroke and heart failure
 cardio_data_deaths <- bind_rows(deaths_ami, deaths_hf, deaths_str)
 
 #Merging with deprivation and geography lookup
-cardio_data_deaths <- left_join(cardio_data_deaths, geo_lookup) %>% select(-datazone2011) 
+cardio_data_deaths <- left_join(cardio_data_deaths, dep_lookup) 
 
 #Pivoting so one row per area
 cardio_data_deaths %<>% 
   mutate(scot = "Scotland") %>% 
-  pivot_longer(cols = c(hb, hscp2019, scot)) %>% 
+  pivot_longer(cols = c(hb, scot)) %>% 
   #filtering out NA duplicates (which are counted in Scotland totals, but not elsewhere)
   filter(!is.na(value)) %>% 
   # More formatting
@@ -599,7 +573,7 @@ cardio_data_deaths %<>%
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
                       "4" = "4", "5" = "5 - least deprived"),
          area_type = recode(name, "hb" = "Health board", 
-                            "hscp2019" = "HSC partnership", "scot" = "Scotland")) %>% 
+                            "scot" = "Scotland")) %>% 
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
                                TRUE~area_name)) %>% 
   # Aggregating to make it faster to work with
@@ -622,6 +596,11 @@ cardio_data_deaths %<>%
   select(-area_id) %>% 
   filter(area_name != "NHS Unknown residency")
 
+cardio_data_deaths %<>% # Filter graphs that look odd due to small numbers
+  filter(area_name %in% c("Scotland") | !type %in% c("age","dep")) %>%
+  filter(area_name %in% c("Scotland") | !category %in% c("Female","Male"))
+#  filter(!area_name %in% c("NHS Orkney", "NHS Shetland", "NHS Western Isles") | diagnosis !="Heart Failure") %>%
+
 # Running final functions
 prepare_final_data_m_cardiac(dataset = cardio_data_deaths, filename = "cardio_deaths", 
                              last_month, extra_vars = "diagnosis", aver = 5)
@@ -641,19 +620,5 @@ saveRDS(final_cardio_deaths, paste0(data_folder,"final_app_files/cardio_deaths_"
 saveRDS(final_cardio_deaths, paste0(open_data, "cardio_deaths_data.rds"))
 
 }
-#final_cardio_deaths <<- final_cardio_deaths
-
-#print("deaths_data.rds file prepared and saved, including open data")
-
-
-##END
-
-#check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_smr01_discharges.rds")
-#check <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-update/colin/covid-wider-impact-pra/shiny_app/data/cardio_deaths.rds")
-
-#tabyl(smr01_pi_data$month_ending, sort = TRUE)
-#tabyl(cardio_discharges$type_admission, sort = TRUE)
-#tabyl(cardio_discharges$diagnosis, sort = TRUE)
-#tabyl(final_cardio_SMR01$week_ending, sort = TRUE)
 
 
