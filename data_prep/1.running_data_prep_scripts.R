@@ -75,7 +75,7 @@ source("data_prep/deaths_data_preparation.R") # And the deaths function
 # Note: there will be a warning from match_area() about a few hundred thousand
 # geography codes not 9 characters in length - this is caused by the "Scotland"
 # rows, and is not a problem.
-create_deaths(last_week =  "2022-02-20")
+create_deaths(last_week =  "2022-03-27")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the summary_tab script
