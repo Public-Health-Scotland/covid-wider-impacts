@@ -107,8 +107,6 @@ observeEvent(input$btn_dataset_modal,
                   a patient's sex is no longer derived from their CHI number; the sex recorded during the 
                   hospital admission is used. This has resulted in some minor differences in the assignation of sex across the 
                   time period presented."),
-                  
-                 
                  p(),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
