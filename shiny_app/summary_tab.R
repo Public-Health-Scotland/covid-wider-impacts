@@ -84,10 +84,17 @@ observeEvent(input$btn_dataset_modal,
                  p("The hospital admissions analyses are derived from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37",
                           "Rapid Preliminary Inpatient Data (RAPID)", target="_blank"),
-                   "dataset. This dataset is submitted daily to PHS and relates mainly to general acute care.
+                   "dataset. The RAPID dataset is managed by ",
+                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/",
+                          "Public Health Scotland (PHS).",  target="_blank"), "This dataset is submitted daily to 
+                  PHS and relates mainly to general acute care.
                    Exclusions from the RAPID dataset are day cases, neonatal, maternity and
                    psychiatric care admissions. Admissions to the Golden Jubilee National Hospital are
-                   also not included. Admissions related to COVID-19 will be included in totals."),
+                   also not included. Admissions related to COVID-19 will be included in totals. 
+                  Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                 p("Hospital admissions are allocated to weeks based on the ISO8601 standard. Following this standard 
+                   the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 
+                   average of week 52 value as a comparator for 2020’s week 53."),
                  p("The normal source of information on hospital admissions is the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5",
                           "SMR01 (general inpatient and day cases) return.", target="_blank"),
@@ -95,13 +102,12 @@ observeEvent(input$btn_dataset_modal,
                    Therefore, RAPID is being used for the immediate monitoring of the impact of
                    COVID-19 on admissions to hospital and it provides broadly comparable figures to SMR01 on
                    numbers of admissions."),
-                 p("Please, note that for NHS Forth Valley data is largely incomplete for the period presented and therefore
-                   the trends for this board need to be interpreted carefully."),
-                  p("Hospital admissions are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
-                 p("The RAPID dataset is managed by ",
-                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/",
-                          "Public Health Scotland (PHS).",  target="_blank")),
-                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                 p("Please note that for NHS Forth Valley data is largely incomplete for the period presented and 
+                  therefore the trends for this board need to be interpreted carefully. In addition, from May 2022 onwards
+                  a patient's sex is no longer derived from their CHI number; the sex recorded during the 
+                  hospital admission is used. This has resulted in some minor differences in the assignation of sex across the 
+                  time period presented."),
+                 p(),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_select == "aye") { #A&E ATTENDANCES MODAL
