@@ -19,7 +19,8 @@ source("data_prep/functions_packages_data_prep.R")
 #dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
 # Sourced from "/conf/linkage/output/lookups/Unicode/Populations/Estimates/DataZone2011_pop_est_5year_agegroups_2011_2020.rds"
 # See HD lookup code
-dep_lookup <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact-data/colin/lookups/deprivation_geography.rds") %>%
+# dep_lookup <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact-data/colin/lookups/deprivation_geography.rds") %>%
+dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
   rename(datazone_2011 = datazone) %>%
   select(datazone_2011, year, sc_quin) %>%
   filter(year>2014)

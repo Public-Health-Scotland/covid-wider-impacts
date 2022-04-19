@@ -372,6 +372,7 @@ observeEvent(input$btn_cardio_modal,
                           "Scottish Heart disease and stroke publications.",
                           target="_blank")),
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                 p("Please note only the total by sex is shown for island boards due to small numbers."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))               
              }else if (input$measure_cardio_select == "cardio_deaths") { #CARDIAC DEATHS MODAL
@@ -617,8 +618,8 @@ output$cardio_explorer <- renderUI({
                   column(6,data_last_updated)),
          plot_box("2020 and 2021 compared with 2018-2019 average", "cardio_deaths_all"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " compared with the corresponding
-                     time in 2018-2019 by sex"), "cardio_deaths_sex_var",
-                      paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " by sex"), "cardio_deaths_sex_tot"),
+                     time in 2018-2019 by sex (Only totals are shown at board level due to small numbers)"), "cardio_deaths_sex_var",
+                      paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " by sex (Only totals are shown at board level due to small numbers)"), "cardio_deaths_sex_tot"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by age group"), "cardio_deaths_age_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " by age group"), "cardio_deaths_age_tot"),
@@ -752,9 +753,9 @@ output$cardio_deaths_sex_var <- renderPlotly({plot_trend_chart(cardio_dth_filter
 output$cardio_deaths_sex_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
                                                                    pal_sex, split = "sex", type = "total", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
 output$cardio_deaths_age_var <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
-                                                                   pal_age, split = "age", type = "variation", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
+                                                                   pal_2ages, split = "age", type = "variation", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
 output$cardio_deaths_age_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
-                                                                   pal_age, split = "age", type = "total", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
+                                                                   pal_2ages, split = "age", type = "total", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
 output$cardio_deaths_depr_var <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
                                                                     pal_depr, split = "dep", type = "variation",data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
 output$cardio_deaths_depr_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
@@ -836,6 +837,11 @@ output$download_cardio_data <- downloadHandler(
 output$cardio_commentary <- renderUI({
   tagList(
     bsButton("jump_to_cardio",label = "Go to data"), #this button can only be used once
+    h2("Cardiovascular - 5th May 2022"),
+    h3("Cardiovascular Hospital admissions and Excess mortality"),
+    tags$ul(
+      tags$li("Data now available for Cardiovascular Hospital admissions and Excess mortality.
+              Information is available by quarter for diagnosis Heart Attack, Heart Failure and Stroke.")),
     h2("Cardiovascular - 16th December 2020"),
     h3("Cardiovascular GP out of hour cases"),
     tags$ul(

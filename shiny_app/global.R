@@ -402,8 +402,8 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
                  "Out of hours cases" = "ooh_cardiac",
-                 "Scottish Ambulance Service" = "sas_cardiac", "Cardiac procedures" = "cath",
-                 "Hospital admissions" = "cardio_admissions", "Excess mortality" = "cardio_deaths")
+                 "Scottish Ambulance Service" = "sas_cardiac", "Hospital admissions" = "cardio_admissions",
+                 "Excess mortality" = "cardio_deaths", "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Stillbirths"="stillbirths",
@@ -430,6 +430,7 @@ pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
 
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
+
 pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine groupings
 
 pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
