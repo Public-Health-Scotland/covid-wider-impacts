@@ -342,11 +342,11 @@ create_cardiodrugs <- function(filedate, last_week) {
   
 }
 
-#########################################################################
-# SMR01_PI DATA April 1997 Onwards
-#########################################################################
+#########################################################################.
+# Cardio admissions SMR01 ----
+#########################################################################.
 
-create_cardioadmissions <- function(filedate, last_week) {
+create_cardioadmissions <- function(last_week) {
 
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
 # Adapted for cardiac discharges data
@@ -358,23 +358,19 @@ agg_cut_cardiac_dis <- function(dataset, grouper) {
 }  
 
 # SMR start and end dates
-smr_start_date <- ymd(20180101)
-#last_week <- "2021-06-30" #just for testing not using function
-smr_end_date <- ymd(last_week)
+smr_start_date <- format(ymd(20180101), "%d %B %Y")
+smr_end_date <- format(ymd(last_week), "%d %B %Y")
 
 SMRA_connect <- dbConnect(odbc(), 
                           dsn="SMRA",
                           uid=.rs.askForPassword("SMRA Username:"),
-                          pwd=.rs.askForPassword("SMRA Password:"),
-                          port = "1527",
-                          host = "nssstats01.csa.scot.nhs.uk",
-                          SVC = "SMRA.nss.scot.nhs.uk")
+                          pwd=.rs.askForPassword("SMRA Password:"))
 
 query_smr01 <- 
   glue("select LINK_NO, CIS_MARKER, ADMISSION_DATE, DISCHARGE_DATE, HBTREAT_CURRENTDATE, MAIN_CONDITION, AGE_IN_YEARS,
   SEX, ADMISSION_TYPE, INPATIENT_DAYCASE_IDENTIFIER, POSTCODE, DATAZONE_2011, DR_POSTCODE
-  from SMR01_PI WHERE ADMISSION_DATE >= TO_DATE({shQuote(smr_start_date, type = 'sh')}, 'yyyy-mm-dd') AND 
-  ADMISSION_DATE <= TO_DATE({shQuote(smr_end_date, type = 'sh')}, 'yyyy-mm-dd')
+  from SMR01_PI 
+  WHERE ADMISSION_DATE between smr_start_date AND smr_end_date
   ORDER BY LINK_NO, ADMISSION_DATE, DISCHARGE_DATE")
 
 smr01_pi_data <- as_tibble(dbGetQuery(SMRA_connect, query_smr01)) %>%
@@ -493,7 +489,7 @@ saveRDS(final_cardio_SMR01, paste0(open_data, "cardio_admissions_data.rds"))
 ## https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-publications/births-deaths-and-other-vital-events-quarterly-figures/
 ###############################################.
 
-create_cardiodeaths <- function(filedate, last_week) {
+create_cardiodeaths <- function(last_week) {
 
 #last_week <- "2021-09-30" #just for testing not using function
 last_month <- ymd(last_week)
