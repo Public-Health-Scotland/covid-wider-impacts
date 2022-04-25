@@ -412,6 +412,8 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
+    h2("Method of delivery - 4th May 2022"),
+    p("The numbers of women booked for antenatal care in NHS Fife have shown unusual fluctuations in recent weeks. We have informed NHS Fife of this and are working with them to try to understand the data."),
     h2("Method of delivery - 6th April 2022"),
     p("The numbers of women booked for antenatal care and the average gestation of women booked in NHS Forth Valley have shown unusual fluctuations in recent weeks. We have informed NHS Forth Valley of this and are working with them to try to understand the data."),
     h2("Antenatal bookings - 2nd February 2022"),
