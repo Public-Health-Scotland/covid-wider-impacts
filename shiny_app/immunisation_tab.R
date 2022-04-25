@@ -93,7 +93,7 @@ available_time_periods_immun =
 
 # Set the default time periods for plotting
 # Assumes that the months are listed in ascending order in available_time_periods_immun, followed by the years
-default_time_periods_immun = tail(available_time_periods_immun, 6)
+default_time_periods_immun = tail(available_time_periods_immun, 7)
 
 # Immunisation reactive drop-down control showing list of time periods
 output$dates_ui_immun <- renderUI({
@@ -245,8 +245,8 @@ output$immun_table <- renderUI({
                         imm_type == "mmr" & dose == "dose 2" ~ 3)
   
   #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
-  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("AUG 2021", "SEP 2021"))
-  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("JUL 2021", "AUG 2021", "SEP 2021"))
+  no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("2021", "DEC 2021", "JAN 2022"))
+  no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("2021","NOV 2021", "DEC 2021", "JAN 2022"))
   
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
@@ -411,12 +411,9 @@ output$immunisation_explorer <- renderUI({
   
   
   # Intro paragraph within imumunisation tab
-  intro_6in1 <- p("Immunisation protects children against certain serious infections.  It is important that children ",
-                  tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
-                         "continue to receive their routine immunisations during the Covid-19 pandemic", target="_blank"),".",
-                  "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
-                  tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ", target="_blank"),
-                  " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),".")
+  intro_6in1 <- p("Immunisation protects children against certain serious infections.
+                  Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
+                 tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),".")
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_6in1 <-  tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age and the data tables provide the uptake rates at three specific time-points.  Data is provided  on children who have become eligible for immunisation during the pandemic (from March 2020 onwards) and for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison."),
@@ -636,6 +633,10 @@ output$download_imm_simd_data <- downloadHandler(
 output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
+    h2("Immunisations - 2nd March 2022"),
+    p("When a cohort becomes eligible for any of the immunisations reported this data will now only be refreshed for the next 12 months; as the data becomes more complete, uptake rates for these cohorts stabilise within this period. 
+      Only minor changes to uptake rates are observed if the data is updated monthly beyond 12 months and this is mainly driven by movements into or out of the cohort, such as a child leaving Scotland.
+      Older data will continue to be reported but will no longer be refreshed."),
     h2("Immunisations - 6th October 2021"),
     p("Information on the uptake of pre-school immunisations was updated in this tool on 6 October and includes information on cohorts eligible for their immunisations to week beginning 9 August 2021. 
       It should be noted that the data recorded for the most recent eligible cohorts will not be fully complete at this stage. 

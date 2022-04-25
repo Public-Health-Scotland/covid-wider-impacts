@@ -1,5 +1,6 @@
 #UI
-secure_app( #uncomment if needing password protection
+
+# secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -103,7 +104,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           actionLink("childdev_button", "Child development", width="150px"), br(),
                           actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
                           actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
-                          actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
+                           actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
                           actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
                           actionLink("mod_button", "Method of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
@@ -126,7 +127,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                      bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
                                      bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
                                      bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
-                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
+                                      bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
                                      bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
                                      bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
@@ -143,7 +144,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
 # Summary trends ----
 ##############################################.
 tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
-  wellPanel(
+  wellPanel(#actionButton("browser", "browser"),
     column(4,
            conditionalPanel(condition = "input.measure_select != 'outpats' ",
            div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
@@ -187,6 +188,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   mainPanel(width = 12,
             uiOutput("data_explorer")
   )# mainPanel bracket
+
 ), # tabpanel bracket
 #############################################.
 # Cardiovascular ----
@@ -516,27 +518,27 @@ tabPanel(title = "Antenatal booking", value = "booking",
          mainPanel(width = 12,
                    uiOutput("booking_explorer")
          )# mainPanel bracket
-),#, #tab panel
- ###############################################.
- ## Termination of pregnancy  ----
- ###############################################.
- tabPanel(title = "Termination of pregnancy", value = "terminations",
-          wellPanel(
-            column(4, div(title="Select a breakdown",
-                          p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                          selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
-                                      selected = "Scotland")),
-                   uiOutput("geoname_ui_top")),
-            column(4,offset=4,
-                   actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
-                   fluidRow(br()),
-                   downloadButton("download_termination_data", "Download data"),
-                   fluidRow(br()),
-                   actionButton("jump_commentary_top","Go to commentary"))
-          ), #well panel
-          mainPanel(width = 12,
-                    uiOutput("top_explorer")
-          )# mainPanel bracket
+), #tab panel
+###############################################.
+## Termination of pregnancy  ----
+###############################################.
+tabPanel(title = "Termination of pregnancy", value = "terminations",
+         wellPanel(
+           column(4, div(title="Select a breakdown",
+                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
+                         selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
+                                     selected = "Scotland")),
+                  uiOutput("geoname_ui_top")),
+           column(4,offset=4,
+                  actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
+                  fluidRow(br()),
+                  downloadButton("download_termination_data", "Download data"),
+                  fluidRow(br()),
+                  actionButton("jump_commentary_top","Go to commentary"))
+         ), #well panel
+         mainPanel(width = 12,
+                   uiOutput("top_explorer")
+         )# mainPanel bracket
 ) # tabPanel bracket
  ), # navbar menu bracket
 ##############################################.
@@ -817,6 +819,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                          radioGroupButtons("drug_subcategories",
                                            label= "Step 1 – Select the data you want to explore",
                                            choices = c('Take home naloxone kits',
+                                                       'Scottish Ambulance Service naloxone administration'= 'SAS naloxone administration',
                                                        'Drug and alcohol treatment referrals',
                                                        'Opioid substitution therapy prescribing'='OST prescribing'),
                                            status = "primary",
@@ -852,24 +855,23 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
         )# mainPanel bracket
 
 ), # tabpanel bracket
-##############################################.
-# Data ----
-##############################################.
- tabPanel(title = "Data", icon = icon("table"), value = "table",
-          p("This section allows you to view the data in table format.
-         You can use the filters to select the data you are interested in.
-         You can also download the data as a csv using the download button.
-         Some of the data is also hosted in the",
-            tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
-                   "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
-          column(6, selectInput("data_select", "Select the data you want to explore.",
-                                choices = data_list_data_tab)),
-          column(6, downloadButton('download_table_csv', 'Download data')),
-          mainPanel(width = 12,
-                    DT::dataTableOutput("table_filtered"))
-      ) # tabpanel bracket
+#############################################.
+## Data ----
+#############################################.
+tabPanel(title = "Data", icon = icon("table"), value = "table",
+         p("This section allows you to view the data in table format.
+        You can use the filters to select the data you are interested in.
+        You can also download the data as a csv using the download button.
+        Some of the data is also hosted in the",
+           tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
+                  "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
+         column(6, selectInput("data_select", "Select the data you want to explore.",
+                               choices = data_list_data_tab)),
+         column(6, downloadButton('download_table_csv', 'Download data')),
+         mainPanel(width = 12,
+                   DT::dataTableOutput("table_filtered"))
+     ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-)#secure app
 
 #END
