@@ -71,17 +71,15 @@ save_final_file("ethnicity_lookup", "14_Feb_22")
 save_final_file("spec_lookup_op", "09_Feb_22")
 save_final_file("area_type_op", "09_Feb_22")
 ##########################################################.
-## Cardio - cath labs ----
-save_final_file("cath_lab", "16_Nov_20")
-## Cardio - A&E ----
-save_final_file("ae_cardio", "04_Apr_22")
+## Cardio ----
+save_final_file("cath_lab", "16_Nov_20") # cath labs
+save_final_file("ae_cardio", "04_Apr_22") # A&E
 save_final_file("ae_cardio_codes", "30_Nov_20")
-## Cardio - OOH ----
-save_final_file("ooh_cardiac", "28_Feb_22")
-## Cardio - SAS ----
-save_final_file("sas_cardiac", "29_Nov_21")
-## Cardio - Prescribing ----
-save_final_file("cardio_drugs", "04_Apr_22")
+save_final_file("ooh_cardiac", "28_Feb_22") # GP OOH
+save_final_file("sas_cardiac", "29_Nov_21") # SAS
+save_final_file("cardio_drugs", "04_Apr_22") # prescribing
+save_final_file("cardio_deaths", "06_Apr_22") # deaths
+save_final_file("cardio_admissions", "06_Apr_22") # admissions
 ##########################################################.
 ## Immunisations - six in one ----
 save_final_file("six_alldose", "30_Mar_22")
