@@ -354,7 +354,7 @@ SMRA_connect <- dbConnect(odbc(),
                           pwd=.rs.askForPassword("SMRA Password:"))
 query_smr01 <- 
   glue("select LINK_NO, CIS_MARKER, ADMISSION_DATE, DISCHARGE_DATE, HBTREAT_CURRENTDATE, 
-              MAIN_CONDITION, AGE_IN_YEARS age, SEX, ADMISSION_TYPE, DR_POSTCODE pc7
+              MAIN_CONDITION, AGE_IN_YEARS age, SEX, ADMISSION_TYPE, DR_POSTCODE pc7, DATAZONE_2011
   from SMR01_PI 
   WHERE ADMISSION_DATE between '{smr_start_date}' AND '{smr_end_date}'
   ORDER BY LINK_NO, ADMISSION_DATE, DISCHARGE_DATE")
@@ -365,8 +365,6 @@ dbDisconnect(SMRA_connect)
 
 # Condition strings
 smr01_pi_data$mc3 <- substr(smr01_pi_data$main_condition, 0,3)
-smr01_pi_data$mc1 <- substr(smr01_pi_data$main_condition, 0,1)
-smr01_pi_data$mc2 <- as.numeric(substr(smr01_pi_data$main_condition, 2,3))
 
 # Create blank diagnosis field to avoid ifelse NA issue
 smr01_pi_data <- mutate(smr01_pi_data, diagnosis = "")
@@ -464,9 +462,6 @@ create_cardiodeaths <- function(last_week) {
 #last_week <- "2021-09-30" #just for testing not using function
 last_month <- ymd(last_week)
 
-# NRS Start Date Fixed
-nrs_start_date <- ymd(20141229)
-
 # Speed up aggregations of different data cuts (A&E,NHS24,OOH)
 agg_cut_cardiac <- function(dataset, grouper) {
   dataset %>%
@@ -478,14 +473,14 @@ agg_cut_cardiac <- function(dataset, grouper) {
 SMRA_connect <- dbConnect(odbc(), 
                           dsn="SMRA",
                           uid=.rs.askForPassword("SMRA Username:"),
-                          pwd=.rs.askForPassword("SMRA Password:"),
-                          port = "1527",
-                          host = "nssstats01.csa.scot.nhs.uk",
-                          SVC = "SMRA.nss.scot.nhs.uk")
+                          pwd=.rs.askForPassword("SMRA Password:"))
 
 Query_Deaths <- 
-  glue("select DATE_OF_REGISTRATION, AGE, SEX, UNDERLYING_CAUSE_OF_DEATH, DATAZONE_2011, HBRES_CURRENTDATE hb, POSTCODE pc7 
-       from ANALYSIS.GRO_DEATHS_C WHERE DATE_OF_REGISTRATION >= TO_DATE({shQuote(nrs_start_date, type = 'sh')}, 'yyyy-mm-dd')")
+  glue("select DATE_OF_REGISTRATION, AGE, SEX, UNDERLYING_CAUSE_OF_DEATH, 
+              HBRES_CURRENTDATE hb, POSTCODE pc7, DATAZONE_2011 
+       from ANALYSIS.GRO_DEATHS_C 
+       WHERE DATE_OF_REGISTRATION >= '29 December 2014' 
+            AND regexp_like(UNDERLYING_CAUSE_OF_DEATH, 'I2[12]|I50|I6[0134]') ")
 
 # Extract data from database using SQL query above
 cardio_data_deaths <- as_tibble(dbGetQuery(SMRA_connect, Query_Deaths)) %>%
@@ -502,8 +497,6 @@ cardio_data_deaths <- cardio_data_deaths %>%
          year = year(month_ending)) #to allow merging
 
 cardio_data_deaths$mc3 <- substr(cardio_data_deaths$underlying_cause_of_death, 0,3)
-cardio_data_deaths$mc1 <- substr(cardio_data_deaths$underlying_cause_of_death, 0,1)
-cardio_data_deaths$mc2 <- as.numeric(substr(cardio_data_deaths$underlying_cause_of_death, 2,3))
 
 # Create blank diagnosis field to avoid ifelse NA issue
 cardio_data_deaths <- mutate(cardio_data_deaths, diagnosis = "")
@@ -544,8 +537,7 @@ cardio_data_deaths %<>%
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
                                TRUE~area_name)) %>% 
   # Aggregating to make it faster to work with
-  group_by(month_ending, sex, dep, age, diagnosis, area_name, area_type) %>% 
-  summarise(count = n())  %>% ungroup()
+  count(month_ending, sex, dep, age, diagnosis, area_name, area_type, name = "count") 
 
 # Create aggregations for each split
 deaths_all <- cardio_data_deaths %>% agg_cut_cardiac(grouper=NULL) %>% mutate(type = "sex", category = "All")
