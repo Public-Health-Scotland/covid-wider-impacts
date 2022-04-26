@@ -33,8 +33,8 @@ create_aecardio(filedate = "2022-03-31", last_week =  "2022-03-27")
 create_sascardio(filedate = "2021-11-29", last_week =  "2021-11-21") #there is currently a duplicates issue with this data so it is not being updated until resolved.
 create_cardiodrugs(filedate = "2022-03-31", last_week =  "2022-03-27")
 create_oohcardio(filedate = "2022-04-04", last_week =  "2022-03-27")
-create_cardioadmissions(last_week =  "2021-09-30")
-create_cardiodeaths(last_week =  "2021-12-31")
+create_cardioadmissions(last_week =  "2021-09-30") #updated quarterly   
+create_cardiodeaths(last_week =  "2021-12-31") #updated quarterly
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the cardio_tab script

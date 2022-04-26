@@ -8,18 +8,7 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 ## Lookups ---- from deaths_data_preparation.R 
 ## for Hospital Discharges / deaths Cardiac
-## May need adapted
 ###############################################.
-# Bringing  LA and datazone info.
-#postcode_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2021_2.rds') %>% 
-#  setNames(tolower(names(.))) %>%   #variables to lower case
-#  select(pc7, datazone2011, hscp2019, hscp2019name)
-
-# SIMD quintile to datazone lookup
-#dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
-# Sourced from "/conf/linkage/output/lookups/Unicode/Populations/Estimates/DataZone2011_pop_est_5year_agegroups_2011_2020.rds"
-# See HD lookup code
-# dep_lookup <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact-data/colin/lookups/deprivation_geography.rds") %>%
 dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
   rename(datazone_2011 = datazone) %>%
   select(datazone_2011, year, sc_quin) %>%
@@ -28,8 +17,6 @@ dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/depriva
 dep_lookup21 <- dep_lookup %>%  filter(year == 2019) %>% mutate(year = 2021)
 
 dep_lookup <- rbind(dep_lookup, dep_lookup21)
-
-#geo_lookup <- left_join(dep_lookup, postcode_lookup)
 
 ###############################################.
 ## Cath labs - cardiac procedures ----
@@ -365,12 +352,11 @@ SMRA_connect <- dbConnect(odbc(),
                           dsn="SMRA",
                           uid=.rs.askForPassword("SMRA Username:"),
                           pwd=.rs.askForPassword("SMRA Password:"))
-
 query_smr01 <- 
-  glue("select LINK_NO, CIS_MARKER, ADMISSION_DATE, DISCHARGE_DATE, HBTREAT_CURRENTDATE, MAIN_CONDITION, AGE_IN_YEARS,
-  SEX, ADMISSION_TYPE, INPATIENT_DAYCASE_IDENTIFIER, POSTCODE, DATAZONE_2011, DR_POSTCODE
+  glue("select LINK_NO, CIS_MARKER, ADMISSION_DATE, DISCHARGE_DATE, HBTREAT_CURRENTDATE, 
+              MAIN_CONDITION, AGE_IN_YEARS age, SEX, ADMISSION_TYPE, DR_POSTCODE pc7
   from SMR01_PI 
-  WHERE ADMISSION_DATE between smr_start_date AND smr_end_date
+  WHERE ADMISSION_DATE between '{smr_start_date}' AND '{smr_end_date}'
   ORDER BY LINK_NO, ADMISSION_DATE, DISCHARGE_DATE")
 
 smr01_pi_data <- as_tibble(dbGetQuery(SMRA_connect, query_smr01)) %>%
@@ -397,7 +383,7 @@ smr01_hf <- smr01_pi_data %>% filter(mc3 %in% c("I50")) %>%
 smr01_str <- smr01_pi_data %>% filter(mc3 %in% c("I60","I61","I63","I64")) %>%
   mutate(diagnosis = "Stroke")
 
-remove(smr01_pi_data)
+browser()
 
 # Filter to just include heart attack, stroke and heart failure
 smr01_pi_data <- bind_rows(smr01_ami, smr01_hf, smr01_str)
@@ -407,42 +393,26 @@ smr01_pi_data <- smr01_pi_data %>%
   mutate(month_ending = quarter(as.Date(discharge_date), type = "date_last", fiscal_start = 1)) %>%
   mutate(month_ending = floor_date(as.Date(month_ending), "month")) %>%
   mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
-         year = year(month_ending)) #to allow merging
-
-smr01_pi_data <- smr01_pi_data %>% rename(pc7 = dr_postcode)
-smr01_pi_data <- smr01_pi_data %>% rename(age = age_in_years)
-
-smr01_pi_data <- smr01_pi_data %>% mutate(hbname = match_area(hbtreat_currentdate))
+         year = year(month_ending),
+         hbname = match_area(hbtreat_currentdate)) #HB name
                                             
 #Merging with deprivation and geography lookup
-smr01_pi_data <- left_join(smr01_pi_data, dep_lookup) 
-smr01_pi_data <- smr01_pi_data %>% rename(dep = sc_quin)
+smr01_pi_data <- left_join(smr01_pi_data, dep_lookup) %>% rename(dep = sc_quin)
 
-smr01_pi_data <- smr01_pi_data %>% create_agegroups() # Age Bands
-smr01_pi_data <- smr01_pi_data %>% create_depgroups() #deprivation groups
-smr01_pi_data <- smr01_pi_data %>% select(-age)
-smr01_pi_data <- smr01_pi_data %>% rename(age = age_grp)
+smr01_pi_data %<>% create_agegroups() %>%  # Age Bands
+  create_depgroups() %>%  #deprivation groups
+  select(-age) %>% 
+  rename(age = age_grp)
 
-# Admission type
-smr01_pi_data = smr01_pi_data %>%
-  mutate(type_admission = case_when(
-    between(admission_type, 20, 22) ~ "Emergency",
-    between(admission_type, 30, 36) ~ "Emergency",
-    between(admission_type, 38, 39) ~ "Emergency",
-    between(admission_type, 10, 12) ~ "Elective",
-    between(admission_type, 19, 19) ~ "Elective",
-    between(admission_type, 18, 18) ~ "Transfer",
-    between(admission_type, 40, 40) ~ "Other",
-    between(admission_type, 42, 42) ~ "Other",
-    between(admission_type, 48, 48) ~ "Other"))
+# Selecting only emergency admissions
+smr01_pi_data %<>% filter(between(admission_type, 20, 22) |
+                                           between(admission_type, 30, 36) |
+                                           between(admission_type, 38, 39))
 
-smr01_pi_data = smr01_pi_data %>% filter(type_admission == "Emergency")
-
-smr01_pi_data <- smr01_pi_data %>%
-group_by(year, month_ending, hbname, diagnosis, type_admission, sex, dep, age) %>% 
-  summarise(count = n())
-
-smr01_pi_data <- smr01_pi_data %>% mutate(scot = "Scotland")
+smr01_pi_data %<>%
+  count(year, month_ending, hbname, diagnosis, type_admission, 
+        sex, dep, age, name = "count") %>% 
+  mutate(scot = "Scotland")
 
 smr01_piv <- smr01_pi_data %>%
   mutate(scot = "Scotland") %>%
