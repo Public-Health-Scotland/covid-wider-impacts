@@ -261,6 +261,7 @@ tears_download <- readRDS("data/tears_download_data.rds")
  SASdata<-readRDS('data/SASdata.rds')
  OST_paid<-readRDS('data/OST_paid.rds')
  OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
+ Drug_AE_attendances <- readRDS('data/Drug_AE_attendances.rds')
 
 ###############################################.
 ## Objects, names, lists ----

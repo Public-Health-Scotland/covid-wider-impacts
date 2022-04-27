@@ -620,4 +620,40 @@ saveRDS(Total_Quant, "shiny_app/data/OST_paid_quantity.rds")
 saveRDS(Total_Quant, paste0(data_folder,"final_app_files/OST_paid_quantity_",
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
+
+
+###############################################.
+## A&E data prep ----
+###############################################.
+
+Drug_AE_attendances <- readRDS("//PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Drug_related_AE_attendances/A&E_Scotland_HB_2020_to_28-02-2022.RDS")
+
+Drug_AE_attendances <- Drug_AE_attendances %>%
+  filter(Geography_type == "Scotland") %>%
+  select(-Geography_type) %>%
+  rename(Board = Geography) %>%
+  bind_rows(Drug_AE_attendances %>%
+              filter(Geography_type != "Scotland") %>%
+              select(-Geography_type) %>%
+              rename(Board = Geography)) %>%
+  rename(Type = DrugsAlcBothNone,
+         `Average 2018 & 2019` = avg_1819_ma,
+         `2020 & 2021` = Observed.20.21.22_ma,
+         Date = WeekBeginning) %>%
+  mutate(Type = as.factor(Type),
+         Board = as.factor(Board)) %>%
+  mutate(Type = forcats::fct_recode(Type, 
+                                    "Drug Overdoses" = "Drug",
+                                    'Alcohol Overdoses' = "Alcohol",
+                                    'Drug and Alcohol Overdoses' = "Both"))
+
+
+# # Censor data cells < 5
+# Drug_AE_attendances <- Drug_AE_attendances %>%
+#   filter(!(`2020 & 2021` <= 5 | `Average 2018 & 2019` <=5))
+
+saveRDS(Drug_AE_attendances, "shiny_app/data/Drug_AE_attendances.rds")
+saveRDS(Drug_AE_attendances, paste0(data_folder,"final_app_files/Drug_AE_attendances_", 
+                       format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
 ## END

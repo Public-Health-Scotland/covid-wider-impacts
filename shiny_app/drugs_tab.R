@@ -87,6 +87,23 @@ observeEvent(input$btn_drugs_modal,
                    tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
+             else if(input$drug_subcategories == 'Drug related A&E attendances'){
+               showModal(modalDialog(
+                 title = "What is the data source?",
+                 p('bla '),
+                 p('blah'),
+                 p('blaahh'),
+                 p(strong('Terminology:')),
+                 tags$ul(
+                   tags$li("Item: An item is an individual product written on a prescription, e.g. methadone 1mg/ml oral solution. "),
+                   tags$li("Quantity: The total quantity of the item requested on the prescription, e.g. 500ml."),
+                   tags$li("Quantity per item:  The quantity prescribed per item on a prescription. It is calculated as quantity/number of items.")),
+                 p('Other areas of the Covid Wider Impacts Dashboard i.e. Cardiovascular and Mental Health have presented prescribing information using data from e- messages (generated through GP practices) which provide more real-time data. As a significant amount of OST prescribing is undertaken through non-GP clinic settings, paid data is the most complete and robust and used in this analysis.'),
+                 p('Paid data is presented by month and refers to prescriptions that have been submitted and processed for payment. Since all dispensers must be reimbursed for the drugs they dispense, this data is regarded as complete. '),
+                 p('For further information, contact',
+                   tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             }
                )
 #observeEvent(input$browser, browser())
 
@@ -98,10 +115,11 @@ output$area_drugs_select<-renderUI({
   }
 
   
-  else if (input$drug_subcategories == 'Take home naloxone kits'||input$drug_subcategories=='SAS naloxone administration'||input$drug_subcategories == 'OST prescribing'){
+  else if (input$drug_subcategories == 'Take home naloxone kits'||input$drug_subcategories=='SAS naloxone administration'||input$drug_subcategories == 'OST prescribing'||input$drug_subcategories == 'Drug related A&E attendances'){
     selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
                    choices = c('Scotland','NHS Board'), selected = "Scotland")
   }
+  
 })
 
 
@@ -135,24 +153,27 @@ output$types<-renderUI({
     column(8, 
            radioButtons('types',label='Step 3 - Select type of treatment',
                         choices=c('Methadone','Buprenorphine'),selected='Methadone'))
-    }
+  }
+  else if(input$drug_subcategories=='Drug related A&E attendances'){
+    column(8,
+           radioButtons("types", label="Step 3 - Select type of attendance",
+                        choices = c('Drug Overdoses','Alcohol Overdoses', 'Drug and Alcohol Overdoses'),selected = 'Drug and Alcohol Overdoses'))
+  }
 })
  
 location<-reactive({
-  
   if (input$area_drugs_select=='Scotland'){
     location<-'Scotland'
   }
   else if (input$area_drugs_select=='Alcohol and Drug Partnership'||input$area_drugs_select=='NHS Board'){
     location<-input$geoname_drugs
   }
-  }) 
+}) 
 
 
 plot_data<-reactive({ 
   
   if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
-    
     plot_data<-subset(DTR_data,(Board==location()) & Type==input$types)
   }
   else if(input$drug_subcategories=='Take home naloxone kits'){
@@ -163,6 +184,9 @@ plot_data<-reactive({
   }
   else if(input$drug_subcategories=='SAS naloxone administration'){
     plot_data<-subset(SASdata,(Board==location()))
+  }
+  else if(input$drug_subcategories=='Drug related A&E attendances'){
+    plot_data<-subset(Drug_AE_attendances,(Board==location()))
   }
   plot_data
 })
@@ -344,8 +368,54 @@ output$TwoYrComparison<-renderUI({
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     })
     plotlyOutput('trend',width='100%')
-  }}
+    }}
   
+  #### Drug related A&E attendances ####
+  else if(input$drug_subcategories=='Drug related A&E attendances'){
+    if(location()=='NHS Shetland'||location()=='NHS Orkney'||location()=='NHS Western Isles'){
+      output$data_message<-renderText('Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total')
+      textOutput('data_message')
+    }
+    else{
+      output$trend <- renderPlotly({
+        plot_data <- subset(plot_data(),(Type==input$types))
+        lab_text<-c(paste0("Week beginning: ", format(plot_data$Date, "%d %b %Y"),
+                            "<br>", 'Number of attendances: ', round(plot_data$`2020 & 2021`,1),
+                            "<br>", "Historic average: ", round(plot_data$`Average 2018 & 2019`,1)))
+        trend <- plot_ly(data = plot_data, 
+                         x = plot_data$Date)
+        trend <- trend %>% add_trace(y = plot_data$`2020 & 2021`,
+                                     name = '2020, 2021 & 2022',
+                                     type = 'scatter', 
+                                     mode = 'lines', 
+                                     line = list(color=pal_overall[1]),
+                                     text = lab_text,
+                                     hoverinfo = 'text')
+        
+        trend <- trend %>% add_trace(y = plot_data$`Average 2018 & 2019`,
+                                     name = 'Average \n2018-2019',
+                                     type = 'scatter', 
+                                     mode = 'lines', 
+                                     line = list(color=pal_overall[2],dash='dot'),
+                                     text = lab_text,hoverinfo='text')
+        
+        trend <- trend %>% layout(margin = list(t=80),
+                                xaxis = list(fixedrange=TRUE,
+                                           title='Date'),
+                                title = (sprintf("3-Week central moving average of number of", input$type, "attendances at A&E in 2020 - 2022 \n compared with 2018-19 average (%s,%s)",location())),
+                                yaxis = list(title = "Number of attendances",
+                                             rangemode='tozero',
+                                             fixedrange=TRUE),
+                                shapes = lockdown(as.Date('2020-03-23'),'grey'),
+                                annotations = annote(as.Date("2020-03-01"), plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`))
+        
+        trend <- trend %>%  config(displaylogo = F, 
+                                   displayModeBar = TRUE, 
+                                   modeBarButtonsToRemove = bttn_remove)
+      })
+      plotlyOutput('trend',width='100%')
+    }
+  }
   
 })
 
