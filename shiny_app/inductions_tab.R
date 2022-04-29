@@ -358,6 +358,8 @@ observeEvent(input$switch_to_induction,{
 output$induction_commentary <- renderUI({
   tagList(
     bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
+    h2("Induction of labour - 4th May 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley for December 2021 and January 2022 so the proportion of births that are induced for these months is likely to change in future releases of the dashboard."),
     h2("Induction of labour - 1st December 2021"),
     p("The percentage in NHS Greater Glasgow & Clyde of singleton live births at 37-42 weeks gestation that followed induction of labour has been consistently higher than the pre-pandemic average since October 2020, and reached 44% in August 2021. When undertaken for appropriate reasons, and by appropriate methods, induction is useful and benefits both mothers and newborn. We will continue to monitor and are working with NHS Greater Glasgow & Clyde to explore further. "),
     h2("Induction of labour - 1st September 2021"),

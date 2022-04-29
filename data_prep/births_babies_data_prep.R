@@ -20,7 +20,7 @@ create_delivery <- function(folderdate) {
   ## mod data for run chart (scotland and nhs board) - monthly
   mod_runchart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",delivery_folder,"/WI_DELIVERIES_RUNCHART_mode_",delivery_date,".rds")) %>%  
     janitor::clean_names() %>%
-    rename(area_name = hbres, month = date) %>%
+    rename(area_name = hbrname, month = date) %>%
     mutate(month = as.Date(month),
            type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                             area_name=="Scotland" ~ "Scotland"),
@@ -59,7 +59,7 @@ create_delivery <- function(folderdate) {
   ## 2- LINECHART DATA mode of delivery for Scotland only by age and dep
   mod_scot <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",delivery_folder,"/WI_DELIVERIES_SCOT_CHARTS_mode_",delivery_date,".rds")) %>%  
     janitor::clean_names() %>%
-    rename(area_name=hbres, month=date, category=variable) %>%
+    rename(area_name=hbrname, month=date, category=variable) %>%
     mutate(month=as.Date(month),
            area_type="Scotland",
            type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
@@ -74,7 +74,7 @@ create_delivery <- function(folderdate) {
   ## 3- LINECHART DATA mode of delivery for Scotland & NHS board
   mod_linechart <- readRDS(paste0(data_folder, "pregnancy/mode_of_delivery/",delivery_folder,"/WI_DELIVERIES_LINECHART_mode_",delivery_date,".rds")) %>%  
     janitor::clean_names() %>%
-    rename(area_name=hbres, month=date) %>%
+    rename(area_name=hbrname, month=date) %>%
     mutate(month=as.Date(month, format="%Y-%m-%d "),
            #month=format(month,"%b %Y"),
            type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
@@ -159,7 +159,7 @@ create_delivery <- function(folderdate) {
   ## mod data for run chart (scotland and nhs board) - monthly
   induct_runchart <- readRDS(paste0(data_folder, "pregnancy/inductions/",delivery_folder,"/WI_DELIVERIES_RUNCHART_induced_",delivery_date,".rds")) %>%
     janitor::clean_names() %>%
-    rename(area_name = hbres, month = date) %>%
+    rename(area_name = hbrname, month = date) %>%
     mutate(month = as.Date(month),
            type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                             area_name=="Scotland" ~ "Scotland"),
@@ -190,7 +190,7 @@ create_delivery <- function(folderdate) {
   ## 2- LINECHART DATA inductions for Scotland only by age and dep
   induct_scot <- readRDS(paste0(data_folder, "pregnancy/inductions/",delivery_folder,"/WI_DELIVERIES_SCOT_CHARTS_induced_",delivery_date,".rds")) %>%
     janitor::clean_names() %>%
-    rename(area_name=hbres, month=date, category=variable) %>%
+    rename(area_name=hbrname, month=date, category=variable) %>%
     mutate(month=as.Date(month),
            area_type="Scotland",
            type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
@@ -208,7 +208,7 @@ create_delivery <- function(folderdate) {
     mutate(tot_births_37_42=births_37_42) %>%
     #reshape data file for ease of creation of line chart with percentages
     pivot_longer(cols = ind_37_42:births_37_42, names_to = "ind",values_to = "births") %>%
-    rename(area_name=hbres, month=date) %>%
+    rename(area_name=hbrname, month=date) %>%
     mutate(month=as.Date(month, format="%Y-%m-%d "),
            type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                           area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
@@ -279,7 +279,7 @@ create_delivery <- function(folderdate) {
   ## 1-RUNCHART DATA
   gestation_runchart <- readRDS(paste0(data_folder,"pregnancy/gestation_at_delivery/",delivery_folder,"/WI_DELIVERIES_RUNCHART_gestation_",delivery_date,".rds")) %>%
     janitor::clean_names() %>%
-    rename(area_name = hbres, month = date) %>%
+    rename(area_name = hbrname, month = date) %>%
     mutate(month = as.Date(month),
            type = case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                             area_name=="Scotland" ~ "Scotland"),
@@ -321,7 +321,7 @@ create_delivery <- function(folderdate) {
   ## 2- LINECHART DATA inductions for Scotland only by age and dep
   gestation_scot <- readRDS(paste0(data_folder, "pregnancy/gestation_at_delivery/",delivery_folder,"/WI_DELIVERIES_SCOT_CHARTS_gestation_",delivery_date,".rds")) %>%
     janitor::clean_names() %>%
-    rename(area_name=hbres, month=date, category=variable) %>%
+    rename(area_name=hbrname, month=date, category=variable) %>%
     mutate(month=as.Date(month),
            area_type="Scotland",
            type=case_when(subgroup=="AGEGRP" ~ "age",subgroup=="SIMD" ~ "dep"),
@@ -340,7 +340,7 @@ create_delivery <- function(folderdate) {
     mutate(tot_births_18_44=births_18_44) %>%
     #reshape data file for ease of creation of line chart with percentages
     pivot_longer(cols = births_under32:births_18_44, names_to = "gest",values_to = "births") %>%
-    rename(area_name=hbres, month=date) %>%
+    rename(area_name=hbrname, month=date) %>%
     mutate(month=as.Date(month, format="%Y-%m-%d "),
            type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                           area_name=="Scotland" ~ "Scotland", TRUE ~ "Other"),
