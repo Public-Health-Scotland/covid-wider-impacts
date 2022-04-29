@@ -100,32 +100,33 @@ save_final_file("age_defs_imm_6inone", "30_Mar_22")
 save_final_file("age_defs_imm_mmr", "30_Mar_22")
 save_final_file("month_eligibility_immun", "30_Mar_22")
 ##########################################################.
+ch_date <- "28_Apr_22"
 ## Child health reviews - first visit ----
-save_final_file("first_visit", "28_Apr_22")
-save_final_file("first_visit_datatable", "28_Apr_22")
-save_final_file("first_visit_data", "28_Apr_22")
+save_final_file("first_visit", ch_date)
+save_final_file("first_visit_datatable", ch_date)
+save_final_file("first_visit_data", ch_date)
 ## Child health reviews - 6-8 weeks ----
-save_final_file("six_to_eight", "28_Apr_22")
-save_final_file("six_to_eight_datatable", "28_Apr_22")
-save_final_file("six_to_eight_data", "28_Apr_22")
+save_final_file("six_to_eight", ch_date)
+save_final_file("six_to_eight_datatable", ch_date)
+save_final_file("six_to_eight_data", ch_date)
 ## Child health reviews - 13-15 months ----
-save_final_file("thirteen", "28_Apr_22")
-save_final_file("thirteen_datatable", "28_Apr_22")
-save_final_file("thirteen_data", "28_Apr_22")
+save_final_file("thirteen", ch_date)
+save_final_file("thirteen_datatable", ch_date)
+save_final_file("thirteen_data", ch_date)
 ## Child health reviews - 27-30 months ----
-save_final_file("twentyseven", "28_Apr_22")
-save_final_file("twentyseven_datatable", "28_Apr_22")
-save_final_file("twentyseven_data", "28_Apr_22")
+save_final_file("twentyseven", ch_date)
+save_final_file("twentyseven_datatable", ch_date)
+save_final_file("twentyseven_data", ch_date)
 ## Child health reviews - 4-5 years ----
-save_final_file("fourtofive", "28_Apr_22")
-save_final_file("fourtofive_datatable", "28_Apr_22")
-save_final_file("fourtofive_data", "28_Apr_22")
+save_final_file("fourtofive", ch_date)
+save_final_file("fourtofive_datatable", ch_date)
+save_final_file("fourtofive_data", ch_date)
 ## Child development ----
-save_final_file("child_dev", "28_Apr_22")
-save_final_file("child_dev_depr", "28_Apr_22")
-save_final_file("child_dev_domains", "28_Apr_22")
+save_final_file("child_dev", ch_date)
+save_final_file("child_dev_depr", ch_date)
+save_final_file("child_dev_domains", ch_date)
 ## Breastfeeding ----
-save_final_file("breastfeeding", "28_Apr_22")
+save_final_file("breastfeeding", ch_date)
 ##########################################################.
 ## Pregnancy - Antenatal bookings ----
 save_final_file("ante_booking", "29_Mar_22")
