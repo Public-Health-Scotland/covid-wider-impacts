@@ -15,11 +15,12 @@
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
 
-create_delivery(folderdate = "2022-03-21") # Mode of delivery, induction and gestation data
+
+create_delivery(folderdate = "2022-04-12") # Mode of delivery, induction and gestation data
 create_perinatal(foldermonth = "may22") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2022_03_16", max_date = "2021-12-01") # Apgar scores
+create_apgar(folderdate = "2022_04_13", max_date = "2021-12-01") # Apgar scores
 create_preterm(preterm_date = "2022_03_16", max_date = "2021-12-01") # Preterm
-create_tears(tears_date = "2022_03_16", max_date = "2021-12-01") # Perineal tears
+create_tears(tears_date = "2022_04_13", max_date = "2022-01-31") # Perineal tears
 
 # For delivery, apgar, preterm, tears and antenatal change dates in global script
 # For perinatal change dates in perinatal_tab script
@@ -47,10 +48,10 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20220328") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "28thMar2022")
-create_breastfeeding(filedate = "28thMar2022")
-create_childdev_domains(filedate="28thMar2022")
+create_chreview(ch_date_file = "20220425") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "25thApr2022")
+create_breastfeeding(filedate = "25thApr2022")
+create_childdev_domains(filedate="25thApr2022")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
@@ -89,7 +90,7 @@ file.edit("shiny_app/summary_tab.R")
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
 create_terminations(top_date = "2022-03-22")
-create_antebooking(booking_date = "16032022", max_book_date = "2022-03-14")
+create_antebooking(booking_date = "20042022", max_book_date = "2022-04-12")
 
 
 # Add here what needs to be changed in the shiny scripts
