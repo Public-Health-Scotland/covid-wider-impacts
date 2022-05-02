@@ -140,9 +140,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           )))
 ), #tab panel
 
-###############################################.
-# Summary trends ----
 ##############################################.
+# Summary trends ----
+#############################################.
 tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   wellPanel(#actionButton("browser", "browser"),
     column(4,
@@ -188,7 +188,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
    mainPanel(width = 12,
              uiOutput("data_explorer")
    )# mainPanel bracket
- 
+
  ), # tabpanel bracket
 #############################################.
 # Cardiovascular ----
@@ -211,7 +211,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                    uiOutput("cardio_explorer")
          )# mainPanel bracket
 ), # tabpanel bracket
- 
+
 # ###############################################.
 # ## Cancer ----
 # ###############################################.
@@ -265,14 +265,14 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer3"))
                         ) , # tabpanel bracket
- 
+
                          ###############################################.
                          ## SACT ----
                          ###############################################.
- 
- 
+
+
                          #### MONTHLY TAB
- 
+
                         tabPanel(title = "SACT (Chemotherapy) Monthly Patients ", icon = icon("syringe"), value = "sact",
                                  wellPanel(h4(strong("SACT Treatment Activity in Scotland - Monthly Patient Data")),
                                            p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
@@ -489,13 +489,13 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
                    uiOutput("mh_explorer")
          )# mainPanel bracket
 ),#tabPanel bracket
-###############################################.
-## Pregnancy menu ----
 ##############################################.
+# Pregnancy menu ----
+#############################################.
 navbarMenu("Pregnancy", icon = icon("venus"),
-###############################################.
-## Antenatal booking ----
-###############################################.
+##############################################.
+# Antenatal booking ----
+##############################################.
 tabPanel(title = "Antenatal booking", value = "booking",
          wellPanel(
            column(4, div(title="Select a breakdown",
@@ -537,13 +537,13 @@ tabPanel(title = "Termination of pregnancy", value = "terminations",
          )# mainPanel bracket
 ) # tabPanel bracket
  ), # navbar menu bracket
-##############################################.
-# Births and Babies menu ----
 #############################################.
+# Births and Babies menu ----
+############################################.
 navbarMenu("Births and babies", icon = icon("baby"),
-###############################################.
-## Inductions ----
-###############################################.
+##############################################.
+# Inductions ----
+##############################################.
 tabPanel(title = "Induction of labour", value = "inductions",
         wellPanel(
           column(4, div(title="Select a breakdown",
