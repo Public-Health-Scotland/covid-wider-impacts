@@ -378,12 +378,16 @@ output$TwoYrComparison<-renderUI({
     }
     else{
       output$trend <- renderPlotly({
-        plot_data <- subset(plot_data(),(Type==input$types))
-        lab_text<-c(paste0("Week beginning: ", format(plot_data$Date, "%d %b %Y"),
+        ## set out the plot data, based on what the user has selected
+        plot_data <- subset(plot_data(),(Type==input$types) & (Category == "All"))
+        
+        lab_text<-c(paste0("Average of weeks beginning ",format(plot_data$Date-7, "%d %b %y"), ", ", format(plot_data$Date, "%d %b %y"), ", ", format(plot_data$Date+7, "%d %b %y"),
                             "<br>", 'Number of attendances: ', round(plot_data$`2020 & 2021`,1),
                             "<br>", "Historic average: ", round(plot_data$`Average 2018 & 2019`,1)))
+        
         trend <- plot_ly(data = plot_data, 
                          x = plot_data$Date)
+        
         trend <- trend %>% add_trace(y = plot_data$`2020 & 2021`,
                                      name = '2020, 2021 & 2022',
                                      type = 'scatter', 
@@ -400,14 +404,14 @@ output$TwoYrComparison<-renderUI({
                                      text = lab_text,hoverinfo='text')
         
         trend <- trend %>% layout(margin = list(t=80),
-                                xaxis = list(fixedrange=TRUE,
+                                  xaxis = list(fixedrange=TRUE,
                                            title='Date'),
-                                title = (sprintf("3-Week central moving average of number of", input$type, "attendances at A&E in 2020 - 2022 \n compared with 2018-19 average (%s,%s)",location())),
-                                yaxis = list(title = "Number of attendances",
+                                  title = (paste0("3-Week central moving average of number of attendances for", tolower(input$types), " at A&E in 2020 - 2022 \n compared with 2018-19 average (",location(), ")")),
+                                  yaxis = list(title = "Number of attendances",
                                              rangemode='tozero',
                                              fixedrange=TRUE),
-                                shapes = lockdown(as.Date('2020-03-23'),'grey'),
-                                annotations = annote(as.Date("2020-03-01"), plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`))
+                                  shapes = lockdown(as.Date('2020-03-23'),'grey'),
+                                  annotations = annote(as.Date("2020-03-01"), plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`))
         
         trend <- trend %>%  config(displaylogo = F, 
                                    displayModeBar = TRUE, 
@@ -670,7 +674,61 @@ output$Quan_plot<-renderUI({
   
 })
   
-  
+## A&E Drug attendances by sex
+output$Drug_gender_plot<-renderUI({
+  if (input$drug_subcategories=='Drug related A&E attendances') {
+    tagList(#A&E attendances
+      tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
+                 incomplete for a number of NHS Boards. Thus, the figures reported for drug and alcohol related
+                 attendances offer only a very approximate indication of attendances.
+                 Additionally, some NHS Boards have moved to a new recording standard which
+                 has not been fully consolidated in the A&E datamart as yet."),
+      br())
+    
+    if(location() == 'Scotland')  {
+    
+    output$drug_gender_plot<-renderPlotly({
+      
+      plot_drug_sex <- subset(plot_data(), (Board == "Scotland") & (Type==input$types) & (Category %in% c("Female", "Male", "Unknown","All")))
+      
+      lab_text<-c(paste0("Average of weeks beginning: ", format(plot_drug_sex$Date-7, "%d %b %Y"), ", ", format(plot_drug_sex$Date, "%d %b %Y"), ", ", format(plot_drug_sex$Date+7, "%d %b %Y"),
+                         "<br>", 'Number of attendances: ', round(plot_drug_sex$`2020 & 2021`,1)))
+      
+      trend_sex <- plot_ly(data = plot_drug_sex, 
+                       x = ~ Date,
+                       y = ~`2020 & 2021` )
+      
+      trend_sex <- trend_sex %>% 
+        add_trace(color = ~ Category,
+                  type = 'scatter',
+                  mode = 'lines', 
+                  line = list(color=pal_sex),
+                  text = lab_text,
+                  hoverinfo = 'text')
+      
+      trend_sex <- trend_sex %>% 
+        layout(xaxis = list(fixedrange=TRUE, title='Date'), 
+               margin=list(t=80),
+               title = (paste0("3-Week central moving average of number of attendances for ", tolower(input$types), "\n at A&E by sex (Scotland, 2020-2022)")),
+               yaxis = list(title = "Number of attendances",
+                            rangemode='tozero',
+                            fixedrange=TRUE) ,
+               shapes = lockdown(as.Date('2020-03-23'),'grey'),
+               annotations = annote(as.Date("2020-03-01"), plot_drug_sex$`Average 2018 & 2019`,plot_drug_sex$`2020 & 2021`))
+      
+      trend_sex <- trend_sex %>%  
+        config(displaylogo = F, 
+               displayModeBar = TRUE,
+               modeBarButtonsToRemove = bttn_remove)
+    })
+    plotlyOutput('drug_gender_plot')
+    }
+    else {
+      output$data_message<-renderText('Breakdown of attendances by sex are not shown at NHS Board level.')
+      textOutput('data_message')
+    }
+}
+})  
 
 
 ###############################################.

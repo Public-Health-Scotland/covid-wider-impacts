@@ -846,9 +846,10 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    fluidRow(br()),
                    uiOutput('Prop_barplot'),
                    uiOutput('PercentChange'),
+                   uiOutput('Drug_gender_plot'),
                    fluidRow(br()),
                    fluidRow(br())
-
+                   
         )# mainPanel bracket
 
 ), # tabpanel bracket

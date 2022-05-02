@@ -629,16 +629,17 @@ saveRDS(Total_Quant, paste0(data_folder,"final_app_files/OST_paid_quantity_",
 Drug_AE_attendances <- readRDS("//PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Drug_related_AE_attendances/A&E_Scotland_HB_2020_to_28-02-2022.RDS")
 
 Drug_AE_attendances <- Drug_AE_attendances %>%
-  filter(Geography_type == "Scotland") %>%
-  select(-Geography_type) %>%
-  rename(Board = Geography) %>%
-  bind_rows(Drug_AE_attendances %>%
-              filter(Geography_type != "Scotland") %>%
-              select(-Geography_type) %>%
-              rename(Board = Geography)) %>%
+  # filter(Geography_type == "Scotland") %>%
+  # select(-Geography_type) %>%
+  # rename(Board = Geography) %>%
+  # bind_rows(Drug_AE_attendances %>%
+  #             filter(Geography_type != "Scotland") %>%
+  #             select(-Geography_type) %>%
+  #             rename(Board = Geography)) %>%
   rename(Type = DrugsAlcBothNone,
          `Average 2018 & 2019` = avg_1819_ma,
          `2020 & 2021` = Observed.20.21.22_ma,
+         Board = Geography,
          Date = WeekBeginning) %>%
   mutate(Type = as.factor(Type),
          Board = as.factor(Board)) %>%
