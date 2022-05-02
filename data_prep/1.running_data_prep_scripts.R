@@ -30,7 +30,7 @@ create_tears(tears_date = "2022_04_13", max_date = "2022-01-31") # Perineal tear
 source("data_prep/cardio_data_prep.R") # This sources the functions for the section
 # Filedate: date on filename for each update, last week = last week of data to be included
 create_aecardio(filedate = "2022-04-28", last_week =  "2022-04-24")
-create_sascardio(filedate = "2021-11-29", last_week =  "2021-11-21") #there is currently a duplicates issue with this data so it is not being updated until resolved.
+create_sascardio(filedate = "2022-05-02", last_week =  "2022-04-24") #there is currently a duplicates issue with this data so it is not being updated until resolved.
 create_cardiodrugs(filedate = "2022-04-28", last_week =  "2022-04-24")
 create_oohcardio(filedate = "2022-05-02", last_week =  "2022-04-24")
 
