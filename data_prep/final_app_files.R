@@ -79,7 +79,7 @@ save_final_file("ae_cardio_codes", "30_Nov_20")
 ## Cardio - OOH ----
 save_final_file("ooh_cardiac", "2_May_22")
 ## Cardio - SAS ----
-save_final_file("sas_cardiac", "29_Nov_21")
+save_final_file("sas_cardiac", "2_May_22")
 ## Cardio - Prescribing ----
 save_final_file("cardio_drugs", "29_Apr_22")
 ##########################################################.
