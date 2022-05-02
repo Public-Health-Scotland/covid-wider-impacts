@@ -46,7 +46,7 @@ function(input, output, session) {
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               )
+               
 
   ##############################################.
   # Sourcing server files for each tab ----
