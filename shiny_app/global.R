@@ -81,10 +81,17 @@ sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 #Cancer data
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
 
-cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>%
+cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
   mutate(dep = factor(dep)) %>%
-  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20",
-                                              "Oct-Dec 20", "Jan-Mar 21", "Apr-Jun 21", "Jul-Sep 21", "Oct-Dec 21"), ordered = TRUE))
+  mutate(quarter_no = factor(quarter_no, ordered = TRUE))
+
+cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
+  mutate(dep = factor(dep)) %>%
+  mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
+                                                    "Jul-Sep 2020", "Oct-Dec 2020",
+                                                    "Jan-Mar 2021", "Apr-Jun 2021",
+                                                    "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
+
 
 cancer_extract_date <- "04 April 2022"
 

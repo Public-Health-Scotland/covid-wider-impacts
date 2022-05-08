@@ -947,13 +947,16 @@ base_cancer_cum_quarters_2yr <- base_cancer_counts_quarters_2yr %>%
 # ADD DIFFERENCE FIGURES
 
 diff_data_base_quarters_2yr <- base_cancer_cum_quarters_2yr %>%
-  mutate(cum_difference20 = case_when(cum_count1919 > 0 ~ 100*(cum_count2021 - cum_count1919)/cum_count1919,
+  mutate(difference = case_when(count1919 > 0 ~ 100*(count2021 - count1919)/count1919,
+                                      (count1919 = 0 & count2021 != 0) ~ 100*(count2021 - count1919)/1,
+                                      TRUE ~ 0)) %>% 
+  mutate(cum_difference = case_when(cum_count1919 > 0 ~ 100*(cum_count2021 - cum_count1919)/cum_count1919,
                                       (cum_count1919 = 0 & cum_count2021 != 0) ~ 100*(cum_count2021 - cum_count1919)/1,
                                       TRUE ~ 0))
 
 # TEST - CHECK DIFFERENCE FIGURES
-diff_data_base_quarters_check_2yr <- diff_data_base_quarters_2yr %>%
-  filter((site == "All Cancers") & (sex == "All") & (area == "NCA") & (breakdown == "None"))
+# diff_data_base_quarters_check_2yr <- diff_data_base_quarters_2yr %>%
+#   filter((site == "All Malignant Neoplasms (Excl. C44)") & (sex == "All") & (area == "Scotland") & (breakdown == "None"))
 # OK
 
 

@@ -45,15 +45,27 @@ cancer_data_cum_main <- reactive({
   
 })
 
-# Reactive dataset for the diff charts
-cancer_data_diff_all <- reactive({
-  
+# Reactive datasets for the diff charts
+cancer_data_diff <- reactive({
   cancer_data_quarters %>% filter(sex == input$gender, 
                               area == input$geoname_cancer, 
                               site == input$cancer_type,
                               breakdown == input$breakdown) %>%
     # Ordering factor so it shows correctly in Plotly
     mutate(quarter_no = factor(quarter_no, ordered = TRUE)) %>% 
+    arrange(quarter_no)
+})
+
+cancer_data_diff_2yrs <- reactive({
+  cancer_data_quarters_2 %>% filter(sex == input$gender, 
+                                  area == input$geoname_cancer, 
+                                  site == input$cancer_type,
+                                  breakdown == input$breakdown) %>%
+    # Ordering factor so it shows correctly in Plotly
+    mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
+                                                      "Jul-Sep 2020", "Oct-Dec 2020",
+                                                      "Jan-Mar 2021", "Apr-Jun 2021",
+                                                      "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE)) %>% 
     arrange(quarter_no)
 })
 
@@ -156,16 +168,16 @@ output$cancer_explorer3 <- renderUI({
   tagList(
     if(input$breakdown == "Age Group") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January against 2019 by Age Group - ", 
+                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 by Age Group - ", 
                       input$geoname_cancer), "cancer_split")
       
     } else if (input$breakdown == "Deprivation") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January against 2019 by Deprivation - ",
+                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 by Deprivation (1 = least deprived) - ",
                        input$geoname_cancer), "cancer_split")
     } else {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January against 2019 - ",
+                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 - ",
                       input$geoname_cancer), "cancer_split")
     },
     
@@ -240,7 +252,7 @@ output$cancer_explorer2 <- renderUI({
     br(),
     p(paste0("Figures presented based on data extracted on ",cancer_extract_date)),
     p(strong(paste0("Last updated: - 20/04/2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
-             30/08/2021."))))
+             31/12/2021."))))
   
   
 })
@@ -271,12 +283,12 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
                                                                    data_name = "inc")})
 
 # Difference charts
-output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_all(), periodvar = "quarter",
-                                                            if(input$cum_baseline == "Standard") {
-                                                              diffvar1 = "dif"
-                                                            } else {
-                                                              diffvar1 = "cum_dif"
-                                                            })})
+output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_2yrs(), periodvar = "quarter_no",
+                                                            if(input$cum_baseline == "Standard"){
+                                                              diffvar1 = "difference"
+                                                              } else {
+                                                              diffvar1 = "cum_difference"  
+                                                              })})
 
 ###############################################.
 ## Data downloads ----

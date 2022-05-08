@@ -437,25 +437,24 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
   } else {
     
     # Set x axis label
-    xaxis_title <-  "Incidence"
+    xaxis_title <-  "Quarter"
     
     xaxis_plots[["title"]] <- xaxis_title
     
     # Set y axis label
-    yaxis_title <-  "% Change"
+    yaxis_title <-  "% Change from 2019 Quarter"
 
     yaxis_plots[["title"]] <- yaxis_title 
     
     #Text for tooltips  
-    
-    measure_name <- case_when(diffvar1 %in% c("dif")  ~ "Percentage(%) Change:",
-                              diffvar1 %in% c("dif_cum")  ~ "Cumulative Percentage(%) Change:") # ,
+    measure_name <- "Percentage(%) Change:"
 
     value1 <- dataset[[diffvar1]]
     
-    tooltip_1 <- c(paste0("Quarter: ", dataset$quarter, "<br>", 
+    tooltip_1 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>", 
                           "Age group: ", dataset$age_group, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
     
     # Function for vertical line at start of lockdown
     vline <- function(x = 0, color = "grey") {
@@ -477,40 +476,45 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
     
    if (input$breakdown == "None"){ # DIFF PLOT - No breakdown
      
-     diff_plot <- diff_plot %>% 
+     diff_plot <- diff_plot %>%
+       
        add_trace(y = ~get(diffvar1),
                 type = 'scatter', 
                 mode = 'line',
                 color = 'purple',
-                text=tooltip_1,
+                text = tooltip_1,
                 hoverinfo="text")
+     
    } else if (input$breakdown == "Age Group") { # DIFF PLOT - AGE BREAKDOWN
      
-     diff_plot <- diff_plot %>% 
+     diff_plot <- diff_plot %>%
+       
        add_trace(y = ~get(diffvar1),
                  type = 'scatter', 
                  mode = 'line',
                  color = ~age_group,
                  colors = pal_sact,
-                 text=tooltip_1, 
+                 text = tooltip_1, 
                  hoverinfo="text")
      
    } else if (input$breakdown == "Deprivation") { #DIFF PLOT - Deprivation BREAKDOWN
     
      diff_plot <- diff_plot %>% 
+       
       add_trace(y = ~get(diffvar1),
                 type = 'scatter', 
                 mode = 'line',
                 color = ~dep,
                 colors = pal_cancer_diff,
-                text=tooltip_1, 
-                hoverinfo="text")
+                text = tooltip_1, 
+                hoverinfo="text") 
+       
    }
       
       #Layout
        diff_plot %>%  layout(margin = list(b = 80, t=5),
              xaxis = xaxis_plots, yaxis = yaxis_plots,
-             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>% 
+             legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
