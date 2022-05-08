@@ -48,16 +48,13 @@ cancer_data_cum_main <- reactive({
 # Reactive dataset for the diff charts
 cancer_data_diff_all <- reactive({
   
-  cancer_data_diff %>% filter(sex == input$gender, 
+  cancer_data_quarters %>% filter(sex == input$gender, 
                               area == input$geoname_cancer, 
                               site == input$cancer_type,
                               breakdown == input$breakdown) %>%
     # Ordering factor so it shows correctly in Plotly
-    mutate(quarter = factor(quarter, 
-                            levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", 
-                                       "Jul-Sep 20", "Oct-Dec 20", "Jan-Mar 21",
-                                       "Apr-Jun 21", "Jul-Sep 21", "Oct-Dec 21"), ordered = TRUE)) %>% 
-    arrange(quarter)
+    mutate(quarter_no = factor(quarter_no, ordered = TRUE)) %>% 
+    arrange(quarter_no)
 })
 
 cancer_data_dl <- reactive({
@@ -159,16 +156,16 @@ output$cancer_explorer3 <- renderUI({
   tagList(
     if(input$breakdown == "Age Group") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January 2020 against the previous year by Age Group - ", 
+                      " confirmed on a pathological specimen since January against 2019 by Age Group - ", 
                       input$geoname_cancer), "cancer_split")
       
     } else if (input$breakdown == "Deprivation") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January 2020 against the previous year by Deprivation - ",
+                      " confirmed on a pathological specimen since January against 2019 by Deprivation - ",
                        input$geoname_cancer), "cancer_split")
     } else {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen since January 2020 against the previous year - ",
+                      " confirmed on a pathological specimen since January against 2019 - ",
                       input$geoname_cancer), "cancer_split")
     },
     
