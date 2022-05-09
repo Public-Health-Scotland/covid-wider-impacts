@@ -206,13 +206,12 @@ output$cancer_explorer2 <- renderUI({
       pandemic.  It is important to understand whether fewer patients have been diagnosed with cancer as a
       result of these changes.  The Scottish Cancer Registry published its high quality figures on cancer
       incidence for 2020 on 12th April 2022.  As a proxy measure of new cancer diagnoses, this dashboard presents
-      numbers of individuals from whom a pathology sample found cancer in 2020/2021 and compares them to 2019."),
-    p(strong("Note - this does not include all patients who have been newly diagnosed with cancer, and also will include some patients
-             who are being followed-up from an earlier diagnosis of cancer. ")),
-    
+      numbers of individuals from whom a pathology sample found cancer in 2020/2021 and compares them to 2019.
+      While only proxy measures, the size of the changes corresponds approximately with those reported by cancer clinicians."),
+    p(strong("Note - this does not include all patients who have been newly diagnosed with cancer (by other methods), 
+              and will also include some patients who are being followed-up from a pre-2019 diagnosis of cancer.")),
     p(("By the end of 2021 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
        cancer (excluding non-melanoma skin cancers) in Scotland was "),
-      
       strong ("33,086 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
       ("in 2021, "),
       strong ("28,481 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -265,8 +264,6 @@ output$cancer_explorer2 <- renderUI({
       "more colorectal cancers (a total increase of less than",
       strong ("1%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
       "). "),
-    p("While these numbers are only proxy measures of new cancer diagnoses in Scotland, the size of the changes
-      corresponds with those reported by cancer clinicians. "),
     strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and
            may also update historical data."),
     br(),
@@ -420,7 +417,7 @@ output$cancer_commentary <- renderUI({
               of 176 individuals, or 17.5% higher.")),
     br(),
     p("A new chart comparing 2019 quarterly totals to the same quarters in 2020 and 2021 shows that after initial falls in diagnoses, 
-      there was some recovery or catching-up in the cumulative figures, repeating 2019 figures over two years for comparison of the 2 year period:"),
+      there was some recovery or catching-up in the cumulative figures, repeating 2019 figures over two years for comparison with the 2020-2021 period:"),
     tags$ul(
       tags$li("Lung cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 19.3% lower."),
       
