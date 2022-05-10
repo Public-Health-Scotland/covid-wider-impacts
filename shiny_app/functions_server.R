@@ -450,9 +450,16 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
     measure_name <- "Percentage(%) Change:"
 
     value1 <- dataset[[diffvar1]]
-    
-    tooltip_1 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>", 
+
+    tooltip_1 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>",
+                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+        
+    tooltip_2 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>", 
                           "Age group: ", dataset$age_group, "<br>",
+                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+
+    tooltip_3 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>", 
+                          "Deprivation Quintile: ", dataset$dep, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
     
     
@@ -494,7 +501,7 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
                  mode = 'line',
                  color = ~age_group,
                  colors = pal_sact,
-                 text = tooltip_1, 
+                 text = tooltip_2, 
                  hoverinfo="text")
      
    } else if (input$breakdown == "Deprivation") { #DIFF PLOT - Deprivation BREAKDOWN
@@ -506,7 +513,7 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
                 mode = 'line',
                 color = ~dep,
                 colors = pal_cancer_diff,
-                text = tooltip_1, 
+                text = tooltip_3, 
                 hoverinfo="text") 
        
    }

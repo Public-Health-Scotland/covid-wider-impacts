@@ -173,7 +173,7 @@ output$cancer_explorer3 <- renderUI({
       
     } else if (input$breakdown == "Deprivation") {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 by Deprivation (1 = least deprived) - ",
+                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 by Deprivation quintile(1 = least deprived) - ",
                        input$geoname_cancer), "cancer_split")
     } else {
       plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
