@@ -381,14 +381,14 @@ smr01_hf <- smr01_pi_data %>% filter(mc3 %in% c("I50")) %>%
 smr01_str <- smr01_pi_data %>% filter(mc3 %in% c("I60","I61","I63","I64")) %>%
   mutate(diagnosis = "Stroke")
 
-browser()
+#browser()
 
 # Filter to just include heart attack, stroke and heart failure
 smr01_pi_data <- bind_rows(smr01_ami, smr01_hf, smr01_str)
 
 # Note was issue with ceiling date creating wrong dates
 smr01_pi_data <- smr01_pi_data %>%
-  mutate(month_ending = quarter(as.Date(discharge_date), type = "date_last", fiscal_start = 1)) %>%
+  mutate(month_ending = quarter(as.Date(admission_date), type = "date_last", fiscal_start = 1)) %>%
   mutate(month_ending = floor_date(as.Date(month_ending), "month")) %>%
   mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
          year = year(month_ending),
@@ -406,6 +406,8 @@ smr01_pi_data %<>% create_agegroups() %>%  # Age Bands
 smr01_pi_data %<>% filter(between(admission_type, 20, 22) |
                                            between(admission_type, 30, 36) |
                                            between(admission_type, 38, 39))
+
+smr01_pi_data <- rename(smr01_pi_data, type_admission = admission_type)
 
 smr01_pi_data %<>%
   count(year, month_ending, hbname, diagnosis, type_admission, 
