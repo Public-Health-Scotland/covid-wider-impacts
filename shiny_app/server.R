@@ -39,9 +39,9 @@ function(input, output, session) {
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
                    tags$li("18 May 2022 - Systemic anti-cancer therapies data update."),
-                   tags$li("May/June 2022 - Additional data for the cardiovascular section."),
-                   tags$li("May/June 2022 - Cancer pathology data update."),
+                   tags$li("25 May 2022 - Additional data for the cardiovascular section: hospital admissions and excess mortality."),
                    tags$li("6 June 2022 - Monthly update of data (most sections)."),
+                   tags$li("June/July 2022 - Cancer pathology data update."),
                    tags$li("TBC 2022 - Cancer staging data.")
                  ),
                  size = "m",
