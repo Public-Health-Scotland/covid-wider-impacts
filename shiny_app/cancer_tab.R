@@ -371,8 +371,8 @@ output$cancer_commentary <- renderUI({
       tags$li("treatment (particularly surgery, which may provide the pathology sample)"),
       tags$li("completeness of pathology data")),
     
-    p("However, a quality assurance consultation with Scottish cancer clinicians and cancer network managers 
-      suggests that the differences between 2020 and 2019 correspond to their clinical experience."),
+    p("Since the definitive 2020 cancer incidence data were published in April 2022, quality assurance 
+      work is being carried out to validate the pathology dashboard figures. "),
     
     
     h4(strong("Overall trends in pathologically confirmed cancers")),
@@ -380,8 +380,9 @@ output$cancer_commentary <- renderUI({
       the numbers fell by about 40% of those seen in comparable weeks in 2019. Numbers then rose from late April 2020. 
       Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
       pandemic by 26th February 2021, when the latest data were available, although this varied by cancer type."),
-    p("In 2021, numbers had returned closer to those seen in 2019. Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
-      pandemic, although again, this varied by cancer type."),
+    p("In 2021, numbers had returned closer to those seen in 2019.For all cancers combined (excluding non-melanoma skin cancers), 
+      the weekly numbers of patients with pathologically confirmed cancers were close to those before the pandemic, 
+      although this varied by cancer type and there were some notably higher and lower than expected numbers (see relevant updates)."),
  
     #################################################################################################################   .
     
@@ -396,13 +397,13 @@ output$cancer_commentary <- renderUI({
       respectively, a difference of approximately 0.8%).  However, within cancer sites, some were higher and some lower than
       expected in 2021 compared with 2019."),
     
-    p("Among the most common cancer types, comparing January to week ending 27th December in 2021 and 2019:"),
+    p("Among the most common cancer types, comparing January to week ending 27th December in 2021 and 2019, respectively:"),
     tags$ul(
       tags$li("Lung cancer: 2,319 versus 2,833 pathological diagnoses; a decrease
               of 583 individuals, or 20.6% lower."),
       
-      tags$li("Breast cancer: 5,362 versus 5,358 pathological diagnoses; 
-              an increase of 4 individuals, or 0.7% higher"),
+      tags$li("Breast cancer (females only): 5,314 versus 5,315 pathological diagnoses; 
+              a decrease of  individual, or less than 1% lower"),
       
       tags$li("Prostate cancer: 3,646 versus 3,143 pathological diagnoses; an increase
               of 503 individuals, or 16% higher."),
@@ -419,19 +420,34 @@ output$cancer_commentary <- renderUI({
     p("A new chart comparing 2019 quarterly totals to the same quarters in 2020 and 2021 shows that after initial falls in diagnoses, 
       there was some recovery or catching-up in the cumulative figures, repeating 2019 figures over two years for comparison with the 2020-2021 period:"),
     tags$ul(
-      tags$li("Lung cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 19.3% lower."),
-      
-      tags$li("Breast cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 7.6% lower."),
-      
-      tags$li("Prostate cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 0.4% lower."),
-      
-      tags$li("Colorectal(bowel) cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10% lower."),
-      
-      tags$li("Liver and intrahepatic bile ducts: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.5% higher."),
-      
-      tags$li("Oesophagus: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.3% higher."),
+      tags$li("All excl. NMSC: 33086 (2021) and 28481 (2020) compared with 33345 in 2019.  That is, down 5123 in total by December 2021.  
+              No overall reduction in the number of “missing” patients although it is important to look at each cancer type to understand 
+              what has happened."),
+      tags$li("Lung cancer: 2319 (2021) and 2250 (2020) compared with 2833 in 2019.  That is, 1097 down in total by December 2021.  
+              So the continued under-diagnosis in 2021 added to the total “missing”."),
+
+      tags$li("Colorectal: 4057 (2021) and 3187 (2020) compared with 4041 in 2019.  That is, 838 down in total by December 2021."),
+
+      tags$li("Breast (females only): 5314 (2021) and 4488 (2020) compared with 5295 in 2019.  That is, down 788 in total by December 2021."),
+
+      tags$li("Cervical: 307 (2021) and 357 (2020) compared with 371 in 2019.  That is, down 78 in total by December 2021.")),
+
+      tags$li("Prostate: 2587 (2021) and 3646 (2020) compared with 3143 in 2019.  That is, down only 53 patients in total by December 2021 – 
+              suggesting that those missing in 2020 were largely identified in 2021 and there is little ongoing deficit."),
     
-      tags$li("Cervical: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10.2% lower.")),
+      # tags$li("Lung cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 19.3% lower."),
+      
+      # tags$li("Breast cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 7.6% lower."),
+      # 
+      # tags$li("Prostate cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 0.4% lower."),
+      # 
+      # tags$li("Colorectal(bowel) cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10% lower."),
+      # 
+      # tags$li("Liver and intrahepatic bile ducts: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.5% higher."),
+      # 
+      # tags$li("Oesophagus: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.3% higher."),
+      # 
+      # tags$li("Cervical: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10.2% lower.")),
       
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
              data to the end of December 2021 compared to 2019:")),

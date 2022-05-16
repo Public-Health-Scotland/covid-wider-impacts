@@ -90,7 +90,7 @@ cancer <- cancer %>%
 
 
 # import deprivation lookup
-depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_2_simd2020v2.rds")) %>%
+depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2022_1_simd2020v2.rds")) %>%
   clean_names() %>%
   select(pc8, hb2019name, simd2020v2_sc_quintile) %>%
   rename(postcode = pc8, hbres = hb2019name, dep = simd2020v2_sc_quintile) %>% 
@@ -228,10 +228,10 @@ cancer <- cancer %>%
 
 # extract invalid age records
 cancer <- cancer %>% 
-  mutate(dob = dmy(date_of_birth), 
-         doi = incidence_date,
-         age = floor(difftime(doi, dob, units = "weeks")/52.25)) %>% 
-  filter((age >= 0 & age < 130) & dob <= doi)
+  mutate(dob = ymd(dmy(date_of_birth)), 
+         doi = ymd(incidence_date),
+         age = age_calculate(dob, doi)) %>% 
+  filter(age >= 0 | dob <= doi)
 
 # create age group column
 cancer <- cancer %>%
@@ -298,7 +298,7 @@ cancer <- cancer %>%
 
 #format postcode to 8 digit
 cancer <- cancer %>%
-  mutate(postcode = postcode(postcode, format = "pc8"))
+  mutate(postcode = format_postcode(postcode, format = "pc8"))
 
 ### get Health Boards of residence and deprivation quintile rank from postcodes
 

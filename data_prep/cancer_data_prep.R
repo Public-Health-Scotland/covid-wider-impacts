@@ -50,34 +50,20 @@ cancer <- read_csv(paste0(input_folder,"Pathology_Data_Mar_22.csv"), col_names =
   mutate(incidence_date = dmy(incidence_date)) %>%
   mutate(chi_number = replace_na(chi_number, "0")) %>% 
   filter(year != 2022)
+# 266,772
 
-cancer2017_18 <- read_csv(paste0(input_folder,"2017_2018 Covid source data pathology detail.csv"), col_names = T) %>%
-  clean_names() %>%
-  select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
-  mutate(incidence_date = dmy(incidence_date)) %>%
-  mutate(chi_number = replace_na(chi_number, 0)) %>%
-  mutate(chi_number = as.character(chi_number)) %>%
-  mutate(chi_number = chi_pad(chi_number)) %>% 
-  mutate(derived_upi = as.character(derived_upi))
-
-cancer <- bind_rows(cancer, cancer2017_18)
-
-rm(cancer2017_18)
-
-# DATE VARIABLES TO UPDATE----
-valid_date <- "2021-12-31"
-
-quarters_1 <- c("Oct-Dec 18", "Jan-Mar 19",
-                    "Apr-Jun 19", "Jul-Sep 19",
-                    "Oct-Dec 19", "Jan-Mar 20",
-                    "Apr-Jun 20", "Jul-Sep 20",
-                    "Oct-Dec 20")
-
-quarters_2 <- c("Oct-Dec 19", "Jan-Mar 20",
-                    "Apr-Jun 20", "Jul-Sep 20",
-                    "Oct-Dec 20", "Jan-Mar 21",
-                    "Apr-Jun 21", "Jul-Sep 21",
-                    "Oct-Dec 21")
+# cancer2017_18 <- read_csv(paste0(input_folder,"2017_2018 Covid source data pathology detail.csv"), col_names = T) %>%
+#   clean_names() %>%
+#   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
+#   mutate(incidence_date = dmy(incidence_date)) %>%
+#   mutate(chi_number = replace_na(chi_number, 0)) %>%
+#   mutate(chi_number = as.character(chi_number)) %>%
+#   mutate(chi_number = chi_pad(chi_number)) %>%
+#   mutate(derived_upi = as.character(derived_upi))
+# 
+# cancer <- bind_rows(cancer, cancer2017_18)
+# 
+# rm(cancer2017_18)
 
 
 # Allocate records to Quarter groupings
@@ -90,11 +76,11 @@ cancer <- cancer %>%
 
 
 # import deprivation lookup
-depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_2_simd2020v2.rds")) %>%
+depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2022_1_simd2020v2.rds")) %>%
   clean_names() %>%
   select(pc8, hb2019name, simd2020v2_sc_quintile) %>%
   rename(postcode = pc8, hbres = hb2019name, dep = simd2020v2_sc_quintile) %>% 
-  mutate(postcode = postcode(postcode, format = 'pc8')) 
+  mutate(postcode = format_postcode(postcode, format = 'pc8')) 
 
 
 # allocate to ICD10 site
@@ -105,8 +91,8 @@ icd_cancer <- sprintf('C%02d', seq(00,97))
 
 # filter & recode sex values
 cancer <- cancer %>%
-  filter(site10 %in% icd_cancer) %>% 
-  filter(sex %in% c(1,2)) 
+  filter(site10 %in% icd_cancer) %>%   # 222,360
+  filter(sex %in% c(1,2))   # 222,357
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Classify by Cancer Sites----
@@ -209,12 +195,12 @@ cancer <- cancer %>%
 
 # exclude records where DOB = NA 
 cancer <- cancer %>%
-  filter(!is.na(date_of_birth)) 
+  filter(!is.na(date_of_birth)) # no rows removed; 222,357
 
 # filter impossible sex/cancer combos
 cancer <- cancer %>% 
-  filter(!(sex == 2 & site10 %in% sprintf('C%02d', seq(60, 63)))) %>% 
-  filter(!(sex == 1 & site10 %in% sprintf('C%02d', seq(51, 58))))
+  filter(!(sex == 2 & site10 %in% sprintf('C%02d', seq(60, 63)))) %>%  # 1 removed, 222,356
+  filter(!(sex == 1 & site10 %in% sprintf('C%02d', seq(51, 58))))      # 1 removed, 222,355
 
 # fix incorrect week numbers (2021 only) and include data to last week
 # of complete data (check this with DM)
@@ -224,14 +210,16 @@ cancer <- cancer %>%
   # mutate(week_number = case_when(year == 2020 & week_number == 53 ~ 52,
   #                                TRUE ~ week_number)) %>%
   filter(!(year == 2021 & week_number > 52))
+# no rows removed - 222,355
 
 
 # extract invalid age records
 cancer <- cancer %>% 
-  mutate(dob = dmy(date_of_birth), 
-         doi = incidence_date,
-         age = floor(difftime(doi, dob, units = "weeks")/52.25)) %>% 
-  filter((age >= 0 & age < 130) & dob <= doi)
+  mutate(dob = ymd(dmy(date_of_birth)), 
+         doi = ymd(incidence_date),
+         age = age_calculate(dob, doi)) %>% 
+  filter(age >= 0 | dob <= doi)
+# 222,323
 
 # create age group column
 cancer <- cancer %>%
@@ -298,7 +286,7 @@ cancer <- cancer %>%
 
 #format postcode to 8 digit
 cancer <- cancer %>%
-  mutate(postcode = postcode(postcode, format = "pc8"))
+  mutate(postcode = format_postcode(postcode, format = "pc8"))
 
 ### get Health Boards of residence and deprivation quintile rank from postcodes
 
@@ -329,12 +317,15 @@ cancer$hbres <- recode(cancer$hbres,
 
 cancer_all <- cancer %>% 
   mutate(site = "All Cancers")
+# 222,323
 
 cancer_xnmsc <- cancer %>% 
   filter(site != "Non-Melanoma Skin Cancer") %>% 
   mutate(site = "All Malignant Neoplasms (Excl. C44)")
+# 160,790
 
 cancer_sites <- cancer
+# 
 
 # 2. Modify each of above for area groupings
 
@@ -418,7 +409,10 @@ rm(cancer_all_scotland_dupes, cancer_all_scotland_dupes_id, cancer_all_scotland_
 # - both sexes
 cancer_scotland_all_allsex <- cancer_scotland_all %>%   
   mutate(sex = 3)
-
+# 142,407
+# 2019: 51,517
+# 2020: 43,106
+# 2021: 47,784
 
 ################# SCOTLAND DATASETS - ALL CANCER(xNMSC) ##################################################
 
@@ -446,6 +440,10 @@ rm(cancer_xnmsc_scotland_dupes, cancer_xnmsc_scotland_dupes_id, cancer_xnmsc_sco
 # - both sexes
 cancer_scotland_xnmsc_allsex <- cancer_scotland_xnmsc %>%   
   mutate(sex = 3)
+# 97049
+# 2019: 33,896
+# 2020: 29,529
+# 2021: 33,624
 
 ################# SCOTLAND DATASETS - ALL SITES ##################################################
 
@@ -473,7 +471,85 @@ rm(cancer_sites_scotland_dupes, cancer_sites_scotland_dupes_id, cancer_sites_sco
 # - both sexes
 cancer_scotland_sites_allsex <- cancer_scotland_sites %>%   
   mutate(sex = 3)
+# 161,482
+# 2019: 58,241
+# 2020: 48,935
+# 2021: 54,306
 
+##################################################################################################
+# QA EXERCISE - LINKAGE WITH SMR06 ----
+# Link records in SMR06 to All Cancer and All Cancers(xNMSC) datasets
+
+# Retrieve "analysis.smr06_pi" (SMR06) from SMRA
+
+install.packages("odbc")
+library(odbc)
+channel <- suppressWarnings(dbConnect(
+  odbc(),
+  dsn = "SMRA",
+  uid = .rs.askForPassword("What is your user ID?"),
+  pwd = .rs.askForPassword("What is your LDAP password?")
+))
+
+
+### Create cancer reg extract
+
+### Although ENCR Date of Diagnosis will be used from 2019 onwards (later) and will be used to right-censor the 
+### selection at 31 December 2021 (later)
+
+query_cancer_reg <- paste0("SELECT PE_PATIENT_ID, TUMOUR_NO, CHI_NO, UPI_NUMBER, DATE_OF_BIRTH, SEX, ", 
+                           "ICD10S_CANCER_SITE, INCIDENCE_DATE, ENCR_INCIDENCE_DATE ", 
+                           "FROM ANALYSIS.SMR06_PI")
+
+cancer_reg_extract <-
+  as_tibble(dbGetQuery(channel, statement = query_cancer_reg)) %>%
+  clean_names()
+
+
+### Close odbc connection
+dbDisconnect(channel)
+
+# link by patiend ID - 
+
+# remove unneeded fields from pathology dataset
+cancer_path_all <- cancer_all %>% 
+  select(-c(week_number, data_source, sex, postcode, quarter, siteno, site, age_group, hbres:region)) %>% 
+  mutate(path_incidence_date = incidence_date)
+
+# check how many NAs in incidence date
+
+
+# remove unneeded fields from reg dataset
+cancer_reg_all <- cancer_reg_extract %>%
+  select(-c(tumour_no:chi_no, sex)) %>% 
+  mutate(scr_diagyr = as.numeric(format(as.Date(incidence_date, format="%Y-%m-%d"),"%Y"))) %>%
+  mutate(encr_diagyr = as.numeric(format(as.Date(encr_incidence_date, format="%Y-%m-%d"),"%Y"))) %>% 
+  mutate(scr_incidence_date = incidence_date)
+
+
+# link datasets by person id
+cancer_path_reg_join <- left_join(cancer_path_all,
+                                  cancer_reg_all,
+                                  by = c("person_id" = "pe_patient_id"))
+# 355850
+
+# check how many SCR incidence dates predate Pathology incidence dates
+cancer_path_reg_inc_compare <- cancer_path_reg_join %>%
+  # filter(path_incidence_date > scr_incidence_date)  # removed 51,437 rows (15%), 284,413 rows remaining
+  # filter(path_incidence_date > encr_incidence_date)  # removed 217,496 rows (65%), 118,354 rows remaining
+  # filter((path_incidence_date > scr_incidence_date) & (scr_diagyr >= 2019))  # removed 185,947 rows (55%), 149,903 rows remaining
+  filter((path_incidence_date > encr_incidence_date) & (encr_diagyr < 2019))
+
+# extract records where SCR or ENCR year of diagnosis equal to Pathology incidence year
+cancer_path_reg_yr_match <- cancer_path_reg_join %>% 
+  filter((year == scr_diagyr) | (year == encr_diagyr))
+# removed 196,977 rows (59%), 138,873 rows remaining (Year = SCR Year)
+# removed 189,928 rows (57%), 145,922 rows remaining (Year = SCR or ENCR Year)
+
+# extract records where SCR OR ENCR incidence date equal to Pathology incidence date
+cancer_path_reg_yr_match <- cancer_path_reg_join %>% 
+  filter((path_incidence_date == scr_incidence_date) | (path_incidence_date == encr_incidence_date))
+# removed 289,750 rows (86%), 46,100 rows remaining
 
 ################# NETWORK DATASETS - ALL CANCER ##################################################
 
