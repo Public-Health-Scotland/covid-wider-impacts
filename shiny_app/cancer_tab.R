@@ -230,7 +230,7 @@ output$cancer_explorer2 <- renderUI({
       ("fewer patients in Scotland had a pathologically confirmed cancer diagnosis by the end of 2020/2021 than would have 
        been expected.")),
     p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and colorectal."),
-    p("By the week ending 27th December 2021, compared to the same week in 2019, there were ",
+    p("By the week ending 27th December 2020, compared to the same week in 2019, there were ",
       strong ("583 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
         "fewer lung cancers (a total fall of ",
       strong ("20.6%", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -391,7 +391,7 @@ output$cancer_commentary <- renderUI({
     
     ###################################.
     
-    h4(strong("**DRAFT** Update --/05/2022: For pathology data to 31st December 2021 (extracted 20/04/2022)")),
+    h4(strong("Update 25/05/2022: For pathology data to 31st December 2021 (extracted 20/04/2022)")),
     p("In 2021 (weeks ending 05th January to 27th December), there was little difference in the total number
       of individuals with a pathological diagnosis of cancer (Excl. C44) compared with those in 2019 (33086 and 33345 in 2021 and 2019
       respectively, a difference of approximately 0.8%).  However, within cancer sites, some were higher and some lower than
@@ -403,7 +403,7 @@ output$cancer_commentary <- renderUI({
               of 583 individuals, or 20.6% lower."),
       
       tags$li("Breast cancer (females only): 5,314 versus 5,315 pathological diagnoses; 
-              a decrease of  individual, or less than 1% lower"),
+              a decrease of 1 individual, or less than 1% lower"),
       
       tags$li("Prostate cancer: 3,646 versus 3,143 pathological diagnoses; an increase
               of 503 individuals, or 16% higher."),
@@ -423,17 +423,17 @@ output$cancer_commentary <- renderUI({
       tags$li("All excl. NMSC: 33086 (2021) and 28481 (2020) compared with 33345 in 2019.  That is, down 5123 in total by December 2021.  
               No overall reduction in the number of “missing” patients although it is important to look at each cancer type to understand 
               what has happened."),
-      tags$li("Lung cancer: 2319 (2021) and 2250 (2020) compared with 2833 in 2019.  That is, 1097 down in total by December 2021.  
+      tags$li("Lung: 2319 (2021) and 2250 (2020) compared with 2833 in 2019.  That is, 1097 down in total by December 2021.  
               So the continued under-diagnosis in 2021 added to the total “missing”."),
 
       tags$li("Colorectal: 4057 (2021) and 3187 (2020) compared with 4041 in 2019.  That is, 838 down in total by December 2021."),
 
       tags$li("Breast (females only): 5314 (2021) and 4488 (2020) compared with 5295 in 2019.  That is, down 788 in total by December 2021."),
 
-      tags$li("Cervical: 307 (2021) and 357 (2020) compared with 371 in 2019.  That is, down 78 in total by December 2021.")),
+      tags$li("Cervical: 307 (2021) and 357 (2020) compared with 371 in 2019.  That is, down 78 in total by December 2021."),
 
       tags$li("Prostate: 2587 (2021) and 3646 (2020) compared with 3143 in 2019.  That is, down only 53 patients in total by December 2021 – 
-              suggesting that those missing in 2020 were largely identified in 2021 and there is little ongoing deficit."),
+              suggesting that those missing in 2020 were largely identified in 2021 and there is little ongoing deficit.")),
     
       # tags$li("Lung cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 19.3% lower."),
       
