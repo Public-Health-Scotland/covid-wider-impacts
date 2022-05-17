@@ -167,16 +167,17 @@ output$cancer_explorer3 <- renderUI({
   
   tagList(
     if(input$breakdown == "Age Group") {
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
+      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, 
                       " confirmed on a pathological specimen by quarter against equivalent quarter 2019 by Age Group - ", 
                       input$geoname_cancer), "cancer_split")
       
     } else if (input$breakdown == "Deprivation") {
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 by Deprivation quintile(1 = least deprived) - ",
+      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, 
+                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 by Deprivation 
+                        quintile(1 = least deprived, 5 = most deprived) - ",
                        input$geoname_cancer), "cancer_split")
     } else {
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
+      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, 
                       " confirmed on a pathological specimen by quarter against equivalent quarter 2019 - ",
                       input$geoname_cancer), "cancer_split")
     },

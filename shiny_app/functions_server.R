@@ -357,19 +357,19 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
     value3 <- dataset[[var3_chosen]]
 
 
-    tooltip_1 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+    tooltip_1 <- c(paste0("Year: 2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, value1))
 
-    tooltip_2 <- c(paste0("Year:", denom_period, "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+    tooltip_2 <- c(paste0("Year: ", denom_period, "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, value2))
 
-    tooltip_3 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+    tooltip_3 <- c(paste0("Year: 2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, value3))
 
-    tooltip_4 <- c(paste0("Year:2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+    tooltip_4 <- c(paste0("Year: 2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
 
-    tooltip_5 <- c(paste0("Year:2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+    tooltip_5 <- c(paste0("Year: 2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, paste0(format(round(value3, 2), nsmall = 2), "%")))
 
     # Function for verical line at start of lockdown
@@ -400,7 +400,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
                 text=tooltip_1, hoverinfo="text", name = "2020") %>%
       # 2019 line
       add_lines(y = ~get(var2_chosen), line = list(color = "black", dash = 'dash', opacity = 3, width = 1),
-                text=tooltip_2, hoverinfo="text", name = "2019") %>%
+                text=tooltip_2, hoverinfo="text", name = denom_period) %>%
 
       add_annotations(x = "2020-04-05",
                       y = max(var1_chosen),
@@ -413,7 +413,7 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
       #Layout
       layout(margin = list(b = 80, t=5),
              shapes = list(vline("2020-03-22")),
-             yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
+             yaxis = yaxis_plots, xaxis = list(title = "Week Ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 4*60*60*24*7*1000),
              legend = list(x = 100, y = 0.5)) %>%
 
       # leaving only save plot button
