@@ -40,20 +40,16 @@ create_rapid <- function(last_week, extract = T) {
     }
   }
     
-  date_on_filename <<- format(Sys.Date(), format = '%d-%b')
+  date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
   
-# Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_", date_on_filename, ".rds")) %>% 
-  janitor::clean_names() %>% 
-  # taking out aggregated values, not clear right now
-  filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
-           date_adm > as.Date("2017-12-31")) 
+# Read in output file from extract_rapid_data.R
+rap_adm <- readRDS(paste0(data_folder, "rapid/", date_on_filename, "-admissions-by-category.rds"))
 
-# Bringing HB names
+# Add HB names
 rap_adm <- left_join(rap_adm, hb_lookup, by = c("hb" = "hb_cypher")) %>% 
   select(-hb) %>% rename(hb = area_name) %>% select(-area_type)
 
-# Bringing spec names
+# Add spec names
 spec_lookup <- read_csv("data/spec_groups_dashboard.csv")
 
 rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "spec_code")) %>% 
@@ -76,15 +72,7 @@ saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_rapid",
 
 # Formatting groups
 rap_adm %<>% 
-  rename(dep = simd_quintile, age = age_group) %>%
-  mutate(sex = recode(sex, "male" = "Male", "female" = "Female")) %>% 
-  mutate(age = recode_factor(age, "Under_5" = "Under 5", "5_thru_14" = "5 - 14", 
-                             "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
-                             "65_thru_74" = "65 - 74", "75_thru_84" = "75 - 84",
-                             "85+" = "85 and over")) %>% 
-  create_depgroups()  %>% 
-  mutate(admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency")) %>% 
-  mutate(spec = case_when(
+    mutate(spec = case_when(
     spec_name == "Paediatric Dentistry" ~ "Paediatrics (medical)",
     spec_name == "Paediatrics" ~ "Paediatrics (medical)",
     spec_name == "Paediatric Surgery" ~ "Paediatrics (surgical)",

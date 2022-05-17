@@ -1,6 +1,6 @@
 #UI
 
-# secure_app( #uncomment if needing password protection
+ #secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -96,53 +96,53 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                           p("Select topic areas to find commentary relating to data presented in this tool."))),
          wellPanel(column(2,
                           p("Select topic:"),
-                          actionLink("summary_button", "Summary trends", width = "150px"),br(),
-                          actionLink("cardio_button", "Cardiovascular", width="150px"),br(),
-                          actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
-                          actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
-                          actionLink("breastfeeding_button", "Breastfeeding", width="150px"), br(),
-                          actionLink("childdev_button", "Child development", width="150px"), br(),
-                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
+                         actionLink("summary_button", "Summary trends", width = "150px"),br(),
+                         actionLink("cardio_button", "Cardiovascular", width="150px"),br(),
+                         actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
+                         actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
+                         actionLink("breastfeeding_button", "Breastfeeding", width="150px"), br(),
+                         actionLink("childdev_button", "Child development", width="150px"), br(),
+                         actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
                           actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
-                           actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
-                          actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
+                          actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
+                         actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
                           actionLink("mod_button", "Method of delivery", width="150px"), br(),
                           actionLink("induction_button", "Induction of labour", width="150px"),br(),
                           actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
                           actionLink("apgar_button", "Apgar scores", width="150px"),br(),
-                          actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
-                          actionLink("tears_button", "Perineal tears", width="150px"),br(),
-                          actionLink("cancer_button", "Cancer", width="150px"),br(),
-                          actionLink("injuries_button", "Injuries", width="150px"), br(),
-                          actionLink("drug_button", "Substance use", width="150px")
+                         actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
+                         actionLink("tears_button", "Perineal tears", width="150px"),br(),
+                         actionLink("cancer_button", "Cancer", width="150px"),br(),
+                         actionLink("injuries_button", "Injuries", width="150px"), br(),
+                         actionLink("drug_button", "Substance use", width="150px")
                          ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
-                                     bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
-                                     bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
-                                     bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
-                                     bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
-                                     bsCollapsePanel("Breastfeeding", uiOutput("breastfeeding_commentary")),
-                                     bsCollapsePanel("Child development", uiOutput("childdev_commentary")),
-                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
-                                     bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
+                                    bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
+                                    bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
+                                    bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
+                                    bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
+                                    bsCollapsePanel("Breastfeeding", uiOutput("breastfeeding_commentary")),
+                                    bsCollapsePanel("Child development", uiOutput("childdev_commentary")),
+                                    bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
+                                    bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
                                      bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
-                                      bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
+                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
                                      bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
                                      bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
                                      bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
                                      bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
-                                     bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
+                                    bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
                                      bsCollapsePanel("Perineal tears", uiOutput("tears_commentary")),
-                                     bsCollapsePanel("Cancer", uiOutput("cancer_commentary")),
-                                     bsCollapsePanel("Injuries", uiOutput("injuries_commentary")),
-                                     bsCollapsePanel("Substance use", uiOutput("drug_commentary"))
+                                    bsCollapsePanel("Cancer", uiOutput("cancer_commentary")),
+                                    bsCollapsePanel("Injuries", uiOutput("injuries_commentary")),
+                                    bsCollapsePanel("Substance use", uiOutput("drug_commentary"))
                           )))
 ), #tab panel
 
-###############################################.
-# Summary trends ----
 ##############################################.
+# Summary trends ----
+#############################################.
 tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
   wellPanel(#actionButton("browser", "browser"),
     column(4,
@@ -153,7 +153,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
                               choices= c("Scotland", "Health board", "HSC partnership"),
                               selected = "Scotland")),
            uiOutput("geoname_ui")),
-           # If outpatients selected bring other set of choices
+            # If outpatients selected bring other set of choices
            conditionalPanel(condition = "input.measure_select == 'outpats' ",
                             div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                                 p(tags$b("Step 1. Select a geography level and then an area of interest.")),
@@ -184,12 +184,12 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
            fluidRow(br()),
            actionButton('jump_commentary_summary','Go to commentary')
     )
-  ), #wellPanel bracket
-  mainPanel(width = 12,
-            uiOutput("data_explorer")
-  )# mainPanel bracket
+   ), #wellPanel bracket
+   mainPanel(width = 12,
+             uiOutput("data_explorer")
+   )# mainPanel bracket
 
-), # tabpanel bracket
+ ), # tabpanel bracket
 #############################################.
 # Cardiovascular ----
 #############################################.
@@ -212,9 +212,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          )# mainPanel bracket
 ), # tabpanel bracket
 
-###############################################.
-## Cancer ----
-###############################################.
+# ###############################################.
+# ## Cancer ----
+# ###############################################.
              navbarMenu("Cancer", icon = icon("disease"),
 
                         # CANCER PATHOLOGY
@@ -266,12 +266,12 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            uiOutput("cancer_explorer3"))
                         ) , # tabpanel bracket
 
-                        ###############################################.
-                        ## SACT ----
-                        ###############################################.
+                         ###############################################.
+                         ## SACT ----
+                         ###############################################.
 
 
-                        #### MONTHLY TAB
+                         #### MONTHLY TAB
 
                         tabPanel(title = "SACT (Chemotherapy) Monthly Patients ", icon = icon("syringe"), value = "sact",
                                  wellPanel(h4(strong("SACT Treatment Activity in Scotland - Monthly Patient Data")),
@@ -363,7 +363,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                  mainPanel(width = 12,
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
-                              )#, # tabpanel bracket
+                              ) #, # tabpanel bracket
 
                         ###############################################.
                         ## DCE ----
@@ -481,13 +481,13 @@ tabPanel(title = "Mental health", icon = icon("brain"), value = "mentalhealth",
                    uiOutput("mh_explorer")
          )# mainPanel bracket
 ),#tabPanel bracket
-###############################################.
-## Pregnancy menu ----
 ##############################################.
+# Pregnancy menu ----
+#############################################.
 navbarMenu("Pregnancy", icon = icon("venus"),
-###############################################.
-## Antenatal booking ----
-###############################################.
+##############################################.
+# Antenatal booking ----
+##############################################.
 tabPanel(title = "Antenatal booking", value = "booking",
          wellPanel(
            column(4, div(title="Select a breakdown",
@@ -507,9 +507,9 @@ tabPanel(title = "Antenatal booking", value = "booking",
                    uiOutput("booking_explorer")
          )# mainPanel bracket
 ), #tab panel
-###############################################.
-## Termination of pregnancy  ----
-###############################################.
+# ###############################################.
+# ## Termination of pregnancy  ----
+# ###############################################.
 tabPanel(title = "Termination of pregnancy", value = "terminations",
          wellPanel(
            column(4, div(title="Select a breakdown",
@@ -529,13 +529,13 @@ tabPanel(title = "Termination of pregnancy", value = "terminations",
          )# mainPanel bracket
 ) # tabPanel bracket
  ), # navbar menu bracket
-##############################################.
-# Births and Babies menu ----
 #############################################.
+# Births and Babies menu ----
+############################################.
 navbarMenu("Births and babies", icon = icon("baby"),
-###############################################.
-## Inductions ----
-###############################################.
+##############################################.
+# Inductions ----
+##############################################.
 tabPanel(title = "Induction of labour", value = "inductions",
         wellPanel(
           column(4, div(title="Select a breakdown",
@@ -618,9 +618,9 @@ tabPanel(title = "Apgar scores", value = "apgar",
                    uiOutput("apgar_explorer")
          )# mainPanel bracket
 ), # tabPanel bracket
-###############################################.
-## Preterm ----
-###############################################.
+# ###############################################.
+# ## Preterm ----
+# ###############################################.
 tabPanel(title = "Location of extremely preterm deliveries", value = "preterm",
          wellPanel(
            column(6, div(title="",
@@ -656,10 +656,10 @@ tabPanel(title = "Perineal tears", value = "tears",
          mainPanel(width = 12,
                    uiOutput("tears_explorer")
          )# mainPanel bracket
-), # tabPanel bracket
+) , # tabPanel bracket
 ##############################################.
 ## Perinatal ----
-###############################################.
+# ###############################################.
 tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -717,9 +717,9 @@ navbarMenu("Child health", icon = icon("child"),
                               uiOutput("immunisation_explorer")
                     )# mainPanel bracket
            ), # tabpanel bracket
-           ##############################################.
-           # Child Health reviews ----
-           #############################################.
+#            ##############################################.
+#            # Child Health reviews ----
+#            #############################################.
            tabPanel(title = "Child health reviews", value = "child_health",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
@@ -858,7 +858,7 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
          column(6, downloadButton('download_table_csv', 'Download data')),
          mainPanel(width = 12,
                    DT::dataTableOutput("table_filtered"))
-     ) # tabpanel bracket
+      ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
 # )#secure app
