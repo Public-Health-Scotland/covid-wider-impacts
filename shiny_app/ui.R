@@ -818,7 +818,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                                                        'Scottish Ambulance Service naloxone administration'= 'SAS naloxone administration',
                                                        'Drug and alcohol treatment referrals',
                                                        'Opioid substitution therapy prescribing'='OST prescribing',
-                                                       'Drug related A&E attendances'),
+                                                       'Drug Overdose/Intoxication Attendances at Emergency Departments'),
                                            status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,uiOutput('area_drugs_select'),
@@ -831,7 +831,6 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                   actionButton("btn_drugs_modal", "Data source and definitions",
                                                     icon = icon('question-circle')))
          ),#wellPanel bracket
-
 
          mainPanel(width = 12,
                    #actionButton('browser','browser'),
@@ -846,8 +845,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    fluidRow(br()),
                    uiOutput('Prop_barplot'),
                    uiOutput('PercentChange'),
-                   uiOutput('Drug_gender_plot'),
-                   fluidRow(br()),
+                   uiOutput('drug_AE_explorer'),
                    fluidRow(br())
                    
         )# mainPanel bracket
