@@ -268,8 +268,8 @@ output$cancer_explorer2 <- renderUI({
     strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and
            may also update historical data."),
     br(),
-    p(strong(paste0("Last updated: - 20/04/2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
-             31/12/2021."))))
+    p(strong(paste0("Last updated: - 25 May 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
+             31 December 2021."))))
   
   
 })
