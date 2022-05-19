@@ -25,7 +25,6 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select a cardiac catheterisation lab"
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
     shinyjs::hide("diagnosis_select")
-    #shinyjs::hide("type_adm_select")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -34,7 +33,6 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular A&E attendances"
     cardio_choices = c("Scotland")
     shinyjs::hide("diagnosis_select")
-    #shinyjs::hide("type_adm_select")
     hide("geoname_cardio_ui")
     disable("area_cardio_select")
   }
@@ -43,7 +41,6 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular medicine prescriptions"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
     shinyjs::hide("diagnosis_select")
-    #shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -52,7 +49,6 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular OOH cases"
     cardio_choices = c("Scotland", "Health board")
     shinyjs::hide("diagnosis_select")
-    #shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -61,7 +57,6 @@ observeEvent(input$measure_cardio_select, {
     cardio_label = "Step 2 - Select geography level for cardiovascular Scottish Ambulance Service incidents"
     cardio_choices = c("Scotland", "Health board")
     shinyjs::hide("diagnosis_select")
-    #shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -72,7 +67,6 @@ observeEvent(input$measure_cardio_select, {
     shinyjs::show("diagnosis_select")
     updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
                       choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")
-    #shinyjs::show("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -83,7 +77,6 @@ observeEvent(input$measure_cardio_select, {
     shinyjs::show("diagnosis_select")
     updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
                 choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")
-    #shinyjs::hide("type_adm_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -367,14 +360,13 @@ observeEvent(input$btn_cardio_modal,
              }else if (input$measure_cardio_select == "cardio_admissions") { #CARDIAC DISCHARGES MODAL
                showModal(modalDialog(
                  title = "What is the data source?",
-                 p("Cardiovascular admissions"),
+                 tags$b("Cardiovascular admissions"),
                  p("These data provide a quarterly summary of the number of admissions to hospital as a result of an
                     cardiovascular condition since Jan 2020, with data from 2018-2019 for comparison purposes.
                     The recent trend data is shown by age group, sex, diagnosis, admission type and deprivation category (SIMD)."),
                  p("Please note that the stroke figures include diagnosis subarachnoid haemorrhage."),
                  p("The source of data is the Scottish Morbidity Record 01 (SMR01) database, which holds information on
                     admissions from non-obstetric and non-psychiatric acute hospitals in Scotland."),
-                 #p("Activity", week_standard),
                  p("Further information relating to the cardiovascular hospital activity is available from the ",
                    tags$a(href="https://beta.isdscotland.org/topics/heart-disease-and-stroke/",
                           "Scottish Heart disease and stroke publications.",

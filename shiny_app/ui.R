@@ -205,8 +205,6 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                   uiOutput("geoname_cardio_ui")),
            column(4,  selectInput("diagnosis_select", label = "Step 3. Select diagnosis",
                                   choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")),
-                      #column(4,  selectInput("type_adm_select", label = "Step 4. Select type of admission",
-                      #            choices = c("Elective", "Emergency", "Transfer"), selected = "Emergency")),
            column(4, downloadButton('download_cardio_data', 'Download data'),
                   fluidRow(br()),
                   actionButton('jump_commentary_cardio','Go to commentary'))
