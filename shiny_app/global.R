@@ -24,7 +24,6 @@ library(shinymanager)
 library(lubridate)
 library(tidyr) # for uncount()
 
-
 ###############################################.
 ## Functions ----
 ###############################################.
@@ -80,13 +79,19 @@ ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
 sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
 
 #Cancer data
-cancer_data2 <- readRDS("data/cancer_data_2.rds")
-
-cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>%
+cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
   mutate(dep = factor(dep)) %>%
-  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE))
+  mutate(quarter_no = factor(quarter_no, ordered = TRUE))
 
-cancer_extract_date <- "19 August 2021"
+cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
+  mutate(dep = factor(dep)) %>%
+  mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
+                                                    "Jul-Sep 2020", "Oct-Dec 2020",
+                                                    "Jan-Mar 2021", "Apr-Jun 2021",
+                                                    "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
+
+
+cancer_extract_date <- "04 April 2022"
 
 # SACT data
 sact_data <- readRDS("data/sact_data.rds")
@@ -128,7 +133,7 @@ sact_data_wk_inc <- sact_weekly_data %>%
 #                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
 #   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
 #   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
-#
+# 
 # dce_extract_date <- "8 October 2021"
 
 
@@ -335,7 +340,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
-                        "Cancer" = "cancer",
+                        "Cancer pathology" = "cancer",
                         "Take home naloxone kits"="THN_by_HB",
                         "Drug and alcohol treatment referrals"="DTR_data",
                         "Opioid substituation therapy prescribing"="OST_paid",
@@ -391,6 +396,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Mesothelioma" = "Mesothelioma",
                       "Multiple Myeloma and malignant plasma cell neoplasms" = "Multiple Myeloma and malignant plasma cell neoplasms",
                       "Non-Melanoma Skin Cancer" = "Non-Melanoma Skin Cancer",
+                      "Non-Hodgkin Lymphoma" = "Non Hodgkin Lymphoma",
                       "Oesophagus" = "Oesophagus",
                       "Other" = "Other",
                       "Ovary - Females only" = "Ovary - Females only",
@@ -478,11 +484,11 @@ pal_sact <- c('#3F3685',
               '#000000' )
 
 
-pal_cancer_diff <- c("1" = '#000080',
+pal_cancer_diff <- c("1 (least deprived)" = '#000080',
                      "2" = '#DCDCDC',
                      "3" = '#D3D3D3',
                      "4" = '#C0C0C0',
-                     "5" = '#0000FF')
+                     "5 (most deprived)" = '#0000FF')
 
 
 pal_eth <- c('#E39C8C',
@@ -501,20 +507,20 @@ pal_eth <- c('#E39C8C',
              '#CDA1C9')
  
 
-pal_dce <- c("1" = '#000080',
-             "2" = '#6A5ACD',
-             "3" = '#008B8B',
-             "4" = '#32CD32',
-             "NK" = '#FFD700')
+# pal_dce <- c("1" = '#000080',
+#              "2" = '#6A5ACD',
+#              "3" = '#008B8B',
+#              "4" = '#32CD32',
+#              "NK" = '#FFD700')
 
 
-pal_dce_diff <- c("NHS Grampian" = '#000080',  "NHS Greater Glasgow & Clyde" = '#000080',
-                  "NHS Highland" = '#6A5ACD', "NHS Dumfries & Galloway" = '#6A5ACD',
-                  "NCA" = '#008B8B', "NHS Fife" = '#008B8B', "NHS Forth Valley" = '#008B8B',
-                  "SCAN" = '#32CD32',"NHS Orkney" = '#32CD32', "NHS Ayrshire & Arran" = '#32CD32',
-                  "WOSCAN" = '#FFD700', "NHS Shetland" = '#FFD700', "NHS Lothian" = '#FFD700',
-                  "Scotland" = '#FF8C00', "NHS Tayside" = '#FF8C00',
-                  "NHS Western Isles" = '#00FFFF', "NHS Borders" = '#00FFFF',"NHS Lanarkshire" = '#00FFFF')
+# pal_dce_diff <- c("NHS Grampian" = '#000080',  "NHS Greater Glasgow & Clyde" = '#000080',
+#                   "NHS Highland" = '#6A5ACD', "NHS Dumfries & Galloway" = '#6A5ACD',
+#                   "NCA" = '#008B8B', "NHS Fife" = '#008B8B', "NHS Forth Valley" = '#008B8B',
+#                   "SCAN" = '#32CD32',"NHS Orkney" = '#32CD32', "NHS Ayrshire & Arran" = '#32CD32',
+#                   "WOSCAN" = '#FFD700', "NHS Shetland" = '#FFD700', "NHS Lothian" = '#FFD700',
+#                   "Scotland" = '#FF8C00', "NHS Tayside" = '#FF8C00',
+#                   "NHS Western Isles" = '#00FFFF', "NHS Borders" = '#00FFFF',"NHS Lanarkshire" = '#00FFFF')
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
