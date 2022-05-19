@@ -412,7 +412,9 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
-    h2("Method of delivery - 6th April 2022"),
+    h2("Antenatal bookings - 4th May 2022"),
+    p("The numbers of women booked for antenatal care in NHS Fife have shown unusual fluctuations in recent weeks. We have informed NHS Fife of this and are working with them to try to understand the data."),
+    h2("Antenatal bookings - 6th April 2022"),
     p("The numbers of women booked for antenatal care and the average gestation of women booked in NHS Forth Valley have shown unusual fluctuations in recent weeks. We have informed NHS Forth Valley of this and are working with them to try to understand the data."),
     h2("Antenatal bookings - 2nd February 2022"),
     p("The sudden drop in numbers of women booking for antenatal care during the weeks starting 27th December 2021 and 3rd January 2022 is thought to be as a result of the Christmas and new year public holidays. A similar decrease can be seen during the previous year’s Christmas and new year period and the extent of the decrease is likely to depend on whether the four public holidays fall across a two or three week period. Most NHS Boards showed some level of reduction in their numbers of women booked over this period."),
