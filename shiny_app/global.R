@@ -486,11 +486,11 @@ pal_sact <- c('#3F3685',
               '#000000' )
 
 
-pal_cancer_diff <- c("1" = '#000080',
+pal_cancer_diff <- c("1 (least deprived)" = '#000080',
                      "2" = '#DCDCDC',
                      "3" = '#D3D3D3',
                      "4" = '#C0C0C0',
-                     "5" = '#0000FF')
+                     "5 (most deprived)" = '#0000FF')
 
 
 pal_eth <- c('#E39C8C',

@@ -817,7 +817,10 @@ base_cancer_counts_dep_quarters <- base_cancer_slim %>%
 
 base_cancer_counts_all_quarters <- bind_rows(base_cancer_counts_quarters, 
                                              base_cancer_counts_agegroups_quarters, 
-                                             base_cancer_counts_dep_quarters)
+                                             base_cancer_counts_dep_quarters) %>%
+                                    mutate(dep = factor(dep, levels = c(0,1,2,3,4,5), 
+                                      labels = c("0","1 (least deprived)","2","3","4","5 (most deprived)"))) 
+  
 
 rm(base_cancer_counts_agegroups_quarters, base_cancer_counts_dep_quarters)
 
@@ -940,7 +943,7 @@ base_cancer_cum_quarters_2yr <- base_cancer_counts_quarters_2yr %>%
   select(region, area, site, sex, age_group, dep, quarter_no, count1919, count2021,  breakdown) %>%
   group_by(area, site, sex, age_group, dep) %>%
   mutate(cum_count1919 = cumsum(count1919),
-         cum_count2021 = cumsum(count2021)) %>%
+         cum_count2021 = cumsum(count2021)) %>% 
   ungroup()
 
 ########################################
