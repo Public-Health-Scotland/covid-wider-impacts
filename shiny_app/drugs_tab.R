@@ -90,14 +90,14 @@ observeEvent(input$btn_drugs_modal,
              else if(input$drug_subcategories == 'Drug Overdose/Intoxication Attendances at Emergency Departments'){
                showModal(modalDialog(
                  title = "What is the data source?",
-                 p('A weekly breakdown of the number of drug- and alcohol-related attendances at Emergency Departments (ED) in Scotland is obtained from Public Health Scotland’s Accident & Emergency Datamart'),
+                 p('A weekly breakdown of the number of drug-related attendances at Emergency Departments (ED) in Scotland is obtained from Public Health Scotland’s Accident & Emergency Datamart'),
                  p('This breakdown contains information on all A&E sites across NHS Scotland where possible.  However for sites submitting an aggregated return to PHS, reasons for admission are not known, and therefore attendances at these locations are not included in this report.'),
                  p('Due to differences in the way Emergency Departments in Scotland record data, it is not possible to identify drug or alcohol involvement or overdose as a presenting condition using only a specific variable or diagnosis code. Attendances for drug and alcohol intoxications or overdoses are identified using a combination of exact matching of relevant ICD codes and searching of free-text fields.'),
-                 p('Numbers of drug and alcohol attendances separately are available, but due to small numbers, are not displayed in this dashboard.'),
+                 
                  p(''),
                  p('Due to small and fluctuating numbers, attendances are presented here as a three week rolling average. Numbers by sex are displayed where sex was recorded on the A&E attendance record'),
                  p(strong('Terminology:')),
-                 p("Drug and Alcohol Intoxication/Attendance: An attendance for a drug intoxication/overdose, an alcohol intoxication/overdose, or both drug and alcohol"),
+                 p("Drug Intoxication/Overdose: An attendance for a drug intoxication/overdose, either alone, or combined with alcohol intoxication"),
                  p('For further information, contact',
                    tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -788,7 +788,7 @@ output$drug_AE_explorer <- renderUI({
    #   h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", location())),
     ## plot_box and plot_cut_box are defined in global.R
       # plot_box("2020, 2021 and 2022 compared with 2018-2019 average", "TwoYrComparison"),
-      plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug and Alcohol Overdose/Intoxications in ", location(), "(2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
+      plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug Overdose/Intoxications in ", location(), "(2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
                    plot_output1 = "Drug_AE_change_plot",
                    title_plot2 = paste0("3-Week central moving average of number of attendances for Drug Overdose/Intoxication Attendances \n at Emergency Departments  by sex (", location(),", 2020-2022)"),
                    plot_output2 = "drug_gender_plot"))

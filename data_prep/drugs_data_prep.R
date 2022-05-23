@@ -626,7 +626,7 @@ saveRDS(Total_Quant, paste0(data_folder,"final_app_files/OST_paid_quantity_",
 ## A&E data prep ----
 ###############################################.
 
-Drug_AE_attendances <- readRDS("//PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Drug_related_AE_attendances/A&E_Scotland_HB_Gender_2020_to_28-02-2022.RDS")
+Drug_AE_attendances <- readRDS("//PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Drug_related_AE_attendances/A&E_Scotland_HB_Gender_2020_to_30-03-2022.RDS")
 
 Drug_AE_attendances <- Drug_AE_attendances %>%
   rename(Type = DrugsAlcBothNone,
@@ -651,9 +651,9 @@ Drug_AE_attendances <- Drug_AE_attendances %>%
          Change = as.numeric(format(Change, nsmall = 1)))
 
 
-## Restricting to only Drug & Alcohol Attendances
+## Restricting to only Drug attendences (includes Drug+OD and Drug+Alc+OD attendances)
 Drug_AE_attendances <- Drug_AE_attendances %>%
-  filter(Type == "Drug and Alcohol Overdose/Intoxication")
+  filter(Type == "Drug Overdose/Intoxication")
 
 
 saveRDS(Drug_AE_attendances, "shiny_app/data/Drug_AE_attendances.rds")
