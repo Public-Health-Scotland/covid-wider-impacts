@@ -15,52 +15,82 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 require(tidyverse)||install.packages("tidyverse")
+require(remotes)||install.packages("remotes")
 require(janitor)||install.packages("janitor")
 require(lubridate)||install.packages("lubridate")
 require(writexl)||install.packages("writexl")
 require(tidylog)||install.packages("tidylog")
 require(naniar)||install.packages("naniar")
+
+#remotes::install_local("/PHI_conf/CancerGroup1/Topics/CancerStatistics/Projects/20200804-pathology-as-proxy-for-2020-regs/RShiny/CancerPathologyDashboard/Cancer Pathology Jan 22 update/phsmethods-master.zip",
+#                      upgrade = "never"
+#)
+
 remotes::install_github("Public-Health-Scotland/phsmethods", upgrade = "never")
 library(phsmethods)
 
+
+
+
+# Helper function
+`%notin%` <- Negate(`%in%`)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #### Import Data and rename variables ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 input_folder <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Projects",
                        "//20200804-pathology-as-proxy-for-2020-regs//RShiny//CancerPathologyData//")
 cl_out <- "/conf/linkage/output/lookups/Unicode/"
 
-cancer <- read_csv(paste0(input_folder,"Pathology_Data_Aug21.csv"), col_names = T) %>%  
+cancer <- read_csv(paste0(input_folder,"Pathology_Data_Mar_22.csv"), col_names = T) %>%  
   clean_names() %>% 
   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
   mutate(incidence_date = dmy(incidence_date)) %>%
-  mutate(chi_number = replace_na(chi_number, 0)) 
+  mutate(chi_number = replace_na(chi_number, "0")) %>% 
+  filter(year != 2022)
 
 cancer2017_18 <- read_csv(paste0(input_folder,"2017_2018 Covid source data pathology detail.csv"), col_names = T) %>%
   clean_names() %>%
   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
   mutate(incidence_date = dmy(incidence_date)) %>%
   mutate(chi_number = replace_na(chi_number, 0)) %>%
-  mutate(chi_number = as.character(chi_number))
+  mutate(chi_number = as.character(chi_number)) %>%
+  mutate(chi_number = chi_pad(chi_number)) %>% 
+  mutate(derived_upi = as.character(derived_upi))
 
 cancer <- bind_rows(cancer, cancer2017_18)
 
 rm(cancer2017_18)
 
+# DATE VARIABLES TO UPDATE----
+# valid_date <- "2021-12-31"
+# 
+# quarters_1 <- c("Oct-Dec 18", "Jan-Mar 19",
+#                 "Apr-Jun 19", "Jul-Sep 19",
+#                 "Oct-Dec 19", "Jan-Mar 20",
+#                 "Apr-Jun 20", "Jul-Sep 20",
+#                 "Oct-Dec 20")
+# 
+# quarters_2 <- c("Oct-Dec 19", "Jan-Mar 20",
+#                 "Apr-Jun 20", "Jul-Sep 20",
+#                 "Oct-Dec 20", "Jan-Mar 21",
+#                 "Apr-Jun 21", "Jul-Sep 21",
+#                 "Oct-Dec 21")
 
-# Allocate records to Quarter groupings
+
+# Allocate records to Quarter groupings - removed for dev code
 cancer <- cancer %>% 
   mutate(quarter = qtr(incidence_date)) %>% 
-  mutate(quarter = case_when(str_detect(quarter, "January") ~ "Jan-Mar 20",
-                             str_detect(quarter, "April") ~ "Apr-Jun 20",
-                             str_detect(quarter, "July") ~ "Jul-Sep 20",
-                             str_detect(quarter, "October") ~ "Oct-Dec 20")) 
+  mutate(quarter_no = case_when(str_detect(quarter, "January") ~ "1",
+                                str_detect(quarter, "April") ~ "2",
+                                str_detect(quarter, "July") ~ "3",
+                                str_detect(quarter, "October") ~ "4"))
 
 
 # import deprivation lookup
-depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_1_simd2020v2.rds")) %>%
+depriv_dir <- readRDS(paste0(cl_out,"Deprivation/postcode_2022_1_simd2020v2.rds")) %>%
   clean_names() %>%
   select(pc8, hb2019name, simd2020v2_sc_quintile) %>%
   rename(postcode = pc8, hbres = hb2019name, dep = simd2020v2_sc_quintile) %>% 
@@ -94,7 +124,6 @@ cancer <- cancer %>%
                             str_detect(site10, "C45")  ~ 1320,
                             str_detect(site10, "C60")  ~ 1410,
                             str_detect(site10, "C61")  ~ 1420,
-                            str_detect(site10, "C63.8")  ~ 1420, # not needed from Aug update on
                             str_detect(site10, "C62")  ~ 1430,
                             str_detect(site10, "C90")  ~ 1510,
                             str_detect(site10, "C15")  ~ 1710,
@@ -165,7 +194,7 @@ cancer <- cancer %>%
                           siteno == 1420 ~ "Prostate - Males only",
                           siteno == 1430 ~ "Testis - Males only",
                           siteno == 1510 ~ "Multiple Myeloma and malignant plasma cell neoplasms",
-                          siteno == 1610 ~ "Non-Hodgkin lymphoma",
+                          siteno == 1610 ~ "Non-Hodgkin Lymphoma",
                           siteno == 1710 ~ "Oesophagus",
                           siteno == 1810 ~ "Pancreas",
                           siteno == 1910 ~ "Malignant Melanoma of the Skin",
@@ -194,15 +223,15 @@ cancer <- cancer %>%
                                  TRUE ~ week_number)) %>% 
   # mutate(week_number = case_when(year == 2020 & week_number == 53 ~ 52,
   #                                TRUE ~ week_number)) %>%
-  filter(!(year == 2021 & week_number > 24))
+  filter(!(year == 2021 & week_number > 52))
 
 
 # extract invalid age records
 cancer <- cancer %>% 
-  mutate(dob = dmy(date_of_birth), 
-         doi = incidence_date,
-         age = floor(difftime(doi, dob, units = "weeks")/52.25)) %>% 
-  filter((age >= 0 & age < 130) & dob <= doi)
+  mutate(dob = ymd(dmy(date_of_birth)), 
+         doi = ymd(incidence_date),
+         age = age_calculate(dob, doi)) %>% 
+  filter(age >= 0 | dob <= doi)
 
 # create age group column
 cancer <- cancer %>%
@@ -269,7 +298,7 @@ cancer <- cancer %>%
 
 #format postcode to 8 digit
 cancer <- cancer %>%
-  mutate(postcode = postcode(postcode, format = "pc8"))
+  mutate(postcode = format_postcode(postcode, format = "pc8"))
 
 ### get Health Boards of residence and deprivation quintile rank from postcodes
 
@@ -689,128 +718,121 @@ base_cancer <- base_cancer %>%
 
 base_cancer_slim <- base_cancer %>% 
   select(-c(data_source, icd10_conv, chi_number, date_of_birth,postcode,  site10,
-            siteno, dob:age, original_postcode, dupe_count))
+            siteno, dob:age, original_postcode, dupe_count)) %>% 
+  arrange(incidence_date)
 
 rm(base_cancer)
 gc()
 
-
-#### SET Q4 IN EACH YEAR TO QUARTER 0 FOR DIFFERENCE GRAPH
-
-base_cancer_slim_q0 <- base_cancer_slim %>%
-  filter(quarter == "Oct-Dec 20") %>% 
-  mutate(year = case_when(year == 2017 ~ 2018,
-                          year == 2018 ~ 2019,
-                          year == 2019 ~ 2020,
-                          year == 2020 ~ 2021)) %>% 
-  mutate(quarter = "Oct-Dec 19")
-
-base_cancer_slim_quarters <- bind_rows(base_cancer_slim, base_cancer_slim_q0) 
-
+#######################################################
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get weekly counts for each value of hbres and All cancer ----
+# Get QUARTERLY counts for each value of hbres and All cancer ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-base_cancer_counts <- base_cancer_slim %>% 
-  group_by(year,  week_number, region, hbres, site, sex) %>% 
+base_cancer_counts_quarters <- base_cancer_slim %>% 
+  group_by(year,  quarter_no, region, hbres, site, sex) %>% 
   summarise(count = n()) %>% 
   ungroup() %>% 
-  complete(week_number, nesting(year,  region, hbres, site, sex), fill = list(count = 0)) %>%
+  complete(quarter_no, nesting(year,  region, hbres, site, sex), fill = list(count = 0)) %>%
   pivot_wider(names_from = year, 
               values_from = count,
-              values_fill = 0) %>% 
+              values_fill = list(count = 0)) %>% 
   rename(area = hbres, count17 = "2017",count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(age_group = "All Ages", dep = 0, breakdown = "None") 
 
-base_cancer_counts19_wk53 <- base_cancer_counts %>% 
-  filter(week_number == 53) %>% 
-  mutate(count17 = NA, count18 = NA, count19 = NA)
-
-base_cancer_counts19_notwk53 <- base_cancer_counts %>% 
-  filter(week_number != 53)
-
-base_cancer_counts <- bind_rows(base_cancer_counts19_notwk53, base_cancer_counts19_wk53) 
-
-rm(base_cancer_counts19_notwk53, base_cancer_counts19_wk53)
+# base_cancer_counts19_wk53 <- base_cancer_counts %>% 
+#   filter(week_number == 53) %>% 
+#   mutate(count17 = NA, count18 = NA, count19 = NA)
+# 
+# base_cancer_counts19_notwk53 <- base_cancer_counts %>% 
+#   filter(week_number != 53)
+# 
+# base_cancer_counts <- bind_rows(base_cancer_counts19_notwk53, base_cancer_counts19_wk53) 
+# 
+# rm(base_cancer_counts19_notwk53, base_cancer_counts19_wk53)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get weekly counts for each value of hbres and All cancer by age group----
+# Get quarterly counts for each value of hbres and All cancer by age group----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-base_cancer_counts_agegroups <- base_cancer_slim %>% 
-  group_by(year, week_number, region, hbres, site, sex, age_group) %>% 
+base_cancer_counts_agegroups_quarters <- base_cancer_slim %>% 
+  group_by(year, quarter_no, region, hbres, site, sex, age_group) %>% 
   summarise(count = n()) %>% 
   ungroup() %>% 
-  complete(week_number, nesting(year, region, hbres, site, sex, age_group), 
+  complete(quarter_no, nesting(year, region, hbres, site, sex, age_group), 
            fill = list(count = 0)) %>%
   pivot_wider(names_from = year, 
               values_from = count,
-              values_fill = 0) %>% 
+              values_fill = list(count = 0)) %>% 
   rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(dep = 0, breakdown = "Age Group")
 
-base_cancer_counts_agegroups_19_wk53 <- base_cancer_counts_agegroups %>% 
-  filter(week_number == 53) %>% 
-  mutate(count17 = NA, count18 = NA, count19 = NA)
-
-base_cancer_counts_agegroups_19_notwk53 <- base_cancer_counts_agegroups %>% 
-  filter(week_number != 53)
-
-base_cancer_counts_agegroups <- bind_rows(base_cancer_counts_agegroups_19_notwk53, 
-                                          base_cancer_counts_agegroups_19_wk53) 
-
-rm(base_cancer_counts_agegroups_19_notwk53, base_cancer_counts_agegroups_19_wk53)
+# base_cancer_counts_agegroups_19_wk53 <- base_cancer_counts_agegroups %>% 
+#   filter(week_number == 53) %>% 
+#   mutate(count17 = NA, count18 = NA, count19 = NA)
+# 
+# base_cancer_counts_agegroups_19_notwk53 <- base_cancer_counts_agegroups %>% 
+#   filter(week_number != 53)
+# 
+# base_cancer_counts_agegroups <- bind_rows(base_cancer_counts_agegroups_19_notwk53, 
+#                                           base_cancer_counts_agegroups_19_wk53) 
+# 
+# rm(base_cancer_counts_agegroups_19_notwk53, base_cancer_counts_agegroups_19_wk53)
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get weekly counts for each value of hbres and All cancer by deprivation ----
+# Get quarterly counts for each value of hbres and All cancer by deprivation ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-base_cancer_counts_dep <- base_cancer_slim %>% 
-  group_by(year, week_number, region, hbres, site, sex, dep) %>% 
+base_cancer_counts_dep_quarters <- base_cancer_slim %>% 
+  group_by(year, quarter_no, region, hbres, site, sex, dep) %>% 
   summarise(count = n()) %>% 
   ungroup() %>% 
-  complete(week_number, nesting(year, region, hbres, site, sex, dep), 
+  complete(quarter_no, nesting(year, region, hbres, site, sex, dep), 
            fill = list(count = 0)) %>%
   pivot_wider(names_from = year, 
               values_from = count,
-              values_fill = 0) %>% 
+              values_fill = list(count = 0)) %>% 
   rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
          count20 = "2020", count21 = "2021") %>% 
   mutate(age_group = "All Ages", breakdown = "Deprivation")
 
-base_cancer_counts_dep_19_wk53 <- base_cancer_counts_dep %>% 
-  filter(week_number == 53) %>% 
-  mutate(count17 = NA, count18 = NA, count19 = NA)
-
-base_cancer_counts_dep_19_notwk53 <- base_cancer_counts_dep %>% 
-  filter(week_number != 53)
-
-base_cancer_counts_dep <- bind_rows(base_cancer_counts_dep_19_notwk53, 
-                                    base_cancer_counts_dep_19_wk53)
-
-rm(base_cancer_counts_dep_19_notwk53, base_cancer_counts_dep_19_wk53)
+# base_cancer_counts_dep_19_wk53 <- base_cancer_counts_dep %>% 
+#   filter(week_number == 53) %>% 
+#   mutate(count17 = NA, count18 = NA, count19 = NA)
+# 
+# base_cancer_counts_dep_19_notwk53 <- base_cancer_counts_dep %>% 
+#   filter(week_number != 53)
+# 
+# base_cancer_counts_dep <- bind_rows(base_cancer_counts_dep_19_notwk53, 
+#                                     base_cancer_counts_dep_19_wk53)
+# 
+# rm(base_cancer_counts_dep_19_notwk53, base_cancer_counts_dep_19_wk53)
 
 # combine for base cancer counts with age group split and no split
 
-base_cancer_counts_all <- bind_rows(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep)
+base_cancer_counts_all_quarters <- bind_rows(base_cancer_counts_quarters, 
+                                             base_cancer_counts_agegroups_quarters, 
+                                             base_cancer_counts_dep_quarters) %>%
+                                    mutate(dep = factor(dep, levels = c(0,1,2,3,4,5), 
+                                      labels = c("0","1 (least deprived)","2","3","4","5 (most deprived)"))) 
+  
 
-rm(base_cancer_counts_agegroups, base_cancer_counts_dep)
+rm(base_cancer_counts_agegroups_quarters, base_cancer_counts_dep_quarters)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# BASE WEEKLY COUNTS---- 
-# DOWNLOAD FILE FOR DASHBOARD??
-# (before means or cumulative sums added?)
+# BASE QUARTERLY COUNTS---- 
+# comparing 2020 and 2021 quarter totals against 2019 totals
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# get mean of weekly counts from 2017-2019
+# get mean of QUARTERLY counts from 2017-2019
 
-base_cancer_mean <- base_cancer_counts_all %>%
-  group_by(week_number, region, area, site, sex) %>%
+base_cancer_mean_quarters <- base_cancer_counts_all_quarters %>%
+  group_by(quarter_no, region, area, site, sex) %>%
   mutate(count_mean_17_19 = round((count17 + count18 + count19)/3)) %>%
   ungroup() %>%
   select(-count18)
@@ -818,8 +840,8 @@ base_cancer_mean <- base_cancer_counts_all %>%
 
 # Get Cumulative Counts for each year
 
-base_cancer_cum <- base_cancer_mean %>%
-  select(region, area, site, sex, age_group, dep, week_number, count19, count20, count21, count_mean_17_19, breakdown) %>%
+base_cancer_cum_quarters <- base_cancer_mean_quarters %>%
+  select(region, area, site, sex, age_group, dep, quarter_no, count19, count20, count21, count_mean_17_19, breakdown) %>%
   group_by(area, site, sex, age_group, dep) %>%
   mutate(cum_count19 = cumsum(count19),
          cum_count20 = cumsum(count20),
@@ -827,7 +849,11 @@ base_cancer_cum <- base_cancer_mean %>%
          cum_count_mean_17_19 = cumsum(count_mean_17_19)) %>%
   ungroup()
 
-rm(base_cancer_mean, base_cancer_slim)
+rm(base_cancer_mean)
+
+# TEST - CHECK CUMULATIVE COUNTS
+# base_cancer_cum_check <- base_cancer_cum %>% 
+#   filter((site == "All Cancers") & (sex == "All") & (area == "NCA") & (breakdown == "None"))
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -840,203 +866,116 @@ rm(base_cancer_mean, base_cancer_slim)
 # (BELOW VARIABLES USED FOR WEEKLY DIFFERENCE GRAPH ONLY - NOT
 # ON DASHBOARD FROM SEP 21 UPDATE BUT MAY BRING BACK AS OPTION) 
 
-diff_data_base <- base_cancer_cum %>%
+diff_data_base_quarters <- base_cancer_cum_quarters %>%
   mutate(difference20 = case_when(count19 > 0 ~ 100*(count20 - count19)/count19,
                                   (count19 = 0 & count20 != 0) ~ 100*(count20 - count19)/1,
                                   TRUE ~ 0),
          difference21 = case_when(count19 > 0 ~ 100*(count21 - count19)/count19,
                                   (count19 = 0 & count21 != 0) ~ 100*(count21 - count19)/1,
                                   TRUE ~ 0),
+         cum_difference20 = case_when(cum_count19 > 0 ~ 100*(cum_count20 - cum_count19)/cum_count19,
+                                      (cum_count19 = 0 & cum_count20 != 0) ~ 100*(cum_count20 - cum_count19)/1,
+                                      TRUE ~ 0),
+         cum_difference21 = case_when(cum_count19 > 0 ~ 100*(cum_count21 - cum_count19)/cum_count19,
+                                      (cum_count19 = 0 & cum_count21 != 0) ~ 100*(cum_count21 - cum_count19)/1,
+                                      TRUE ~ 0),
          difference20_ave = case_when(count_mean_17_19 > 0 ~ 100*(count20 - count_mean_17_19)/count_mean_17_19,
                                       (count_mean_17_19 = 0 & count20 != 0) ~ 100*(count20 - count_mean_17_19)/1,
                                       TRUE ~ 0),
          difference21_ave = case_when(count_mean_17_19 > 0 ~ 100*(count21 - count_mean_17_19)/count_mean_17_19,
                                       (count_mean_17_19 = 0 & count21 != 0) ~ 100*(count21 - count_mean_17_19)/1,
-                                      TRUE ~ 0)) %>% 
-  mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1))) 
-
-diff_data_base_24 <- diff_data_base %>% 
-  filter(week_number > 24) %>% 
-  mutate(count21 = NA,
-         cum_count21 = NA)
-
-diff_data_base <- diff_data_base %>% 
-  filter(week_number <= 24)
-
-diff_data_base <- bind_rows(diff_data_base, diff_data_base_24)
+                                      TRUE ~ 0)) 
 
 
+# TEST - CHECK DIFFERENCE FIGURES
+# diff_data_base_quarters_check <- diff_data_base_quarters %>%
+#   filter((site == "All Cancers") & (sex == "All") & (area == "NCA") & (breakdown == "None"))
 
-rm(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep,
-   base_cancer_cum, base_cancer_slim_q0, base_cancer_counts_all, diff_data_base_24)
+##################################################################################
+# NEW 2 YEAR DATASET ----
+##################################################################################
 
-saveRDS(diff_data_base, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_2_", 
-                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-saveRDS(diff_data_base, "shiny_app/data/cancer_data_2.rds")
+# 2019 times 2 (2019 figures repeated for 2nd year for comparison with 2020/2021)
+base_cancer_counts_quarters_19 <- base_cancer_counts_all_quarters %>%
+  select(-c(count17, count18, count20, count21)) %>% 
+  mutate(quarter_no = as.numeric(quarter_no))
 
-# END
+base_cancer_counts_quarters_19_yr2 <- base_cancer_counts_quarters_19 %>% 
+  mutate(quarter_no = (quarter_no)+4)
 
+base_cancer_counts_quarters_19 <- bind_rows(base_cancer_counts_quarters_19,
+                                            base_cancer_counts_quarters_19_yr2) %>% 
+  rename(count1919 = count19)
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get quarterly counts for each value of hbres and All cancer ----
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-# BY QUARTER
+rm(base_cancer_counts_quarters_19_yr2)
 
-# change back year of records in week 1 of wrong year
-base_cancer_slim_quarters <- base_cancer_slim_quarters %>% 
-  mutate(year = case_when(incidence_date == "2018-12-31" ~ 2018,
-                          incidence_date == "2019-12-30" ~ 2019,
-                          incidence_date == "2019-12-31" ~ 2019,
-                          TRUE ~ year))
+#############
+# 2020
+base_cancer_counts_quarters_20 <- base_cancer_counts_all_quarters %>%
+  select(-c(count17, count18, count19, count21)) %>% 
+  mutate(quarter_no = as.numeric(quarter_no)) %>% 
+  rename(count2021 = count20)
 
+#############
+# 2021
+base_cancer_counts_quarters_21 <- base_cancer_counts_all_quarters %>%
+  select(-c(count17, count18, count19, count20)) %>% 
+  mutate(quarter_no = as.numeric(quarter_no)) %>% 
+  mutate(quarter_no = (quarter_no)+4)%>% 
+  rename(count2021 = count21)
 
-base_cancer_counts_quarters <- base_cancer_slim_quarters %>% 
-  group_by(year, quarter, region, hbres, site, sex) %>% 
-  summarise(count = n()) %>% 
-  ungroup() %>% 
-  complete(quarter, nesting(year, region, hbres, site, sex), fill = list(count = 0)) %>%
-  pivot_wider(names_from = year, 
-              values_from = count,
-              values_fill = 0) %>% 
-  rename(area = hbres, count17 = "2017",count18 = "2018", count19 = "2019", 
-         count20 = "2020", count21 = "2021") %>% 
-  mutate(age_group = "All Ages", dep = 0, breakdown = "None") %>% 
-  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE)) %>%
-  arrange(quarter)
+base_cancer_counts_quarters_20_21 <- bind_rows(base_cancer_counts_quarters_20,
+                                               base_cancer_counts_quarters_21)
 
+rm(base_cancer_counts_quarters_20,
+   base_cancer_counts_quarters_21)
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get quarterly counts for each value of hbres and All cancer by age group----
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+base_cancer_counts_quarters_2yr <- left_join(base_cancer_counts_quarters_19,
+                                             base_cancer_counts_quarters_20_21)
 
-base_cancer_counts_agegroups_quarters <- base_cancer_slim_quarters %>% 
-  group_by(year, quarter, region, hbres, site, sex, age_group) %>% 
-  summarise(count = n()) %>% 
-  ungroup() %>% 
-  complete(quarter, nesting(year, region, hbres, site, sex, age_group), 
-           fill = list(count = 0)) %>%
-  pivot_wider(names_from = year, 
-              values_from = count,
-              values_fill = 0) %>% 
-  rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
-         count20 = "2020", count21 = "2021") %>% 
-  mutate(dep = 0, breakdown = "Age Group") %>% 
-  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE)) %>%
-  arrange(quarter) 
+rm(base_cancer_counts_quarters_19,
+   base_cancer_counts_quarters_20_21)
 
+########################################
+# GET CUMULATIVE TOTALS OVER 2 YEARS
 
+base_cancer_cum_quarters_2yr <- base_cancer_counts_quarters_2yr %>%
+  select(region, area, site, sex, age_group, dep, quarter_no, count1919, count2021,  breakdown) %>%
+  group_by(area, site, sex, age_group, dep) %>%
+  mutate(cum_count1919 = cumsum(count1919),
+         cum_count2021 = cumsum(count2021)) %>% 
+  ungroup()
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Get quarterly counts for each value of hbres and All cancer by deprivation ----
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+########################################
+# ADD DIFFERENCE FIGURES
 
-base_cancer_counts_dep_quarters <- base_cancer_slim_quarters %>% 
-  group_by(year, quarter, region, hbres, site, sex, dep) %>% 
-  summarise(count = n()) %>% 
-  ungroup() %>% 
-  complete(quarter, nesting(year, region, hbres, site, sex, dep), 
-           fill = list(count = 0)) %>%
-  pivot_wider(names_from = year, 
-              values_from = count,
-              values_fill = 0) %>% 
-  rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
-         count20 = "2020", count21 = "2021") %>% 
-  mutate(age_group = "All Ages", breakdown = "Deprivation") %>% 
-  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE)) %>%
-  arrange(quarter)
+diff_data_base_quarters_2yr <- base_cancer_cum_quarters_2yr %>%
+  mutate(difference = case_when(count1919 > 0 ~ 100*(count2021 - count1919)/count1919,
+                                (count1919 = 0 & count2021 != 0) ~ 100*(count2021 - count1919)/1,
+                                TRUE ~ 0)) %>% 
+  mutate(cum_difference = case_when(cum_count1919 > 0 ~ 100*(cum_count2021 - cum_count1919)/cum_count1919,
+                                    (cum_count1919 = 0 & cum_count2021 != 0) ~ 100*(cum_count2021 - cum_count1919)/1,
+                                    TRUE ~ 0))
 
 
+##################################################################################
 
-base_cancer_counts_all_quarters <- bind_rows(base_cancer_counts_quarters, 
-                                             base_cancer_counts_agegroups_quarters, 
-                                             base_cancer_counts_dep_quarters)
+rm(base_cancer_counts_all_quarters, 
+   base_cancer_counts_quarters, 
+   base_cancer_counts_quarters_2yr,
+   base_cancer_cum_quarters, 
+   base_cancer_cum_quarters_2yr, 
+   base_cancer_mean_quarters, 
+   base_cancer_slim)
 
-rm(base_cancer_counts_quarters, base_cancer_counts_dep_quarters, base_cancer_counts_agegroups_quarters)
-
-# get mean of weekly counts from 2017-2019
-
-base_cancer_mean_quarters_ave <- base_cancer_counts_all_quarters %>%
-  filter(quarter != "Oct-Dec 19") %>% 
-  mutate(count_mean_17_19 =  round((count17 + count18 + count19)/3)) %>%
-  group_by(area, site, sex, age_group, dep, breakdown) %>%
-  mutate(cum_count19 = cumsum(count19),
-         cum_count20 = cumsum(count20),
-         cum_count21 = cumsum(count21),
-         cum_count_mean_17_19 = cumsum(count_mean_17_19),
-         denom = "Mean 2017-2019",
-         difference20 = case_when(count19 > 0 ~ 100*(count20 - count19)/count19,
-                                  (count19 = 0 & count20 != 0) ~ 100*(count20 - count19)/1,
-                                  TRUE ~ 0),
-         difference21 = case_when(count19 > 0 ~ 100*(count21 - count19)/count19,
-                                  (count19 = 0 & count21 != 0) ~ 100*(count21 - count19)/1,
-                                  TRUE ~ 0),
-         difference20_ave = case_when(count_mean_17_19 > 0 ~ 100*(count20 - count_mean_17_19)/count_mean_17_19,
-                                      (count_mean_17_19 = 0 & count20 != 0) ~ 100*(count20 - count_mean_17_19)/1,
-                                      TRUE ~ 0),
-         difference21_ave = case_when(count_mean_17_19 > 0 ~ 100*(count21 - count_mean_17_19)/count_mean_17_19,
-                                      (count_mean_17_19 = 0 & count21 != 0) ~ 100*(count21 - count_mean_17_19)/1,
-                                      TRUE ~ 0),
-         difference20_cum = case_when(cum_count19 > 0 ~ 100*(cum_count20 - cum_count19)/cum_count19,
-                                      (cum_count19 = 0 & cum_count20 != 0) ~ 100*(cum_count20 - cum_count19)/1,
-                                      TRUE ~ 0),
-         difference21_cum = case_when(cum_count19 > 0 ~ 100*(cum_count21 - cum_count19)/cum_count19,
-                                      (cum_count19 = 0 & cum_count21 != 0) ~ 100*(cum_count21 - cum_count19)/1,
-                                      TRUE ~ 0),
-         difference20_ave_cum = case_when(cum_count_mean_17_19 > 0 ~ 100*(cum_count20 - cum_count_mean_17_19)/cum_count_mean_17_19,
-                                          (cum_count_mean_17_19 = 0 & cum_count20 != 0) ~ 100*(cum_count20 - cum_count_mean_17_19)/1,
-                                          TRUE ~ 0),
-         difference21_ave_cum = case_when(cum_count_mean_17_19 > 0 ~ 100*(cum_count21 - cum_count_mean_17_19)/cum_count_mean_17_19,
-                                          (cum_count_mean_17_19 = 0 & cum_count21 != 0) ~ 100*(cum_count21 - cum_count_mean_17_19)/1,
-                                          TRUE ~ 0)) %>% 
-  ungroup() %>% 
-  select(quarter:sex, age_group:breakdown, denom, difference20_ave, difference21_ave, difference20_ave_cum, difference21_ave_cum) %>% 
-  rename(difference20 = difference20_ave,
-         difference21 = difference21_ave,
-         difference20_cum = difference20_ave_cum,
-         difference21_cum = difference21_ave_cum)
-
-
-base_cancer_mean_quarters <- base_cancer_counts_all_quarters %>%
-  group_by(area, site, sex, age_group, dep, breakdown) %>%
-  mutate(cum_count19 = cumsum(count19),
-         cum_count20 = cumsum(count20),
-         cum_count21 = cumsum(count21),
-         denom = "2019",
-         difference20 = case_when(count19 > 0 ~ 100*(count20 - count19)/count19,
-                                  (count19 = 0 & count20 != 0) ~ 100*(count20 - count19)/1,
-                                  TRUE ~ 0),
-         difference21 = case_when(count19 > 0 ~ 100*(count21 - count19)/count19,
-                                  (count19 = 0 & count21 != 0) ~ 100*(count21 - count19)/1,
-                                  TRUE ~ 0),
-         difference20_cum = case_when(cum_count19 > 0 ~ 100*(cum_count20 - cum_count19)/cum_count19,
-                                      (cum_count19 = 0 & cum_count20 != 0) ~ 100*(cum_count20 - cum_count19)/1,
-                                      TRUE ~ 0),
-         difference21_cum = case_when(cum_count19 > 0 ~ 100*(cum_count21 - cum_count19)/cum_count19,
-                                      (cum_count19 = 0 & cum_count21 != 0) ~ 100*(cum_count21 - cum_count19)/1,
-                                      TRUE ~ 0)) %>% 
-  ungroup() %>% 
-  select(quarter:sex, age_group:breakdown, denom:difference21_cum)
-
-diff_data_base_quarters <- bind_rows(base_cancer_mean_quarters,
-                                     base_cancer_mean_quarters_ave) %>% 
-  mutate(depdesc = case_when(dep == 1 ~ "1 - most deprived",
-                             dep == 2 ~ "2",
-                             dep == 3 ~ "3",
-                             dep == 4 ~ "4",
-                             dep == 5 ~ "5 - least deprived"))
-
-rm(base_cancer_counts_all_quarters,
-   base_cancer_mean_quarters,
-   base_cancer_mean_quarters_ave,
-   diff_data_base,
-   base_cancer_slim_quarters)
-
-
-saveRDS(diff_data_base_quarters, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_diff_", 
+##################################################################################
+# EXPORT DATA ----
+##################################################################################
+saveRDS(diff_data_base_quarters, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_quarters_",
                                         format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+saveRDS(diff_data_base_quarters, "shiny_app/data/cancer_data_quarters.rds")
 
 
-saveRDS(diff_data_base_quarters, "shiny_app/data/cancer_data_diff.rds")
-
-# END
+saveRDS(diff_data_base_quarters_2yr, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_quarters_2yr_",
+                                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+saveRDS(diff_data_base_quarters_2yr, "shiny_app/data/cancer_data_quarters_2yr.rds")
