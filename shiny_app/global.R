@@ -81,6 +81,9 @@ cardio_admissions <- readRDS("data/cardio_admissions.rds") # cardio admissions d
 cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
 
 #Cancer data
+
+cancer_data2 <- readRDS("data/cancer_data_2.rds")
+
 cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
   mutate(dep = factor(dep)) %>%
   mutate(quarter_no = factor(quarter_no, ordered = TRUE))
