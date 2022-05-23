@@ -77,6 +77,8 @@ cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
 ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
 sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
+cardio_admissions <- readRDS("data/cardio_admissions.rds") # cardio admissions data
+cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
 
 #Cancer data
 cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
@@ -316,8 +318,10 @@ data_list_childdev <- c("13-15 month review" = "13_15mnth",
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
                         "Cardiac procedures" = "cath_lab",
-                        "Cardiovascular OOH cases" = "ooh_cardiac",
+                        "Chest Pain OOH cases" = "ooh_cardiac",
                         "Cardiovascular SAS incidents" = "sas_cardiac",
+                        "Cardiovascular hospital admissions" = "cardio_admissions",
+                        "Cardiovascular deaths" = "cardio_deaths",
                         "6-in-1 first dose"  = "sixin_8wks",
                         "6-in-1 second dose" = "sixin_8wks_second",
                         "6-in-1 third dose" = "sixin_8wks_third",
@@ -413,7 +417,8 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
                  "Out of hours cases" = "ooh_cardiac",
-                 "Scottish Ambulance Service" = "sas_cardiac", "Cardiac procedures" = "cath")
+                 "Scottish Ambulance Service" = "sas_cardiac", "Hospital admissions" = "cardio_admissions",
+                 "Excess mortality" = "cardio_deaths", "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Stillbirths"="stillbirths",
@@ -440,6 +445,7 @@ pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
 
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
+
 pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine groupings
 
 pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
