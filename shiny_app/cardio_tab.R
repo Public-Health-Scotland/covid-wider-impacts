@@ -361,7 +361,7 @@ observeEvent(input$btn_cardio_modal,
                showModal(modalDialog(
                  title = "What is the data source?",
                  tags$b("Cardiovascular admissions"),
-                 p("These data provide a quarterly summary of the number of admissions to hospital as a result of an
+                 p("These data provide a quarterly summary of the number of hospital episodes as a result of an
                     cardiovascular condition since Jan 2020, with data from 2018-2019 for comparison purposes.
                     The recent trend data is shown by age group, sex, diagnosis, admission type and deprivation category (SIMD)."),
                  p("Please note that the stroke figures include diagnosis subarachnoid haemorrhage."),

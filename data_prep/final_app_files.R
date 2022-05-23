@@ -78,8 +78,8 @@ save_final_file("ae_cardio_codes", "30_Nov_20")
 save_final_file("ooh_cardiac", "02_May_22") # GP OOH
 save_final_file("sas_cardiac", "02_May_22") # SAS
 save_final_file("cardio_drugs", "29_Apr_22") # prescribing
-save_final_file("cardio_deaths", "06_Apr_22") # deaths
-save_final_file("cardio_admissions", "06_Apr_22") # admissions
+save_final_file("cardio_deaths", "13_May_22") # deaths
+save_final_file("cardio_admissions", "12_May_22") # admissions
 
 ##########################################################.
 ## Immunisations - six in one ----
