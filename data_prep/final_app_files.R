@@ -83,21 +83,21 @@ save_final_file("cardio_admissions", "12_May_22") # admissions
 
 ##########################################################.
 ## Immunisations - six in one ----
-save_final_file("six_alldose", "27_Apr_22")
-save_final_file("six_dose1_simdtable", "27_Apr_22")
-save_final_file("six_dose2_simdtable", "27_Apr_22")
-save_final_file("six_dose3_simdtable", "27_Apr_22")
-save_final_file("sixinone_datatable", "27_Apr_22")
+save_final_file("six_alldose", "24_May_22")
+save_final_file("six_dose1_simdtable", "24_May_22")
+save_final_file("six_dose2_simdtable", "24_May_22")
+save_final_file("six_dose3_simdtable", "24_May_22")
+save_final_file("sixinone_datatable", "24_May_22")
 ## Immunisations - MMR ----
-save_final_file("mmr_alldose", "27_Apr_22")
-save_final_file("mmr_dose1_simdtable", "27_Apr_22")
-save_final_file("mmr_dose2_simdtable", "27_Apr_22")
-save_final_file("mmr_datatable", "27_Apr_22")
-save_final_file("mmr_dose2_grampian_datatable", "27_Apr_22")
+save_final_file("mmr_alldose", "24_May_22")
+save_final_file("mmr_dose1_simdtable", "24_May_22")
+save_final_file("mmr_dose2_simdtable", "24_May_22")
+save_final_file("mmr_datatable", "24_May_22")
+save_final_file("mmr_dose2_grampian_datatable", "24_May_22")
 # Immunisations - definitions
-save_final_file("age_defs_imm_6inone", "27_Apr_22")
-save_final_file("age_defs_imm_mmr", "27_Apr_22")
-save_final_file("month_eligibility_immun", "27_Apr_22")
+save_final_file("age_defs_imm_6inone", "24_May_22")
+save_final_file("age_defs_imm_mmr", "24_May_22")
+save_final_file("month_eligibility_immun", "24_May_22")
 ##########################################################.
 ch_date <- "28_Apr_22"
 ## Child health reviews - first visit ----
