@@ -87,17 +87,17 @@ observeEvent(input$btn_drugs_modal,
                    tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
-             else if(input$drug_subcategories == 'Drug Overdose/Intoxication Attendances at Emergency Departments'){
+             else if(input$drug_subcategories == 'Drug overdose/intoxication attendances at Emergency Departments'){
                showModal(modalDialog(
                  title = "What is the data source?",
-                 p('A weekly breakdown of the number of drug-related attendances at Emergency Departments (ED) in Scotland is obtained from Public Health Scotland’s Accident & Emergency Datamart'),
-                 p('This breakdown contains information on all A&E sites across NHS Scotland where possible.  However for sites submitting an aggregated return to PHS, reasons for admission are not known, and therefore attendances at these locations are not included in this report.'),
-                 p('Due to differences in the way Emergency Departments in Scotland record data, it is not possible to identify drug or alcohol involvement or overdose as a presenting condition using only a specific variable or diagnosis code. Attendances for drug and alcohol intoxications or overdoses are identified using a combination of exact matching of relevant ICD codes and searching of free-text fields.'),
+                 p('A weekly breakdown of the number of drug-related attendances at Emergency Departments in Scotland is obtained from Public Health Scotland’s Accident & Emergency Datamart'),
+                 p('This breakdown contains information on all Emergency Department sites across NHS Scotland where possible.  Where sites submit an aggregated return to PHS, reasons for attendance are not known, and therefore attendances at these locations are not included.'),
+                 p('Due to differences in the way Emergency Departments in Scotland record data, it is not possible to identify drug involvement or overdose as a presenting condition using only a specific variable or diagnosis code. Attendances for drug intoxications or overdoses are identified using a combination of exact matching of relevant ICD codes and searching of free-text fields.'),
                  
                  p(''),
-                 p('Due to small and fluctuating numbers, attendances are presented here as a three week rolling average. Numbers by sex are displayed where sex was recorded on the A&E attendance record'),
+                 p('Due to small and fluctuating numbers, attendances are presented here as a 3-week rolling average. Numbers by sex are displayed where sex was recorded on the attendance record'),
                  p(strong('Terminology:')),
-                 p("Drug Intoxication/Overdose: An attendance for a drug intoxication/overdose, either alone, or combined with alcohol intoxication"),
+                 p("Drug Intoxication/Overdose: An attendance for a drug intoxication or overdose, either alone, or combined with alcohol intoxication"),
                  p('For further information, contact',
                    tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -113,7 +113,7 @@ output$area_drugs_select<-renderUI({
   }
 
   
-  else if (input$drug_subcategories == 'Take home naloxone kits'||input$drug_subcategories=='SAS naloxone administration'||input$drug_subcategories == 'OST prescribing'||input$drug_subcategories == 'Drug Overdose/Intoxication Attendances at Emergency Departments'){
+  else if (input$drug_subcategories == 'Take home naloxone kits'||input$drug_subcategories=='SAS naloxone administration'||input$drug_subcategories == 'OST prescribing'||input$drug_subcategories == 'Drug overdose/intoxication attendances at Emergency Departments'){
     selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
                    choices = c('Scotland','NHS Board'), selected = "Scotland")
   }
@@ -183,7 +183,7 @@ plot_data<-reactive({
   else if(input$drug_subcategories=='SAS naloxone administration'){
     plot_data<-subset(SASdata,(Board==location()))
   }
-  else if(input$drug_subcategories=='Drug Overdose/Intoxication Attendances at Emergency Departments'){
+  else if(input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments'){
     plot_data<-subset(Drug_AE_attendances,(Board==location()))
   }
   plot_data
@@ -369,14 +369,13 @@ output$TwoYrComparison<-renderUI({
     }}
   
   #### Drug related A&E attendances ####
-  else if(input$drug_subcategories=='Drug Overdose/Intoxication Attendances at Emergency Departments'){
+  else if(input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments'){
     tagList(#A&E attendances
-      tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
-                 incomplete for a number of NHS Boards. Thus, the figures reported for drug and alcohol related
+      p("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
+                 incomplete for a number of NHS Boards. Thus, the figures reported for drug related
                  attendances offer only a very approximate indication of attendances.
                  Additionally, some NHS Boards have moved to a new recording standard which
-                 has not been fully consolidated in the A&E datamart as yet."),
-      br())
+                 has not been fully consolidated in the A&E datamart as yet."))
     # if(location()=='NHS Shetland'||location()=='NHS Orkney'||location()=='NHS Western Isles'){
     #   output$data_message<-renderText('Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total')
     #   textOutput('data_message')
@@ -411,7 +410,7 @@ output$TwoYrComparison<-renderUI({
         trend <- trend %>% layout(margin = list(t=80),
                                   xaxis = list(fixedrange=TRUE,
                                            title='Date'),
-                                  title = (paste0("3-Week central moving average of number of attendances for Drug Overdose/Intoxication Attendances at Emergency Departments in 2020 - 2022 \n compared with 2018-19 average (",location(), ")")),
+                                  title = (paste0("3-Week central moving average of number of attendances for Drug Overdose/Intoxication Attendances \nat Emergency Departments in 2020 - 2022 compared with 2018-19 average (",location(), ")")),
                                   yaxis = list(title = "Number of attendances",
                                              rangemode='tozero',
                                              fixedrange=TRUE),
@@ -583,14 +582,6 @@ output$Cum_plot<-renderUI({
 
 output$PercentChange<-renderUI({
   
-  
-  # if(input$drug_subcategories %in% c('Drug and alcohol treatment referrals', 'Drug Overdose/Intoxication Attendances at Emergency Departments')) {
-  #   if (input$drug_subcategories == 'Drug and alcohol treatment referrals') {
-  #     plot_data<-plot_data()
-  #   } else {
-  #     plot_data <- subset(plot_data(), Gender == "All")
-  #   }
-  #   
   if (input$drug_subcategories == 'Drug and alcohol treatment referrals') {
     if(length(which(is.na(plot_data$Change)))==0){
 
@@ -684,18 +675,6 @@ output$Quan_plot<-renderUI({
 })
   
 ## A&E Drug attendances by sex
-# output$Drug_gender_plot<-renderUI({
-#   if (input$drug_subcategories=='Drug Overdose/Intoxication Attendances at Emergency Departments') {
-#     tagList(#A&E attendances
-#       tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
-#                  incomplete for a number of NHS Boards. Thus, the figures reported for drug and alcohol related
-#                  attendances offer only a very approximate indication of attendances.
-#                  Additionally, some NHS Boards have moved to a new recording standard which
-#                  has not been fully consolidated in the A&E datamart as yet."),
-#       br())
-#     
-#     # if(location() == 'Scotland')  {
-    
 output$drug_gender_plot<-renderPlotly({
   
   plot_drug_sex <- subset(plot_data(), (Board == location()) & (Gender %in% c("Female", "Male","All")))
@@ -718,7 +697,6 @@ output$drug_gender_plot<-renderPlotly({
   trend_sex <- trend_sex %>% 
     layout(xaxis = list(fixedrange=TRUE, title='Date'), 
            margin=list(t=80),
-           # title = (paste0("3-Week central moving average of number of attendances for Drug Overdose/Intoxication Attendances \n at Emergency Departments  by sex (", location(),", 2020-2022)")),
            yaxis = list(title = "Number of attendances",
                         rangemode='tozero',
                         fixedrange=TRUE) ,
@@ -731,6 +709,7 @@ output$drug_gender_plot<-renderPlotly({
            modeBarButtonsToRemove = bttn_remove)
 })
 
+## A&E Drug attendances - Pct change
 output$Drug_AE_change_plot<-renderPlotly({
   
   plot_data <- subset(plot_data(), (Gender == "All"))
@@ -774,23 +753,27 @@ output$Drug_AE_change_plot<-renderPlotly({
 
 })    
     
-    
+## This section combines the two A&E sub-plots together (Pct change and Gender)    
 output$drug_AE_explorer <- renderUI({
   
-  data_last_updated <- tagList(p("Last updated: 6 April 2022"))
+  data_last_updated <- tagList(p("Last updated: 24 May 2022"))
   
-  note_average <- p("Please note that to ease interpretation of these charts ",
-                    "we are presenting 3-week rolling average figures.",
-                    "Single-week figures can be obtained from the download button at the top of the page.")
+  note_average <- p("Please note that due to small numbers we are presenting 3-week rolling average figures.")
   
-  if (input$drug_subcategories=='Drug Overdose/Intoxication Attendances at Emergency Departments') {
-    tagList(
+  note_dataQual <- p("Due to limitations in diagnosis recording in the A&E datamart, the data are
+                 incomplete for a number of NHS Boards. Thus, the figures reported for drug related
+                 attendances offer only a very approximate indication of attendances.
+                 Additionally, some NHS Boards have moved to a new recording standard which
+                 has not been fully consolidated in the A&E datamart as yet.")
+  
+  if (input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments') {
+    tagList(note_dataQual, note_average, data_last_updated,
    #   h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", location())),
     ## plot_box and plot_cut_box are defined in global.R
       # plot_box("2020, 2021 and 2022 compared with 2018-2019 average", "TwoYrComparison"),
-      plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug Overdose/Intoxications in ", location(), "(2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
+      plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug overdose/intoxications \nin ", location(), " (2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
                    plot_output1 = "Drug_AE_change_plot",
-                   title_plot2 = paste0("3-Week central moving average of number of attendances for Drug Overdose/Intoxication Attendances \n at Emergency Departments  by sex (", location(),", 2020-2022)"),
+                   title_plot2 = paste0("3-Week central moving average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
                    plot_output2 = "drug_gender_plot"))
   }
 })
@@ -892,6 +875,20 @@ output$drug_commentary <- renderUI({
       tags$li('From January to April 2020, the number of items of buprenorphine prescribed per month was higher than the 2018-2019 average. After peaking in March 2020 the number of items prescribed per month decreased and was similar to the 2018-2019 average in the period from May to October 2020. Since November 2020, the number of items prescribed per month has remained above the 2018-2019 average. '),
       tags$li('The quantity of buprenorphine prescribed per item in 2020 and 2021 was higher than the 2018-2019 average across the whole time series, in particular from April 2020 onwards. ')
     ),
+    
+    h2('Drug overdose/intoxication attendances at Emergency Departments'),
+    p(strong('2020')),
+    tags$ul(
+      tags$li('There was a large decrease in the number of drug-related overdose/intoxication attendances at Emergency Departments in Scotland in the weeks immediately prior to the UK lockdown.'), 
+      tags$li('Following the introduction of the UK lockdown, attendances increased throughout Spring and Summer 2020.'),
+      tags$li('This was followed by a decreasing trend of attendances from September to the end of 2020. ')),
+    p(strong('2021')),
+    tags$ul(
+      tags$li('Between January and August 2021, a long-term increasing trend in number of drug-related attendances was observed.'), 
+      tags$li('In September, October and November 2021, the weekly average numbers of drug-related ED attendances decreased.')),
+    p(strong('2022')),
+      p('Since December 2021, the numbers of drug-related attendances have fallen below the 2018 & 2019 average and remain lower than observed in the corresponding months of 2020 and 2021. '),
+    
     p('For further information, contact ',
       tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.')
   )
