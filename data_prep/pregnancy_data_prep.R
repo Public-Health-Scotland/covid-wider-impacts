@@ -65,6 +65,9 @@ ante_booking %<>%
                                   T ~ dottedline_g)) %>%
   mutate(centreline_g = case_when(area_name == "NHS Forth Valley" & !(is.na(centreline_g_v)) ~ centreline_g_v,
                                   T ~ centreline_g))
+
+# ante_booking <- ante_booking %>%
+#   filter(case_when(area_name == "NHS Greater Glasgow & Clyde" ~ week_book_starting < "2022-04-19"))
   
 
 #add control chart flags for charting
