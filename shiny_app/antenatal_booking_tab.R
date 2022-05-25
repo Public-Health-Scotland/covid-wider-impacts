@@ -69,9 +69,12 @@ ante_booking_filter <- function(){
     select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
     filter(area_name == input$geoname_booking &
                        area_type == input$geotype_booking &
-                       type %in% c("Scotland","Health board"))
+                       type %in% c("Scotland","Health board")) %>%
+    # temp fix for june 2022 update
+    filter(case_when(area_name == "NHS Greater Glasgow & Clyde" | area_name == "Scotland" ~ week_book_starting < "2022-04-19",
+       area_name != "NHS Greater Glasgow & Clyde" | area_name != "Scotland" ~ week_book_starting < "2022-05-15"))
     
-}
+  }
 
 #Dataset behind deprivation/age plots (only available at scotland level)
 ante_booking_filter_split <- function(split){

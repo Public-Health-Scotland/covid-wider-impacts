@@ -66,6 +66,7 @@ ante_booking %<>%
   mutate(centreline_g = case_when(area_name == "NHS Forth Valley" & !(is.na(centreline_g_v)) ~ centreline_g_v,
                                   T ~ centreline_g))
 
+# test filter june2022 update
 # ante_booking <- ante_booking %>%
 #   filter(case_when(area_name == "NHS Greater Glasgow & Clyde" ~ week_book_starting < "2022-04-19"))
   
