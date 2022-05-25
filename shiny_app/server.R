@@ -42,6 +42,7 @@ function(input, output, session) {
                  tags$ul(
                    tags$li("1 June 2022 - Systemic anti-cancer therapies data update."),
                    tags$li("6 June 2022 - Monthly update of data (most sections)."),
+                   tags$li("15 June 2022 - Outpatient activity data update."),
                    tags$li("TBC 2022 - Cancer staging data.")
                  ),
                  size = "m",
