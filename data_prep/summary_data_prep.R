@@ -168,7 +168,7 @@ ooh %<>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-04-26")))
 
-#new data extract from week ending 03 may 2020 up to week ending 31 may 2020
+#new data extract from week ending 03 may 2020 up to present
 ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/", filename, ".xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
@@ -186,7 +186,7 @@ ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/", filename, ".xlsx"))
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
                       "4" = "4", "5" = "5 - least deprived"),
          week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
-         scot = "Scotland") %>% 
+         scot = "Scotland") %>%  
   proper() # convert HB names to correct format
 
 ooh_may_onwards <- ooh_may_onwards %>% 
@@ -214,6 +214,41 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = last_week)
 print("ooh.rds file prepared and saved, including open data")
 
 }
+
+################################
+## OOH COVID CONSULTATIONS ##
+###############################
+
+create_ooh_cons <- function(filename, last_week) {
+  
+filename <- "WIDER IMPACT PC OOH Data_58_6121904306290086073"
+last_week <-  "2022-04-24"
+test_data_folder <- "/PHI_conf/ScotPHO/1.Analysts_space/Peter/covid-wider-impact-pra/test_data_ooh/"
+
+ooh_cons <- read_xlsx(paste0(test_data_folder, "Wider_Impact_PC_OOH_Consultations_March_2022_Test_report.xlsx")) %>% 
+  janitor::clean_names() %>%
+  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
+         cons_type=all_cons, count=number_of_consultations) %>%
+  mutate(week_ending = as.Date(week_ending, "%d/%m/%Y"),  #formatting date (is this required? doesn't seem to do anything)
+         scot = "Scotland") %>%
+  proper()
+
+ooh_cons <- ooh_cons %>% 
+  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                            "hscp" = "HSC partnership", "scot" = "Scotland"),
+         type = cons_type) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
+  mutate(category = "All") # add columns required for prepare_final_data()
+  
+# Formatting file for shiny app
+prepare_final_data(dataset = ooh_cons, filename = "ooh_cons", last_week = last_week)
+
+print("ooh_cons.rds file prepared and saved, including open data")
+}
+
 
 ###############################################.
 ## A&E data ----

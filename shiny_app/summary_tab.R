@@ -37,6 +37,17 @@ observeEvent({input$measure_select}, {
                       label = "Step 3. Select type of appointment.",
                       choices = c("All", "New", "Return"),
                       selected = "All")
+  } else if (input$measure_select == "ooh") {
+    disable("adm_type")
+    enable("ooh_appt_type")
+    
+    updateSelectInput(session, "adm_type",
+                      label = "Step 3. Select type of admission (not available).")
+    
+    updateSelectInput(session, "ooh_appt_type",
+                      label = "Step 4. Select type of appointment for overall chart.",
+                      choices = c("All cases", "Covid consultations" = "COVID", "Non-covid consultations" = "NON COVID"), 
+                      selected = "All cases")
   } else {
     disable("adm_type")
 
@@ -523,7 +534,9 @@ output$data_explorer <- renderUI({
         } else {
           plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
-      plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
+      
+     if (input$measure_select != "ooh" | (input$measure_select == "ooh" & input$ooh_appt_type == "All cases")) { 
+       tagList(plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
       plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
                    paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
@@ -533,6 +546,12 @@ output$data_explorer <- renderUI({
                             icon = icon('question-circle'))),
       fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))),
                column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))
+      )
+     } else {
+       tags$b(span("Out of Hours demographic data is only avaialable for Cases. Please Select 'All cases' in Step 4."))
+       
+     }
+        
     )
 
   }
@@ -567,16 +586,38 @@ output$data_explorer <- renderUI({
                source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
   } else if (input$measure_select == "ooh") { #Out of hours cases
-    tagList(
-    tags$b(span("Please note that the data on this page excludes individuals coming to
+      if (input$ooh_appt_type == "All cases"){
+          tagList(
+           tags$b(span("Please note that the data on this page excludes individuals coming to
                 Primary Care Out of Hours services via the COVID Pathway. PHS are
                 investigating this to better reflect Primary Care Out of Hours service
                 provision.", style = "color:red")),
-    br(),
-
-    cut_charts(title= "Weekly cases in out of hours services",
+             br(),
+    
+          cut_charts(title = "Weekly cases in out of hours services",
                source = "PHS GP OOH Datamart", data_name ="ooh"))
-
+        } else if(input$ooh_appt_type == "COVID") {
+          tagList(
+            tags$b(span("Please note that the data on this page excludes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. PHS are
+                investigating this to better reflect Primary Care Out of Hours service
+                provision.", style = "color:red")),
+            br(),
+            
+            cut_charts(title = "Weekly Covid related consultations in out of hours services",
+            source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
+        } else if(input$ooh_appt_type == "NON COVID"){
+          tagList(
+            tags$b(span("Please note that the data on this page excludes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. PHS are
+                investigating this to better reflect Primary Care Out of Hours service
+                provision.", style = "color:red")),
+            br(),
+            
+            cut_charts(title = "Weekly Non-covid related consultations in out of hours services",
+                       source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
+        }
+    
   } else if (input$measure_select == "sas") {
     tagList(# SAS data
       tags$em(p("Please note that there is currently an issue with duplicates in the SAS dataset and
@@ -727,6 +768,7 @@ output$aye_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "tot
 
 # OOH charts
 output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
+output$ooh_cons_overall <- renderPlotly({plot_overall_chart(ooh_cons, data_name = "ooh_cons")})
 output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", data_name = "ooh")})
 output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", data_name = "ooh")})
 output$ooh_depr_var <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", data_name = "ooh")})
@@ -888,9 +930,14 @@ overall_data_download <- reactive({
     "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),
-    "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average) %>% 
-      mutate(week_ending = format(week_ending, "%d %b %y")) %>%
-      select(area_name, week_ending, count, starts_with("average")),
+    "ooh" = case_when(input$ooh_appt_type == "All cases" ~ filter_data(ooh) %>% 
+                                                            rename(average_2018_2019 = count_average) %>% 
+                                                            mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
+                                                            select(area_name, week_ending, count, starts_with("average")),
+                      input$ooh_appt_type %in% c("COVID", "NON COVID") ~ filter_data(ooh_cons) %>% 
+                                                                          rename(average_2018_2019 = count_average) %>% 
+                                                                          mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
+                                                                          select(area_name, week_ending, count, starts_with("average"))), 
     "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),

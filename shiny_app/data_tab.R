@@ -12,6 +12,7 @@ data_table <- reactive({
          "ae_cardio" = ae_cardio %>% rename(average_2018_2019 = count_average),
          "nhs24" = nhs24 %>% rename(average_2018_2019 = count_average),
          "ooh" = ooh %>% rename(average_2018_2019 = count_average),
+         "ooh_cons" = ooh_cons %>% rename(average_2018_2019 = count_average),
          "sas" = sas %>% rename(average_2018_2019 = count_average),
          "deaths" = deaths %>% rename(average_2015_2019 = count_average),
          "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
@@ -417,6 +418,17 @@ data_table <- reactive({
                                   TRUE ~ "All")) %>% 
       mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                   TRUE ~ "All"))
+  } else if (input$data_select == "ooh_cons") {
+    table_data %<>%
+      # Formatting to a "nicer" style
+            mutate("Consultation type" = recode_factor(type, 
+                                                 "COVID" = "Covid related", 
+                                                 "NON COVID" = "Non-covid related"),
+             week_ending = format(week_ending, "%d %b %y"),
+             variation = case_when(type == "COVID" ~ 0,
+                                   T ~ variation)) %>% 
+      rename("Variation (%)" = variation) %>%
+      select(-category, -type)
   }
   
   
