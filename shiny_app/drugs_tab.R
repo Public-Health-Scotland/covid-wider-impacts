@@ -14,7 +14,7 @@ observeEvent(input$btn_drugs_modal,
                 and treatment information. This replaced the DATWT database and the Scottish Drug Misuse Database (SDMD) systems.
                 From 1 December 2020 NHS Ayrshire & Arran, NHS Dumfries & Galloway, NHS Grampian and NHS Western Isles began recording
                 waiting times information on DAISy. The remaining NHS Boards transferred to DAISy in April 2021.'),
-              p('Drug and Alcohol referral data from the start of 2020 to the end of December 2021 are shown alongside historical activity data
+              p('Drug and Alcohol referral data from the start of 2020 to March 2022 are shown alongside historical activity data
                 (average from 2018 and 2019) for comparison purposes. Data are available for Scotland and at NHS Board and Alcohol and Drug Partnership
                 levels and are also broken down by client type (Drugs, Alcohol, Co-dependency and All).'),
               p('Direct comparisons between numbers of referrals recorded in DATWT and DAISy should be interpreted carefully,
@@ -43,15 +43,14 @@ observeEvent(input$btn_drugs_modal,
                   Administration of naloxone provides time for emergency services to arrive and for further treatment to be given. Following suitable training, \'take home\' naloxone kits (hereafter referred to as \'THN\') 
                 are issued to people at risk of opioid overdose, their friends and family and service workers in order to help prevent overdose deaths. '),
               p('Information on THN kits supplied by community outlets, dispensed by community pharmacies and supplied by prisons on release from custody is shown. 
-                For THN supplied by prisons, NHS Board relates to the location of the prison. Monthly data from the start of 2020 up to March 2021 are shown, 
+                For THN supplied by prisons, NHS Board relates to the location of the prison. Monthly data from the start of 2020 up to December 2021 are shown, 
                 alongside historical activity data (average from 2018 and 2019) for comparison purposes. Data are available for Scotland and at NHS Board level.'),
               p('Data on THN supplies from community services and the Scottish Prison Service are based on data submitted to PHS from the National Naloxone Database. 
                 Data on naloxone dispensed by community pharmacies is extracted from the Prescribing Information System, held by PHS. '),
               p('The data relate to numbers of THN kits distributed rather than individuals. Data can include supplies of multiple kits, repeat supplies and those issued to service workers and family/friends of persons at risk. The supply of THN was expanded to non-drug treatment services (such as homelessness services and mental health services) 
                 at the end of April 2020 to ensure continued supply during the COVID-19 pandemic. Data on supply by these services is included in \'Community\' figures.'),
               p('The distribution of THN supplied by each source is shown in this dashboard (chart titled \'Percentage of take home naloxone kits provided by each source\'). This includes data supplied by the Scottish Ambulance Service (SAS), whose figures are not included in the other charts as data are not available nationally for the pre-COVID period. 
-                SAS undertook a THN supply pilot between February 2020 and June 2020 and have subsequently rolled out this work on a nationwide basis. 
-                Due to the operational pressures currently being experienced by SAS, data are only available for the period up to May 2021. '),
+                SAS undertook a THN supply pilot between February 2020 and June 2020 and have subsequently rolled out this work on a nationwide basis.'),
               p('For further information, contact',
                 tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -60,7 +59,7 @@ observeEvent(input$btn_drugs_modal,
                showModal(modalDialog(
                  title = "What is the data source?",
                  p('Scottish Ambulance Service (SAS) data on weekly numbers of incidents at which naloxone was administered to a patient have been shared with Public Health Scotland to facilitate the monitoring of drug-related harms and assist in preserving life and informing harm prevention activity. '),
-                 p('These data provide an indication of numbers of suspected opioid overdoses attended by ambulance clinicians before and during the pandemic. This allows trends over time to be monitored and acts as a basis for investigating changes that may be associated with the pandemic.  The figures shown relate to the 3-week central moving average of naloxone incidents per week recorded by SAS in the period from beginning of 2018 to 16 August 2021.'),
+                 p('These data provide an indication of numbers of suspected opioid overdoses attended by ambulance clinicians before and during the pandemic. This allows trends over time to be monitored and acts as a basis for investigating changes that may be associated with the pandemic.  The figures shown relate to the 3-week central moving average of naloxone incidents per week recorded by SAS in the period from beginning of 2018 to April 2022.'),
                  p('Naloxone is a medication which is used to prevent fatal opioid overdose. SAS clinicians have been administering naloxone directly to patients experiencing symptoms of an opioid overdose since around 1998. Scotland’s National Naloxone Programme, supplying take-home naloxone kits directly to people at risk of opioid overdose, has been operational since April 2011. In 2020, SAS commenced a pilot study to supply take-home naloxone to those experiencing a non-fatal opioid overdose or present at the scene of an opioid overdose that they attended.'),
                  p('SAS data on numbers of naloxone incidents are collated from data entered by ambulance clinicians recording medications administered to patients via an electronic tablet in the vehicle. Data recording is typically completed within 30 minutes of the end of an incident. There have been no changes in the guidance given to SAS clinicians regarding the administration of naloxone nor in the recording mechanisms or processes over the time series shown in the analysis.'),
                  p('In spite of this high degree of consistency, the full reasons for naloxone administration are not known. A small percentage of these administrations will have been due to circumstances other than an illicit opioid overdose (for example, some may relate to prescribed opioid overdoses or to adverse reactions associated with medications administered in the course of emergency treatment). Also, in a small number of cases, naloxone may be administered to someone who is unconscious for unconfirmed reasons, which may be confirmed at a later point not to have been an opioid overdose. '),
@@ -210,8 +209,8 @@ output$TwoYrComparison<-renderUI({
       annotations=annote("2020-03-01", plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`),
       margin=list(t=80),
       title = (ifelse(test = input$types == 'Co-dependency',
-                      yes = 'Number of co-dependency treatment referrals in 2020 & 2021.',
-                      no = sprintf("Number of %s treatment referrals in 2020 and 2021 \n compared with 2018-19 average (%s)",
+                      yes = 'Number of co-dependency treatment referrals in 2020, 2021, and 2022.',
+                      no = sprintf("Number of %s treatment referrals in 2020, 2021, and 2022 \n compared with 2018-19 average (%s)",
                                    tolower(input$types),location()))),
       yaxis = list(title = "Number of referrals",
                    rangemode='tozero',
@@ -351,7 +350,7 @@ output$TwoYrComparison<-renderUI({
       layout(shapes=lockdown('2020-03-23','grey'),
       annotations=annote("2020-03-01",plot_data()$`Average 2018 & 2019`,plot_data()$`2020 & 2021`),
       margin=list(t=80),
-      title = (sprintf("Number of SAS incidents where naloxone was administered in 2020 and 2021 \n compared with 2018-19 average (%s)",location())),
+      title = (sprintf("Number of SAS incidents where naloxone was administered in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",location())),
       xaxis=list(
         title='Date',
         fixedrange=TRUE
@@ -559,7 +558,7 @@ output$Cum_plot<-renderUI({
               hoverinfo='text') %>% 
      layout(
        margin=list(t=80,l=2),
-       title=(sprintf("Cumulative number of SAS incidents where naloxone was administered in 2020 and 2021 \n compared with 2018-19 average (%s)",location())),
+       title=(sprintf("Cumulative number of SAS incidents where naloxone was administered in 2020, 2021, and 2022 \n compared with 2018-19 average (%s)",location())),
        xaxis=list(
          tickvals=seq(1:(nrow(plot_data1)+1)),
          ticktext=c('',month.abb[as.numeric(plot_data1$month)]),
@@ -599,7 +598,7 @@ output$PercentChange<-renderUI({
 
     change <- change %>% layout(
       margin=list(t=80),
-      title = (sprintf("Percentage difference in the number of %s treatment referrals in 2020 and 2021 \n compared with 2018-2019 average (%s)",tolower(input$types),location())),
+      title = (sprintf("Percentage difference in the number of %s treatment referrals in 2020, 2021, and 2022 \n compared with 2018-2019 average (%s)",tolower(input$types),location())),
       yaxis = list(title = "% Change",
                    fixedrange=TRUE),
       xaxis=list(fixedrange=TRUE),
@@ -840,27 +839,6 @@ output$drug_commentary <- renderUI({
       tags$li("The trends for SAS naloxone administration in 2020 and 2021 are generally in line with the trend seen in the average of 2018 and 2019. The 3-week average in both 2020 and 2021 data and the historic average show considerable variation over time. "),
       tags$li("From January 2020 to the beginning of June 2020 the number of SAS naloxone incidents were roughly similar those seen on average in 2018 and 2019. The biggest difference between the two trend lines can be seen at the end of June to beginning of July where the historic average line peaked at 131 Naloxone incidents compared with 95 incidents in 2020. "),
       tags$li('Following this difference, from August 2020 there was a decreasing trend in the number of SAS naloxone incidents followed by an increase from January 2021. This increase in the number of SAS naloxone incidents reaches a peak of 127 at the beginning of July 2021, followed by a small decrease to around 110 incidents in August 2021. This trend, beginning in January 2021, closely follows the trend seen on average in 2018 and 2019.')),
-
-     h2("Drug and alcohol treatment referrals"),
-    p(strong("Information on the number of referrals to specialist drug and
-             alcohol treatment services was included for the first time on 03 November
-             2021")),
-    p(strong(
-      'These data on numbers of referrals to specialist drug and alcohol treatment services during the pandemic can be interpreted as a measure of demand for support with substance use issues and/or the capacity of services to process referrals for treatment.
-     Although these data are sourced from the systems that monitor waiting times for drug and alcohol treatment waiting times, they do not indicate the percentage of waits for specialist treatment where the target was met, nor whether individuals were provided with support that met their needs.
-       Information on performance against Scotland\'s Drug and Alcohol Treatment Waiting Time target can be found at',
-       tags$a(href="https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/",
-              "https://publichealthscotland.scot/publications/national-drug-and-alcohol-treatment-waiting-times/national-drug-and-alcohol-treatment-waiting-times-1-january-to-31-march-2021/",  target="_blank"), '.'
-    )),
-    tags$ul(
-      tags$li("The numbers of specialist drug and alcohol treatment referrals in January and February 2020 were broadly comparable to the 2018 and 2019 average for the corresponding weeks. Subsequently,
-              a 63% decrease in referrals was observed from week beginning 9 March 2020 (1,156 referrals) to week beginning 23 March 2020 (424 referrals). "),
-      tags$li("Since the UK lockdown was implemented on 23 March 2020, drug and alcohol treatment referral numbers have been consistently lower than in the comparable period in 2018 and 2019. From April 2020, a gradual increase has been observed, rising from 387 in the week beginning 6 April 2020 to 1,060 in the week beginning 24 August. This figure remained approximately stable until December, when the annual seasonal decrease in treatment
-              referrals in late November and December 2020 was broadly comparable with decreases observed in previous years. "),
-      tags$li("From January 2021 to May 2021, referral numbers remained stable and at a similar level seen in the latter half of 2020 (generally around 20% lower than the 2018 and 2019 average for corresponding weeks)."),
-      tags$li("A similar pattern was seen for both drug and alcohol referrals over the 18-month time period, although alcohol treatment referrals dropped to a greater extent following the UK lockdown (at their lowest, alcohol referrals were 74% below the 2018 and 2019 average for the week beginning 6 April, compared with 58% below observed in drug referrals). However, both referral types increased to around 20% below the 2018 and 2019 average by 22 June. "),
-      tags$li("The trends described were broadly observed across all NHS Boards and Alcohol and Drug Partnerships.")),
-
 
     h2('OST prescribing'),
     p(strong('Methadone')),
