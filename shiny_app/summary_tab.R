@@ -168,7 +168,7 @@ observeEvent(input$btn_dataset_modal,
                  p("Figures by NHS health board include those calls made by residents of each health board area."),
                  p("Contacts are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of NHS24 activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                            target="_blank"), "."),
                  p("The NHS24 dataset is managed by ",
                    tags$a(href="https://publichealthscotland.scot/",
@@ -192,13 +192,13 @@ observeEvent(input$btn_dataset_modal,
                    broad deprivation category (SIMD)."),
                  p("The charts provide a weekly summary of cases in the recent past and
                    historical trends for comparison purposes."),
-                 p("The figures presented in this tool exclude cases within any of the COVID-19
-                   hubs or assessment centres and relate only to cases concerning non-COVID
-                   issues. "),
+                 p("The figures presented in this tool relate to cases concerning non-COVID
+                   issues and include cases within any of the COVID-19
+                   hubs or assessment centres. "),
                  p("Cases are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may
                    be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                            target="_blank"), "."),
                  p("General Practice Out of Hours service data is sourced from the",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113",
@@ -228,7 +228,7 @@ observeEvent(input$btn_dataset_modal,
                    to gain further insight into patient flow through unscheduled care."),
                  p("Calls are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of SAS activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                            target="_blank"), "."),
                  p("The SAS dataset is managed by ",
                    tags$a(href="https://publichealthscotland.scot/",
@@ -548,8 +548,10 @@ output$data_explorer <- renderUI({
                column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))
       )
      } else {
-       tags$b(span("Out of Hours demographic data is only avaialable for Cases. Please Select 'All cases' in Step 4."))
-       
+       tags$b(span("Out of Hours demographic data is only available for Cases. Please Select 'All cases' in Step 4."),
+       br(),
+       br(),
+       br())
      }
         
     )
@@ -588,20 +590,16 @@ output$data_explorer <- renderUI({
   } else if (input$measure_select == "ooh") { #Out of hours cases
       if (input$ooh_appt_type == "All cases"){
           tagList(
-           tags$b(span("Please note that the data on this page excludes individuals coming to
-                Primary Care Out of Hours services via the COVID Pathway. PHS are
-                investigating this to better reflect Primary Care Out of Hours service
-                provision.", style = "color:red")),
+           tags$b(span("Please note that the data on this page now includes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", style = "color:red")),
              br(),
     
           cut_charts(title = "Weekly cases in out of hours services",
                source = "PHS GP OOH Datamart", data_name ="ooh"))
         } else if(input$ooh_appt_type == "COVID") {
           tagList(
-            tags$b(span("Please note that the data on this page excludes individuals coming to
-                Primary Care Out of Hours services via the COVID Pathway. PHS are
-                investigating this to better reflect Primary Care Out of Hours service
-                provision.", style = "color:red")),
+            tags$b(span("Please note that the data on this page now includes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", style = "color:red")),
             br(),
             
             cut_charts(title = "Weekly Covid related consultations in out of hours services",
