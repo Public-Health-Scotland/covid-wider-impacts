@@ -221,11 +221,7 @@ print("ooh.rds file prepared and saved, including open data")
 
 create_ooh_cons <- function(filename, last_week) {
   
-filename <- "WIDER IMPACT PC OOH Data_58_6121904306290086073"
-last_week <-  "2022-04-24"
-test_data_folder <- "/PHI_conf/ScotPHO/1.Analysts_space/Peter/covid-wider-impact-pra/test_data_ooh/"
-
-ooh_cons <- read_xlsx(paste0(test_data_folder, "Wider_Impact_PC_OOH_Consultations_March_2022_Test_report.xlsx")) %>% 
+ooh_cons <- read_xlsx(paste0(data_folder, "GP_OOH_cons/", filename)) %>% 
   janitor::clean_names() %>%
   rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          cons_type=all_cons, count=number_of_consultations) %>%
