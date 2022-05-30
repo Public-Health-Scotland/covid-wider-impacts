@@ -35,7 +35,6 @@ function(input, output, session) {
                    tags$li("2 March 2022 - Monthly update of data (most sections)."),
                    tags$li("16 February 2022 - Adding ethnicity data to the outpatients activity dataset."),
                    tags$li("2 February 2022 - Improvements to visualisations in pregnancy, births and babies, and child health section.")
-                   )
                    ),
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
@@ -46,7 +45,7 @@ function(input, output, session) {
                    tags$li("TBC 2022 - Cancer staging data.")
                  ),
                  size = "m",
-                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
                
 
   ##############################################.
