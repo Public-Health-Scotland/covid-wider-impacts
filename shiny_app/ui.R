@@ -115,7 +115,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                          actionLink("cancer_button", "Cancer", width="150px"),br(),
                          actionLink("injuries_button", "Injuries", width="150px"), br(),
                          actionLink("drug_button", "Substance use", width="150px")
-                         ),
+                          ),
                    column(10,
                           bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
                                     bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
@@ -658,7 +658,7 @@ tabPanel(title = "Perineal tears", value = "tears",
          mainPanel(width = 12,
                    uiOutput("tears_explorer")
          )# mainPanel bracket
-) , # tabPanel bracket
+), # tabPanel bracket
 ##############################################.
 ## Perinatal ----
 # ###############################################.
@@ -860,7 +860,7 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
          column(6, downloadButton('download_table_csv', 'Download data')),
          mainPanel(width = 12,
                    DT::dataTableOutput("table_filtered"))
-      ) # tabpanel bracket
+       ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
 # )#secure app
