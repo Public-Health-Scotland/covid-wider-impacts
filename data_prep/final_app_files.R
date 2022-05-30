@@ -73,11 +73,11 @@ save_final_file("area_type_op", "09_Feb_22")
 ##########################################################.
 ## Cardio ----
 save_final_file("cath_lab", "16_Nov_20") # cath labs
-save_final_file("ae_cardio", "29_Apr_22") # A&E
+save_final_file("ae_cardio", "30_May_22") # A&E
 save_final_file("ae_cardio_codes", "30_Nov_20")
-save_final_file("ooh_cardiac", "02_May_22") # GP OOH
-save_final_file("sas_cardiac", "02_May_22") # SAS
-save_final_file("cardio_drugs", "29_Apr_22") # prescribing
+save_final_file("ooh_cardiac", "30_May_22") # GP OOH
+save_final_file("sas_cardiac", "30_May_22") # SAS
+save_final_file("cardio_drugs", "30_May_22") # prescribing
 save_final_file("cardio_deaths", "13_May_22") # deaths
 save_final_file("cardio_admissions", "12_May_22") # admissions
 
