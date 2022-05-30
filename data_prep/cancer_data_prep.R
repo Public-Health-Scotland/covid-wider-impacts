@@ -727,6 +727,177 @@ gc()
 #######################################################
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get weekly counts for each value of hbres and All cancer ----
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+base_cancer_counts <- base_cancer_slim %>% 
+  group_by(year,  week_number, region, hbres, site, sex) %>% 
+  summarise(count = n()) %>% 
+  ungroup() %>% 
+  complete(week_number, nesting(year,  region, hbres, site, sex), fill = list(count = 0)) %>%
+  pivot_wider(names_from = year, 
+              values_from = count,
+              values_fill = 0) %>% 
+  rename(area = hbres, count17 = "2017",count18 = "2018", count19 = "2019", 
+         count20 = "2020", count21 = "2021") %>% 
+  mutate(age_group = "All Ages", dep = 0, breakdown = "None") 
+
+base_cancer_counts19_wk53 <- base_cancer_counts %>% 
+  filter(week_number == 53) %>% 
+  mutate(count17 = NA, count18 = NA, count19 = NA)
+
+base_cancer_counts19_notwk53 <- base_cancer_counts %>% 
+  filter(week_number != 53)
+
+base_cancer_counts <- bind_rows(base_cancer_counts19_notwk53, base_cancer_counts19_wk53) 
+
+rm(base_cancer_counts19_notwk53, base_cancer_counts19_wk53)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get weekly counts for each value of hbres and All cancer by age group----
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+base_cancer_counts_agegroups <- base_cancer_slim %>% 
+  group_by(year, week_number, region, hbres, site, sex, age_group) %>% 
+  summarise(count = n()) %>% 
+  ungroup() %>% 
+  complete(week_number, nesting(year, region, hbres, site, sex, age_group), 
+           fill = list(count = 0)) %>%
+  pivot_wider(names_from = year, 
+              values_from = count,
+              values_fill = 0) %>% 
+  rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
+         count20 = "2020", count21 = "2021") %>% 
+  mutate(dep = 0, breakdown = "Age Group")
+
+base_cancer_counts_agegroups_19_wk53 <- base_cancer_counts_agegroups %>% 
+  filter(week_number == 53) %>% 
+  mutate(count17 = NA, count18 = NA, count19 = NA)
+
+base_cancer_counts_agegroups_19_notwk53 <- base_cancer_counts_agegroups %>% 
+  filter(week_number != 53)
+
+base_cancer_counts_agegroups <- bind_rows(base_cancer_counts_agegroups_19_notwk53, 
+                                          base_cancer_counts_agegroups_19_wk53) 
+
+rm(base_cancer_counts_agegroups_19_notwk53, base_cancer_counts_agegroups_19_wk53)
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Get weekly counts for each value of hbres and All cancer by deprivation ----
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+base_cancer_counts_dep <- base_cancer_slim %>% 
+  group_by(year, week_number, region, hbres, site, sex, dep) %>% 
+  summarise(count = n()) %>% 
+  ungroup() %>% 
+  complete(week_number, nesting(year, region, hbres, site, sex, dep), 
+           fill = list(count = 0)) %>%
+  pivot_wider(names_from = year, 
+              values_from = count,
+              values_fill = 0) %>% 
+  rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
+         count20 = "2020", count21 = "2021") %>% 
+  mutate(age_group = "All Ages", breakdown = "Deprivation")
+
+base_cancer_counts_dep_19_wk53 <- base_cancer_counts_dep %>% 
+  filter(week_number == 53) %>% 
+  mutate(count17 = NA, count18 = NA, count19 = NA)
+
+base_cancer_counts_dep_19_notwk53 <- base_cancer_counts_dep %>% 
+  filter(week_number != 53)
+
+base_cancer_counts_dep <- bind_rows(base_cancer_counts_dep_19_notwk53, 
+                                    base_cancer_counts_dep_19_wk53)
+
+rm(base_cancer_counts_dep_19_notwk53, base_cancer_counts_dep_19_wk53)
+
+# combine for base cancer counts with age group split and no split
+
+base_cancer_counts_all <- bind_rows(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep)
+
+rm(base_cancer_counts_agegroups, base_cancer_counts_dep)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# BASE WEEKLY COUNTS---- 
+# DOWNLOAD FILE FOR DASHBOARD??
+# (before means or cumulative sums added?)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# get mean of weekly counts from 2017-2019
+
+base_cancer_mean <- base_cancer_counts_all %>%
+  group_by(week_number, region, area, site, sex) %>%
+  mutate(count_mean_17_19 = round((count17 + count18 + count19)/3)) %>%
+  ungroup() %>%
+  select(-count18)
+
+
+# Get Cumulative Counts for each year
+
+base_cancer_cum <- base_cancer_mean %>%
+  select(region, area, site, sex, age_group, dep, week_number, count19, count20, count21, count_mean_17_19, breakdown) %>%
+  group_by(area, site, sex, age_group, dep) %>%
+  mutate(cum_count19 = cumsum(count19),
+         cum_count20 = cumsum(count20),
+         cum_count21 = cumsum(count21),
+         cum_count_mean_17_19 = cumsum(count_mean_17_19)) %>%
+  ungroup()
+
+# rm(base_cancer_mean, base_cancer_slim)
+rm(base_cancer_mean)
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# CUM/INC DATASET ----
+# base_cancer_cum has all values needed for graphs 1 and 2: cumulative,
+# incidence
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Add % weekly variation between 2020/2019 and 2020/mean(2017-19)
+# (BELOW VARIABLES USED FOR WEEKLY DIFFERENCE GRAPH ONLY - NOT
+# ON DASHBOARD FROM SEP 21 UPDATE BUT MAY BRING BACK AS OPTION) 
+
+diff_data_base <- base_cancer_cum %>%
+  mutate(difference20 = case_when(count19 > 0 ~ 100*(count20 - count19)/count19,
+                                  (count19 = 0 & count20 != 0) ~ 100*(count20 - count19)/1,
+                                  TRUE ~ 0),
+         difference21 = case_when(count19 > 0 ~ 100*(count21 - count19)/count19,
+                                  (count19 = 0 & count21 != 0) ~ 100*(count21 - count19)/1,
+                                  TRUE ~ 0),
+         difference20_ave = case_when(count_mean_17_19 > 0 ~ 100*(count20 - count_mean_17_19)/count_mean_17_19,
+                                      (count_mean_17_19 = 0 & count20 != 0) ~ 100*(count20 - count_mean_17_19)/1,
+                                      TRUE ~ 0),
+         difference21_ave = case_when(count_mean_17_19 > 0 ~ 100*(count21 - count_mean_17_19)/count_mean_17_19,
+                                      (count_mean_17_19 = 0 & count21 != 0) ~ 100*(count21 - count_mean_17_19)/1,
+                                      TRUE ~ 0)) %>% 
+  mutate(week_ending = dmy("05/01/2020") + days(7*(week_number-1))) 
+
+diff_data_base_24 <- diff_data_base %>% 
+  filter(week_number > 52) %>% 
+  mutate(count21 = NA,
+         cum_count21 = NA)
+
+diff_data_base <- diff_data_base %>% 
+  filter(week_number <= 52)
+
+diff_data_base <- bind_rows(diff_data_base, diff_data_base_24)
+
+
+
+rm(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep,
+   base_cancer_cum, base_cancer_slim_q0, base_cancer_counts_all, diff_data_base_24)
+
+# OUTPUT DATA FOR CHARTS 1 & 2 - WEEKLY ----
+saveRDS(diff_data_base, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_2_", 
+                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+saveRDS(diff_data_base, "shiny_app/data/cancer_data_2.rds")
+
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Get QUARTERLY counts for each value of hbres and All cancer ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
