@@ -67,7 +67,7 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # Filedate: date on filename for each update, last week = last week of data to be included
 # Change extract to F if you just want to run the data prep and not the extraction
 # (quicker once the extraction has been done once)
-create_rapid(last_week =  "2022-04-24", extract = T) # this requires access to the RAPID dataset
+create_rapid(last_week =  "2022-05-22", extract = T) # this requires access to the RAPID dataset
 create_ae(filedate = "2022-04-28", last_week =  "2022-04-24")
 create_ooh(filename = "WIDER IMPACT PC OOH Data_58_6121904306290086073", last_week = "2022-04-24")
 create_nhs24(filedate = "2022-05-02", last_week =  "2022-04-24")
