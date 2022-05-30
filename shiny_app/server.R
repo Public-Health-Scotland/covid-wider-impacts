@@ -25,7 +25,9 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("18 May 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("25 May 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("25 May 2022 - Additional data for the cardiovascular section: hospital admissions and excess mortality."),
+                   tags$li("25 May 2022 - Cancer pathology data update."),
                    tags$li("4 May 2022 - Monthly update of data (most sections)."),
                    tags$li("6 April 2022 - Monthly update of data (most sections)."),
                    tags$li("30 March 2022 - New data on ambulance administered naloxone and update of substance use section."),
@@ -33,19 +35,17 @@ function(input, output, session) {
                    tags$li("2 March 2022 - Monthly update of data (most sections)."),
                    tags$li("16 February 2022 - Adding ethnicity data to the outpatients activity dataset."),
                    tags$li("2 February 2022 - Improvements to visualisations in pregnancy, births and babies, and child health section.")
-                   )
                    ),
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("25 May 2022 - Systemic anti-cancer therapies data update."),
-                   tags$li("25 May 2022 - Additional data for the cardiovascular section: hospital admissions and excess mortality."),
-                   tags$li("25 May 2022 - Cancer pathology data update."),
+                   tags$li("1 June 2022 - Systemic anti-cancer therapies data update."),
                    tags$li("6 June 2022 - Monthly update of data (most sections)."),
+                   tags$li("15 June 2022 - Outpatient activity data update."),
                    tags$li("TBC 2022 - Cancer staging data.")
                  ),
                  size = "m",
-                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
                
 
   ##############################################.

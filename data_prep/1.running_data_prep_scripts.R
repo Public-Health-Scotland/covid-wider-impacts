@@ -34,6 +34,8 @@ create_aecardio(filedate = "2022-04-28", last_week =  "2022-04-24")
 create_sascardio(filedate = "2022-05-02", last_week =  "2022-04-24") #there is currently a duplicates issue with this data so it is not being updated until resolved.
 create_cardiodrugs(filedate = "2022-04-28", last_week =  "2022-04-24")
 create_oohcardio(filedate = "2022-05-02", last_week =  "2022-04-24")
+create_cardioadmissions(last_week =  "2021-09-30") #updated quarterly   
+create_cardiodeaths(last_week =  "2021-12-31") #updated quarterly
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the cardio_tab script
@@ -89,7 +91,7 @@ file.edit("shiny_app/summary_tab.R")
 ## Pregnancy datasets ----
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
-create_terminations(top_date = "2022-04-12")
+create_terminations(top_date = "2022-05-17")
 create_antebooking(booking_date = "26052022", max_book_date = "2022-05-15")
 
 #For terminations change global extract date, and in terminations tab, update date.
