@@ -9,15 +9,10 @@
 ###############################################.
 ## Birth and babies datasets ----
 ###############################################.
-
-
-
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
-
-
 create_delivery(folderdate = "2022-05-13") # Mode of delivery, induction and gestation data
-create_perinatal(foldermonth = "may22") # Stillbirths and perinatal mortality
+create_perinatal(foldermonth = "jun22") # Stillbirths and perinatal mortality
 create_apgar(folderdate = "2022_05_17", max_date = "2022-02-28") # Apgar scores
 create_preterm(preterm_date = "2022_03_16", max_date = "2021-12-01") # Preterm
 create_tears(tears_date = "2022_05_17", max_date = "2022-02-28") # Perineal tears
