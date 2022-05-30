@@ -26,6 +26,7 @@ function(input, output, session) {
                  h4("New content and updates"),
                  tags$ul(
                    tags$li("1 June 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("1 June 2022 - Monthly update of data (most sections)."),
                    tags$li("25 May 2022 - Additional data for the cardiovascular section: hospital admissions and excess mortality."),
                    tags$li("25 May 2022 - Cancer pathology data update."),
                    tags$li("4 May 2022 - Monthly update of data (most sections)."),
@@ -40,8 +41,9 @@ function(input, output, session) {
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
                    tags$li("8 June 2022 - Systemic anti-cancer therapies data update."),
-                   tags$li("6 June 2022 - Monthly update of data (most sections)."),
                    tags$li("15 June 2022 - Outpatient activity data update."),
+                   tags$li("6 July 2022 - Monthly update of data (most sections)."),
+                   tags$li("3 August 2022 - Monthly update of data (most sections)."),
                    tags$li("TBC 2022 - Cancer staging data.")
                  ),
                  size = "m",
