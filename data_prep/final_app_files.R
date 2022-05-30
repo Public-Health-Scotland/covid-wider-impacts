@@ -166,11 +166,11 @@ save_final_file("tears_linechart_data", "19_May_22")
 save_final_file("tears_download_data", "19_May_22")
 ##########################################################.
 ## Mental health - Prescribing ----
-save_final_file("mentalhealth_drugs", "02_May_22")
+save_final_file("mentalhealth_drugs", "30_May_22")
 ## Mental health - A&E ----
-save_final_file("mh_A&E", "02_May_22")
+save_final_file("mh_A&E", "30_May_22")
 ## Mental health - OOH ----
-save_final_file("mh_ooh", "02_May_22")
+save_final_file("mh_ooh", "30_May_22")
 ##########################################################.
 ## Drugs - substance use ----
 

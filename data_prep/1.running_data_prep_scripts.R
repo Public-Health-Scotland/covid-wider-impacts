@@ -101,12 +101,12 @@ create_antebooking(booking_date = "26052022", max_book_date = "2022-05-15")
 ## Mental health datasets ----
 ###############################################.
 source("data_prep/mh_data_prep.R") # This sources the functions for the section
-create_aemh(filedate = "2022-05-01", last_week =  "2022-04-24") #takes a while
-create_oohmh(filedate = "2022-05-02", last_week =  "2022-04-24") #file generated on monday of update - last week should be 2 sundays previous (as in 8 days prior)
+create_aemh(filedate = "2022-05-29", last_week =  "2022-05-22") #takes a while
+create_oohmh(filedate = "2022-05-30", last_week =  "2022-05-22") #file generated on monday of update - last week should be 2 sundays previous (as in 8 days prior)
 # There will be a warning about duplicate rows, 63 rows removed - this is fine,
 # Glasgow City HSCP appears with 2 different codes earlier in the data, summing
 # count is correct.
-create_drugsmh(last_week =  "2022-04-24") #last week should be sunday before date file created
+create_drugsmh(last_week =  "2022-05-22") #last week should be sunday before date file created
 
 # Change update date in mental_health_tab.R script - approx line 324 in code
 file.edit("shiny_app/mental_health_tab.R")
