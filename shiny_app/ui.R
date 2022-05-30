@@ -680,7 +680,7 @@ tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ) # tabpanel bracket
- ) # navbar menu bracket
+ ), # navbar menu bracket
 ###############################################.
 ## Child health menu ----
 ###############################################.
