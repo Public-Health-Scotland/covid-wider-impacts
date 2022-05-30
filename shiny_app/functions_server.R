@@ -1968,7 +1968,7 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 ## Function for filtering ----
 ###############################################.
 # Function to filter the datasets for the overall charts and download data based on user input
-filter_data <- function(dataset, data_name, area = T, op = F) {
+filter_data <- function(dataset, data_name = "other", area = T, op = F) {
   if (data_name == "ooh_cons"){
     dataset %>% filter(area_name == input$geoname &
                          type == input$ooh_appt_type)

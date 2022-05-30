@@ -916,7 +916,23 @@ symbol_spec <- reactive({
 ###############################################.
 ## Data downloads ----
 ###############################################.
-
+ooh_download <- reactive({
+  
+  if(input$ooh_appt_type == "All cases") {
+    
+    filter_data(ooh) %>% 
+      rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
+      select(area_name, week_ending, count, starts_with("average"))
+    
+  } else {
+    filter_data(ooh_cons, data_name = "ooh_cons") %>% 
+      rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
+      select(area_name, week_ending, count, starts_with("average"))
+  }
+  
+})
 # For the charts at the moment the data download is for the overall one,
 # need to think how to allow downloading for each chart
 # Reactive dataset that gets the data the user is visualisaing ready to download
@@ -932,14 +948,7 @@ overall_data_download <- reactive({
     "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),
-    "ooh" = case_when(input$ooh_appt_type == "All cases" ~ filter_data(ooh) %>% 
-                                                            rename(average_2018_2019 = count_average) %>% 
-                                                            mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
-                                                            select(area_name, week_ending, count, starts_with("average")),
-                      input$ooh_appt_type %in% c("COVID", "NON COVID") ~ filter_data(ooh_cons) %>% 
-                                                                          rename(average_2018_2019 = count_average) %>% 
-                                                                          mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
-                                                                          select(area_name, week_ending, count, starts_with("average"))), 
+    "ooh" = ooh_download(),
     "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),
