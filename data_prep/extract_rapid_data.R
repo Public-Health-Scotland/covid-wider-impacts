@@ -62,7 +62,7 @@ rapid_extract %<>%
 
 
 # Add SIMD from lookup by postcode.
-simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2021_2_simd2020v2.rds') %>% 
+simd_lookup <- readRDS('/conf/linkage/output/lookups/Unicode/Deprivation/postcode_2022_1_simd2020v2.rds') %>% 
   select(pc7, simd2020v2_sc_quintile) %>% 
   rename(postcode = pc7,
          dep = simd2020v2_sc_quintile)
