@@ -423,7 +423,8 @@ data_table <- reactive({
       # Formatting to a "nicer" style
             mutate("Consultation type" = recode_factor(type, 
                                                  "COVID" = "Covid related", 
-                                                 "NON COVID" = "Non-covid related"),
+                                                 "NON COVID" = "Non-covid related",
+                                                 "ALL" = "All consultations"),
              week_ending = format(week_ending, "%d %b %y"),
              variation = case_when(type == "COVID" ~ 0,
                                    T ~ variation)) %>% 

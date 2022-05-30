@@ -46,7 +46,8 @@ observeEvent({input$measure_select}, {
     
     updateSelectInput(session, "ooh_appt_type",
                       label = "Step 4. Select type of appointment for overall chart.",
-                      choices = c("All cases", "Covid consultations" = "COVID", "Non-covid consultations" = "NON COVID"), 
+                      choices = c("All cases", "All consultations" = "ALL", 
+                                  "Covid consultations" = "COVID", "Non-covid consultations" = "NON COVID"), 
                       selected = "All cases")
   } else {
     disable("adm_type")
@@ -192,9 +193,8 @@ observeEvent(input$btn_dataset_modal,
                    broad deprivation category (SIMD)."),
                  p("The charts provide a weekly summary of cases in the recent past and
                    historical trends for comparison purposes."),
-                 p("The figures presented in this tool relate to cases concerning non-COVID
-                   issues and include cases within any of the COVID-19
-                   hubs or assessment centres. "),
+                 p("The figures presented in this tool relate to cases/consultations concerning non-COVID
+                   issues and cases/consultations within the COVID Pathway."),
                  p("Cases are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may
                    be available on request to ",
@@ -606,10 +606,14 @@ output$data_explorer <- renderUI({
             source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
         } else if(input$ooh_appt_type == "NON COVID"){
           tagList(
-            tags$b(span("Please note that the data on this page excludes individuals coming to
-                Primary Care Out of Hours services via the COVID Pathway. PHS are
-                investigating this to better reflect Primary Care Out of Hours service
-                provision.", style = "color:red")),
+            br(),
+            
+            cut_charts(title = "Weekly Non-covid related consultations in out of hours services",
+                       source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
+        } else if(input$ooh_appt_type == "ALL"){
+          tagList(
+            tags$b(span("Please note that the data on this page now includes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", style = "color:red")),
             br(),
             
             cut_charts(title = "Weekly Non-covid related consultations in out of hours services",

@@ -224,20 +224,40 @@ create_ooh_cons <- function(filename, last_week) {
 ooh_cons <- read_xlsx(paste0(data_folder, "GP_OOH_cons/", filename)) %>% 
   janitor::clean_names() %>%
   rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
-         cons_type=all_cons, count=number_of_consultations) %>%
+         type=all_cons, count=number_of_consultations) %>%
   mutate(week_ending = as.Date(week_ending, "%d/%m/%Y"),  #formatting date (is this required? doesn't seem to do anything)
          scot = "Scotland") %>%
-  proper()
-
-ooh_cons <- ooh_cons %>% 
+  proper() %>% 
   gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "area_name" = "Health board", 
-                            "hscp" = "HSC partnership", "scot" = "Scotland"),
-         type = cons_type) %>% 
+                            "hscp" = "HSC partnership", "scot" = "Scotland"))
+
+
+ooh_cons_covid <- ooh_cons %>% 
+  filter(type == "COVID",
+         between(week_ending, as.Date("2020-01-01"), as.Date("2022-04-03"))) %>% 
   # Aggregating to make it faster to work with
   group_by(week_ending, area_name, area_type, type) %>% 
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
   mutate(category = "All") # add columns required for prepare_final_data()
+
+ooh_cons_non_covid <- ooh_cons %>% 
+  filter(type == "NON COVID") %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
+  mutate(category = "All") # add columns required for prepare_final_data()
+
+ooh_cons <- rbind(ooh_cons_covid, ooh_cons_non_covid)
+
+ooh_cons_all <- ooh_cons %>% # calculate all consultations
+  group_by(week_ending, area_name, area_type) %>% 
+  summarise(count = sum(count)) %>% ungroup() %>% 
+  mutate(type = "ALL", category = "All")
+
+ooh_cons <- rbind(ooh_cons, ooh_cons_all)
+
+rm(ooh_cons_all, ooh_cons_covid, ooh_cons_non_covid) # remove unneeded datasets
   
 # Formatting file for shiny app
 prepare_final_data(dataset = ooh_cons, filename = "ooh_cons", last_week = last_week)
