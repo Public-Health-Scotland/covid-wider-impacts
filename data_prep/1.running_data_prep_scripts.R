@@ -67,7 +67,7 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # (quicker once the extraction has been done once)
 create_rapid(last_week =  "2022-04-24", extract = T) # this requires access to the RAPID dataset
 create_ae(filedate = "2022-04-28", last_week =  "2022-04-24")
-create_ooh(filename = "Wider_Impact_PC_OOH_Update_March_2022", last_week = "2022-04-24")
+create_ooh(filename = "Wider_Impact_PC_OOH_Update_March_2022", last_week = "2022-05-22")
 create_nhs24(filedate = "2022-05-02", last_week =  "2022-04-24")
 create_sas(filedate = "2022-05-02", last_week =  "2022-04-24")
 create_ooh_cons(filename = "Wider_Impact_PC_OOH_Consultations_March_2022_Test_report.xlsx", last_week = "2022-05-22")
