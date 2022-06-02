@@ -204,8 +204,8 @@ data_2020 <- left_join(dataset %>%
                                TRUE ~ variation)) %>%
   ## renaming for ease in dashboard
   rename("admission_type" = "appt_type") %>%
-  ## data goes to week ending July 4th 2021 but data after June 2021 haven't been published
-  filter(week_ending <= dmy("30-09-2021")) %>%
+  ## data goes to week ending December 31st 2021 but data after Dec 2021 haven't been published
+  filter(week_ending <= dmy("31-12-2021")) %>%
   # changing values where there is no activity in 2018/19 to 100% variation
   #   to avoid weird trends
   mutate(variation = case_when(count_average == 0 & variation == 0 &
@@ -395,8 +395,8 @@ data_2020 <- left_join(dataset %>%
                                TRUE ~ variation)) %>%
   ## renaming for ease in dashboard
   rename("admission_type" = "appt_type") %>%
-  ## data after June 2021 haven't been published
-  filter(week_ending <= dmy("30-09-2021")) %>%
+  ## data after December 2021 haven't been published
+  filter(week_ending <= dmy("31-12-2021")) %>%
   # changing values where there is no activity in 2018/19 to 100% variation
   #   to avoid weird trends
   mutate(variation = case_when(count_average == 0 & variation == 0 &

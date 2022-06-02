@@ -285,10 +285,10 @@ observeEvent(input$btn_dataset_modal,
                      refers to Other Residential Categories as defined ",
                      "on our ",
                      tags$a(href="https://www.opendata.nhs.scot/dataset/non-standard-geography-codes-and-labels/resource/32164b83-c9ec-495a-ac9f-dbeeb6ed5e59",
-                            "Open Data portal", target = "_blank"), "."),
+                            "Open Data portal (external website)", target = "_blank"), "."),
                    p("The outpatient analyses are derived from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=4",
-                            "Scottish Morbidity Record (SMR00) dataset",
+                            "Scottish Morbidity Record (SMR00) dataset (external website)",
                             target="_blank"),". This dataset is submitted monthly ",
                      "to Public Health Scotland (PHS), and relates to outpatient ",
                      "care. All new and return appointments from consultant-led clinics are included; ",
@@ -296,10 +296,10 @@ observeEvent(input$btn_dataset_modal,
                      "Did Not Attend (DNA) appointments. For more ",
                      "information on outpatient attendances, please see our ",
                      tags$a(href= "https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=O&ID=374&Title=Outpatient%20Attendance",
-                            "Data Dictionary",  target="_blank"),
+                            "Data Dictionary (external website)",  target="_blank"),
                      ". Please note that there is a time lag between the submission of ",
                      "SMR00 to PHS, and the data being validated and ready for release. ",
-                     "Therefore, weekly data up to 26th September 2021 and monthly data up to 30th September 2021 are given. For data quality issues, please see the ", 
+                     "Therefore, weekly data up to 26th December 2021 and monthly data up to 31st December 2021 are given. For data quality issues, please see the ", 
                      tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
                             "Acute Activity and NHS Beds quarterly publication",  
 
@@ -309,7 +309,7 @@ observeEvent(input$btn_dataset_modal,
                    p("The SMR00 dataset is managed by Public Health Scotland (PHS). ",
                      "For current completeness estimates, please see ",
                      tags$a(href = "https://beta.isdscotland.org/products-and-services/data-management-hospital-activity/smr-completeness/",
-                            "the PHS website", target = "_blank"), "."),
+                            "SMR data completeness (external website)", target = "_blank"), " web page."),
                    p(tags$a(href = "https://www.publichealthscotland.scot/publications/statistical-disclosure-protocol/statistical-disclosure-protocol/",
                             "Statistical disclosure control", target = "_blank"), 
 
@@ -323,7 +323,7 @@ observeEvent(input$btn_dataset_modal,
 # Modal to explain SIMD and deprivation
 simd_modal <- modalDialog(
   h5("What is SIMD and deprivation?"),
-  p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+  p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
                    target="_blank"), "is the Scottish Government's
     official tool for identifying areas in Scotland with concentrations of deprivation
     by incorporating several different aspects of deprivation (multiple-deprivations)
@@ -368,14 +368,14 @@ eth_modal <- modalDialog(
   h5(tags$b("Interpretation of this chart")),
   p("The ethnic group field in the Scottish Morbidity Record (SMR) 
   classifies the person according to their own perceived ethnic group and cultural 
-  background. More information can be found ", tags$a(href="https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group", "here.",
+  background. More information can be found in the", tags$a(href="https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group", "Health & Social Care data dictionary web page (external website).",
          target="_blank")),
   p("It became mandatory for NHS Scotland organisations to record ethnic group 
     on SMR outpatient (SMR00) returns from 1 February 2021. There is currently
   significant variation in the completeness of ethnic group recording in new 
-  outpatient appointment records between NHS Boards. More information can be found 
+  outpatient appointment records between NHS Boards. More information can be found in the
     ", tags$a(href="https://www.isdscotland.org/products-and-Services/Data-Support-and-Monitoring/SMR-Ethnic-Group-Recording/",
-              "here.", target="_blank")),
+              "SMR Ethnic Group Recording (external website)", target="_blank")),
   p("The following list is the current ethnicity classification (2011 Census categories) 
   used by NHS Scotland organisations for SMR return purposes, and the ethnic groups 
   that we have used in this dashboard."),
@@ -484,7 +484,7 @@ output$data_explorer <- renderUI({
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
 
   #update date for outpatients and the rest is different
-  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "9 March 2022",
+  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "15 June 2022",
                              TRUE ~ "4 May 2022")
 
   # Function to create the standard layout for all the different charts/sections
@@ -924,43 +924,40 @@ output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
 
-    h2("Summary - Outpatient appointments - 9th March 2022"),
-    p("Data are taken from Scottish Morbidity Record (SMR00) and show weekly outpatient appointments to
-      week ending 26th September 2021, with monthly information shown to 30th September 2021. Further information
-      is available by following the 'Data source: SMR00' links on the dashboard."),
+    h2("Summary - Outpatient appointments - 15th June 2022"),
+    p("Data are taken from Scottish Morbidity Record (SMR00) and show weekly outpatient appointments to week ending 26 December 2021, 
+      with monthly information shown to 31 December 2021. Further information is available by following the 'Data source: SMR00' 
+      links on the dashboard."),
    
       h4("Initial findings: outpatient appointments"),
     tags$ul(
-      tags$li("Outpatient appointments fell from the second week of March 2020 onwards: by week ending 19th April 2020,
-              all outpatient appointments had fallen by over two-thirds (-68%) compared to the average of the same week in 2018-19
-              (from an average of 87,049 in 2018-19 to 27,510 in 2020)."),
-      tags$li("This impact was similar across sexes, age groups and deprivation groups. 
-              For example, the fall in all appointments was greatest in patients aged 85 and over, dropping by almost three-quarters (-73%), 
-              while appointments for patients aged 15-44 dropped by two-thirds (-66%). However, by the week ending 26th September 2021,
-              these reductions were 10% for patients aged 85 and over and 13% for patients aged 15-44."),
-      tags$li("There were larger relative falls for surgical (-76%) than medical (-64%) specialties in the early stages
-              of the pandemic. However, by week ending 26th September 2021, medical specialties showed a reduction of over an eighth
-              (-13%), while surgical specialties showed a reduction of around one fifth (-21%)
-              compared to average values for the same week in 2018-19."),
+      tags$li("Outpatient appointments fell from the second week of March 2020 onwards: by week ending 19 April 2020, all outpatient 
+              appointments had fallen by over two-thirds (-68%) compared to the average of the same week in 2018–19 (from an average 
+              of 86,765 in 2018–19 to 27,523 in 2020)."),
+      tags$li("This impact was similar across sexes, age groups and deprivation groups. For example, the fall in all appointments was 
+              greatest in patients aged 85 and over, dropping by almost three-quarters (-72%), while appointments for patients aged 15–44 
+              dropped by two-thirds (-66%). However, by the week ending 26 December 2021, these reductions were 31% for patients aged 85 
+              and over and 28% for patients aged 15–44. "),
+      tags$li("There were larger relative falls for surgical (-76%) than medical (-64%) specialties in the early stages of the pandemic. 
+              However, by week ending 26 December 2021, medical specialties showed a reduction of over a quarter (-29%), while surgical 
+              specialties showed a reduction of over one third (-34%) compared to average values for the same week in 2018–19."),
       tags$li("There were larger decreases and a slower recovery in new outpatient appointments
               than in return outpatient appointments."),
-      tags$li("Outpatient appointments have generally been recovering from the end of April 2020 onwards
-               but are still not up to pre-pandemic levels. For example, for the week ending 26th September 2021, 
-               the total number of appointments remains at around 16% below the average of the same week in
-               2018-19."),
-      tags$li("There has been a very large increase in the number of appointments carried out remotely via 
-              telephone and videolink. In week ending 26th September 2021, just under one sixth (16%) of all
-              appointments was conducted by telephone, and 1 in 25 (4%) was by videolink. These modes of clinical
-              interaction were uncommon prior to March 2020 but have consistently made up around one fifth of 
-              outpatient activity since then."),
-      tags$li("The impact of the pandemic on outpatient appointments was similar across ethnic groups; however,
-              interpretation by ethnic group is complicated by the mandating of recording of ethnic group on SMR outpatient (SMR00)
-              returns from 1st February 2021. This is reflected in the fall in the number of appointments with a missing ethnic group, which
-              were 22% lower by September 2021 than the corresponding time in 2018-19."),
-      tags$li("In September 2021, appointments for patients with the 'White Scottish' ethnic group recorded were around 5% lower than the
-              corresponding time in 2018-19; the number of appointments in other ethnic groups varies between 23% higher (African) and 6%
-              lower (Chinese). It is important to note that the trends for ethnic groups with small populations should be interpreted with
-              caution as they will be subject to greater variability due to small numbers.")
+      tags$li("Outpatient appointments have generally been recovering from the end of April 2020 onwards but are still not up to 
+              pre-pandemic levels. For example, for the week ending 26 December 2021, the total number of appointments remains at around 
+              31% below the average of the same week in 2018–19."),
+      tags$li("There has been a very large increase in the number of appointments carried out remotely via telephone and videolink. 
+              In week ending 26th December 2021, just under one sixth (15%) of all appointments was conducted by telephone, 
+              and 1 in 25 (4%) was by videolink. These modes of clinical interaction were uncommon prior to March 2020 but have 
+              consistently made up around one fifth of outpatient activity since then."),
+      tags$li("The impact of the pandemic on outpatient appointments was similar across ethnic groups; however, interpretation by ethnic 
+              group is complicated by the mandating of recording of ethnic group on SMR outpatient (SMR00) returns from 1 February 2021. 
+              This is reflected in the fall in the number of appointments with a missing ethnic group, which were 22% lower by December 
+              2021 than the corresponding time in 2018–19."),
+      tags$li("In December 2021, appointments for patients with the 'White Scottish' ethnic group recorded were around 4% lower than the 
+              corresponding time in 2018–19; the number of appointments in other ethnic groups varies between 28% higher (‘Caribbean or 
+              Black’) and 4% lower (‘White Other’). It is important to note that the trends for ethnic groups with small populations should 
+              be interpreted with caution, as they will be subject to greater variability due to small numbers.")
       ),
     h4("Interpreting these figures"),
     p("Please exercise caution when interpreting these figures, as these data are for management information only.
@@ -968,12 +965,7 @@ output$summary_comment <- renderUI({
       tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
              "Acute Activity and NHS Beds quarterly publication.",
              target="_blank"),
-       h2("Outpatient appointments by ethnic group - 16th February 2022"),
-    p("New analyses by ethnic group have now been added. The COVID-19 pandemic has 
-      highlighted the need for ongoing monitoring of health data by ethnicity. Reporting 
-      analyses by ethnic group supports efforts to achieve equity in health care provision.
-      Please note that the rest of the outpatients data remains unchanged from the last update
-      on 15th December 2021."),
+       
     h2("Summary - Revision of baseline OOH - 23rd September 2020"),
     p("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) data was
 identified and has now been corrected. OOH figures from January 2018 to 22nd March 2020 had previously

@@ -66,10 +66,9 @@ save_final_file("nhs24", "02_May_22")
 ## SAS ----
 save_final_file("sas", "02_May_22")
 ### Outpatients ----
-save_final_file("outpats", "09_Feb_22")
-save_final_file("ethnicity_lookup", "14_Feb_22")
-save_final_file("spec_lookup_op", "09_Feb_22")
-save_final_file("area_type_op", "09_Feb_22")
+save_final_file("outpats", "24_May_22")
+save_final_file("spec_lookup_op", "24_May_22")
+save_final_file("area_type_op", "24_May_22")
 ##########################################################.
 ## Cardio ----
 save_final_file("cath_lab", "16_Nov_20") # cath labs
