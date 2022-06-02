@@ -195,6 +195,10 @@ observeEvent(input$btn_dataset_modal,
                    historical trends for comparison purposes."),
                  p("The figures presented in this tool relate to cases/consultations concerning non-COVID
                    issues and cases/consultations within the COVID Pathway."),
+                 p("A 'Case' is used to identify a patient's single encounter (service contact) with the OOH Service. 
+                   Within a single case a patient may have multiple consultations with OOH health care professionals.  
+                   Please note that the total number of consultations may be higher than the total number of cases as individuals 
+                   may have more than one consultation during a single encounter with the Out of Hours service."),
                  p("Cases are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may
                    be available on request to ",

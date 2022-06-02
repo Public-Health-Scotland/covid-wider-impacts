@@ -280,7 +280,7 @@ eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "W
 data_list <- c(
   "Hospital admissions" = "rapid", "A&E attendances" = "aye",
   "NHS 24 completed contacts" = "nhs24",
-  "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
+  "Out of hours cases and consultations" = "ooh", "Scottish Ambulance Service" = "sas",
   "Excess mortality" = "deaths",
   "Outpatient appointments" = "outpats")
 
