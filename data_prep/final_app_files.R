@@ -181,7 +181,7 @@ save_final_file("THN_by_HB", "27_May_22")
 save_final_file("OST_paid", "27_May_22")
 save_final_file("OST_paid_quantity", "27_May_22")
 save_final_file('SASdata', "27_May_22") 
-save_final_file('Drug_AE_attendances', "23_May_22") 
+save_final_file('Drug_AE_attendances', "07_Jun_22") 
 
 ##END
 

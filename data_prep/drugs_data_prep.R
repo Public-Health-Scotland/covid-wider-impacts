@@ -598,7 +598,7 @@ saveRDS(Total_Quant, paste0(data_folder,"final_app_files/OST_paid_quantity_",
 ## A&E data prep ----
 ###############################################.
 
-Drug_AE_attendances <- readRDS("//PHI_conf/SubstanceMisuse1/Topics/Surveillance/COVID/Dashboard/Drug_related_AE_attendances/A&E_Scotland_HB_Gender_2020_to_30-03-2022.RDS")
+Drug_AE_attendances <- readRDS(paste0(data_folder,"drugs/A&E_Scotland_HB_Gender_2020_to_30-04-2022.RDS"))
 
 Drug_AE_attendances <- Drug_AE_attendances %>%
   rename(Type = DrugsAlcBothNone,
@@ -613,6 +613,20 @@ Drug_AE_attendances <- Drug_AE_attendances %>%
                                     'Alcohol Overdose/Intoxication' = "Alcohol",
                                     'Drug and Alcohol Overdose/Intoxication' = "Both"))
 
+## Restricting to only Drug attendences (includes Drug+OD and Drug+Alc+OD attendances)
+Drug_AE_attendances <- Drug_AE_attendances %>%
+  filter(Type == "Drug Overdose/Intoxication") %>%
+  # mutate(`2020 & 2021` = plyr::round_any(`2020 & 2021`, 5, f = round),
+  #        `Average 2018 & 2019`= plyr::round_any(`Average 2018 & 2019`, 5, f = round))
+  mutate(`2020 & 2021` = if_else(`2020 & 2021` > 0 & `2020 & 2021` < 5, NA_real_, `2020 & 2021`),
+         `Average 2018 & 2019`= if_else(`Average 2018 & 2019` > 0 & `Average 2018 & 2019` < 5, NA_real_, `Average 2018 & 2019`)) %>%
+  group_by(Board) %>%
+  mutate(avg = mean(`2020 & 2021`[Gender == "All"], na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(`2020 & 2021` = if_else(avg < 10, NA_real_, `2020 & 2021`),
+         `Average 2018 & 2019` = if_else(avg < 10, NA_real_, `Average 2018 & 2019`))
+
+
 #calculating percent change
 Drug_AE_attendances <- Drug_AE_attendances %>%
   rowwise() %>%
@@ -623,9 +637,7 @@ Drug_AE_attendances <- Drug_AE_attendances %>%
          Change = as.numeric(format(Change, nsmall = 1)))
 
 
-## Restricting to only Drug attendences (includes Drug+OD and Drug+Alc+OD attendances)
-Drug_AE_attendances <- Drug_AE_attendances %>%
-  filter(Type == "Drug Overdose/Intoxication")
+
 
 
 saveRDS(Drug_AE_attendances, "shiny_app/data/Drug_AE_attendances.rds")

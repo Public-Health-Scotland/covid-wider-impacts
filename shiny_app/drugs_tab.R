@@ -95,6 +95,7 @@ observeEvent(input$btn_drugs_modal,
                  
                  p(''),
                  p('Due to small and fluctuating numbers, attendances are presented here as a 3-week rolling average. Numbers by sex are displayed where sex was recorded on the attendance record'),
+                 p('Additionally, where the average number of weekly attendences across the 2020 to 2022 time frame is <10, the data at NHS Board level is not displayed.'),
                  p(strong('Terminology:')),
                  p("Drug Intoxication/Overdose: An attendance for a drug intoxication or overdose, either alone, or combined with alcohol intoxication"),
                  p('For further information, contact',
@@ -375,11 +376,12 @@ output$TwoYrComparison<-renderUI({
                  attendances offer only a very approximate indication of attendances.
                  Additionally, some NHS Boards have moved to a new recording standard which
                  has not been fully consolidated in the A&E datamart as yet."))
-    # if(location()=='NHS Shetland'||location()=='NHS Orkney'||location()=='NHS Western Isles'){
-    #   output$data_message<-renderText('Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total')
-    #   textOutput('data_message')
-    # }
-    # else{
+    if(location() %in% c('NHS Shetland', 'NHS Orkney', 'NHS Western Isles', 'NHS Ayrshire & Arran', 'NHS Borders',
+                         'NHS Highland', 'NHS Lanarkshire', 'NHS Grampian', 'NHS Tayside', 'NHS Forth Valley', 'NHS Dumfries & Galloway')) {
+      output$data_message<-renderText('Data not shown due to small numbers. Data for this NHS Board is included in the Scotland total')
+      textOutput('data_message')
+    }
+    else{
       output$trend <- renderPlotly({
         ## set out the plot data, based on what the user has selected
         plot_data <- subset(plot_data(), (Gender == "All"))
@@ -421,7 +423,7 @@ output$TwoYrComparison<-renderUI({
                                    modeBarButtonsToRemove = bttn_remove)
       })
       plotlyOutput('trend',width='100%')
-    # }
+     }
   }
   
 })
@@ -755,7 +757,7 @@ output$Drug_AE_change_plot<-renderPlotly({
 ## This section combines the two A&E sub-plots together (Pct change and Gender)    
 output$drug_AE_explorer <- renderUI({
   
-  data_last_updated <- tagList(p("Last updated: 24 May 2022"))
+  data_last_updated <- tagList(p("Last updated: 7 June 2022"))
   
   note_average <- p("Please note that due to small numbers we are presenting 3-week rolling average figures.")
   
@@ -765,15 +767,18 @@ output$drug_AE_explorer <- renderUI({
                  Additionally, some NHS Boards have moved to a new recording standard which
                  has not been fully consolidated in the A&E datamart as yet.")
   
+  note_smallBoards <- p("")
+  
   if (input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments') {
-    tagList(note_dataQual, note_average, data_last_updated,
-   #   h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", location())),
-    ## plot_box and plot_cut_box are defined in global.R
-      # plot_box("2020, 2021 and 2022 compared with 2018-2019 average", "TwoYrComparison"),
+   if(location()=='Scotland') {
+     tagList(note_dataQual, note_average, data_last_updated,
       plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug overdose/intoxications \nin ", location(), " (2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
                    plot_output1 = "Drug_AE_change_plot",
                    title_plot2 = paste0("3-Week central moving average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
                    plot_output2 = "drug_gender_plot"))
+   } else {
+     tagList(note_smallBoards)
+     }
   }
 })
 
@@ -865,7 +870,8 @@ output$drug_commentary <- renderUI({
       tags$li('Between January and August 2021, a long-term increasing trend in number of drug-related attendances was observed.'), 
       tags$li('In September, October and November 2021, the weekly average numbers of drug-related ED attendances decreased.')),
     p(strong('2022')),
-      p('Since December 2021, the numbers of drug-related attendances have fallen below the 2018 & 2019 average and remain lower than observed in the corresponding months of 2020 and 2021. '),
+      p('Between December 2021 and Feburary 2022 the numbers of drug-related attendances fell below the 2018 & 2019 average and remain lower than observed in the corresponding months of 2020 and 2021.'),
+      p('In March 2022 number of attendences for drug overdoses or intoxications fell to their lowest point since the start of the 2020 Lockdown, but increased steadily in April 2022, reaching the historic average trend.'),
     
     p('For further information, contact ',
       tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.')
@@ -895,8 +901,28 @@ output$download_drugs_data <- downloadHandler(
       write_csv(OST_paid,
                 file)
       write_csv(OST_paid_quantity,
-                file)
-    }
+                file) }
+    else if(input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments'){
+      if (location() == "Scotland") {
+        x <- Drug_AE_attendances %>%
+          filter(Board == "Scotland") %>%
+          select(Geography_type, Board, Gender, Date, Type, `2020 & 2021`, `Average 2018 & 2019`) %>%
+          rename(`2020, 2021 & 2022` = `2020 & 2021`) %>%
+          arrange(Gender, Date)
+      } else {
+        x <- subset(Drug_AE_attendances,(Board==location() & Gender == "All"))
+        x <- x %>%
+          select(Geography_type, Board, Gender, Date, Type, `2020 & 2021`, `Average 2018 & 2019`) %>%
+          rename(`2020, 2021 & 2022` = `2020 & 2021`) %>%
+          mutate(`2020, 2021 & 2022` = as.character(`2020, 2021 & 2022`),
+                 `2020, 2021 & 2022` = replace_na(`2020, 2021 & 2022`, "c"),
+                 `Average 2018 & 2019` = as.character(`Average 2018 & 2019`),
+                 `Average 2018 & 2019` = replace_na(`Average 2018 & 2019`, "c")) %>%
+          arrange(Date)
+      }
+      
+      write_csv(x,
+                file) }
   }
 )
   
