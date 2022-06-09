@@ -442,6 +442,13 @@ output$download_mentalhealth_data <- downloadHandler(
 output$mentalhealth_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mentalhealth",label = "Go to data"), #this button can only be used once
+    h2("Mental health - 15 June 2022"),
+    p("Information on the number of patients starting a new treatment course for selected mental health medicines (those commonly used for depression, anxiety or insomnia) through General Practice was included for the first time in the COVID Wider Impacts Dashboard on 30 September 2020. This data does not include hospital prescribing. These data indicate:"),
+    tags$ul(
+      tags$li("The number of patients starting new treatment with the selected medicines fell by almost 40% between the week ending 22nd March, 2020 and the week ending 5th April, 2020 compared with the previous two years' average for the same period. This period corresponds with the first national lockdown in response to COVID-19 in Scotland. Since then, the total numbers have been gradually increasing but have generally remained below the 2018-2019 baseline levels to April 2022."),
+      tags$li("Looking at the selected medicines in separate groups, the number of new treatment courses for depression returned to expected in July 2020, whilst new treatment courses for insomnia and anxiety continued to remain below the 2018-2019 baseline to May 2022."),
+      tags$li("Observed downward spikes in the trend seen around the Christmas Periods in late December/early January reflect low overall activity in those periods, most likely due to reduced access over the holiday periods.")
+    ),
     h2("Mental health - 30 September 2020"),
     h3("Unscheduled care"),
     p("Information on the number of contacts for mental health problems with accident and emergency (A&E) and with primary care out of hours (OOH)
