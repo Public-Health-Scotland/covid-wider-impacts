@@ -358,6 +358,8 @@ observeEvent(input$switch_to_induction,{
 output$induction_commentary <- renderUI({
   tagList(
     bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
+    h2("Induction of labour - 1st June 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley and for NHS Fife in February 2022, so the proportion of births that are induced in February 2022 is likely to change in future releases of the dashboard."),
     h2("Induction of labour - 4th May 2022"),
     p("Data are thought to be incomplete for NHS Forth Valley for December 2021 and January 2022 so the proportion of births that are induced for these months is likely to change in future releases of the dashboard."),
     h2("Induction of labour - 1st December 2021"),

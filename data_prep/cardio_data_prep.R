@@ -9,7 +9,7 @@ source("data_prep/functions_packages_data_prep.R")
 ## Lookups ---- from deaths_data_preparation.R 
 ## for Hospital Discharges / deaths Cardiac
 ###############################################.
-dep_lookup <- readRDS("/PHI_conf/HeartDiseaseStroke/Topics/covid-wider-impact-data/colin/lookups/deprivation_geography.rds") %>%
+dep_lookup <- readRDS("/PHI_conf/ScotPHO/Profiles/Data/Lookups/Geography/deprivation_geography.rds") %>%
   rename(datazone_2011 = datazone) %>%
   select(datazone_2011, year, sc_quin) %>%
   filter(year>2014)

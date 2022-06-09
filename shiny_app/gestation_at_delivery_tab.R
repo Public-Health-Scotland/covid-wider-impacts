@@ -472,9 +472,11 @@ observeEvent(input$switch_to_gestation,{
 output$gestation_commentary <- renderUI({
   tagList(
     bsButton("jump_to_gestation",label = "Go to data"), #this button can only be used once
-    h2("Method of delivery - 4th May 2022"),
+    h2("Gestation at delivery - 1st June 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley and for NHS Fife in February 2022,  so the proportions of births that are delivered pre-term and post-term in February 2022 are likely to change in future releases of the dashboard."),
+    h2("Gestation at delivery - 4th May 2022"),
     p("Data are thought to be incomplete for NHS Forth Valley for December 2021 and January 2022 so the proportions of births that are delivered pre-term and post-term for these months are likely to change in future releases of the dashboard."),
-    h2("Method of delivery - 6th April 2022"),
+    h2("Gestation at delivery - 6th April 2022"),
     p("Data are thought to be incomplete for NHS Forth Valley for December 2021 so the proportion of births that are preterm, which appears lower than that for most other NHS Boards, is likely to change in future releases of the dashboard."),
     h2("Gestation at Delivery – 2nd March 2022"),
     p("The percentage of singleton live births delivered at or over 42 weeks (‘post-term’) in NHS Grampian has been increasing and has remained above the pre-pandemic average for the last 8 consecutive months, although it should be noted that numbers of post-term births delivered each month are very small.  NHS Grampian have been made aware of the data and PHS will continue to monitor."),
