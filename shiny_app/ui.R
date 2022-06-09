@@ -36,7 +36,7 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                 ),
          p("More detailed background information on these potential impacts is provided by the Scottish Public Health Observatory in a section on ",
            tags$a(href="https://www.scotpho.org.uk/comparative-health/coronavirus-covid-19/covid-19-wider-impacts/",
-                  "Covid-19 wider impacts", class="externallink",target="_blank"),"."),
+                  "Covid-19 wider impacts (external website)", class="externallink",target="_blank"),"."),
          p("This information tool provides an overview of changes in health and use of healthcare during the COVID-19
                     pandemic in Scotland, drawing on a range of national data sources."),
          p("We are providing information on different topics as quickly as we can, given the different time lags
@@ -47,7 +47,7 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                     for males and females; and for people living in areas with different levels of material deprivation.
                     Information will also be shown for different locations across Scotland, such as NHS Board areas."),
                 p("This tool will be updated monthly. New releases will be published at the same time as the Public Health Scotland ",
-                  tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/",
+                  tags$a(href="https://publichealthscotland.scot/publications/covid-19-statistical-report/",
                          "COVID-19 report for Scotland.",  target="_blank")),
                 p("Note that some numbers may not sum to the total as disclosure control methods have been applied
                     to the data in order to protect patient confidentiality."),
@@ -63,7 +63,7 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                 p("If you have any questions relating to the data presented please contact us at: ",
                   tags$b(tags$a(href="mailto:phs.statsgov@phs.scot", "phs.statsgov@phs.scot",  target="_blank")), "."),
                 p("You can access the code used to produce this tool in this ",
-                  tags$a(href="https://github.com/Public-Health-Scotland/covid-wider-impacts", "GitHub repository",  target="_blank"), "."),
+                  tags$a(href="https://github.com/Public-Health-Scotland/covid-wider-impacts", "GitHub repository (external website)",  target="_blank"), "."),
          h3("Other sources of information: "),
          tags$ul(
            tags$li("Public Health Scotland publishes ",
@@ -71,18 +71,18 @@ tabPanel("Home", icon = icon("info-circle"), value = "intro",
                     "on the direct health
                    impacts of COVID-19 as well as guidance for professionals and public."),
            tags$li("The Scottish Government publishes a ",
-                   tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard",  target="_blank"),
+                   tags$a(href="https://data.gov.scot/coronavirus-covid-19/", "dashboard (external website)",  target="_blank"),
                    " which brings together data and
           evidence on the impacts of COVID-19 on health, society and the economy."),
            tags$li("The Improvement Service publishes a ",
-                   tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard",  target="_blank"),
+                   tags$a(href="https://scotland.shinyapps.io/is-covid-economic-impact", "dashboard (external website)",  target="_blank"),
                    " on the economic impacts of the pandemic in Scotland."),
            tags$li("Public Health Scotland publishes ",
                    tags$a(href="https://publichealthscotland.scot/our-areas-of-work/covid-19/covid-19-data-and-intelligence/covid-19-and-children-research/",
                           "a series of reports",  target="_blank"),
                    " on the direct and wider impacts of the pandemic on children and young people."),
            tags$li("Transport Scotland publishes ",
-                   tags$a(href="https://www.transport.gov.scot/publications/", "information",  target="_blank"),
+                   tags$a(href="https://www.transport.gov.scot/publications/", "information (external website)",  target="_blank"),
             " on transport trends and public attitudes towards
                    transport for the pandemic period.")
          )
@@ -854,7 +854,7 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
         You can also download the data as a csv using the download button.
         Some of the data is also hosted in the",
            tags$a(href="https://www.opendata.nhs.scot/dataset?groups=covid-19",
-                  "Scottish Health and Social Care Open Data portal",  target="_blank"), "."),
+                  "Scottish Health and Social Care Open Data portal (external website)",  target="_blank"), "."),
          column(6, selectInput("data_select", "Select the data you want to explore.",
                                choices = data_list_data_tab)),
          column(6, downloadButton('download_table_csv', 'Download data')),

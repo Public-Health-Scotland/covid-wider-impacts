@@ -83,7 +83,7 @@ observeEvent(input$btn_dataset_modal,
                    sex, broad deprivation category and specialty groups."),
                  p("The hospital admissions analyses are derived from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37",
-                          "Rapid Preliminary Inpatient Data (RAPID)", target="_blank"),
+                          "Rapid Preliminary Inpatient Data (RAPID) (external website)", target="_blank"),
                    "dataset. The RAPID dataset is managed by ",
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/",
                           "Public Health Scotland (PHS).",  target="_blank"), "This dataset is submitted daily to 
@@ -97,7 +97,7 @@ observeEvent(input$btn_dataset_modal,
                    average of week 52 value as a comparator for 2020’s week 53."),
                  p("The normal source of information on hospital admissions is the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5",
-                          "SMR01 (general inpatient and day cases) return.", target="_blank"),
+                          "SMR01 (general inpatient and day cases) return (external website).", target="_blank"),
                    "However, there is generally time lag in the submission of SMR01 to PHS.
                    Therefore, RAPID is being used for the immediate monitoring of the impact of
                    COVID-19 on admissions to hospital and it provides broadly comparable figures to SMR01 on
@@ -123,14 +123,14 @@ observeEvent(input$btn_dataset_modal,
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/Hospital-Site-List/",
                           "hospital list.",  target="_blank")),
                  p("Additional information relating to A&E activity is available from the ",
-                   tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/",
+                   tags$a(href="https://publichealthscotland.scot/publications/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics",
                           "NHS Performs - weekly update of emergency department activity and waiting time statistics.",
                            target="_blank")),
                  p("Numbers of A&E attendances will include both COVID-19 and non-COVID-19 related activity." ),
                  p("Attendances are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("Attendances to A&E departments data sourced from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3",
-                          "Accident and Emergency Datamart (A&E2).", target="_blank"),
+                          "Accident and Emergency Datamart (A&E2) (external website).", target="_blank"),
                    "The A&E2 dataset is managed by ",
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/",
                           "Public Health Scotland (PHS).",  target="_blank")),
@@ -157,15 +157,15 @@ observeEvent(input$btn_dataset_modal,
                  p("Figures by NHS health board include those calls made by residents of each health board area."),
                  p("Contacts are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of NHS24 activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                            target="_blank"), "."),
                  p("The NHS24 dataset is managed by ",
                    tags$a(href="https://publichealthscotland.scot/",
                           "Public Health Scotland",  target="_blank"), "and ",
                    tags$a(href="https://www.nhs24.scot/",
-                          "NHS 24",  target="_blank"), ".",
+                          "NHS 24 (external website)",  target="_blank"), ".",
                    "This analysis is drawn from the ",
-                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).", target="_blank")
+                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD) (external website).", target="_blank")
                  ),
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
@@ -187,11 +187,11 @@ observeEvent(input$btn_dataset_modal,
                  p("Cases are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may
                    be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",,
                            target="_blank"), "."),
                  p("General Practice Out of Hours service data is sourced from the",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113",
-                          "GP Out of Hours Dataset (OOH).", target="_blank"),
+                          "GP Out of Hours Dataset (OOH)(external website).", target="_blank"),
                    "The OOH dataset is managed by ",
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/",
                           "Public Health Scotland (PHS).",  target="_blank")),
@@ -217,15 +217,15 @@ observeEvent(input$btn_dataset_modal,
                    to gain further insight into patient flow through unscheduled care."),
                  p("Calls are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of SAS activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                            target="_blank"), "."),
                  p("The SAS dataset is managed by ",
                    tags$a(href="https://publichealthscotland.scot/",
                           "Public Health Scotland",  target="_blank"), "and ",
                    tags$a(href="https://www.scottishambulance.com/",
-                          "Scottish Ambulance Service",  target="_blank"), ".",
+                          "Scottish Ambulance Service (external website)",  target="_blank"), ".",
                    "This analysis is drawn from the ",
-                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).", target="_blank")
+                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD) (external website).", target="_blank")
                  ),
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
@@ -243,14 +243,14 @@ observeEvent(input$btn_dataset_modal,
                    and Social Care Partnerships because of the small numbers involved and the possibility for misinterpretation."),
                  p("The deaths data are derived from the National Records of Scotland (NRS) ",
                    tags$a(href="https://www.nrscotland.gov.uk/covid19stats",
-                          "weekly deaths",  target="_blank"), " dataset. Deaths related to COVID-19 are included in totals.
+                          "weekly deaths (external website)",  target="_blank"), " dataset. Deaths related to COVID-19 are included in totals.
                    Data are provisional and subject to revision."),
                  p("The figures are based on the date a death was registered rather than the date the death occurred. When someone dies,
                    their family (or a representative) have to make an appointment with a registrar to register the death.
                    Legally this must be done within 8 days, although in practice there is, on average, a 3 day gap between a
                    death occurring and being registered. More information on days between occurrence and registration can be be found on the ",
                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-background-information/births-and-deaths-days-until-registration",
-                          "NRS website", target="_blank"),"."),
+                          "NRS website (external website)", target="_blank"),"."),
                  p("The figures are reported by week, with each week running from Monday to Sunday (the ISO8601 standard week).
                    Moveable public holidays, when registration offices are closed, affect the number of registrations made in the
                    published weeks and in the corresponding weeks in previous years."),
@@ -261,9 +261,9 @@ observeEvent(input$btn_dataset_modal,
           this week is the 2015 count, rather than the 2015-19 average."),
                  p("The weekly deaths dataset is managed by ",
                    tags$a(href= "https://www.nrscotland.gov.uk/",
-                          "National Records of Scotland (NRS).",  target="_blank")),
+                          "National Records of Scotland (NRS) (external website).",  target="_blank")),
                  p("For more information on deaths and health inequalities during the pandemic, please read ",
-                   tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-weekly-excess-deaths/",
+                   tags$a(href = "https://publichealthscotland.scot/publications/covid-19-weekly-excess-deaths/covid-19-weekly-excess-deaths-health-inequalities-briefing/",
                           "this report.",  target="_blank")),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -368,7 +368,9 @@ eth_modal <- modalDialog(
   h5(tags$b("Interpretation of this chart")),
   p("The ethnic group field in the Scottish Morbidity Record (SMR) 
   classifies the person according to their own perceived ethnic group and cultural 
-  background. More information can be found in the", tags$a(href="https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group", "Health & Social Care data dictionary web page (external website).",
+  background. More information can be found in the", 
+    tags$a(href="https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group", 
+           "Health & Social Care data dictionary web page (external website).",
          target="_blank")),
   p("It became mandatory for NHS Scotland organisations to record ethnic group 
     on SMR outpatient (SMR00) returns from 1 February 2021. There is currently
@@ -584,7 +586,7 @@ output$data_explorer <- renderUI({
               investigated by PHS and the data will be updated as soon as possible."),
               p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
         tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
-               "Unscheduled Care Operational Statistics", target="_blank"), ". The data published by SAS is sourced from a 
+               "Unscheduled Care Operational Statistics (external website)", target="_blank"), ". The data published by SAS is sourced from a 
         different operational system than that used for the PHS reporting. This means that the data published 
         by SAS will at times be slightly different to that reported by PHS source.")),
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service",
@@ -1059,7 +1061,7 @@ output$deaths_commentary <- renderUI({
   tagList(
     h2("Excess mortality - 10th June 2020"),
     p("Each week National Records for Scotland (NRS) release provisional deaths data and a ",
-      tags$a(href="https://www.nrscotland.gov.uk/covid19stats", "report",  target="_blank"),
+      tags$a(href="https://www.nrscotland.gov.uk/covid19stats", "report (external website)",  target="_blank"),
 " about the numbers of deaths involving COVID-19 in Scotland.
 NRS report that weekly excess mortality (defined as deaths from any cause in 2020,
 both COVID-19 and non-COVID-19, compared with the average of the previous five years)
