@@ -10,7 +10,7 @@ observeEvent(input$btn_modal_simd_imm, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
     p("Children have been allocated to different levels of deprivation based on the small area (data zone) 
-      in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+      in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
                                           target="_blank"), "score for that area. 
       SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: 
       income; employment; health; education, skills and training; housing; geographic access; and crime. 
@@ -29,7 +29,7 @@ observeEvent(input$btn_immune_modal,
                title = "What is the data source?",
                p("The information shown on the numbers of children eligible for, and receiving, routine preschool immunisations is taken from the ",
                  tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=4&SubID=12",
-                        "Scottish Immunisation and Recall System (SIRS).", target="_blank")),
+                        "Scottish Immunisation and Recall System (SIRS) (external website).", target="_blank")),
                p(tags$a(href="https://publichealthscotland.scot/",
                         "Public Health Scotland (PHS)", target="_blank"),
                  " routinely receives quarterly data extracts from SIRS for the purpose of producing and ",
@@ -413,7 +413,7 @@ output$immunisation_explorer <- renderUI({
   # Intro paragraph within imumunisation tab
   intro_6in1 <- p("Immunisation protects children against certain serious infections.
                   Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
-                 tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),".")
+                 tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform (external website)", target="_blank"),".")
   
   #Additional commentart/meta data to appear on immunisation tab
   commentary_6in1 <-  tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age and the data tables provide the uptake rates at three specific time-points.  Data is provided  on children who have become eligible for immunisation during the pandemic (from March 2020 onwards) and for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison."),
@@ -727,12 +727,12 @@ output$immun_commentary_section <- renderUI({
     h2("Immunisations - 17th June 2020"), 
     p("Information on the uptake of ",
       tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
-             are routinely offered to all preschool children", target="_blank"),
+             are routinely offered to all preschool children (external website)", target="_blank"),
       " has been included in this tool for the first time on 3 June 2020.", br(),
       "Immunisation protects children against many serious infectious diseases including diphtheria, 
       whooping cough, and measles.",
       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
-             "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic",  target="_blank"),".",
+             "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic (external website)",  target="_blank"),".",
       "It is important to maintain the best possible immunisation uptake rates to ensure children 
       remain protected and to prevent a resurgence of these infections.  Including information on 
       childhood immunisation rates in this tool will help us to ensure that immunisation rates remain 
@@ -745,12 +745,12 @@ output$immun_commentary_section <- renderUI({
     h2("Immunisations - 3rd June 2020"),
     p("Information on the uptake of ",
       tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
-             are routinely offered to all preschool children", target="_blank"),
+             are routinely offered to all preschool children (external website)", target="_blank"),
       " has been included in this tool for the first time on 3 June 2020.", br(),
       "Immunisation protects children against many serious infectious diseases including diphtheria, 
       whooping cough, and measles.",
       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
-             "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic",  target="_blank"),".",
+             "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic (external website)",  target="_blank"),".",
       "It is important to maintain the best possible immunisation uptake rates to ensure children 
       remain protected and to prevent a resurgence of these infections.  Including information on 
       childhood immunisation rates in this tool will help us to ensure that immunisation rates remain 
