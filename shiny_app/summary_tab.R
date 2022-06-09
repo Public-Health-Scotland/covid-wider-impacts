@@ -552,7 +552,7 @@ output$data_explorer <- renderUI({
                column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))
       )
      } else {
-       tags$b(span("Out of Hours demographic data is only available for Cases. Please Select 'All cases' in Step 4."),
+       tags$b(p("Out of Hours demographic data is only available for Cases. Please Select 'All cases' in Step 4.", style="text-align:center; font-size:16px"),
        br(),
        br(),
        br())
