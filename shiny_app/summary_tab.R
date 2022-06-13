@@ -596,7 +596,8 @@ output$data_explorer <- renderUI({
           tagList(
            tags$b(span("Please note that the data on this page now includes individuals coming to
                 Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.",
-                       
+                       br(),
+                       br(),
                        "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
                        PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
                        These will impact on Scotland figures and comparisons with previous years.", 
@@ -609,7 +610,8 @@ output$data_explorer <- renderUI({
           tagList(
             tags$b(span("Please note that the data on this page now includes individuals coming to
                 Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", 
-                        
+                        br(),
+                        br(),
                         "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
                        PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
                        These will impact on Scotland figures and comparisons with previous years.",
@@ -631,7 +633,8 @@ output$data_explorer <- renderUI({
           tagList(
             tags$b(span("Please note that the data on this page now includes individuals coming to
                 Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", 
-                        
+                        br(),
+                        br(),
                         "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
                         PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
                         These will impact on Scotland figures and comparisons with previous years.",
