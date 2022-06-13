@@ -65,6 +65,7 @@ ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 rapid <- readRDS("data/rapid.rds") #RAPID data
 aye <- readRDS("data/ae.rds") #A&E data
 ooh <- readRDS("data/ooh.rds") # OOH data
+ooh_cons <- readRDS("data/ooh_cons.rds") # OOH consultation data
 nhs24 <- readRDS("data/nhs24.rds") # OOH data
 sas <- readRDS("data/sas.rds") # OOH data
 deaths <- readRDS("data/deaths.rds") # deaths data
@@ -288,7 +289,7 @@ eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "W
 data_list <- c(
   "Hospital admissions" = "rapid", "A&E attendances" = "aye",
   "NHS 24 completed contacts" = "nhs24",
-  "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
+  "Out of hours cases and consultations" = "ooh", "Scottish Ambulance Service" = "sas",
   "Excess mortality" = "deaths",
   "Outpatient appointments" = "outpats")
 
@@ -358,7 +359,8 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Poisonings" = "ui_smr01_poison",
                         "Falls" = "ui_smr01_falls",
                         "Other" = "ui_smr01_other",
-                        "Assaults" = "ui_smr01_assaults"
+                        "Assaults" = "ui_smr01_assaults",
+                        "Out of hours consultations" = "ooh_cons"
                         )
 
 injury_data_list <- c("All unintentional injuries" = "ui_smr01_all",

@@ -37,6 +37,18 @@ observeEvent({input$measure_select}, {
                       label = "Step 3. Select type of appointment.",
                       choices = c("All", "New", "Return"),
                       selected = "All")
+  } else if (input$measure_select == "ooh") {
+    disable("adm_type")
+    enable("ooh_appt_type")
+    
+    updateSelectInput(session, "adm_type",
+                      label = "Step 3. Select type of admission (not available).")
+    
+    updateSelectInput(session, "ooh_appt_type",
+                      label = "Step 4. Select type of appointment for overall chart.",
+                      choices = c("All cases", "All consultations" = "ALL", 
+                                  "Covid consultations" = "COVID", "Non-covid consultations" = "NON COVID"), 
+                      selected = "All cases")
   } else {
     disable("adm_type")
 
@@ -181,13 +193,17 @@ observeEvent(input$btn_dataset_modal,
                    broad deprivation category (SIMD)."),
                  p("The charts provide a weekly summary of cases in the recent past and
                    historical trends for comparison purposes."),
-                 p("The figures presented in this tool exclude cases within any of the COVID-19
-                   hubs or assessment centres and relate only to cases concerning non-COVID
-                   issues. "),
+                 p("The figures presented in this tool relate to cases/consultations concerning non-COVID
+                   issues and cases/consultations within the COVID Pathway."),
+                 p("A 'Case' is used to identify a patient's single encounter (service contact) with the OOH Service. 
+                   Within a single case a patient may have multiple consultations with OOH health care professionals.  
+                   Please note that the total number of consultations may be higher than the total number of cases as individuals 
+                   may have more than one consultation during a single encounter with the Out of Hours service."),
                  p("Cases are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may
                    be available on request to ",
-                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",,
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
+
                            target="_blank"), "."),
                  p("General Practice Out of Hours service data is sourced from the",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113",
@@ -525,7 +541,9 @@ output$data_explorer <- renderUI({
         } else {
           plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
-      plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
+      
+     if (input$measure_select != "ooh" | (input$measure_select == "ooh" & input$ooh_appt_type == "All cases")) { 
+       tagList(plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
       plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
                    paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
@@ -535,6 +553,14 @@ output$data_explorer <- renderUI({
                             icon = icon('question-circle'))),
       fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))),
                column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))
+      )
+     } else {
+       tags$b(p("Out of Hours demographic data is only available for Cases. Please Select 'All cases' in Step 4.", style="text-align:center; font-size:16px"),
+       br(),
+       br(),
+       br())
+     }
+        
     )
 
   }
@@ -569,16 +595,59 @@ output$data_explorer <- renderUI({
                source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
   } else if (input$measure_select == "ooh") { #Out of hours cases
-    tagList(
-    tags$b(span("Please note that the data on this page excludes individuals coming to
-                Primary Care Out of Hours services via the COVID Pathway. PHS are
-                investigating this to better reflect Primary Care Out of Hours service
-                provision.", style = "color:red")),
-    br(),
-
-    cut_charts(title= "Weekly cases in out of hours services",
+      if (input$ooh_appt_type == "All cases"){
+          tagList(
+           tags$b(span("Please note that the data on this page now includes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.",
+                       br(),
+                       br(),
+                       "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
+                       PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
+                       These will impact on Scotland figures and comparisons with previous years.", 
+                       style = "color:red")),
+             br(),
+    
+          cut_charts(title = "Weekly cases in out of hours services",
                source = "PHS GP OOH Datamart", data_name ="ooh"))
-
+        } else if(input$ooh_appt_type == "COVID") {
+          tagList(
+            tags$b(span("Please note that the data on this page now includes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", 
+                        br(),
+                        br(),
+                        "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
+                       PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
+                       These will impact on Scotland figures and comparisons with previous years.",
+                        style = "color:red")),
+            br(),
+            
+            cut_charts(title = "Weekly Covid related consultations in out of hours services",
+            source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
+        } else if(input$ooh_appt_type == "NON COVID"){
+          tagList(tags$b(span("Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
+                       PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
+                       These will impact on Scotland figures and comparisons with previous years.",
+                              style = "color:red")),
+            br(),
+            
+            cut_charts(title = "Weekly Non-covid related consultations in out of hours services",
+                       source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
+        } else if(input$ooh_appt_type == "ALL"){
+          tagList(
+            tags$b(span("Please note that the data on this page now includes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", 
+                        br(),
+                        br(),
+                        "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
+                        PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
+                        These will impact on Scotland figures and comparisons with previous years.",
+                        style = "color:red")),
+            br(),
+            
+            cut_charts(title = "Weekly Non-covid related consultations in out of hours services",
+                       source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
+        }
+    
   } else if (input$measure_select == "sas") {
     tagList(# SAS data
       tags$em(p("Please note that there is currently an issue with duplicates in the SAS dataset and
@@ -729,6 +798,7 @@ output$aye_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "tot
 
 # OOH charts
 output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
+output$ooh_cons_overall <- renderPlotly({plot_overall_chart(ooh_cons, data_name = "ooh_cons")})
 output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", data_name = "ooh")})
 output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", data_name = "ooh")})
 output$ooh_depr_var <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", data_name = "ooh")})
@@ -874,7 +944,23 @@ symbol_spec <- reactive({
 ###############################################.
 ## Data downloads ----
 ###############################################.
-
+ooh_download <- reactive({
+  
+  if(input$ooh_appt_type == "All cases") {
+    
+    filter_data(ooh) %>% 
+      rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
+      select(area_name, week_ending, count, starts_with("average"))
+    
+  } else {
+    filter_data(ooh_cons, data_name = "ooh_cons") %>% 
+      rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
+      select(area_name, week_ending, count, starts_with("average"))
+  }
+  
+})
 # For the charts at the moment the data download is for the overall one,
 # need to think how to allow downloading for each chart
 # Reactive dataset that gets the data the user is visualisaing ready to download
@@ -890,9 +976,7 @@ overall_data_download <- reactive({
     "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),
-    "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average) %>% 
-      mutate(week_ending = format(week_ending, "%d %b %y")) %>%
-      select(area_name, week_ending, count, starts_with("average")),
+    "ooh" = ooh_download(),
     "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),

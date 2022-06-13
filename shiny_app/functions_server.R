@@ -232,7 +232,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
   if (filtering == T) {
     # Filtering dataset to include only overall figures
-    trend_data <- filter_data(dataset, area = area, op = op)
+    trend_data <- filter_data(dataset, area = area, op = op, data_name = data_name)
   } else {
     trend_data <- dataset
   }
@@ -248,6 +248,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
                              data_name == "ooh" ~ "Number of cases",
+                             data_name == "ooh_cons" ~ "Number of consultations",
                              data_name == "nhs24" ~ "Number of completed contacts",
                              data_name == "sas" ~ "Number of incidents",
                              data_name == "cath" ~ "Number of cases",
@@ -271,20 +272,22 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
 
-    hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc",
+    hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
                                                        "ooh_cardiac", "sas_cardiac",
                                                        "cath", "mentalhealth_drugs", "mh_ooh",
-                                                       "op","cardio_admissions") ~ "Average 2018-2019",
-                                      data_name %in% c("deaths","cardio_deaths") ~ "Average 2015-2019")
-    
-    hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "nhs24", "sas", "drug_presc", 
-                                                    "ooh_cardiac", "sas_cardiac","cardio_admissions","cardio_deaths",
-                                                    "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 & 2021",
+                                                       "op") ~ "Average 2018-2019",
+                                      data_name == "deaths" ~ "Average 2015-2019")
+
+    hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
+                                                    "ooh_cardiac", "sas_cardiac",
+                                                    "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 - 2022",
+
                                    data_name %in% c("cath")  ~ "2020")
 
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                               data_name == "aye" ~ "Attendances: ",
                               data_name == "ooh" ~ "Cases: ",
+                              data_name == "ooh_cons" ~ "Consultations: ",
                               data_name == "nhs24" ~ "Completed contacts: ",
                               data_name == "sas" ~ "Incidents: ",
                               data_name == "cath" ~ "Cases: ",
@@ -1433,8 +1436,11 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 ## Function for filtering ----
 ###############################################.
 # Function to filter the datasets for the overall charts and download data based on user input
-filter_data <- function(dataset, area = T, op = F) {
-  if (area == T & op == T) {
+filter_data <- function(dataset, data_name = "other", area = T, op = F) {
+  if (data_name == "ooh_cons"){
+    dataset %>% filter(area_name == input$geoname &
+                         type == input$ooh_appt_type)
+  } else if (area == T & op == T) {
     dataset %>% filter(type == "sex") %>%
       filter(area_name == input$geoname_op &
                category == "All")
