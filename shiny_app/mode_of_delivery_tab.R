@@ -11,7 +11,7 @@ observeEvent(input$btn_mod_modal,
                p("Data is shown for up to and including the most recent month for which SMR02 records are considered near complete.  Data for the most recent months should be viewed as provisional.  Data for all months will be refreshed every time the dashboard page is updated, and data for the most recent months is likely to change slightly as additional SMR02 records are submitted to PHS."),
                p("Although there is no legal requirement to submit SMR02 records to PHS, data completeness is very high.  For example, for the period 1 April 2019 to 31 March 2020, live births recorded on SMR02 represented 98.8% of the live births registered by law with National Records of Scotland.  In addition, the recording of method of delivery is very complete.  For the period 1 April 2019 to 31 March 2020, method of delivery was recorded on 99.9% of SMR02 records relating to singleton live births."),
                p("Further information based on SMR02 data is also available from the annual ",
-                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/births-in-scottish-hospitals/", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
+                 tags$a(href="https://publichealthscotland.scot/publications/births-in-scottish-hospitals", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
                size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
@@ -35,7 +35,7 @@ observeEvent(input$btn_modal_simd_mod, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
     p("Women have been allocated to different levels of deprivation based on the small area (data zone) in which they live and the",
-      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
              class="externallink"), "SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: income; employment; health; education, skills and training; housing; geographic access; and crime.
     In this tool we have presented results for women living in different SIMD ‘quintiles’. To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) of the overall population of Scotland are identified.
     Women living in the most and least deprived areas that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
@@ -389,6 +389,8 @@ observeEvent(input$switch_to_mod,{
 output$mod_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mod",label = "Go to data"), #this button can only be used once
+    h2("Method of delivery - 1st June 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley and for NHS Fife in February 2022, so the proportion of births that are delivered by caesarean section in February 2022 is likely to change in future releases of the dashboard."),
     h2("Method of delivery - 4th May 2022"),
     p("Data are thought to be incomplete for NHS Forth Valley for December 2021 and January 2022 so the proportion of births that are delivered by caesarean section for these months is likely to change in future releases of the dashboard."),
     h2("Method of delivery - 6th April 2022"),
@@ -414,13 +416,13 @@ output$mod_commentary <- renderUI({
     h2("Method of delivery - 16th December 2020"),
     p("Information on method of delivery was included in this tool for the first time on 16 December 2020."),
     p("The ‘",
-      tags$a(href="https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/assisted-birth", "method of delivery",class="externallink",target="_blank"),
+      tags$a(href="https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/assisted-birth", "method of delivery (external website) ",class="externallink",target="_blank"),
       "' refers to the way a baby is born.  Different methods of delivery include spontaneous vaginal delivery (a natural birth); assisted vaginal delivery (including vaginal delivery by forceps or ventouse, or vaginal delivery of a breech baby); or a caesarean section (an operation to deliver the baby through a cut in the mother’s abdomen).  A caesarean section can be elective (planned in advance and provided before labour has started) or emergency (unplanned, and usually but not always provided after labour has started)."),
     p("Care for women around the time they are giving birth is an essential, time critical service that cannot be deferred.  As such, it has been provided throughout the COVID-19 pandemic, and maternity staff have not been redeployed to support other services.  The way that some elements of this care are provided has changed in response to COVID-19 however, to minimise the risk of infection and to allow services to continue to provide safe care during times when a high number of staff may be off work, for example due to needing to isolate."),
     p("Guidance issued by the ",
-      tags$a(href="https://www.gov.scot/collections/coronavirus-covid-19-guidance/#health,careandsocialwork", "Scottish Government",class="externallink",target="_blank"),
+      tags$a(href="https://www.gov.scot/collections/coronavirus-covid-19-guidance/#health,careandsocialwork", "Scottish Government (external website)",class="externallink",target="_blank"),
       " and ",
-      tags$a(href="https://www.rcog.org.uk/coronavirus-pregnancy", "Royal College of Obstetricians and Gynaecologists",class="externallink",target="_blank"),
+      tags$a(href="https://www.rcog.org.uk/coronavirus-pregnancy", "Royal College of Obstetricians and Gynaecologists (external website)",class="externallink",target="_blank"),
       "to maternity services at the height of the first wave of the pandemic noted that:"),
     tags$ul(
       tags$li("It may be necessary for services to temporarily suspend the option for women to deliver at home or in midwife led units, and to concentrate delivery care within obstetric units"),
@@ -432,7 +434,7 @@ output$mod_commentary <- renderUI({
     ),
     p("The information on method of delivery presented through this tool is taken from hospital discharge records, specifically records relating to the care of women delivering a singleton live birth (i.e. one baby, not twins or more) at any stage of pregnancy.  Further technical information is available through the ‘Data source’ button on the dashboard page."),
     p("The data shows that, at all Scotland level, the percentage of singleton live births delivered by caesarean section (the ‘caesarean section rate’) has gradually increased from January 2018 (when the data shown starts) to end September 2020 (the latest point for which data is currently available).  The increase is particularly seen in the elective caesarean section rate, but is also evident in the emergency caesarean section rate.  The upward trend in the elective and emergency caesarean section rates predates the COVID-19 pandemic, and it has continued during the pandemic. Whilst caesarean section can be a lifesaving operation for mothers and babies, the high and rising caesarean section rate seen in many countries over recent years is a ",
-      tags$a(href="https://obgyn.onlinelibrary.wiley.com/doi/full/10.1111/1471-0528.13526", "cause for concern",class="externallink",target="_blank"),
+      tags$a(href="https://obgyn.onlinelibrary.wiley.com/doi/full/10.1111/1471-0528.13526", "cause for concern (external website)",class="externallink",target="_blank"),
       ". Excessive use of caesarean sections can carry unnecessary risks for mothers and babies."),
     p("Prior to the COVID-19 pandemic, the caesarean section rate was somewhat variable between NHS Board areas of residence.  There is also some variation between areas in how the caesarean section rate has changed around the time of the pandemic, for example the emergency caesarean section rate has increased noticeably for women living in NHS Fife, whereas the elective and emergency caesarean section rates have decreased for women living in NHS Lanarkshire."),
     p("There is a very clear gradient in the caesarean section rate by maternal age, with the rate being lowest among mothers in the youngest (<20 years) age group and highest among mothers in the oldest (40+ years) age group. These patterns have persisted during the COVID-19 pandemic. As women from the least deprived areas of Scotland tend to have their children at older ages than women from more deprived areas, this means that the caesarean section rate tends to be highest among mothers living in the least deprived areas.")

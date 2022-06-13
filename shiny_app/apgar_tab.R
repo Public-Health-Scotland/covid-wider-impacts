@@ -17,7 +17,7 @@ observeEvent(input$btn_apgar_modal,
                p("Data is shown for up to and including the most recent month for which SMR02 records are considered near complete. Data for the most recent months should be viewed as provisional. Data for all months will be refreshed every time the dashboard page is updated, and data for the most recent months is likely to change slightly as additional SMR02 records are submitted to PHS."),
                p("Although there is no legal requirement to submit SMR02 records to PHS, data completeness is very high. For example, for the period 1 April 2019 to 31 March 2020, live births recorded on SMR02 represented 98.8% of the live births registered by law with National Records of Scotland. In addition, the recording of specific data items allowing identification of singleton live births at 37-42 weeks gestation, and of babies’ 5 minute Apgar score, is very complete. For the period 1 April 2019 to 31 March 2020, a 5 minute Apgar score was recorded on 99% of SMR02 records relating to singleton live births at 37-42 weeks gestation."),
                p("Further information based on SMR02 data is also available from the annual ",
-                 tags$a(href= "https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/births-in-scottish-hospitals/",
+                 tags$a(href= "https://publichealthscotland.scot/publications/births-in-scottish-hospitals",
                         "Births in Scottish Hospitals report." , target="_blank")),
 
                size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
@@ -127,10 +127,7 @@ output$apgar_explorer <- renderUI({
   apgar_title <- paste0("of singleton live births at 37-42 weeks gestation that have a 5 minute Apgar score of <7: ",input$geoname_apgar)
 
   chart_explanation <-
-    tagList(#p("We have used ",
-              # tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-              #        'run charts', target="_blank")," to present the data above. Run charts use a series of rules to help identify unusual behaviour in data and indicate patterns that merit further investigation. Read more about the rules used in the charts by clicking the button above: ‘How do we identify patterns in the data?’"),
-            p(run_chart_description("Percentage of births that have a 5 minute
+    tagList(p(run_chart_description("Percentage of births that have a 5 minute
                                     Apgar score of <7",
                                     "the percentage of singleton live births at
                                     37-42 weeks gestation with known 5 minute

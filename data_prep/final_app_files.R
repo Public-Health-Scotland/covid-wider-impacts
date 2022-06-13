@@ -26,22 +26,22 @@ save_final_file <- function(dataset, date_saved) {
 ###############################################.
 ###############################################.
 ## Deaths ----
-save_final_file("deaths", "02_May_22")
+save_final_file("deaths", "30_May_22")
 ##########################################################.
-## Cancer ----
-save_final_file("cancer_data_2", "10_Sep_21")
-save_final_file("cancer_data_diff", "10_Sep_21")
+## Cancer ----#
+save_final_file("cancer_data_2", "23_May_22")
+save_final_file("cancer_data_quarters", "23_May_22")
+save_final_file("cancer_data_quarters_2yr", "23_May_22")
+
 
 ##########################################################.
 ## SACT ----
-save_final_file("sact_data", "02_May_22")
-
-save_final_file("sact_weekly_data", "02_May_22")
+save_final_file("sact_data", "13_Jun_22")
+save_final_file("sact_weekly_data", "13_Jun_22")
 
 ##########################################################.
 ## DCE ----
-# save_final_file("dce_data", "18_Oct_21")
-
+# save_final_file("dce_data", "19_Jan_22")
 
 ##########################################################.
 ##########################################################.
@@ -55,54 +55,52 @@ save_final_file("ui_smr01_assaults", "31_Jan_22")
 
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "02_May_22")
+save_final_file("rapid", "30_May_22")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
 save_final_file("ooh", "13_Jun_22")
 ## OOH_cons ----
 save_final_file("ooh_cons", "13_Jun_22")
 ## A&E ----
-save_final_file("ae", "02_May_22")
+save_final_file("ae", "30_May_22")
 ## NHS24 ----
-save_final_file("nhs24", "02_May_22")
+save_final_file("nhs24", "30_May_22")
 ## SAS ----
-save_final_file("sas", "02_May_22")
+save_final_file("sas", "30_May_22")
 ### Outpatients ----
-save_final_file("outpats", "09_Feb_22")
-save_final_file("ethnicity_lookup", "14_Feb_22")
-save_final_file("spec_lookup_op", "09_Feb_22")
-save_final_file("area_type_op", "09_Feb_22")
+save_final_file("outpats", "24_May_22")
+save_final_file("spec_lookup_op", "24_May_22")
+save_final_file("area_type_op", "24_May_22")
 ##########################################################.
-## Cardio - cath labs ----
-save_final_file("cath_lab", "16_Nov_20")
-## Cardio - A&E ----
-save_final_file("ae_cardio", "29_Apr_22")
+## Cardio ----
+save_final_file("cath_lab", "16_Nov_20") # cath labs
+save_final_file("ae_cardio", "30_May_22") # A&E
 save_final_file("ae_cardio_codes", "30_Nov_20")
-## Cardio - OOH ----
-save_final_file("ooh_cardiac", "2_May_22")
-## Cardio - SAS ----
-save_final_file("sas_cardiac", "2_May_22")
-## Cardio - Prescribing ----
-save_final_file("cardio_drugs", "29_Apr_22")
+save_final_file("ooh_cardiac", "30_May_22") # GP OOH
+save_final_file("sas_cardiac", "30_May_22") # SAS
+save_final_file("cardio_drugs", "30_May_22") # prescribing
+save_final_file("cardio_deaths", "13_May_22") # deaths
+save_final_file("cardio_admissions", "12_May_22") # admissions
+
 ##########################################################.
 ## Immunisations - six in one ----
-save_final_file("six_alldose", "27_Apr_22")
-save_final_file("six_dose1_simdtable", "27_Apr_22")
-save_final_file("six_dose2_simdtable", "27_Apr_22")
-save_final_file("six_dose3_simdtable", "27_Apr_22")
-save_final_file("sixinone_datatable", "27_Apr_22")
+save_final_file("six_alldose", "25_May_22")
+save_final_file("six_dose1_simdtable", "25_May_22")
+save_final_file("six_dose2_simdtable", "25_May_22")
+save_final_file("six_dose3_simdtable", "25_May_22")
+save_final_file("sixinone_datatable", "25_May_22")
 ## Immunisations - MMR ----
-save_final_file("mmr_alldose", "27_Apr_22")
-save_final_file("mmr_dose1_simdtable", "27_Apr_22")
-save_final_file("mmr_dose2_simdtable", "27_Apr_22")
-save_final_file("mmr_datatable", "27_Apr_22")
-save_final_file("mmr_dose2_grampian_datatable", "27_Apr_22")
+save_final_file("mmr_alldose", "25_May_22")
+save_final_file("mmr_dose1_simdtable", "25_May_22")
+save_final_file("mmr_dose2_simdtable", "25_May_22")
+save_final_file("mmr_datatable", "25_May_22")
+save_final_file("mmr_dose2_grampian_datatable", "25_May_22")
 # Immunisations - definitions
-save_final_file("age_defs_imm_6inone", "27_Apr_22")
-save_final_file("age_defs_imm_mmr", "27_Apr_22")
-save_final_file("month_eligibility_immun", "27_Apr_22")
+save_final_file("age_defs_imm_6inone", "25_May_22")
+save_final_file("age_defs_imm_mmr", "25_May_22")
+save_final_file("month_eligibility_immun", "25_May_22")
 ##########################################################.
-ch_date <- "28_Apr_22"
+ch_date <- "30_May_22"
 ## Child health reviews - first visit ----
 save_final_file("first_visit", ch_date)
 save_final_file("first_visit_datatable", ch_date)
@@ -131,49 +129,49 @@ save_final_file("child_dev_domains", ch_date)
 save_final_file("breastfeeding", ch_date)
 ##########################################################.
 ## Pregnancy - Antenatal bookings ----
-save_final_file("ante_booking", "21_Apr_22")
-save_final_file("ante_booking_download", "21_Apr_22")
+save_final_file("ante_booking", "27_May_22")
+save_final_file("ante_booking_download", "27_May_22")
 ## Pregnancy - Terminations ----
-save_final_file("top", "19_Apr_22")
-save_final_file("top_download", "19_Apr_22")
+save_final_file("top", "23_May_22")
+save_final_file("top_download", "23_May_22")
 ##########################################################.
 ## B&B - Mode/Method of Delivery ----
-save_final_file("mod_runchart_data", "20_Apr_22")
-save_final_file("mod_scot_data", "20_Apr_22")
-save_final_file("mod_linechart_data", "20_Apr_22")
-save_final_file("mod_download_data", "20_Apr_22")
+save_final_file("mod_runchart_data", "19_May_22")
+save_final_file("mod_scot_data", "19_May_22")
+save_final_file("mod_linechart_data", "19_May_22")
+save_final_file("mod_download_data", "19_May_22")
 ## B&B - Inductions ----
-save_final_file("induct_runchart_data", "20_Apr_22")
-save_final_file("induct_scot_data", "20_Apr_22")
-save_final_file("induct_linechart_data", "20_Apr_22")
-save_final_file("induct_download_data", "20_Apr_22")
+save_final_file("induct_runchart_data", "19_May_22")
+save_final_file("induct_scot_data", "19_May_22")
+save_final_file("induct_linechart_data", "19_May_22")
+save_final_file("induct_download_data", "19_May_22")
 ## B&B - Gestation at Delivery ----
-save_final_file("gestation_runchart_data", "20_Apr_22")
-save_final_file("gestation_scot_data", "20_Apr_22")
-save_final_file("gestation_linechart_data", "20_Apr_22")
-save_final_file("gestation_download_data", "20_Apr_22")
+save_final_file("gestation_runchart_data", "19_May_22")
+save_final_file("gestation_scot_data", "19_May_22")
+save_final_file("gestation_linechart_data", "19_May_22")
+save_final_file("gestation_download_data", "19_May_22")
 ## B&B - Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "22_Apr_22")
+save_final_file("perinatal", "23_May_22")
 ## B&B - Apgar ----
-save_final_file("apgar_runchart_data", "21_Apr_22")
-save_final_file("apgar_scot_data", "21_Apr_22")
-save_final_file("apgar_linechart_data", "21_Apr_22")
-save_final_file("apgar_download_data", "21_Apr_22")
+save_final_file("apgar_runchart_data", "19_May_22")
+save_final_file("apgar_scot_data", "19_May_22")
+save_final_file("apgar_linechart_data", "19_May_22")
+save_final_file("apgar_download_data", "19_May_22")
 ## B&B - Preterm ----
 save_final_file("preterm_linechart_data", "24_Mar_22")
 save_final_file("preterm", "24_Mar_22")
 ## B&B - Tears ----
-save_final_file("tears_runchart_data", "21_Apr_22")
-save_final_file("tears_scot_data", "21_Apr_22")
-save_final_file("tears_linechart_data", "21_Apr_22")
-save_final_file("tears_download_data", "21_Apr_22")
+save_final_file("tears_runchart_data", "19_May_22")
+save_final_file("tears_scot_data", "19_May_22")
+save_final_file("tears_linechart_data", "19_May_22")
+save_final_file("tears_download_data", "19_May_22")
 ##########################################################.
 ## Mental health - Prescribing ----
-save_final_file("mentalhealth_drugs", "02_May_22")
+save_final_file("mentalhealth_drugs", "30_May_22")
 ## Mental health - A&E ----
-save_final_file("mh_A&E", "02_May_22")
+save_final_file("mh_A&E", "30_May_22")
 ## Mental health - OOH ----
-save_final_file("mh_ooh", "02_May_22")
+save_final_file("mh_ooh", "30_May_22")
 ##########################################################.
 ## Drugs - substance use ----
 
