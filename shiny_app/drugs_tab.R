@@ -199,15 +199,15 @@ output$TwoYrComparison<-renderUI({
   if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
     output$trend<-renderPlotly({
     lab.text<-c(paste0("Date: ", format(plot_data$Date, format = "%b %d, %Y"),
-                       "<br>", 'Number of referrals: ', plot_data$`2020 & 2021`,
+                       "<br>", 'Number of referrals: ', plot_data$`2020, 2021 & 2022`,
                        "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
-    trend<-plot_ly(data = plot_data, x = ~Date,y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),
+    trend<-plot_ly(data = plot_data, x = ~Date,y = ~ `2020, 2021 & 2022`,name='2020,2021 & 2022',type='scatter', mode='lines', line=list(color=pal_overall[1]),
                    text=lab.text,hoverinfo='text')
     trend<-trend %>% add_trace(x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
                                text=lab.text,hoverinfo='text')
     trend <- trend %>% layout(
       shapes=lockdown('2020-03-23','grey'),
-      annotations=annote("2020-03-01", plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`),
+      annotations=annote("2020-03-01", plot_data$`Average 2018 & 2019`,plot_data$`2020, 2021 & 2022`),
       margin=list(t=80),
       title = (ifelse(test = input$types == 'Co-dependency',
                       yes = 'Number of co-dependency treatment referrals in 2020, 2021, and 2022.',
@@ -270,20 +270,20 @@ output$TwoYrComparison<-renderUI({
       plot_item<-subset(plot_data(),(Measurement=='Items'))
       plot_qpi<-subset(plot_data(),(Measurement=='Quantity per item'))
       lab_text<-c(paste0("Month: ", plot_item$Date,
-                         "<br>", 'Number of items: ', plot_item$`2020 & 2021`,
+                         "<br>", 'Number of items: ', plot_item$`2020, 2021 & 2022`,
                          "<br>", "Historic average: ", plot_item$`Average 2018 & 2019`))
       lab_text1<-c(paste0("Month: ", plot_qpi$Date,
-                          "<br>", 'Quantity per item (mg): ', plot_qpi$`2020 & 2021`,
+                          "<br>", 'Quantity per item (mg): ', plot_qpi$`2020, 2021 & 2022`,
                           "<br>", "Historic average: ", plot_qpi$`Average 2018 & 2019`))
       trend<-plot_ly(data = plot_item,x=seq(1:nrow(plot_item)))
-      trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='Items: 2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1],width=3),text=lab_text,hoverinfo='text')
+      trend<-trend %>% add_trace(y = ~ `2020, 2021 & 2022`,name='Items: 2020, 2021 & 2022',type='scatter', mode='lines', line=list(color=pal_overall[1],width=3),text=lab_text,hoverinfo='text')
       trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Items: Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[1],dash='dot'),text=lab_text,hoverinfo='text')
-      trend<-trend %>% add_trace(data=plot_qpi, x=seq(1:nrow(plot_qpi)),y = ~ `2020 & 2021`,name='QPI: 2020 & 2021',type='scatter',yaxis='y2', mode='lines', line=list(color=pal_overall[2],width=3),text=lab_text1,hoverinfo='text')
+      trend<-trend %>% add_trace(data=plot_qpi, x=seq(1:nrow(plot_qpi)),y = ~ `2020, 2021 & 2022`,name='QPI: 2020, 2021 & 2022',type='scatter',yaxis='y2', mode='lines', line=list(color=pal_overall[2],width=3),text=lab_text1,hoverinfo='text')
       trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='QPI: Average \n2018-2019',type='scatter', mode='lines',yaxis='y2', line=list(color=pal_overall[2],dash='dot'),text=lab_text1,hoverinfo='text')
       trend<-trend %>% layout(
         shapes=lockdown('3.77','grey'),
-        annotations=annote("3.2",plot_item$`Average 2018 & 2019`,plot_item$`2020 & 2021` ),
-        title=(sprintf("%s prescribing (number of items and quantity (mg) per item (QPI)) by month in 2020 and 2021 \n compared with 2018-19 average (%s)",input$types,location())),
+        annotations=annote("3.2",plot_item$`Average 2018 & 2019`,plot_item$`2020, 2021 & 2022` ),
+        title=(sprintf("%s prescribing (number of items and quantity (mg) per item (QPI)) by month in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",input$types,location())),
         margin=list(t=140),
         xaxis=list(
           title='Date',
@@ -340,18 +340,18 @@ output$TwoYrComparison<-renderUI({
     output$trend<-renderPlotly({
     
     lab_text1<-c(paste0("Date: ", plot_data()$Date,
-                        "<br>", 'No. of SAS naloxone incidents: ', plot_data()$`2020 & 2021`,
+                        "<br>", 'No. of SAS naloxone incidents: ', plot_data()$`2020, 2021 & 2022`,
                         "<br>", "Historic average: ", plot_data()$`Average 2018 & 2019`))
     trend <- plot_ly(data = plot_data(),x=plot_data()$Date) %>% 
-      add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', 
+      add_trace(y = ~ `2020, 2021 & 2022`,name='2020, 2021 & 2022',type='scatter', mode='lines', 
                 line=list(color=pal_overall[1]),text=lab_text1,hoverinfo='text') %>% 
       add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',
                 type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
                 text=lab_text1,hoverinfo='text') %>% 
       layout(shapes=lockdown('2020-03-23','grey'),
-      annotations=annote("2020-03-01",plot_data()$`Average 2018 & 2019`,plot_data()$`2020 & 2021`),
+      annotations=annote("2020-03-01",plot_data()$`Average 2018 & 2019`,plot_data()$`2020, 2021 & 2022`),
       margin=list(t=80),
-      title = (sprintf("Number of SAS incidents where naloxone was administered in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",location())),
+      title = (sprintf("3-Week central moving average of the number of SAS incidents where naloxone was administered in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",location())),
       xaxis=list(
         title='Date',
         fixedrange=TRUE
@@ -448,10 +448,10 @@ output$Prop_barplot<-renderUI({
                   marker = list(color = pal_drug[2])) %>% 
         add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')], name = 'Prison',
                   hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Prison')],' %'),
-                  marker = list(color = pal_drug[3]))
+                  marker = list(color = pal_drug[3])) %>% 
         add_trace(y = plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')], name = 'SAS',
                   hovertemplate = paste0(plot_data$`Proportion 20/21`[which(plot_data$Type=='Ambulance')],' %')
-                  ,marker = list(color = pal_drug[4]))
+                  ,marker = list(color = pal_drug[4])) %>% 
         add_trace(y = (plot_data$`2020 & 2021`[which(plot_data$Type=='Ambulance')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prison')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Prescribing')]+plot_data$`2020 & 2021`[which(plot_data$Type=='Community')]),
                   name = 'Total', type='scatter', mode='markers',
                   colors='black',showlegend=F,
@@ -584,6 +584,9 @@ output$Cum_plot<-renderUI({
 output$PercentChange<-renderUI({
   
   if (input$drug_subcategories == 'Drug and alcohol treatment referrals') {
+    
+    plot_data<-plot_data()
+    
     if(length(which(is.na(plot_data$Change)))==0){
 
       output$change_plot<-renderPlotly({

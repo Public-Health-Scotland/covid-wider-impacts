@@ -109,6 +109,10 @@ Referrals_breakdown <- Referrals_breakdown %>%
                             TRUE ~ Change),
          Date = as.Date(Date))
 
+# Change name of 2020/2021 variable
+Referrals_breakdown <- Referrals_breakdown %>% 
+  rename(`2020, 2021 & 2022` = `2020 & 2021`)
+
 # Save out data. 
 saveRDS(Referrals_breakdown,file="shiny_app/data/DTR_data.rds")
 saveRDS(Referrals_breakdown, paste0(data_folder,"final_app_files/DTR_data_",
@@ -303,6 +307,14 @@ data <- data %>%
          `Raw 2018/19`= Average.2018...2019)
 data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
 data$`2020 & 2021`<- round(data$`2020 & 2021`,1)
+
+# Change name of 2020/2021 variable
+data <- data %>% 
+  rename(`2020, 2021 & 2022` = `2020 & 2021`)
+
+# Reformat date variable
+data <- data %>% 
+  mutate(Date = as.Date(Date))
 
 # SAVING Files
 saveRDS(data, "shiny_app/data/SASdata.rds")
@@ -582,6 +594,11 @@ str(Total_Quant)
 
 Total_Quant <- Total_Quant %>% 
   mutate(across(c(Quantity), ~replace_na(.x, 0)))
+
+
+# Change name of 2020/2021 variable
+Totals <- Totals %>% 
+  rename(`2020, 2021 & 2022` = `2020 & 2021`)
 
 # SAVING files
 saveRDS(Totals, "shiny_app/data/OST_paid.rds")
