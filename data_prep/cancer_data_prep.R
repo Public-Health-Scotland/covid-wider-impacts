@@ -44,7 +44,7 @@ input_folder <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Pr
                        "//20200804-pathology-as-proxy-for-2020-regs//RShiny//CancerPathologyData//")
 cl_out <- "/conf/linkage/output/lookups/Unicode/"
 
-cancer <- read_csv(paste0(input_folder,"Pathology_Data_Mar_22.csv"), col_names = T) %>%  
+cancer <- read_csv(paste0(input_folder,"Pathology_Data_Jul_22.csv"), col_names = T) %>%  
   clean_names() %>% 
   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
   mutate(incidence_date = dmy(incidence_date)) %>%

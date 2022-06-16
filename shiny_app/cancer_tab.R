@@ -198,6 +198,7 @@ output$cancer_explorer3 <- renderUI({
 
 ################# ADDITION MAY 21 TO RE-ARRANGE PAGE ##############
 
+# MAIN PAGE TEXT
 output$cancer_explorer2 <- renderUI({
   
   
@@ -268,7 +269,7 @@ output$cancer_explorer2 <- renderUI({
     strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and
            may also update historical data."),
     br(),
-    p(strong(paste0("Last updated: - 25 May 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
+    p(strong(paste0("Last updated: - 15 June 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
              31 December 2021."))))
   
   
@@ -392,7 +393,7 @@ output$cancer_commentary <- renderUI({
     
     ###################################.
     
-    h4(strong("Update 25/05/2022: For pathology data to 31st December 2021 (extracted 20/04/2022)")),
+    h4(strong("Update 15/06/2022: For pathology data to 31st December 2021 (extracted 20/04/2022)")),
     p("In 2021 (weeks ending 05th January to 27th December), there was little difference in the total number
       of individuals with a pathological diagnosis of cancer (Excl. C44) compared with those in 2019 (33086 and 33345 in 2021 and 2019
       respectively, a difference of approximately 0.8%).  However, within cancer sites, some were higher and some lower than

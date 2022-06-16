@@ -95,7 +95,7 @@ cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
                                                     "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
 
 
-cancer_extract_date <- "04 April 2022"
+cancer_extract_date <- "02 June 2022"
 
 # SACT data
 sact_data <- readRDS("data/sact_data.rds")
