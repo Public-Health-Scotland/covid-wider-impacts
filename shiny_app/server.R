@@ -38,9 +38,10 @@ function(input, output, session) {
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
                    tags$li("22 June 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("29 June 2022 - Substance use data update and new dataset on A&E attendances due to substance misuse."),
                    tags$li("6 July 2022 - Monthly update of data (most sections)."),
-                   tags$li("3 August 2022 - Monthly update of data (most sections)."),
-                   tags$li("TBC 2022 - Cancer staging data.")
+                   tags$li("6 July 2022 - Update on injuries data."),
+                   tags$li("3 August 2022 - Monthly update of data (most sections).")
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
