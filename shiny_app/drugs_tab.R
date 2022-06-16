@@ -839,6 +839,9 @@ output$drug_commentary <- renderUI({
               below the 2020 levels for the corresponding weeks. However, combined with the co-dependency referrals, the combined number of 
               referrals are broadly similar to the 2020 drug referral levels.  This apparent fall in drug referrals is possibly an artifact of
               the introduction of DAISy (the new data system) and the new co-dependency category.'),
+      tags$li('In the first three months of 2022 the number of drug and alcohol referrals was lower than observed
+              in the corresponding months of 2020 and 2021, and at just above 900 referrals per week, was approximately
+              25% lower than the 2018 and 2019 weekly average.'),
       tags$li('The Scotland trends described were observed across many NHS Boards and Alcohol and Drug Partnerships, although
               there will have been some variation between areas.')
     ),
