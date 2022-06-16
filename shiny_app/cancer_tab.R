@@ -46,15 +46,15 @@ cancer_data_cum_main <- reactive({
 })
 
 # Reactive datasets for the diff charts
-cancer_data_diff <- reactive({
-  cancer_data_quarters %>% filter(sex == input$gender, 
-                              area == input$geoname_cancer, 
-                              site == input$cancer_type,
-                              breakdown == input$breakdown) %>%
-    # Ordering factor so it shows correctly in Plotly
-    mutate(quarter_no = factor(quarter_no, ordered = TRUE)) %>% 
-    arrange(quarter_no)
-})
+# cancer_data_diff <- reactive({
+#   cancer_data_quarters %>% filter(sex == input$gender, 
+#                               area == input$geoname_cancer, 
+#                               site == input$cancer_type,
+#                               breakdown == input$breakdown) %>%
+#     # Ordering factor so it shows correctly in Plotly
+#     mutate(quarter_no = factor(quarter_no, ordered = TRUE)) %>% 
+#     arrange(quarter_no)
+# })
 
 cancer_data_diff_2yrs <- reactive({
   cancer_data_quarters_2 %>% filter(sex == input$gender, 
