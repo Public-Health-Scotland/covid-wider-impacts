@@ -48,9 +48,8 @@ cancer <- read_csv(paste0(input_folder,"Pathology_Data_Jul_22.csv"), col_names =
   clean_names() %>% 
   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
   mutate(incidence_date = dmy(incidence_date)) %>%
-  mutate(chi_number = replace_na(chi_number, "0")) 
-# %>% 
-#   filter(year != 2022)
+  mutate(chi_number = replace_na(chi_number, "0")) %>% 
+  filter(!c(year == 2022 & incidence_date >= "2022-03-01"))
 
 cancer2017_18 <- read_csv(paste0(input_folder,"2017_2018 Covid source data pathology detail.csv"), col_names = T) %>%
   clean_names() %>%
