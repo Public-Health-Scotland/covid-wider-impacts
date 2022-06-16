@@ -288,6 +288,7 @@ output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum
                                                                    var2_chosen = "cum_count_mean_17_19"  
                                                                  },
                                                                  var3_chosen = "cum_count21",
+                                                                 var4_chosen = "cum_count22",
                                                                  data_name = "cum")})
 
 output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), 
@@ -298,6 +299,7 @@ output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_c
                                                                      var2_chosen = "count_mean_17_19"  
                                                                    },
                                                                    var3_chosen = "count21",
+                                                                   var4_chosen = "count22",
                                                                    data_name = "inc")})
 
 # Difference charts
