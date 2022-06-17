@@ -56,6 +56,7 @@ save_final_file("ui_smr01_assaults", "31_Jan_22")
 ##########################################################.
 ## RAPID ----
 save_final_file("rapid", "30_May_22")
+save_final_file("ethnicity_lookup", "14_Feb_22")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
 save_final_file("ooh", "13_Jun_22")
