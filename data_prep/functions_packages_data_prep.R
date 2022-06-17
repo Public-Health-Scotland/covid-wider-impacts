@@ -87,6 +87,33 @@ create_depgroups <- function(dataset) {
                                    dep==5 ~"5 - least deprived", TRUE~as.character(dep)))
 }
 
+# Create ethnic groups
+create_ethgroups <- function(dataset) {
+  dataset %>% 
+    mutate(ethnic_group = case_when(ethnic_group_code == "1A" ~ "White Scottish",
+                                    ethnic_group_code == "1B" ~ "White Other British",
+                                    ethnic_group_code == "1C" ~ "White Irish",
+                                    ethnic_group_code == "1K" ~ "White Other",
+                                    ethnic_group_code == "1L" ~ "White Polish",
+                                    ethnic_group_code == "1Z" ~ "White Other",
+                                    ethnic_group_code == "2A" ~ "Mixed",
+                                    ethnic_group_code == "3F" ~ "Pakistani",
+                                    ethnic_group_code == "3G" ~ "Indian",
+                                    ethnic_group_code == "3H" ~ "Other Asian",
+                                    ethnic_group_code == "3J" ~ "Chinese",
+                                    ethnic_group_code == "3Z" ~ "Other Asian",
+                                    ethnic_group_code == "4D" ~ "African",
+                                    ethnic_group_code == "4Y" ~ "African",
+                                    ethnic_group_code == "5C" ~ "Caribbean or Black",
+                                    ethnic_group_code == "5D" ~ "Caribbean or Black",
+                                    ethnic_group_code == "5Y" ~ "Caribbean or Black",
+                                    ethnic_group_code == "6A" ~ "Other ethnic group",
+                                    ethnic_group_code == "6Z" ~ "Other ethnic group",
+                                    ethnic_group_code == "98" ~ "Missing",
+                                    ethnic_group_code == "99" ~ "Missing",
+                                    is.na(ethnic_group_code) ~ "Missing"))
+}
+
 # Convert HB names to correct format
 proper <- function(dataset) {
   dataset %>%
