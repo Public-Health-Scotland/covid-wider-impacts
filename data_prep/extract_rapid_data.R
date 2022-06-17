@@ -101,8 +101,9 @@ rapid %<>%
                                     TRUE ~ 'Planned')) %>% 
   create_agegroups() %>% 
   create_sexgroups() %>% 
-  create_depgroups() %>% 
-  select(-age, -age_grp1, -postcode, -emergency_admission_flag, -medsur) %>% 
+  create_depgroups() %>%
+  create_ethgroups() %>% 
+  select(-age, -age_grp1, -postcode, -emergency_admission_flag, -medsur, -ethnic_group_description, -ethnic_group_code) %>% 
   rename(age = age_grp)
 
 
@@ -112,11 +113,11 @@ rapid %<>%
 
 # Totals - by admission_type, spec, dep, age, sex, and date_adm.
 rapid_output <- rapid %>% 
-    group_by(hb, hscp_code, hscp_name, admission_type, spec, dep, age, sex, date_adm) %>% 
+    group_by(hb, hscp_code, hscp_name, admission_type, spec, dep, age, sex, ethnic_group, date_adm) %>% 
     summarise(count = n()) %>% 
     ungroup() %>%  
-    select(hb, hscp_code, hscp_name, admission_type, spec, dep, age, sex, date_adm, count)
-
+    select(hb, hscp_code, hscp_name, admission_type, spec, dep, age, sex, ethnic_group, date_adm, count)
+ 
 
 # Save file with today's date
 date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
