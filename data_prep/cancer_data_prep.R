@@ -815,7 +815,9 @@ rm(base_cancer_counts_dep_19_notwk53, base_cancer_counts_dep_19_wk53)
 
 # combine for base cancer counts with age group split and no split
 
-base_cancer_counts_all <- bind_rows(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep)
+base_cancer_counts_all <- bind_rows(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep) %>% 
+  mutate(count22 = case_when(week_number >= 9 ~ NA,
+                             TRUE ~ as.numeric(count22))) 
 
 rm(base_cancer_counts_agegroups, base_cancer_counts_dep)
 
@@ -835,6 +837,7 @@ base_cancer_mean <- base_cancer_counts_all %>%
 
 
 # Get Cumulative Counts for each year
+# Exclude cumulative counts beyond date of data completeness (Feb 2022 for Jul 22 update)
 
 base_cancer_cum <- base_cancer_mean %>%
   select(region, area, site, sex, age_group, dep, week_number, count19, count20, count21, count22, count_mean_17_19, breakdown) %>%
@@ -844,6 +847,8 @@ base_cancer_cum <- base_cancer_mean %>%
          cum_count21 = cumsum(count21),
          cum_count22 = cumsum(count22),
          cum_count_mean_17_19 = cumsum(count_mean_17_19)) %>%
+  mutate(cum_count22 = case_when(week_number >= 9 ~ NA,
+                             TRUE ~ as.numeric(cum_count22))) %>% 
   ungroup()
 
 # rm(base_cancer_mean, base_cancer_slim)
