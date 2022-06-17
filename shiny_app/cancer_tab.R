@@ -130,6 +130,7 @@ output$cancer_explorer <- renderUI({
                            input$cancer_type == "Malignant Melanoma of the Skin" ~ "Malignant Melanoma of the Skin",
                            input$cancer_type == "Mesothelioma" ~ "Mesothelioma",
                            input$cancer_type == "Multiple Myeloma and malignant plasma cell neoplasms" ~ "Multiple Myeloma and malignant plasma cell neoplasms",
+                           input$cancer_type == "Non-Hodgkin Lymphoma" ~ "Non-Hodgkin Lymphoma",
                            input$cancer_type == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
                            input$cancer_type == "Oesophagus" ~ "Oesophagus",
                            input$cancer_type == "Other" ~ "Other",
@@ -392,8 +393,98 @@ output$cancer_commentary <- renderUI({
     
     # UPDATES ----
     
+    ###################################
+    ## JULY 2022 update ----
+    ## (Copied from June update on 17th June 2022)
+    ## N.B. Figures have not yet been fully updated. 
+    ##      Update date to be confirmed - currently 6th July 
+    ##      Text also to be double checked.
+    ##      Add section on new 2022 trend
+    ###################################.
+    
+    h4(strong("Update 06/07/2022: For pathology data to 28th February 2022 (extracted 02/06/2022)")),
+    p("In 2022 (weeks ending (CHECK DATES), there was little difference in the total number of individuals with a pathological
+      diagnosis of cancer (Excl.C44) compared with those in 2019 over the same dates (FEBRUARY COMPARISON FIGURES)"),
+    p("In 2021 (weeks ending 05th January to 27th December), there was little difference in the total number
+      of individuals with a pathological diagnosis of cancer (Excl. C44) compared with those in 2019 (33086 and 33345 in 2021 and 2019
+      respectively, a difference of approximately 0.8%).  However, within cancer sites, some were higher and some lower than
+      expected in 2021 compared with 2019."),
+    
+    p("Among the most common cancer types, comparing January to week ending 27th December in 2021 and 2019, respectively:"),
+    tags$ul(
+      tags$li("Lung cancer: 2,319 versus 2,833 pathological diagnoses; a decrease
+              of 583 individuals, or 20.6% lower."),
+      
+      tags$li("Breast cancer (females only): 5,314 versus 5,315 pathological diagnoses; 
+              a decrease of 1 individual, or less than 1% lower"),
+      
+      tags$li("Prostate cancer: 3,646 versus 3,143 pathological diagnoses; an increase
+              of 503 individuals, or 16% higher."),
+      
+      tags$li("Colorectal (bowel) cancer: 4,057 versus 4,041 pathological diagnoses; an
+              increase of 16 individuals, or 0.4% higher."),
+      
+      tags$li("Liver and intrahepatic bile ducts: 379 versus 330 pathological diagnoses;
+              an increase of 49 individuals, or 14.8% higher."),
+      
+      tags$li("Oesophagus: 1182 versus 1006 pathological diagnoses; an increase
+              of 176 individuals, or 17.5% higher.")),
+    br(),
+    p("A new chart comparing 2019 quarterly totals to the same quarters in 2020 and 2021 shows that after initial falls in diagnoses, 
+      there was some recovery or catching-up in the cumulative figures, repeating 2019 figures over two years for comparison with the 2020-2021 period:"),
+    tags$ul(
+      tags$li("All excl. NMSC: 33086 (2021) and 28481 (2020) compared with 33345 in 2019.  That is, down 5123 in total by December 2021.  
+              No overall reduction in the number of “missing” patients although it is important to look at each cancer type to understand 
+              what has happened."),
+      tags$li("Lung: 2319 (2021) and 2250 (2020) compared with 2833 in 2019.  That is, 1097 down in total by December 2021.  
+              So the continued under-diagnosis in 2021 added to the total “missing”."),
+      
+      tags$li("Colorectal: 4057 (2021) and 3187 (2020) compared with 4041 in 2019.  That is, 838 down in total by December 2021."),
+      
+      tags$li("Breast (females only): 5314 (2021) and 4488 (2020) compared with 5295 in 2019.  That is, down 788 in total by December 2021."),
+      
+      tags$li("Cervical: 307 (2021) and 357 (2020) compared with 371 in 2019.  That is, down 78 in total by December 2021."),
+      
+      tags$li("Prostate: 2587 (2021) and 3646 (2020) compared with 3143 in 2019.  That is, down only 53 patients in total by December 2021 – 
+              suggesting that those missing in 2020 were largely identified in 2021 and there is little ongoing deficit.")),
+    
+    # tags$li("Lung cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 19.3% lower."),
+    
+    # tags$li("Breast cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 7.6% lower."),
+    # 
+    # tags$li("Prostate cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 0.4% lower."),
+    # 
+    # tags$li("Colorectal(bowel) cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10% lower."),
+    # 
+    # tags$li("Liver and intrahepatic bile ducts: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.5% higher."),
+    # 
+    # tags$li("Oesophagus: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.3% higher."),
+    # 
+    # tags$li("Cervical: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10.2% lower.")),
+    
+    p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
+             data to the end of December 2021 compared to 2019:")),
+    
+    h4(strong("Age")),
+    p("For all cancers except non-melanoma skin cancers, the proportionate fall in pathologically confirmed cancers by December 2021 were
+      much smaller than at the end of 2020, and there was less difference between age groups.
+      The reduction in breast and colorectal cancer diagnoses, which were both affected by pauses in the screening
+      programmes for people aged 50-69, were smaller by December 2021 than December 2020. For example, for breast cancer, 
+      pathological cancer diagnoses in those aged 50-69 showed a shortfall of 9.1% 
+      in those of screening age (50-69) by the end of Q4 2021, compared to a shortfall of 1.6% for those under 50.
+      For colorectal cancers, numbers in 50-69 years olds showed a shortfall of
+      11.2% by the end of Q4 2021; however, the total falls in under 50s had shown less improvement, a shortfall of 17.2%."),
+    h4(strong("Socio-economic deprivation")),
+    p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
+      skin cancers, these showed the largest decreases in diagnoses remained among people from the most deprived areas, showing 
+      a shortfall of 12.9% by the end of Q4 2021.The least deprived were down 6% by the same period."),
+    p("---------------------------------------------------------------------------------------------------------------------"),
+    br(),
     
     ###################################.
+    ## JUNE 2022 UPDATE ----
+    ###################################.
+    
     
     h4(strong("Update 15/06/2022: For pathology data to 31st December 2021 (extracted 20/04/2022)")),
     p("In 2021 (weeks ending 05th January to 27th December), there was little difference in the total number
@@ -475,6 +566,9 @@ output$cancer_commentary <- renderUI({
    
     
     ###################################.
+    ## SEPTEMBER 2021 UPDATE ----
+    ###################################.
+    
     
     h4(strong("Update 22/9/2021: For pathology data to 14th June 2021 (extracted 19/8/2021)")),
     p("In the first half of 2021 (weeks ending 05 January to 14 June), there was little difference in the total number
