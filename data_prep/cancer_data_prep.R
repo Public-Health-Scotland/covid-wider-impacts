@@ -218,12 +218,24 @@ cancer <- cancer %>%
 
 # fix incorrect week numbers (2021 only) and include data to last week
 # of complete data (check this with DM)
+
+
+## below section is new code for allocating week 53 to other weeks.
 cancer <- cancer %>%
-  mutate(week_number = case_when(year == 2021 & week_number == 53 ~ 1,
-                                 TRUE ~ week_number)) %>% 
-  # mutate(week_number = case_when(year == 2020 & week_number == 53 ~ 52,
-  #                                TRUE ~ week_number)) %>%
-  filter(!(year == 2021 & week_number > 52))
+  mutate(testmarker = case_when(week_number == 53 ~ 1,
+                                TRUE ~ 0)) %>% 
+  mutate(week_number = case_when((testmarker == 1 & year == 2021 & incidence_date < 2022-01-01) ~ 52,
+                                 (testmarker == 1 & year == 2021 & incidence_date >= 2022-01-01) ~ 1,
+                                  TRUE ~ week_number)) %>% 
+  mutate(week_number = case_when(year == 2020 & week_number == 53 ~ 52,
+                                  TRUE ~ week_number))
+
+# cancer <- cancer %>%
+#   mutate(week_number = case_when(year == 2021 & week_number == 53 ~ 1,
+#                                  TRUE ~ week_number)) %>% 
+#   # mutate(week_number = case_when(year == 2020 & week_number == 53 ~ 52,
+#   #                                TRUE ~ week_number)) %>%
+#   filter(!(year == 2021 & week_number > 52))
 
 
 # extract invalid age records
@@ -816,7 +828,7 @@ rm(base_cancer_counts_dep_19_notwk53, base_cancer_counts_dep_19_wk53)
 # combine for base cancer counts with age group split and no split
 
 base_cancer_counts_all <- bind_rows(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep) %>% 
-  mutate(count22 = case_when(week_number >= 9 ~ NA,
+  mutate(count22 = case_when(week_number >= 9 ~ NA_real_,
                              TRUE ~ as.numeric(count22))) 
 
 rm(base_cancer_counts_agegroups, base_cancer_counts_dep)
@@ -847,7 +859,7 @@ base_cancer_cum <- base_cancer_mean %>%
          cum_count21 = cumsum(count21),
          cum_count22 = cumsum(count22),
          cum_count_mean_17_19 = cumsum(count_mean_17_19)) %>%
-  mutate(cum_count22 = case_when(week_number >= 9 ~ NA,
+  mutate(cum_count22 = case_when(week_number >= 9 ~ NA_real_,
                              TRUE ~ as.numeric(cum_count22))) %>% 
   ungroup()
 
@@ -891,9 +903,12 @@ diff_data_base <- diff_data_base %>%
 diff_data_base <- bind_rows(diff_data_base, diff_data_base_24)
 
 
+## where is base_cancer_slim_q0? scratch this for now. 
 
 rm(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep,
-   base_cancer_cum, base_cancer_slim_q0, base_cancer_counts_all, diff_data_base_24)
+   base_cancer_cum, base_cancer_counts_all, diff_data_base_24)
+
+## base_cancer_slim_q0
 
 # OUTPUT DATA FOR CHARTS 1 & 2 - WEEKLY ----
 saveRDS(diff_data_base, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_2_", 
