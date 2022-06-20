@@ -208,70 +208,70 @@ output$cancer_explorer2 <- renderUI({
     p("Cancer services in Scotland have been disrupted since late March 2020 as a result of the coronavirus
       pandemic.  It is important to understand whether fewer patients have been diagnosed with cancer as a
       result of these changes.  The Scottish Cancer Registry published its high quality figures on cancer
-      incidence for 2020 on 12th April 2022.  As a proxy measure of new cancer diagnoses, this dashboard presents
-      numbers of individuals from whom a pathology sample found cancer in 2020/2021 and compares them to 2019.
+      incidence for 2020 on 2nd June 2022.  As a proxy measure of new cancer diagnoses, this dashboard presents
+      numbers of individuals from whom a pathology sample found cancer in 2020/2021/2022 and compares them to 2019.
       While only proxy measures, the size of the changes corresponds approximately with those reported by cancer clinicians."),
     p(strong("Note - this does not include all patients who have been newly diagnosed with cancer (by other methods), 
               and will also include some patients who are being followed-up from a pre-2019 diagnosis of cancer.")),
     p(("By the end of 2021 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
        cancer (excluding non-melanoma skin cancers) in Scotland was "),
-      strong ("33,086 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("33,162 ", style = "font-family: 'arial'; font-si20pt;"),
       ("in 2021, "),
-      strong ("28,481 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("28,784 ", style = "font-family: 'arial'; font-si20pt;"),
       ("in 2020 and"),
       strong ("33,345 ", style = "font-family: 'arial'; font-si20pt;"),
       ("in 2019, absolute differences of "), 
-      strong ("4,864 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("4,561 ", style = "font-family: 'arial'; font-si20pt;"),
       ("individuals in 2020 (an overall cumulative difference of "),
-      strong ("-14.7% ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("-13.7% ", style = "font-family: 'arial'; font-si20pt;"),
       ("), and "),
-      strong ("259 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("183 ", style = "font-family: 'arial'; font-si20pt;"),
       ("individuals in 2021 (an overall cumulative difference of "),
-      strong ("-0.77% ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("-0.55% ", style = "font-family: 'arial'; font-si20pt;"),
       (").  That is to say, "),
-      strong ("4,864 / 259 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("4,561 / 183 ", style = "font-family: 'arial'; font-si20pt;"),
       ("fewer patients in Scotland had a pathologically confirmed cancer diagnosis by the end of 2020/2021 than would have 
        been expected.")),
     p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and colorectal."),
     p("By the week ending 27th December 2020, compared to the same week in 2019, there were ",
-      strong ("583 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("570 ", style = "font-family: 'arial'; font-si20pt;"),
         "fewer lung cancers (a total fall of ",
-      strong ("20.6%", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("20.1%", style = "font-family: 'arial'; font-si20pt;"),
       "); ",
-      strong ("848 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("806 ", style = "font-family: 'arial'; font-si20pt;"),
       "fewer breast cancers (a total fall of ",
-      strong ("15.8%", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("15.0%", style = "font-family: 'arial'; font-si20pt;"),
       "); ",
-      strong ("556 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("596 ", style = "font-family: 'arial'; font-si20pt;"),
       "fewer prostate cancers (a total fall of ",
-      strong ("17.7%", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("19.0%", style = "font-family: 'arial'; font-si20pt;"),
       "); and ",
-      strong ("854 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("825 ", style = "font-family: 'arial'; font-si20pt;"),
       "fewer colorectal cancers (a total fall of ",
-      strong ("21.1%", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("20.4%", style = "font-family: 'arial'; font-si20pt;"),
       "). "),
     p("By the week ending 27th December 2021, compared to the same week in 2019, there were ",
-      strong ("514 ", style = "font-family: 'arial'; font-si20pt; color:"),
+      strong ("509 ", style = "font-family: 'arial'; font-si20pt; color:"),
       "fewer lung cancers (a total fall of ",
-      strong ("18.1%", style = "font-family: 'arial'; font-si20pt; color:"),
+      strong ("18.0%", style = "font-family: 'arial'; font-si20pt; color:"),
       "); ",
       strong ("4 ", style = "font-family: 'arial'; font-si20pt;"),
-      "fewer breast cancers (a total fall of less than",
+      "more breast cancers (a total increase of less than",
       strong ("1%", style = "font-family: 'arial'; font-si20pt;"),
       "); ",
-      strong ("503 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("508 ", style = "font-family: 'arial'; font-si20pt;"),
       "more prostate cancers (a total increase of ",
       strong ("16%", style = "font-family: 'arial'; font-si20pt;"),
       "); and ",
-      strong ("16 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("30 ", style = "font-family: 'arial'; font-si20pt;"),
       "more colorectal cancers (a total increase of less than",
       strong ("1%", style = "font-family: 'arial'; font-si20pt;"),
       "). "),
     strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and
            may also update historical data."),
     br(),
-    p(strong(paste0("Last updated: - 15 June 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
-             31 December 2021."))))
+    p(strong(paste0("Last updated: - 6 July 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
+             1st March 2022."))))
   
   
 })
@@ -330,7 +330,7 @@ output$cancer_commentary <- renderUI({
   tagList(
     bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
     
-    h3(strong("Cancer in Scotland in 2019/2020/2021")),
+    h3(strong("Cancer in Scotland in 2019/2020/2021/2022")),
     p(strong("Note: as the information provided in this dashboard is updated, it will both add more recent 
              data and may also change historical data. This commentary includes reference to pathological specimens 
              reported to the week ending 31st December 2021, which were available for inclusion in the analysis 
