@@ -90,9 +90,12 @@ observeEvent(input$btn_drugs_modal,
                showModal(modalDialog(
                  title = "What is the data source?",
                  p('A weekly breakdown of the number of drug-related attendances at Emergency Departments in Scotland is obtained from Public Health Scotland’s Accident & Emergency Datamart'),
-                 p('This breakdown contains information on all Emergency Department sites across NHS Scotland where possible.  Where sites submit an aggregated return to PHS, reasons for attendance are not known, and therefore attendances at these locations are not included.'),
-                 p('Due to differences in the way Emergency Departments in Scotland record data, it is not possible to identify drug involvement or overdose as a presenting condition using only a specific variable or diagnosis code. Attendances for drug intoxications or overdoses are identified using a combination of exact matching of relevant ICD codes and searching of free-text fields.'),
-                 
+                 p(''),
+                 p('Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E dataset, due to the quality of the data available.  
+                   Diagnosis/reason for attendance can be recorded in a variety of ways, including in free text fields - and not all NHS Boards submit this information.  
+                   The numbers presented in these dashboards therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with caution. PHS are planning work to improve consistency.'),
+                 p(''),
+                 p('Due to these differences, it is not possible to identify drug involvement or overdose as a presenting condition using only a specific variable or diagnosis code. Attendances for drug intoxications or overdoses are identified using a combination of exact matching of relevant ICD codes and searching of free-text fields.'),
                  p(''),
                  p('Due to small and fluctuating numbers, attendances are presented here as a 3-week rolling average. Numbers by sex are displayed where sex was recorded on the attendance record'),
                  p('Additionally, where the average number of weekly attendences across the 2020 to 2022 time frame is <10, the data at NHS Board level is not displayed.'),
@@ -371,11 +374,11 @@ output$TwoYrComparison<-renderUI({
   #### Drug related A&E attendances ####
   else if(input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments'){
     tagList(#A&E attendances
-      p("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
-                 incomplete for a number of NHS Boards. Thus, the figures reported for drug related
-                 attendances offer only a very approximate indication of attendances.
-                 Additionally, some NHS Boards have moved to a new recording standard which
-                 has not been fully consolidated in the A&E datamart as yet."))
+      p("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E dataset, due to the quality of the data available.  
+        Diagnosis/reason for attendance can be recorded in a variety of ways, including in free text fields - and not all NHS Boards submit this information.  
+        The numbers presented in these dashboards therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with caution.  
+        Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of the areas represented in the data available. PHS are planning work to improve consistency."))
+    
     if(location() %in% c('NHS Shetland', 'NHS Orkney', 'NHS Western Isles', 'NHS Ayrshire & Arran', 'NHS Borders',
                          'NHS Highland', 'NHS Lanarkshire', 'NHS Grampian', 'NHS Tayside', 'NHS Forth Valley', 'NHS Dumfries & Galloway')) {
       output$data_message<-renderText('Data not shown due to small numbers. Data for this NHS Board is included in the Scotland total')
@@ -764,11 +767,10 @@ output$drug_AE_explorer <- renderUI({
   
   note_average <- p("Please note that due to small numbers we are presenting 3-week rolling average figures.")
   
-  note_dataQual <- p("Due to limitations in diagnosis recording in the A&E datamart, the data are
-                 incomplete for a number of NHS Boards. Thus, the figures reported for drug related
-                 attendances offer only a very approximate indication of attendances.
-                 Additionally, some NHS Boards have moved to a new recording standard which
-                 has not been fully consolidated in the A&E datamart as yet.")
+  note_dataQual <- p("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E dataset, due to the quality of the data available.  
+                     Diagnosis/reason for attendance can be recorded in a variety of ways, including in free text fields - and not all NHS Boards submit this information.  
+                     The numbers presented in these dashboards therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with caution.  
+                     Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of the areas represented in the data available. PHS are planning work to improve consistency.")
   
   note_smallBoards <- p("")
   
