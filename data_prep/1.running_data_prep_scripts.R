@@ -110,6 +110,15 @@ create_drugsmh(last_week =  "2022-05-22") #last week should be sunday before dat
 file.edit("shiny_app/mental_health_tab.R")
 
 ###############################################.
+## Injury datasets ----
+###############################################.
+source("data_prep/injuries_data_preparation.R") # functions for section
+
+create_ui(last_month = "2022-01-01")
+file.edit("shiny_app/global.R") # Change update date in global script
+file.edit("data_prep/final_app_files.R") #change dates in final app files scripts
+
+###############################################.
 ## Immunisation datasets ----
 ###############################################.
 source("data_prep/imm_data_prep.R") # functions for section
