@@ -86,7 +86,7 @@ observeEvent(input$btn_drugs_modal,
                    tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
-             else if(input$drug_subcategories == 'Drug overdose/intoxication attendances at Emergency Departments'){
+             else if(input$drug_subcategories == 'A&E attendances for drug overdose/intoxication'){
                showModal(modalDialog(
                  title = "What is the data source?",
                  p('A weekly breakdown of the number of drug-related attendances at Emergency Departments in Scotland is obtained from Public Health Scotland’s Accident & Emergency Datamart'),
@@ -116,7 +116,7 @@ output$area_drugs_select<-renderUI({
   }
 
   
-  else if (input$drug_subcategories == 'Take home naloxone kits'||input$drug_subcategories=='SAS naloxone administration'||input$drug_subcategories == 'OST prescribing'||input$drug_subcategories == 'Drug overdose/intoxication attendances at Emergency Departments'){
+  else if (input$drug_subcategories == 'Take home naloxone kits'||input$drug_subcategories=='SAS naloxone administration'||input$drug_subcategories == 'OST prescribing'||input$drug_subcategories == 'A&E attendances for drug overdose/intoxication'){
     selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
                    choices = c('Scotland','NHS Board'), selected = "Scotland")
   }
@@ -155,7 +155,7 @@ output$types<-renderUI({
            radioButtons('types',label='Step 3 - Select type of treatment',
                         choices=c('Methadone','Buprenorphine'),selected='Methadone'))
   }
-  # else if(input$drug_subcategories=='Drug Overdose/Intoxication Attendances at Emergency Departments'){
+  # else if(input$drug_subcategories=='A&E attendances for drug overdose/intoxication'){
   #   column(8,
   #          radioButtons("types", label="Step 3 - Select type of attendance",
   #                       choices = c('Drug Overdoses','Alcohol Overdoses', 'Drug and Alcohol Overdoses'),selected = 'Drug and Alcohol Overdoses'))
@@ -186,7 +186,7 @@ plot_data<-reactive({
   else if(input$drug_subcategories=='SAS naloxone administration'){
     plot_data<-subset(SASdata,(Board==location()))
   }
-  else if(input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments'){
+  else if(input$drug_subcategories=='A&E attendances for drug overdose/intoxication'){
     plot_data<-subset(Drug_AE_attendances,(Board==location()))
   }
   plot_data
@@ -372,7 +372,7 @@ output$TwoYrComparison<-renderUI({
     }}
   
   #### Drug related A&E attendances ####
-  else if(input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments'){
+  else if(input$drug_subcategories=='A&E attendances for drug overdose/intoxication'){
     tagList(#A&E attendances
       p("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E dataset, due to the quality of the data available.  
         Diagnosis/reason for attendance can be recorded in a variety of ways, including in free text fields - and not all NHS Boards submit this information.  
@@ -414,7 +414,7 @@ output$TwoYrComparison<-renderUI({
         trend <- trend %>% layout(margin = list(t=80),
                                   xaxis = list(fixedrange=TRUE,
                                            title='Date'),
-                                  title = (paste0("3-Week central moving average of number of attendances for Drug Overdose/Intoxication Attendances \nat Emergency Departments in 2020 - 2022 compared with 2018-19 average (",location(), ")")),
+                                  title = (paste0("3-Week average of number of attendances for Drug Overdose/Intoxication Attendances \nat Emergency Departments in 2020 - 2022 compared with 2018-19 average (",location(), ")")),
                                   yaxis = list(title = "Number of attendances",
                                              rangemode='tozero',
                                              fixedrange=TRUE),
@@ -684,20 +684,20 @@ output$Quan_plot<-renderUI({
 ## A&E Drug attendances by sex
 output$drug_gender_plot<-renderPlotly({
   
-  plot_drug_sex <- subset(plot_data(), (Board == location()) & (Gender %in% c("Female", "Male","All")))
+  plot_drug_sex <- subset(plot_data(), (Board == location()) & (Gender %in% c("All", "Male","Female")))
   
   lab_text<-c(paste0("Average of weeks beginning: ", format(plot_drug_sex$Date-7, "%d %b %Y"), ", ", format(plot_drug_sex$Date, "%d %b %Y"), ", ", format(plot_drug_sex$Date+7, "%d %b %Y"),
                      "<br>", 'Number of attendances: ', round(plot_drug_sex$`2020 & 2021`,1)))
   
   trend_sex <- plot_ly(data = plot_drug_sex, 
-                   x = ~ Date,
-                   y = ~`2020 & 2021` )
+                   x = ~ Date)
   
   trend_sex <- trend_sex %>% 
-    add_trace(color = ~ Gender,
+    add_trace(y = ~`2020 & 2021`,
+              color = ~ Gender,
               type = 'scatter',
               mode = 'lines', 
-              line = list(color=pal_sex),
+              colors = pal_sex,
               text = lab_text,
               hoverinfo = 'text')
   
@@ -763,7 +763,7 @@ output$Drug_AE_change_plot<-renderPlotly({
 ## This section combines the two A&E sub-plots together (Pct change and Gender)    
 output$drug_AE_explorer <- renderUI({
   
-  data_last_updated <- tagList(p("Last updated: 7 June 2022"))
+  data_last_updated <- tagList(p("Last updated: 29 June 2022"))
   
   note_average <- p("Please note that due to small numbers we are presenting 3-week rolling average figures.")
   
@@ -774,12 +774,12 @@ output$drug_AE_explorer <- renderUI({
   
   note_smallBoards <- p("")
   
-  if (input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments') {
+  if (input$drug_subcategories=='A&E attendances for drug overdose/intoxication') {
    if(location()=='Scotland') {
      tagList(note_dataQual, note_average, data_last_updated,
       plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug overdose/intoxications \nin ", location(), " (2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
                    plot_output1 = "Drug_AE_change_plot",
-                   title_plot2 = paste0("3-Week central moving average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
+                   title_plot2 = paste0("3-Week average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
                    plot_output2 = "drug_gender_plot"))
    } else {
      tagList(note_smallBoards)
@@ -867,7 +867,7 @@ output$drug_commentary <- renderUI({
       tags$li('The quantity of buprenorphine prescribed per item in 2020 and 2021 was higher than the 2018-2019 average across the whole time series, in particular from April 2020 onwards. ')
     ),
     
-    h2('Drug overdose/intoxication attendances at Emergency Departments'),
+    h2('A&E attendances for drug overdose/intoxication'),
     p(strong('2020')),
     tags$ul(
       tags$li('There was a large decrease in the number of drug-related overdose/intoxication attendances at Emergency Departments in Scotland in the weeks immediately prior to the UK lockdown.'), 
@@ -910,7 +910,7 @@ output$download_drugs_data <- downloadHandler(
                 file)
       write_csv(OST_paid_quantity,
                 file) }
-    else if(input$drug_subcategories=='Drug overdose/intoxication attendances at Emergency Departments'){
+    else if(input$drug_subcategories=='A&E attendances for drug overdose/intoxication'){
       if (location() == "Scotland") {
         x <- Drug_AE_attendances %>%
           filter(Board == "Scotland") %>%
