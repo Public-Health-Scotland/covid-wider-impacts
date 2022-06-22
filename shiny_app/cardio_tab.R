@@ -103,8 +103,7 @@ observeEvent(input$btn_cardio_modal,
                  title = "What is the data source?",
                  p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments)
                     in the recent past, along with historical activity for
-                   comparison purposes. The recent trend data is shown by age group, sex
-                   and broad deprivation category (SIMD). This data only include Emergency Department
+                   comparison purposes. The recent trend data is shown by age group and sex. This data only include Emergency Department
                    attendances and do not include minor injury units and other small hospitals and
                    health centres in rural areas that carry out emergency department related activity,
                    for more information on what sites are included please see this ",
@@ -121,13 +120,14 @@ observeEvent(input$btn_cardio_modal,
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/",
                           "Public Health Scotland (PHS).",  target="_blank")),
                  p("Attendances", week_standard),
-                 p(tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
-                            incomplete for a number of NHS Boards. Thus, the figures reported for cardiovascular-related
-                            attendances offer only a very approximate indication of attendances.
-                            Additionally, some NHS Boards have moved to a new recording standard which
-                            has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020,
-                            even prior to the introduction of lockdown measures, appear somehwat lower when compared to
-                            previous years.")),
+                 p(tags$em("Important note: It is not possible to accurately report total attendances for specific conditions 
+                           using the national A&E dataset, due to the quality of the data available.  Diagnosis/reason for 
+                           attendance can be recorded in a variety of ways, including in free text fields - and not all NHS 
+                           Boards submit this information.  The numbers presented in these dashboards therefore give only a 
+                           high level indication of differences over time and by age and sex, and should be interpreted with 
+                           caution.  Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the 
+                           demographic profile of the areas represented in the data available. PHS are planning work to improve 
+                           consistency.")),
                  p("The table below shows the ICD-10 codes that were considered for the cardiovascular A&E data subset,
                    where this information was available."),
                  actionButton("toggleCodeTable", "Show / Hide Table"),
@@ -521,12 +521,12 @@ output$cardio_explorer <- renderUI({
         plot_box("2020 and 2021 compared with 2018-2019 average", "ae_cardio_overall"),
         plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by age group", "ae_cardio_age_var",
-                     "Weekly number of cardiovascular A&E attendances in Scotland by age group", "ae_cardio_age_tot"),
-        plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
-                     time in 2018-2019 by SIMD quintile", "ae_cardio_dep_var",
-                     "Weekly number of cardiovascular A&E attendances in Scotland by SIMD quintile", "ae_cardio_dep_tot",
-                     extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
-                                                  icon = icon('question-circle')))
+                     "Weekly number of cardiovascular A&E attendances in Scotland by age group", "ae_cardio_age_tot")
+        # plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
+        #              time in 2018-2019 by SIMD quintile", "ae_cardio_dep_var",
+        #              "Weekly number of cardiovascular A&E attendances in Scotland by SIMD quintile", "ae_cardio_dep_tot",
+        #              extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
+        #                                           icon = icon('question-circle')))
       )
     } else if (input$measure_cardio_select == "drug_presc") {
       tagList(# Prescribing - items dispensed
