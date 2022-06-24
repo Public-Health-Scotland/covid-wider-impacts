@@ -4,12 +4,7 @@
 ## Functions/Packages/filepaths ----
 ###############################################.
 source("data_prep/functions_packages_data_prep.R")
-library(odbc)
-library(tools)
-library(tidyverse)
 library(stringi)
-library(lubridate)
-
 
 smra_connect <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
                                       uid=.rs.askForPassword("SMRA Username:"), 
@@ -22,12 +17,12 @@ smra_connect <- suppressWarnings(dbConnect(odbc(),  dsn="SMRA",
 # SIMD quintile to datazone lookup
 cl_out <- "/conf/linkage/output/lookups/Unicode/"
 # import deprivation lookup
-SIMD_lookup <- readRDS(paste0(cl_out,"Deprivation/postcode_2021_2_simd2020v2.rds")) %>% 
+SIMD_lookup <- readRDS(paste0(cl_out,"Deprivation/postcode_2022_1_simd2020v2.rds")) %>% 
   clean_names() %>% 
   select(pc7, hb2019name, simd2020v2_sc_quintile) %>% 
   rename(dep = simd2020v2_sc_quintile)
 # hscp lookup with datazone2011
-hscp <- readRDS(paste0(cl_out, "Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2021_2.rds")) %>%
+hscp <- readRDS(paste0(cl_out, "Geography/Scottish Postcode Directory/Scottish_Postcode_Directory_2022_1.rds")) %>%
   clean_names() %>%
   select(pc7, hscp2019name) %>%
   rename(hscp = hscp2019name)
@@ -58,19 +53,21 @@ other_assault_ui <- c(sprintf('X%d', 85:98), c("Y00", "Y01", "Y02", "Y03", "Y04"
 ###############################################.
 ## Extract UI_SMR01 data from SMRA ----
 ###############################################.
-# Define SQL query
-Query_SMR01 <- paste("SELECT LINK_NO, DR_POSTCODE, SEX, ADMISSION_DATE, ADMISSION_TYPE, DISCHARGE_DATE, MAIN_CONDITION,
-                     OTHER_CONDITION_1, OTHER_CONDITION_2, OTHER_CONDITION_3, OTHER_CONDITION_4, OTHER_CONDITION_5,
-                     HBRES_CURRENTDATE, AGE_IN_YEARS, CIS_MARKER, LENGTH_OF_STAY, INPATIENT_DAYCASE_IDENTIFIER,
-                     COUNCIL_AREA_2019 FROM ANALYSIS.SMR01_PI WHERE INPATIENT_DAYCASE_IDENTIFIER = 'I' 
-                     AND ADMISSION_TYPE >= 32 AND admission_type <= 35")
+# Define SQL query: Filtering out non-Scottish or no residence, only injury emergency admissions and inpatients
+Query_SMR01 <- paste("SELECT LINK_NO, DR_POSTCODE pc7, SEX, ADMISSION_DATE, ADMISSION_TYPE, 
+                            DISCHARGE_DATE, MAIN_CONDITION, OTHER_CONDITION_1, 
+                            OTHER_CONDITION_2, OTHER_CONDITION_3, OTHER_CONDITION_4, 
+                            OTHER_CONDITION_5, HBRES_CURRENTDATE, AGE_IN_YEARS, 
+                            CIS_MARKER, LENGTH_OF_STAY, INPATIENT_DAYCASE_IDENTIFIER,
+                            COUNCIL_AREA_2019 
+                      FROM ANALYSIS.SMR01_PI 
+                      WHERE discharge_date between '1 January 2018' and '30 June 2021'
+                            AND hbres_currentdate not in ('S27000001', 'S08100001', 'S08200001', 'S08200002', 'S08200003', 'S08200004')
+                            AND INPATIENT_DAYCASE_IDENTIFIER = 'I' 
+                            AND ADMISSION_TYPE >= 32 AND admission_type <= 35  )")
 
 data_UI_SMR01 <- as_tibble(dbGetQuery(smra_connect, Query_SMR01)) %>%
   setNames(tolower(names(.))) %>% 
-  filter(discharge_date >= lubridate::dmy(01012018) & discharge_date < lubridate::dmy(01072021),
-         hbres_currentdate != "S27000001", hbres_currentdate != "S08100001", hbres_currentdate != "S08200001",
-         hbres_currentdate != "S08200002", hbres_currentdate != "S08200003", hbres_currentdate != "S08200004") %>%
-  rename(pc7=dr_postcode)  %>%
 # Formatting variables
   mutate(week_ending = ceiling_date(as.Date(discharge_date), "week", change_on_boundary = F)) %>% 
   mutate(sex = recode(sex, "1" = "Male", "2" = "Female", "0" = NA_character_, "9" = NA_character_),
@@ -82,12 +79,11 @@ data_UI_SMR01 <- as_tibble(dbGetQuery(smra_connect, Query_SMR01)) %>%
                                 age_in_years >=45 & age_in_years <65 ~ "45-64", age_in_years >=65 & age_in_years <80 ~ "65-79",
                                 age_in_years >=80 ~ "80 and over"),
          year = year(week_ending)) %>% #to allow merging
-         mutate_at(vars(7:12), ~replace_na(., "000ZZZ")) %>%
-         mutate_at(vars(7:12),  .funs = list(diag = ~substr(.,1,3))) %>% 
-         mutate_at(vars(7:12),  .funs = list(loc = ~substr(.,4,4))) %>% 
-         rename_at(vars(24:29), funs(c("diag1", "diag2", "diag3", "diag4", "diag5", "diag6"))) %>% 
-         rename_at(vars(30:35), funs(c("loc1", "loc2", "loc3", "loc4", "loc5", "loc6"))) %>%
-         select(-c(7:12))
+  mutate(across(contains("condition"), ~replace_na(., "000ZZZ")),
+         across(contains("condition"), ~substr(.,1,3), .names = "diag{1:6}"),
+         across(contains("condition"), ~substr(.,4,4), .names = "loc{1:6}")) %>% 
+  select(-contains("condition"))
+
          ### - 3 - BASEFILE FOR UI ADMISSION TABLES ----
          
          # filter episodes where any UI was recorded in any diagnostic position
@@ -101,6 +97,7 @@ data_UI_SMR01 <- as_tibble(dbGetQuery(smra_connect, Query_SMR01)) %>%
          # flag up cause of injury for 'Other external causes of accidental injury' (W00-X59) and admission type between 33 and 35 
          # each episode could have more than 1 type of injury. Count separately.
          ui_codes <- function(codes) {
+           
            df <- Tab1
            output <- if_else ((df$diag1 %in% codes | df$diag2 %in% codes | df$diag3 %in% codes |
                                  df$diag4 %in% codes | df$diag5 %in% codes | df$diag6 %in% codes) 
@@ -231,7 +228,6 @@ Tab4 <- Tab3 %>%
 ui_all <- Tab4 %>%
   filter(class=="all unintentional injuries" & category!='NA') %>%
   group_by(area_type, category, type, month_ending, area_name) %>%
-  #filter((area_name !="Shetland Islands" & area_name !="NHS Shetland" & area_name !="NHS Orkney" & area_name !="Orkney Islands")) %>%
   summarise(count= sum(count)) %>% ungroup()
 
 ui_rta <- Tab4 %>%
@@ -253,7 +249,6 @@ ui_poison <- Tab4 %>%
 ui_falls <- Tab4 %>%
   filter(class=="falls") %>%
   group_by(area_type, category, type, month_ending, area_name) %>%
-  #filter((area_name !="Shetland Islands" & area_name !="NHS Shetland" & area_name !="NHS Orkney" & area_name !="Orkney Islands")) %>%
   summarise(count= sum(count)) %>% ungroup()
 
 ui_other <- Tab4 %>%

@@ -823,7 +823,7 @@ output$drug_commentary <- renderUI({
                   were 21% lower than the 2018 & 2019 average for the same month. "),
           tags$li("The large peak in May 2020 may partially have been a result of the Scottish Prison Service\'s ",
                   tags$a(href="https://www.sps.gov.uk/Corporate/Information/covid19/covid-19-information-hub.aspx", 
-                         "COVID Early Release scheme ",  target="_blank"),
+                         "COVID Early Release scheme (external website) ",  target="_blank"),
                  "in which the Coronavirus (Scotland) Act 2020 provided new powers for the early release of a specific class of prisoners held in Scottish prisons. Early release was deemed necessary in order to provide the Scottish Prison Service with additional operational capacity including allowing for a greater use of single cell occupancy, keeping prison staff and the people in their care safe. It is understood that that scheme is no longer operational, so subsequent increases may reflect other factors.")),
            
     h2('Drug and alcohol treatment referrals'),

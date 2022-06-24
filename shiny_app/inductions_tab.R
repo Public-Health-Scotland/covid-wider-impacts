@@ -11,7 +11,7 @@ observeEvent(input$btn_induct_modal,
                p("Data is shown for up to and including the most recent month for which SMR02 records are considered near complete.  Data for the most recent months should be viewed as provisional.  Data for all months will be refreshed every time the dashboard page is updated, and data for the most recent months is likely to change slightly as additional SMR02 records are submitted to PHS."),
                p("Although there is no legal requirement to submit SMR02 records to PHS, data completeness is very high.  For example, for the period 1 April 2019 to 31 March 2020, live births recorded on SMR02 represented 98.8% of the live births registered by law with National Records of Scotland.  In addition, the recording of gestation at delivery, and of whether the delivery followed induction of labour, is very complete.  For the period 1 April 2019 to 31 March 2020, gestation was recorded on >99.9% of SMR02 records relating to singleton live births, and whether the delivery followed induction of labour was recorded on 99.4% of records relating to singleton live births at 37-42 weeks gestation."),
                p("Further information based on SMR02 data is also available from the annual ",
-                 tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/births-and-maternity/births-in-scottish-hospitals/", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
+                 tags$a(href="https://publichealthscotland.scot/publications/births-in-scottish-hospitals", "Births in Scottish Hospitals report",class="externallink",target="_blank"),"."),
                size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
@@ -35,7 +35,7 @@ observeEvent(input$btn_modal_simd_induct, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
     p("Women have been allocated to different levels of deprivation based on the small area (data zone) in which they live and the",
-      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
              class="externallink"), "SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: income; employment; health; education, skills and training; housing; geographic access; and crime.
     In this tool we have presented results for women living in different SIMD ‘quintiles’. To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) of the overall population of Scotland are identified.
     Women living in the most and least deprived areas that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
@@ -358,6 +358,10 @@ observeEvent(input$switch_to_induction,{
 output$induction_commentary <- renderUI({
   tagList(
     bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
+    h2("Induction of labour - 1st June 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley and for NHS Fife in February 2022, so the proportion of births that are induced in February 2022 is likely to change in future releases of the dashboard."),
+    h2("Induction of labour - 4th May 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley for December 2021 and January 2022 so the proportion of births that are induced for these months is likely to change in future releases of the dashboard."),
     h2("Induction of labour - 1st December 2021"),
     p("The percentage in NHS Greater Glasgow & Clyde of singleton live births at 37-42 weeks gestation that followed induction of labour has been consistently higher than the pre-pandemic average since October 2020, and reached 44% in August 2021. When undertaken for appropriate reasons, and by appropriate methods, induction is useful and benefits both mothers and newborn. We will continue to monitor and are working with NHS Greater Glasgow & Clyde to explore further. "),
     h2("Induction of labour - 1st September 2021"),
@@ -375,13 +379,13 @@ output$induction_commentary <- renderUI({
     h2("Induction of labour - 16th December 2020"),
     p("Information on induction of labour was included in this tool for the first time on 16 December 2020."),
     p("'",
-      tags$a(href="https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/getting-ready-for-the-birth/induced-labour", "Induction of labour",class="externallink",target="_blank"),
+      tags$a(href="https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/getting-ready-for-the-birth/induced-labour", "Induction of labour (external website)",class="externallink",target="_blank"),
       "' is when a woman is given a medical intervention to start her labour, rather than waiting for labour to start spontaneously.  It is offered because there are medical reasons meaning it is considered safer (for the mother or baby) for the baby to be born, or because a woman is past her ‘due date’.  There are different approaches to inducing labour, for example using medicines, a medical ‘balloon’ device that sits at the neck of the womb, and/or breaking the woman’s waters."),
     p("Care for women around the time they are giving birth is an essential, time critical service that cannot be deferred.  As such, it has been provided throughout the COVID-19 pandemic, and maternity staff have not been redeployed to support other services.  The way that some elements of this care are provided has changed in response to COVID-19 however, to minimise the risk of infection and to allow services to continue to provide safe care during times when a high number of staff may be off work, for example due to needing to isolate."),
     p("Guidance issued by the ",
-      tags$a(href="https://www.gov.scot/collections/coronavirus-covid-19-guidance/#health,careandsocialwork", "Scottish Government",class="externallink",target="_blank"),
+      tags$a(href="https://www.gov.scot/collections/coronavirus-covid-19-guidance/#health,careandsocialwork", "Scottish Government (external website)",class="externallink",target="_blank"),
       " and ",
-      tags$a(href="https://www.rcog.org.uk/coronavirus-pregnancy", "Royal College of Obstetricians and Gynaecologists",class="externallink",target="_blank"),
+      tags$a(href="https://www.rcog.org.uk/coronavirus-pregnancy", "Royal College of Obstetricians and Gynaecologists (external website)",class="externallink",target="_blank"),
       "to maternity services at the height of the first wave of the pandemic noted that:"),
     tags$ul(
       tags$li("It may be necessary for services to temporarily suspend the option for women to deliver at home or in midwife led units, and to concentrate delivery care within obstetric units"),

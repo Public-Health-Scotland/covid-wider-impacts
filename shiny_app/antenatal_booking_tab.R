@@ -32,7 +32,7 @@ observeEvent(input$btn_modal_simd_booking, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
     p("Women have been allocated to different levels of deprivation based on the small area (data zone) in which they live and the",
-      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
     class="externallink"), "SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: income; employment; health; education, skills and training; housing; geographic access; and crime.
     In this tool we have presented results for women living in different SIMD ‘quintiles’. To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) of the overall population of Scotland are identified.
     Women living in the most and least deprived areas that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
@@ -69,8 +69,12 @@ ante_booking_filter <- function(){
     select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
     filter(area_name == input$geoname_booking &
                        area_type == input$geotype_booking &
-                       type %in% c("Scotland","Health board"))
-}
+                       type %in% c("Scotland","Health board")) %>%
+    # temp fix for june 2022 update
+    filter(case_when(area_name == "NHS Greater Glasgow & Clyde" | area_name == "Scotland" ~ week_book_starting < "2022-04-19",
+       area_name != "NHS Greater Glasgow & Clyde" | area_name != "Scotland" ~ week_book_starting < "2022-05-15"))
+    
+  }
 
 #Dataset behind deprivation/age plots (only available at scotland level)
 ante_booking_filter_split <- function(split){
@@ -80,6 +84,7 @@ ante_booking_filter_split <- function(split){
     filter(area_name == "Scotland" &
                        area_type == "Scotland" &
                        type==split) %>%
+    filter(week_book_starting < "2022-04-19") %>% #temporary fix for june 2022 update
     droplevels()
 }
 
@@ -412,7 +417,9 @@ observeEvent(input$switch_to_top,{
 output$booking_commentary <- renderUI({
   tagList(
     bsButton("jump_to_booking",label = "Go to data"), #this button can only be used once
-    h2("Method of delivery - 6th April 2022"),
+    h2("Antenatal bookings - 4th May 2022"),
+    p("The numbers of women booked for antenatal care in NHS Fife have shown unusual fluctuations in recent weeks. We have informed NHS Fife of this and are working with them to try to understand the data."),
+    h2("Antenatal bookings - 6th April 2022"),
     p("The numbers of women booked for antenatal care and the average gestation of women booked in NHS Forth Valley have shown unusual fluctuations in recent weeks. We have informed NHS Forth Valley of this and are working with them to try to understand the data."),
     h2("Antenatal bookings - 2nd February 2022"),
     p("The sudden drop in numbers of women booking for antenatal care during the weeks starting 27th December 2021 and 3rd January 2022 is thought to be as a result of the Christmas and new year public holidays. A similar decrease can be seen during the previous year’s Christmas and new year period and the extent of the decrease is likely to depend on whether the four public holidays fall across a two or three week period. Most NHS Boards showed some level of reduction in their numbers of women booked over this period."),
@@ -464,12 +471,12 @@ output$booking_commentary <- renderUI({
     h2("Antenatal bookings - 28th October 2020"),
     p("Information on the number of women booking for antenatal care, and the average gestation (stage of pregnancy) at which they booked, was included in this tool for the first time on 28 October 2020."),
     p("The ",
-      tags$a(href = "https://www.nhsinform.scot/ready-steady-baby/pregnancy/your-antenatal-care/your-booking-appointment-booking-visit", "‘booking’ appointment", class="externallink",target="_blank"),
+      tags$a(href = "https://www.nhsinform.scot/ready-steady-baby/pregnancy/your-antenatal-care/your-booking-appointment-booking-visit", "‘booking’ appointment (external website)", class="externallink",target="_blank"),
       " is the first main appointment a woman has with her local maternity service once she knows she is pregnant. At the booking appointment, women are assessed by a midwife who can then tailor the subsequent care they receive during their pregnancy to their particular preferences and needs.  Women are encouraged to book before they are 13 weeks pregnant, and ideally before they are 10 weeks pregnant."),
     p("As an essential service, maternity care including ‘booking’ has been provided throughout the COVID-19 pandemic, and ",
-      tags$a(href = "https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies", "women have been encouraged to attend all their scheduled antenatal appointments", class="externallink"),
+      tags$a(href = "https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/parents-and-families/coronavirus-covid-19-pregnancy-and-newborn-babies", "women have been encouraged to attend all their scheduled antenatal appointments (external website)", class="externallink"),
       ".  However, ",
-      tags$a(href = "https://www.rcog.org.uk/globalassets/documents/guidelines/2020-07-10-guidance-for-antenatal-and-postnatal.pdf", "how some elements of maternity care are delivered has changed", class="externallink",target="_blank"),
+      tags$a(href = "https://www.rcog.org.uk/globalassets/documents/guidelines/2020-07-10-guidance-for-antenatal-and-postnatal.pdf", "how some elements of maternity care are delivered has changed (external website)", class="externallink",target="_blank"),
       ", to minimise the number of visits women need to make to clinics and hospitals."),
     p("In general, prior to COVID-19, women were offered an initial in-person booking appointment (including various face to face tests such as blood tests and blood pressure monitoring) then a follow up appointment for their early pregnancy ultrasound scan. Since March 2020, in many areas women have been offered an initial remote consultation, for example using the Near Me video consultation system, then an in-person ‘one stop’ follow up appointment for all their face to face tests and their scan."),
     p("At the start of the COVID-19 pandemic, Public Health Scotland worked with NHS Boards to set up a new national data return providing information on women booking for antenatal care (see the Data source button on the dashboard page). This provides the information required to monitor in a timely way both the direct impact of COVID-19 on pregnant women, and the wider impacts of changes to maternity services and how women interact with services.  The data return is based on an extract of data recorded by midwives in local clinical information systems.  The information relates to the first main appointment a woman has with her maternity service: as noted above, during COVID-19 this will have changed from an in-person to a remote consultation in many areas."),

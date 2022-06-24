@@ -9,7 +9,7 @@ observeEvent(input$btn_top_modal,
                p("Further information is available from the PHS ",
                  tags$a(href="https://www.publichealthscotland.scot/media/7976/2021-05-25-terminations-2020-report.pdf", "annual report on termination of pregnancy up to December 2020.",class="externallink"),
                  "The ",
-                 tags$a(href="https://publichealthscotland.scot/publications/termination-of-pregnancy-statistics/termination-of-pregnancy-statistics-year-ending-december-2020/", "data tables and charts",class="externallink"),
+                 tags$a(href="https://publichealthscotland.scot/publications/termination-of-pregnancy-statistics", "data tables and charts",class="externallink"),
                  "are also available."),
                p("The number of terminations of pregnancy is shown for each month from January 2018 onwards.  Data is shown at all Scotland level and for each mainland NHS Board of residence.  Due to small numbers, data is not shown for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles, however the Island Boards are included in the Scotland total."),
                size = "m",
@@ -36,7 +36,7 @@ observeEvent(input$btn_modal_simd_top, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
     p("Women have been allocated to different levels of deprivation based on the small area (data zone)
-      in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+      in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
                                           class="externallink"), "score for that area.
       SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains:
       income; employment; health; education, skills and training; housing; geographic access; and crime.
@@ -102,7 +102,7 @@ output$top_dep_g <- renderPlotly({plot_top_split(dataset=top_filter_split("dep")
 # The charts and text shown on the app will depend on what the user wants to see
 output$top_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 15th November 2021"))
+  data_last_updated <- tagList(p("Last updated: 1 June 2022"))
 
   # text for titles of cut charts
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
@@ -340,17 +340,17 @@ output$top_commentary <- renderUI({
     h2("Termination of pregnancy - 28th October 2020"),
     p("Information on the number of terminations of pregnancy carried out in Scotland, and the average gestation (stage of pregnancy) at which they occurred, was included in this tool for the first time on 28 October 2020."),
     p("Termination of pregnancy (also referred to as a therapeutic or induced abortion) is provided under the terms of the Abortion Act 1967 and subsequent regulations.  When a healthcare practitioner provides a termination of pregnancy, there is a legal requirement for them to notify the Chief Medical Officer of the termination within seven days of it taking place.  Public Health Scotland is responsible for the collation of data derived from notifications of terminations of pregnancy on behalf of the Chief Medical Officer.  This notification data has been used in this tool (see Data source button on the dashboard page).  Detailed information on terminations is published each year by Public Health Scotland.  The ",
-      tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/sexual-health/termination-of-pregnancy-statistics/", "most recent report", class="externallink",target="_blank"),
+      tags$a(href = "https://publichealthscotland.scot/publications/termination-of-pregnancy-statistics", "most recent report", class="externallink",target="_blank"),
       " covers the year to December 2019."),
     p("As an essential service, ",
-      tags$a(href = "https://www.rcog.org.uk/en/guidelines-research-services/guidelines/coronavirus-abortion/", "care relating to termination of pregnancy has been provided throughout the COVID-19 pandemic", class="externallink", target="_blank"),
+      tags$a(href = "https://www.rcog.org.uk/en/guidelines-research-services/guidelines/coronavirus-abortion/", "care relating to termination of pregnancy has been provided throughout the COVID-19 pandemic (external website)", class="externallink", target="_blank"),
       ".   Termination of pregnancy can be carried out as a medical procedure or, less commonly, a surgical procedure.  Medical terminations involve the woman taking two different medicines 24-48 hours apart to end her pregnancy. Prior to Oct 2017, women having a medical termination were required to attend a clinic or hospital on two occasions to take the first and then, separately, the second medicine. From ",
-      tags$a(href = "https://www.sehd.scot.nhs.uk/cmo/CMO(2017)14.pdf", "October 2017", class="externallink",target="_blank"),
+      tags$a(href = "https://www.sehd.scot.nhs.uk/cmo/CMO(2017)14.pdf", "October 2017 (external website)", class="externallink",target="_blank"),
       ", women requiring an early medical termination (at up to 9 weeks and 6 days gestation) were able to take the second medicine away with them at the end of their first appointment, and subsequently take that at home.  From ",
-      tags$a(href = "https://www.sehd.scot.nhs.uk/cmo/CMO(2020)09.pdf", "31 March 2020", class="externallink", target="_blank"),
+      tags$a(href = "https://www.sehd.scot.nhs.uk/cmo/CMO(2020)09.pdf", "31 March 2020 (external website)", class="externallink", target="_blank"),
       ", in response to the COVID-19 pandemic, women requiring an early medical termination (at up to 11 weeks and 6 days gestation) have been able to have an initial remote consultation, by telephone or video call, then take both medicines at home."),
     p("Since 31 March 2020, there has been variation between NHS Boards across Scotland in exactly how care relating to termination of pregnancy has been provided.  Almost all Boards have provided some remote consultations.  After their initial consultation, some women have been required to attend for an ultrasound scan (for example to confirm how far along their pregnancy is if there is some doubt about that, or to see if they have an ectopic pregnancy) before medicines are provided.  Once a woman has been confirmed as eligible for an early medical termination, in some areas both sets of medicine have been delivered to the woman’s home, whereas in other areas women have been required to pick up their medicine from a clinic reception.  On 30 September 2020, the Scottish Government issued a ",
-      tags$a(href = "http://www.gov.scot/publications/consultation-future-arrangements-early-medical-abortion-home/", "consultation", class="externallink", target="_blank"),
+      tags$a(href = "http://www.gov.scot/publications/consultation-future-arrangements-early-medical-abortion-home/", "consultation (external website)", class="externallink", target="_blank"),
       " on whether the recent changes extending women’s access to early medical termination at home should be retained after the COVID-19 pandemic.  The consultation will be open until 5 January 2021."),
     p("The data shows that, at all Scotland level, the number of terminations of pregnancy provided month by month remained broadly constant from January 2018 (when the data shown starts) to February 2020 inclusive. The number of terminations was then higher than usual in March and April 2020, before falling to lower than usual levels in May, June, and July 2020 (with July 2020 being the latest month for which data are currently available).  Over March and April 2020, around 500 more terminations than would have been expected based on pre-pandemic average levels were provided in Scotland. This is likely to reflect a higher proportion than usual of women who found they were pregnant at the start of the COVID-19 pandemic in Scotland choosing not to continue with their pregnancy. As discussed in the ",
       actionLink("switch_to_anb","Commentary on the Antenatal booking data"),

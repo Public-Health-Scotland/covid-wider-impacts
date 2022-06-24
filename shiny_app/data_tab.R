@@ -12,12 +12,15 @@ data_table <- reactive({
          "ae_cardio" = ae_cardio %>% rename(average_2018_2019 = count_average),
          "nhs24" = nhs24 %>% rename(average_2018_2019 = count_average),
          "ooh" = ooh %>% rename(average_2018_2019 = count_average),
+         "ooh_cons" = ooh_cons %>% rename(average_2018_2019 = count_average),
          "sas" = sas %>% rename(average_2018_2019 = count_average),
          "deaths" = deaths %>% rename(average_2015_2019 = count_average),
          "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
          "cath_lab" = cath_lab %>% rename(average_2018_2019 = count_average),
         "ooh_cardiac" = ooh_cardiac %>% rename(average_2018_2019 = count_average),
         "sas_cardiac" = sas_cardiac %>% rename(average_2018_2019 = count_average),
+        "cardio_admissions" = cardio_admissions %>% rename(average_2018_2019 = count_average),        
+        "cardio_deaths" = cardio_deaths %>% rename(average_2015_2019 = count_average),       
          "sixin_8wks" = sixtable %>% filter(immunisation == "six-in-one dose 1"),
          "sixin_8wks_second" = sixtable %>% filter(immunisation == "six-in-one dose 2"),
          "sixin_8wks_third" = sixtable %>% filter(immunisation == "six-in-one dose 3"),
@@ -67,7 +70,7 @@ data_table <- reactive({
     mutate_if(is.character, as.factor) 
   
   if (input$data_select %in% c("rapid", "aye", "nhs24", "ooh", "sas", "deaths",
-                               "ooh_cardiac", "sas_cardiac")) {
+                               "ooh_cardiac", "sas_cardiac","cardio_admissions","cardio_deaths")) {
     table_data %<>%
     # Formatting to a "nicer" style
     # select(-type) %>% 
@@ -419,6 +422,18 @@ data_table <- reactive({
                                   TRUE ~ "All")) %>% 
       mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                   TRUE ~ "All"))
+  } else if (input$data_select == "ooh_cons") {
+    table_data %<>%
+      # Formatting to a "nicer" style
+            mutate("Consultation type" = recode_factor(type, 
+                                                 "COVID" = "Covid related", 
+                                                 "NON COVID" = "Non-covid related",
+                                                 "ALL" = "All consultations"),
+             week_ending = format(week_ending, "%d %b %y"),
+             variation = case_when(type == "COVID" ~ 0,
+                                   T ~ variation)) %>% 
+      rename("Variation (%)" = variation) %>%
+      select(-category, -type)
   }
   
   

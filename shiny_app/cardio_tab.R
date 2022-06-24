@@ -24,6 +24,7 @@ observeEvent(input$measure_cardio_select, {
   if (x == "cath") {
     cardio_label = "Step 2 - Select a cardiac catheterisation lab"
     cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
+    shinyjs::hide("diagnosis_select")
     hide("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -31,6 +32,7 @@ observeEvent(input$measure_cardio_select, {
   if (x == "aye") {
     cardio_label = "Step 2 - Select geography level for cardiovascular A&E attendances"
     cardio_choices = c("Scotland")
+    shinyjs::hide("diagnosis_select")
     hide("geoname_cardio_ui")
     disable("area_cardio_select")
   }
@@ -38,12 +40,15 @@ observeEvent(input$measure_cardio_select, {
   if (x == "drug_presc") {
     cardio_label = "Step 2 - Select geography level for cardiovascular medicine prescriptions"
     cardio_choices = c("Scotland", "Health board", "HSC partnership")
+    shinyjs::hide("diagnosis_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
+  
   if (x == "ooh_cardiac") {
     cardio_label = "Step 2 - Select geography level for cardiovascular OOH cases"
     cardio_choices = c("Scotland", "Health board")
+    shinyjs::hide("diagnosis_select")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -51,6 +56,27 @@ observeEvent(input$measure_cardio_select, {
   if (x == "sas_cardiac") {
     cardio_label = "Step 2 - Select geography level for cardiovascular Scottish Ambulance Service incidents"
     cardio_choices = c("Scotland", "Health board")
+    shinyjs::hide("diagnosis_select")
+    shinyjs::show("geoname_cardio_ui")
+    enable("area_cardio_select")
+  }
+
+  if (x == "cardio_admissions") {
+    cardio_label = "Step 2 - Select geography level for cardiovascular hospital admissions"
+    cardio_choices = c("Scotland", "Health board")
+    shinyjs::show("diagnosis_select")
+    updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
+                      choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")
+    shinyjs::show("geoname_cardio_ui")
+    enable("area_cardio_select")
+  }
+  
+  if (x == "cardio_deaths") {
+    cardio_label = "Step 2 - Select geography level for cardiovascular mortality"
+    cardio_choices = c("Scotland", "Health board")
+    shinyjs::show("diagnosis_select")
+    updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
+                choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")
     shinyjs::show("geoname_cardio_ui")
     enable("area_cardio_select")
   }
@@ -85,12 +111,12 @@ observeEvent(input$btn_cardio_modal,
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/Hospital-Site-List/",
                           "hospital list.",  target="_blank")),
                  p("Additional information relating to the overall A&E activity is available from the ",
-                   tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/",
+                   tags$a(href="https://publichealthscotland.scot/publications/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics",
                           "NHS Performs - weekly update of emergency department activity and waiting time statistics.",
                            target="_blank")),
                  p("Attendances to A&E departments data sourced from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3",
-                          "Accident and Emergency Datamart (A&E2).", target="_blank"),
+                          "Accident and Emergency Datamart (A&E2) (external website).", target="_blank"),
                    "The A&E2 dataset is managed by ",
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/",
                           "Public Health Scotland (PHS).",  target="_blank")),
@@ -270,8 +296,8 @@ observeEvent(input$btn_cardio_modal,
                    broad deprivation category (SIMD)."),
                  p("A GP out of hours case represents one patient contact with the service. Please note that the same person could
                     become a case on more than one occasion."),
-                 p("The charts provide a weekly summary of cardiovascular cases in the recent past and
-                   historical trends for comparison purposes. Cardiovascular cases are identified using the following conditions:"),
+                 p("The charts provide a weekly summary of chest pain cases in the recent past and
+                   historical trends for comparison purposes. chest pain cases are identified using the following conditions:"),
                 tags$ul(
                   tags$li("pleuritic pain, atypical chest pain, ischaemic heart disease, acute myocardial infarction, angina pectoris, ischaemic chest pain, chest pain.")),
                  p("The figures presented in this tool exclude cases within any of the COVID-19
@@ -280,11 +306,11 @@ observeEvent(input$btn_cardio_modal,
                 p("Cases", week_standard),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may
                    be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                           class="externallink"), "."),
                  p("General Practice Out of Hours service data is sourced from the",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113",
-                          "GP Out of Hours Dataset (OOH).",class="externallink"),
+                          "GP Out of Hours Dataset (OOH) (external website).",class="externallink"),
                    "The OOH dataset is managed by ",
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/",
                           "Public Health Scotland (PHS).", class="externallink")),
@@ -301,7 +327,7 @@ observeEvent(input$btn_cardio_modal,
                    at the scene of the incident, and excludes both data from resources which were cleared as ‘dealt with by another vehicle’ and air ambulance data."),
                  p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
                 tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
-                       "Unscheduled Care Operational Statistics", target="_blank"), ". This details unscheduled care demand, 
+                       "Unscheduled Care Operational Statistics (external website)", target="_blank"), ". This details unscheduled care demand, 
                    response times and turnaround times. Please note that the data published by SAS is sourced from a 
                    different operational system than that used for the PHS reporting. This means that the data published 
                    by SAS will at times be slightly different to that reported by PHS source. The data published by PHS 
@@ -318,19 +344,75 @@ observeEvent(input$btn_cardio_modal,
                    Heart Problems and Clammy or Cold Sweats, Just Resuscitated and/or Defibrillated"),
                  p("Activity", week_standard),
                  p("If required, more detailed analysis of SAS activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                           class="externallink"), "."),
                  p("The SAS dataset is managed by ",
                    tags$a(href="https://publichealthscotland.scot/",
                           "Public Health Scotland", class="externallink"), "and ",
                    tags$a(href="https://www.scottishambulance.com/",
-                          "Scottish Ambulance Service", class="externallink"), ".",
+                          "Scottish Ambulance Service (external website)", class="externallink"), ".",
                    "This analysis is drawn from the ",
-                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).",class="externallink")
+                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", 
+                          "Unscheduled Care Datamart (UCD) (external website).",class="externallink")
                  ),
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+             }else if (input$measure_cardio_select == "cardio_admissions") { #CARDIAC DISCHARGES MODAL
+               showModal(modalDialog(
+                 title = "What is the data source?",
+                 tags$b("Cardiovascular admissions"),
+                 p("These data provide a quarterly summary of the number of hospital episodes as a result of an
+                    cardiovascular condition since Jan 2020, with data from 2018-2019 for comparison purposes.
+                    The recent trend data is shown by age group, sex, diagnosis, admission type and deprivation category (SIMD)."),
+                 p("Please note that the stroke figures include diagnosis subarachnoid haemorrhage."),
+                 p("The source of data is the Scottish Morbidity Record 01 (SMR01) database, which holds information on
+                    admissions from non-obstetric and non-psychiatric acute hospitals in Scotland."),
+                 p("Further information relating to the cardiovascular hospital activity is available from the ",
+                   tags$a(href="https://beta.isdscotland.org/topics/heart-disease-and-stroke/",
+                          "Scottish Heart disease and stroke publications.",
+                          target="_blank")),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                 p("Please note only the total by sex is shown for island boards due to small numbers."),
+                 size = "m",
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))               
+             }else if (input$measure_cardio_select == "cardio_deaths") { #CARDIAC DEATHS MODAL
+               showModal(modalDialog(
+                 title = "What is the data source?",
+                 p("The analyses shown here are derived from weekly deaths registration data, and show recent trends in deaths (2020),
+                   whether COVID or non-COVID related, and historic trends for comparison (five-year average, 2015-2019).
+                   The recent trend data are shown by age group and sex, and the national data are also shown by broad area
+                   deprivation category (Scottish Index of Multiple Deprivation, SIMD).
+                   Volatility of the trends will be observed in some charts due to small counts.
+                   SIMD trends are not shown for Health Boards or Health
+                   and Social Care Partnerships because of the small numbers involved and the possibility for misinterpretation."),
+                 p("The deaths data are derived from the National Records of Scotland (NRS) ",
+                   tags$a(href="https://www.nrscotland.gov.uk/covid19stats",
+                          "weekly deaths (external website)",  target="_blank"), " dataset. Deaths related to COVID-19 are included in totals.
+                   Data are provisional and subject to revision."),
+                 p("The figures are based on the date a death was registered rather than the date the death occurred. When someone dies,
+                   their family (or a representative) have to make an appointment with a registrar to register the death.
+                   Legally this must be done within 8 days, although in practice there is, on average, a 3 day gap between a
+                   death occurring and being registered. More information on days between occurrence and registration can be be found on the ",
+                   tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-background-information/births-and-deaths-days-until-registration",
+                          "NRS website (external website)", target="_blank"),"."),
+                 p("The figures are reported by week, with each week running from Monday to Sunday (the ISO8601 standard week).
+                   Moveable public holidays, when registration offices are closed, affect the number of registrations made in the
+                   published weeks and in the corresponding weeks in previous years."),
+                 p("Figures include non-residents.  Deaths are allocated to area based on the usual residence of the deceased.
+                   If the deceased was not a Scottish resident, the death is allocated to the area where the death occurred."),
+                 p("Deaths are allocated to weeks . The last week of 2020 is week 53 according to this standard.
+          Between 2015 and 2019 only 2015 also had a week 53, so the ‘historic average’ figure that the 2020 deaths are compared with in
+          this week is the 2015 count, rather than the 2015-19 average."),
+                 p("The weekly deaths dataset is managed by ",
+                   tags$a(href= "https://www.nrscotland.gov.uk/",
+                          "National Records of Scotland (NRS) (external website).",  target="_blank")),
+                 p("For more information on deaths and health inequalities during the pandemic, please read ",
+                   tags$a(href = "https://publichealthscotland.scot/publications/covid-19-weekly-excess-deaths/covid-19-weekly-excess-deaths-health-inequalities-briefing/",
+                          "this report.",  target="_blank")),
+                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                 size = "m",
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))          
              }
 
 )
@@ -395,7 +477,7 @@ cath_lab_type <- reactive({
 # The charts and text shown on the app will depend on what the user wants to see
 output$cardio_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 2 March 2022"))
+  data_last_updated <- tagList(p("Last updated: 1 June 2022"))
 
   # Charts and rest of UI
   if (input$measure_cardio_select == "cath") {
@@ -466,34 +548,32 @@ output$cardio_explorer <- renderUI({
      } else if (input$measure_cardio_select == "ooh_cardiac") {
         tagList(# OOH Attendances
           tags$b(span("New clinical codes have been introduced for out of hours cases, which has had an
-            impact on the number of cardiovascular cases we report in the latter half of 2021.
+            impact on the number of chest pain cases we report in the latter half of 2021.
             We are currently investigating this issue.",
             style = "color:red")),
-          h3(paste0("Weekly cardiovascular cases in out of hours services in ", input$geoname_cardio)),
+          h3(paste0("Weekly chest pain cases in out of hours services in ", input$geoname_cardio)),
           fluidRow(column(6,
                           actionButton("btn_cardio_modal", "Data source and definitions",
                                        icon = icon('question-circle'))),
                    column(6,data_last_updated)),
           plot_box("2020 and 2021 compared with 2018-2019 average", "ooh_cardio_all"),
-          plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
+          plot_cut_box(paste0("Percentage change in chest pain cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "ooh_cardio_sex_var",
-                       paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by sex"), "ooh_cardio_sex_tot"),
-          plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
+                       paste0("Weekly number of chest pain cases in ", input$geoname_cardio, " by sex"), "ooh_cardio_sex_tot"),
+          plot_cut_box(paste0("Percentage change in chest pain cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by age group"), "ooh_cardio_age_var",
-                       paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by age group"), "ooh_cardio_age_tot"),
-          plot_cut_box(paste0("Percentage change in cardiovascular cases in ", input$geoname_cardio, " compared with the corresponding
+                       paste0("Weekly number of chest pain cases in ", input$geoname_cardio, " by age group"), "ooh_cardio_age_tot"),
+          plot_cut_box(paste0("Percentage change in chest pain cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by SIMD quintile"), "ooh_cardio_depr_var",
-                       paste0("Weekly number of cardiovascular cases in ", input$geoname_cardio, " by SIMD quintile"), "ooh_cardio_depr_tot",
+                       paste0("Weekly number of chest pain cases in ", input$geoname_cardio, " by SIMD quintile"), "ooh_cardio_depr_tot",
                        extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
                                                     icon = icon('question-circle')))
         )
      } else if (input$measure_cardio_select == "sas_cardiac") {
        tagList(# SAS incidents
-         tags$em(p("Please note that there is currently an issue with duplicates in the SAS dataset and therefore the data was not
-                  updated this month. This is currently being investigated by PHS and the data will be updated as soon as possible."),
-                 p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
+         tags$em(p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
                 tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
-                       "Unscheduled Care Operational Statistics", target="_blank"), ". The data published by SAS is sourced from a 
+                       "Unscheduled Care Operational Statistics (external website)", target="_blank"), ". The data published by SAS is sourced from a 
                         different operational system than that used for the PHS reporting. This means that the data published 
                         by SAS will at times be slightly different to that reported by PHS source.")),
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$geoname_cardio)),
@@ -514,8 +594,72 @@ output$cardio_explorer <- renderUI({
                       extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
                                                    icon = icon('question-circle')))
        )
+       # Removed input$type_adm_select and added text emergency "Percentage change in ", input$diagnosis_select, " ", input$type_adm_select, " admissions in "
+     } else if (input$measure_cardio_select == "cardio_admissions") {
+       tagList(# cardio_admissions
+         h3(paste0("Quarterly ", input$diagnosis_select, " ", "Emergency admissions in ", input$geoname_cardio)),
+         fluidRow(column(6,
+                         actionButton("btn_cardio_modal", "Data source and definitions",
+                                      icon = icon('question-circle'))),
+                  column(6,data_last_updated)),
+         plot_box("2020 and 2021 compared with 2018-2019 average", "cardio_admissions_all"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "Emergency admissions in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by sex"), "cardio_admissions_sex_var",
+                      paste0("Quarterly number of ", input$diagnosis_select, " ", "Emergency admissions in ", input$geoname_cardio, " by sex"), "cardio_admissions_sex_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "Emergency admissions ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by age group"), "cardio_admissions_age_var",
+                      paste0("Quarterly number of ", input$diagnosis_select, " ", "Emergency admissions in ", input$geoname_cardio, " by age group"), "cardio_admissions_age_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "Emergency admissions in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by SIMD quintile"), "cardio_admissions_depr_var",
+                      paste0("Quarterly number of ", input$diagnosis_select, " ", "Emergency admissions in ", input$geoname_cardio, " by SIMD quintile"), "cardio_admissions_depr_tot",
+                      extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
+                                                   icon = icon('question-circle')))
+       )
+     } else if (input$measure_cardio_select == "cardio_deaths") {
+       tagList(# cardio_deaths
+         h3(paste0("Quarterly ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio)),
+         fluidRow(column(6,
+                         actionButton("btn_cardio_modal", "Data source and definitions",
+                                      icon = icon('question-circle'))),
+                  column(6,data_last_updated)),
+         plot_box("2020 and 2021 compared with 2018-2019 average", "cardio_deaths_all"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by sex (Only totals are shown at board level due to small numbers)"), "cardio_deaths_sex_var",
+                      paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " by sex (Only totals are shown at board level due to small numbers)"), "cardio_deaths_sex_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by age group"), "cardio_deaths_age_var",
+                      paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " by age group"), "cardio_deaths_age_tot"),
+         plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " compared with the corresponding
+                     time in 2018-2019 by SIMD quintile"), "cardio_deaths_depr_var",
+                      paste0("Quarterly number of ", input$diagnosis_select, " ", " deaths in ", input$geoname_cardio, " by SIMD quintile"), "cardio_deaths_depr_tot",
+                      extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
+                                                   icon = icon('question-circle')))
+       )       
     }
 })
+
+
+###############################################.
+## Reactive datasets ----
+###############################################.
+
+# Cardio deaths area/diagnosis reactive filter
+# remove  & type_admission == input$type_adm_select
+cardio_disch_filter <- reactive({
+  cardio_admissions %>% 
+    filter(area_name == input$geoname_cardio &
+             diagnosis == input$diagnosis_select)
+  
+})
+
+# Cardio deaths area/diagnosis reactive filter
+cardio_dth_filter <- reactive({
+  cardio_deaths %>% 
+    filter(area_name == input$geoname_cardio &
+             diagnosis == input$diagnosis_select)
+  
+})
+
 
 ###############################################.
 ## Charts ----
@@ -587,7 +731,42 @@ output$sas_cardio_depr_tot <- renderPlotly({plot_trend_chart(sas_cardiac %>% fil
 ###############################################.
 
 
+###############################################.
+# Admissions charts
+output$cardio_admissions_all <- renderPlotly({plot_overall_chart(cardio_disch_filter(),
+                                                          data_name = "cardio_admissions", area = "All", period = "quarterly")})
+output$cardio_admissions_sex_var <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                            pal_sex, split = "sex", type = "variation", data_name = "cardio_admissions", tab = "cardio", period = "quarterly")})
+output$cardio_admissions_sex_tot <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                            pal_sex, split = "sex", type = "total", data_name = "cardio_admissions", tab = "cardio", period = "quarterly")})
+output$cardio_admissions_age_var <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                            pal_age, split = "age", type = "variation", data_name = "cardio_admissions", tab = "cardio", period = "quarterly")})
+output$cardio_admissions_age_tot <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                            pal_age, split = "age", type = "total", data_name = "cardio_admissions", tab = "cardio", period = "quarterly")})
+output$cardio_admissions_depr_var <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                             pal_depr, split = "dep", type = "variation",data_name = "cardio_admissions", tab = "cardio", period = "quarterly")})
+output$cardio_admissions_depr_tot <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
+                                                             pal_depr, split = "dep", type = "total",data_name = "cardio_admissions", tab = "cardio", period = "quarterly")})
+###############################################.
 
+
+###############################################.
+# Deaths charts
+output$cardio_deaths_all <- renderPlotly({plot_overall_chart(cardio_dth_filter(),
+                                                                 data_name = "cardio_deaths", area = "All", period = "quarterly")})
+output$cardio_deaths_sex_var <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                   pal_sex, split = "sex", type = "variation", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
+output$cardio_deaths_sex_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                   pal_sex, split = "sex", type = "total", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
+output$cardio_deaths_age_var <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                   pal_2ages, split = "age", type = "variation", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
+output$cardio_deaths_age_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                   pal_2ages, split = "age", type = "total", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
+output$cardio_deaths_depr_var <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                    pal_depr, split = "dep", type = "variation",data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
+output$cardio_deaths_depr_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
+                                                                    pal_depr, split = "dep", type = "total",data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
+###############################################.
 
 ## Data downloads ----
 ###############################################.
@@ -623,6 +802,18 @@ overall_cardio_download <- reactive({
     new_var_name <- "average_2018_2019"
   }
 
+  # Admissions
+  if (input$measure_cardio_select == "cardio_admissions") {
+    selection <- c("week_ending", "area_name", "diagnosis", "type_admission", "count", "count_average", "variation")
+    new_var_name <- "average_2018_2019"
+  }  
+
+  # Deaths
+  if (input$measure_cardio_select == "cardio_deaths") {
+    selection <- c("week_ending", "area_name", "diagnosis", "count", "count_average", "variation")
+    new_var_name <- "average_2018_2019"
+  }  
+  
   # Prep data for download
   switch(
     input$measure_cardio_select,
@@ -630,7 +821,9 @@ overall_cardio_download <- reactive({
     "aye" = filter_data(ae_cardio, area = F),
     "drug_presc" = filter_data(cardio_drugs, area = F),
     "ooh_cardiac" = filter_data(ooh_cardiac, area = F),
-    "sas_cardiac" = filter_data(sas_cardiac, area = F)
+    "sas_cardiac" = filter_data(sas_cardiac, area = F),
+    "cardio_admissions" = filter_data(cardio_admissions, area = F),
+    "cardio_deaths" = filter_data(cardio_deaths, area = F)
   ) %>%
     select_at(selection) %>%
     rename(!!new_var_name := count_average) %>%
@@ -650,6 +843,11 @@ output$download_cardio_data <- downloadHandler(
 output$cardio_commentary <- renderUI({
   tagList(
     bsButton("jump_to_cardio",label = "Go to data"), #this button can only be used once
+    h2("Cardiovascular - 5th May 2022"),
+    h3("Cardiovascular Hospital admissions and Excess mortality"),
+    tags$ul(
+      tags$li("Data now available for Cardiovascular Hospital admissions and Excess mortality.
+              Information is available by quarter for diagnosis Heart Attack, Heart Failure and Stroke.")),
     h2("Cardiovascular - 16th December 2020"),
     h3("Cardiovascular GP out of hour cases"),
     tags$ul(
