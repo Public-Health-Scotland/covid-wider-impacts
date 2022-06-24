@@ -354,7 +354,7 @@ output$TwoYrComparison<-renderUI({
       layout(shapes=lockdown('2020-03-23','grey'),
       annotations=annote("2020-03-01",plot_data()$`Average 2018 & 2019`,plot_data()$`2020, 2021 & 2022`),
       margin=list(t=80),
-      title = (sprintf("3-Week central moving average of the number of SAS incidents where naloxone was administered in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",location())),
+      title = (sprintf("3-Week average of the number of SAS incidents where naloxone was administered in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",location())),
       xaxis=list(
         title='Date',
         fixedrange=TRUE

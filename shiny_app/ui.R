@@ -829,7 +829,8 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                   actionButton('jump_commentary_drugs','Go to commentary'),
                   fluidRow(br()),
                   actionButton("btn_drugs_modal", "Data source and definitions",
-                                                    icon = icon('question-circle')))
+                                                    icon = icon('question-circle')),
+                  'Last updated: 29 June 2022')
          ),#wellPanel bracket
 
          mainPanel(width = 12,
