@@ -49,7 +49,7 @@ cancer <- read_csv(paste0(input_folder,"Pathology_Data_Jul_22.csv"), col_names =
   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
   mutate(incidence_date = dmy(incidence_date)) %>%
   mutate(chi_number = replace_na(chi_number, "0")) %>% 
-  filter(!c(year == 2022 & incidence_date >= "2022-03-01"))
+  filter(!c(year == 2022 & incidence_date > "2022-02-05"))
 
 cancer2017_18 <- read_csv(paste0(input_folder,"2017_2018 Covid source data pathology detail.csv"), col_names = T) %>%
   clean_names() %>%
@@ -828,7 +828,7 @@ rm(base_cancer_counts_dep_19_notwk53, base_cancer_counts_dep_19_wk53)
 # combine for base cancer counts with age group split and no split
 
 base_cancer_counts_all <- bind_rows(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep) %>% 
-  mutate(count22 = case_when(week_number >= 9 ~ NA_real_,
+  mutate(count22 = case_when(week_number >= 6 ~ NA_real_,
                              TRUE ~ as.numeric(count22))) 
 
 rm(base_cancer_counts_agegroups, base_cancer_counts_dep)
@@ -859,7 +859,7 @@ base_cancer_cum <- base_cancer_mean %>%
          cum_count21 = cumsum(count21),
          cum_count22 = cumsum(count22),
          cum_count_mean_17_19 = cumsum(count_mean_17_19)) %>%
-  mutate(cum_count22 = case_when(week_number >= 9 ~ NA_real_,
+  mutate(cum_count22 = case_when(week_number >= 6 ~ NA_real_,
                              TRUE ~ as.numeric(cum_count22))) %>% 
   ungroup()
 
@@ -902,6 +902,14 @@ diff_data_base <- diff_data_base %>%
 
 diff_data_base <- bind_rows(diff_data_base, diff_data_base_24)
 
+## Need to check 2022 data - pull out all cancer all scotland table to send to Greig. 
+
+extract <- diff_data_base %>%
+  filter(region == "Scotland", area == "Scotland", age_group == "All Ages", site == "All Cancers",
+         sex == "All", breakdown == "None", week_number %in% c(1:9)) %>% 
+  select(region, site, sex, week_number, week_ending, count22, cum_count22) 
+
+write_csv(extract, file = "Path2022_extract.csv")
 
 ## where is base_cancer_slim_q0? scratch this for now. 
 
