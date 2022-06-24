@@ -56,149 +56,149 @@ intro_box <- function(title_box, button_name, description) {
 ###############################################.
 ## Data ----
 ###############################################.
-geo_lookup <- readRDS("data/geo_lookup.rds")
-area_type_op <- readRDS("data/area_type_op.rds")
-spec_lookup_rapid <- readRDS("data/spec_lookup_rapid.rds")
-spec_lookup_op <- readRDS("data/spec_lookup_op.rds")
-ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
-
-rapid <- readRDS("data/rapid.rds") #RAPID data
-aye <- readRDS("data/ae.rds") #A&E data
-ooh <- readRDS("data/ooh.rds") # OOH data
-ooh_cons <- readRDS("data/ooh_cons.rds") # OOH consultation data
-nhs24 <- readRDS("data/nhs24.rds") # OOH data
-sas <- readRDS("data/sas.rds") # OOH data
-deaths <- readRDS("data/deaths.rds") # deaths data
-outpats <- readRDS("data/outpats.rds") # outpatients data
+# geo_lookup <- readRDS("data/geo_lookup.rds")
+# area_type_op <- readRDS("data/area_type_op.rds")
+# spec_lookup_rapid <- readRDS("data/spec_lookup_rapid.rds")
+# spec_lookup_op <- readRDS("data/spec_lookup_op.rds")
+# ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
+#
+# rapid <- readRDS("data/rapid.rds") #RAPID data
+# aye <- readRDS("data/ae.rds") #A&E data
+# ooh <- readRDS("data/ooh.rds") # OOH data
+# ooh_cons <- readRDS("data/ooh_cons.rds") # OOH consultation data
+# nhs24 <- readRDS("data/nhs24.rds") # OOH data
+# sas <- readRDS("data/sas.rds") # OOH data
+# deaths <- readRDS("data/deaths.rds") # deaths data
+# outpats <- readRDS("data/outpats.rds") # outpatients data
 
 #Cardiovascular data
-ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
-cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
-cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
-ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
-sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
-cardio_admissions <- readRDS("data/cardio_admissions.rds") # cardio admissions data
-cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
+# ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
+# cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
+# cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
+# ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
+# sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
+# cardio_admissions <- readRDS("data/cardio_admissions.rds") # cardio admissions data
+# cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
 
 #Cancer data
 
-cancer_data2 <- readRDS("data/cancer_data_2.rds")
-
-cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
-  mutate(dep = factor(dep)) %>%
-  mutate(quarter_no = factor(quarter_no, ordered = TRUE))
-
-cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
-  mutate(dep = factor(dep)) %>%
-  mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
-                                                    "Jul-Sep 2020", "Oct-Dec 2020",
-                                                    "Jan-Mar 2021", "Apr-Jun 2021",
-                                                    "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
-
-
-cancer_extract_date <- "04 April 2022"
-
-# SACT data
-sact_data <- readRDS("data/sact_data.rds")
-
-sact_data_inc <- sact_data %>%
-  mutate(region = factor(region)) %>%
-  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
-                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
-                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
-                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
-                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
-
-sact_weekly_data <- readRDS("data/sact_weekly_data.rds")
-
-sact_data_wk_difference <- sact_weekly_data %>%
-  mutate(region = factor(region)) %>%
-  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
-                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
-                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
-                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
-                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
-
-sact_data_wk_inc <- sact_weekly_data %>%
-  # filter(week <= 52) %>%
-  mutate(region = factor(region)) %>%
-  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
-                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
-                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
-                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
-                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
-
-# DCE Data
-# dce_data <- readRDS("data/dce_data.rds") %>%
+# cancer_data2 <- readRDS("data/cancer_data_2.rds")
+#
+# cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
+#   mutate(dep = factor(dep)) %>%
+#   mutate(quarter_no = factor(quarter_no, ordered = TRUE))
+#
+# cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
+#   mutate(dep = factor(dep)) %>%
+#   mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
+#                                                     "Jul-Sep 2020", "Oct-Dec 2020",
+#                                                     "Jan-Mar 2021", "Apr-Jun 2021",
+#                                                     "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
+#
+#
+# cancer_extract_date <- "04 April 2022"
+#
+# # SACT data
+# sact_data <- readRDS("data/sact_data.rds")
+#
+# sact_data_inc <- sact_data %>%
 #   mutate(region = factor(region)) %>%
 #   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
 #                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
 #                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
 #                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
-#                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
-#   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
-#   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
-# 
-# dce_extract_date <- "8 October 2021"
-
-
-
-#Injuries data
-ui_smr01_all <- readRDS("data/ui_smr01_all.rds")
-ui_smr01_rta <- readRDS("data/ui_smr01_rta.rds")
-ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
-ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
-ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
-ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
-injuries_extract_date <- "01 February 2022"
-
-
-# mental health data
-mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
-ae_mh <- readRDS("data/mh_A&E.rds")
-mh_ooh <- readRDS("data/mh_ooh.rds")
-
-## Child Health Data
-child_extract_date <- "23 May 2022"
-first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
-firsttable <- readRDS("data/first_visit_datatable.rds")
-firstdata <- readRDS("data/first_visit_data.rds")
-sixtoeight <- readRDS("data/six_to_eight.rds")
-sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
-sixtoeightdata <- readRDS("data/six_to_eight_data.rds")
-thirteen <- readRDS("data/thirteen.rds")
-thirteentable <- readRDS("data/thirteen_datatable.rds")
-thirteendata <- readRDS("data/thirteen_data.rds")
-twentyseven <- readRDS("data/twentyseven.rds")
-twentyseventable <- readRDS("data/twentyseven_datatable.rds")
-twentysevendata <- readRDS("data/twentyseven_data.rds")
-fourtofive <- readRDS("data/fourtofive.rds")
-fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
-fourtofivedata <- readRDS("data/fourtofive_data.rds")
+#                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
+#
+# sact_weekly_data <- readRDS("data/sact_weekly_data.rds")
+#
+# sact_data_wk_difference <- sact_weekly_data %>%
+#   mutate(region = factor(region)) %>%
+#   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+#                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+#                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+#                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+#                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
+#
+# sact_data_wk_inc <- sact_weekly_data %>%
+#   # filter(week <= 52) %>%
+#   mutate(region = factor(region)) %>%
+#   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+#                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+#                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+#                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+#                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
+#
+# # DCE Data
+# # dce_data <- readRDS("data/dce_data.rds") %>%
+# #   mutate(region = factor(region)) %>%
+# #   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+# #                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+# #                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+# #                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+# #                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
+# #   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
+# #   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
+# #
+# # dce_extract_date <- "8 October 2021"
+#
+#
+#
+# #Injuries data
+# ui_smr01_all <- readRDS("data/ui_smr01_all.rds")
+# ui_smr01_rta <- readRDS("data/ui_smr01_rta.rds")
+# ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
+# ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
+# ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
+# ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
+# injuries_extract_date <- "01 February 2022"
+#
+#
+# # mental health data
+# mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
+# ae_mh <- readRDS("data/mh_A&E.rds")
+# mh_ooh <- readRDS("data/mh_ooh.rds")
+#
+# ## Child Health Data
+# child_extract_date <- "23 May 2022"
+# first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
+# firsttable <- readRDS("data/first_visit_datatable.rds")
+# firstdata <- readRDS("data/first_visit_data.rds")
+# sixtoeight <- readRDS("data/six_to_eight.rds")
+# sixtoeighttable <- readRDS("data/six_to_eight_datatable.rds")
+# sixtoeightdata <- readRDS("data/six_to_eight_data.rds")
+# thirteen <- readRDS("data/thirteen.rds")
+# thirteentable <- readRDS("data/thirteen_datatable.rds")
+# thirteendata <- readRDS("data/thirteen_data.rds")
+# twentyseven <- readRDS("data/twentyseven.rds")
+# twentyseventable <- readRDS("data/twentyseven_datatable.rds")
+# twentysevendata <- readRDS("data/twentyseven_data.rds")
+# fourtofive <- readRDS("data/fourtofive.rds")
+# fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
+# fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "23 May 2022"
-month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
-age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
-age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
-
-#Immunisations s-curve data
-six_alldose <- readRDS("data/six_alldose.rds")
-mmr_alldose <- readRDS("data/mmr_alldose.rds") # mmr immunisation scurve data for all doses
-
-#Immunisations data table data
-sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table (all dose)
-mmrtable <- readRDS("data/mmr_datatable.rds") # mmr summary table (all dose)
-
-#data quality issues require additional data file for NHS grampian
-mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_grampian_datatable.rds") # mmr immunisation data table summary for just grampian mmr dose 2
-
-#Immunisations SIMD data
-six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
-six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
-six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
-mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
-mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
+# immunisation_extract_date <- "23 May 2022"
+# month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
+# age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
+# age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
+#
+# #Immunisations s-curve data
+# six_alldose <- readRDS("data/six_alldose.rds")
+# mmr_alldose <- readRDS("data/mmr_alldose.rds") # mmr immunisation scurve data for all doses
+#
+# #Immunisations data table data
+# sixtable <- readRDS("data/sixinone_datatable.rds") # 6-in-1 summary table (all dose)
+# mmrtable <- readRDS("data/mmr_datatable.rds") # mmr summary table (all dose)
+#
+# #data quality issues require additional data file for NHS grampian
+# mmrtable_dose2_gramp <- readRDS("data/mmr_dose2_grampian_datatable.rds") # mmr immunisation data table summary for just grampian mmr dose 2
+#
+# #Immunisations SIMD data
+# six_simd_dose1 <- readRDS("data/six_dose1_simdtable.rds")
+# six_simd_dose2 <- readRDS("data/six_dose2_simdtable.rds")
+# six_simd_dose3 <- readRDS("data/six_dose3_simdtable.rds")
+# mmr_simd_dose1 <- readRDS("data/mmr_dose1_simdtable.rds")
+# mmr_simd_dose2 <- readRDS("data/mmr_dose2_simdtable.rds")
 
 # perinatal mortality data
 perinatal <- readRDS("data/perinatal.rds")
@@ -206,86 +206,86 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "18 May 2022"
-booking <- readRDS("data/ante_booking.rds")
-booking_download <- readRDS("data/ante_booking_download.rds")
-
-#terminations
-top_extract_date <- "17 May 2022"
-top <- readRDS("data/top.rds")
-top_download <- readRDS("data/top_download.rds")
-
-#mode of delivery (pregnanacy tab)
-mod_extract_date <- "15 May 2022"
-mod_runchart <- readRDS("data/mod_runchart_data.rds")
-mod_scot <- readRDS("data/mod_scot_data.rds")
-mod_linechart <- readRDS("data/mod_linechart_data.rds")
-mod_download <- readRDS("data/mod_download_data.rds")
-
-#inductions (pregnanacy tab)
-induct_extract_date <- mod_extract_date
-induct_runchart <- readRDS("data/induct_runchart_data.rds")
-induct_scot <- readRDS("data/induct_scot_data.rds")
-induct_linechart <- readRDS("data/induct_linechart_data.rds")
-induct_download <- readRDS("data/induct_download_data.rds")
-
-#gestation at delivery (pregnanacy tab)
-gestation_extract_date <- mod_extract_date
-gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
-gestation_scot <- readRDS("data/gestation_scot_data.rds")
-gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
-gestation_download <- readRDS("data/gestation_download_data.rds")
-
-# Breastfeeding data
-breastfeeding <- readRDS("data/breastfeeding.rds")
-#Child development data
-child_dev <- readRDS("data/child_dev.rds")
-child_dev_depr <- readRDS("data/child_dev_depr.rds")
-child_dev_domains <- readRDS("data/child_dev_domains.rds")
-
-
-# Apgar (births and babies tab)
-apgar_extract_date <- "17 May 2022"
-apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
-apgar_scot <- readRDS("data/apgar_scot_data.rds")
-apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
-apgar_download <- readRDS("data/apgar_download_data.rds")
-
-# Preterm
-preterm_extract_date <- "16 March 2022"
-preterm_chart <- readRDS("data/preterm.rds")
-preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
-
-# Tears (births and babies tab)
-tears_extract_date <- apgar_extract_date
-tears_runchart <- readRDS("data/tears_runchart_data.rds")
-tears_scot <- readRDS("data/tears_scot_data.rds")
-tears_linechart <- readRDS("data/tears_linechart_data.rds")
-tears_download <- readRDS("data/tears_download_data.rds")
-
-#Drugs data
- ADP_names<-readRDS('data/ADP_names.rds')
- Health_board<-readRDS('data/Health_board.rds')
- DTR_data<-readRDS('data/DTR_data.rds')
- THN_by_HB<-readRDS('data/THN_by_HB.rds')
- SASdata<-readRDS('data/SASdata.rds')
- OST_paid<-readRDS('data/OST_paid.rds')
- OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
+# booking_extract_date <- "18 May 2022"
+# booking <- readRDS("data/ante_booking.rds")
+# booking_download <- readRDS("data/ante_booking_download.rds")
+#
+# #terminations
+# top_extract_date <- "17 May 2022"
+# top <- readRDS("data/top.rds")
+# top_download <- readRDS("data/top_download.rds")
+#
+# #mode of delivery (pregnanacy tab)
+# mod_extract_date <- "15 May 2022"
+# mod_runchart <- readRDS("data/mod_runchart_data.rds")
+# mod_scot <- readRDS("data/mod_scot_data.rds")
+# mod_linechart <- readRDS("data/mod_linechart_data.rds")
+# mod_download <- readRDS("data/mod_download_data.rds")
+#
+# #inductions (pregnanacy tab)
+# induct_extract_date <- mod_extract_date
+# induct_runchart <- readRDS("data/induct_runchart_data.rds")
+# induct_scot <- readRDS("data/induct_scot_data.rds")
+# induct_linechart <- readRDS("data/induct_linechart_data.rds")
+# induct_download <- readRDS("data/induct_download_data.rds")
+#
+# #gestation at delivery (pregnanacy tab)
+# gestation_extract_date <- mod_extract_date
+# gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
+# gestation_scot <- readRDS("data/gestation_scot_data.rds")
+# gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
+# gestation_download <- readRDS("data/gestation_download_data.rds")
+#
+# # Breastfeeding data
+# breastfeeding <- readRDS("data/breastfeeding.rds")
+# #Child development data
+# child_dev <- readRDS("data/child_dev.rds")
+# child_dev_depr <- readRDS("data/child_dev_depr.rds")
+# child_dev_domains <- readRDS("data/child_dev_domains.rds")
+#
+#
+# # Apgar (births and babies tab)
+# apgar_extract_date <- "17 May 2022"
+# apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
+# apgar_scot <- readRDS("data/apgar_scot_data.rds")
+# apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
+# apgar_download <- readRDS("data/apgar_download_data.rds")
+#
+# # Preterm
+# preterm_extract_date <- "16 March 2022"
+# preterm_chart <- readRDS("data/preterm.rds")
+# preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
+#
+# # Tears (births and babies tab)
+# tears_extract_date <- apgar_extract_date
+# tears_runchart <- readRDS("data/tears_runchart_data.rds")
+# tears_scot <- readRDS("data/tears_scot_data.rds")
+# tears_linechart <- readRDS("data/tears_linechart_data.rds")
+# tears_download <- readRDS("data/tears_download_data.rds")
+#
+# #Drugs data
+#  ADP_names<-readRDS('data/ADP_names.rds')
+#  Health_board<-readRDS('data/Health_board.rds')
+#  DTR_data<-readRDS('data/DTR_data.rds')
+#  THN_by_HB<-readRDS('data/THN_by_HB.rds')
+#  SASdata<-readRDS('data/SASdata.rds')
+#  OST_paid<-readRDS('data/OST_paid.rds')
+#  OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
 
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
 
-spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
-                          "Medical (incl. Cardiology & Cancer)",
-                          "Paediatrics (medical & surgical)")) # specialty list
-spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
-
-#List of ethnic groups included in the outpatients by ethnicity section
-eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "White Other", "White Polish", 
-                      "Mixed", "Pakistani", "Indian", "Other Asian", "Chinese", "African",
-                      "Caribbean or Black", "Other ethnic group", "Missing"))
-
+# spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
+#                           "Medical (incl. Cardiology & Cancer)",
+#                           "Paediatrics (medical & surgical)")) # specialty list
+# spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
+#
+# #List of ethnic groups included in the outpatients by ethnicity section
+# eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "White Other", "White Polish",
+#                       "Mixed", "Pakistani", "Indian", "Other Asian", "Chinese", "African",
+#                       "Caribbean or Black", "Other ethnic group", "Missing"))
+#
 data_list <- c(
   "Hospital admissions" = "rapid", "A&E attendances" = "aye",
   "NHS 24 completed contacts" = "nhs24",
@@ -293,30 +293,30 @@ data_list <- c(
   "Excess mortality" = "deaths",
   "Outpatient appointments" = "outpats")
 
-#List of data items available in step 2 of immunisation tab
-data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
-                     "6-in-1 second dose" = "sixin_dose2",
-                     "6-in-1 third dose" = "sixin_dose3",
-                     "MMR first dose" = "mmr_dose1",
-                     "MMR second dose" = "mmr_dose2")
-
-# List of data items available in step 2 of child health tab
-data_list_child <- c("Health Visitor first visit" = "first_visit",
-                     "6-8 Week Review" = "six_eightwks",
-                     "13-15 Month Review" = "13_15mnth",
-                     "27-30 Month Review" = "27_30mnth",
-                     "4-5 Year Review" = "4_5yr")
-
-## Data lists for pregnancy tab
-# List of data items available in step 1 of antenatal booking
-data_list_booking <- c("Number" = "booking_number",
-                       "Average gestation" = "booking_gestation")
-# List of data items available in step 1 of terminations
-data_list_top <- c("Number" = "top_number",
-                   "Average gestation" = "top_gestation")
-
-data_list_childdev <- c("13-15 month review" = "13_15mnth",
-                        "27-30 month review" = "27_30mnth")
+# #List of data items available in step 2 of immunisation tab
+# data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
+#                      "6-in-1 second dose" = "sixin_dose2",
+#                      "6-in-1 third dose" = "sixin_dose3",
+#                      "MMR first dose" = "mmr_dose1",
+#                      "MMR second dose" = "mmr_dose2")
+#
+# # List of data items available in step 2 of child health tab
+# data_list_child <- c("Health Visitor first visit" = "first_visit",
+#                      "6-8 Week Review" = "six_eightwks",
+#                      "13-15 Month Review" = "13_15mnth",
+#                      "27-30 Month Review" = "27_30mnth",
+#                      "4-5 Year Review" = "4_5yr")
+#
+# ## Data lists for pregnancy tab
+# # List of data items available in step 1 of antenatal booking
+# data_list_booking <- c("Number" = "booking_number",
+#                        "Average gestation" = "booking_gestation")
+# # List of data items available in step 1 of terminations
+# data_list_top <- c("Number" = "top_number",
+#                    "Average gestation" = "top_gestation")
+#
+# data_list_childdev <- c("13-15 month review" = "13_15mnth",
+#                         "27-30 month review" = "27_30mnth")
 
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
@@ -363,66 +363,66 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Out of hours consultations" = "ooh_cons"
                         )
 
-injury_data_list <- c("All unintentional injuries" = "ui_smr01_all",
-                        "Road traffic accidents" = "ui_smr01_rta",
-                        "Poisonings" = "ui_smr01_poison",
-                        "Falls" = "ui_smr01_falls",
-                        "Other" = "ui_smr01_other",
-                        "Assaults" = "ui_smr01_assaults")
-
-injury_type_list <- c("All unintentional injuries" =	"all unintentional injuries",
-                     "Road traffic accidents" =	"road traffic accident",
-                     "Poisonings" =	"poisoning",
-                     "Falls"=	"falls",
-                     "Other" =	"other",
-                     "Assaults"="assaults")
-
-injury_split_list <- c("Age group" =	"age",
-                       "Deprivation" =	"dep",
-                       "Injury location" =	"injurylocation",
-                       "Sex" =	"sex")
-injury_colour_list <- c("Age group" =	1,
-                       "Deprivation" =	2,
-                       "Injury location" =	3,
-                       "Sex" =	4)
-
-
-cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
-                      "All Cancers" = "All Cancers",
-                      "Bladder" = "Bladder",
-                      "Bone and Connective Tissue" = "Bone and Connective Tissue",
-                      "Brain Tumour" = "Brain Tumour",
-                      "Breast" = "Breast",
-                      "Cervical - Females only" = "Cervical - Females only",
-                      "Colorectal" = "Colorectal",
-                      "Head and Neck" = "Head and Neck",
-                      "Hodgkin Lymphoma" = "Hodgkin Lymphoma",
-                      "Kidney" = "Kidney",
-                      "Leukaemias" = "Leukaemias",
-                      "Liver and Intrahepatic Bile Ducts" = "Liver and Intrahepatic Bile Ducts",
-                      "Malignant Melanoma of the Skin" = "Malignant Melanoma of the Skin",
-                      "Mesothelioma" = "Mesothelioma",
-                      "Multiple Myeloma and malignant plasma cell neoplasms" = "Multiple Myeloma and malignant plasma cell neoplasms",
-                      "Non-Melanoma Skin Cancer" = "Non-Melanoma Skin Cancer",
-                      "Non-Hodgkin Lymphoma" = "Non Hodgkin Lymphoma",
-                      "Oesophagus" = "Oesophagus",
-                      "Other" = "Other",
-                      "Ovary - Females only" = "Ovary - Females only",
-                      "Pancreas" = "Pancreas",
-                      "Penis - Males only" = "Penis - Males only",
-                      "Prostate - Males only" = "Prostate - Males only",
-                      "Stomach" = "Stomach",
-                      "Testis - Males only" = "Testis - Males only",
-                      "Thyroid" = "Thyroid",
-                      "Trachea, Bronchus and Lung" = "Trachea, Bronchus and Lung",
-                      "Uterus - Females only" = "Uterus - Females only",
-                      "Vagina - Females only" = "Vagina - Females only",
-                      "Vulva - Females only" = "Vulva - Females only")
-
-cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
-                 "Out of hours cases" = "ooh_cardiac",
-                 "Scottish Ambulance Service" = "sas_cardiac", "Hospital admissions" = "cardio_admissions",
-                 "Excess mortality" = "cardio_deaths", "Cardiac procedures" = "cath")
+# injury_data_list <- c("All unintentional injuries" = "ui_smr01_all",
+#                         "Road traffic accidents" = "ui_smr01_rta",
+#                         "Poisonings" = "ui_smr01_poison",
+#                         "Falls" = "ui_smr01_falls",
+#                         "Other" = "ui_smr01_other",
+#                         "Assaults" = "ui_smr01_assaults")
+#
+# injury_type_list <- c("All unintentional injuries" =	"all unintentional injuries",
+#                      "Road traffic accidents" =	"road traffic accident",
+#                      "Poisonings" =	"poisoning",
+#                      "Falls"=	"falls",
+#                      "Other" =	"other",
+#                      "Assaults"="assaults")
+#
+# injury_split_list <- c("Age group" =	"age",
+#                        "Deprivation" =	"dep",
+#                        "Injury location" =	"injurylocation",
+#                        "Sex" =	"sex")
+# injury_colour_list <- c("Age group" =	1,
+#                        "Deprivation" =	2,
+#                        "Injury location" =	3,
+#                        "Sex" =	4)
+#
+#
+# cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neoplasms (Excl. C44)",
+#                       "All Cancers" = "All Cancers",
+#                       "Bladder" = "Bladder",
+#                       "Bone and Connective Tissue" = "Bone and Connective Tissue",
+#                       "Brain Tumour" = "Brain Tumour",
+#                       "Breast" = "Breast",
+#                       "Cervical - Females only" = "Cervical - Females only",
+#                       "Colorectal" = "Colorectal",
+#                       "Head and Neck" = "Head and Neck",
+#                       "Hodgkin Lymphoma" = "Hodgkin Lymphoma",
+#                       "Kidney" = "Kidney",
+#                       "Leukaemias" = "Leukaemias",
+#                       "Liver and Intrahepatic Bile Ducts" = "Liver and Intrahepatic Bile Ducts",
+#                       "Malignant Melanoma of the Skin" = "Malignant Melanoma of the Skin",
+#                       "Mesothelioma" = "Mesothelioma",
+#                       "Multiple Myeloma and malignant plasma cell neoplasms" = "Multiple Myeloma and malignant plasma cell neoplasms",
+#                       "Non-Melanoma Skin Cancer" = "Non-Melanoma Skin Cancer",
+#                       "Non-Hodgkin Lymphoma" = "Non Hodgkin Lymphoma",
+#                       "Oesophagus" = "Oesophagus",
+#                       "Other" = "Other",
+#                       "Ovary - Females only" = "Ovary - Females only",
+#                       "Pancreas" = "Pancreas",
+#                       "Penis - Males only" = "Penis - Males only",
+#                       "Prostate - Males only" = "Prostate - Males only",
+#                       "Stomach" = "Stomach",
+#                       "Testis - Males only" = "Testis - Males only",
+#                       "Thyroid" = "Thyroid",
+#                       "Trachea, Bronchus and Lung" = "Trachea, Bronchus and Lung",
+#                       "Uterus - Females only" = "Uterus - Females only",
+#                       "Vagina - Females only" = "Vagina - Females only",
+#                       "Vulva - Females only" = "Vulva - Females only")
+#
+# cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
+#                  "Out of hours cases" = "ooh_cardiac",
+#                  "Scottish Ambulance Service" = "sas_cardiac", "Hospital admissions" = "cardio_admissions",
+#                  "Excess mortality" = "cardio_deaths", "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Stillbirths"="stillbirths",
@@ -431,10 +431,10 @@ data_list_perinatal <- c("Stillbirths"="stillbirths",
                          "Post-neonatal deaths"="pnnd",
                          "Infant deaths"="infantdeaths")
 
-data_list_bf <- c("Health Visitor first visit" = "First visit",
-                  "6-8 week review" = "6-8 week")
-
-mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye", "Out of hours cases" = "ooh")
+# data_list_bf <- c("Health Visitor first visit" = "First visit",
+#                   "6-8 week review" = "6-8 week")
+#
+# mentalhealth_list <- c("Prescribing" = "mhdrugs", "A&E attendances" = "aye", "Out of hours cases" = "ooh")
 
 ###############################################.
 ## Palettes and plot parameters ----
@@ -515,7 +515,7 @@ pal_eth <- c('#E39C8C',
              '#C73918',
              '#1E7F84',
              '#CDA1C9')
- 
+
 
 # pal_dce <- c("1" = '#000080',
 #              "2" = '#6A5ACD',
