@@ -827,12 +827,13 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                   actionButton('jump_commentary_drugs','Go to commentary'),
                   fluidRow(br()),
                   actionButton("btn_drugs_modal", "Data source and definitions",
-                                                    icon = icon('question-circle')),
-                  'Last updated: 29 June 2022')
+                                                    icon = icon('question-circle'))
+                  )
          ),#wellPanel bracket
 
          mainPanel(width = 12,
                    #actionButton('browser','browser'),
+                   p('Last updated: 29 June 2022'),
                    fluidRow(br()),
                    uiOutput('Quan_plot'),
                    fluidRow(br()),

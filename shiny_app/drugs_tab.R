@@ -776,7 +776,7 @@ output$drug_AE_explorer <- renderUI({
   
   if (input$drug_subcategories=='A&E attendances for drug overdose/intoxication') {
    if(location()=='Scotland') {
-     tagList(note_dataQual, note_average, data_last_updated,
+     tagList(note_dataQual, note_average, br(), data_last_updated,
       plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug overdose/intoxications \nin ", location(), " (2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
                    plot_output1 = "Drug_AE_change_plot",
                    title_plot2 = paste0("3-Week average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
