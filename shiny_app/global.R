@@ -72,31 +72,31 @@ deaths <- readRDS("data/deaths.rds") # deaths data
 outpats <- readRDS("data/outpats.rds") # outpatients data
 
 #Cardiovascular data
-# ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
-# cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
-# cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
-# ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
-# sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
-# cardio_admissions <- readRDS("data/cardio_admissions.rds") # cardio admissions data
-# cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
+ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
+cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
+cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
+ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
+sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
+cardio_admissions <- readRDS("data/cardio_admissions.rds") # cardio admissions data
+cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
 
 #Cancer data
 
-# cancer_data2 <- readRDS("data/cancer_data_2.rds")
-# 
-# cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
-#   mutate(dep = factor(dep)) %>%
-#   mutate(quarter_no = factor(quarter_no, ordered = TRUE))
-# 
-# cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
-#   mutate(dep = factor(dep)) %>%
-#   mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
-#                                                     "Jul-Sep 2020", "Oct-Dec 2020",
-#                                                     "Jan-Mar 2021", "Apr-Jun 2021",
-#                                                     "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
-# 
-# 
-# cancer_extract_date <- "04 April 2022"
+cancer_data2 <- readRDS("data/cancer_data_2.rds")
+
+cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
+  mutate(dep = factor(dep)) %>%
+  mutate(quarter_no = factor(quarter_no, ordered = TRUE))
+
+cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
+  mutate(dep = factor(dep)) %>%
+  mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
+                                                    "Jul-Sep 2020", "Oct-Dec 2020",
+                                                    "Jan-Mar 2021", "Apr-Jun 2021",
+                                                    "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
+
+
+cancer_extract_date <- "04 April 2022"
 
 # SACT data
 sact_data <- readRDS("data/sact_data.rds")
@@ -128,18 +128,18 @@ sact_data_wk_inc <- sact_weekly_data %>%
                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
-# DCE Data
-# dce_data <- readRDS("data/dce_data.rds") %>%
-#   mutate(region = factor(region)) %>%
-#   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
-#                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
-#                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
-#                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
-#                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
-#   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
-#   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
-# 
-# dce_extract_date <- "8 October 2021"
+#DCE Data
+dce_data <- readRDS("data/dce_data.rds") %>%
+  mutate(region = factor(region)) %>%
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
+  mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
+  mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
+
+dce_extract_date <- "8 October 2021"
 
 
 
