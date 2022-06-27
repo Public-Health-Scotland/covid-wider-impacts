@@ -1019,7 +1019,7 @@ base_cancer_counts_all_quarters <- bind_rows(base_cancer_counts_quarters,
                                              base_cancer_counts_agegroups_quarters, 
                                              base_cancer_counts_dep_quarters) %>%
                                     mutate(dep = factor(dep, levels = c(0,1,2,3,4,5), 
-                                      labels = c("0","1 (least deprived)","2","3","4","5 (most deprived)"))) 
+                                      labels = c("0","1 (most deprived)","2","3","4","5 (least deprived)"))) 
   
 
 rm(base_cancer_counts_agegroups_quarters, base_cancer_counts_dep_quarters)
