@@ -389,8 +389,6 @@ observeEvent(input$switch_to_mod,{
 output$mod_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mod",label = "Go to data"), #this button can only be used once
-    h2("Method of delivery - 6th July 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley in March 2022 and for NHS Fife in February 2022, so the proportion of births that are delivered by caesarean section in these months is likely to change in future releases of the dashboard."),
     h2("Method of delivery - 1st June 2022"),
     p("Data are thought to be incomplete for NHS Forth Valley and for NHS Fife in February 2022, so the proportion of births that are delivered by caesarean section in February 2022 is likely to change in future releases of the dashboard."),
     h2("Method of delivery - 4th May 2022"),

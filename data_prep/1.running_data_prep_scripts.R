@@ -11,11 +11,11 @@
 ###############################################.
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
-create_delivery(folderdate = "2022-06-13") # Mode of delivery, induction and gestation data
+create_delivery(folderdate = "2022-05-13") # Mode of delivery, induction and gestation data
 create_perinatal(foldermonth = "jun22") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2022_06_13", max_date = "2022-03-31") # Apgar scores
-create_preterm(preterm_date = "2022_06_13", max_date = "2022-03-31") # Preterm
-create_tears(tears_date = "2022_06_13", max_date = "2022-03-31") # Perineal tears
+create_apgar(folderdate = "2022_05_17", max_date = "2022-02-28") # Apgar scores
+create_preterm(preterm_date = "2022_03_16", max_date = "2021-12-01") # Preterm
+create_tears(tears_date = "2022_05_17", max_date = "2022-02-28") # Perineal tears
 
 # For delivery, apgar, preterm, tears and antenatal change dates in global script
 # For perinatal change dates in perinatal_tab script
@@ -90,7 +90,7 @@ file.edit("shiny_app/summary_tab.R")
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
 create_terminations(top_date = "2022-05-17")
-create_antebooking(booking_date = "15062022", max_book_date = "2022-06-12")
+create_antebooking(booking_date = "26052022", max_book_date = "2022-05-15")
 
 #For terminations change global extract date, and in terminations tab, update date.
 # Add here what needs to be changed in the shiny scripts
