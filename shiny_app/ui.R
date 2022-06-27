@@ -815,7 +815,8 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                                            choices = c('Take home naloxone kits',
                                                        'Scottish Ambulance Service naloxone administration'= 'SAS naloxone administration',
                                                        'Drug and alcohol treatment referrals',
-                                                       'Opioid substitution therapy prescribing'='OST prescribing'),
+                                                       'Opioid substitution therapy prescribing'='OST prescribing',
+                                                       'A&E attendances for drug overdose/intoxication'),
                                            status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,uiOutput('area_drugs_select'),
@@ -826,12 +827,13 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                   actionButton('jump_commentary_drugs','Go to commentary'),
                   fluidRow(br()),
                   actionButton("btn_drugs_modal", "Data source and definitions",
-                                                    icon = icon('question-circle')))
+                                                    icon = icon('question-circle'))
+                  )
          ),#wellPanel bracket
-
 
          mainPanel(width = 12,
                    #actionButton('browser','browser'),
+                   p('Last updated: 29 June 2022'),
                    fluidRow(br()),
                    uiOutput('Quan_plot'),
                    fluidRow(br()),
@@ -843,9 +845,9 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    fluidRow(br()),
                    uiOutput('Prop_barplot'),
                    uiOutput('PercentChange'),
-                   fluidRow(br()),
+                   uiOutput('drug_AE_explorer'),
                    fluidRow(br())
-
+                   
         )# mainPanel bracket
 
 ), # tabpanel bracket
@@ -867,6 +869,12 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
        ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
+
+
+
+
+
 # )#secure app
+
 
 #END
