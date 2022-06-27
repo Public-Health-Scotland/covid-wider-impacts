@@ -150,12 +150,12 @@ output$cancer_explorer <- renderUI({
   
   tagList(
     plot_box(paste0("Total count of individuals having a cancer of type:  ", input$cancer_type, #cancer_site,
-                    " confirmed on a pathological specimen since January for 2019/2020/2021"), 
+                    " confirmed on a pathological specimen since January for 2019/2020/2021/2022"), 
              "cancer_overall"),
     p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt")),
     br(),
     plot_box(paste0("Weekly count of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                    " confirmed on a pathological specimen since January for 2019/2020/2021"), 
+                    " confirmed on a pathological specimen since January for 2019/2020/2021/2022"), 
              "cancer_incidence"),
     p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt"))
   )  
@@ -396,11 +396,6 @@ output$cancer_commentary <- renderUI({
     
     ###################################
     ## JULY 2022 update ----
-    ## (Copied from June update on 17th June 2022)
-    ## N.B. Figures have not yet been fully updated. 
-    ##      Update date to be confirmed - currently 6th July 
-    ##      Text also to be double checked.
-    ##      Add section on new 2022 trend
     ###################################.
     
     h4(strong("Update 06/07/2022: For pathology data to 2nd February 2022 (extracted 02/06/2022)")),
