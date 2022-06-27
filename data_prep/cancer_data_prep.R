@@ -902,14 +902,7 @@ diff_data_base <- diff_data_base %>%
 
 diff_data_base <- bind_rows(diff_data_base, diff_data_base_24)
 
-## Need to check 2022 data - pull out all cancer all scotland table to send to Greig. 
-
-extract <- diff_data_base %>%
-  filter(region == "Scotland", area == "Scotland", age_group == "All Ages", site == "All Cancers",
-         sex == "All", breakdown == "None", week_number %in% c(1:9)) %>% 
-  select(region, site, sex, week_number, week_ending, count22, cum_count22) 
-
-write_csv(extract, file = "Path2022_extract.csv")
+test <-filter(diff_data_base, site == "Non-Hodgkin Lymphoma")
 
 ## where is base_cancer_slim_q0? scratch this for now. 
 
