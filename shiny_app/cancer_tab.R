@@ -417,25 +417,27 @@ output$cancer_commentary <- renderUI({
       tags$li("Lung cancer: 2,324 versus 2,833 pathological diagnoses; a decrease
               of 583 individuals, or 20.1% lower."),
       
-      tags$li("Breast cancer (females only): 5,322 versus 5,362 pathological diagnoses; 
-              a decrease of 1 individual, or less than 1% lower"),
+      tags$li("Breast cancer (females only): 5,322 versus 5,315 pathological diagnoses; 
+              a decrease of 7 individuals, or less than 1% lower"),
       
-      tags$li("Prostate cancer: 3,646 versus 3,143 pathological diagnoses; an increase
-              of 503 individuals, or 16% higher."),
+      tags$li("Prostate cancer: 3,651 versus 3,143 pathological diagnoses; an increase
+              of 508 individuals, or 16% higher."),
       
-      tags$li("Colorectal (bowel) cancer: 4,057 versus 4,041 pathological diagnoses; an
-              increase of 16 individuals, or 0.4% higher."),
+      tags$li("Colorectal (bowel) cancer: 4,071 versus 4,041 pathological diagnoses; an
+              increase of 30 individuals, or less than 1% higher."),
       
-      tags$li("Liver and intrahepatic bile ducts: 379 versus 330 pathological diagnoses;
-              an increase of 49 individuals, or 14.8% higher."),
+      tags$li("Liver and intrahepatic bile ducts: 380 versus 330 pathological diagnoses;
+              an increase of 50 individuals, or 15.1% higher."),
       
-      tags$li("Oesophagus: 1182 versus 1006 pathological diagnoses; an increase
-              of 176 individuals, or 17.5% higher.")),
+      tags$li("Oesophagus: 1184 versus 1006 pathological diagnoses; an increase
+              of 178 individuals, or 17.7% higher.")),
     br(),
     p("A new chart comparing 2019 quarterly totals to the same quarters in 2020 and 2021 shows that after initial falls in diagnoses, 
       there was some recovery or catching-up in the cumulative figures, repeating 2019 figures over two years for comparison with the 2020-2021 period:"),
     tags$ul(
-      tags$li("All excl. NMSC: 33162 (2021) and 28784 (2020) compared with 33345 in 2019.  That is, down 5123 in total by December 2021.  
+      
+      #### CONTINUE COMMENTARY UPDATE FROM THIS POINT!
+      tags$li("All excl. NMSC: 33162 (2021) and 28784 (2020) compared with 33345 in 2019.  That is, down 4744 in total by December 2021.  
               No overall reduction in the number of “missing” patients although it is important to look at each cancer type to understand 
               what has happened."),
       tags$li("Lung: 2324 (2021) and 2263 (2020) compared with 2833 in 2019.  That is, 1079 down in total by December 2021.  
@@ -443,14 +445,11 @@ output$cancer_commentary <- renderUI({
       
       tags$li("Colorectal: 4071 (2021) and 3216 (2020) compared with 4041 in 2019.  That is, 795 down in total by December 2021."),
       
-      tags$li("Breast (females only): 5314 (2021) and 4488 (2020) compared with 5295 in 2019.  That is, down 802 in total by December 2021."),
+      tags$li("Breast (females only): 5322 (2021) and 4529 (2020) compared with 5315 in 2019.  That is, down 779 in total by December 2021."),
       
       tags$li("Cervical: 358 (2021) and 309 (2020) compared with 371 in 2019.  That is, down 75 in total by December 2021."),
       
-      
-      #### CONTINUE COMMENTARY UPDATE FROM THIS POINT!
-      
-      tags$li("Prostate: 2587 (2021) and 3646 (2020) compared with 3143 in 2019.  That is, down only 53 patients in total by December 2021 – 
+       tags$li("Prostate: 3651 (2021) and 2614 (2020) compared with 3143 in 2019.  That is, down only 21 patients in total by December 2021 – 
               suggesting that those missing in 2020 were largely identified in 2021 and there is little ongoing deficit.")),
     
     # tags$li("Lung cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 19.3% lower."),
@@ -471,18 +470,18 @@ output$cancer_commentary <- renderUI({
              data to the end of December 2021 compared to 2019:")),
     
     h4(strong("Age")),
-    p("For all cancers except non-melanoma skin cancers, the proportionate fall in pathologically confirmed cancers by December 2021 were
+    p("For all cancers except non-melanoma skin cancers, the proportionate fall in cumulative pathologically confirmed cancers by December 2021 were
       much smaller than at the end of 2020, and there was less difference between age groups.
       The reduction in breast and colorectal cancer diagnoses, which were both affected by pauses in the screening
       programmes for people aged 50-69, were smaller by December 2021 than December 2020. For example, for breast cancer, 
-      pathological cancer diagnoses in those aged 50-69 showed a shortfall of 9.1% 
-      in those of screening age (50-69) by the end of Q4 2021, compared to a shortfall of 1.6% for those under 50.
+      pathological cancer diagnoses in those aged 50-69 showed a shortfall of 8.9% 
+      in those of screening age (50-69) by the end of Q4 2021, compared to a shortfall of 1.7% for those under 50.
       For colorectal cancers, numbers in 50-69 years olds showed a shortfall of
-      11.2% by the end of Q4 2021; however, the total falls in under 50s had shown less improvement, a shortfall of 17.2%."),
+      10.5% by the end of Q4 2021; however, the total falls in under 50s had shown less improvement, a shortfall of 18.0%."),
     h4(strong("Socio-economic deprivation")),
     p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
       skin cancers, these showed the largest decreases in diagnoses remained among people from the most deprived areas, showing 
-      a shortfall of 12.9% by the end of Q4 2021.The least deprived were down 6% by the same period."),
+      a shortfall of 9.8% by the end of Q4 2021.The least deprived were down 4.5% by the same period."),
     p("---------------------------------------------------------------------------------------------------------------------"),
     br(),
     
