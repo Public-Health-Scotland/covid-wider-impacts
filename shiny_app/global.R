@@ -128,18 +128,18 @@ sact_data_wk_inc <- sact_weekly_data %>%
                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE))
 
-# DCE Data
-# dce_data <- readRDS("data/dce_data.rds") %>%
-#   mutate(region = factor(region)) %>%
-#   mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
-#                                         "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
-#                                         "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
-#                                         "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
-#                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
-#   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
-#   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
-# 
-# dce_extract_date <- "8 October 2021"
+#DCE Data
+dce_data <- readRDS("data/dce_data.rds") %>%
+  mutate(region = factor(region)) %>%
+  mutate(area = factor(area, levels = c("NCA", "SCAN", "WOSCAN", "NHS Ayrshire & Arran",
+                                        "NHS Borders","NHS Dumfries & Galloway","NHS Fife","NHS Forth Valley",
+                                        "NHS Grampian", "NHS Greater Glasgow & Clyde", "NHS Highland",
+                                        "NHS Lanarkshire", "NHS Lothian", "NHS Orkney", "NHS Shetland",
+                                        "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
+  mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
+  mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
+
+dce_extract_date <- "8 October 2021"
 
 
 
@@ -206,7 +206,7 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "18 May 2022"
+booking_extract_date <- "13 June 2022"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
@@ -216,7 +216,7 @@ top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "15 May 2022"
+mod_extract_date <- "13 June 2022"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
@@ -245,14 +245,14 @@ child_dev_domains <- readRDS("data/child_dev_domains.rds")
 
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "17 May 2022"
+apgar_extract_date <- "13 June 2022"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
 apgar_download <- readRDS("data/apgar_download_data.rds")
 
 # Preterm
-preterm_extract_date <- "16 March 2022"
+preterm_extract_date <- "13 June 2022"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
 
@@ -264,6 +264,7 @@ tears_linechart <- readRDS("data/tears_linechart_data.rds")
 tears_download <- readRDS("data/tears_download_data.rds")
 
 #Drugs data
+
  ADP_names<-readRDS('data/ADP_names.rds')
  Health_board<-readRDS('data/Health_board.rds')
  DTR_data<-readRDS('data/DTR_data.rds')
@@ -272,6 +273,7 @@ tears_download <- readRDS("data/tears_download_data.rds")
  OST_paid<-readRDS('data/OST_paid.rds')
  OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
  Drug_AE_attendances <- readRDS('data/Drug_AE_attendances.rds')
+
 
 ###############################################.
 ## Objects, names, lists ----
