@@ -130,7 +130,7 @@ output$cancer_explorer <- renderUI({
                            input$cancer_type == "Malignant Melanoma of the Skin" ~ "Malignant Melanoma of the Skin",
                            input$cancer_type == "Mesothelioma" ~ "Mesothelioma",
                            input$cancer_type == "Multiple Myeloma and malignant plasma cell neoplasms" ~ "Multiple Myeloma and malignant plasma cell neoplasms",
-                           input$cancer_type == "Non-Hodgkin Lymphoma" ~ "Non-Hodgkin Lymphoma",
+                           input$cancer_type %in% c("Non-Hodgkin Lymphoma") ~ "Non-Hodgkin Lymphoma",
                            input$cancer_type == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
                            input$cancer_type == "Oesophagus" ~ "Oesophagus",
                            input$cancer_type == "Other" ~ "Other",
