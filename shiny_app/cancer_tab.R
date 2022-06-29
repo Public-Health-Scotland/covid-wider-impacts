@@ -271,7 +271,7 @@ output$cancer_explorer2 <- renderUI({
            may also update historical data."),
     br(),
     p(strong(paste0("Last updated: - 6 July 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
-             1st March 2022."))))
+             2nd February 2022."))))
   
   
 })
@@ -430,8 +430,7 @@ output$cancer_commentary <- renderUI({
     p("A new chart comparing 2019 quarterly totals to the same quarters in 2020 and 2021 shows that after initial falls in diagnoses, 
       there was some recovery or catching-up in the cumulative figures, repeating 2019 figures over two years for comparison with the 2020-2021 period:"),
     tags$ul(
-      
-      #### CONTINUE COMMENTARY UPDATE FROM THIS POINT!
+
       tags$li("All excl. NMSC: 33162 (2021) and 28784 (2020) compared with 33345 in 2019.  That is, down 4744 in total by December 2021.  
               No overall reduction in the number of “missing” patients although it is important to look at each cancer type to understand 
               what has happened."),
