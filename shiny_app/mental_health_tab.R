@@ -44,8 +44,7 @@ observeEvent(input$btn_mentalhealth_modal,
                  title = "What is the data source?",
                  p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments)
                    in the recent past, along with historical activity for
-                   comparison purposes. The recent trend data is shown by age group, sex
-                   and broad deprivation category (SIMD). These figures include attendances of people aged 5 and over.
+                   comparison purposes. The recent trend data is shown by age group and sex. These figures include attendances of people aged 5 and over.
                     Also, this data only include Emergency Department
                    attendances and do not include minor injury units and other small hospitals and
                    health centres in rural areas that carry out emergency department related activity,
@@ -293,9 +292,9 @@ output$ae_mh_age_tot <- renderPlotly({
   plot_trend_chart(ae_mh_aver() %>% filter(type == "age") %>%
                      mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))),
                    pal_age, c("age", "all"), "total", "aye", tab = "mh",  aver_week = T)})
-output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_aver(), pal_chose = pal_depr, split = "dep",
-                                                       type = "variation", data_name = "aye", tab = "mh", aver_week = T)})
-output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh",  aver_week = T)})
+# output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_aver(), pal_chose = pal_depr, split = "dep",
+#                                                        type = "variation", data_name = "aye", tab = "mh", aver_week = T)})
+# output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh",  aver_week = T)})
 
 ###############################################.
 # MH OOH charts
@@ -340,11 +339,12 @@ output$mh_explorer <- renderUI({
                    paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
   } else if (input$measure_mh_select == "aye") {
     tagList(#A&E attendances
-      tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
-                 incomplete for a number of NHS Boards. Thus, the figures reported for mental health related
-                 attendances offer only a very approximate indication of attendances.
-                 Additionally, some NHS Boards have moved to a new recording standard which
-                 has not been fully consolidated in the A&E datamart as yet."),
+      tags$em("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E 
+              dataset, due to the quality of the data available.  Diagnosis/reason for attendance can be recorded in a variety of ways, 
+              including in free text fields - and not all NHS Boards submit this information.  The numbers presented in these dashboards 
+              therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with 
+              caution.  Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of 
+              the areas represented in the data available. PHS are planning work to improve consistency."),
       br(),
       tags$em(span("An issue had been identified with the number of A&E attendances in NHS Lanarkshire for
                   the week ending 4 July 2021. This has been resolved.")),
@@ -364,13 +364,13 @@ output$mh_explorer <- renderUI({
                      time in 2018-2019 by age group", "ae_mh_age_var",
                      "Weekly number of mental health A&E attendances by age group", "ae_mh_age_tot",
                      extra_content = note_average),
-        plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
-                     time in 2018-2019 by SIMD quintile", "ae_mh_dep_var",
-                     "Weekly number of mental health A&E attendances by SIMD quintile", "ae_mh_dep_tot",
-                     extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
-                                                  icon = icon('question-circle')),
-                                             note_average)
-                     )
+        # plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
+        #              time in 2018-2019 by SIMD quintile", "ae_mh_dep_var",
+        #              "Weekly number of mental health A&E attendances by SIMD quintile", "ae_mh_dep_tot",
+        #              extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
+        #                                           icon = icon('question-circle')),
+        #                                      note_average)
+        #              )
       ) #taglist bracket from if statement
 
     }
