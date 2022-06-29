@@ -72,7 +72,7 @@ deaths <- readRDS("data/deaths.rds") # deaths data
 outpats <- readRDS("data/outpats.rds") # outpatients data
 
 #Cardiovascular data
-ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
+ae_cardio <- readRDS("data/ae_cardio.rds") %>% filter(type != 'dep') # A&E cardio data
 cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
 ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
@@ -155,7 +155,7 @@ injuries_extract_date <- "01 February 2022"
 
 # mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
-ae_mh <- readRDS("data/mh_A&E.rds")
+ae_mh <- readRDS("data/mh_A&E.rds") %>% filter(type != 'dep')
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
