@@ -46,7 +46,7 @@ save_final_file("sact_weekly_data", "20_Jun_22")
 ##########################################################.
 ##########################################################.
 ## Injuries ----
-ui_update_date <- "21_Jun_22"
+ui_update_date <- "29_Jun_22"
 save_final_file("ui_smr01_all", ui_update_date)
 save_final_file("ui_smr01_rta", ui_update_date)
 save_final_file("ui_smr01_poison", ui_update_date)

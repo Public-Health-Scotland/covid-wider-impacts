@@ -74,7 +74,8 @@ create_ui <- function(last_month) {
   ###############################################.
   ## Extract UI_SMR01 data from SMRA ----
   ###############################################.
-  sql_date <- format(as.Date(last_month), "%d %B %Y")
+  # Obtaining last day of the month in the right format
+  sql_date <- format(as.Date(as.yearmon(last_month), frac=1), "%d %B %Y")
   # Define SQL query: Filtering out non-Scottish or no residence, only injury emergency admissions and inpatients
   query_smr01 <- glue("SELECT LINK_NO, DR_POSTCODE pc7, SEX, ADMISSION_DATE, ADMISSION_TYPE, 
                               DISCHARGE_DATE, MAIN_CONDITION, OTHER_CONDITION_1, 

@@ -114,7 +114,7 @@ file.edit("shiny_app/mental_health_tab.R")
 ###############################################.
 source("data_prep/injuries_data_preparation.R") # functions for section
 
-create_ui(last_month = "2022-01-01")
+create_ui(last_month = "2021-12-01")
 file.edit("shiny_app/global.R") # Change update date in global script
 file.edit("data_prep/final_app_files.R") #change dates in final app files scripts
 
