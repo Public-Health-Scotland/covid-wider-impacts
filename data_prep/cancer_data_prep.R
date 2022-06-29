@@ -828,7 +828,7 @@ rm(base_cancer_counts_dep_19_notwk53, base_cancer_counts_dep_19_wk53)
 # combine for base cancer counts with age group split and no split
 
 base_cancer_counts_all <- bind_rows(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep) %>% 
-  mutate(count22 = case_when(week_number >= 6 ~ NA_real_,
+  mutate(count22 = case_when(week_number > 5 ~ NA_real_,
                              TRUE ~ as.numeric(count22))) 
 
 rm(base_cancer_counts_agegroups, base_cancer_counts_dep)
@@ -859,7 +859,7 @@ base_cancer_cum <- base_cancer_mean %>%
          cum_count21 = cumsum(count21),
          cum_count22 = cumsum(count22),
          cum_count_mean_17_19 = cumsum(count_mean_17_19)) %>%
-  mutate(cum_count22 = case_when(week_number >= 6 ~ NA_real_,
+  mutate(cum_count22 = case_when(week_number > 5 ~ NA_real_,
                              TRUE ~ as.numeric(cum_count22))) %>% 
   ungroup()
 
@@ -902,8 +902,6 @@ diff_data_base <- diff_data_base %>%
 
 diff_data_base <- bind_rows(diff_data_base, diff_data_base_24)
 
-test <-filter(diff_data_base, site == "Non-Hodgkin Lymphoma")
-
 ## where is base_cancer_slim_q0? scratch this for now. 
 
 rm(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep,
@@ -917,12 +915,13 @@ saveRDS(diff_data_base, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/fina
 saveRDS(diff_data_base, "shiny_app/data/cancer_data_2.rds")
 
 
-
+#############################################################################################################################
+### QUARTERLY DATA ----
+#############################################################################################################################
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Get QUARTERLY counts for each value of hbres and All cancer ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 base_cancer_counts_quarters <- base_cancer_slim %>% 
   group_by(year,  quarter_no, region, hbres, site, sex) %>% 
