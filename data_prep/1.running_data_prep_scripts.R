@@ -24,7 +24,7 @@ create_tears(tears_date = "2022_05_17", max_date = "2022-02-28") # Perineal tear
 ## Cardiovascular datasets ----
 ###############################################.
 source("data_prep/cardio_data_prep.R") # This sources the functions for the section
-# # Filedate: date on filename for each update, last week = last week of data to be included
+# Filedate: date on filename for each update, last week = last week of data to be included
 create_aecardio(filedate = "2022-05-26", last_week =  "2022-05-22")
 create_sascardio(filedate = "2022-05-30", last_week =  "2022-05-22") #there is currently a duplicates issue with this data so it is not being updated until resolved.
 create_cardiodrugs(filedate = "2022-05-26", last_week =  "2022-05-22")
@@ -52,13 +52,13 @@ create_childdev_domains(filedate="23rdMay2022")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
-# # Add here what needs to be changed in the shiny scripts
+# Add here what needs to be changed in the shiny scripts
 file.edit("shiny_app/global.R")
 
 ###############################################.
 ## Summary datasets ----
 ###############################################.
-#source("data_prep/summary_data_prep.R") # This sources the functions for the section
+source("data_prep/summary_data_prep.R") # This sources the functions for the section
 # Filedate: date on filename for each update, last week = last week of data to be included
 # Change extract to F if you just want to run the data prep and not the extraction
 # (quicker once the extraction has been done once)
@@ -73,9 +73,9 @@ create_ooh_cons(filename = "Wider Impact PC OOH Consultations March 2022 Test.xl
 
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function
-# # Note: there will be a warning from match_area() about a few hundred thousand
-# # geography codes not 9 characters in length - this is caused by the "Scotland"
-# # rows, and is not a problem.
+# Note: there will be a warning from match_area() about a few hundred thousand
+# geography codes not 9 characters in length - this is caused by the "Scotland"
+# rows, and is not a problem.
 create_deaths(last_week =  "2022-05-22")
 
 ############## Remember to change final_app_files script dates
