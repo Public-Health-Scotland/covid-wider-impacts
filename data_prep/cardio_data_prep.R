@@ -339,7 +339,7 @@ create_cardioadmissions <- function(last_week) {
 # Adapted for cardiac discharges data
 agg_cut_cardiac_dis <- function(dataset, grouper) {
   dataset %>%
-    group_by_at(c("month_ending","diagnosis","type_admission","area_name", "area_type", grouper)) %>%
+    group_by_at(c("month_ending","diagnosis","area_name", "area_type", grouper)) %>%
     summarise(count = sum(count)) %>% ungroup() %>% 
     mutate(type = grouper) 
 }  
@@ -407,10 +407,8 @@ smr01_pi_data %<>% filter(between(admission_type, 20, 22) |
                                            between(admission_type, 30, 36) |
                                            between(admission_type, 38, 39))
 
-smr01_pi_data <- rename(smr01_pi_data, type_admission = admission_type)
-
 smr01_pi_data %<>%
-  count(year, month_ending, hbname, diagnosis, type_admission, 
+  count(year, month_ending, hbname, diagnosis, 
         sex, dep, age, name = "count") %>% 
   mutate(scot = "Scotland")
 
@@ -421,7 +419,7 @@ smr01_piv <- smr01_pi_data %>%
                    "scot" = "Scotland")) %>%
   mutate(area_name = case_when(area_type=="Health board" ~ (paste0("NHS ",gsub(" and ", " & ", area_name))), 
                                TRUE~area_name))  %>%
-  group_by(month_ending, sex, dep, age, diagnosis, type_admission, area_name, area_type) %>% 
+  group_by(month_ending, sex, dep, age, diagnosis, area_name, area_type) %>% 
   summarise(count = sum(count))
 
 # Create aggregations for each split
