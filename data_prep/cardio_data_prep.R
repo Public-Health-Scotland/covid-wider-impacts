@@ -352,11 +352,16 @@ SMRA_connect <- dbConnect(odbc(),
                           dsn="SMRA",
                           uid=.rs.askForPassword("SMRA Username:"),
                           pwd=.rs.askForPassword("SMRA Password:"))
+# Selecting only emergency admissions
+# Filter to just include heart attack, stroke and heart failure
+# Stroke includes subarachnoid haemorraghe
 query_smr01 <- 
   glue("select LINK_NO, CIS_MARKER, ADMISSION_DATE, DISCHARGE_DATE, HBTREAT_CURRENTDATE, 
-              MAIN_CONDITION, AGE_IN_YEARS age, SEX, ADMISSION_TYPE, DR_POSTCODE pc7, DATAZONE_2011
+              MAIN_CONDITION, AGE_IN_YEARS age, SEX, DR_POSTCODE pc7, DATAZONE_2011
   from SMR01_PI 
   WHERE ADMISSION_DATE between '{smr_start_date}' AND '{smr_end_date}'
+      AND ADMISSION_TYPE in (20, 21, 22, 30, 31, 32, 33, 34, 35,36,38, 39)
+      AND regexp_like(main_condition, 'I2[12]|I6[0134]|I50')
   ORDER BY LINK_NO, ADMISSION_DATE, DISCHARGE_DATE")
 
 smr01_pi_data <- as_tibble(dbGetQuery(SMRA_connect, query_smr01)) %>%
@@ -366,25 +371,11 @@ dbDisconnect(SMRA_connect)
 # Condition strings
 smr01_pi_data$mc3 <- substr(smr01_pi_data$main_condition, 0,3)
 
-# Create blank diagnosis field to avoid ifelse NA issue
-smr01_pi_data <- mutate(smr01_pi_data, diagnosis = "")
-
 # CHD
-smr01_ami <- smr01_pi_data %>% filter(mc3 %in% c("I21","I22")) %>%
-  mutate(diagnosis = "Heart Attack")
-
-smr01_hf <- smr01_pi_data %>% filter(mc3 %in% c("I50")) %>%
-  mutate(diagnosis = "Heart Failure")
-
-# Stroke
-# Includes Subarachnoid Haemorrhage
-smr01_str <- smr01_pi_data %>% filter(mc3 %in% c("I60","I61","I63","I64")) %>%
-  mutate(diagnosis = "Stroke")
-
-#browser()
-
-# Filter to just include heart attack, stroke and heart failure
-smr01_pi_data <- bind_rows(smr01_ami, smr01_hf, smr01_str)
+smr01_pi_data <- smr01_pi_data %>% mutate(diagnosis = case_when(
+  mc3 %in% c("I21","I22") ~ "Heart Attack",
+  mc3 %in% c("I50") ~ "Heart Failure",
+  mc3 %in% c("I60","I61","I63","I64") ~ "Stroke"))
 
 # Note was issue with ceiling date creating wrong dates
 smr01_pi_data <- smr01_pi_data %>%
@@ -401,11 +392,6 @@ smr01_pi_data %<>% create_agegroups() %>%  # Age Bands
   create_depgroups() %>%  #deprivation groups
   select(-age) %>% 
   rename(age = age_grp)
-
-# Selecting only emergency admissions
-smr01_pi_data %<>% filter(between(admission_type, 20, 22) |
-                                           between(admission_type, 30, 36) |
-                                           between(admission_type, 38, 39))
 
 smr01_pi_data %<>%
   count(year, month_ending, hbname, diagnosis, 
