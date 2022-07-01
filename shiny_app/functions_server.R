@@ -1288,12 +1288,7 @@ plot_overall_injury_chart <- function(dataset, var1_chosen, var2_chosen, data_na
 
 
     # Set y axis label
-    yaxis_title <- case_when(data_name == "ui_smr01_all" ~ "Number of Admissions",
-                             data_name == "ui_smr01_rta" ~ "Number of Admissions",
-                             data_name == "ui_smr01_falls" ~ "Number of Admissions",
-                             data_name == "ui_smr01_other" ~ "Number of Admissions",
-                             data_name == "ui_smr01_poison" ~ "Number of Admissions",
-                             data_name == "ui_smr01_assaults" ~ "Number of Admissions")
+    yaxis_title <- "Number of admissions"
 
     yaxis_plots[["title"]] <- yaxis_title
 
@@ -1358,10 +1353,6 @@ plot_overall_injury_chart <- function(dataset, var1_chosen, var2_chosen, data_na
         config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
   }
 }
-
-# END OF SACT CHARTS
-###############################################.
-
 
 ###############################################.
 ## # Function that creates specialty charts.   ----
