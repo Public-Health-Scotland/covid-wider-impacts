@@ -25,7 +25,7 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("22 June 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("29 June 2022 - Systemic anti-cancer therapies data update."),
                    tags$li("15 June 2022 - Outpatient activity data update."),
                    tags$li("1 June 2022 - Monthly update of data (most sections)."),
                    tags$li("25 May 2022 - Additional data for the cardiovascular section: hospital admissions and excess mortality."),
@@ -37,7 +37,7 @@ function(input, output, session) {
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("29 June 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("6 July 2022 - Systemic anti-cancer therapies data update."),
                    tags$li("29 June 2022 - Substance use data update and new dataset on A&E attendances due to substance misuse."),
                    tags$li("6 July 2022 - Monthly update of data (most sections)."),
                    tags$li("6 July 2022 - Update on injuries data."),

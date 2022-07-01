@@ -45,10 +45,10 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20220523") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "23rdMay2022")
-create_breastfeeding(filedate = "23rdMay2022")
-create_childdev_domains(filedate="23rdMay2022")
+create_chreview(ch_date_file = "20220627") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "27thJune2022")
+create_breastfeeding(filedate = "27thJune2022")
+create_childdev_domains(filedate="27thJune2022")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
@@ -108,6 +108,15 @@ create_drugsmh(last_week =  "2022-05-22") #last week should be sunday before dat
 
 # Change update date in mental_health_tab.R script - approx line 324 in code
 file.edit("shiny_app/mental_health_tab.R")
+
+###############################################.
+## Injury datasets ----
+###############################################.
+source("data_prep/injuries_data_preparation.R") # functions for section
+
+create_ui(last_month = "2021-12-01")
+file.edit("shiny_app/global.R") # Change update date in global script
+file.edit("data_prep/final_app_files.R") #change dates in final app files scripts
 
 ###############################################.
 ## Immunisation datasets ----
