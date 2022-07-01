@@ -55,66 +55,66 @@ function(input, output, session) {
 
   ###############################################.
   # Summary trends tab
-  #source(file.path("summary_tab.R"),  local = TRUE)$value
+  source(file.path("summary_tab.R"),  local = TRUE)$value
 
   ##############################################.
   # Cardiovascular tab
-  #source(file.path("cardio_tab.R"),  local = TRUE)$value
+  source(file.path("cardio_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Immunisation tab
-  #source(file.path("immunisation_tab.R"),  local = TRUE)$value
+  source(file.path("immunisation_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Child health reviews tab
-  #source(file.path("child_health_tab.R"),  local = TRUE)$value
+  source(file.path("child_health_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Pregnancy tabs
-  #source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
-  #source(file.path("terminations_tab.R"),  local = TRUE)$value
+  source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
+  source(file.path("terminations_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Births and Babies tabs
   source(file.path("perinatal_tab.R"),  local = TRUE)$value
-  #source(file.path("apgar_tab.R"),  local = TRUE)$value
-  #source(file.path("preterm_tab.R"),  local = TRUE)$value
-  #source(file.path("tears_tab.R"),  local = TRUE)$value
-  #source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
-  #source(file.path("inductions_tab.R"),  local = TRUE)$value
-  #source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
+  source(file.path("apgar_tab.R"),  local = TRUE)$value
+  source(file.path("preterm_tab.R"),  local = TRUE)$value
+  source(file.path("tears_tab.R"),  local = TRUE)$value
+  source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
+  source(file.path("inductions_tab.R"),  local = TRUE)$value
+  source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Child development tab
-  #source(file.path("child_dev_tab.R"),  local = TRUE)$value
+  source(file.path("child_dev_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Breastfeeding tab
-  #source(file.path("breastfeeding_tab.R"),  local = TRUE)$value
+  source(file.path("breastfeeding_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Mental health tab
-  #source(file.path("mental_health_tab.R"),  local = TRUE)$value
+  source(file.path("mental_health_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Cancer tab
-  #source(file.path("cancer_tab.R"),  local = TRUE)$value
+  source(file.path("cancer_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # SACT tab
-  #source(file.path("sact_tab.R"),  local = TRUE)$value
+  source(file.path("sact_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # DCE tab
-  # source(file.path("dce_tab.R"),  local = TRUE)$value
+  source(file.path("dce_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Drugs tab
-  #source(file.path("drugs_tab.R"),  local = TRUE)$value
+  source(file.path("drugs_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Unintentional Injuries tab
-  #source(file.path("injuries_tab.R"),  local = TRUE)$value
+  source(file.path("injuries_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Data tab
