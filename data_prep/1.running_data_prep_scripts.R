@@ -12,7 +12,7 @@
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
 create_delivery(folderdate = "2022-05-13") # Mode of delivery, induction and gestation data
-create_perinatal(foldermonth = "jun22") # Stillbirths and perinatal mortality
+create_perinatal(foldermonth = "july22") # Stillbirths and perinatal mortality
 create_apgar(folderdate = "2022_05_17", max_date = "2022-02-28") # Apgar scores
 create_preterm(preterm_date = "2022_03_16", max_date = "2021-12-01") # Preterm
 create_tears(tears_date = "2022_05_17", max_date = "2022-02-28") # Perineal tears
@@ -29,7 +29,7 @@ create_aecardio(filedate = "2022-05-26", last_week =  "2022-05-22")
 create_sascardio(filedate = "2022-05-30", last_week =  "2022-05-22") #there is currently a duplicates issue with this data so it is not being updated until resolved.
 create_cardiodrugs(filedate = "2022-05-26", last_week =  "2022-05-22")
 create_oohcardio(filedate = "2022-05-30", last_week =  "2022-05-22")
-create_cardioadmissions(last_week =  "2021-09-30") #updated quarterly   
+create_cardioadmissions(last_week =  "2021-09-30") #updated quarterly
 create_cardiodeaths(last_week =  "2021-12-31") #updated quarterly
 
 ############## Remember to change final_app_files script dates

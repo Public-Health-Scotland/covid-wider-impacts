@@ -45,7 +45,7 @@ function(input, output, session) {
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-               
+
 
   ##############################################.
   # Sourcing server files for each tab ----
@@ -105,7 +105,7 @@ function(input, output, session) {
   source(file.path("sact_tab.R"),  local = TRUE)$value
 
   ###############################################.
-  # DCE tab
+  # DCE tab - Not in place yet
   # source(file.path("dce_tab.R"),  local = TRUE)$value
 
   ###############################################.

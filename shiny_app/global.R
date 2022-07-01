@@ -53,9 +53,9 @@ intro_box <- function(title_box, button_name, description) {
 }
 
 
-###############################################.
-## Data ----
-###############################################.
+##############################################.
+# Data ----
+##############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
 area_type_op <- readRDS("data/area_type_op.rds")
 spec_lookup_rapid <- readRDS("data/spec_lookup_rapid.rds")
@@ -138,7 +138,7 @@ sact_data_wk_inc <- sact_weekly_data %>%
 #                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
 #   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
 #   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
-# 
+#
 # dce_extract_date <- "8 October 2021"
 
 
@@ -283,7 +283,7 @@ spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
 spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
 
 #List of ethnic groups included in the outpatients by ethnicity section
-eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "White Other", "White Polish", 
+eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "White Other", "White Polish",
                       "Mixed", "Pakistani", "Indian", "Other Asian", "Chinese", "African",
                       "Caribbean or Black", "Other ethnic group", "Missing"))
 
@@ -519,7 +519,7 @@ pal_eth <- c('#E39C8C',
              '#C73918',
              '#1E7F84',
              '#CDA1C9')
- 
+
 
 # pal_dce <- c("1" = '#000080',
 #              "2" = '#6A5ACD',
