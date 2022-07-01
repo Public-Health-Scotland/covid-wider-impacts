@@ -1,6 +1,6 @@
 #UI
 
- # secure_app( #uncomment if needing password protection
+  # secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -176,7 +176,7 @@ tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
            conditionalPanel(condition = "input.measure_select == 'ooh' ",
                             selectInput("ooh_appt_type", label = "Step 4. Select type of appointment for overall chart.",
                                         choices = c("All cases", "All consultations" = "ALL",
-                                                    "Covid consultations" = "COVID", "Non-covid consultations" = "NON COVID"), 
+                                                    "Covid consultations" = "COVID", "Non-covid consultations" = "NON COVID"),
                                         selected = "All Cases")),
            conditionalPanel(condition = "input.measure_select == 'outpats' ",
                             selectInput("appt_type", label = "Step 3. Select type of appointment.",
@@ -306,7 +306,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            column(5,  selectInput("sact_type", label = "Select all or specific cancer type",
                                                                   choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
                                                                               "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
-                                                                              "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin", 
+                                                                              "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
                                                                               "Upper GI", "Urological", "Unknown"), selected = "All"),
                                                   div(radioButtons("sact_plot_filter", "Select data breakdown to display together:",
                                                                    list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
@@ -356,7 +356,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                            column(5, selectInput("sact_wk_type", label = "Select all or specific cancer type",
                                                                  choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
                                                                              "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
-                                                                             "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin", 
+                                                                             "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
                                                                              "Upper GI", "Urological", "Unknown"), selected = "All"),
                                                   div(radioButtons("sact_wk_appt_reg", "Select method of administration route derivation",
                                                                    list("Appointment level","Regimen level"), inline = TRUE,
@@ -847,7 +847,7 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    uiOutput('PercentChange'),
                    uiOutput('drug_AE_explorer'),
                    fluidRow(br())
-                   
+
         )# mainPanel bracket
 
 ), # tabpanel bracket
@@ -867,14 +867,14 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
          mainPanel(width = 12,
                    DT::dataTableOutput("table_filtered"))
        ) # tabpanel bracket
-   ) # page bracket
+    ) # page bracket
  )# taglist bracket
 
 
 
 
 
-# )#secure app
+ # )#secure app
 
 
 #END
