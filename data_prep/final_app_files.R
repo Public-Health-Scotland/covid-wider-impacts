@@ -36,8 +36,8 @@ save_final_file("cancer_data_quarters_2yr", "23_May_22")
 
 ##########################################################.
 ## SACT ----
-save_final_file("sact_data", "13_Jun_22")
-save_final_file("sact_weekly_data", "13_Jun_22")
+save_final_file("sact_data", "27_Jun_22")
+save_final_file("sact_weekly_data", "27_Jun_22")
 
 ##########################################################.
 ## DCE ----
@@ -46,12 +46,13 @@ save_final_file("sact_weekly_data", "13_Jun_22")
 ##########################################################.
 ##########################################################.
 ## Injuries ----
-save_final_file("ui_smr01_all", "31_Jan_22")
-save_final_file("ui_smr01_rta", "31_Jan_22")
-save_final_file("ui_smr01_poison", "31_Jan_22")
-save_final_file("ui_smr01_other", "31_Jan_22")
-save_final_file("ui_smr01_falls", "31_Jan_22")
-save_final_file("ui_smr01_assaults", "31_Jan_22")
+ui_update_date <- "29_Jun_22"
+save_final_file("ui_smr01_all", ui_update_date)
+save_final_file("ui_smr01_rta", ui_update_date)
+save_final_file("ui_smr01_poison", ui_update_date)
+save_final_file("ui_smr01_other", ui_update_date)
+save_final_file("ui_smr01_falls", ui_update_date)
+save_final_file("ui_smr01_assaults", ui_update_date)
 
 ##########################################################.
 ## RAPID ----
@@ -84,23 +85,23 @@ save_final_file("cardio_admissions", "12_May_22") # admissions
 
 ##########################################################.
 ## Immunisations - six in one ----
-save_final_file("six_alldose", "25_May_22")
-save_final_file("six_dose1_simdtable", "25_May_22")
-save_final_file("six_dose2_simdtable", "25_May_22")
-save_final_file("six_dose3_simdtable", "25_May_22")
-save_final_file("sixinone_datatable", "25_May_22")
+save_final_file("six_alldose", "28_Jun_22")
+save_final_file("six_dose1_simdtable", "28_Jun_22")
+save_final_file("six_dose2_simdtable", "28_Jun_22")
+save_final_file("six_dose3_simdtable", "28_Jun_22")
+save_final_file("sixinone_datatable", "28_Jun_22")
 ## Immunisations - MMR ----
-save_final_file("mmr_alldose", "25_May_22")
-save_final_file("mmr_dose1_simdtable", "25_May_22")
-save_final_file("mmr_dose2_simdtable", "25_May_22")
-save_final_file("mmr_datatable", "25_May_22")
-save_final_file("mmr_dose2_grampian_datatable", "25_May_22")
+save_final_file("mmr_alldose", "28_Jun_22")
+save_final_file("mmr_dose1_simdtable", "28_Jun_22")
+save_final_file("mmr_dose2_simdtable", "28_Jun_22")
+save_final_file("mmr_datatable", "28_Jun_22")
+save_final_file("mmr_dose2_grampian_datatable", "28_Jun_22")
 # Immunisations - definitions
-save_final_file("age_defs_imm_6inone", "25_May_22")
-save_final_file("age_defs_imm_mmr", "25_May_22")
-save_final_file("month_eligibility_immun", "25_May_22")
+save_final_file("age_defs_imm_6inone", "28_Jun_22")
+save_final_file("age_defs_imm_mmr", "28_Jun_22")
+save_final_file("month_eligibility_immun", "28_Jun_22")
 ##########################################################.
-ch_date <- "30_May_22"
+ch_date <- "30_Jun_22"
 ## Child health reviews - first visit ----
 save_final_file("first_visit", ch_date)
 save_final_file("first_visit_datatable", ch_date)
@@ -151,7 +152,7 @@ save_final_file("gestation_scot_data", "19_May_22")
 save_final_file("gestation_linechart_data", "19_May_22")
 save_final_file("gestation_download_data", "19_May_22")
 ## B&B - Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "23_May_22")
+save_final_file("perinatal", "24_Jun_22")
 ## B&B - Apgar ----
 save_final_file("apgar_runchart_data", "19_May_22")
 save_final_file("apgar_scot_data", "19_May_22")
@@ -177,12 +178,12 @@ save_final_file("mh_ooh", "30_May_22")
 
 save_final_file("ADP_names", "25_Mar_22")
 save_final_file("Health_board", "25_Mar_22")
-save_final_file("DTR_data", "25_Mar_22")
-save_final_file("THN_by_HB", "25_Mar_22")
-save_final_file("OST_paid", "25_Mar_22")
-save_final_file("OST_paid_quantity", "25_Mar_22")
-save_final_file('SASdata', "25_Mar_22") 
-
+save_final_file("DTR_data", "15_Jun_22")
+save_final_file("THN_by_HB", "27_May_22")
+save_final_file("OST_paid", "15_Jun_22")
+save_final_file("OST_paid_quantity", "15_Jun_22")
+save_final_file('SASdata', "15_Jun_22") 
+save_final_file('Drug_AE_attendances', "07_Jun_22") 
 
 ##END
 

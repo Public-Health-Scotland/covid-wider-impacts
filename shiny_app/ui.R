@@ -1,6 +1,6 @@
 #UI
 
-# secure_app( #uncomment if needing password protection
+  # secure_app( #uncomment if needing password protection
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -103,13 +103,13 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                          actionLink("breastfeeding_button", "Breastfeeding", width="150px"), br(),
                          actionLink("childdev_button", "Child development", width="150px"), br(),
                          actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
-                          actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
-                          actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
+                         actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
+                         actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
                          actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
-                          actionLink("mod_button", "Method of delivery", width="150px"), br(),
-                          actionLink("induction_button", "Induction of labour", width="150px"),br(),
-                          actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
-                          actionLink("apgar_button", "Apgar scores", width="150px"),br(),
+                         actionLink("mod_button", "Method of delivery", width="150px"), br(),
+                         actionLink("induction_button", "Induction of labour", width="150px"),br(),
+                         actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
+                         actionLink("apgar_button", "Apgar scores", width="150px"),br(),
                          actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
                          actionLink("tears_button", "Perineal tears", width="150px"),br(),
                          actionLink("cancer_button", "Cancer", width="150px"),br(),
@@ -126,14 +126,14 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                     bsCollapsePanel("Child development", uiOutput("childdev_commentary")),
                                     bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
                                     bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
-                                     bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
-                                     bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
-                                     bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
-                                     bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
-                                     bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
-                                     bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
+                                    bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
+                                    bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
+                                    bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
+                                    bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
+                                    bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
+                                    bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
                                     bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
-                                     bsCollapsePanel("Perineal tears", uiOutput("tears_commentary")),
+                                    bsCollapsePanel("Perineal tears", uiOutput("tears_commentary")),
                                     bsCollapsePanel("Cancer", uiOutput("cancer_commentary")),
                                     bsCollapsePanel("Injuries", uiOutput("injuries_commentary")),
                                     bsCollapsePanel("Substance use", uiOutput("drug_commentary"))
@@ -411,7 +411,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                    #
                         #                    #   tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
                         #                    #           diagnoses, which was only lower than expected in April 2020.")),
-                        #
+                        # 
                         #                    p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                         #                    ),
                         #          wellPanel(
@@ -437,9 +437,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #       ) # tabpanel bracket
                         )  , # navbar bracket
 
-###############################################.
-## Unintentional Injuries ----
-###############################################.
+##############################################.
+# Unintentional Injuries ----
+##############################################.
 tabPanel(title = "Injuries", icon = icon("user-injured"), value = "injuries",
          wellPanel(
            column(4, div(title="Select the data you want to explore.", # tooltip
@@ -535,9 +535,9 @@ tabPanel(title = "Termination of pregnancy", value = "terminations",
          )# mainPanel bracket
 ) # tabPanel bracket
  ), # navbar menu bracket
-#############################################.
-## Births and Babies menu ----
-############################################.
+# ############################################.
+# Births and Babies menu ----
+# ###########################################.
 navbarMenu("Births and babies", icon = icon("baby"),
 ##############################################.
 # Inductions ----
@@ -625,7 +625,7 @@ tabPanel(title = "Apgar scores", value = "apgar",
          )# mainPanel bracket
 ), # tabPanel bracket
 ###############################################.
-# Preterm ----
+## Preterm ----
 ###############################################.
 tabPanel(title = "Location of extremely preterm deliveries", value = "preterm",
          wellPanel(
@@ -642,9 +642,9 @@ tabPanel(title = "Location of extremely preterm deliveries", value = "preterm",
                    uiOutput("preterm_explorer")
          )# mainPanel bracket
 ), # tabPanel bracket
-###############################################.
-## Perineal tears  ----
-###############################################.
+##############################################.
+# Perineal tears  ----
+##############################################.
 tabPanel(title = "Perineal tears", value = "tears",
          wellPanel(
            column(4, div(title="Select a breakdown",
@@ -663,8 +663,8 @@ tabPanel(title = "Perineal tears", value = "tears",
                    uiOutput("tears_explorer")
          )# mainPanel bracket
 ), # tabPanel bracket
-###############################################.
-## Perinatal ----
+#############################################.
+# Perinatal ----
 ###############################################.
 tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
          wellPanel(
@@ -804,9 +804,9 @@ navbarMenu("Child health", icon = icon("child"),
            ) # tabpanel bracket
 ), #navbarMenu bracket
 
-###############################################.
-## Drugs ----
-###############################################.
+##############################################.
+# Drugs ----
+##############################################.
 tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
          wellPanel(
            column(4, div(title="Select the data you want to explore", # tooltip
@@ -815,7 +815,8 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                                            choices = c('Take home naloxone kits',
                                                        'Scottish Ambulance Service naloxone administration'= 'SAS naloxone administration',
                                                        'Drug and alcohol treatment referrals',
-                                                       'Opioid substitution therapy prescribing'='OST prescribing'),
+                                                       'Opioid substitution therapy prescribing'='OST prescribing',
+                                                       'A&E attendances for drug overdose/intoxication'),
                                            status = "primary",
                                            direction = "vertical", justified = T))),
            column(4,uiOutput('area_drugs_select'),
@@ -826,12 +827,13 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                   actionButton('jump_commentary_drugs','Go to commentary'),
                   fluidRow(br()),
                   actionButton("btn_drugs_modal", "Data source and definitions",
-                                                    icon = icon('question-circle')))
+                                                    icon = icon('question-circle'))
+                  )
          ),#wellPanel bracket
-
 
          mainPanel(width = 12,
                    #actionButton('browser','browser'),
+                   p('Last updated: 29 June 2022'),
                    fluidRow(br()),
                    uiOutput('Quan_plot'),
                    fluidRow(br()),
@@ -843,15 +845,15 @@ tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
                    fluidRow(br()),
                    uiOutput('Prop_barplot'),
                    uiOutput('PercentChange'),
-                   fluidRow(br()),
+                   uiOutput('drug_AE_explorer'),
                    fluidRow(br())
 
         )# mainPanel bracket
 
 ), # tabpanel bracket
-#############################################.
-## Data ----
-#############################################.
+############################################.
+# Data ----
+############################################.
 tabPanel(title = "Data", icon = icon("table"), value = "table",
          p("This section allows you to view the data in table format.
         You can use the filters to select the data you are interested in.
@@ -865,8 +867,14 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
          mainPanel(width = 12,
                    DT::dataTableOutput("table_filtered"))
        ) # tabpanel bracket
-   ) # page bracket
+    ) # page bracket
  )# taglist bracket
-#)#secure app
+
+
+
+
+
+ # )#secure app
+
 
 #END

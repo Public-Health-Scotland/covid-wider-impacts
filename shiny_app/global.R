@@ -53,9 +53,9 @@ intro_box <- function(title_box, button_name, description) {
 }
 
 
-###############################################.
-## Data ----
-###############################################.
+##############################################.
+# Data ----
+##############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
 area_type_op <- readRDS("data/area_type_op.rds")
 spec_lookup_rapid <- readRDS("data/spec_lookup_rapid.rds")
@@ -72,7 +72,7 @@ deaths <- readRDS("data/deaths.rds") # deaths data
 outpats <- readRDS("data/outpats.rds") # outpatients data
 
 #Cardiovascular data
-ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
+ae_cardio <- readRDS("data/ae_cardio.rds") %>% filter(type != 'dep') # A&E cardio data
 cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
 ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
@@ -138,7 +138,7 @@ sact_data_wk_inc <- sact_weekly_data %>%
 #                                         "NHS Tayside", "NHS Western Isles", "Scotland"), ordered = TRUE)) %>%
 #   mutate(stage = factor(stage, levels = c("NK", "4", "3", "2", "1"), ordered = TRUE)) %>%
 #   mutate(percent19 = as.numeric(percent19), percent20 = as.numeric(percent20))
-# 
+#
 # dce_extract_date <- "8 October 2021"
 
 
@@ -150,16 +150,16 @@ ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
 ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
 ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
 ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
-injuries_extract_date <- "01 February 2022"
+injuries_extract_date <- "6 July 2022"
 
 
 # mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
-ae_mh <- readRDS("data/mh_A&E.rds")
+ae_mh <- readRDS("data/mh_A&E.rds") %>% filter(type != 'dep')
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "23 May 2022"
+child_extract_date <- "27 June 2022"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
@@ -177,7 +177,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "23 May 2022"
+immunisation_extract_date <- "27 June 2022"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -271,6 +271,7 @@ tears_download <- readRDS("data/tears_download_data.rds")
  SASdata<-readRDS('data/SASdata.rds')
  OST_paid<-readRDS('data/OST_paid.rds')
  OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
+ Drug_AE_attendances <- readRDS('data/Drug_AE_attendances.rds')
 
 ###############################################.
 ## Objects, names, lists ----
@@ -282,7 +283,7 @@ spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
 spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
 
 #List of ethnic groups included in the outpatients by ethnicity section
-eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "White Other", "White Polish", 
+eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "White Other", "White Polish",
                       "Mixed", "Pakistani", "Indian", "Other Asian", "Chinese", "African",
                       "Caribbean or Black", "Other ethnic group", "Missing"))
 
@@ -352,6 +353,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Drug and alcohol treatment referrals"="DTR_data",
                         "Opioid substituation therapy prescribing"="OST_paid",
                         "SAS naloxone administration"="SASdata",
+                        'A&E attendances for drug overdose/intoxication'='Drug_AE',
                         "Weekly SACT activity" = "sact_weekly",
                         "Monthly SACT activity" = "sact_monthly",
                         "All unintentional injuries" = "ui_smr01_all",
@@ -461,7 +463,8 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
                "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
                "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141",
-               "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff")
+               "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff",
+               "APR 2022" = "#bcbddc")
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
@@ -472,7 +475,8 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
                "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
                "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141",
-               "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff")
+               "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff",
+               "APR 2022" = "#bcbddc")
 
 pal_inj <- list(pal_age,pal_depr,pal_sex)
 
@@ -515,7 +519,7 @@ pal_eth <- c('#E39C8C',
              '#C73918',
              '#1E7F84',
              '#CDA1C9')
- 
+
 
 # pal_dce <- c("1" = '#000080',
 #              "2" = '#6A5ACD',

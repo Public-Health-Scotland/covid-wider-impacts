@@ -12,7 +12,7 @@
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
 create_delivery(folderdate = "2022-05-13") # Mode of delivery, induction and gestation data
-create_perinatal(foldermonth = "jun22") # Stillbirths and perinatal mortality
+create_perinatal(foldermonth = "july22") # Stillbirths and perinatal mortality
 create_apgar(folderdate = "2022_05_17", max_date = "2022-02-28") # Apgar scores
 create_preterm(preterm_date = "2022_03_16", max_date = "2021-12-01") # Preterm
 create_tears(tears_date = "2022_05_17", max_date = "2022-02-28") # Perineal tears
@@ -29,7 +29,7 @@ create_aecardio(filedate = "2022-05-26", last_week =  "2022-05-22")
 create_sascardio(filedate = "2022-05-30", last_week =  "2022-05-22") #there is currently a duplicates issue with this data so it is not being updated until resolved.
 create_cardiodrugs(filedate = "2022-05-26", last_week =  "2022-05-22")
 create_oohcardio(filedate = "2022-05-30", last_week =  "2022-05-22")
-create_cardioadmissions(last_week =  "2021-09-30") #updated quarterly   
+create_cardioadmissions(last_week =  "2021-09-30") #updated quarterly
 create_cardiodeaths(last_week =  "2021-12-31") #updated quarterly
 
 ############## Remember to change final_app_files script dates
@@ -45,10 +45,10 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20220523") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "23rdMay2022")
-create_breastfeeding(filedate = "23rdMay2022")
-create_childdev_domains(filedate="23rdMay2022")
+create_chreview(ch_date_file = "20220627") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "27thJune2022")
+create_breastfeeding(filedate = "27thJune2022")
+create_childdev_domains(filedate="27thJune2022")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
@@ -108,6 +108,15 @@ create_drugsmh(last_week =  "2022-05-22") #last week should be sunday before dat
 
 # Change update date in mental_health_tab.R script - approx line 324 in code
 file.edit("shiny_app/mental_health_tab.R")
+
+###############################################.
+## Injury datasets ----
+###############################################.
+source("data_prep/injuries_data_preparation.R") # functions for section
+
+create_ui(last_month = "2021-12-01")
+file.edit("shiny_app/global.R") # Change update date in global script
+file.edit("data_prep/final_app_files.R") #change dates in final app files scripts
 
 ###############################################.
 ## Immunisation datasets ----
