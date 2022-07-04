@@ -273,13 +273,13 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     yaxis_plots[["title"]] <- yaxis_title
 
     hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
-                                                       "ooh_cardiac", "sas_cardiac",
+                                                       "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
                                                        "cath", "mentalhealth_drugs", "mh_ooh",
                                                        "op") ~ "Average 2018-2019",
                                       data_name == "deaths" ~ "Average 2015-2019")
 
     hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
-                                                    "ooh_cardiac", "sas_cardiac",
+                                                    "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
                                                     "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 - 2022",
 
                                    data_name %in% c("cath")  ~ "2020")
