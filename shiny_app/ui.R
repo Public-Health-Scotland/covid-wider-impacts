@@ -217,9 +217,9 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
          )# mainPanel bracket
 ), # tabpanel bracket
 
-# ###############################################.
-# ## Cancer ----
-# ###############################################.
+###############################################.
+## Cancer ----
+###############################################.
              navbarMenu("Cancer", icon = icon("disease"),
 
                         # CANCER PATHOLOGY
@@ -512,9 +512,9 @@ tabPanel(title = "Antenatal booking", value = "booking",
                    uiOutput("booking_explorer")
          )# mainPanel bracket
 ), #tab panel
-# ###############################################.
-# ## Termination of pregnancy  ----
-# ###############################################.
+###############################################.
+## Termination of pregnancy  ----
+###############################################.
 tabPanel(title = "Termination of pregnancy", value = "terminations",
          wellPanel(
            column(4, div(title="Select a breakdown",
@@ -603,7 +603,7 @@ tabPanel(title = "Gestation at delivery", value = "gestation",
         )# mainPanel bracket
  ), # tabPanel bracket
 ###############################################.
-## Apgar ----
+# Apgar ----
 ###############################################.
 tabPanel(title = "Apgar scores", value = "apgar",
          wellPanel(
