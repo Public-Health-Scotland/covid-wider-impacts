@@ -585,8 +585,6 @@ output$data_explorer <- renderUI({
     )
   } else if (input$measure_select == "aye") {
     tagList(#A&E Attendances
-    tags$em("Please note that a data recording issue has been identified and was rectified on 3/9/21 for the gender, age
-            and SIMD data for the week ending 20 September 2020, mainly affecting Perth and Kinross HSCP and NHS Tayside."),
     cut_charts(title= "Weekly attendances to A&E departments",
                source = "PHS AE2 Datamart", data_name = "aye"))
 
@@ -650,14 +648,11 @@ output$data_explorer <- renderUI({
     
   } else if (input$measure_select == "sas") {
     tagList(# SAS data
-      tags$em(p("Please note that there is currently an issue with duplicates in the SAS dataset and
-              therefore the data was not updated in April 2022. This is currently being 
-              investigated by PHS and the data will be updated as soon as possible."),
-              p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
+        p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
         tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
                "Unscheduled Care Operational Statistics (external website)", target="_blank"), ". The data published by SAS is sourced from a 
         different operational system than that used for the PHS reporting. This means that the data published 
-        by SAS will at times be slightly different to that reported by PHS source.")),
+        by SAS will at times be slightly different to that reported by PHS source."),
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service",
                source = "PHS Unscheduled Care Datamart", data_name ="sas"))
 
