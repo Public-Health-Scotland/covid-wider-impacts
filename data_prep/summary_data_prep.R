@@ -43,7 +43,7 @@ create_rapid <- function(last_week, extract = T) {
   date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
   
 # Read in output file from extract_rapid_data.R
-rap_adm <- readRDS(paste0(data_folder, "rapid/", date_on_filename, "-admissions-by-category.rds"))
+rap_adm <- readRDS(paste0(data_folder, "rapid/", date_on_filename, "-admissions-by-category-test.rds"))
 
 # Add HB names
 rap_adm <- left_join(rap_adm, hb_lookup, by = c("hb" = "hb_cypher")) %>% 
@@ -66,9 +66,9 @@ spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) 
   )) %>% 
   select("Specialty name" = spec_name, "Specialty group" = dash_groups)
 
-saveRDS(spec_lookup, "shiny_app/data/spec_lookup_rapid.rds")
-saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_rapid",
-                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+#saveRDS(spec_lookup, "shiny_app/data/spec_lookup_rapid.rds")
+#saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_rapid",
+#                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # Formatting groups
 rap_adm %<>% 
@@ -82,7 +82,7 @@ rap_adm %<>%
 # Aggregating to weekly data
 rap_adm %<>% 
   mutate(week_ending = ceiling_date(date_adm, "week", change_on_boundary = F)) %>% #end of week
-  group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec) %>% 
+  group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec, ethnic_group) %>% 
   summarise(count = sum(count, na.rm = T))
 
 # Aggregating for each geo level
@@ -98,8 +98,10 @@ rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% rename(category = sex) # T
 rap_adm_age <- agg_rapid(c("age"), split = "age") %>% rename(category = age) # Totals for overalls for all age groups
 # Totals for overalls for deprivation quintiles
 rap_adm_depr <- agg_rapid(c("dep"), split = "dep") %>% rename(category = dep) 
+# Totals for overalls for ethnic_groups
+rap_adm_eth <- agg_rapid(c("eth"), split = "ethnic_group") %>% rename(category = ethnic_group) 
 
-rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) 
+rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age, rap_adm_eth) 
 
 # Producing data for combined medical specialty
 spec_med <- rap_adm %>% 
