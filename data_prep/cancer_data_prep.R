@@ -284,8 +284,6 @@ cancer <- cancer %>%
 # Convert 8-character postcodes to 7-character postcodes.
 # 'pc7' always assumes a 7 character length and there could be zero, one or two spaces 
 # between Postcode District and Postcode Sector / Walk.
-# - instances where a 3_3 postcode is 4_2,
-# - instances where a 3_3 postcode is 3_1_2
 
 cancer <- cancer %>%
   mutate(postcode = case_when(
@@ -293,8 +291,6 @@ cancer <- cancer %>%
     str_length(postcode) == 7 ~ postcode,
     str_length(postcode) == 6 ~ paste0(substr(postcode, 1, 3), ' ', substr(postcode, 4, 6)),
     str_length(postcode) == 5 ~ paste0(substr(postcode, 1, 2), '  ', substr(postcode, 3, 5)),
-    (str_length(postcode) == 8 & substr(postcode,4,4) == " " & substr(postcode, 6,6) == " ") ~ 
-       paste0(substr(postcode,1,3), ' ',substr(4,6)),
     TRUE ~ postcode))
 
 # VARIABLE LABELS pc7 'Postcode of Residence (7 character format)'.
@@ -311,7 +307,7 @@ cancer <- cancer %>%
 #
 # VARIABLE LABELS pc8 'Postcode of Residence (8 character format)'.
 
-cancer1 <- cancer %>%
+cancer <- cancer %>%
   mutate(postcode = case_when(
     substr(postcode, 4, 4) != ' ' & substr(postcode, 5, 5) != ' ' & substr(postcode,7,7) != ' ' ~
       paste0(substr(postcode,1,4), " ", substr(postcode, 5, 7)),
@@ -322,15 +318,9 @@ cancer1 <- cancer %>%
     TRUE ~ postcode)) 
 
 #format postcode to 8 digit
-cancer <- cancer1 %>%
+cancer <- cancer %>%
   mutate(postcode = format_postcode(postcode, format = "pc8"))
 
-## A few instances where format_postcode incorrectly excludes individuals. Fix these tomorrow... 
-
-# find records dropped in the above line of code:
-test<-anti_join(cancer,cancer1)
-
-## A few more postcodes to be fixed:
 ### get Health Boards of residence and deprivation quintile rank from postcodes
 
 cancer <- cancer %>% 
