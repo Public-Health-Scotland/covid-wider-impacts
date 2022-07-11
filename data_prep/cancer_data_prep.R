@@ -307,7 +307,7 @@ cancer <- cancer %>%
 #
 # VARIABLE LABELS pc8 'Postcode of Residence (8 character format)'.
 
-cancer <- cancer %>%
+cancer1 <- cancer %>%
   mutate(postcode = case_when(
     substr(postcode, 4, 4) != ' ' & substr(postcode, 5, 5) != ' ' & substr(postcode,7,7) != ' ' ~
       paste0(substr(postcode,1,4), " ", substr(postcode, 5, 7)),
@@ -318,8 +318,37 @@ cancer <- cancer %>%
     TRUE ~ postcode)) 
 
 #format postcode to 8 digit
-cancer <- cancer %>%
+cancer <- cancer1 %>%
   mutate(postcode = format_postcode(postcode, format = "pc8"))
+
+## check postcodes that are excluded and fix those that can be fixed:
+test <- anti_join(cancer,cancer1)
+
+fix<- test %>%
+  mutate(postcode = case_when(
+           (str_length(original_postcode) == 7 & 
+              substr(original_postcode,5,5) == " " & substr(original_postcode,6,7) %in% LETTERS) ~ 
+             paste0(substr(original_postcode,1,3), " ",
+                    substr(original_postcode,4,4),
+                    substr(original_postcode,6,7)),
+          TRUE ~ postcode)) %>% 
+  filter(!is.na(postcode))
+
+fix<- test %>% 
+  mutate(postcode = case_when(
+          (str_length(original_postcode) == 8 & substr(original_postcode,4,4) == " " &
+           substr(original_postcode,6,6) == " ") ~ paste0(substr(original_postcode,1,3)," ",
+                                                         substr(original_postcode,5,5),
+                                                         substr(original_postcode,7,8)),
+         substr(original_postcode,6,6) == 0 ~ paste0(substr(original_postcode,1,5),"O",
+                                                    substr(original_postcode,7,8)))) %>% 
+  filter(!is.na(postcode)) %>% 
+  bind_rows(fix)
+
+## bind rows of fix back to cancer
+
+cancer<- bind_rows(cancer, fix)
+
 
 ### get Health Boards of residence and deprivation quintile rank from postcodes
 
