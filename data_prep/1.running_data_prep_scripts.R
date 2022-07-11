@@ -27,7 +27,7 @@ source("data_prep/cardio_data_prep.R") # This sources the functions for the sect
 # Filedate: date on filename for each update, last week = last week of data to be included
 create_aecardio(filedate = "2022-06-30", last_week =  "2022-06-26")
 create_sascardio(filedate = "2022-07-04", last_week =  "2022-06-26") #there is currently a duplicates issue with this data so it is not being updated until resolved.
-create_cardiodrugs(filedate = "2022-06-30", last_week =  "2022-06-26")
+create_cardiodrugs(filedate = "2022-07-11", last_week =  "2022-06-26")
 create_oohcardio(filedate = "2022-07-04", last_week =  "2022-06-26")
 create_cardioadmissions(last_week =  "2021-12-31") #updated quarterly
 create_cardiodeaths(last_week =  "2021-12-31") #updated quarterly
