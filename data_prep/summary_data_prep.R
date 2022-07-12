@@ -8,17 +8,28 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 ## RAPID data ----
 ###############################################.
-create_rapid <- function(last_week, extract = T) {
+create_rapid <- function(last_week, last_month, extract = T) {
   if (extract == T) { source("data_prep/extract_rapid_data.R") }
   
   # This function aggregates data for each different cut requires
   agg_rapid <- function(grouper = NULL, split, specialty = F) {
     
+    if (split == "eth") {
+      agg_helper <- function(more_vars, type_chosen = split) {
+        rap_adm_monthly %>%
+          group_by_at(c("month_ending","area_name", "area_type", more_vars)) %>%
+          summarise(count = sum(count)) %>% ungroup() %>%
+          mutate(type = type_chosen)
+      }
+    }
+    
+    else {
     agg_helper <- function(more_vars, type_chosen = split) {
-      rap_adm %>%
+      rap_adm_weekly %>%
         group_by_at(c("week_ending","area_name", "area_type", more_vars)) %>%
         summarise(count = sum(count)) %>% ungroup() %>%
         mutate(type = type_chosen)
+      }
     }
     
     # Aggregating to obtain totals for each split type and then putting all back together.
@@ -43,7 +54,7 @@ create_rapid <- function(last_week, extract = T) {
   date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
   
 # Read in output file from extract_rapid_data.R
-rap_adm <- readRDS(paste0(data_folder, "rapid/", date_on_filename, "-admissions-by-category-test.rds"))
+rap_adm <- readRDS(paste0(data_folder, "rapid/", date_on_filename, "-admissions-by-category.rds"))
 
 # Add HB names
 rap_adm <- left_join(rap_adm, hb_lookup, by = c("hb" = "hb_cypher")) %>% 
@@ -80,13 +91,13 @@ rap_adm %<>%
   ))
 
 # Aggregating to weekly data
-rap_adm %<>% 
+rap_adm_weekly <- rap_adm %>%  
   mutate(week_ending = ceiling_date(date_adm, "week", change_on_boundary = F)) %>% #end of week
-  group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec, ethnic_group) %>% 
+  group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec) %>% 
   summarise(count = sum(count, na.rm = T))
 
 # Aggregating for each geo level
-rap_adm %<>% mutate(scot = "Scotland") %>% 
+rap_adm_weekly %<>% mutate(scot = "Scotland") %>% 
   gather(area_type, area_name, c(hb, hscp_name, scot)) %>% ungroup() %>% 
   mutate(area_type = recode(area_type, "hb" = "Health board", 
                             "hscp_name" = "HSC partnership", "scot" = "Scotland")) 
@@ -98,13 +109,12 @@ rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% rename(category = sex) # T
 rap_adm_age <- agg_rapid(c("age"), split = "age") %>% rename(category = age) # Totals for overalls for all age groups
 # Totals for overalls for deprivation quintiles
 rap_adm_depr <- agg_rapid(c("dep"), split = "dep") %>% rename(category = dep) 
-# Totals for overalls for ethnic_groups
-rap_adm_eth <- agg_rapid(c("eth"), split = "ethnic_group") %>% rename(category = ethnic_group) 
 
-rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age, rap_adm_eth) 
+# Join all datasets together
+rap_weekly <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) 
 
 # Producing data for combined medical specialty
-spec_med <- rap_adm %>% 
+spec_med <- rap_weekly %>% 
   filter(spec %in% c("Cancer", "Medical (excl. Cardiology & Cancer)", "Cardiology")) %>% 
   mutate(spec = "Medical (incl. Cardiology & Cancer)") %>% 
   group_by(week_ending, area_name, area_type, type, 
@@ -112,23 +122,76 @@ spec_med <- rap_adm %>%
   summarise(count = sum(count, na.rm = T)) %>% ungroup
 
 # Producing data for combined Paediatrics specialty
-paed_com <- rap_adm %>% 
+paed_com <- rap_weekly %>% 
   filter(spec %in% c("Paediatrics (medical)", "Paediatrics (surgical)")) %>% 
   mutate(spec = "Paediatrics (medical & surgical)") %>% 
   group_by(week_ending, area_name, area_type, type, 
            admission_type, spec, category) %>% 
   summarise(count = sum(count, na.rm = T)) %>% ungroup
 
-rap_adm <- rbind(rap_adm, spec_med, paed_com) %>% 
+# Join together
+rap_weekly <- rbind(rap_weekly, spec_med, paed_com) %>% 
   # Excluding specialties groups with very few cases and of not much interest
   filter(!(spec %in% c("Dental", "Other"))) 
 
-prepare_final_data(rap_adm, "rapid", last_week = last_week, 
+prepare_final_data(rap_weekly, "rapid_weekly", last_week = last_week, 
                    extra_vars = c("admission_type", "spec"))
 
-print("rapid.rds file prepared and saved, including open data")
+print("rapid_weekly.rds file prepared and saved, including open data")
+
+
+## MONTHLY - for ethnicity split
+
+# Aggregating to monthly data
+rap_adm_monthly <- rap_adm %>%  
+  mutate(month_ending = floor_date(date_adm, "month")) %>% 
+  group_by(hscp_name, hb, admission_type, dep, age, sex, month_ending, spec, ethnic_group) %>% 
+  summarise(count = sum(count, na.rm = T))
+
+# Aggregating for each geo level
+rap_adm_monthly %<>% mutate(scot = "Scotland") %>% 
+  gather(area_type, area_name, c(hb, hscp_name, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "hb" = "Health board", 
+                            "hscp_name" = "HSC partnership", "scot" = "Scotland")) 
+
+# Totals for ethnic_groups
+rap_monthly <- agg_rapid(c("ethnic_group"), split = "eth") %>% 
+  rename(category = ethnic_group) %>% 
+  filter(area_name == "Scotland",
+         admission_type == "All") %>%
+  filter(!is.na(category)) # Scotland level data only
+
+prepare_final_data_m(rap_monthly, "rapid_monthly", last_month = last_month, 
+                   extra_vars = c("admission_type", "spec"))
+
+print("rapid_monthly.rds file prepared and saved, including open data")
+
+# Rename month variable to allow matching
+rapid_monthly %<>% rename(week_ending = month_ending) 
+
+# Combine weekly and monthly data together into one rapid dataset
+rapid <- rbind(rapid_weekly, rapid_monthly) 
+
+saveRDS(rapid, paste0("shiny_app/data/rapid.rds"))
+saveRDS(rapid, paste0(data_folder,"final_app_files/rapid_",
+                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+saveRDS(rapid, paste0(open_data, "rapid_data.rds"))
+
+# Remove files that are not required
+# file.remove("shiny_app/data/rapid_weekly.rds")
+# file.remove("shiny_app/data/rapid_monthly.rds")
+# 
+# file.remove(paste0(data_folder,"final_app_files/rapid_weekly_",
+#                       format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# file.remove(paste0(data_folder,"final_app_files/rapid_monthly_",
+#                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+file.remove(paste0(open_data, "rapid_weekly_data.rds"))
+file.remove(paste0(open_data, "rapid_monthly_data.rds"))
 
 }
+
+
 
 ###############################################.
 ## OOH data ----
