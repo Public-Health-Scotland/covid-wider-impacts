@@ -121,7 +121,7 @@ rapid_output <- rapid %>%
 
 # Save file with today's date
 date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
-saveRDS(rapid_output, paste0(data_folder, 'rapid/', date_on_filename, '-admissions-by-category-test.rds')) 
+saveRDS(rapid_output, paste0(data_folder, 'rapid/', date_on_filename, '-admissions-by-category.rds')) 
 
 
 ##END
