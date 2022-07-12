@@ -429,6 +429,14 @@ rapid_spec <- reactive({
 
 })
 
+# Rapid dataset used for ethnicity charts
+rapid_eth <- reactive({
+  rapid %>% filter(type == "eth") %>%
+    filter(area_name == input$geoname,
+           category %in% input$rapid_ethnicity)
+  
+})
+
 # Outpatients dataset filtered for admission_type, then used to create the admissions charts
 op_filt <- reactive({
   outpats %>%
@@ -567,6 +575,31 @@ output$data_explorer <- renderUI({
 
   # Charts and rest of UI
   if (input$measure_select == "rapid") {
+    
+    eth_rapid_ui <- tagList(#Add ethnicity charts
+      fluidRow(
+        # column(6,
+        #               h4(paste0(variation_title, "ethnic group")),
+        #               tags$em("Please note that this data is only available by month.")),
+               column(6,
+                      h4(paste0("Monthly number of ", dataset, " by ethnic group")),
+                      tags$em("Please note that this data is only available by month."))),
+      fluidRow(column(6,
+                      pickerInput("rapid_ethnicity", "Select one or more ethnic groups",
+                                  choices = eth_list_op, 
+                                  multiple = TRUE,
+                                  selected = eth_list_op,
+                                  options = list(
+                                    `actions-box` = TRUE)))),
+               # column(6,actionButton("btn_modal_eth", "Interpretation of this chart", 
+               #                     icon = icon('fas fa-exclamation-circle')))),
+      fluidRow(
+        # column(6,
+        #               withSpinner(plotlyOutput("adm_eth_var"))),
+               column(12,
+                      withSpinner(plotlyOutput("adm_eth_tot")))))
+    
+    
     tagList(#Hospital admissions
       cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
                  data_name = "adm"),
@@ -581,8 +614,11 @@ output$data_explorer <- renderUI({
                                       "Specialties and their groups",
                                       icon = icon('question-circle')))),
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
-               column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
+               column(6, withSpinner(plotlyOutput("adm_spec_tot"))),
+               eth_rapid_ui)
     )
+    
+    
   } else if (input$measure_select == "aye") {
     tagList(#A&E Attendances
     tags$em("Please note that a data recording issue has been identified and was rectified on 3/9/21 for the gender, age
@@ -829,9 +865,11 @@ output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
 output$adm_sex_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", data_name = "adm")})
 output$adm_age_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", data_name = "adm")})
 output$adm_depr_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", data_name = "adm")})
+#output$adm_eth_var <- renderPlotly({plot_trend_chart(rapid_eth(), pal_eth, "eth", data_name = "adm")})
 output$adm_sex_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", "total", "adm")})
 output$adm_age_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", "total", "adm")})
 output$adm_depr_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", "total", "adm")})
+output$adm_eth_tot <- renderPlotly({plot_trend_chart(rapid_eth(), pal_eth, "eth", "total", "adm", period = "monthly")})
 output$adm_spec_var <- renderPlotly({plot_spec("variation", rapid_spec())})
 output$adm_spec_tot <- renderPlotly({plot_spec("total", rapid_spec())})
 
