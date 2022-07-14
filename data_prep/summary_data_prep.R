@@ -166,10 +166,15 @@ prepare_final_data_m(rap_monthly, "rapid_monthly", last_month = last_month,
 
 print("rapid_monthly.rds file prepared and saved, including open data")
 
-# Rename month variable to allow matching
-rapid_monthly %<>% rename(week_ending = month_ending) 
 
 # Combine weekly and monthly data together into one rapid dataset
+rapid_weekly <- read_rds("shiny_app/data/rapid_weekly.rds")
+rapid_monthly <- read_rds("shiny_app/data/rapid_monthly.rds")
+
+# Rename month variable to allow matching
+rapid_monthly %<>% filter(month_ending >= as.Date("2020-03-01")) %>% 
+  rename(week_ending = month_ending) 
+
 rapid <- rbind(rapid_weekly, rapid_monthly) 
 
 saveRDS(rapid, paste0("shiny_app/data/rapid.rds"))
