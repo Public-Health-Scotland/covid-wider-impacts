@@ -183,16 +183,16 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, 
                          historic_data, 
                          by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
-    filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
-               is.na(area_name) |
+    filter(!(is.na(category) | is.na(area_name) | category %in% c("Missing", "missing", "Not Known") |
                area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND",
-                                "ENGland/Wales/Northern Ireland", "NANA"))) %>%
+                                "ENGland/Wales/Northern Ireland", "NANA"))) %>% 
     # Creating %variation from precovid to covid period
     mutate(count_average = ifelse(is.na(count_average), 0, count_average),
            variation = round(-1 * ((count_average - count)/count_average * 100), 1),
            # Dealing with infinite values from historic average = 0
            variation =  ifelse(is.infinite(variation), 8000, variation)) %>%
     select(-week_no)
+  
 
   if (aver == 3) {
     # Supressing numbers under 5
@@ -237,11 +237,17 @@ prepare_final_data_m <- function(dataset, filename, last_month, extra_vars = NUL
                          historic_data, 
                          by = c("category", "type", "area_name", "area_type", "month_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
-    filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
-               is.na(area_name) |
+    filter(!(is.na(category) | is.na(area_name) |
                area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND",
-                                "ENGland/Wales/Northern Ireland", "NANA"))) %>%
+                                "ENGland/Wales/Northern Ireland", "NANA"))) 
+  
+    if (filename != "rapid_monthly") {
+      data_2020 %<>% filter(!(category %in% c("Missing", "missing", "Not Known")))
+    }
+    
+    
     # Creating %variation from precovid to covid period
+  data_2020 %<>% 
     mutate(count_average = ifelse(is.na(count_average), 0, count_average),
            variation = round(-1 * ((count_average - count)/count_average * 100), 1),
            # Dealing with infinite values from historic average = 0
