@@ -379,7 +379,7 @@ observeEvent(input$btn_modal_moc, { showModal(moc_modal) })
 
 
 ###############################################.
-# Modal to explain ethnicity graphs
+# Modal to explain ethnicity charts in outpatients section.
 eth_modal <- modalDialog(
   h5(tags$b("Interpretation of this chart")),
   p("The ethnic group field in the Scottish Morbidity Record (SMR) 
@@ -408,7 +408,24 @@ eth_modal <- modalDialog(
 # Link action button click to modal launch 
 observeEvent(input$btn_modal_eth, { showModal(eth_modal) }) 
 
-
+###############################################.
+# Modal to explain ethnicity chart - rapid section
+rapid_eth_modal <- modalDialog(
+  h5(tags$b("Interpretation of this chart")),
+  p("From late June 2020, the data collected for the RAPID dataset was expanded to include ethnicity.
+  The following list is the current ethnicity classification (2011 Census categories) 
+  used by NHS Scotland organisations, and the ethnic groupings 
+  that we have used in this dashboard."),
+  renderTable(eth_lookup),  
+  p("The ‘Missing’ ethnic group category includes those where ethnic group was 
+    recorded as 'Not Known', 'Refused/Not Provided by the Patient' or was not recorded at all."),
+  p("It is important to note that the trends for ethnic groups with small populations should be 
+  interpreted with caution as they will be subject to greater variability due to small numbers."),
+  size = "l",
+  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+)
+# Link action button click to modal launch 
+observeEvent(input$btn_modal_eth_rapid, { showModal(rapid_eth_modal) }) 
 
 ###############################################.
 ## Reactive datasets ----
@@ -581,18 +598,21 @@ output$data_explorer <- renderUI({
         # column(6,
         #               h4(paste0(variation_title, "ethnic group")),
         #               tags$em("Please note that this data is only available by month.")),
-               column(6,
+               column(12,
                       h4(paste0("Monthly number of ", dataset, " by ethnic group")),
-                      tags$em("Please note that this data is only available by month."))),
-      fluidRow(column(6,
+                      p("Please note that this data is only available by month. The chart presents data from March 2020
+                        onwards as ethnic group was not widely recorded in the RAPID dataset prior to March 2020."))),
+
+      fluidRow(column(9,
                       pickerInput("rapid_ethnicity", "Select one or more ethnic groups",
                                   choices = eth_list_op, 
                                   multiple = TRUE,
                                   selected = eth_list_op,
                                   options = list(
-                                    `actions-box` = TRUE)))),
-               # column(6,actionButton("btn_modal_eth", "Interpretation of this chart", 
-               #                     icon = icon('fas fa-exclamation-circle')))),
+                                    `actions-box` = TRUE))),
+               column(3,actionButton("btn_modal_eth_rapid", "Interpretation of this chart",
+                                     icon = icon('fas fa-exclamation-circle')))),
+
       fluidRow(
         # column(6,
         #               withSpinner(plotlyOutput("adm_eth_var"))),
