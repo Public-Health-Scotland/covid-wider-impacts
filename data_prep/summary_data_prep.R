@@ -171,31 +171,31 @@ print("rapid_monthly.rds file prepared and saved, including open data")
 rapid_weekly <- read_rds("shiny_app/data/rapid_weekly.rds")
 rapid_monthly <- read_rds("shiny_app/data/rapid_monthly.rds")
 
-# Rename month variable to allow matching
+# Filter out earlier incomplete data
 rapid_monthly %<>% filter(month_ending >= as.Date("2020-03-01")) %>% 
-  rename(week_ending = month_ending) 
+  rename(week_ending = month_ending) %>% 
+  select(-variation, -count_average)
 
-rapid <- rbind(rapid_weekly, rapid_monthly) 
+rapid <- bind_rows(rapid_weekly, rapid_monthly) 
 
 saveRDS(rapid, paste0("shiny_app/data/rapid.rds"))
 saveRDS(rapid, paste0(data_folder,"final_app_files/rapid_",
                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 saveRDS(rapid, paste0(open_data, "rapid_data.rds"))
 
-# Remove files that are not required
-# file.remove("shiny_app/data/rapid_weekly.rds")
-# file.remove("shiny_app/data/rapid_monthly.rds")
-# 
-# file.remove(paste0(data_folder,"final_app_files/rapid_weekly_",
-#                       format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# file.remove(paste0(data_folder,"final_app_files/rapid_monthly_",
-#                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# Remove files that are not required to be saved
+file.remove("shiny_app/data/rapid_weekly.rds")
+file.remove("shiny_app/data/rapid_monthly.rds")
+
+file.remove(paste0(data_folder,"final_app_files/rapid_weekly_",
+                      format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+file.remove(paste0(data_folder,"final_app_files/rapid_monthly_",
+                   format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 file.remove(paste0(open_data, "rapid_weekly_data.rds"))
 file.remove(paste0(open_data, "rapid_monthly_data.rds"))
 
 }
-
 
 
 ###############################################.
