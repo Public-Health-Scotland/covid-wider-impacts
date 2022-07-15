@@ -270,7 +270,7 @@ output$cancer_explorer2 <- renderUI({
     strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and
            may also update historical data."),
     br(),
-    p(strong(paste0("Last updated: - 6 July 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
+    p(strong(paste0("Last updated: - 27 July 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
              2nd February 2022."))))
   
   
@@ -398,7 +398,7 @@ output$cancer_commentary <- renderUI({
     ## JULY 2022 update ----
     ###################################.
     
-    h4(strong("Update 06/07/2022: For pathology data to 2nd February 2022 (extracted 02/06/2022)")),
+    h4(strong("Update 27/07/2022: For pathology data to 2nd February 2022 (extracted 02/06/2022)")),
     p("In 2022 (weeks ending 5th January to 2nd February), there was little difference in the total number of individuals with a pathological
       diagnosis of cancer (Excl.C44) compared with those in 2019 over the same dates (4046 and 3986 in 2022 and 2019 respectively, a difference
       of approximately 0.01%)."),
