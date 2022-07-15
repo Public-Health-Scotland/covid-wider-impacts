@@ -942,7 +942,7 @@ diff_data_base <- bind_rows(diff_data_base, diff_data_base_24)
 
 ## where is base_cancer_slim_q0? scratch this for now. 
 
-rm(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep,
+rm(base_cancer_counts,
    base_cancer_cum, base_cancer_counts_all, diff_data_base_24)
 
 ## base_cancer_slim_q0
