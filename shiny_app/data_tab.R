@@ -83,10 +83,14 @@ data_table <- reactive({
                                     "85 and over" = "Aged 85 and over",
                                     "Under 65" = "Aged under 65",
                                     "65 and over" = "Aged 65 and over"),
+           week_ending = case_when(type == "eth" ~ format(week_ending, "%b %y"),
+                                   TRUE ~ format(week_ending, "%d %b %y")),
            type = recode_factor(type, "sex" = "Sex", "age" = "Age Group", 
                                 "dep" = "Deprivation",
-                                "moc" = "Mode of Clinical Interaction"),
-           week_ending = format(week_ending, "%d %b %y"))
+                                "moc" = "Mode of Clinical Interaction",
+                                "eth" = "Ethnic group"))
+           #week_ending = format(week_ending, "%d %b %y"),
+
   }  else if (input$data_select %in% "outpats") { 
     table_data %<>%
       # Formatting to a "nicer" style
