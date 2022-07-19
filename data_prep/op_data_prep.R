@@ -30,7 +30,19 @@ library(purrr)
 source("outpatient_functions.R")
 
 ### 1 - Read in data ----
-outpats_full = read_fst(paste0(SCT_folder, "Outpatients_basefile.fst"))
+outpats_full = read_fst(QPub_basefile_path)
+
+# Slight amendments required to basefile
+outpats_full <- outpats_full %>%
+    # Rename Unknown Health Board of treatment to Other
+    mutate(hbtreat_name = ifelse(hbtreat_name == "Unknown Health Board", "Other", hbtreat_name)) %>%
+    # Make NA Health Board of treatment Other
+    mutate(hbtreat_name = ifelse(is.na(hbtreat_name), "Other", hbtreat_name)) %>%
+    # Add spaces into age groups
+    mutate(age_grp = str_replace(age_grp, "-", " - ")) %>%
+    # Fix NA Grouping issue - this relates to specialty G1, but hadn't matched on properly
+    # in basefile - manually update for now
+    mutate(Grouping = ifelse(is.na(Grouping), "Mental Health", Grouping))
 
 ##create specialty lookup, including which specialties are in each group ----
 ##this is used in the dashboard
@@ -192,8 +204,8 @@ data_2020 <- left_join(dataset %>%
                                TRUE ~ variation)) %>%
   ## renaming for ease in dashboard
   rename("admission_type" = "appt_type") %>%
-  ## data goes to week ending July 4th 2021 but data after June 2021 haven't been published
-  filter(week_ending <= dmy("30-06-2021")) %>%
+  ## data goes to week ending December 31st 2021 but data after Dec 2021 haven't been published
+  filter(week_ending <= dmy("31-12-2021")) %>%
   # changing values where there is no activity in 2018/19 to 100% variation
   #   to avoid weird trends
   mutate(variation = case_when(count_average == 0 & variation == 0 &
@@ -247,7 +259,7 @@ outpats_agg = outpats_full %>%
   mutate(count = 1) %>%
   mutate(week_ending = floor_date(clinic_date, "month")) %>% #start of month
   group_by(HSCPName, hbtreat_name, hbres_new_name, appt_type, attendance_status, simd,
-           age_grp, sex_name, mode_contact_new, week_ending, Grouping) %>%
+           age_grp, sex_name, mode_contact_new, week_ending, Grouping, ethnic_group) %>%
   summarise(count = sum(count, na.rm = T)) %>%
   ungroup() %>%
   rename(spec = Grouping) %>%
@@ -339,8 +351,13 @@ op_adm_moc <- agg_op(c("mode_contact_new"), split = "moc") %>%
   rename(category = mode_contact_new) %>%
   filter(!is.na(category)) # Totals for all modes of clinical interaction
 
+op_adm_eth <- agg_op(c("ethnic_group"), split = "eth") %>%
+    rename(category = ethnic_group) %>%
+    filter(area_name == "Scotland") %>% # Scotland level data only
+    filter(!is.na(category)) # Totals for all ethnic groups
+
 ### apply disclosure flag to cases ----
-op_adm = disc_flag_adm() %>%
+op_adm = disc_flag_adm_monthly() %>%
   ## remove specialties with low numbers
   filter(!(spec %in% c("Dental", "Other")))
 
@@ -378,8 +395,8 @@ data_2020 <- left_join(dataset %>%
                                TRUE ~ variation)) %>%
   ## renaming for ease in dashboard
   rename("admission_type" = "appt_type") %>%
-  ## data after June 2021 haven't been published
-  filter(week_ending <= dmy("30-06-2021")) %>%
+  ## data after December 2021 haven't been published
+  filter(week_ending <= dmy("31-12-2021")) %>%
   # changing values where there is no activity in 2018/19 to 100% variation
   #   to avoid weird trends
   mutate(variation = case_when(count_average == 0 & variation == 0 &
@@ -409,4 +426,4 @@ saveRDS(op_data, paste0(WID_folder,"final_app_files/outpats_",
 
 # remove datasets
 rm(outpats_agg, op_adm, op_adm_age, op_adm_all, op_adm_depr, op_adm_moc, op_adm_sex, 
-   historic_data, dataset, data_2020, area_type_op)
+   historic_data, dataset, data_2020)

@@ -16,6 +16,8 @@ library(flextable)
 library(magrittr)
 library(haven)
 library(readxl)
+library(odbc) # for accessing SMRA
+library(glue) # For SQL date parameters
 
 ###############################################.
 ## Filepaths ----
@@ -138,8 +140,8 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, 
     historic_data %<>% rbind(week_53)
   } else if (aver == 5) {
     # Creating average admissions of pre-covid data (2015-2019) by day of the year
-    historic_data <- dataset %>% filter(!(year(week_ending) %in% c("2020", "2021"))) %>%
-      group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>%
+    historic_data <- dataset %>% filter(!(year(week_ending) %in% c("2020", "2021", "2022"))) %>% 
+      group_by_at(c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
       # Not using mean to avoid issues with missing data for some weeks
       summarise(count_average = round((sum(count, na.rm = T))/5, 1)) %>%
       ungroup() %>%
@@ -150,9 +152,9 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, 
 
   # Joining with 2020 and 2021 data
   # Filtering weeks with incomplete week too!! Temporary
-  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020", "2021")),
-                         historic_data,
-                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>%
+  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020", "2021", "2022")), 
+                         historic_data, 
+                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
     filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
                is.na(area_name) |
@@ -204,9 +206,9 @@ prepare_final_data_m <- function(dataset, filename, last_month, extra_vars = NUL
   }
   # Joining with 2020 and 2021 data
   # Filtering weeks with incomplete week too!! Temporary
-  data_2020 <- left_join(dataset %>% filter(year(month_ending) %in% c("2020", "2021")),
-                         historic_data,
-                         by = c("category", "type", "area_name", "area_type", "month_no", extra_vars)) %>%
+  data_2020 <- left_join(dataset %>% filter(year(month_ending) %in% c("2020", "2021", "2022")), 
+                         historic_data, 
+                         by = c("category", "type", "area_name", "area_type", "month_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
     filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
                is.na(area_name) |
@@ -279,9 +281,9 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
 
   # Joining with 2020 and 2021 data
   # Filtering weeks with incomplete week too!! Temporary
-  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020", "2021")),
-                         historic_data,
-                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>%
+  data_2020 <- left_join(dataset %>% filter(year(week_ending) %in% c("2020", "2021", "2022")), 
+                         historic_data, 
+                         by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
     filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
                is.na(area_name) |
@@ -324,7 +326,66 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
 
+}
 
+# Function by month to format data in the right format for the Shiny app
+prepare_final_data_m_cardiac <- function(dataset, filename, last_month, extra_vars = NULL, extra_vars2 = NULL, aver = 3) {
+  
+  # Creating week number to be able to compare pre-covid to covid period
+  dataset <- dataset %>% mutate(month_no = month(month_ending),
+                                # Fixing HSCP names
+                                area_name = gsub(" and ", " & ", area_name))
+  
+  if (aver == 3) {
+    # Creating average admissions of pre-covid data (2018-2019) by day of the year
+    historic_data <- dataset %>% filter(year(month_ending) %in% c("2018", "2019")) %>% 
+      group_by_at(c("category", "type", "area_name", "area_type", "month_no", extra_vars, extra_vars2)) %>% 
+      # Not using mean to avoid issues with missing data for some weeks
+      summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% 
+      ungroup()
+
+
+  } else if (aver == 5) {
+    # Creating average admissions of pre-covid data (2015-2019) by day of the year
+    historic_data <- dataset %>% filter(!(year(month_ending) %in% c("2020", "2021", "2022"))) %>% 
+      group_by_at(c("category", "type", "area_name", "area_type", "month_no", extra_vars, extra_vars2)) %>% 
+      # Not using mean to avoid issues with missing data for some weeks
+      summarise(count_average = round((sum(count, na.rm = T))/5, 1)) %>% 
+      ungroup()
+    
+  }
+    
+  # Joining with 2020 and 2021 data
+  # Filtering weeks with incomplete week too!! Temporary
+  data_2020 <- left_join(dataset %>% filter(year(month_ending) %in% c("2020", "2021", "2022")), 
+                         historic_data, 
+                         by = c("category", "type", "area_name", "area_type", "month_no", extra_vars, extra_vars2)) %>% 
+    # Filtering cases without information on age, sex, area or deprivation (still counted in all)
+    filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
+               is.na(area_name) | 
+               area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND",
+                                "ENGland/Wales/Northern Ireland", "NANA"))) %>% 
+    # Creating %variation from precovid to covid period 
+    mutate(count_average = ifelse(is.na(count_average), 0, count_average),
+           variation = round(-1 * ((count_average - count)/count_average * 100), 1),
+           # Dealing with infinite values from historic average = 0
+           variation =  ifelse(is.infinite(variation), 8000, variation)) %>% 
+    select(-month_no)
+  
+  if (aver %in% c(3,5)) {
+    # Supressing numbers under 5
+    data_2020 <- data_2020 %>% filter(count>=5) 
+  } 
+  
+  data_2020 <- data_2020 %>%
+    filter(month_ending <= as.Date(last_month))
+  
+  final_data <<- data_2020
+  
+  saveRDS(data_2020, paste0("shiny_app/data/", filename,".rds"))
+  saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_", 
+                            format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+  saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
 }
 
 #Function to format the immunisations and child health review tables
@@ -491,6 +552,59 @@ runchart_flags <- function(dataset, shift, trend, value, median) {
     rename({{shift}}:=shift,{{trend}}:=trend) %>%
     select(-shift_i, -trend_i)
 
-  }
+  # Two trends can sometimes run into each other. This can be problematic when
+  # they are plotted using lines.
+  #
+  # Two adjacent trends where one point is in both trends is fine (think data
+  # like \/) - the trend line should not be interrupted. But when the last point
+  # in one trend is adjacent to the first point in the next (think \|\) we don't
+  # want to connect both trend lines together.
+  #
+  # This code adds a column to the data that identifies the problematic cases,
+  # so the lines can be split in the plotting function.
+  #
+  # Problematic points are surrounded by other trend points and are in a section
+  # where the gradient changes sign twice in succession.
+  dataset =
+    dataset %>%
+    # For identifying two succesive changes in gradient direction
+    mutate(gradient = sign({{value}} - lag({{value}})),
+           gradient_lag_change = lag(gradient) != gradient,
+           gradient_lead_change = lead(gradient) != gradient) %>%
+    # Need these to find whether point is in the middle of a trend
+    mutate(across(all_of(trend), ~lag(.x), .names = "trend_lag"),
+           across(all_of(trend), ~lead(.x), .names = "trend_lead")) %>%
+    # Set new column to TRUE when all conditions are met
+    mutate("{trend}.split" :=
+             if_else(gradient_lag_change + gradient_lead_change +
+                       .data[[trend]] + trend_lag + trend_lead == 5,
+                     TRUE, FALSE, missing = FALSE)) %>%
+    # Remove columns that are no longer needed
+    select(-all_of(c("gradient", "gradient_lag_change", "gradient_lead_change",
+                     "trend_lag", "trend_lead")))
 
+  # There is a similar issue for shifts. There can't be one point in two shifts,
+  # but the last point in one can be adjacent to the first point in the next.
+  # Again we don't want to connect the lines.
+  #
+  # Problematic points are surrounded by other shift points and are on the
+  # opposite side of the median from the preceding point.
+  dataset =
+    dataset %>%
+    # Find whether sign has changed from preceding point
+    mutate(median_diff_sign = sign({{value}} - {{median}}),
+           sign_change = median_diff_sign != lag(median_diff_sign)) %>%
+    # Need these to find whether point is in the middle of a shift
+    mutate(across(all_of(shift), ~lag(.x), .names = "shift_lag"),
+           across(all_of(shift), ~lead(.x), .names = "shift_lead")) %>%
+    # Set new column to TRUE when all conditions are met
+    mutate("{shift}.split" :=
+             if_else(sign_change + .data[[shift]] +
+                       shift_lag + shift_lead == 4,
+                     TRUE, FALSE, missing = FALSE)) %>%
+    # Remove columns that are no longer needed
+    select(-all_of(c("median_diff_sign", "sign_change",
+                     "shift_lag", "shift_lead")))
+
+}
 ##END

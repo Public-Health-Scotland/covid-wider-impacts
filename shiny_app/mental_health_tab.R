@@ -44,8 +44,7 @@ observeEvent(input$btn_mentalhealth_modal,
                  title = "What is the data source?",
                  p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments)
                    in the recent past, along with historical activity for
-                   comparison purposes. The recent trend data is shown by age group, sex
-                   and broad deprivation category (SIMD). These figures include attendances of people aged 5 and over.
+                   comparison purposes. The recent trend data is shown by age group and sex. These figures include attendances of people aged 5 and over.
                     Also, this data only include Emergency Department
                    attendances and do not include minor injury units and other small hospitals and
                    health centres in rural areas that carry out emergency department related activity,
@@ -53,12 +52,12 @@ observeEvent(input$btn_mentalhealth_modal,
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/Hospital-Site-List/",
                           "hospital list.", class="externallink")),
                  p("Additional information relating to the overall A&E activity is available from the ",
-                   tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/",
+                   tags$a(href="https://publichealthscotland.scot/publications/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics",
                           "NHS Performs - weekly update of emergency department activity and waiting time statistics.",
                           class="externallink")),
                  p("Attendances to A&E departments data sourced from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3",
-                          "Accident and Emergency Datamart (A&E2).",class="externallink"),
+                          "Accident and Emergency Datamart (A&E2) (external website).",class="externallink"),
                    "The A&E2 dataset is managed by ",
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/",
                           "Public Health Scotland (PHS).", class="externallink")),
@@ -212,11 +211,11 @@ observeEvent(input$btn_mentalhealth_modal,
                    issues."),
                 p("If required, more detailed analysis of the Primary Care Out of Hours service may
                    be available on request to ",
-                  tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                  tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                          class="externallink"), "."),
                 p("General Practice Out of Hours service data is sourced from the",
                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113",
-                         "GP Out of Hours Dataset (OOH).",class="externallink"),
+                         "GP Out of Hours Dataset (OOH) (external website).",class="externallink"),
                   "The OOH dataset is managed by ",
                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/",
                          "Public Health Scotland (PHS).", class="externallink")),
@@ -293,9 +292,9 @@ output$ae_mh_age_tot <- renderPlotly({
   plot_trend_chart(ae_mh_aver() %>% filter(type == "age") %>%
                      mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))),
                    pal_age, c("age", "all"), "total", "aye", tab = "mh",  aver_week = T)})
-output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_aver(), pal_chose = pal_depr, split = "dep",
-                                                       type = "variation", data_name = "aye", tab = "mh", aver_week = T)})
-output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh",  aver_week = T)})
+# output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_aver(), pal_chose = pal_depr, split = "dep",
+#                                                        type = "variation", data_name = "aye", tab = "mh", aver_week = T)})
+# output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh",  aver_week = T)})
 
 ###############################################.
 # MH OOH charts
@@ -321,7 +320,7 @@ output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_depr,
 # The charts and text shown on the app will depend on what the user wants to see
 output$mh_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 01 December 2021"))
+  data_last_updated <- tagList(p("Last updated: 6 July 2022"))
 
   note_average <- p("Please note that to ease interpretation of these charts ",
                     "we are presenting 3-week rolling average figures.",
@@ -334,17 +333,18 @@ output$mh_explorer <- renderUI({
                       actionButton("btn_mentalhealth_modal", "Data source and definitions",
                                    icon = icon('question-circle'))),
                column(6,data_last_updated)),
-      plot_box("2020 and 2021 compared with 2018-2019 average", "mh_prescribing_all"),
+      plot_box("2020, 2021 and 2022 compared with 2018-2019 average", "mh_prescribing_all"),
       plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh,
                           " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
                    paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
   } else if (input$measure_mh_select == "aye") {
     tagList(#A&E attendances
-      tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
-                 incomplete for a number of NHS Boards. Thus, the figures reported for mental health related
-                 attendances offer only a very approximate indication of attendances.
-                 Additionally, some NHS Boards have moved to a new recording standard which
-                 has not been fully consolidated in the A&E datamart as yet."),
+      tags$em("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E 
+              dataset, due to the quality of the data available.  Diagnosis/reason for attendance can be recorded in a variety of ways, 
+              including in free text fields - and not all NHS Boards submit this information.  The numbers presented in these dashboards 
+              therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with 
+              caution.  Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of 
+              the areas represented in the data available. PHS are planning work to improve consistency."),
       br(),
       tags$em(span("An issue had been identified with the number of A&E attendances in NHS Lanarkshire for
                   the week ending 4 July 2021. This has been resolved.")),
@@ -353,7 +353,7 @@ output$mh_explorer <- renderUI({
                       actionButton("btn_mentalhealth_modal", "Data source and definitions",
                                    icon = icon('question-circle'))),
                column(6,data_last_updated)),
-      plot_box("2020 and 2021 compared with 2018-2019 average", "ae_mh_overall"),
+      plot_box("2020, 2021 and 2022 compared with 2018-2019 average", "ae_mh_overall"),
     if (input$geoname_mh == "Scotland") {
       tagList(
         plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
@@ -364,13 +364,13 @@ output$mh_explorer <- renderUI({
                      time in 2018-2019 by age group", "ae_mh_age_var",
                      "Weekly number of mental health A&E attendances by age group", "ae_mh_age_tot",
                      extra_content = note_average),
-        plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
-                     time in 2018-2019 by SIMD quintile", "ae_mh_dep_var",
-                     "Weekly number of mental health A&E attendances by SIMD quintile", "ae_mh_dep_tot",
-                     extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
-                                                  icon = icon('question-circle')),
-                                             note_average)
-                     )
+        # plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
+        #              time in 2018-2019 by SIMD quintile", "ae_mh_dep_var",
+        #              "Weekly number of mental health A&E attendances by SIMD quintile", "ae_mh_dep_tot",
+        #              extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
+        #                                           icon = icon('question-circle')),
+        #                                      note_average)
+        #              )
       ) #taglist bracket from if statement
 
     }
@@ -387,7 +387,7 @@ output$mh_explorer <- renderUI({
                         actionButton("btn_mentalhealth_modal", "Data source and definitions",
                                      icon = icon('question-circle'))),
                  column(6,data_last_updated)),
-        plot_box("2020 and 2021 compared with 2018-2019 average", "mh_ooh_overall"),
+        plot_box("2020, 2021 and 2022 compared with 2018-2019 average", "mh_ooh_overall"),
         if (input$geoname_mh == "Scotland") {
           tagList(
             plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
@@ -442,6 +442,13 @@ output$download_mentalhealth_data <- downloadHandler(
 output$mentalhealth_commentary <- renderUI({
   tagList(
     bsButton("jump_to_mentalhealth",label = "Go to data"), #this button can only be used once
+    h2("Mental health - 15 June 2022"),
+    p("Information on the number of patients starting a new treatment course for selected mental health medicines (those commonly used for depression, anxiety or insomnia) through General Practice was included for the first time in the COVID Wider Impacts Dashboard on 30 September 2020. This data does not include hospital prescribing. These data indicate:"),
+    tags$ul(
+      tags$li("The number of patients starting new treatment with the selected medicines fell by almost 40% between the week ending 22nd March, 2020 and the week ending 5th April, 2020 compared with the previous two years' average for the same period. This period corresponds with the first national lockdown in response to COVID-19 in Scotland. Since then, the total numbers have been gradually increasing but have generally remained below the 2018-2019 baseline levels to April 2022."),
+      tags$li("Looking at the selected medicines in separate groups, the number of new treatment courses for depression returned to expected in July 2020, whilst new treatment courses for insomnia and anxiety continued to remain below the 2018-2019 baseline to May 2022."),
+      tags$li("Observed downward spikes in the trend seen around the Christmas Periods in late December/early January reflect low overall activity in those periods, most likely due to reduced access over the holiday periods.")
+    ),
     h2("Mental health - 30 September 2020"),
     h3("Unscheduled care"),
     p("Information on the number of contacts for mental health problems with accident and emergency (A&E) and with primary care out of hours (OOH)

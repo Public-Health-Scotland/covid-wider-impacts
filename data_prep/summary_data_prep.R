@@ -40,20 +40,16 @@ create_rapid <- function(last_week, extract = T) {
     }
   }
     
-  date_on_filename <<- format(Sys.Date(), format = '%d-%b')
+  date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
   
-# Prepared by Unscheduled care team
-rap_adm <- readRDS(paste0(data_folder, "rapid/Admissions_by_category_", date_on_filename, ".rds")) %>% 
-  janitor::clean_names() %>% 
-  # taking out aggregated values, not clear right now
-  filter(!(substr(hosp,3,5) == "All" | (substr(hscp_name,3,5) == "All")) &
-           date_adm > as.Date("2017-12-31")) 
+# Read in output file from extract_rapid_data.R
+rap_adm <- readRDS(paste0(data_folder, "rapid/", date_on_filename, "-admissions-by-category.rds"))
 
-# Bringing HB names
+# Add HB names
 rap_adm <- left_join(rap_adm, hb_lookup, by = c("hb" = "hb_cypher")) %>% 
   select(-hb) %>% rename(hb = area_name) %>% select(-area_type)
 
-# Bringing spec names
+# Add spec names
 spec_lookup <- read_csv("data/spec_groups_dashboard.csv")
 
 rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "spec_code")) %>% 
@@ -76,15 +72,7 @@ saveRDS(spec_lookup, paste0(data_folder,"final_app_files/spec_lookup_rapid",
 
 # Formatting groups
 rap_adm %<>% 
-  rename(dep = simd_quintile, age = age_group) %>%
-  mutate(sex = recode(sex, "male" = "Male", "female" = "Female")) %>% 
-  mutate(age = recode_factor(age, "Under_5" = "Under 5", "5_thru_14" = "5 - 14", 
-                             "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
-                             "65_thru_74" = "65 - 74", "75_thru_84" = "75 - 84",
-                             "85+" = "85 and over")) %>% 
-  create_depgroups()  %>% 
-  mutate(admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency")) %>% 
-  mutate(spec = case_when(
+    mutate(spec = case_when(
     spec_name == "Paediatric Dentistry" ~ "Paediatrics (medical)",
     spec_name == "Paediatrics" ~ "Paediatrics (medical)",
     spec_name == "Paediatric Surgery" ~ "Paediatrics (surgical)",
@@ -180,8 +168,8 @@ ooh %<>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>
   summarise(count = sum(count, na.rm = T))  %>% ungroup() %>%
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-04-26")))
 
-#new data extract from week ending 03 may 2020 up to week ending 31 may 2020
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/", filename, ".xlsx")) %>% 
+#new data extract from week ending 03 may 2020 up to present
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH DATA_", filename, ".xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -198,7 +186,7 @@ ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/", filename, ".xlsx"))
                       "1" = "1 - most deprived", "2" = "2",  "3" = "3", 
                       "4" = "4", "5" = "5 - least deprived"),
          week_ending = as.Date(week_ending, "%d/%m/%Y"), #formatting date
-         scot = "Scotland") %>% 
+         scot = "Scotland") %>%  
   proper() # convert HB names to correct format
 
 ooh_may_onwards <- ooh_may_onwards %>% 
@@ -226,6 +214,57 @@ prepare_final_data(dataset = ooh, filename = "ooh", last_week = last_week)
 print("ooh.rds file prepared and saved, including open data")
 
 }
+
+################################
+## OOH COVID CONSULTATIONS ##
+###############################
+
+create_ooh_cons <- function(filename, last_week) {
+  
+ooh_cons <- read_xlsx(paste0(data_folder, "GP_OOH_cons/WIDER IMPACT PC OOH_CONS DATA_", filename, ".xlsx")) %>% 
+  janitor::clean_names() %>%
+  rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
+         type=all_cons, count=number_of_consultations) %>%
+  mutate(week_ending = as.Date(week_ending, "%d/%m/%Y"),  #formatting date (is this required? doesn't seem to do anything)
+         scot = "Scotland") %>%
+  proper() %>% 
+  gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "area_name" = "Health board", 
+                            "hscp" = "HSC partnership", "scot" = "Scotland"))
+
+
+ooh_cons_covid <- ooh_cons %>% 
+  filter(type == "COVID",
+         between(week_ending, as.Date("2020-01-01"), as.Date("2022-04-03"))) %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
+  mutate(category = "All") # add columns required for prepare_final_data()
+
+ooh_cons_non_covid <- ooh_cons %>% 
+  filter(type == "NON COVID") %>% 
+  # Aggregating to make it faster to work with
+  group_by(week_ending, area_name, area_type, type) %>% 
+  summarise(count = sum(count, na.rm = T))  %>% ungroup() %>% 
+  mutate(category = "All") # add columns required for prepare_final_data()
+
+ooh_cons <- rbind(ooh_cons_covid, ooh_cons_non_covid)
+
+ooh_cons_all <- ooh_cons %>% # calculate all consultations
+  group_by(week_ending, area_name, area_type) %>% 
+  summarise(count = sum(count)) %>% ungroup() %>% 
+  mutate(type = "ALL", category = "All")
+
+ooh_cons <- rbind(ooh_cons, ooh_cons_all)
+
+rm(ooh_cons_all, ooh_cons_covid, ooh_cons_non_covid) # remove unneeded datasets
+  
+# Formatting file for shiny app
+prepare_final_data(dataset = ooh_cons, filename = "ooh_cons", last_week = last_week)
+
+print("ooh_cons.rds file prepared and saved, including open data")
+}
+
 
 ###############################################.
 ## A&E data ----

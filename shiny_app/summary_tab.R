@@ -37,6 +37,18 @@ observeEvent({input$measure_select}, {
                       label = "Step 3. Select type of appointment.",
                       choices = c("All", "New", "Return"),
                       selected = "All")
+  } else if (input$measure_select == "ooh") {
+    disable("adm_type")
+    enable("ooh_appt_type")
+    
+    updateSelectInput(session, "adm_type",
+                      label = "Step 3. Select type of admission (not available).")
+    
+    updateSelectInput(session, "ooh_appt_type",
+                      label = "Step 4. Select type of appointment for overall chart.",
+                      choices = c("All cases", "All consultations" = "ALL", 
+                                  "Covid consultations" = "COVID", "Non-covid consultations" = "NON COVID"), 
+                      selected = "All cases")
   } else {
     disable("adm_type")
 
@@ -62,9 +74,12 @@ spec_modal_op <- modalDialog(
   size = "l", align= "center",
   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
 )
+
 # Link action button click to modal launch
 observeEvent(input$btn_spec_groups_rapid, { showModal(spec_modal_rapid) })
 observeEvent(input$btn_spec_groups_op, { showModal(spec_modal_op) })
+
+
 
 ###############################################.
 #modal to describe dataset
@@ -80,25 +95,31 @@ observeEvent(input$btn_dataset_modal,
                    sex, broad deprivation category and specialty groups."),
                  p("The hospital admissions analyses are derived from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=37",
-                          "Rapid Preliminary Inpatient Data (RAPID)", target="_blank"),
-                   "dataset. This dataset is submitted daily to PHS and relates mainly to general acute care.
+                          "Rapid Preliminary Inpatient Data (RAPID) (external website)", target="_blank"),
+                   "dataset. The RAPID dataset is managed by ",
+                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/",
+                          "Public Health Scotland (PHS).",  target="_blank"), "This dataset is submitted daily to 
+                  PHS and relates mainly to general acute care.
                    Exclusions from the RAPID dataset are day cases, neonatal, maternity and
                    psychiatric care admissions. Admissions to the Golden Jubilee National Hospital are
-                   also not included. Admissions related to COVID-19 will be included in totals."),
+                   also not included. Admissions related to COVID-19 will be included in totals. 
+                  Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                 p("Hospital admissions are allocated to weeks based on the ISO8601 standard. Following this standard 
+                   the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 
+                   average of week 52 value as a comparator for 2020’s week 53."),
                  p("The normal source of information on hospital admissions is the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=5",
-                          "SMR01 (general inpatient and day cases) return.", target="_blank"),
+                          "SMR01 (general inpatient and day cases) return (external website).", target="_blank"),
                    "However, there is generally time lag in the submission of SMR01 to PHS.
                    Therefore, RAPID is being used for the immediate monitoring of the impact of
                    COVID-19 on admissions to hospital and it provides broadly comparable figures to SMR01 on
                    numbers of admissions."),
-                 p("Please, note that for NHS Forth Valley data is largely incomplete for the period presented and therefore
-                   the trends for this board need to be interpreted carefully."),
-                  p("Hospital admissions are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
-                 p("The RAPID dataset is managed by ",
-                   tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Predicting-Hospital-Activity/",
-                          "Public Health Scotland (PHS).",  target="_blank")),
-                 p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
+                 p("Please note that for NHS Forth Valley data is largely incomplete for the period presented and 
+                  therefore the trends for this board need to be interpreted carefully. In addition, from May 2022 onwards
+                  a patient's sex is no longer derived from their CHI number; the sex recorded during the 
+                  hospital admission is used. This has resulted in some minor differences in the assignation of sex across the 
+                  time period presented."),
+                 p(),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              } else if (input$measure_select == "aye") { #A&E ATTENDANCES MODAL
@@ -114,14 +135,14 @@ observeEvent(input$btn_dataset_modal,
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/Hospital-Site-List/",
                           "hospital list.",  target="_blank")),
                  p("Additional information relating to A&E activity is available from the ",
-                   tags$a(href="https://beta.isdscotland.org/find-publications-and-data/health-services/hospital-care/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/",
+                   tags$a(href="https://publichealthscotland.scot/publications/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics/nhs-performs-weekly-update-of-emergency-department-activity-and-waiting-time-statistics",
                           "NHS Performs - weekly update of emergency department activity and waiting time statistics.",
                            target="_blank")),
                  p("Numbers of A&E attendances will include both COVID-19 and non-COVID-19 related activity." ),
                  p("Attendances are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("Attendances to A&E departments data sourced from the ",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=3",
-                          "Accident and Emergency Datamart (A&E2).", target="_blank"),
+                          "Accident and Emergency Datamart (A&E2) (external website).", target="_blank"),
                    "The A&E2 dataset is managed by ",
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/",
                           "Public Health Scotland (PHS).",  target="_blank")),
@@ -148,15 +169,15 @@ observeEvent(input$btn_dataset_modal,
                  p("Figures by NHS health board include those calls made by residents of each health board area."),
                  p("Contacts are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of NHS24 activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                            target="_blank"), "."),
                  p("The NHS24 dataset is managed by ",
                    tags$a(href="https://publichealthscotland.scot/",
                           "Public Health Scotland",  target="_blank"), "and ",
                    tags$a(href="https://www.nhs24.scot/",
-                          "NHS 24",  target="_blank"), ".",
+                          "NHS 24 (external website)",  target="_blank"), ".",
                    "This analysis is drawn from the ",
-                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).", target="_blank")
+                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD) (external website).", target="_blank")
                  ),
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
@@ -172,17 +193,21 @@ observeEvent(input$btn_dataset_modal,
                    broad deprivation category (SIMD)."),
                  p("The charts provide a weekly summary of cases in the recent past and
                    historical trends for comparison purposes."),
-                 p("The figures presented in this tool exclude cases within any of the COVID-19
-                   hubs or assessment centres and relate only to cases concerning non-COVID
-                   issues. "),
+                 p("The figures presented in this tool relate to cases/consultations concerning non-COVID
+                   issues and cases/consultations within the COVID Pathway."),
+                 p("A 'Case' is used to identify a patient's single encounter (service contact) with the OOH Service. 
+                   Within a single case a patient may have multiple consultations with OOH health care professionals.  
+                   Please note that the total number of consultations may be higher than the total number of cases as individuals 
+                   may have more than one consultation during a single encounter with the Out of Hours service."),
                  p("Cases are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of the Primary Care Out of Hours service may
                    be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
+
                            target="_blank"), "."),
                  p("General Practice Out of Hours service data is sourced from the",
                    tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=113",
-                          "GP Out of Hours Dataset (OOH).", target="_blank"),
+                          "GP Out of Hours Dataset (OOH)(external website).", target="_blank"),
                    "The OOH dataset is managed by ",
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/GP-Out-of-Hours-Services/",
                           "Public Health Scotland (PHS).",  target="_blank")),
@@ -198,17 +223,25 @@ observeEvent(input$btn_dataset_modal,
                    relate to incidents concerning both COVID-19 and non-COVID issues. Please note that the source of this data is the Unscheduled Care
                    Datamart and represents a sub-set of the total Scottish Ambulance service activity. Figures include emergencies, where a vehicle arrived
                    at the scene of the incident, and excludes both data from resources which were cleared as ‘dealt with by another vehicle’ and air ambulance data."),
+                 p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
+                   tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
+                          "Unscheduled Care Operational Statistics", target="_blank"), ". This details unscheduled care demand, 
+                   response times and turnaround times. Please note that the data published by SAS is sourced from a 
+                   different operational system than that used for the PHS reporting. This means that the data published 
+                   by SAS will at times be slightly different to that reported by PHS source. The data published by PHS 
+                   is less timely than the data used for the SAS publication, however allows for data to be linked in order 
+                   to gain further insight into patient flow through unscheduled care."),
                  p("Calls are allocated to weeks based on the ISO8601 standard. Following this standard the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."),
                  p("If required, more detailed analysis of SAS activity may be available on request to ",
-                   tags$a(href="mailto:phs.isdunscheduledcare@nhs.net", "phs.isdunscheduledcare@nhs.net",
+                   tags$a(href="mailto:phs.unscheduledcare@phs.scot", "phs.unscheduledcare@phs.scot",
                            target="_blank"), "."),
                  p("The SAS dataset is managed by ",
                    tags$a(href="https://publichealthscotland.scot/",
                           "Public Health Scotland",  target="_blank"), "and ",
                    tags$a(href="https://www.scottishambulance.com/",
-                          "Scottish Ambulance Service",  target="_blank"), ".",
+                          "Scottish Ambulance Service (external website)",  target="_blank"), ".",
                    "This analysis is drawn from the ",
-                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD).", target="_blank")
+                   tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?SubID=111", "Unscheduled Care Datamart (UCD) (external website).", target="_blank")
                  ),
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
@@ -226,14 +259,14 @@ observeEvent(input$btn_dataset_modal,
                    and Social Care Partnerships because of the small numbers involved and the possibility for misinterpretation."),
                  p("The deaths data are derived from the National Records of Scotland (NRS) ",
                    tags$a(href="https://www.nrscotland.gov.uk/covid19stats",
-                          "weekly deaths",  target="_blank"), " dataset. Deaths related to COVID-19 are included in totals.
+                          "weekly deaths (external website)",  target="_blank"), " dataset. Deaths related to COVID-19 are included in totals.
                    Data are provisional and subject to revision."),
                  p("The figures are based on the date a death was registered rather than the date the death occurred. When someone dies,
                    their family (or a representative) have to make an appointment with a registrar to register the death.
                    Legally this must be done within 8 days, although in practice there is, on average, a 3 day gap between a
                    death occurring and being registered. More information on days between occurrence and registration can be be found on the ",
                    tags$a(href="https://www.nrscotland.gov.uk/statistics-and-data/statistics/statistics-by-theme/vital-events/general-background-information/births-and-deaths-days-until-registration",
-                          "NRS website", target="_blank"),"."),
+                          "NRS website (external website)", target="_blank"),"."),
                  p("The figures are reported by week, with each week running from Monday to Sunday (the ISO8601 standard week).
                    Moveable public holidays, when registration offices are closed, affect the number of registrations made in the
                    published weeks and in the corresponding weeks in previous years."),
@@ -244,9 +277,9 @@ observeEvent(input$btn_dataset_modal,
           this week is the 2015 count, rather than the 2015-19 average."),
                  p("The weekly deaths dataset is managed by ",
                    tags$a(href= "https://www.nrscotland.gov.uk/",
-                          "National Records of Scotland (NRS).",  target="_blank")),
+                          "National Records of Scotland (NRS) (external website).",  target="_blank")),
                  p("For more information on deaths and health inequalities during the pandemic, please read ",
-                   tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-weekly-excess-deaths/",
+                   tags$a(href = "https://publichealthscotland.scot/publications/covid-19-weekly-excess-deaths/covid-19-weekly-excess-deaths-health-inequalities-briefing/",
                           "this report.",  target="_blank")),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
@@ -268,10 +301,10 @@ observeEvent(input$btn_dataset_modal,
                      refers to Other Residential Categories as defined ",
                      "on our ",
                      tags$a(href="https://www.opendata.nhs.scot/dataset/non-standard-geography-codes-and-labels/resource/32164b83-c9ec-495a-ac9f-dbeeb6ed5e59",
-                            "Open Data portal", target = "_blank"), "."),
+                            "Open Data portal (external website)", target = "_blank"), "."),
                    p("The outpatient analyses are derived from the ",
                      tags$a(href="https://www.ndc.scot.nhs.uk/National-Datasets/data.asp?ID=1&SubID=4",
-                            "Scottish Morbidity Record (SMR00) dataset",
+                            "Scottish Morbidity Record (SMR00) dataset (external website)",
                             target="_blank"),". This dataset is submitted monthly ",
                      "to Public Health Scotland (PHS), and relates to outpatient ",
                      "care. All new and return appointments from consultant-led clinics are included; ",
@@ -279,10 +312,10 @@ observeEvent(input$btn_dataset_modal,
                      "Did Not Attend (DNA) appointments. For more ",
                      "information on outpatient attendances, please see our ",
                      tags$a(href= "https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=O&ID=374&Title=Outpatient%20Attendance",
-                            "Data Dictionary",  target="_blank"),
+                            "Data Dictionary (external website)",  target="_blank"),
                      ". Please note that there is a time lag between the submission of ",
                      "SMR00 to PHS, and the data being validated and ready for release. ",
-                     "Therefore, data up to June 27th are given. For data quality issues, please see the ", 
+                     "Therefore, weekly data up to 26th December 2021 and monthly data up to 31st December 2021 are given. For data quality issues, please see the ", 
                      tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
                             "Acute Activity and NHS Beds quarterly publication",  
 
@@ -292,7 +325,7 @@ observeEvent(input$btn_dataset_modal,
                    p("The SMR00 dataset is managed by Public Health Scotland (PHS). ",
                      "For current completeness estimates, please see ",
                      tags$a(href = "https://beta.isdscotland.org/products-and-services/data-management-hospital-activity/smr-completeness/",
-                            "the PHS website", target = "_blank"), "."),
+                            "SMR data completeness (external website)", target = "_blank"), " web page."),
                    p(tags$a(href = "https://www.publichealthscotland.scot/publications/statistical-disclosure-protocol/statistical-disclosure-protocol/",
                             "Statistical disclosure control", target = "_blank"), 
 
@@ -306,7 +339,7 @@ observeEvent(input$btn_dataset_modal,
 # Modal to explain SIMD and deprivation
 simd_modal <- modalDialog(
   h5("What is SIMD and deprivation?"),
-  p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD).",
+  p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
                    target="_blank"), "is the Scottish Government's
     official tool for identifying areas in Scotland with concentrations of deprivation
     by incorporating several different aspects of deprivation (multiple-deprivations)
@@ -343,6 +376,38 @@ moc_modal <- modalDialog(
   )
 # Link action button click to modal launch
 observeEvent(input$btn_modal_moc, { showModal(moc_modal) })
+
+
+###############################################.
+# Modal to explain ethnicity graphs
+eth_modal <- modalDialog(
+  h5(tags$b("Interpretation of this chart")),
+  p("The ethnic group field in the Scottish Morbidity Record (SMR) 
+  classifies the person according to their own perceived ethnic group and cultural 
+  background. More information can be found in the", 
+    tags$a(href="https://www.ndc.scot.nhs.uk/Dictionary-A-Z/Definitions/index.asp?Search=E&ID=243&Title=Ethnic%20Group", 
+           "Health & Social Care data dictionary web page (external website).",
+         target="_blank")),
+  p("It became mandatory for NHS Scotland organisations to record ethnic group 
+    on SMR outpatient (SMR00) returns from 1 February 2021. There is currently
+  significant variation in the completeness of ethnic group recording in new 
+  outpatient appointment records between NHS Boards. More information can be found in the
+    ", tags$a(href="https://www.isdscotland.org/products-and-Services/Data-Support-and-Monitoring/SMR-Ethnic-Group-Recording/",
+              "SMR Ethnic Group Recording (external website)", target="_blank")),
+  p("The following list is the current ethnicity classification (2011 Census categories) 
+  used by NHS Scotland organisations for SMR return purposes, and the ethnic groups 
+  that we have used in this dashboard."),
+  renderTable(eth_lookup), 
+  p("The ‘Missing’ ethnic group category includes those where ethnic group was 
+    recorded as 'Not Known', 'Refused/Not Provided by the Patient' or was not recorded at all."),
+  p("It is important to note that the trends for ethnic groups with small populations should be 
+  interpreted with caution as they will be subject to greater variability due to small numbers."),
+  size = "l",
+  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+)
+# Link action button click to modal launch 
+observeEvent(input$btn_modal_eth, { showModal(eth_modal) }) 
+
 
 
 ###############################################.
@@ -384,6 +449,15 @@ op_spec <- reactive({
              area_type == input$geotype_op &
              time_split == input$time_type)   
 
+})
+
+# # Outpatients dataset used for ethnicity charts
+op_eth <- reactive({
+  outpats %>%
+    filter(type == "eth" & 
+             area_type == "Scotland" &
+             admission_type == input$appt_type &
+             category %in% input$op_ethnicity)   
 })
 
 ###############################################.
@@ -428,9 +502,8 @@ output$data_explorer <- renderUI({
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
 
   #update date for outpatients and the rest is different
-  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "15 December 2021",
-                             TRUE ~ "1 December 2021")
-  
+  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "15 June 2022",
+                             TRUE ~ "6 July 2022")
 
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
@@ -445,10 +518,15 @@ output$data_explorer <- renderUI({
       if (input$measure_select == "nhs24"){
         tagList(
         p("The data used in this chart are taken from the Unscheduled Care Datamart.
-          As mentioned in the", tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/covid-19/covid-19-statistical-report/",
+          As mentioned in the", tags$a(href="https://publichealthscotland.scot/publications/covid-19-statistical-report",
                                                                                                                    "COVID-19 weekly report for Scotland",  target="_blank"),
-          "NHS 24 made changes to their service delivery to respond to COVID-19.  The data from March 2020
-          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time."))
+          "NHS 24 made changes to their service delivery to respond to COVID-19. The data from March 2020
+          does not reflect the full extent of the demand and activity being undertaken by NHS 24 at this time.
+          As of the 31st of March 2022 the COVID-19 Community Pathway will be closed. 
+          From this date patients who contact NHS 24 with Covid symptoms during the in-hours period will be 
+          advised to contact their own GP practice. For the out of hours period, the Out of Hours services will 
+          continue to manage Covid patients directed by NHS 24 as a matter of course. This will have an impact on 
+          the NHS 24 and the Out of Hours data data contained in the dashboard. "))
         },
       if (input$measure_select == "deaths"){
         tagList(
@@ -463,7 +541,9 @@ output$data_explorer <- renderUI({
         } else {
           plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
-      plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
+      
+     if (input$measure_select != "ooh" | (input$measure_select == "ooh" & input$ooh_appt_type == "All cases")) { 
+       tagList(plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
       plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
                    paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
@@ -473,6 +553,14 @@ output$data_explorer <- renderUI({
                             icon = icon('question-circle'))),
       fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))),
                column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))
+      )
+     } else {
+       tags$b(p("Out of Hours demographic data is only available for Cases. Please Select 'All cases' in Step 4.", style="text-align:center; font-size:16px"),
+       br(),
+       br(),
+       br())
+     }
+        
     )
 
   }
@@ -497,8 +585,6 @@ output$data_explorer <- renderUI({
     )
   } else if (input$measure_select == "aye") {
     tagList(#A&E Attendances
-    tags$em("Please note that a data recording issue has been identified and was rectified on 3/9/21 for the gender, age
-            and SIMD data for the week ending 20 September 2020, mainly affecting Perth and Kinross HSCP and NHS Tayside."),
     cut_charts(title= "Weekly attendances to A&E departments",
                source = "PHS AE2 Datamart", data_name = "aye"))
 
@@ -507,20 +593,66 @@ output$data_explorer <- renderUI({
                source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
   } else if (input$measure_select == "ooh") { #Out of hours cases
-    tagList(
-    tags$b(span("Please note that the data on this page excludes individuals coming to
-                Primary Care Out of Hours services via the COVID Pathway. PHS are
-                investigating this to better reflect Primary Care Out of Hours service
-                provision.", style = "color:red")),
-    br(),
-    tags$em("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH)
-           data was identified and was corrected on 23/09/2020– for more details please see ",
-                actionLink("jump_commentary_oohissue_sum", "commentary"), "."),
-    cut_charts(title= "Weekly cases in out of hours services",
+      if (input$ooh_appt_type == "All cases"){
+          tagList(
+           tags$b(span("Please note that the data on this page now includes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.",
+                       br(),
+                       br(),
+                       "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
+                       PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
+                       These will impact on Scotland figures and comparisons with previous years.", 
+                       style = "color:red")),
+             br(),
+    
+          cut_charts(title = "Weekly cases in out of hours services",
                source = "PHS GP OOH Datamart", data_name ="ooh"))
-
+        } else if(input$ooh_appt_type == "COVID") {
+          tagList(
+            tags$b(span("Please note that the data on this page now includes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", 
+                        br(),
+                        br(),
+                        "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
+                       PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
+                       These will impact on Scotland figures and comparisons with previous years.",
+                        style = "color:red")),
+            br(),
+            
+            cut_charts(title = "Weekly Covid related consultations in out of hours services",
+            source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
+        } else if(input$ooh_appt_type == "NON COVID"){
+          tagList(tags$b(span("Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
+                       PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
+                       These will impact on Scotland figures and comparisons with previous years.",
+                              style = "color:red")),
+            br(),
+            
+            cut_charts(title = "Weekly Non-covid related consultations in out of hours services",
+                       source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
+        } else if(input$ooh_appt_type == "ALL"){
+          tagList(
+            tags$b(span("Please note that the data on this page now includes individuals coming to
+                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", 
+                        br(),
+                        br(),
+                        "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
+                        PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
+                        These will impact on Scotland figures and comparisons with previous years.",
+                        style = "color:red")),
+            br(),
+            
+            cut_charts(title = "Weekly Non-covid related consultations in out of hours services",
+                       source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
+        }
+    
   } else if (input$measure_select == "sas") {
     tagList(# SAS data
+        p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
+        tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
+               "Unscheduled Care Operational Statistics (external website)", target="_blank"), ". The data published by SAS is sourced from a 
+        different operational system than that used for the PHS reporting. This means that the data published 
+        by SAS will at times be slightly different to that reported by PHS source."),
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service",
                source = "PHS Unscheduled Care Datamart", data_name ="sas"))
 
@@ -529,6 +661,31 @@ output$data_explorer <- renderUI({
                source = "NRS Death Registrations", data_name ="deaths")
 
   } else if (input$measure_select == "outpats") { # Outpatients data
+      eth_op_ui <- tagList(#Add ethnicity charts
+        fluidRow(column(6,
+                        h4(paste0(variation_title, "ethnic group")),
+                        tags$em("Please note that this data is only available by month.")),
+                 column(6,
+                        h4(paste0("Monthly number of ", dataset, " by ethnic group")),
+                        tags$em("Please note that this data is only available by month."))),
+        
+        ###Adding adm_type here to make clear what is selected
+        fluidRow(column(6,
+                        pickerInput("op_ethnicity", "Select one or more ethnic groups",
+                                    choices = eth_list_op, 
+                                    multiple = TRUE,
+                                    selected = eth_list_op,
+                                    options = list(
+                                      `actions-box` = TRUE))),
+                 column(6,
+                        actionButton("btn_modal_eth", "Interpretation of this chart", 
+                                     icon = icon('fas fa-exclamation-circle')))),
+        fluidRow(column(6,
+                        withSpinner(plotlyOutput("op_eth_var"))),
+                 column(6,
+                        withSpinner(plotlyOutput("op_eth_tot"))))
+      )
+      
     if(input$time_type == "Weekly"){
       tagList(tags$b(span("Please note that these data are for management information only, and care should",
                           "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
@@ -567,7 +724,9 @@ output$data_explorer <- renderUI({
               fluidRow(column(6,
                               withSpinner(plotlyOutput("op_moc_var"))),
                        column(6,
-                              withSpinner(plotlyOutput("op_moc_tot"))))
+                              withSpinner(plotlyOutput("op_moc_tot")))),
+              eth_op_ui
+                                          
       )
     } else if(input$time_type == "Monthly"){
       
@@ -608,7 +767,8 @@ output$data_explorer <- renderUI({
               fluidRow(column(6,
                               withSpinner(plotlyOutput("monthly_op_moc_var"))),
                        column(6,
-                              withSpinner(plotlyOutput("monthly_op_moc_tot"))))
+                              withSpinner(plotlyOutput("monthly_op_moc_tot")))),
+              eth_op_ui
       )
 
     } 
@@ -633,6 +793,7 @@ output$aye_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "tot
 
 # OOH charts
 output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
+output$ooh_cons_overall <- renderPlotly({plot_overall_chart(ooh_cons, data_name = "ooh_cons")})
 output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", data_name = "ooh")})
 output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", data_name = "ooh")})
 output$ooh_depr_var <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", data_name = "ooh")})
@@ -705,6 +866,22 @@ output$monthly_op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), ma
 output$monthly_op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80, op = T, period = "monthly")})
 
 
+output$op_eth_tot <- renderPlotly({
+  
+  plot_nodata(text_nodata = "Data is only available for Scotland")
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", type = "total", 
+                   data_name = "op", period = "monthly")})
+
+
+# plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due to small numbers") {
+#   text_na <- list(x = 5, y = 5, text = text_nodata , size = 20,
+#                   xref = "x", yref = "y",  showarrow = FALSE)
+
+ 
+output$op_eth_var <- renderPlotly({
+  plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", 
+                   data_name = "op", period = "monthly")})
+
 
 # Palette for specialty
 pal_spec <- reactive({
@@ -762,7 +939,23 @@ symbol_spec <- reactive({
 ###############################################.
 ## Data downloads ----
 ###############################################.
-
+ooh_download <- reactive({
+  
+  if(input$ooh_appt_type == "All cases") {
+    
+    filter_data(ooh) %>% 
+      rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
+      select(area_name, week_ending, count, starts_with("average"))
+    
+  } else {
+    filter_data(ooh_cons, data_name = "ooh_cons") %>% 
+      rename(average_2018_2019 = count_average) %>% 
+      mutate(week_ending = format(week_ending, "%d %b %y")) %>% 
+      select(area_name, week_ending, count, starts_with("average"))
+  }
+  
+})
 # For the charts at the moment the data download is for the overall one,
 # need to think how to allow downloading for each chart
 # Reactive dataset that gets the data the user is visualisaing ready to download
@@ -778,9 +971,7 @@ overall_data_download <- reactive({
     "nhs24" = filter_data(nhs24) %>% rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),
-    "ooh" = filter_data(ooh) %>% rename(average_2018_2019 = count_average) %>% 
-      mutate(week_ending = format(week_ending, "%d %b %y")) %>%
-      select(area_name, week_ending, count, starts_with("average")),
+    "ooh" = ooh_download(),
     "sas" = filter_data(sas) %>% rename(average_2018_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),
@@ -813,44 +1004,49 @@ output$download_chart_data <- downloadHandler(
 output$summary_comment <- renderUI({
   tagList(
     bsButton("jump_to_summary",label = "Go to data"), #this button can only be used once
-    h2("Summary - Outpatient appointments - 15th December 2021"),
-    p("Data are taken from Scottish Morbidity Record (SMR00), and show outpatient appointments
-      to week ending 27th June 2021. Outpatient information contained within this dashboard has been 
-      developed further, and monthly information is now available. Further information is available by 
-      following the 'Data source: SMR00' links on the dashboard."),
-    h4("Initial findings: outpatient appointments"),
+
+    h2("Summary - Outpatient appointments - 15th June 2022"),
+    p("Data are taken from Scottish Morbidity Record (SMR00) and show weekly outpatient appointments to week ending 26 December 2021, 
+      with monthly information shown to 31 December 2021. Further information is available by following the 'Data source: SMR00' 
+      links on the dashboard."),
+   
+      h4("Initial findings: outpatient appointments"),
     tags$ul(
-      tags$li("Outpatient appointments fell from the second week of March 2020; by week ending 19th April 2020,
-              outpatient appointments had fallen by over two-thirds (68%) compared to the average of the same week in 2018-19
-              (from an average of 87,049 in 2018-19 to 27,506 in 2020)."),
-      tags$li("Outpatient appointments have generally been recovering from end April 2020 onwards,
-               but are still not up to pre-pandemic levels. For example, by the end of June 2021, 
-               the numbers of appointments remain around 16% below the average of the same week in
-               2018-19."),
-      tags$li("This impact was similar across sexes, age groups and deprivation groups. 
-              However, between April and July 2020, the fall in appointments was 
-              greatest in patients aged 85 and over, dropping by almost three-quarters (-73%) 
-              while patients aged 15-44 dropped by two-thirds (-66%)."),
-
-      tags$li("There were larger relative falls for surgical (-76%) than medical (-64%) specialties.
-              By week ending 27th June 2021, medical specialties showed a reduction of about an eighth
-              (-13%) while surgical specialties decreased by over a fifth (-22%)
-              compared to the same week in 2018-19."),
-      tags$li("There were larger decreases and slower recovery in new outpatient appointments
-than in return outpatient appointments."),
-      tags$li("There has been a very large increase in the number of appointments carried out remotely through 
-              telephone and videolink. In week ending 27th June 2021, about a sixth (16%) of appointments
-
-              were conducted via telephone, and 1 in 20 (5%) were by videolink. These types of appointments
-              were uncommon prior to March 2020, but have consistently made up over a fifth of 
-              outpatient activity since then.")
+      tags$li("Outpatient appointments fell from the second week of March 2020 onwards: by week ending 19 April 2020, all outpatient 
+              appointments had fallen by over two-thirds (-68%) compared to the average of the same week in 2018–19 (from an average 
+              of 86,765 in 2018–19 to 27,523 in 2020)."),
+      tags$li("This impact was similar across sexes, age groups and deprivation groups. For example, the fall in all appointments was 
+              greatest in patients aged 85 and over, dropping by almost three-quarters (-72%), while appointments for patients aged 15–44 
+              dropped by two-thirds (-66%). However, by the week ending 26 December 2021, these reductions were 31% for patients aged 85 
+              and over and 28% for patients aged 15–44. "),
+      tags$li("There were larger relative falls for surgical (-76%) than medical (-64%) specialties in the early stages of the pandemic. 
+              However, by week ending 26 December 2021, medical specialties showed a reduction of over a quarter (-29%), while surgical 
+              specialties showed a reduction of over one third (-34%) compared to average values for the same week in 2018–19."),
+      tags$li("There were larger decreases and a slower recovery in new outpatient appointments
+              than in return outpatient appointments."),
+      tags$li("Outpatient appointments have generally been recovering from the end of April 2020 onwards but are still not up to 
+              pre-pandemic levels. For example, for the week ending 26 December 2021, the total number of appointments remains at around 
+              31% below the average of the same week in 2018–19."),
+      tags$li("There has been a very large increase in the number of appointments carried out remotely via telephone and videolink. 
+              In week ending 26th December 2021, just under one sixth (15%) of all appointments was conducted by telephone, 
+              and 1 in 25 (4%) was by videolink. These modes of clinical interaction were uncommon prior to March 2020 but have 
+              consistently made up around one fifth of outpatient activity since then."),
+      tags$li("The impact of the pandemic on outpatient appointments was similar across ethnic groups; however, interpretation by ethnic 
+              group is complicated by the mandating of recording of ethnic group on SMR outpatient (SMR00) returns from 1 February 2021. 
+              This is reflected in the fall in the number of appointments with a missing ethnic group, which were 22% lower by December 
+              2021 than the corresponding time in 2018–19."),
+      tags$li("In December 2021, appointments for patients with the 'White Scottish' ethnic group recorded were around 4% lower than the 
+              corresponding time in 2018–19; the number of appointments in other ethnic groups varies between 28% higher (‘Caribbean or 
+              Black’) and 4% lower (‘White Other’). It is important to note that the trends for ethnic groups with small populations should 
+              be interpreted with caution, as they will be subject to greater variability due to small numbers.")
       ),
     h4("Interpreting these figures"),
     p("Please exercise caution when interpreting these figures, as these data are for management information only.
-      For more information on methodology and data quality please see the ",
+      For more information on methodology and data quality, please see the ",
       tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
              "Acute Activity and NHS Beds quarterly publication.",
              target="_blank"),
+       
     h2("Summary - Revision of baseline OOH - 23rd September 2020"),
     p("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) data was
 identified and has now been corrected. OOH figures from January 2018 to 22nd March 2020 had previously
@@ -944,7 +1140,7 @@ output$deaths_commentary <- renderUI({
   tagList(
     h2("Excess mortality - 10th June 2020"),
     p("Each week National Records for Scotland (NRS) release provisional deaths data and a ",
-      tags$a(href="https://www.nrscotland.gov.uk/covid19stats", "report",  target="_blank"),
+      tags$a(href="https://www.nrscotland.gov.uk/covid19stats", "report (external website)",  target="_blank"),
 " about the numbers of deaths involving COVID-19 in Scotland.
 NRS report that weekly excess mortality (defined as deaths from any cause in 2020,
 both COVID-19 and non-COVID-19, compared with the average of the previous five years)

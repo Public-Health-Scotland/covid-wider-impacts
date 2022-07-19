@@ -25,34 +25,27 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("8 December 2021 - Systemic anti-cancer therapies data update."),
-                   tags$li("1 December 2021 - Monthly update of data (most sections)."),
-                   tags$li("3 November 2021 - Monthly update of data (most sections)."),
-                   tags$li("3 November 2021 - New data on opioid substitution therapy
-                             and drug treatment referrals."),
-                   tags$li("6 October 2021 - Monthly update of data (most sections)."),
-                   tags$li("6 October 2021 - New data on injury hospital admissions."),
-                   tags$li("1 September 2021 - Monthly update of data (most sections)."),
-                   tags$li("1 September 2021 - New data on substance misuse."),
-                   tags$li("4 August 2021 - Monthly update of data (most sections)."),
-                   tags$li("30 July 2021 - Cancer pathology data update.")
+                   tags$li("20 July 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("6 July 2022 - Monthly update of data (most sections)."),
+                   tags$li("6 July 2022 - Update on injuries data."),
+                   tags$li("29 June 2022 - Substance use data update and new dataset on A&E attendances due to substance misuse."),
+                   tags$li("15 June 2022 - Outpatient activity data update."),
+                   tags$li("1 June 2022 - Monthly update of data (most sections)."),
+                   tags$li("25 May 2022 - Additional data for the cardiovascular section: hospital admissions and excess mortality."),
+                   tags$li("25 May 2022 - Cancer pathology data update."),
+                   tags$li("30 March 2022 - New data on ambulance administered naloxone and update of substance use section."),
+                   tags$li("16 February 2022 - Adding ethnicity data to the outpatients activity dataset."),
+                   tags$li("2 February 2022 - Improvements to visualisations in pregnancy, births and babies, and child health section.")
                    ),
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("15 December 2021 - Systemic anti-cancer therapies data update."),
-                   tags$li("November 2021 - Cancer staging data."),
-                   tags$li("November/December 2021 - New data on ambulance administered naloxone."),
-                   tags$li("15 December 2021 - Outpatients data update"),
-                   tags$li("Please note that many of the datasets included in the dashboard will not
-                           be updated during the Christmas period"),
-                   tags$li("12 January 2021 - Monthly update of summary trends section."),
-                   tags$li("2 February 2021 - Monthly update of data (most sections).")
-
+                   tags$li("27 July 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("3 August 2022 - Monthly update of data (most sections).")
                  ),
                  size = "m",
-                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-               )
+                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
 
   ##############################################.
   # Sourcing server files for each tab ----
@@ -112,7 +105,7 @@ function(input, output, session) {
   source(file.path("sact_tab.R"),  local = TRUE)$value
 
   ###############################################.
-  # DCE tab
+  # DCE tab - Not in place yet
   # source(file.path("dce_tab.R"),  local = TRUE)$value
 
   ###############################################.
@@ -276,7 +269,7 @@ observeEvent(input$summary_button, ({
     updateCollapse(session, "collapse_commentary", open = "Injuries")}))
 
   observeEvent(input$drug_button, ({
-    updateCollapse(session, "collapse_commentary", open = "Substance Use")}))
+    updateCollapse(session, "collapse_commentary", open = "Substance use")}))
 
 } # server end
 

@@ -22,6 +22,7 @@ library(zoo)
 library(magrittr)
 library(shinymanager)
 library(lubridate)
+library(tidyr) # for uncount()
 
 ###############################################.
 ## Functions ----
@@ -52,9 +53,9 @@ intro_box <- function(title_box, button_name, description) {
 }
 
 
-###############################################.
-## Data ----
-###############################################.
+##############################################.
+# Data ----
+##############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
 area_type_op <- readRDS("data/area_type_op.rds")
 spec_lookup_rapid <- readRDS("data/spec_lookup_rapid.rds")
@@ -64,26 +65,38 @@ ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
 rapid <- readRDS("data/rapid.rds") #RAPID data
 aye <- readRDS("data/ae.rds") #A&E data
 ooh <- readRDS("data/ooh.rds") # OOH data
+ooh_cons <- readRDS("data/ooh_cons.rds") # OOH consultation data
 nhs24 <- readRDS("data/nhs24.rds") # OOH data
 sas <- readRDS("data/sas.rds") # OOH data
 deaths <- readRDS("data/deaths.rds") # deaths data
 outpats <- readRDS("data/outpats.rds") # outpatients data
 
 #Cardiovascular data
-ae_cardio <- readRDS("data/ae_cardio.rds") # A&E cardio data
+ae_cardio <- readRDS("data/ae_cardio.rds") %>% filter(type != 'dep') # A&E cardio data
 cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
 cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
 ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
 sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
+cardio_admissions <- readRDS("data/cardio_admissions.rds") # cardio admissions data
+cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
 
 #Cancer data
+
 cancer_data2 <- readRDS("data/cancer_data_2.rds")
 
-cancer_data_diff <- readRDS("data/cancer_data_diff.rds") %>%
+cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
   mutate(dep = factor(dep)) %>%
-  mutate(quarter = factor(quarter, levels = c("Oct-Dec 19", "Jan-Mar 20", "Apr-Jun 20", "Jul-Sep 20", "Oct-Dec 20"), ordered = TRUE))
+  mutate(quarter_no = factor(quarter_no, ordered = TRUE))
 
-cancer_extract_date <- "19 August 2021"
+cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
+  mutate(dep = factor(dep)) %>%
+  mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
+                                                    "Jul-Sep 2020", "Oct-Dec 2020",
+                                                    "Jan-Mar 2021", "Apr-Jun 2021",
+                                                    "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
+
+
+cancer_extract_date <- "04 April 2022"
 
 # SACT data
 sact_data <- readRDS("data/sact_data.rds")
@@ -128,8 +141,6 @@ sact_data_wk_inc <- sact_weekly_data %>%
 #
 # dce_extract_date <- "8 October 2021"
 
-
-
 #Injuries data
 ui_smr01_all <- readRDS("data/ui_smr01_all.rds")
 ui_smr01_rta <- readRDS("data/ui_smr01_rta.rds")
@@ -137,16 +148,16 @@ ui_smr01_poison <- readRDS("data/ui_smr01_poison.rds")
 ui_smr01_other <- readRDS("data/ui_smr01_other.rds")
 ui_smr01_falls <- readRDS("data/ui_smr01_falls.rds")
 ui_smr01_assaults <- readRDS("data/ui_smr01_assaults.rds")
-injuries_extract_date <- "13 September 2021"
+injuries_extract_date <- "6 July 2022"
 
 
 # mental health data
 mentalhealth_drugs <- readRDS("data/mentalhealth_drugs.rds")
-ae_mh <- readRDS("data/mh_A&E.rds")
+ae_mh <- readRDS("data/mh_A&E.rds") %>% filter(type != 'dep')
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "22 November 2021"
+child_extract_date <- "27 June 2022"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
@@ -164,7 +175,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "22 November 2021"
+immunisation_extract_date <- "27 June 2022"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -193,31 +204,31 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "11 November 2021"
+booking_extract_date <- "13 June 2022"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "15 November 2021"
+top_extract_date <- "14 June 2022"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "15 November 2021"
+mod_extract_date <- "13 June 2022"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
 mod_download <- readRDS("data/mod_download_data.rds")
 
 #inductions (pregnanacy tab)
-induct_extract_date <- "15 November 2021"
+induct_extract_date <- mod_extract_date
 induct_runchart <- readRDS("data/induct_runchart_data.rds")
 induct_scot <- readRDS("data/induct_scot_data.rds")
 induct_linechart <- readRDS("data/induct_linechart_data.rds")
 induct_download <- readRDS("data/induct_download_data.rds")
 
 #gestation at delivery (pregnanacy tab)
-gestation_extract_date <- "15 November 2021"
+gestation_extract_date <- mod_extract_date
 gestation_runchart <- readRDS("data/gestation_runchart_data.rds")
 gestation_scot <- readRDS("data/gestation_scot_data.rds")
 gestation_linechart <- readRDS("data/gestation_linechart_data.rds")
@@ -228,35 +239,39 @@ breastfeeding <- readRDS("data/breastfeeding.rds")
 #Child development data
 child_dev <- readRDS("data/child_dev.rds")
 child_dev_depr <- readRDS("data/child_dev_depr.rds")
+child_dev_domains <- readRDS("data/child_dev_domains.rds")
 
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "15 November 2021"
+apgar_extract_date <- "13 June 2022"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
 apgar_download <- readRDS("data/apgar_download_data.rds")
 
 # Preterm
-preterm_extract_date <- "14 October 2021"
+preterm_extract_date <- "13 June 2022"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
 
 # Tears (births and babies tab)
-tears_extract_date <- "15 November 2021"
+tears_extract_date <- apgar_extract_date
 tears_runchart <- readRDS("data/tears_runchart_data.rds")
 tears_scot <- readRDS("data/tears_scot_data.rds")
 tears_linechart <- readRDS("data/tears_linechart_data.rds")
 tears_download <- readRDS("data/tears_download_data.rds")
 
 #Drugs data
-ADP_names<-readRDS('data/ADP_names.rds')
-Health_board<-readRDS('data/Health_board.rds')
-DTR_data<-readRDS('data/DTR_data.rds')
-THN_by_HB<-readRDS('data/THN_by_HB.rds')
-# SASdata<-readRDS('data/SASdata.rds')
-OST_paid<-readRDS('data/OST_paid.rds')
-OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
+
+ ADP_names<-readRDS('data/ADP_names.rds')
+ Health_board<-readRDS('data/Health_board.rds')
+ DTR_data<-readRDS('data/DTR_data.rds')
+ THN_by_HB<-readRDS('data/THN_by_HB.rds')
+ SASdata<-readRDS('data/SASdata.rds')
+ OST_paid<-readRDS('data/OST_paid.rds')
+ OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
+ Drug_AE_attendances <- readRDS('data/Drug_AE_attendances.rds')
+
 
 ###############################################.
 ## Objects, names, lists ----
@@ -267,10 +282,15 @@ spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
                           "Paediatrics (medical & surgical)")) # specialty list
 spec_list_op <- sort(c(unique(spec_lookup_op$Grouping))) # specialty list
 
+#List of ethnic groups included in the outpatients by ethnicity section
+eth_list_op <- sort(c("White Scottish", "White Other British", "White Irish", "White Other", "White Polish",
+                      "Mixed", "Pakistani", "Indian", "Other Asian", "Chinese", "African",
+                      "Caribbean or Black", "Other ethnic group", "Missing"))
+
 data_list <- c(
   "Hospital admissions" = "rapid", "A&E attendances" = "aye",
   "NHS 24 completed contacts" = "nhs24",
-  "Out of hours cases" = "ooh", "Scottish Ambulance Service" = "sas",
+  "Out of hours cases and consultations" = "ooh", "Scottish Ambulance Service" = "sas",
   "Excess mortality" = "deaths",
   "Outpatient appointments" = "outpats")
 
@@ -302,8 +322,10 @@ data_list_childdev <- c("13-15 month review" = "13_15mnth",
 data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs",
                         "A&E cardiovascular attendances" = "ae_cardio",
                         "Cardiac procedures" = "cath_lab",
-                        "Cardiovascular OOH cases" = "ooh_cardiac",
+                        "Chest Pain OOH cases" = "ooh_cardiac",
                         "Cardiovascular SAS incidents" = "sas_cardiac",
+                        "Cardiovascular hospital admissions" = "cardio_admissions",
+                        "Cardiovascular deaths" = "cardio_deaths",
                         "6-in-1 first dose"  = "sixin_8wks",
                         "6-in-1 second dose" = "sixin_8wks_second",
                         "6-in-1 third dose" = "sixin_8wks_third",
@@ -326,11 +348,12 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Mental health prescribing" = "mhdrugs",
                         "A&E mental health attendances" = "ae_mh",
                         "Out of hours mental health cases" = "ooh_mh",
-                        "Cancer" = "cancer",
+                        "Cancer pathology" = "cancer",
                         "Take home naloxone kits"="THN_by_HB",
-                        "Drug and alchohol treatment referrals"="DTR_July_update",
+                        "Drug and alcohol treatment referrals"="DTR_data",
                         "Opioid substituation therapy prescribing"="OST_paid",
-                      #  "SAS naloxone administration"="SASdata"
+                        "SAS naloxone administration"="SASdata",
+                        'A&E attendances for drug overdose/intoxication'='Drug_AE',
                         "Weekly SACT activity" = "sact_weekly",
                         "Monthly SACT activity" = "sact_monthly",
                         "All unintentional injuries" = "ui_smr01_all",
@@ -338,7 +361,8 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Poisonings" = "ui_smr01_poison",
                         "Falls" = "ui_smr01_falls",
                         "Other" = "ui_smr01_other",
-                        "Assaults" = "ui_smr01_assaults"
+                        "Assaults" = "ui_smr01_assaults",
+                        "Out of hours consultations" = "ooh_cons"
                         )
 
 injury_data_list <- c("All unintentional injuries" = "ui_smr01_all",
@@ -382,6 +406,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Mesothelioma" = "Mesothelioma",
                       "Multiple Myeloma and malignant plasma cell neoplasms" = "Multiple Myeloma and malignant plasma cell neoplasms",
                       "Non-Melanoma Skin Cancer" = "Non-Melanoma Skin Cancer",
+                      "Non-Hodgkin Lymphoma" = "Non Hodgkin Lymphoma",
                       "Oesophagus" = "Oesophagus",
                       "Other" = "Other",
                       "Ovary - Females only" = "Ovary - Females only",
@@ -398,7 +423,8 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
 
 cardio_list <- c("Prescribing" = "drug_presc", "A&E attendances" = "aye",
                  "Out of hours cases" = "ooh_cardiac",
-                 "Scottish Ambulance Service" = "sas_cardiac", "Cardiac procedures" = "cath")
+                 "Scottish Ambulance Service" = "sas_cardiac", "Hospital admissions" = "cardio_admissions",
+                 "Excess mortality" = "cardio_deaths", "Cardiac procedures" = "cath")
 
 #List of data items available in step 2 of perinatal tab
 data_list_perinatal <- c("Stillbirths"="stillbirths",
@@ -425,9 +451,10 @@ pal_sex <- c('#000000', '#9ebcda','#8856a7')
 pal_overall <- c('#000000', '#009900')
 
 pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
+
 pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine groupings
 
-pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
+pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#0d38b0",
@@ -435,9 +462,11 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
                "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
                "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
-               "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141")
+               "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141",
+               "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff",
+               "APR 2022" = "#bcbddc")
 
-pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
+pal_child <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
                "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#0d38b0",
@@ -445,7 +474,9 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4',
                "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
                "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
                "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
-               "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141")
+               "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141",
+               "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff",
+               "APR 2022" = "#bcbddc")
 
 pal_inj <- list(pal_age,pal_depr,pal_sex)
 
@@ -467,25 +498,43 @@ pal_sact <- c('#3F3685',
               '#000000' )
 
 
-pal_cancer_diff <- c("1" = '#000080',
+pal_cancer_diff <- c("1 (least deprived)" = '#000080',
                      "2" = '#DCDCDC',
                      "3" = '#D3D3D3',
                      "4" = '#C0C0C0',
-                     "5" = '#0000FF')
+                     "5 (most deprived)" = '#0000FF')
 
-pal_dce <- c("1" = '#000080',
-             "2" = '#6A5ACD',
-             "3" = '#008B8B',
-             "4" = '#32CD32',
-             "NK" = '#FFD700')
 
-pal_dce_diff <- c("NHS Grampian" = '#000080',  "NHS Greater Glasgow & Clyde" = '#000080',
-                  "NHS Highland" = '#6A5ACD', "NHS Dumfries & Galloway" = '#6A5ACD',
-                  "NCA" = '#008B8B', "NHS Fife" = '#008B8B', "NHS Forth Valley" = '#008B8B',
-                  "SCAN" = '#32CD32',"NHS Orkney" = '#32CD32', "NHS Ayrshire & Arran" = '#32CD32',
-                  "WOSCAN" = '#FFD700', "NHS Shetland" = '#FFD700', "NHS Lothian" = '#FFD700',
-                  "Scotland" = '#FF8C00', "NHS Tayside" = '#FF8C00',
-                  "NHS Western Isles" = '#00FFFF', "NHS Borders" = '#00FFFF',"NHS Lanarkshire" = '#00FFFF')
+pal_eth <- c('#E39C8C',
+             '#d4d3d5',
+             '#83BB26',
+             '#80BCEA',
+             '#3F3685',
+             '#8FBFC2',
+             '#6B5C85',
+             '#0078D4',
+             '#C1DD93',
+             '#9B4393',
+             '#948DA3',
+             '#C73918',
+             '#1E7F84',
+             '#CDA1C9')
+
+
+# pal_dce <- c("1" = '#000080',
+#              "2" = '#6A5ACD',
+#              "3" = '#008B8B',
+#              "4" = '#32CD32',
+#              "NK" = '#FFD700')
+
+
+# pal_dce_diff <- c("NHS Grampian" = '#000080',  "NHS Greater Glasgow & Clyde" = '#000080',
+#                   "NHS Highland" = '#6A5ACD', "NHS Dumfries & Galloway" = '#6A5ACD',
+#                   "NCA" = '#008B8B', "NHS Fife" = '#008B8B', "NHS Forth Valley" = '#008B8B',
+#                   "SCAN" = '#32CD32',"NHS Orkney" = '#32CD32', "NHS Ayrshire & Arran" = '#32CD32',
+#                   "WOSCAN" = '#FFD700', "NHS Shetland" = '#FFD700', "NHS Lothian" = '#FFD700',
+#                   "Scotland" = '#FF8C00', "NHS Tayside" = '#FF8C00',
+#                   "NHS Western Isles" = '#00FFFF', "NHS Borders" = '#00FFFF',"NHS Lanarkshire" = '#00FFFF')
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
@@ -498,5 +547,8 @@ yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4
 bttn_remove <-  list('select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
                      'autoScale2d',   'toggleSpikelines',  'hoverCompareCartesian',
                      'hoverClosestCartesian', 'zoom2d', 'pan2d', 'resetScale2d')
+
+# Plot heights
+height_run_chart = "35em"
 
 ## END
