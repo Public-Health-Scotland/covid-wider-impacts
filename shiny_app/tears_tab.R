@@ -417,7 +417,7 @@ output$tears_commentary <- renderUI({
   tagList(
     bsButton("jump_to_tears",label = "Go to data"), #this button can only be used once
     h2("Perineal tears - 3rd August 2022"),
-    p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births that result in a tear this month is likely to change in future releases of the dashboard. Data submissions from NHS Forth Valley were insufficient to report for April 2022. These will be updated in future dashboard releases."),
+    p("Data are thought to be incomplete for NHS Fife and NHS Forth Valley in April 2022, so the proportion of births that result in a tear this month is likely to change in future releases of the dashboard. "),
     h2("Perineal tears - 2nd February 2022"),
     p("The percentage of women resident in NHS Lanarkshire giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation, and who have a third or fourth degree perineal tear has been above the pre-pandemic average for six successive quarters (covering the period April 2020-Sept 2021). The pre-pandemic rate was 3% and that for July-Sept 2021 3.7%. It is important to note that some women resident in NHS Lanarkshire receive delivery care from bordering health boards.  At Scotland level the pre-pandemic rate of third and fourth degree perineal tears was 3.5% and that for July-Sept 2021 was 3.2%.  NHS Lanarkshire have been made aware of this data and PHS will continue to monitor."),
     h2("Perineal tears - 3rd November 2021"),
