@@ -472,6 +472,8 @@ observeEvent(input$switch_to_gestation,{
 output$gestation_commentary <- renderUI({
   tagList(
     bsButton("jump_to_gestation",label = "Go to data"), #this button can only be used once
+    h2("Gestation at delivery - 3rd August 2022"),
+    p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births that are delivered pre-term and post-term in this month are likely to change in future releases of the dashboard. Data submissions from NHS Forth Valley were insufficient to report for April 2022. These will be updated in future dashboard releases."),
     h2("Gestation at delivery - 6th July 2022"),
     p("Data are thought to be incomplete for NHS Forth Valley in March 2022 and for NHS Fife in February 2022, so the proportion of births that are delivered pre-term and post-term in these months are likely to change in future releases of the dashboard."),
     h2("Gestation at delivery - 1st June 2022"),
