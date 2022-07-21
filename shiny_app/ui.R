@@ -1,6 +1,6 @@
 #UI
 
-  # secure_app( #uncomment if needing password protection
+  secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
@@ -869,6 +869,6 @@ tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
     ) # page bracket
  )# taglist bracket
 
- # )#secure app
+ )#secure app
 
 #END
