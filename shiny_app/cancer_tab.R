@@ -209,7 +209,7 @@ output$cancer_explorer2 <- renderUI({
       pandemic.  It is important to understand whether fewer patients have been diagnosed with cancer as a
       result of these changes.  The Scottish Cancer Registry published its high quality figures on cancer
       incidence for 2020 on 2nd June 2022.  As a proxy measure of new cancer diagnoses, this dashboard presents
-      numbers of individuals from whom a pathology sample found cancer in 2020/2021/2022 and compares them to 2019.
+      numbers of individuals from whom a pathology sample found cancer in 2020 through to 2022 and compares them to 2019.
       While only proxy measures, the size of the changes corresponds approximately with those reported by cancer clinicians."),
     p(strong("Note - this does not include all patients who have been newly diagnosed with cancer (by other methods), 
               and will also include some patients who are being followed-up from a pre-2019 diagnosis of cancer.")),
@@ -242,9 +242,9 @@ output$cancer_explorer2 <- renderUI({
       "fewer breast cancers (a total fall of ",
       strong ("15.0%", style = "font-family: 'arial'; font-si20pt;"),
       "); ",
-      strong ("596 ", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("529 ", style = "font-family: 'arial'; font-si20pt;"),
       "fewer prostate cancers (a total fall of ",
-      strong ("19.0%", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("16.8%", style = "font-family: 'arial'; font-si20pt;"),
       "); and ",
       strong ("825 ", style = "font-family: 'arial'; font-si20pt;"),
       "fewer colorectal cancers (a total fall of ",
@@ -261,7 +261,7 @@ output$cancer_explorer2 <- renderUI({
       "); ",
       strong ("508 ", style = "font-family: 'arial'; font-si20pt;"),
       "more prostate cancers (a total increase of ",
-      strong ("16%", style = "font-family: 'arial'; font-si20pt;"),
+      strong ("16.2%", style = "font-family: 'arial'; font-si20pt;"),
       "); and ",
       strong ("30 ", style = "font-family: 'arial'; font-si20pt;"),
       "more colorectal cancers (a total increase of less than",
@@ -400,7 +400,7 @@ output$cancer_commentary <- renderUI({
     h4(strong("Update 27/07/2022: For pathology data to 2nd February 2022 (extracted 02/06/2022)")),
     p("In 2022 (weeks ending 5th January to 2nd February), there was little difference in the total number of individuals with a pathological
       diagnosis of cancer (Excl.C44) compared with those in 2019 over the same dates (4046 and 3986 in 2022 and 2019 respectively, a difference
-      of approximately 0.01%). It should be noted that there are usually fewer cancer diagnoses in late December and early 
+      of approximately 1.5%). It should be noted that there are usually fewer cancer diagnoses in late December and early 
       January because of seasonal holidays, so the interpretation of results from the first few weeks of 2022 should be 
       made with caution."),
     p("For this update, we review patterns in the most common types of cancer for early 2022 as well as
@@ -413,8 +413,8 @@ output$cancer_commentary <- renderUI({
       tags$li("Lung cancer: 230 versus 274 pathological diagnoses.  
               This indicates a continued deficit (-16%) which was also seen through 2021"),
     
-      tags$li("Breast cancer (females only):  811 versus 746 pathological diagnoses. 
-              This indicates an increase in diagnoses of 8% after the return to typical numbers of diagnoses in 2021."),
+      tags$li("Breast cancer (females only):  804 versus 739 pathological diagnoses. 
+              This indicates an increase in diagnoses of 9% after the return to typical numbers of diagnoses in 2021."),
     
       tags$li("Prostate cancer:  476 versus 350 pathological diagnoses.
               This indicates a further increase in diagnoses of  36%, a continuation of the increase seen in 2021."),
@@ -425,31 +425,30 @@ output$cancer_commentary <- renderUI({
       tags$li("Liver and intrahepatic bile ducts: 38 versus 29 pathological diagnoses. 
               This indicates an increase of 31%, a continued increase in diagnoses also seen in 2021."),
     
-      tags$li("Oesophagus: 112 versus 104 pathological diagnoses.  This indicates a
+      tags$li("Oesophagus: 112 versus 104 pathological diagnoses.  This indicates an increase of 8% and a
               continuation of the increase in diagnoses seen in 2021.")),
   
   p("These early results therefore show a mixture of some continued under-diagnoses and some “catching-up” 
       with the under-diagnoses seen earlier in the pandemic."),
-  br(),
     
     h4(strong("Revisions of 2021 data")),
     p("As pathology data are continually updated, a revision of the January to week ending 27th December in 2021 and 2019, 
       in this latest extract is given below:"),
     tags$ul(
       tags$li("Lung cancer: 2,324 versus 2,833 pathological diagnoses; a decrease
-              of 583 individuals, or 20.1% lower."),
+              of 509 individuals, or 17.9% lower."),
       
       tags$li("Breast cancer (females only): 5,322 versus 5,315 pathological diagnoses; 
               a decrease of 7 individuals, or less than 1% lower"),
       
       tags$li("Prostate cancer: 3,651 versus 3,143 pathological diagnoses; an increase
-              of 508 individuals, or 16% higher."),
+              of 508 individuals, or 16.2% higher."),
       
       tags$li("Colorectal (bowel) cancer: 4,071 versus 4,041 pathological diagnoses; an
               increase of 30 individuals, or less than 1% higher."),
       
       tags$li("Liver and intrahepatic bile ducts: 380 versus 330 pathological diagnoses;
-              an increase of 50 individuals, or 15.1% higher."),
+              an increase of 50 individuals, or 15.2% higher."),
       
       tags$li("Oesophagus: 1184 versus 1006 pathological diagnoses; an increase
               of 178 individuals, or 17.7% higher.")),
