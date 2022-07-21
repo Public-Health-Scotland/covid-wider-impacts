@@ -276,6 +276,12 @@ tears_download <- readRDS("data/tears_download_data.rds")
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
+ 
+# List of sections in Home tab
+home_list <- c("About" = "about",
+                "Using the dashboard" = "use",
+                "Further information" = "info",
+                "Accessibility" = "accessibility")
 
 spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
                           "Medical (incl. Cardiology & Cancer)",
