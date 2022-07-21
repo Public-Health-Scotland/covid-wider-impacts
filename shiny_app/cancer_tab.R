@@ -330,7 +330,7 @@ output$cancer_commentary <- renderUI({
   tagList(
     bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
     
-    h3(strong("Cancer in Scotland in 2019/2020/2021/2022")),
+    h3(strong("Cancer in Scotland in 2019 to 2022")),
     p(strong("Note: as the information provided in this dashboard is updated, it will both add more recent 
              data and may also change historical data. This commentary includes reference to pathological specimens 
              reported to the week ending 2nd February 2022, which were available for inclusion in the analysis 
@@ -365,30 +365,29 @@ output$cancer_commentary <- renderUI({
       have pathological confirmation, though this varies by the type of cancer."),
     
     p("There is generally a 2-3 month time lag between the pathology sample being reported on by the laboratory and 
-      the complete data to have been received and processed by the Scottish Cancer Registry; as such the data shown 
+      the complete data being received and processed by the Scottish Cancer Registry; as such the data shown 
       in the dashboard are for pathological samples taken for patients to the 2nd February 2022."),
     
-    p("Any observed differences in numbers of pathologically confirmed cancers in 2020 (or 2021/2022) compared to 2019 could be due to changes in:"),
+    p("Any observed differences in numbers of pathologically confirmed cancers from 2020 onwards, compared to 2019, could be due to changes in:"),
     tags$ul(
       tags$li("patients seeking or obtaining an initial medical consultation"),
       tags$li("availability of cancer screening"),
       tags$li("availability of diagnostic services"),
       tags$li("treatment (particularly surgery, which may provide the pathology sample)"),
-      tags$li("completeness of pathology data")),
+      tags$li("completeness of pathology data"),
+      tags$li("true changes in cancer occurence (incidence)")),
     
     p("Since the definitive 2020 cancer incidence data were published in June 2022, quality assurance 
-      work is being carried out to validate the pathology dashboard figures. "),
+      work is being carried out to validate the pathology dashboard figures."),
     
     
     h4(strong("Overall trends in pathologically confirmed cancers")),
     p("In 2020, numbers were similar to 2019 until towards the end of March. After the first national lockdown, 
       the numbers fell by about 40% of those seen in comparable weeks in 2019. Numbers then rose from late April 2020. 
       Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
-      pandemic by 26th February 2021, when the latest data were available, although this varied by cancer type."),
-    p("In 2021, numbers had returned closer to those seen in 2019.For all cancers combined (excluding non-melanoma skin cancers), 
-      the weekly numbers of patients with pathologically confirmed cancers were close to those before the pandemic, 
-      although this varied by cancer type and there were some notably higher and lower than expected numbers (see relevant updates)."),
-    p("In 2022, the trend observed for January is in line with 2019,2020 and 2021."),
+      pandemic by the end of September 2020. It should be noted that there were important variations in patterns between types of cancer."),
+    p("In 2021, overall numbers remained close to those seen in 2019.  This varied by cancer type and there were some 
+      notably higher and lower than expected numbers (see relevant updates)."),
     
     #################################################################################################################   .
     
@@ -401,13 +400,41 @@ output$cancer_commentary <- renderUI({
     h4(strong("Update 27/07/2022: For pathology data to 2nd February 2022 (extracted 02/06/2022)")),
     p("In 2022 (weeks ending 5th January to 2nd February), there was little difference in the total number of individuals with a pathological
       diagnosis of cancer (Excl.C44) compared with those in 2019 over the same dates (4046 and 3986 in 2022 and 2019 respectively, a difference
-      of approximately 0.01%)."),
-    p("In 2021 (weeks ending 5th January to 27th December), there was little difference in the total number
-      of individuals with a pathological diagnosis of cancer (Excl. C44) compared with those in 2019 (33162 and 33345 in 2021 and 2019
-      respectively, a difference of approximately 0.6%).  However, within cancer sites, some were higher and some lower than
-      expected in 2021 compared with 2019."),
+      of approximately 0.01%). It should be noted that there are usually fewer cancer diagnoses in late December and early 
+      January because of seasonal holidays, so the interpretation of results from the first few weeks of 2022 should be 
+      made with caution."),
+    p("For this update, we review patterns in the most common types of cancer for early 2022 as well as
+      updating the results for the calendar year 2021."),
     
-    p("Among the most common cancer types, comparing January to week ending 27th December in 2021 and 2019, respectively:"),
+    h4(strong("Early 2022 data")),
+    p("Among the most common cancer types, comparing January to week ending 2nd February in 2022 and 2019, respectively:"),
+    
+    tags$ul(
+      tags$li("Lung cancer: 230 versus 274 pathological diagnoses.  
+              This indicates a continued deficit (-16%) which was also seen through 2021"),
+    
+      tags$li("Breast cancer (females only):  811 versus 746 pathological diagnoses. 
+              This indicates an increase in diagnoses of 8% after the return to typical numbers of diagnoses in 2021."),
+    
+      tags$li("Prostate cancer:  476 versus 350 pathological diagnoses.
+              This indicates a further increase in diagnoses of  36%, a continuation of the increase seen in 2021."),
+    
+      tags$li("Colorectal (bowel) cancer: 538 versus 486 pathological diagnoses.  This indicates an
+              increase of 11% after the return to typical number of diagnoses in 2021."),
+    
+      tags$li("Liver and intrahepatic bile ducts: 38 versus 29 pathological diagnoses. 
+              This indicates an increase of 31%, a continued increase in diagnoses also seen in 2021."),
+    
+      tags$li("Oesophagus: 112 versus 104 pathological diagnoses.  This indicates a
+              continuation of the increase in diagnoses seen in 2021.")),
+  
+  p("These early results therefore show a mixture of some continued under-diagnoses and some “catching-up” 
+      with the under-diagnoses seen earlier in the pandemic."),
+  br(),
+    
+    h4(strong("Revisions of 2021 data")),
+    p("As pathology data are continually updated, a revision of the January to week ending 27th December in 2021 and 2019, 
+      in this latest extract is given below:"),
     tags$ul(
       tags$li("Lung cancer: 2,324 versus 2,833 pathological diagnoses; a decrease
               of 583 individuals, or 20.1% lower."),
@@ -445,20 +472,6 @@ output$cancer_commentary <- renderUI({
       
        tags$li("Prostate: 3651 (2021) and 2614 (2020) compared with 3143 in 2019.  That is, down only 21 patients in total by December 2021 – 
               suggesting that those missing in 2020 were largely identified in 2021 and there is little ongoing deficit.")),
-    
-    # tags$li("Lung cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 19.3% lower."),
-    
-    # tags$li("Breast cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 7.6% lower."),
-    # 
-    # tags$li("Prostate cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 0.4% lower."),
-    # 
-    # tags$li("Colorectal(bowel) cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10% lower."),
-    # 
-    # tags$li("Liver and intrahepatic bile ducts: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.5% higher."),
-    # 
-    # tags$li("Oesophagus: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.3% higher."),
-    # 
-    # tags$li("Cervical: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10.2% lower.")),
     
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
              data to the end of December 2021 compared to 2019:")),
