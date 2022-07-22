@@ -206,6 +206,22 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count)
 
     }
+    
+    # Add a range slider to filter the time period in the chart
+    xaxis_plots[["rangeslider"]] <- "week_ending"
+    
+    # For annotation
+    zoom_hover_text =
+      "Drag the markers at either end of<br>the bar to view specific time periods"
+    
+    # We need an annotation to show user how to use the rangeslider
+    zoom_annotation =
+      list(text = "Drag to zoom", borderpad = 2,
+           hovertext = zoom_hover_text,
+           showarrow = TRUE, ax = 0, ay = 18,
+           x = 0, xref = "paper", xanchor = "left",
+           y = -0.35,
+           yref = "paper", yanchor = "middle")
 
     #Creating time trend plot
     trend_plot %>%
@@ -215,7 +231,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
+             legend = list(orientation = "h", x=0, y=1.2),
+             annotations = zoom_annotation) %>% #position of legend
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 
@@ -271,6 +288,10 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
+    
+    # Add a range slider to filter the time period in the chart
+    xaxis_plots[["rangeslider"]] <- "xvar"
+      
 
     hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
                                                        "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
@@ -310,6 +331,19 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     tooltip_trend <- c(paste0(period_data,
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
+    
+    # For annotation
+    zoom_hover_text =
+      "Drag the markers at either end of<br>the bar to view specific time periods"
+    
+    # We need an annotation to show user how to use the rangeslider
+    zoom_annotation =
+      list(text = "Drag to zoom", borderpad = 2,
+           hovertext = zoom_hover_text,
+           showarrow = TRUE, ax = 0, ay = 18,
+           x = 0, xref = "paper", xanchor = "left",
+           y = -0.35,
+           yref = "paper", yanchor = "middle")
 
     #Creating time trend plot
     plot_ly(data=trend_data, x=~get(xvar)) %>%
@@ -323,10 +357,14 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                 name = hist_legend_previous) %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
+             yaxis = yaxis_plots, 
+             xaxis = xaxis_plots,
+             legend = list(orientation = "h", x=0, y=1.2), #position of legend
+             annotations = zoom_annotation) %>% 
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+   # list(rangeslider = list(type = "xvar")),
+
 
   }
 
@@ -1374,7 +1412,7 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 
     #Modifying standard layout
     yaxis_plots[["title"]] <- "% change from 2018-19 average"
-
+    
     #Creating time trend plot
     trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation)
 
@@ -1407,18 +1445,36 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 
   }
 
+  # Add a range slider to filter the time period in the chart
+  xaxis_plots[["rangeslider"]] <- "week_ending"
+  
+  # For annotation
+  zoom_hover_text =
+    "Drag the markers at either end of<br>the bar to view specific time periods"
+  
+  # We need an annotation to show user how to use the rangeslider
+  zoom_annotation =
+    list(text = "Drag to zoom", borderpad = 2,
+         hovertext = zoom_hover_text,
+         showarrow = TRUE, ax = 0, ay = 18,
+         x = 0, xref = "paper", xanchor = "left",
+         y = -0.35,
+         yref = "paper", yanchor = "middle")
 
   #Creating time trend plot
   trend_plot %>%
-    add_trace(type = 'scatter', mode = 'lines+markers',
-              color = ~spec, colors = pal_spec(), marker = list(size = 8),
-              symbol = ~spec, symbols = symbol_spec(),
+    add_trace(type = 'scatter', mode = 'lines',
+              color = ~spec, colors = pal_spec(), 
+              #marker = list(size = 8),
+              #symbol = ~spec, 
+              #symbols = symbol_spec(),
               text=tooltip_trend, hoverinfo="text") %>%
     #Layout
     layout(margin = list(b = marg, t=5), #to avoid labels getting cut out
-           showlegend = TRUE, # always show legen
+           showlegend = TRUE, # always show legend
            yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.5)) %>% # position of legend
+           legend = list(orientation = "h", x=0, y=1.2), # position of legend
+           annotations = zoom_annotation) %>% 
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 }
