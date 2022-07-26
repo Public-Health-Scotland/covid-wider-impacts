@@ -819,33 +819,7 @@ plot_sact_wk_incidence_chart_area <- function(sact_wk_dataset) {
     sact_tooltip_lockdown <- c(paste0("Start of 1st lockdown"))
 
 
-    # Function for vertical line at start of lockdown
-
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
+   
 
     # #Creating time trend plot for weekly incidence
 
@@ -920,30 +894,6 @@ plot_sact_wk_incidence_chart_treatment <- function(sact_wk_dataset) {
 
     # Function for vertical line at start of lockdown
 
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
 
 
     # #Creating time trend plot for weekly incidence
@@ -995,7 +945,7 @@ plot_sact_wk_incidence_chart_treatment <- function(sact_wk_dataset) {
 }
 
 
-################################################################################
+################################################################################.
 
 ## 3. WEEKLY DIFFERENCE
 
@@ -1020,32 +970,6 @@ plot_sact_wk_difference_chart <- function(sact_wk_dataset) {
                                     "Percentage change (%):", paste0(format(round(sact_wk_dataset$week_on_refweek_perc, 2), nsmall = 2), "%"),
                                     "<br>",
                                     "Area: ", sact_wk_dataset$area))
-
-    # Function for verical line at start of lockdown
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
 
 
     # #Creating time trend plot for difference
@@ -1112,32 +1036,7 @@ plot_sact_wk_difference_chart_area <- function(sact_wk_dataset) {
                                     "<br>",
                                     "Area: ", sact_wk_dataset$area))
 
-    # Function for verical line at start of lockdown
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
+ 
 
     # #Creating time trend plot for difference
 
@@ -1206,33 +1105,7 @@ plot_sact_wk_difference_chart_treatment <- function(sact_wk_dataset) {
                                     "<br>",
                                     "Administration Route: ", sact_wk_dataset$treatment))
 
-    # Function for verical line at start of lockdown
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-
+ 
     # #Creating time trend plot for difference
 
     plot_ly(data=sact_wk_dataset) %>%
@@ -2298,14 +2171,15 @@ add_vline = function(fig, x, text, text_align = "center", text_y = 1,
                      line_settings = list(color = "grey", dash = "dash"),
                      hovertext = NULL) {
 
+  # This check works locally but not when deployed, not sure why! JV 26/7/22
   # plot_dodata() inserts the string _no_data_plot_marker_ as the name of the
   # annotation. So if that's included in the JSON data plotly generates, we
   # know it's an empty plot saying there's no data
-  no_data_plot =
-    str_detect(plotly_json(fig)[["x"]][["data"]], "_no_data_plot_marker_")
+  # no_data_plot =
+  #   str_detect(plotly_json(fig)[["x"]][["data"]], "_no_data_plot_marker_")
 
   # Don't add the annotation to an empty plot
-  if (isFALSE(no_data_plot)) {
+  # if (isFALSE(no_data_plot)) {
     fig =
       layout(fig,
              shapes = list(type = "line", line = line_settings,
@@ -2314,7 +2188,7 @@ add_vline = function(fig, x, text, text_align = "center", text_y = 1,
                                 x = x, xanchor = text_align, hovertext = hovertext,
                                 y = text_y, yref = "paper", yanchor = text_yanchor),
              margin = margin)
-  }
+  # }
 
 
 
