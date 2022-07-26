@@ -368,7 +368,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                  mainPanel(width = 12,
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
-                              ), # tabpanel bracket
+                              ) #, # tabpanel bracket
 
                         ###############################################.
                         ## DCE ----
@@ -434,7 +434,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                    uiOutput("dce_explorer2")
                         #          )# mainPanel bracket
                         #       ) # tabpanel bracket
-                        # )  , # navbar bracket
+                        )  , # navbar bracket
 
 ##############################################.
 # Unintentional Injuries ----
@@ -537,7 +537,7 @@ tabPanel(title = "Termination of pregnancy", value = "terminations",
 # ############################################.
 # Births and Babies menu ----
 # ###########################################.
-#navbarMenu("Births and babies", icon = icon("baby"),
+navbarMenu("Births and babies", icon = icon("baby"),
 ##############################################.
 # Inductions ----
 ##############################################.
