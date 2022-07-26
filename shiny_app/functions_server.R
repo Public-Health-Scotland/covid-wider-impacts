@@ -15,7 +15,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
   if (split != FALSE) {
     if (tab == "summary") {
-      if (input$measure_select != "outpats") {
+      if (input$`summary-measure` != "outpats") {
         trend_data <- dataset %>% # filtering data by cut and area name
           filter(type == split & area_name == input$geoname)
       } else { #for outpatients data

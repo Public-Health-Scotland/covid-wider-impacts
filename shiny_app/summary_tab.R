@@ -21,15 +21,15 @@ output$geoname_op_ui <- renderUI({
 
 # Disabling  admissions type if no admissions to hospital selected and
 # updating labels to say it's not available
-observeEvent({input$measure_select}, {
-  if (input$measure_select == "rapid") {
+observeEvent({input$`summary-measure`}, {
+  if (input$`summary-measure` == "rapid") {
     enable("adm_type")
 
     updateSelectInput(session, "adm_type",
                       label = "Step 3. Select type of admission.",
                       choices = c("All", "Emergency", "Planned"),
                       selected = "All")
-  } else if (input$measure_select == "outpats") {
+  } else if (input$`summary-measure` == "outpats") {
     disable("adm_type")
     enable("appt_type")
 
@@ -37,7 +37,7 @@ observeEvent({input$measure_select}, {
                       label = "Step 3. Select type of appointment.",
                       choices = c("All", "New", "Return"),
                       selected = "All")
-  } else if (input$measure_select == "ooh") {
+  } else if (input$`summary-measure` == "ooh") {
     disable("adm_type")
     enable("ooh_appt_type")
     
@@ -86,7 +86,7 @@ observeEvent(input$btn_spec_groups_op, { showModal(spec_modal_op) })
 # Link action button click to modal launch
 observeEvent(input$btn_dataset_modal,
 
-             if (input$measure_select == "rapid") {
+             if (input$`summary-measure` == "rapid") {
                showModal(modalDialog(#RAPID ADMISSIONS MODAL
                  title = "What is the data source?",
                  p("The analyses shown here are derived from person level hospital admissions
@@ -122,7 +122,7 @@ observeEvent(input$btn_dataset_modal,
                  p(),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-             } else if (input$measure_select == "aye") { #A&E ATTENDANCES MODAL
+             } else if (input$`summary-measure` == "aye") { #A&E ATTENDANCES MODAL
                showModal(modalDialog(
                  title = "What is the data source?",
                  p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments)
@@ -149,7 +149,7 @@ observeEvent(input$btn_dataset_modal,
                  p("Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-             } else if (input$measure_select == "nhs24") { #NHS24 CALLS MODAL
+             } else if (input$`summary-measure` == "nhs24") { #NHS24 CALLS MODAL
                showModal(modalDialog(
                  title = "What is the data source?",
                  p("For many people an NHS 24 call provides the first point of contact for urgent access
@@ -183,7 +183,7 @@ observeEvent(input$btn_dataset_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
 
-             } else if (input$measure_select == "ooh"){
+             } else if (input$`summary-measure` == "ooh"){
                showModal(modalDialog(# OUT OF HOURS cases  MODAL
                  title = "What is the data source?",
                  p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor,
@@ -215,7 +215,7 @@ observeEvent(input$btn_dataset_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
 
-             } else if (input$measure_select == "sas"){
+             } else if (input$`summary-measure` == "sas"){
                showModal(modalDialog( # SAS  MODAL
                  title = "What is the data source?",
                  p("The charts provide a weekly summary of Scottish Ambulance Service emergency calls attended with historical trends for comparison purposes.
@@ -247,7 +247,7 @@ observeEvent(input$btn_dataset_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
 
-               } else if (input$measure_select == "deaths"){
+               } else if (input$`summary-measure` == "deaths"){
                showModal(modalDialog( # DEATHS  MODAL
                  title = "What is the data source?",
                  p("The analyses shown here are derived from weekly deaths registration data, and show recent trends in deaths (2020),
@@ -284,7 +284,7 @@ observeEvent(input$btn_dataset_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
 
-               } else if (input$measure_select == "outpats"){
+               } else if (input$`summary-measure` == "outpats"){
                  showModal(modalDialog( # OUTPATIENTS MODAL
                    title = "What is the data source?",
                    p("The analyses shown here are derived from person level",
@@ -467,15 +467,15 @@ op_eth <- reactive({
 output$data_explorer <- renderUI({
 
   # text for titles of cut charts
-  dataset <- case_when(input$measure_select == "rapid" ~ "admissions",
-                       input$measure_select == "aye" ~ "attendances",
-                       input$measure_select == "nhs24" ~ "completed contacts",
-                       input$measure_select == "ooh" ~ "cases",
-                       input$measure_select == "sas" ~ "incidents",
-                       input$measure_select == "deaths" ~ "deaths",
-                       input$measure_select == "outpats" ~ "appointments")
+  dataset <- case_when(input$`summary-measure` == "rapid" ~ "admissions",
+                       input$`summary-measure` == "aye" ~ "attendances",
+                       input$`summary-measure` == "nhs24" ~ "completed contacts",
+                       input$`summary-measure` == "ooh" ~ "cases",
+                       input$`summary-measure` == "sas" ~ "incidents",
+                       input$`summary-measure` == "deaths" ~ "deaths",
+                       input$`summary-measure` == "outpats" ~ "appointments")
 
-  if (input$measure_select == "deaths"){
+  if (input$`summary-measure` == "deaths"){
     variation_title <- paste0("Percentage change in ", dataset,
                             " compared with the corresponding time in 2015-2019 by ")   #different averaging period for deaths
   } else {
@@ -483,7 +483,7 @@ output$data_explorer <- renderUI({
                               " compared with the corresponding time in 2018-2019 by ")
   }
 
-  if(input$measure_select == "outpats"){
+  if(input$`summary-measure` == "outpats"){
     if(input$time_type == "Monthly"){
       time_period <- "Monthly"
     } else{
@@ -502,7 +502,7 @@ output$data_explorer <- renderUI({
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
 
   #update date for outpatients and the rest is different
-  upd_date_summ <- case_when(input$measure_select == "outpats" ~ "15 June 2022",
+  upd_date_summ <- case_when(input$`summary-measure` == "outpats" ~ "15 June 2022",
                              TRUE ~ "6 July 2022")
 
   # Function to create the standard layout for all the different charts/sections
@@ -515,7 +515,7 @@ output$data_explorer <- renderUI({
 
                column(6, p("Last updated: ", upd_date_summ))),
 
-      if (input$measure_select == "nhs24"){
+      if (input$`summary-measure` == "nhs24"){
         tagList(
         p("The data used in this chart are taken from the Unscheduled Care Datamart.
           As mentioned in the", tags$a(href="https://publichealthscotland.scot/publications/covid-19-statistical-report",
@@ -528,7 +528,7 @@ output$data_explorer <- renderUI({
           continue to manage Covid patients directed by NHS 24 as a matter of course. This will have an impact on 
           the NHS 24 and the Out of Hours data data contained in the dashboard. "))
         },
-      if (input$measure_select == "deaths"){
+      if (input$`summary-measure` == "deaths"){
         tagList(
         p("The analyses below are derived from the National Records of Scotland (NRS) weekly deaths dataset (provisional numbers).
           Numbers of deaths represent the total number of deaths (from any cause) that were registered in
@@ -536,13 +536,13 @@ output$data_explorer <- renderUI({
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
         plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
-        } else if (input$measure_select == "outpats") {
+        } else if (input$`summary-measure` == "outpats") {
           plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         } else {
           plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
       
-     if (input$measure_select != "ooh" | (input$measure_select == "ooh" & input$ooh_appt_type == "All cases")) { 
+     if (input$`summary-measure` != "ooh" | (input$`summary-measure` == "ooh" & input$ooh_appt_type == "All cases")) { 
        tagList(plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
                    paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
       plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
@@ -566,7 +566,7 @@ output$data_explorer <- renderUI({
   }
 
   # Charts and rest of UI
-  if (input$measure_select == "rapid") {
+  if (input$`summary-measure` == "rapid") {
     tagList(#Hospital admissions
       cut_charts(title= "Weekly admissions to hospital", source = "PHS RAPID Datamart",
                  data_name = "adm"),
@@ -583,16 +583,16 @@ output$data_explorer <- renderUI({
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
     )
-  } else if (input$measure_select == "aye") {
+  } else if (input$`summary-measure` == "aye") {
     tagList(#A&E Attendances
     cut_charts(title= "Weekly attendances to A&E departments",
                source = "PHS AE2 Datamart", data_name = "aye"))
 
-  } else if (input$measure_select == "nhs24") {# NHS 24 calls
+  } else if (input$`summary-measure` == "nhs24") {# NHS 24 calls
     cut_charts(title= "Weekly completed contacts with NHS 24",
                source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
-  } else if (input$measure_select == "ooh") { #Out of hours cases
+  } else if (input$`summary-measure` == "ooh") { #Out of hours cases
       if (input$ooh_appt_type == "All cases"){
           tagList(
            tags$b(span("Please note that the data on this page now includes individuals coming to
@@ -646,7 +646,7 @@ output$data_explorer <- renderUI({
                        source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
         }
     
-  } else if (input$measure_select == "sas") {
+  } else if (input$`summary-measure` == "sas") {
     tagList(# SAS data
         p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
         tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
@@ -656,11 +656,11 @@ output$data_explorer <- renderUI({
     cut_charts(title= "Weekly attended incidents by Scottish Ambulance Service",
                source = "PHS Unscheduled Care Datamart", data_name ="sas"))
 
-  } else if (input$measure_select == "deaths") { # Deaths data
+  } else if (input$`summary-measure` == "deaths") { # Deaths data
     cut_charts(title= "Weekly number of deaths",
                source = "NRS Death Registrations", data_name ="deaths")
 
-  } else if (input$measure_select == "outpats") { # Outpatients data
+  } else if (input$`summary-measure` == "outpats") { # Outpatients data
       eth_op_ui <- tagList(#Add ethnicity charts
         fluidRow(column(6,
                         h4(paste0(variation_title, "ethnic group")),
@@ -888,7 +888,7 @@ pal_spec <- reactive({
   #Creating palette of colors: colorblind proof
   #First obtaining length of each geography type, if more than 6, then 6,
   # this avoids issues. Extra selections will not be plotted
-  if (input$measure_select == "outpats") {
+  if (input$`summary-measure` == "outpats") {
     trend_length <- length(input$op_specialty)
   } else {
     trend_length <- length(input$adm_specialty)
@@ -899,7 +899,7 @@ pal_spec <- reactive({
   trend_palette <- c("#000000", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99",
                      "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#b15928")
 
-  if (input$measure_select == "outpats") {
+  if (input$`summary-measure` == "outpats") {
     trend_scale <- c(setNames(trend_palette,
                                  unique(op_spec()$spec)[1:trend_length]))
   } else {
@@ -917,7 +917,7 @@ symbol_spec <- reactive({
   symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
                         'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
 
-  if (input$measure_select == "outpats") {
+  if (input$`summary-measure` == "outpats") {
   #Creating palette of colors: colorblind proof
   #First obtaining length of each geography type, if more than 6, then 6,
   # this avoids issues. Extra selections will not be plotted
@@ -961,7 +961,7 @@ ooh_download <- reactive({
 # Reactive dataset that gets the data the user is visualisaing ready to download
 overall_data_download <- reactive({
   switch(
-    input$measure_select,
+    input$`summary-measure`,
     "rapid" = filter_data(rapid_filt() %>% rename(average_2018_2019 = count_average)) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),
@@ -989,7 +989,7 @@ overall_data_download <- reactive({
 
 output$download_chart_data <- downloadHandler(
   filename = function() {
-    paste(input$measure_select, ".csv", sep = "")
+    paste(input$`summary-measure`, ".csv", sep = "")
   },
   content = function(file) {
     write_csv(overall_data_download(),

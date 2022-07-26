@@ -4,7 +4,7 @@
 ## Modal ----
 ###############################################.
 # Pop-up modal explaining source of data
-observeEvent(input$btn_breastfed_modal,
+observeEvent(input$`bf-btn-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("Data source: CHSP Pre-School"),
@@ -42,10 +42,10 @@ observeEvent(input$btn_breastfed_rules,
 ## Reactive controls  ----
 ###############################################.
 # Breastfeeding reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_bf <- renderUI({
+output$`bf-geoname-ui` <- renderUI({
 
   #Lists areas available in
-  areas_summary_bf <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_bf])
+  areas_summary_bf <- sort(geo_lookup$areaname[geo_lookup$areatype == input$`bf-geotype`])
 
   selectizeInput("geoname_bf", label = NULL, choices = areas_summary_bf, selected = "")
 })
@@ -56,9 +56,9 @@ output$geoname_ui_bf <- renderUI({
 # Reactive breastfeeding dataset
 breastfeeding_filt <- reactive({
 
-  breastfeeding %>% filter(area_type == input$geotype_bf &
+  breastfeeding %>% filter(area_type == input$`bf-geotype` &
                              area_name == input$geoname_bf &
-                             review == input$measure_select_bf)
+                             review == input$`bf-measure`)
 })
 
 ###############################################.
@@ -68,10 +68,10 @@ breastfeeding_filt <- reactive({
 # Breastfeeding explorer
 output$breastfeeding_explorer <- renderUI({
 
-  review_title <- case_when(input$measure_select_bf == "6-8 week" ~ "6-8 week reviews; reviews",
+  review_title <- case_when(input$`bf-measure` == "6-8 week" ~ "6-8 week reviews; reviews",
                             T ~ "health visitor first visits; visits")
 
-  if (input$measure_select_bf == "First visit") {
+  if (input$`bf-measure` == "First visit") {
     run_charts_bf <- tagList(
       fluidRow(
         column(4,
@@ -92,17 +92,17 @@ output$breastfeeding_explorer <- renderUI({
                                         height = height_run_chart))))
     )
 
-  } else if (input$measure_select_bf == "6-8 week") {
+  } else if (input$`bf-measure` == "6-8 week") {
     run_charts_bf <- tagList(
       fluidRow(
         column(6,
-               h4(paste0("Percentage of children recorded as exclusively breastfed at the ", tolower(input$measure_select_bf), " review")),
+               h4(paste0("Percentage of children recorded as exclusively breastfed at the ", tolower(input$`bf-measure`), " review")),
                div(actionButton("btn_breastfed_rules", "How do we identify patterns in the data?",
                             icon = icon('question-circle')), style = "height:40px;"),
                withSpinner(plotlyOutput("bf_excl_pc",
                                         height = height_run_chart))),
         column(6,
-               h4(paste0("Percentage of children recorded as overall breastfed at the ", tolower(input$measure_select_bf), " review")),
+               h4(paste0("Percentage of children recorded as overall breastfed at the ", tolower(input$`bf-measure`), " review")),
                div(style = "height:40px;"),
                withSpinner(plotlyOutput("bf_over_pc",
                                         height = height_run_chart))))
@@ -150,7 +150,7 @@ output$bf_types <- renderPlotly({
     # Modifying standard layout
     yaxis_plots[["title"]] <- "Number of reviews"
 
-    if (input$measure_select_bf == "First visit") {
+    if (input$`bf-measure` == "First visit") {
     tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
                               "<br>", "Number of reviews: ", trend_data$no_reviews,
                               "<br>", "Number of reviews with infant feeding data recorded: ", trend_data$no_valid_reviews, " (", trend_data$pc_valid, "%)",
@@ -160,7 +160,7 @@ output$bf_types <- renderPlotly({
                               " (", trend_data$pc_overall, "%)",
                               "<br>", "Number of children ever breastfed: ", trend_data$ever_bf,
                               " (", trend_data$pc_ever, "%)"))
-    } else if (input$measure_select_bf == "6-8 week") {
+    } else if (input$`bf-measure` == "6-8 week") {
       tooltip_trend <- c(paste0("Month: ", format(trend_data$month_review, "%B %y"),
                                 "<br>", "Number of reviews: ", trend_data$no_reviews,
                                 "<br>", "Number of reviews with infant feeding data recorded:  ", trend_data$no_valid_reviews, " (", trend_data$pc_valid, "%)",
@@ -331,7 +331,7 @@ output$breastfeeding_commentary <- renderUI({
 ## Data downloads ----
 ###############################################.
 breast_down <- reactive({
-  breastfeeding %>% filter(review == input$measure_select_bf) %>%
+  breastfeeding %>% filter(review == input$`bf-measure`) %>%
     select(-hscp2019_code,
            -shift_excl, -trend_excl,
            -shift_ever, -trend_ever,

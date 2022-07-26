@@ -1,5 +1,6 @@
 #UI
 # Sourcing UI scripts
+source(file.path('ui/modules_ui.R'),  local = TRUE)$value 
 source(file.path('ui/intro_ui.R'),  local = TRUE)$value 
 source(file.path('ui/summary_ui.R'),  local = TRUE)$value 
 source(file.path('ui/cardio_ui.R'),  local = TRUE)$value 
@@ -11,7 +12,6 @@ source(file.path('ui/birthsbabies_ui.R'),  local = TRUE)$value
 source(file.path('ui/childhealth_ui.R'),  local = TRUE)$value 
 source(file.path('ui/drugs_ui.R'),  local = TRUE)$value 
 source(file.path('ui/data_ui.R'),  local = TRUE)$value 
-
 
 # secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
