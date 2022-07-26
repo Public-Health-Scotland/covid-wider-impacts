@@ -150,12 +150,12 @@ output$cancer_explorer <- renderUI({
   
   tagList(
     plot_box(paste0("Total count of individuals having a cancer of type:  ", input$cancer_type, #cancer_site,
-                    " confirmed on a pathological specimen since January for 2019/2020/2021/2022"), 
+                    " confirmed on a pathological specimen since January for 2019 to 2022"), 
              "cancer_overall"),
     p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt")),
     br(),
     plot_box(paste0("Weekly count of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                    " confirmed on a pathological specimen since January for 2019/2020/2021/2022"), 
+                    " confirmed on a pathological specimen since January for 2019 to 2022"), 
              "cancer_incidence"),
     p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt"))
   )  
@@ -270,7 +270,7 @@ output$cancer_explorer2 <- renderUI({
     strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and
            may also update historical data."),
     br(),
-    p(strong(paste0("Last updated: - 27 July 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
+    p(strong(paste0("Last updated: - 3rd August 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
              2nd February 2022."))))
   
   
@@ -394,10 +394,10 @@ output$cancer_commentary <- renderUI({
     # UPDATES ----
     
     ###################################
-    ## JULY 2022 update ----
+    ## AUGUST 2022 update ----
     ###################################.
     
-    h4(strong("Update 27/07/2022: For pathology data to 2nd February 2022 (extracted 02/06/2022)")),
+    h4(strong("Update 03/08/2022: For pathology data to 2nd February 2022 (extracted 02/06/2022)")),
     p("In 2022 (weeks ending 5th January to 2nd February), there was little difference in the total number of individuals with a pathological
       diagnosis of cancer (Excl.C44) compared with those in 2019 over the same dates (4046 and 3986 in 2022 and 2019 respectively, a difference
       of approximately 1.5%). It should be noted that there are usually fewer cancer diagnoses in late December and early 
