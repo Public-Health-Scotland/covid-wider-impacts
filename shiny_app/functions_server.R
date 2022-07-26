@@ -144,37 +144,30 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
       ###############################################.
       # Creating objects that change depending on dataset
-      yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
+      yaxis_title <- case_when(data_name == "adm" | substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions",
                                data_name == "aye" ~ "Number of attendances",
-                               substr(data_name, 1, 3) == "ooh" ~ "Number of cases",
+                               substr(data_name, 1, 3) == "ooh" | data_name == "cath" ~ "Number of cases",
                                data_name == "nhs24" ~ "Number of completed contacts",
                                substr(data_name, 1, 3) == "sas" ~ "Number of incidents",
-                               data_name == "cath" ~ "Number of cases",
                                data_name == "drug_presc" ~ "Number of items prescribed",
                                data_name == "deaths" ~ "Number of deaths",
                                data_name == "mentalhealth_drugs" ~ "Number of patients",
-                               data_name == "mh_ooh" ~ "Number of consultations",
-                               data_name == "op" ~ "Number of appointments",
-                               substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions")
+                               data_name == "op" ~ "Number of appointments")
 
       #Modifying standard layout
       yaxis_plots[["title"]] <- yaxis_title
 
-      measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
+      measure_name <- case_when(data_name %in% c("adm", "cardio_admissions") | 
+                                  substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ",
                                 data_name == "aye" ~ "Attendances: ",
-                                substr(data_name, 1, 3) == "ooh" ~ "Cases: ",
+                                substr(data_name, 1, 3) == "ooh" | data_name == "cath" ~ "Cases: ",
                                 data_name == "nhs24" ~ "Completed contacts: ",
                                 substr(data_name, 1, 3) == "sas" ~ "Incidents: ",
-                                data_name == "cath" ~ "Cases: ",
                                 data_name == "drug_presc" ~ "Items prescribed: ",
                                 data_name == "cancer" ~ "Referrals: ",
-                                data_name == "deaths" ~ "Deaths: ",
-                                data_name == "cardio_deaths" ~ "Deaths: ",
-                                data_name == "cardio_admissions" ~ "Admissions: ",
+                                data_name %in% c("cardio_deaths", "deaths") ~ "Deaths: ",
                                 data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
-                                data_name == "mh_ooh" ~ "Consultations: ",
-                                data_name == "op" ~ "Appointments: ",
-                                substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ")
+                                data_name == "op" ~ "Appointments: ")
 
       #Text for tooltip
       if (aver_week == T) {
@@ -245,44 +238,26 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
     ###############################################.
     # Creating objects that change depending on dataset
-    yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
+    yaxis_title <- case_when(data_name %in% c("adm", "cardio_admissions") 
+                             | substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
-                             data_name == "ooh" ~ "Number of cases",
+                             substr(data_name, 1, 3) == "ooh" | data_name == "cath"  ~ "Number of cases",
                              data_name == "ooh_cons" ~ "Number of consultations",
                              data_name == "nhs24" ~ "Number of completed contacts",
-                             data_name == "sas" ~ "Number of incidents",
-                             data_name == "cath" ~ "Number of cases",
+                             substr(data_name, 1, 3) == "sas" ~ "Number of incidents",
                              data_name == "drug_presc" ~ "Number of items prescribed",
-                             data_name == "ooh_cardiac" ~ "Number of cases",
-                             data_name == "sas_cardiac" ~ "Number of incidents",
-                             data_name == "deaths" ~ "Number of deaths",
+                             data_name %in% ("deaths", "cardio_deaths") ~ "Number of deaths",
                              data_name == "cancer" ~ "Number of referrals",
                              data_name == "mentalhealth_drugs" ~ "Number of patients",
-                             data_name == "mh_ooh" ~ "Number of consultations",
-                             data_name == "op" ~ "Number of appointments",
-                             data_name == "ui_smr01_all" ~ "Number of admissions",
-                             data_name == "ui_smr01_assaults" ~ "Number of admissions",
-                             data_name == "ui_smr01_falls" ~ "Number of admissions",
-                             data_name == "ui_smr01_other" ~ "Number of admissions",
-                             data_name == "ui_smr01_poison" ~ "Number of admissions",
-                             data_name == "ui_smr01_rta" ~ "Number of admissions",
-                             data_name == "cardio_admissions" ~ "Number of admissions",
-                             data_name == "cardio_deaths" ~ "Number of deaths")
+                             data_name == "op" ~ "Number of appointments")
 
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
 
-    hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
-                                                       "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
-                                                       "cath", "mentalhealth_drugs", "mh_ooh",
-                                                       "op") ~ "Average 2018-2019",
-                                      data_name == "deaths" ~ "Average 2015-2019")
+    hist_legend_previous <- case_when(data_name == "deaths" ~ "Average 2015-2019",
+                                      TRUE ~ "Average 2018-2019")
 
-    hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
-                                                    "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
-                                                    "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 - 2022",
-
-                                   data_name %in% c("cath")  ~ "2020")
+    hist_legend_covid <- case_when(data_name %in% c("cath")  ~ "2020", TRUE ~ "2020 - 2022")
 
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
                               data_name == "aye" ~ "Attendances: ",
