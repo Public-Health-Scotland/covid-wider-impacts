@@ -246,7 +246,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                              data_name == "nhs24" ~ "Number of completed contacts",
                              substr(data_name, 1, 3) == "sas" ~ "Number of incidents",
                              data_name == "drug_presc" ~ "Number of items prescribed",
-                             data_name %in% ("deaths", "cardio_deaths") ~ "Number of deaths",
+                             data_name %in% c("deaths", "cardio_deaths") ~ "Number of deaths",
                              data_name == "cancer" ~ "Number of referrals",
                              data_name == "mentalhealth_drugs" ~ "Number of patients",
                              data_name == "op" ~ "Number of appointments")
@@ -259,22 +259,18 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
     hist_legend_covid <- case_when(data_name %in% c("cath")  ~ "2020", TRUE ~ "2020 - 2022")
 
-    measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
+    measure_name <- case_when(data_name %in% c("adm", "cardio_admissions") 
+                              | substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ",
                               data_name == "aye" ~ "Attendances: ",
-                              data_name == "ooh" ~ "Cases: ",
+                              substr(data_name, 1, 3) == "ooh" | data_name == "cath"  ~ "Cases: ",
                               data_name == "ooh_cons" ~ "Consultations: ",
                               data_name == "nhs24" ~ "Completed contacts: ",
-                              data_name == "sas" ~ "Incidents: ",
+                              substr(data_name, 1, 3) == "sas" ~ "Incidents: ",
                               data_name == "cath" ~ "Cases: ",
                               data_name == "drug_presc" ~ "Items prescribed: ",
-                              data_name == "ooh_cardiac" ~ "Cases: ",
-                              data_name == "sas_cardiac" ~ "Incidents: ",
-                              data_name == "deaths" ~ "Deaths: ",
+                              data_name %in% c("deaths", "cardio_deaths") ~ "Deaths: ",
                               data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
-                              data_name == "mh_ooh" ~ "Consultations: ",
-                              data_name == "op" ~ "Appointments: ",
-                              data_name == "cardio_admissions" ~ "Admissions: ",
-                              data_name == "cardio_deaths" ~ "Deaths: ")
+                              data_name == "op" ~ "Appointments: ")
     
     # Input for tooltip based on weekly/monthly
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
