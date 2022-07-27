@@ -489,7 +489,7 @@ output$cardio_explorer <- renderUI({
           Data from the remaining two centres will be added as it becomes available."),
         h3(paste0("Weekly visits to the cardiac catheterisation labs at the ", lab_chosen)),
         actionButton("btn_cardio_modal", paste0("Data source: ", lab_chosen), icon = icon('question-circle')),
-        plot_box("2020 and 2021 compared with 2018-2019 average", "cath_overall"),
+        plot_box("2020 to 2022 compared with 2018-2019 average", "cath_overall"),
         plot_cut_box("Percentage change in cases compared with the
                    corresponding time in 2018-2019 by type of intervention", "cath_type_var",
                      "Weekly number of cases by type of intervention", "cath_type_tot",
@@ -518,7 +518,7 @@ output$cardio_explorer <- renderUI({
                         actionButton("btn_cardio_modal", "Data source and definitions",
                                      icon = icon('question-circle'))),
         column(6,data_last_updated)),
-        plot_box("2020 and 2021 compared with 2018-2019 average", "ae_cardio_overall"),
+        plot_box("2020 to 2022 compared with 2018-2019 average", "ae_cardio_overall"),
         plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by age group", "ae_cardio_age_var",
                      "Weekly number of cardiovascular A&E attendances in Scotland by age group", "ae_cardio_age_tot")
@@ -538,7 +538,7 @@ output$cardio_explorer <- renderUI({
                         actionButton("btn_cardio_modal", "Data source and definitions",
                                      icon = icon('question-circle'))),
                  column(6,data_last_updated)),
-        plot_box("2020 and 2021 compared with 2018-2019 average", "prescribing_all"),
+        plot_box("2020 to 2022 compared with 2018-2019 average", "prescribing_all"),
         plot_cut_box(paste0("Percentage change in cardiovascular medicines prescribed in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by medicine groupings"), "cardio_drugs_var",
                      paste0("Weekly number of cardiovascular medicines prescribed in ", input$geoname_cardio, " by medicine groupings"), "cardio_drugs_tot")
@@ -556,7 +556,7 @@ output$cardio_explorer <- renderUI({
                           actionButton("btn_cardio_modal", "Data source and definitions",
                                        icon = icon('question-circle'))),
                    column(6,data_last_updated)),
-          plot_box("2020 and 2021 compared with 2018-2019 average", "ooh_cardio_all"),
+          plot_box("2020 to 2022 compared with 2018-2019 average", "ooh_cardio_all"),
           plot_cut_box(paste0("Percentage change in chest pain cases in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "ooh_cardio_sex_var",
                        paste0("Weekly number of chest pain cases in ", input$geoname_cardio, " by sex"), "ooh_cardio_sex_tot"),
@@ -581,7 +581,7 @@ output$cardio_explorer <- renderUI({
                          actionButton("btn_cardio_modal", "Data source and definitions",
                                       icon = icon('question-circle'))),
                   column(6,data_last_updated)),
-         plot_box("2020 and 2021 compared with 2018-2019 average", "sas_cardio_all"),
+         plot_box("2020 to 2022 compared with 2018-2019 average", "sas_cardio_all"),
          plot_cut_box(paste0("Percentage change in cardiovascular incidents in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "sas_cardio_sex_var",
                       paste0("Weekly number of cardiovascular incidents in ", input$geoname_cardio, " by sex"), "sas_cardio_sex_tot"),
@@ -602,7 +602,7 @@ output$cardio_explorer <- renderUI({
                          actionButton("btn_cardio_modal", "Data source and definitions",
                                       icon = icon('question-circle'))),
                   column(6,data_last_updated)),
-         plot_box("2020 and 2021 compared with 2018-2019 average", "cardio_admissions_all"),
+         plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_admissions_all"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "Emergency admissions in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex"), "cardio_admissions_sex_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", "Emergency admissions in ", input$geoname_cardio, " by sex"), "cardio_admissions_sex_tot"),
@@ -622,7 +622,7 @@ output$cardio_explorer <- renderUI({
                          actionButton("btn_cardio_modal", "Data source and definitions",
                                       icon = icon('question-circle'))),
                   column(6,data_last_updated)),
-         plot_box("2020 and 2021 compared with 2018-2019 average", "cardio_deaths_all"),
+         plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_deaths_all"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " compared with the corresponding
                      time in 2018-2019 by sex (Only totals are shown at board level due to small numbers)"), "cardio_deaths_sex_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$geoname_cardio, " by sex (Only totals are shown at board level due to small numbers)"), "cardio_deaths_sex_tot"),

@@ -535,11 +535,11 @@ output$data_explorer <- renderUI({
           Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
-        plot_box(paste0("2020 and 2021 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
+        plot_box(paste0("2020 to 2022 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
         } else if (input$measure_select == "outpats") {
-          plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+          plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         } else {
-          plot_box(paste0("2020 and 2021 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+          plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         },
       
      if (input$measure_select != "ooh" | (input$measure_select == "ooh" & input$ooh_appt_type == "All cases")) { 
