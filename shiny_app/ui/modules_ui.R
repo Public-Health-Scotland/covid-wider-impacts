@@ -1,4 +1,8 @@
-
+# What else:
+# Geotype and geoname functions, this might include some module on the server
+# Download data button, also will need module on server
+# Jump to commentary
+# One for the run chart rules modal and simd. Are these in the server side?
 ###############################################.
 ## Layout functions ----
 ###############################################.
@@ -32,3 +36,11 @@ selectdata_ui <- function(id, measure_choices) {
                                  choices = measure_choices, status = "primary",
                                  direction = "vertical", justified = T))
 }
+
+###############################################.
+## Data source and definitions modal ----
+###############################################.
+sourcemodal_ui <- function(id) {
+  actionButton(NS(id, "source-modal"), "Data source and definitions", icon = icon('question-circle'))
+}
+##END
