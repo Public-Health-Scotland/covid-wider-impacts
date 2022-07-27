@@ -289,19 +289,19 @@ home_list <- c("About" = "about",
                       "Immunisation" = "immunisation",
                       "Child health" = "child-health",
                       "Breastfeeding" = "breastfeeding",
-                      "Child development" = "child-dev"
-                      # "Stillbirths and infant deaths" = "perinatal",
-                      # "Mental health" = "mental-health",
-                      # "Antenatal bookings" = "booking",
-                      # "Termination of pregnancy" = "termination",
-                      # "Induction of labour" = "induction",
-                      # "Gestation at delivery" = "gestation",
-                      # "Apgar scores" = "apgar",
-                      # "Location of extremely preterm babies" = "preterm",
-                      # "Perineal tears" = "tears",
-                      # "Cancer" = "cancer",
-                      # "Injuries" = "injuries",
-                      # "Substance use" = "drugs"
+                      "Child development" = "child-dev",
+                      "Stillbirths and infant deaths" = "perinatal",
+                      "Mental health" = "mental-health",
+                      "Antenatal bookings" = "booking",
+                      "Termination of pregnancy" = "termination",
+                      "Induction of labour" = "induction",
+                      "Gestation at delivery" = "gestation",
+                      "Apgar scores" = "apgar",
+                      "Location of extremely preterm babies" = "preterm",
+                      "Perineal tears" = "tears",
+                      "Cancer" = "cancer",
+                      "Injuries" = "injuries",
+                      "Substance use" = "drugs"
                       )
  
 
@@ -577,7 +577,7 @@ pal_eth <- c('#E39C8C',
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
-                    showline = TRUE, fixedrange=TRUE, rangeslider = FALSE)
+                    showline = TRUE, fixedrange=TRUE, rangeslider = TRUE)
 
 yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
                     tickfont = list(size=14), titlefont = list(size=14))
