@@ -113,19 +113,31 @@ observeEvent(input$measure_injury_select, {
 # Injury time trend charts
 
                     
- output$ui_smr01_all_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_all  %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
-                                                                    data_name = "ui_smr01_all" )})
- output$ui_smr01_rta_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_rta %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
-                                                                     data_name = "ui_smr01_rta")})
- output$ui_smr01_poison_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_poison %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
-                                                                     data_name = "ui_smr01_poison")})
- output$ui_smr01_falls_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_falls %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
-                                                                     data_name = "ui_smr01_falls")})
- output$ui_smr01_other_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_other %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
-                                                                   data_name = "ui_smr01_other")})
- output$ui_smr01_assaults_overall <- renderPlotly({plot_overall_injury_chart(ui_smr01_assaults %>% filter(area_name == input$geoname_injuries & category=="All"),  var1_chosen = "count", var2_chosen = "count_average", 
-  
-                                                                                                                            data_name = "ui_smr01_assaults")})
+output$ui_smr01_all_overall <- renderPlotly({
+  plot_overall_chart(ui_smr01_all  %>% filter(area_name == input$geoname_injuries & category=="All"),
+                     var2020 = "count", var_aver = "count_average", filtering = F,
+                     data_name = "ui_smr01_all", period = "monthly" )})
+output$ui_smr01_rta_overall <- renderPlotly({
+  plot_overall_chart(ui_smr01_rta %>% filter(area_name == input$geoname_injuries & category=="All"),  
+                     var2020 = "count", var_aver = "count_average", filtering = F,
+                     data_name = "ui_smr01_rta", period = "monthly" )})
+output$ui_smr01_poison_overall <- renderPlotly({
+  plot_overall_chart(ui_smr01_poison %>% filter(area_name == input$geoname_injuries & category=="All"), 
+                     var2020 = "count", var_aver = "count_average", filtering = F, 
+                     data_name = "ui_smr01_poison", period = "monthly" )})
+output$ui_smr01_falls_overall <- renderPlotly({
+  plot_overall_chart(ui_smr01_falls %>% filter(area_name == input$geoname_injuries & category=="All"),  
+                     var2020 = "count", var_aver = "count_average", filtering = F,
+                     data_name = "ui_smr01_falls", period = "monthly" )})
+output$ui_smr01_other_overall <- renderPlotly({
+  plot_overall_chart(ui_smr01_other %>% filter(area_name == input$geoname_injuries & category=="All"),  
+                     var2020 = "count", var_aver = "count_average", filtering = F,
+                     data_name = "ui_smr01_other", period = "monthly" )})
+output$ui_smr01_assaults_overall <- renderPlotly({
+  plot_overall_chart(ui_smr01_assaults %>% filter(area_name == input$geoname_injuries & category=="All"),  
+                     var2020 = "count", var_aver = "count_average", filtering = F,
+                     data_name = "ui_smr01_assaults", period = "monthly" )})
+
  output$ui_smr01_all_sex <- renderPlotly({
    plot_trend_chart(ui_smr01_all %>% filter(area_name == input$geoname_injuries), pal_inj[[injury_colour()]], c(input$type_select),
                     type = "variation", data_name = "ui_smr01_all" , tab = "injuries", period = "monthly")})
