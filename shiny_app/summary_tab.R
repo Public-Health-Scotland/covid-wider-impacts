@@ -508,12 +508,11 @@ output$data_explorer <- renderUI({
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
     tagList(
-      h3(title),
-      fluidRow(column(6,
-                      actionButton("btn_dataset_modal", paste0("Data source: ", source),
-                                   icon = icon('question-circle'))),
-
-               column(6, p("Last updated: ", upd_date_summ))),
+      fluidRow(column(10, p("Last updated: ", upd_date_summ))),
+      fluidRow(column(9, h3(title)),
+               column(3, actionButton("btn_dataset_modal", paste0("Data source: ", source),
+                                   icon = icon('question-circle')))),
+      
 
       if (input$measure_select == "nhs24"){
         tagList(
