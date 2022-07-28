@@ -2,7 +2,7 @@
 
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_child_modal, 
+observeEvent(input$`childr-source-modal`, 
                  showModal(modalDialog(#CHILD HEALTH MODAL
                  title = "What is the data source?",
                  p("The information shown on the numbers of children eligible for routine preschool reviews is taken from the",
@@ -21,17 +21,10 @@ observeEvent(input$btn_child_modal,
     
 
 ###############################################.
-## Child Health Reactive controls  ----
+## Reactive controls  ----
 ###############################################.
-
-# Child Health reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_child <- renderUI({
-  
-  #Lists areas available in   
-  areas_summary_child <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_child])
-  
-  selectizeInput("geoname_child", label = NULL, choices = areas_summary_child, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("childr")
 
 # Get list of available time periods for plotting
 # Assumes that the time periods available are the same for all data
@@ -59,7 +52,7 @@ filter_table_data_child <- function(dataset){
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_child
   
-  dataset %>% filter(area_name == input$geoname_child &
+  dataset %>% filter(area_name == input$`childr-geoname` &
                        # we don't want this function to re-execute every time dates_immun changes, so isolate()
                        time_period_eligible %in% isolate(input$dates_child))
 }
@@ -88,17 +81,17 @@ output$child_fourtofive_table <- renderUI({child_table(fourtofivetable, "4 years
 output$child_health_explorer <- renderUI({
 
   # text for titles of cut charts
-  child_title <- paste0(case_when(input$measure_select_child == "first_visit" ~ paste0("Coverage of health visitor first visit (offered to children at 2 weeks of age): ",
-                                                                                             input$geoname_child),
-                            input$measure_select_child == "six_eightwks" ~ paste0("Coverage of child health review offered at 6-8 weeks of age: ", input$geoname_child),
-                            input$measure_select_child == "13_15mnth" ~ paste0("Coverage of child health review offered at 13-15 months of age: ", input$geoname_child),
-                            input$measure_select_child == "27_30mnth" ~ paste0("Coverage of child health review offered at 27-30 months of age: ", input$geoname_child),
-                            input$measure_select_child == "4_5yr" ~ paste0("Coverage of child health review offered at 4-5 years of age: ", input$geoname_child)))
+  child_title <- paste0(case_when(input$`childr-measure` == "first_visit" ~ paste0("Coverage of health visitor first visit (offered to children at 2 weeks of age): ",
+                                                                                             input$`childr-geoname`),
+                            input$`childr-measure` == "six_eightwks" ~ paste0("Coverage of child health review offered at 6-8 weeks of age: ", input$`childr-geoname`),
+                            input$`childr-measure` == "13_15mnth" ~ paste0("Coverage of child health review offered at 13-15 months of age: ", input$`childr-geoname`),
+                            input$`childr-measure` == "27_30mnth" ~ paste0("Coverage of child health review offered at 27-30 months of age: ", input$`childr-geoname`),
+                            input$`childr-measure` == "4_5yr" ~ paste0("Coverage of child health review offered at 4-5 years of age: ", input$`childr-geoname`)))
   child_subtitle <-  paste0("Figures based on data extracted from SIRS and CHSP-PS on ",child_extract_date)
 
   #commentary to appear in child health tab
   commentary_first <-
-    if (input$measure_select_child == "4_5yr") {
+    if (input$`childr-measure` == "4_5yr") {
       p("All preschool children should be offered the following health reviews: health visitor first visit, 6-8 week review, 13-15 month review, 27-30 month review, and 4-5 year review. Although the 4-5 year review only became mandated by government policy for children turning 4 from April 2020 onwards.", br(),
         "The charts show the progression of coverage of the relevant review as children age. The data tables provide the coverage rates at three specific time-points. Data is shown for children who have become eligible for review during the pandemic (from March 2020 onwards). Data is also shown for children who became eligible for review before the pandemic (in 2019 and in January and February 2020) for comparison.", br(), 
         "After a child becomes eligible for a review, it takes time for them to attend their appointment, and for a record of the review provided to subsequently be entered into the CHSP-PS system. We have allowed a 6-week window for this, therefore each release of this page will report on children becoming eligible for a review up to 6 weeks before the date these data were extracted for analysis. Although children will generally have their review, and their CHSP-PS record updated accordingly, within 6 weeks of becoming eligible, the pandemic may have influenced not only how quickly eligible children receive their reviews, but also how long it takes for children’s CHSP-PS records to be updated once a review has been given. Any disruption to CHSP-PS data entry may vary across NHS Boards. Data shown for the most recent cohorts of children will therefore not be fully complete in CHSP-PS and should be viewed as provisional. The coverage rates for each cohort will be refreshed with more up-to-date data every 4 weeks, and rates for the most recent cohorts may increase slightly as relevant records are updated in CHSP-PS.", br(), 
@@ -119,21 +112,21 @@ output$child_health_explorer <- renderUI({
                     p(child_subtitle))))
   
   # Specify items to display in child health ui based on step 2 selection 
-  if (input$measure_select_child == "first_visit") {
+  if (input$`childr-measure` == "first_visit") {
     tagList(explorer_child,
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("child_first_scurve"))),
                column(6, uiOutput("child_first_table"))),
       fluidRow(column(12, renderUI(commentary_first)))
     )
-  }  else if (input$measure_select_child == "six_eightwks"){
+  }  else if (input$`childr-measure` == "six_eightwks"){
     tagList(explorer_child,
       fluidRow(column(6,br(), br(),
                       withSpinner(plotlyOutput("child_sixtoeight_scurve"))),
                column(6, uiOutput("child_sixtoeight_table"))),
       fluidRow(column(12, renderUI(commentary_first)))
     )
-  } else if (input$measure_select_child == "13_15mnth") {
+  } else if (input$`childr-measure` == "13_15mnth") {
     tagList(explorer_child,
       fluidRow(column(12, em("13 months defined as 57 weeks"))),
       fluidRow(column(6,br(), br(),
@@ -142,7 +135,7 @@ output$child_health_explorer <- renderUI({
 
       fluidRow(column(12, renderUI(commentary_first)))
     )
-  } else if (input$measure_select_child == "27_30mnth") {
+  } else if (input$`childr-measure` == "27_30mnth") {
     tagList(explorer_child,
       fluidRow(column(12, em("27 months defined as 117 weeks"))),
       fluidRow(column(6,br(), br(),
@@ -288,7 +281,7 @@ tags$a(href = "https://beta.isdscotland.org/find-publications-and-data/populatio
 # Reactive dataset that gets the data the user is visualisaing ready to download
 visit_data_download <- reactive({
   switch(
-    input$measure_select_child,
+    input$`childr-measure`,
     "first_visit" = firstdata,
     "six_eightwks" = sixtoeightdata,
     "13_15mnth" = thirteendata,

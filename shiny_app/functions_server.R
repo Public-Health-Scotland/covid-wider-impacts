@@ -1314,7 +1314,7 @@ plot_scurve_child <- function(dataset, age_week) {
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_child
 
-  scurve_data <- dataset %>% filter(area_name == input$geoname_child,
+  scurve_data <- dataset %>% filter(area_name == input$`childr-geoname`,
                                     # filter to selected time periods, but don't re-execute each time input changes
                                     time_period_eligible %in% isolate(input$dates_child))
   # %>%
