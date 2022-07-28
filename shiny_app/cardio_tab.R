@@ -547,10 +547,10 @@ output$cardio_explorer <- renderUI({
 
      } else if (input$measure_cardio_select == "ooh_cardiac") {
         tagList(# OOH Attendances
-          tags$b(span("New clinical codes have been introduced for out of hours cases, which has had an
-            impact on the number of chest pain cases we report in the latter half of 2021.
-            We are currently investigating this issue.",
-            style = "color:red")),
+          tags$b("The numbers of cases reported from July 2021 onwards are not comparable to
+                    those in earlier weeks."),
+          p("The clinical codes used to categorise out of hours diagnoses changed in that month,
+             affecting the number of cases that are categorised as chest pain."),
           h3(paste0("Weekly chest pain cases in out of hours services in ", input$geoname_cardio)),
           fluidRow(column(6,
                           actionButton("btn_cardio_modal", "Data source and definitions",
@@ -695,20 +695,57 @@ output$cardio_drugs_tot <- renderPlotly({plot_trend_chart(cardio_drugs, pal_med,
 
 ###############################################.
 # OOH charts
+
+# Adds line and annotation about change in coding
+add_cardio_ooh_coding_line = function(fig){
+
+  hovertext =
+"The clinical codes used to categorise OOH diagnoses
+changed in July 2021. This affected the number of
+cases that are categorised as cardiovascular; numbers
+after this date are not comparable to those before it."
+
+  add_vline(fig, x = ymd(20210701),
+            text = "Change in coding<br>Data not comparable",
+            margin = list(t = 35),
+            hovertext = hovertext)
+}
+
+
 output$ooh_cardio_all <- renderPlotly({plot_overall_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio),
-                                                           data_name = "ooh_cardiac", area = "All")})
+                                                          data_name = "ooh_cardiac", area = "All",
+                                                          fix_x_range = TRUE) %>%
+                                        add_cardio_ooh_coding_line()})
 output$ooh_cardio_sex_var <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio),
-                                                            pal_sex, split = "sex", type = "variation", data_name = "ooh_cardiac", tab = "cardio")})
+                                                            pal_sex, split = "sex", type = "variation",
+                                                            data_name = "ooh_cardiac", tab = "cardio",
+                                                            fix_x_range = TRUE) %>%
+                                            add_cardio_ooh_coding_line()})
 output$ooh_cardio_sex_tot <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio),
-                                                            pal_sex, split = "sex", type = "total", data_name = "ooh_cardiac", tab = "cardio")})
+                                                            pal_sex, split = "sex", type = "total",
+                                                            data_name = "ooh_cardiac", tab = "cardio",
+                                                            fix_x_range = TRUE) %>%
+                                            add_cardio_ooh_coding_line()})
 output$ooh_cardio_age_var <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio),
-                                                            pal_age, split = "age", type = "variation", data_name = "ooh_cardiac", tab = "cardio")})
+                                                            pal_age, split = "age", type = "variation",
+                                                            data_name = "ooh_cardiac", tab = "cardio",
+                                                            fix_x_range = TRUE) %>%
+                                            add_cardio_ooh_coding_line()})
 output$ooh_cardio_age_tot <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio),
-                                                            pal_age, split = "age", type = "total", data_name = "ooh_cardiac", tab = "cardio")})
+                                                            pal_age, split = "age", type = "total",
+                                                            data_name = "ooh_cardiac", tab = "cardio",
+                                                            fix_x_range = TRUE) %>%
+                                            add_cardio_ooh_coding_line()})
 output$ooh_cardio_depr_var <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio),
-                                                            pal_depr, split = "dep", type = "variation",data_name = "ooh_cardiac", tab = "cardio")})
+                                                            pal_depr, split = "dep", type = "variation",
+                                                            data_name = "ooh_cardiac", tab = "cardio",
+                                                            fix_x_range = TRUE) %>%
+                                            add_cardio_ooh_coding_line()})
 output$ooh_cardio_depr_tot <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$geoname_cardio),
-                                                             pal_depr, split = "dep", type = "total",data_name = "ooh_cardiac", tab = "cardio")})
+                                                             pal_depr, split = "dep", type = "total",
+                                                             data_name = "ooh_cardiac", tab = "cardio",
+                                                             fix_x_range = TRUE) %>%
+                                            add_cardio_ooh_coding_line()})
 ###############################################.
 
 

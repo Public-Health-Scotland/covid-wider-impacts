@@ -16,13 +16,14 @@ library(shinycssloaders) #for loading icons, see line below
 library(shinyjs) # for enable/disable functions
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
-library(flextable)
+library(flextable) # for tables
 library(shinyBS) #for collapsible panels in commentary
-library(zoo)
-library(magrittr)
-library(shinymanager)
-library(lubridate)
+library(zoo) # for dates
+library(magrittr) # more pipe operators
+library(shinymanager) # for password protection
+library(lubridate) # for dates
 library(tidyr) # for uncount()
+library(listviewer) # for some plotly features
 
 ###############################################.
 ## Functions ----
