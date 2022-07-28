@@ -1,6 +1,6 @@
 #UI
 
-  # secure_app( #uncomment if needing password protection
+  #secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
@@ -410,7 +410,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                    #
                         #                    #   tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
                         #                    #           diagnoses, which was only lower than expected in April 2020.")),
-                        # 
+                        #
                         #                    p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                         #                    ),
                         #          wellPanel(
@@ -869,6 +869,6 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
     ) # page bracket
  )# taglist bracket
 
- # )#secure app
+ #)#secure app
 
 #END
