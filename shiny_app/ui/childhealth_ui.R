@@ -72,7 +72,8 @@ childreview_tab <-
 breastfeeding_tab <- 
   tabPanel(title = "Breastfeeding", value = "breastfeeding",
            #actionButton("browser", "browser"),
-           filters_ui(id = "bf", measure_choices = data_list_bf), # Filters and options
+           filters_ui(id = "bf", measure_choices = data_list_bf,
+                      area_choices = c("Scotland", "Health board")), # Filters and options
            
 #          wellPanel(
 #            column(4,   filters_ui(id = "bf", measure_choices = data_list_bf)), # Filters and options

@@ -3,17 +3,23 @@
 ###############################################.
 
 # Show list of area names depending on areatype selected
-output$geoname_ui <- renderUI({
-    areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype])
-    selectizeInput("geoname", label = NULL,
-                   choices = areas_summary, selected = "")
+# output$geoname_ui <- renderUI({
+#     areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$`summary-geotype`])
+#     selectizeInput("geoname", label = NULL,
+#                    choices = areas_summary, selected = "")
+# 
+# })
 
-})
+# summary_geoname <- callModule(geotype_value, "summary")
+moduleServer(geoname_server("summary", geo_lookup))
 
-output$geoname_op_ui <- renderUI({
+# op_geoname <- callModule(geotype_value, "op")
 
-  areas_summary <- sort(area_type_op$area_name[area_type_op$area_type == input$geotype_op])
-  selectizeInput("geoname_op", label = NULL,
+
+output$`op-geoname` <- renderUI({
+
+  areas_summary <- sort(area_type_op$area_name[area_type_op$area_type == input$`op-geotype`])
+  selectizeInput("op-geoname", label = NULL,
                  choices = areas_summary, selected = "")
 
 })
@@ -422,7 +428,7 @@ rapid_filt <- reactive({
 # Rapid dataset used for specialty charts
 rapid_spec <- reactive({
   rapid %>% filter(type == "sex") %>%
-    filter(area_name == input$geoname &
+    filter(area_name == input$`summary-geoname` &
              admission_type == input$adm_type &
              category == "All" &
              spec %in% input$adm_specialty)
@@ -434,7 +440,7 @@ op_filt <- reactive({
   outpats %>%
     filter(admission_type == input$appt_type &
              spec == "All" &
-             area_type == input$geotype_op &
+             area_type == input$`op-geotype` &
              time_split == input$time_type)
 })
 
@@ -442,11 +448,11 @@ op_filt <- reactive({
 op_spec <- reactive({
   outpats %>%
     filter(type == "sex") %>%
-    filter(area_name == input$geoname_op &
+    filter(area_name == input$`op-geoname` &
              admission_type == input$appt_type &
              category == "All" &
              spec %in% input$op_specialty &
-             area_type == input$geotype_op &
+             area_type == input$`op-geotype` &
              time_split == input$time_type)   
 
 })
@@ -573,7 +579,7 @@ output$data_explorer <- renderUI({
       fluidRow(column(6, h4(paste0(variation_title, "specialty group - (admission type: ", tolower(input$adm_type), ")"))), # Adding adm_type here to make clear what is selected
                column(6, h4(paste0(total_title, "specialty group - (admission type: ", tolower(input$adm_type), ")")))), # Adding adm_type here to make clear what is selected
       fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
-                                     choices = if (input$geotype == "Scotland") {
+                                     choices = if (input$`summary-geotype` == "Scotland") {
                                        spec_list_rapid} else {
                                          spec_list_rapid[c(1:8,11)]}, multiple = TRUE,
                                      selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics (medical & surgical)"))),

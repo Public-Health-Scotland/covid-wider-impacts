@@ -1322,15 +1322,15 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 # Function to filter the datasets for the overall charts and download data based on user input
 filter_data <- function(dataset, data_name = "other", area = T, op = F) {
   if (data_name == "ooh_cons"){
-    dataset %>% filter(area_name == input$geoname &
+    dataset %>% filter(area_name == input$`summary-geoname` &
                          type == input$ooh_appt_type)
   } else if (area == T & op == T) {
     dataset %>% filter(type == "sex") %>%
-      filter(area_name == input$geoname_op &
+      filter(area_name == input$`op-geoname` &
                category == "All")
   } else if (area == T & op == F) {
     dataset %>% filter(type == "sex") %>%
-      filter(area_name == input$geoname &
+      filter(area_name == input$`summary-geoname` &
                category == "All")
   } else { #this works for cath data
     dataset %>%
@@ -2151,6 +2151,26 @@ plot_run_chart =
     #leaving only save plot button
     config(displaylogo = FALSE, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
+  }
+
+###############################################.
+## Select geography ----
+###############################################.
+geotype_value <- function(input, output, session) {
+  geotype <- reactive({input$geotype})
+  return(geotype)
+}
+
+geoname_server <- function(id, lookup = geo_lookup) {
+
+    lookup <- lookup
+    output$geoname <- renderUI({
+      
+      areas_summary <- sort(lookup$areaname[lookup$areatype == input$geotype])
+      selectizeInput(NS(id, "geoname"), label = NULL,
+                     choices = areas_summary, selected = "")
+      
+    })
 }
 
 ### END

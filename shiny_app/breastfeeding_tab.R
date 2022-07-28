@@ -4,7 +4,7 @@
 ## Modal ----
 ###############################################.
 # Pop-up modal explaining source of data
-observeEvent(input$`bf-btn-modal`,
+observeEvent(input$`bf-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("Data source: CHSP Pre-School"),
@@ -42,13 +42,16 @@ observeEvent(input$btn_breastfed_rules,
 ## Reactive controls  ----
 ###############################################.
 # Breastfeeding reactive drop-down control showing list of area names depending on areatype selected
-output$`bf-geoname-ui` <- renderUI({
+# output$`bf-geoname-ui` <- renderUI({
+# 
+#   #Lists areas available in
+#   areas_summary_bf <- sort(geo_lookup$areaname[geo_lookup$areatype == input$`bf-geotype`])
+# 
+#   selectizeInput("geoname_bf", label = NULL, choices = areas_summary_bf, selected = "")
+# })
 
-  #Lists areas available in
-  areas_summary_bf <- sort(geo_lookup$areaname[geo_lookup$areatype == input$`bf-geotype`])
-
-  selectizeInput("geoname_bf", label = NULL, choices = areas_summary_bf, selected = "")
-})
+# bf_geoname <- callModule(geotype_value, "bf")
+# callModule(geoname_server, "bf", bf_geoname)
 
 ###############################################.
 ## Reactive data ----
@@ -57,7 +60,7 @@ output$`bf-geoname-ui` <- renderUI({
 breastfeeding_filt <- reactive({
 
   breastfeeding %>% filter(area_type == input$`bf-geotype` &
-                             area_name == input$geoname_bf &
+                             area_name == input$`bf-geoname` &
                              review == input$`bf-measure`)
 })
 
