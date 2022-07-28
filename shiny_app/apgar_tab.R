@@ -24,25 +24,8 @@ observeEvent(input$btn_apgar_modal,
 
 # Modal to explain run charts rules
 observeEvent(input$btn_apgar_rules, runchart_modal())
-
 #Modal to explain SIMD and deprivation
-#Link action button click to modal launch
-observeEvent(input$btn_modal_simd_apgar, { showModal(
-  modalDialog(
-    h5("What is SIMD and deprivation?"),
-    p("Babies have been allocated to different levels of deprivation based on the
-      small area (data zone) in which their mothers live and the Scottish Index of
-      Multiple Deprivation (SIMD). SIMD scores are based on data for local areas
-      reflecting 38 indicators across 7 domains: income; employment; health; education,
-      skills and training; housing; geographic access; and crime. In this tool we have
-      presented results for babies living in different SIMD ‘quintiles’. To produce
-      quintiles, data zones are ranked by their SIMD score then the areas each containing
-      a fifth (20%) of the overall population of Scotland are identified. Babies living
-      in the most and least deprived areas that each contain a fifth of the population are
-      assigned to SIMD quintile 1 and 5 respectively."),
-    size = "l",
-    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  ))})
+observeEvent(input$btn_modal_simd_apgar, simd_modal("Babies"))
 
 
 ###############################################.

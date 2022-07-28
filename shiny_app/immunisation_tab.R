@@ -3,25 +3,8 @@
 ###############################################.
 ## Modals  ----
 ###############################################.
-
 # Modal to explain SIMD and deprivation
-# Link action button click to modal launch 
-observeEvent(input$btn_modal_simd_imm, { showModal(
-  modalDialog(
-    h5("What is SIMD and deprivation?"),
-    p("Children have been allocated to different levels of deprivation based on the small area (data zone) 
-      in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
-                                          target="_blank"), "score for that area. 
-      SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: 
-      income; employment; health; education, skills and training; housing; geographic access; and crime. 
-      In this tool we have presented results for children living in different SIMD ‘quintiles’. 
-      To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) 
-      of the overall population of Scotland are identified. Children living in the most and least deprived areas 
-      that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
-    size = "l", 
-    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  )
-    ) }) 
+observeEvent(input$btn_modal_simd_imm, simd_modal("Children")) 
 
 # Pop-up modal explaining source of data
 observeEvent(input$btn_immune_modal, 
