@@ -24,6 +24,7 @@ filters_ui <- function(id, measure_choices, area_choices) {
 ## Select dataset to show ----
 ###############################################.
 # Selection of different indicators, input will follow a style like this input$`id-measure-select`
+# id - namespace
 # measure_choices - list of datasets available
 selectdata_ui <- function(id, measure_choices) {
            div(title="Select the data you want to explore.", # tooltip
@@ -39,9 +40,9 @@ selectdata_ui <- function(id, measure_choices) {
 # Selectors for geography type and geography name 
 # id - namespace
 # area_choices - types of geography levels available. Vector.
-selectgeo_ui <- function(id, area_choices) {
+selectgeo_ui <- function(id, area_choices, step_no = "2") {
   div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-      p(tags$b("Step 2. Select a geography level and then an area of interest.")),
+      p(tags$b("Step ", step_no,". Select a geography level and then an area of interest.")),
       selectInput(NS(id, "geotype"), label = NULL,
                   choices = area_choices,
                   selected = "Scotland"),

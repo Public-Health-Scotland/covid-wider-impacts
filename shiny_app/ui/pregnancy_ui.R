@@ -4,13 +4,9 @@
 antenatal_tab <- 
   tabPanel(title = "Antenatal booking", value = "booking",
          wellPanel(
-           column(4, div(title="Select a breakdown",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_booking", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_booking")),
-           column(4,offset=4,
-                  actionButton("btn_booking_modal", "Data source: Antenatal Booking Collection", icon = icon('question-circle')),
+           column(4, selectgeo_ui("booking", area_choices =  c("Scotland", "Health board"), step_no = "1")),
+           column(4,offset=2,
+                  sourcemodal_ui("booking"),
                   fluidRow(br()),
                   downloadButton("download_ante_booking_data", "Download data"),
                   fluidRow(br()),
