@@ -16,13 +16,14 @@ library(shinycssloaders) #for loading icons, see line below
 library(shinyjs) # for enable/disable functions
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
-library(flextable)
+library(flextable) # for tables
 library(shinyBS) #for collapsible panels in commentary
-library(zoo)
-library(magrittr)
-library(shinymanager)
-library(lubridate)
+library(zoo) # for dates
+library(magrittr) # more pipe operators
+library(shinymanager) # for password protection
+library(lubridate) # for dates
 library(tidyr) # for uncount()
+library(listviewer) # for some plotly features
 
 ###############################################.
 ## Functions ----
@@ -209,7 +210,7 @@ booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "14 June 2022"
+top_extract_date <- "12 July 2022"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
