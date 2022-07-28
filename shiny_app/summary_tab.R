@@ -3,18 +3,9 @@
 ###############################################.
 
 # Show list of area names depending on areatype selected
-# output$geoname_ui <- renderUI({
-#     areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$`summary-geotype`])
-#     selectizeInput("geoname", label = NULL,
-#                    choices = areas_summary, selected = "")
-# 
-# })
-
-# summary_geoname <- callModule(geotype_value, "summary")
-moduleServer(geoname_server("summary", geo_lookup))
+geoname_server("summary")
 
 # op_geoname <- callModule(geotype_value, "op")
-
 
 output$`op-geoname` <- renderUI({
 

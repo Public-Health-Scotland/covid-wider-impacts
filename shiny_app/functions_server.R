@@ -17,10 +17,10 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     if (tab == "summary") {
       if (input$`summary-measure` != "outpats") {
         trend_data <- dataset %>% # filtering data by cut and area name
-          filter(type == split & area_name == input$geoname)
+          filter(type == split & area_name == input$`summary-geoname`)
       } else { #for outpatients data
         trend_data <- dataset %>% # filtering data by cut and area name
-          filter(type == split & area_name == input$geoname_op)
+          filter(type == split & area_name == input$`op-geoname`)
       }
 
     } else if (tab %in% c("cardio", "mh", "injuries")) {
@@ -28,7 +28,6 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type %in% split)
     }
-    # if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
   } else { # for cases outside summary tab
     trend_data <- dataset
   }
@@ -2162,15 +2161,21 @@ geotype_value <- function(input, output, session) {
 }
 
 geoname_server <- function(id, lookup = geo_lookup) {
+  moduleServer(
+    id,
+    function(input, output, session) {
 
-    lookup <- lookup
-    output$geoname <- renderUI({
-      
+          output$geoname <- renderUI({
+            ns <- session$ns #obtaining namespace
+            
       areas_summary <- sort(lookup$areaname[lookup$areatype == input$geotype])
-      selectizeInput(NS(id, "geoname"), label = NULL,
+      selectizeInput(ns("geoname"), label = NULL,
                      choices = areas_summary, selected = "")
       
     })
+}
+
+  )
 }
 
 ### END
