@@ -37,7 +37,7 @@ observeEvent(input$btn_preterm_modal,
 
 # Modal to explain SPC charts rules
 observeEvent(input$btn_preterm_rules,
-             showModal(modalDialog(#RAPID ADMISSIONS MODAL
+             showModal(modalDialog(
                title = "How do we identify patterns in the data?",
                p("Control charts follow a series of rules that help identify important changes in the data. 
                  These are the ones we used in this chart:"),

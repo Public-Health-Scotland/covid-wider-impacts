@@ -51,6 +51,7 @@ selectgeo_ui <- function(id, area_choices) {
 ###############################################.
 ## Data source and definitions modal ----
 ###############################################.
+# id - namespace
 sourcemodal_ui <- function(id) {
   actionButton(NS(id, "source-modal"), "Data source and definitions", icon = icon('question-circle'))
 }

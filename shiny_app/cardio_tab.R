@@ -448,7 +448,7 @@ output$ae_cardio_codes_tbl <- DT::renderDataTable(
 )
 
 # Including 'observeEvent' here so that SIMD modal can be called from A&E Cardio section
-observeEvent(input$btn_modal_simd_cardio, { showModal(simd_modal) })
+observeEvent(input$btn_modal_simd_cardio, simd_modal())
 
 
 ###############################################.

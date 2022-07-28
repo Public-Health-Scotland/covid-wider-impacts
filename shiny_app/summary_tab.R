@@ -334,27 +334,7 @@ observeEvent(input$btn_dataset_modal,
 
 ###############################################.
 # Modal to explain SIMD and deprivation
-simd_modal <- modalDialog(
-  h5("What is SIMD and deprivation?"),
-  p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
-                   target="_blank"), "is the Scottish Government's
-    official tool for identifying areas in Scotland with concentrations of deprivation
-    by incorporating several different aspects of deprivation (multiple-deprivations)
-    and combining them into a single index. Concentrations of deprivation are identified
-    in SIMD at Data Zone level and can be analysed using this small geographical unit.
-    The use of data for such small areas helps to identify 'pockets' (or concentrations)
-    of deprivation that may be missed in analyses based on larger areas such as council
-    areas. By identifying small areas where there are concentrations of multiple deprivation,
-    the SIMD can be used to target policies and resources at the places with the greatest need.
-    The SIMD identifies deprived areas, not deprived individuals."),
-  p("In this tool we use the concept of quintile, which refers to a fifth of the population.
-    For example when we talk about the most deprived quintile, this means the 20% of the population
-    living in the most deprived areas."),
-  size = "l",
-  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  )
-# Link action button click to modal launch
-observeEvent(input$btn_modal_simd, { showModal(simd_modal) })
+observeEvent(input$btn_modal_simd, simd_modal())
 
 
 ###############################################.
