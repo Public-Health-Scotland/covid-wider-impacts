@@ -158,7 +158,7 @@ ae_mh <- readRDS("data/mh_A&E.rds") %>% filter(type != 'dep')
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "27 June 2022"
+child_extract_date <- "25 July 2022"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
@@ -477,7 +477,7 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
                "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141",
                "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff",
-               "APR 2022" = "#bcbddc")
+               "APR 2022" = "#bcbddc", "MAY 2022" = "#7300e6")
 
 pal_inj <- list(pal_age,pal_depr,pal_sex)
 

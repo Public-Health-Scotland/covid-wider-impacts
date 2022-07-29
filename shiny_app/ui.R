@@ -1,6 +1,7 @@
 #UI
 
   #secure_app( #uncomment if needing password protection
+
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
@@ -683,7 +684,7 @@ tabPanel(title = "Stillbirths and infant deaths", value = "perinatal_mortality",
                    uiOutput("perinatal_explorer")
          )# mainPanel bracket
 ) # tabpanel bracket
- ), # navbar menu bracket
+), # navbar menu bracket
 ###############################################.
 ## Child health menu ----
 ###############################################.
@@ -870,5 +871,6 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
  )# taglist bracket
 
  #)#secure app
+
 
 #END
