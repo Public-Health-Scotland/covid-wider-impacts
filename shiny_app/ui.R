@@ -1,6 +1,7 @@
 #UI
 
-   # secure_app( #uncomment if needing password protection
+  #secure_app( #uncomment if needing password protection
+
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
 
@@ -722,9 +723,9 @@ navbarMenu("Child health", icon = icon("child"),
                               uiOutput("immunisation_explorer")
                     )# mainPanel bracket
            ), # tabpanel bracket
-           ##############################################.
-           # Child Health reviews ----
-           #############################################.
+#            ##############################################.
+#            # Child Health reviews ----
+#            #############################################.
            tabPanel(title = "Child health reviews", value = "child_health",
                     wellPanel(
                       column(4, div(title="Select the data you want to explore.", # tooltip
@@ -866,9 +867,10 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
          mainPanel(width = 12,
                    DT::dataTableOutput("table_filtered"))
        ) # tabpanel bracket
-     ) # page bracket
-  )# taglist bracket
+   ) # page bracket
+ )# taglist bracket
 
-  # )#secure app
+ #)#secure app
+
 
 #END

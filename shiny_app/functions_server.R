@@ -11,7 +11,7 @@
 # split - age, sex, condition, or dep (simd deprivation)
 plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                              data_name = NULL, tab = "summary", period = "weekly",
-                             aver_week = F) {
+                             aver_week = F, fix_x_range = FALSE) {
 
   if (split != FALSE) {
     if (tab == "summary") {
@@ -103,7 +103,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
                              period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")),
                              period == "quarterly" ~ paste0("Quarter: ", format(trend_data$week_ending, "%b %y")))  
-
+                             
   # If variation selected different values
   if (type == "variation") {
 
@@ -187,7 +187,6 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                   "<br>", measure_name, trend_data$count,
                                   "<br>", "Historic average: ",
                                   trend_data$count_average))
-
         
       } else if (split == "eth"){
         tooltip_trend <- c(paste0(trend_data$category, "<br>",
@@ -205,6 +204,11 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       #Creating time trend plot
       trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count)
 
+    }
+
+    if (isTRUE(fix_x_range)) {
+      xaxis_plots[["range"]] = c(min(trend_data$week_ending, na.rm = TRUE),
+                                 max(trend_data$week_ending, na.rm = TRUE))
     }
 
     #Creating time trend plot
@@ -228,7 +232,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
 plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                                var2020 = "count", var_aver = "count_average",
-                               xvar = "week_ending", filtering = T, op = F, period = "weekly") {
+                               xvar = "week_ending", filtering = T, op = F,
+                               period = "weekly", fix_x_range = FALSE) {
 
   if (filtering == T) {
     # Filtering dataset to include only overall figures
@@ -281,7 +286,6 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
                                                     "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
                                                     "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 - 2022",
-
                                    data_name %in% c("cath")  ~ "2020")
 
     measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
@@ -310,6 +314,11 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     tooltip_trend <- c(paste0(period_data,
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
+
+    if (isTRUE(fix_x_range)) {
+      xaxis_plots[["range"]] = c(min(trend_data[[xvar]], na.rm = TRUE),
+                                 max(trend_data[[xvar]], na.rm = TRUE))
+    }
 
     #Creating time trend plot
     plot_ly(data=trend_data, x=~get(xvar)) %>%
@@ -366,7 +375,6 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
 
     value3 <- dataset[[var3_chosen]]
 
-
     tooltip_1 <- c(paste0("Year: 2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, value1))
 
@@ -411,7 +419,6 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
       # 2019 line
       add_lines(y = ~get(var2_chosen), line = list(color = "black", dash = 'dash', opacity = 3, width = 1),
                 text=tooltip_2, hoverinfo="text", name = denom_period) %>%
-
       add_annotations(x = "2020-04-05",
                       y = max(var1_chosen),
                       text = "1st lockdown",
@@ -471,8 +478,7 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
     tooltip_3 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>", 
                           "Deprivation Quintile: ", dataset$dep, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
-    
-    
+        
     # Function for vertical line at start of lockdown
     vline <- function(x = 0, color = "grey") {
       list(
@@ -485,7 +491,6 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
         line = list(color = color, dash = 'dash')
       )
     }
-
 
     #Creating time trend plot for difference 
     
@@ -543,7 +548,6 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
 ###############################################.
 
 ## 1. MONTHLY INCIDENCE
-
 plot_sact_incidence_chart <- function(sact_dataset) {
 
   # set plot display if no data
@@ -561,9 +565,7 @@ plot_sact_incidence_chart <- function(sact_dataset) {
 
     xaxis_plots[["title"]] <- xaxis_title
 
-
     #Text for tooltips
-
     sact_tooltip_mon <- c(paste0("Month: ", sact_dataset$month,
                                  "<br>", "Number of Patients: ", sact_dataset$count,
                                  "<br>", "Area: ", sact_dataset$area))
@@ -817,33 +819,7 @@ plot_sact_wk_incidence_chart_area <- function(sact_wk_dataset) {
     sact_tooltip_lockdown <- c(paste0("Start of 1st lockdown"))
 
 
-    # Function for vertical line at start of lockdown
-
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
+   
 
     # #Creating time trend plot for weekly incidence
 
@@ -918,30 +894,6 @@ plot_sact_wk_incidence_chart_treatment <- function(sact_wk_dataset) {
 
     # Function for vertical line at start of lockdown
 
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
 
 
     # #Creating time trend plot for weekly incidence
@@ -993,7 +945,7 @@ plot_sact_wk_incidence_chart_treatment <- function(sact_wk_dataset) {
 }
 
 
-################################################################################
+################################################################################.
 
 ## 3. WEEKLY DIFFERENCE
 
@@ -1018,32 +970,6 @@ plot_sact_wk_difference_chart <- function(sact_wk_dataset) {
                                     "Percentage change (%):", paste0(format(round(sact_wk_dataset$week_on_refweek_perc, 2), nsmall = 2), "%"),
                                     "<br>",
                                     "Area: ", sact_wk_dataset$area))
-
-    # Function for verical line at start of lockdown
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
 
 
     # #Creating time trend plot for difference
@@ -1110,32 +1036,7 @@ plot_sact_wk_difference_chart_area <- function(sact_wk_dataset) {
                                     "<br>",
                                     "Area: ", sact_wk_dataset$area))
 
-    # Function for verical line at start of lockdown
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
+ 
 
     # #Creating time trend plot for difference
 
@@ -1204,33 +1105,7 @@ plot_sact_wk_difference_chart_treatment <- function(sact_wk_dataset) {
                                     "<br>",
                                     "Administration Route: ", sact_wk_dataset$treatment))
 
-    # Function for verical line at start of lockdown
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-
+ 
     # #Creating time trend plot for difference
 
     plot_ly(data=sact_wk_dataset) %>%
@@ -1365,8 +1240,8 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 
     # Input for tooltip based on weekly/monthly
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
-                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))  
-    
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))
+
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$spec, "<br>",
                               period_data,
@@ -1384,14 +1259,14 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
     #Modifying standard layout
     if (op == T){
       yaxis_plots[["title"]] <- "Number of appointments"
-      
+
       measure_name <- "Appointments: "
     } else{
     yaxis_plots[["title"]] <- "Number of admissions"
 
     measure_name <- "Admissions: "
     }
-    
+
     # Input for tooltip based on weekly/monthly
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
                              period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))  
@@ -1524,7 +1399,8 @@ plot_imm_simd <- function(dataset, age_week, dose,
 #Function to create plot when no data available
 plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due to small numbers") {
   text_na <- list(x = 5, y = 5, text = text_nodata , size = 20,
-                  xref = "x", yref = "y",  showarrow = FALSE)
+                  xref = "x", yref = "y",  showarrow = FALSE,
+                  name = "_no_data_plot_marker_") # so can check later if plot object has no data
 
   plot_ly(height = height_plot) %>%
     add_trace(x = 0, y = 0, visible = FALSE, type = "scatter", mode = "lines") %>%
@@ -2261,3 +2137,61 @@ plot_run_chart =
 }
 
 ### END
+
+###############################################.
+## Functions to modify charts ----
+###############################################.
+
+# Adds a single vertical line with an annotation to an existing chart
+#
+# Warning: will remove any existing shapes from chart (so you can't call the
+# function twice on the same chart)
+#
+# Note: works better when plot's x-axis range is fixed, otherwise the range
+# adjusts to fit the annotation in the plot area even if it could extend out
+# over legend.
+#
+# Arguments
+# fig - a plotly chart
+# x - position on x-axis to draw vertical line at
+# text_align - which side of text should be aligned with the line?
+#               "left", "right", or "center"
+# text_y - y position of annotation's anchor (as specified by text_yanchor)
+#         (0 to 1 = chart area, can be outside that)
+# text_yanchor - "auto", "top", "middle", "bottom"
+# margin - named list (t, l, r, b), plot margin in number of pixels.
+#           May need to adjust to get annotation to fit
+# line_settings - named list (color, dash, width)
+# hovertext - text to display on hover (optional)
+#
+# Returns
+# plotly chart
+add_vline = function(fig, x, text, text_align = "center", text_y = 1,
+                     text_yanchor = "bottom", margin = list(t = 15),
+                     line_settings = list(color = "grey", dash = "dash"),
+                     hovertext = NULL) {
+
+  # This check works locally but not when deployed, not sure why! JV 26/7/22
+  # plot_dodata() inserts the string _no_data_plot_marker_ as the name of the
+  # annotation. So if that's included in the JSON data plotly generates, we
+  # know it's an empty plot saying there's no data
+  # no_data_plot =
+  #   str_detect(plotly_json(fig)[["x"]][["data"]], "_no_data_plot_marker_")
+
+  # Don't add the annotation to an empty plot
+  # if (isFALSE(no_data_plot)) {
+    fig =
+      layout(fig,
+             shapes = list(type = "line", line = line_settings,
+                           y0 = 0, y1 = 1, yref = "paper", x0 = x, x1 = x),
+             annotations = list(text = text, align = text_align, showarrow = FALSE,
+                                x = x, xanchor = text_align, hovertext = hovertext,
+                                y = text_y, yref = "paper", yanchor = text_yanchor),
+             margin = margin)
+  # }
+
+
+
+  return(fig)
+
+}
