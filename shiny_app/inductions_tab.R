@@ -3,7 +3,7 @@
 
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_induct_modal,
+observeEvent(input$`induct-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("The data used for the induction of labour page comes from the Scottish Morbidity Record 02 (SMR02) database.  An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care.  From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended homebirths."),
@@ -22,13 +22,8 @@ observeEvent(input$btn_modal_simd_induct, simd_modal("Women"))
 ###############################################.
 ## Induction Reactive controls  ----
 ###############################################.
-
-# deliveries reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_induct <- renderUI({
-  #Lists areas available in
-  areas_summary_induct <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_induct])
-  selectizeInput("geoname_induct", label = NULL, choices = areas_summary_induct, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("induct")
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -37,8 +32,8 @@ output$geoname_ui_induct <- renderUI({
 #Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 induct_filter <- function(){
 
-  induct_runchart %>% filter(area_name == input$geoname_induct &
-                            area_type == input$geotype_induct &
+  induct_runchart %>% filter(area_name == input$`induct-geoname` &
+                            area_type == input$`induct-geotype` &
                             type %in% c("Scotland","Health board"))
 }
 
@@ -53,8 +48,8 @@ induct_linechart_split <- function(split){
 #Dataset 3: behind line chart  (available at scotland and NHS board level)
 induct_linechart_filter <- function(){
 
-  induct_linechart %>% filter(area_name == input$geoname_induct &
-                                area_type == input$geotype_induct &
+  induct_linechart %>% filter(area_name == input$`induct-geoname` &
+                                area_type == input$`induct-geotype` &
                                 type %in% c("Scotland","Health board"))
 }
 
@@ -83,7 +78,7 @@ output$induct_explorer <- renderUI({
 
   # text for titles of cut charts
   induct_data_timeperiod <-  paste0("Figures based on data extracted ",induct_extract_date)
-  induct_title <- paste0("of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$geoname_induct)
+  induct_title <- paste0("of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$`induct-geoname`)
 
   chart_explanation <-
     tagList(p("We have used ",
@@ -116,11 +111,11 @@ output$induct_explorer <- renderUI({
                             p(chart_explanation)),
                      column(12,
                             br(), #spacing
-                            h4(paste0("Number of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$geoname_induct))),
+                            h4(paste0("Number of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$`induct-geoname`))),
                      column(12,
                             withSpinner(plotlyOutput("induct_linechart_number"))),
                      #only if scotland selected display age and deprivation breakdowns
-                     if (input$geotype_induct == "Scotland"){
+                     if (input$`induct-geotype` == "Scotland"){
                        tagList(
                          fluidRow(column(12,
                                          h4("Singleton live births at 37-42 weeks gestation that followed induction of labour by maternal age group: Scotland"))),
@@ -174,7 +169,7 @@ plot_induct_trend <- function(measure, shift, trend){
   } else {
 
     # centrelines
-    centreline_name <- paste0(input$geoname_induct," average up to end Feb 2020")
+    centreline_name <- paste0(input$`induct-geoname`," average up to end Feb 2020")
     dottedline_name <- "Projected average"
     centreline_data = plot_data$median_ind_37_42
     dottedline_data = plot_data$ext_ind_37_42
@@ -199,7 +194,7 @@ plot_induct_trend <- function(measure, shift, trend){
 
   }}
 
-#####################################################################################################################
+#####################################################################################################################.
 ## LINECHART SCOTLAND & NHS BOARD: births (37-42 weeks gestation) where delivery induced, numbers and percentages - Scotland level only
 plot_induct_linechart <- function(measure){
 
@@ -252,7 +247,7 @@ plot_induct_linechart <- function(measure){
 }
 
 
-#####################################################################################################################
+#####################################################################################################################.
 ## LINECHART SCOTLAND: inductced deliveries by age group and deprivation, numbers and percentages - Scotland level only
 plot_induct_split <- function(dataset, split, measure){
 

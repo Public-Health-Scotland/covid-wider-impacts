@@ -57,13 +57,6 @@ observeEvent(input$imm_elig_defs,
 ###############################################.
 # Show list of area names depending on areatype selected
 geoname_server("immun")
-# output$geoname_ui_immun <- renderUI({
-#   #Lists areas available in   
-#   areas_summary_immun <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_immun])
-#   
-#   if (input$geotype_immun == "Scotland"){areas_summary_immun <- c("Scotland")}
-#   selectizeInput("geoname_immun", label = NULL, choices = areas_summary_immun, selected = "")
-# })
 
 # Get list of available time periods for plotting
 # Assumes that the time periods available are the same for all data

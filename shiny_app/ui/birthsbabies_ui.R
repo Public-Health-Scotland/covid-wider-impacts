@@ -4,17 +4,13 @@
 inductions_tab <- 
   tabPanel(title = "Induction of labour", value = "inductions",
            wellPanel(
-             column(4, div(title="Select a breakdown",
-                           p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                           selectInput("geotype_induct", label = NULL, choices= c("Scotland", "Health board"),
-                                       selected = "Scotland")),
-                    uiOutput("geoname_ui_induct")),
-             column(4,offset=4,
-                    actionButton("btn_induct_modal", "Data source: SMR02", icon = icon('question-circle')),
+             column(4, selectgeo_ui("induct", area_choices =  c("Scotland", "Health board"), step_no = "1")),
+             column(4,offset=2,
+                    sourcemodal_ui("induct"),
                     fluidRow(br()),
                     downloadButton("download_induct_data", "Download data"),
                     fluidRow(br()),
-                    actionButton("jump_commentary_induction","Go to commentary"))
+                    actionButton("induct-commentary","Go to commentary"))
            ), #well panel
            mainPanel(width = 12,
                      uiOutput("induct_explorer")
