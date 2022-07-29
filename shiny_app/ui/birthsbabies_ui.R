@@ -71,13 +71,9 @@ gestation_tab <-
 apgar_tab <- 
   tabPanel(title = "Apgar scores", value = "apgar",
            wellPanel(
-             column(4, div(title="Select a breakdown",
-                           p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                           selectInput("geotype_apgar", label = NULL, choices= c("Scotland", "Health board"),
-                                       selected = "Scotland")),
-                    uiOutput("geoname_ui_apgar")),
+             column(4, selectgeo_ui("apgar", area_choices =  c("Scotland", "Health board"), step_no = "1")),
              column(4,offset=4,
-                    actionButton("btn_apgar_modal", "Data source: SMR02", icon = icon('question-circle')),
+                    sourcemodal_ui("apgar"),
                     fluidRow(br()),
                     downloadButton("download_apgar_data", "Download data"),
                     fluidRow(br()),

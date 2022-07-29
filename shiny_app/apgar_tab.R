@@ -7,7 +7,7 @@
 ###############################################.
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_apgar_modal,
+observeEvent(input$`apgar-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("The data used for the Apgar scores page comes from the Scottish Morbidity Record 02 (SMR02) database. An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care. From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended home births."),
@@ -27,17 +27,11 @@ observeEvent(input$btn_apgar_rules, runchart_modal())
 #Modal to explain SIMD and deprivation
 observeEvent(input$btn_modal_simd_apgar, simd_modal("Babies"))
 
-
 ###############################################.
 ## Reactive controls  ----
 ###############################################.
-
-# deliveries reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_apgar <- renderUI({
-  #Lists areas available in
-  areas_summary_apgar <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_apgar])
-  selectizeInput("geoname_apgar", label = NULL, choices = areas_summary_apgar, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("apgar")
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -46,8 +40,8 @@ output$geoname_ui_apgar <- renderUI({
 #Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 apgar_filter <- function(){
 
-apgar_filt <- apgar_runchart %>% filter(area_name == input$geoname_apgar &
-                               area_type == input$geotype_apgar &
+apgar_filt <- apgar_runchart %>% filter(area_name == input$`apgar-geoname` &
+                               area_type == input$`apgar-geotype` &
                                type %in% c("Scotland", "Health board"))
 apgar_filt %>%
     # Sorting levels based on date
@@ -65,13 +59,13 @@ apgar_linechart_split <- function(split){
 #Dataset 3: behind line chart  (available at scotland and NHS board level)
 apgar_linechart_filter <- function(){
 
-  apgar_linechart %>% filter(area_name == input$geoname_apgar &
-                                area_type == input$geotype_apgar &
+  apgar_linechart %>% filter(area_name == input$`apgar-geoname` &
+                                area_type == input$`apgar-geotype` &
                                 type %in% c("Scotland","Health board"))
 }
 
 ###############################################.
-## Induction Chart calls to chart function ----
+## Chart calls to chart function ----
 ###############################################.
 
 # chart outputs for trend
@@ -95,7 +89,7 @@ output$apgar_explorer <- renderUI({
 
   # text for titles of cut charts
   apgar_data_timeperiod <-  paste0("Figures based on data extracted ",apgar_extract_date)
-  apgar_title <- paste0("of singleton live births at 37-42 weeks gestation that have a 5 minute Apgar score of <7: ",input$geoname_apgar)
+  apgar_title <- paste0("of singleton live births at 37-42 weeks gestation that have a 5 minute Apgar score of <7: ",input$`apgar-geoname`)
 
   chart_explanation <-
     tagList(p(run_chart_description("Percentage of births that have a 5 minute
@@ -124,7 +118,7 @@ output$apgar_explorer <- renderUI({
                               pandemic in Scotland)")))
 
   # Layout depending if Scotland or HB selected
-  if (input$geotype_apgar == "Health board"){
+  if (input$`apgar-geotype` == "Health board"){
     tagList(fluidRow(column(12,
                             h4(paste0("Percentage ", apgar_title)),
                             div(actionButton("btn_apgar_rules",
@@ -139,11 +133,11 @@ output$apgar_explorer <- renderUI({
                             p(chart_explanation_quarter)),
                      column(12,
                             br(), #spacing
-                            h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$geoname_apgar))),
+                            h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$`apgar-geoname`))),
                      column(12,
                             withSpinner(plotlyOutput("apgar_linechart_number")))))
 
-  } else if (input$geotype_apgar == "Scotland"){ #only if scotland selected display age and deprivation breakdowns
+  } else if (input$`apgar-geotype` == "Scotland"){ #only if scotland selected display age and deprivation breakdowns
                        tagList(fluidRow(column(12,
                                                h4(paste0("Percentage ", apgar_title)),
                                                div(actionButton("btn_apgar_rules",
@@ -158,7 +152,7 @@ output$apgar_explorer <- renderUI({
                                                p(chart_explanation)),
                                         column(12,
                                                br(), #spacing
-                                               h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$geoname_apgar))),
+                                               h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$`apgar-geoname`))),
                                         column(12,
                                                withSpinner(plotlyOutput("apgar_linechart_number")))),
                          fluidRow(column(12,
@@ -200,7 +194,7 @@ plot_apgar_trend <- function(measure, shift, trend){
   } else {
 
     # centrelines
-    centreline_name <- paste0(input$geoname_apgar," average up to end Feb 2020")
+    centreline_name <- paste0(input$`apgar-geoname`," average up to end Feb 2020")
     dottedline_name = "Projected average"
     centreline_data = plot_data$median_apgar5_37plus
     dottedline_data = plot_data$ext_median_apgar5_37plus
@@ -210,7 +204,7 @@ plot_apgar_trend <- function(measure, shift, trend){
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10%
     y_label <- "Percentage of births (%)"
 
-    tick_freq <- case_when(input$geotype_apgar == "Scotland" ~ 6, T ~ 2)
+    tick_freq <- case_when(input$`apgar-geotype` == "Scotland" ~ 6, T ~ 2)
 
     #specify tool tip
     tooltip_top <- c(paste0(format(plot_data$date_type),": ",format(plot_data$date_label),"<br>",
@@ -265,7 +259,7 @@ plot_apgar_linechart <- function(measure){
                 text_nodata = "Chart not shown as unstable due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
 
-    tick_freq <- case_when(input$geotype_apgar == "Scotland" ~ 6, T ~ 2)
+    tick_freq <- case_when(input$`apgar-geotype` == "Scotland" ~ 6, T ~ 2)
 
     xaxis_plots <- c(xaxis_plots,
                      dtick =tick_freq, tickangle = 0,
