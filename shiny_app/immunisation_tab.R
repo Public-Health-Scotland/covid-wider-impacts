@@ -4,10 +4,10 @@
 ## Modals  ----
 ###############################################.
 # Modal to explain SIMD and deprivation
-observeEvent(input$btn_modal_simd_imm, simd_modal("Children")) 
+observeEvent(input$modal_simd_imm, simd_modal("Children")) 
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_immune_modal, 
+observeEvent(input$`immun-source-modal`, 
              showModal(modalDialog(
                title = "What is the data source?",
                p("The information shown on the numbers of children eligible for, and receiving, routine preschool immunisations is taken from the ",
@@ -55,15 +55,15 @@ observeEvent(input$imm_elig_defs,
 ###############################################...
 ## Reactive controls  ----
 ###############################################.
-
-# Immunisation reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_immun <- renderUI({
-  #Lists areas available in   
-  areas_summary_immun <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_immun])
-  
-  if (input$geotype_immun == "Scotland"){areas_summary_immun <- c("Scotland")}
-  selectizeInput("geoname_immun", label = NULL, choices = areas_summary_immun, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("immun")
+# output$geoname_ui_immun <- renderUI({
+#   #Lists areas available in   
+#   areas_summary_immun <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_immun])
+#   
+#   if (input$geotype_immun == "Scotland"){areas_summary_immun <- c("Scotland")}
+#   selectizeInput("geoname_immun", label = NULL, choices = areas_summary_immun, selected = "")
+# })
 
 # Get list of available time periods for plotting
 # Assumes that the time periods available are the same for all data
@@ -92,11 +92,11 @@ filter_table_data_immun <- function(dataset){
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_immun
   
-  dataset %>% filter(area_name == input$geoname_immun & 
+  dataset %>% filter(area_name == input$`immun-geoname` & 
                        str_detect(immunisation, #filter immunisation scurve data on dose
-                                  substr(input$measure_select_immun, 
-                                         nchar(input$measure_select_immun), 
-                                         nchar(input$measure_select_immun))),
+                                  substr(input$`immun-measure`, 
+                                         nchar(input$`immun-measure`), 
+                                         nchar(input$`immun-measure`))),
                        # we don't want this function to re-execute every time dates_immun changes, so isolate()
                        time_period_eligible %in% isolate(input$dates_immun))
 }
@@ -122,15 +122,15 @@ output$immun_scurve <- renderPlotly({
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_immun
   
-  if (substr(input$measure_select_immun, 1, 3) == "six") {
+  if (substr(input$`immun-measure`, 1, 3) == "six") {
     scurve_data <-  six_alldose_filt()
-  } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
+  } else if (substr(input$`immun-measure`, 1, 3) == "mmr") {
     scurve_data <-  mmr_alldose_filt()
   }
 
   dose <- paste("dose", #extracting dose from input
-                substr(input$measure_select_immun, nchar(input$measure_select_immun),
-                       nchar(input$measure_select_immun)))
+                substr(input$`immun-measure`, nchar(input$`immun-measure`),
+                       nchar(input$`immun-measure`)))
   
   imm_type <- substr(unique(scurve_data$immunisation),1,3)
   
@@ -141,7 +141,7 @@ output$immun_scurve <- renderPlotly({
                         imm_type == "mmr" & dose == "dose 1" ~ "1",
                         imm_type == "mmr" & dose == "dose 2" ~ "3")
   
-  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian" && dose== "dose 2")
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$`immun-geoname` == "NHS Grampian" && dose== "dose 2")
   { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age. 
                 Data is available from the data download option.")
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
@@ -206,15 +206,15 @@ output$immun_scurve <- renderPlotly({
 
 #run function to generate data tables linked to s-curves  
 output$immun_table <- renderUI({
-  if (substr(input$measure_select_immun, 1, 3) == "six") {
+  if (substr(input$`immun-measure`, 1, 3) == "six") {
     dataset <-  sixtable
-  } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
+  } else if (substr(input$`immun-measure`, 1, 3) == "mmr") {
     dataset <-  mmrtable
   }
   
   dose <- paste("dose", #extracting dose from input
-                substr(input$measure_select_immun, nchar(input$measure_select_immun),
-                       nchar(input$measure_select_immun)))
+                substr(input$`immun-measure`, nchar(input$`immun-measure`),
+                       nchar(input$`immun-measure`)))
   
   table_data <- filter_table_data_immun(dataset)
   
@@ -371,26 +371,26 @@ output$imm_mmr_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_do
 output$immunisation_explorer <- renderUI({
   
   # text for titles of cut charts
-  immune_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
-                                                                                 input$geoname_immun),
-                            input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
-                            input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun),
-                            input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$geoname_immun),
-                            input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun))
+  immune_title <- case_when(input$`immun-measure` == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
+                                                                                 input$`immun-geoname`),
+                            input$`immun-measure` == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$`immun-geoname`),
+                            input$`immun-measure` == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$`immun-geoname`),
+                            input$`immun-measure` == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$`immun-geoname`),
+                            input$`immun-measure` == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$`immun-geoname`))
   immune_subtitle <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
   
   # text for SIMD titles of cut charts - SIMD only available at scotland level so no need for variable geography
-  immune_simd_chan_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Change in uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland (Compared to baseline of children turning 8 weeks in 2019)",
-                                      input$measure_select_immun == "sixin_dose2" ~ "Change in uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland (Compared to baseline of children turning 12 weeks in 2019)",
-                                      input$measure_select_immun == "sixin_dose3" ~ "Change in uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation: Scotland (Compared to baseline of children turning 16 weeks in 2019)",
-                                      input$measure_select_immun == "mmr_dose1" ~ "Change in uptake of first dose MMR vaccine by 13 months of age by deprivation: Scotland (Compared to baseline of children turning 12-13 months in 2019)",
-                                      input$measure_select_immun == "mmr_dose2" ~ "Change in uptake of second dose MMR vaccine by 3 years 5 months of age by deprivation: Scotland (Compared to baseline of children turning 3 years and 4 months in 2019)")
+  immune_simd_chan_title <- case_when(input$`immun-measure` == "sixin_dose1" ~ "Change in uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland (Compared to baseline of children turning 8 weeks in 2019)",
+                                      input$`immun-measure` == "sixin_dose2" ~ "Change in uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland (Compared to baseline of children turning 12 weeks in 2019)",
+                                      input$`immun-measure` == "sixin_dose3" ~ "Change in uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation: Scotland (Compared to baseline of children turning 16 weeks in 2019)",
+                                      input$`immun-measure` == "mmr_dose1" ~ "Change in uptake of first dose MMR vaccine by 13 months of age by deprivation: Scotland (Compared to baseline of children turning 12-13 months in 2019)",
+                                      input$`immun-measure` == "mmr_dose2" ~ "Change in uptake of second dose MMR vaccine by 3 years 5 months of age by deprivation: Scotland (Compared to baseline of children turning 3 years and 4 months in 2019)")
   
-  immune_simd_tot_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland",
-                                     input$measure_select_immun == "sixin_dose2" ~ "Uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland",
-                                     input$measure_select_immun == "sixin_dose3" ~ "Uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation",
-                                     input$measure_select_immun == "mmr_dose1" ~ "Uptake of first dose MMR vaccine by 13 months of age by deprivation",
-                                     input$measure_select_immun == "mmr_dose2" ~ "Uptake of second dose MMR vaccine by 3 years 5 months of by age deprivation")
+  immune_simd_tot_title <- case_when(input$`immun-measure` == "sixin_dose1" ~ "Uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland",
+                                     input$`immun-measure` == "sixin_dose2" ~ "Uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland",
+                                     input$`immun-measure` == "sixin_dose3" ~ "Uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation",
+                                     input$`immun-measure` == "mmr_dose1" ~ "Uptake of first dose MMR vaccine by 13 months of age by deprivation",
+                                     input$`immun-measure` == "mmr_dose2" ~ "Uptake of second dose MMR vaccine by 3 years 5 months of by age deprivation")
   
   
   # Intro paragraph within imumunisation tab
@@ -421,7 +421,7 @@ output$immunisation_explorer <- renderUI({
                             p(age_def)),
                      column(6, uiOutput("immun_table"))),
             fluidRow(column(12, renderUI(commentary_6in1))),
-            if (input$geotype_immun == "Scotland"){
+            if (input$`immun-geotype` == "Scotland"){
               tagList(fluidRow(column(6, h4(paste0(immune_simd_tot_title))),
                                column(6, h4(paste0(immune_simd_chan_title))),
                                column(6,
@@ -439,16 +439,16 @@ output$immunisation_explorer <- renderUI({
   }
   
   # Specify items to display in immunisation ui based on step 2 selection 
-  if (input$measure_select_immun == "sixin_dose1") {
+  if (input$`immun-measure` == "sixin_dose1") {
     imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose1", simd_chan_plot = "imm_6in1_simd_chan_dose1")
-  }  else if (input$measure_select_immun == "sixin_dose2"){
+  }  else if (input$`immun-measure` == "sixin_dose2"){
     imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose2", simd_chan_plot = "imm_6in1_simd_chan_dose2")
-  }  else if (input$measure_select_immun == "sixin_dose3"){
+  }  else if (input$`immun-measure` == "sixin_dose3"){
     imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose3", simd_chan_plot = "imm_6in1_simd_chan_dose3")
-  }  else if (input$measure_select_immun == "mmr_dose1"){
+  }  else if (input$`immun-measure` == "mmr_dose1"){
     imm_layout(simd_tot_plot = "imm_mmr_simd_tot_dose1", simd_chan_plot = "imm_mmr_simd_chan_dose1",
                age_def = "12 months defined as 53 weeks")
-  } else if (input$measure_select_immun == "mmr_dose2"){
+  } else if (input$`immun-measure` == "mmr_dose2"){
     imm_layout(simd_tot_plot = "imm_mmr_simd_tot_dose2", simd_chan_plot = "imm_mmr_simd_chan_dose2", 
                age_def = "3 year 4 months defined as 174 weeks")
   }
@@ -464,14 +464,14 @@ output$immunisation_explorer <- renderUI({
 # Reactive dataset that gets the data the user is visualisaing ready to download
 imm_data_download <- reactive({
   
-  if (input$measure_select_immun == "mmr_dose2" & input$geoname_immun == "NHS Grampian") {
+  if (input$`immun-measure` == "mmr_dose2" & input$`immun-geoname` == "NHS Grampian") {
     mmrtable_dose2_gramp %>%
       select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
       rename(cohort = time_period_eligible)
   } else {
     
     data_down <- switch(
-      input$measure_select_immun,
+      input$`immun-measure`,
       # for data download filter on dose for table appearing in the app
       "sixin_dose1" = filter(sixtable,str_detect(immunisation,"dose 1")),
       "sixin_dose2" = filter(sixtable,str_detect(immunisation,"dose 2")),
@@ -482,27 +482,27 @@ imm_data_download <- reactive({
       rename(cohort = time_period_eligible) %>% 
       mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))#forcing variables to show one decimal digit.
     
-    if (input$measure_select_immun %in% "sixin_dose1") {
+    if (input$`immun-measure` %in% "sixin_dose1") {
       data_down <- data_down %>%
         select(immunisation, area_name, cohort, denominator,
                uptake_12weeks_num, uptake_12weeks_percent,
                uptake_24weeks_num, uptake_24weeks_percent, uptake_tot_num, uptake_tot_percent)
-    } else if (input$measure_select_immun %in% "sixin_dose2") {
+    } else if (input$`immun-measure` %in% "sixin_dose2") {
       data_down <- data_down %>%
         select(immunisation, area_name, cohort, denominator,
                uptake_16weeks_num, uptake_16weeks_percent,
                uptake_28weeks_num, uptake_28weeks_percent, uptake_tot_num, uptake_tot_percent)
-    } else if (input$measure_select_immun %in% "sixin_dose3") {
+    } else if (input$`immun-measure` %in% "sixin_dose3") {
       data_down <- data_down %>%
         select(immunisation, area_name, cohort, denominator,
                uptake_20weeks_num, uptake_20weeks_percent,
                uptake_32weeks_num, uptake_32weeks_percent,uptake_tot_num, uptake_tot_percent)
-    } else if (input$measure_select_immun %in% "mmr_dose1") {
+    } else if (input$`immun-measure` %in% "mmr_dose1") {
       data_down <- data_down %>%
         select(immunisation, area_name, cohort, denominator,
                uptake_13m_num, uptake_13m_percent,
                uptake_16m_num, uptake_16m_percent, uptake_tot_num, uptake_tot_percent)
-    } else if (input$measure_select_immun %in% "mmr_dose2") {
+    } else if (input$`immun-measure` %in% "mmr_dose2") {
       data_down <- data_down %>%
         select(immunisation, area_name, cohort, denominator,
                uptake_3y5m_num, uptake_3y5m_percent,
@@ -525,7 +525,7 @@ output$download_imm_data <- downloadHandler(
 imm_simd_data_download <- reactive ({
   
   data_down <- switch(
-    input$measure_select_immun,
+    input$`immun-measure`,
     "sixin_dose1" = six_simd_dose1,
     "sixin_dose2" = six_simd_dose2,
     "sixin_dose3" = six_simd_dose3,
@@ -534,7 +534,7 @@ imm_simd_data_download <- reactive ({
     select(-cohort) %>% 
     rename(cohort = time_period_eligible, deprivation_quintile = simdq)
   
-  if (input$measure_select_immun %in% "sixin_dose1") {
+  if (input$`immun-measure` %in% "sixin_dose1") {
     data_down <- data_down %>%
       select(immunisation, area_name, cohort, deprivation_quintile,
              children_turn_8weeks_num = denominator,
@@ -546,7 +546,7 @@ imm_simd_data_download <- reactive ({
              absolute_change_from_baseline_percent = week12_abs_diff,
              relative_change_from_baseline_percent = week12_rel_diff)
     
-  } else   if (input$measure_select_immun %in% "sixin_dose2") {
+  } else   if (input$`immun-measure` %in% "sixin_dose2") {
     data_down <- data_down %>%
       select(immunisation, area_name, cohort, deprivation_quintile,
              children_turn_12weeks_num = denominator,
@@ -558,7 +558,7 @@ imm_simd_data_download <- reactive ({
              absolute_change_from_baseline_percent = week16_abs_diff,
              relative_change_from_baseline_percent = week16_rel_diff)
     
-  } else   if (input$measure_select_immun %in% "sixin_dose3") {
+  } else   if (input$`immun-measure` %in% "sixin_dose3") {
     data_down <- data_down %>%
       select(immunisation, area_name, cohort, deprivation_quintile,
              children_turn_16weeks_num = denominator,
@@ -569,7 +569,7 @@ imm_simd_data_download <- reactive ({
              uptake_20weeks_2019_percent = baseline_20weeks,
              absolute_change_from_baseline_percent = week20_abs_diff,
              relative_change_from_baseline_percent = week20_rel_diff)
-  } else   if (input$measure_select_immun %in% "mmr_dose1") {
+  } else   if (input$`immun-measure` %in% "mmr_dose1") {
     data_down <- data_down %>%
       select(immunisation, area_name, cohort, deprivation_quintile,
              children_turn_12months_num = denominator,
@@ -581,7 +581,7 @@ imm_simd_data_download <- reactive ({
              absolute_change_from_baseline_percent = week57_abs_diff,
              relative_change_from_baseline_percent = week57_rel_diff)
     
-  } else   if (input$measure_select_immun %in% "mmr_dose2") {
+  } else   if (input$`immun-measure` %in% "mmr_dose2") {
     data_down <- data_down %>%
       select(immunisation, area_name, cohort, deprivation_quintile,
              children_turn_3y4months_num = denominator,

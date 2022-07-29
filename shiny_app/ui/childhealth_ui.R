@@ -6,29 +6,21 @@
 immunisations_tab <- 
   tabPanel(title = "Immunisations", value = "imm",
          wellPanel(
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_immun",
-                                           label= "Step 1. Select the data you want to explore.",
-                                           choices = data_list_immun, status = "primary",
-                                           direction = "vertical", justified = T))),
-           column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-                         p(tags$b("Step 2. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_immun"),
+           column(4, selectdata_ui("immun", measure_choices = data_list_immun)),
+           column(4, selectgeo_ui("immun", area_choices =  c("Scotland", "Health board")),
                   div(title="Select the time periods you want to explore. You can click in the box then click on time periods in the dropdown to add them, or click on the x to remove a time period.",
                       p(tags$b("Step 3. Select time periods of interest.")),
                       uiOutput("dates_ui_immun"),
                       actionButton("btn_update_time_immun", "Update time periods")
                   )
            ),
-           column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
+           column(4, sourcemodal_ui("immun"),
                   fluidRow(br()),
                   actionButton("imm_elig_defs", "Eligibility definitions",  icon = icon('question-circle')),
                   fluidRow(br()),
                   downloadButton('download_imm_data', 'Download data'),
                   fluidRow(br()),
-                  actionButton('jump_commentary_imm','Go to commentary')
+                  actionButton('immun-commentary','Go to commentary')
            )
          ), #well panel
          mainPanel(width = 12,

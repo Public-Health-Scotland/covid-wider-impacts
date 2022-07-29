@@ -150,7 +150,7 @@ function(input, output, session) {
   ## jump to commentary tab from data tabs ----
   ###############################################.
   # To jump to commentary tab and ensures correct panel is expanded - requires multiple lines becuase action buttons must have unique ID
-  observeEvent(input$jump_commentary_imm, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`immun-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Immunisation")})
 
   observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -159,7 +159,7 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Cardiovascular")})
 
-  observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`summary-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Summary trends")})
 
   observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -186,13 +186,13 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_tears, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Perineal tears")})
 
-  observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`gest-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
 
-  observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`childdev-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Child development")})
 
-  observeEvent(input$jump_commentary_breastfed, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`bf-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Breastfeeding")})
 
   observeEvent(input$jump_commentary_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "comment")

@@ -49,17 +49,13 @@ mode_delivery_tab <-
 gestation_tab <- 
   tabPanel(title = "Gestation at delivery", value = "gestation",
            wellPanel(
-             column(4, div(title="Select a breakdown",
-                           p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                           selectInput("geotype_gest", label = NULL, choices= c("Scotland", "Health board"),
-                                       selected = "Scotland")),
-                    uiOutput("geoname_ui_gest")),
-             column(4,offset=4,
-                    actionButton("btn_gest_modal", "Data source: SMR02", icon = icon('question-circle')),
+             column(4, selectgeo_ui("gest", area_choices =  c("Scotland", "Health board"), step_no = "1")),
+             column(4,offset=2,
+                    sourcemodal_ui("gest"),
                     fluidRow(br()),
                     downloadButton("download_gest_data", "Download data"),
                     fluidRow(br()),
-                    actionButton("jump_commentary_gestation","Go to commentary"))
+                    actionButton("gest-commentary","Go to commentary"))
            ), #well panel
            mainPanel(width = 12,
                      uiOutput("gestation_explorer")
