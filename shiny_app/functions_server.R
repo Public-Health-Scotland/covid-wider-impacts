@@ -361,19 +361,6 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
     tooltip_5 <- c(paste0("Year: 2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, paste0(format(round(value3, 2), nsmall = 2), "%")))
 
-    # Function for verical line at start of lockdown
-    vline <- function(x = 0, color = "lightgrey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
 
 
 
@@ -450,18 +437,6 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
                           "Deprivation Quintile: ", dataset$dep, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
         
-    # Function for vertical line at start of lockdown
-    vline <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
 
     #Creating time trend plot for difference 
     
@@ -692,32 +667,7 @@ plot_sact_wk_incidence_chart <- function(sact_wk_dataset) {
     sact_tooltip_lockdown <- c(paste0("Start of 1st lockdown"))
 
 
-    # Function for vertical line at start of lockdown
 
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
 
 
     # #Creating time trend plot for weekly incidence
@@ -2155,5 +2105,44 @@ add_vline = function(fig, x, text, text_align = "center", text_y = 1,
 
 }
 
+# Function for vertical line at start of lockdown
+vline <- function(x = 0, color = "grey") {
+  list(
+    type = "line",
+    y0 = 0,
+    y1 = 1,
+    yref = "paper",
+    x0 = x,
+    x1 = x,
+    line = list(color = color, dash = 'dash')
+  )
+}
+
+# Function for vertical line at start of lockdown
+
+vline1 <- function(x = 0, color = "grey") {
+  list(
+    type = "line",
+    y0 = 0,
+    y1 = 1,
+    yref = "paper",
+    x0 = x,
+    x1 = x,
+    line = list(color = color, dash = 'dash')
+  )
+}
+
+# Function for verical line at 2nd lockdown
+vline2 <- function(x = 0, color = "grey") {
+  list(
+    type = "line",
+    y0 = 0,
+    y1 = 1,
+    yref = "paper",
+    x0 = x,
+    x1 = x,
+    line = list(color = color, dash = 'dash')
+  )
+}
 
 ### END
