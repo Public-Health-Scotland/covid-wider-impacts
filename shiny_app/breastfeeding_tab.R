@@ -324,7 +324,7 @@ breast_down <- reactive({
 })
 
 
-output$download_bf_data <- downloadHandler(
+output$`bf-download-data` <- downloadHandler(
   filename ="breastfeeding_extract.csv",
   content = function(file) {
     write_csv(breast_down(), file) }

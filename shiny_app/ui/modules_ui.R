@@ -17,7 +17,7 @@ filters_ui <- function(id, measure_choices, area_choices) {
            fluidRow(br()),
            downloadButton(ns("download-data"), "Download data"),
            fluidRow(br()),
-           actionButton(ns("jump-commentary"),"Go to commentary"))
+           actionButton(ns("commentary"),"Go to commentary"))
   ) #well panel
 }
 ###############################################.

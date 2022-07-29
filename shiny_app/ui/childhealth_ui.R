@@ -63,28 +63,8 @@ childreview_tab <-
 #############################################.
 breastfeeding_tab <- 
   tabPanel(title = "Breastfeeding", value = "breastfeeding",
-           #actionButton("browser", "browser"),
            filters_ui(id = "bf", measure_choices = data_list_bf,
                       area_choices = c("Scotland", "Health board")), # Filters and options
-           
-#          wellPanel(
-#            column(4,   filters_ui(id = "bf", measure_choices = data_list_bf)), # Filters and options
-# # div(title="Select the data you want to explore.", # tooltip
-# #                          radioGroupButtons("measure_select_bf",
-# #                                            label= "Step 1. Select the data you want to explore.",
-# #                                            choices = data_list_bf, status = "primary",
-# #                                            direction = "vertical", justified = T))),
-#            column(4, div(title="Select a geography level first, then select the area you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-#                          p(tags$b("Step 2. Select a geography level and then an area of interest.")),
-#                          selectInput("geotype_bf", label = NULL, choices= c("Scotland", "Health board"),
-#                                      selected = "Scotland")),
-#                   uiOutput("geoname_ui_bf")),
-#            column(4,actionButton("btn_breastfed_modal", "Data source and definitions", icon = icon('question-circle')),
-#                   fluidRow(br()),
-#                   downloadButton("download_bf_data", "Download data"),
-#                   fluidRow(br()),
-#                   actionButton("jump_commentary_breastfed","Go to commentary"))
-#          ), #well panel
          mainPanel(width = 12,
                    uiOutput("breastfeeding_explorer")
          )# mainPanel bracket
@@ -94,22 +74,8 @@ breastfeeding_tab <-
 ###############################################.
 childdev_tab <- 
   tabPanel(title = "Child development", value = "child_dev",
-         wellPanel(
-           column(4, div(title="Select the data you want to explore.", # tooltip
-                         radioGroupButtons("measure_select_childdev",
-                                           label= "Step 1 - Select the data you want to explore.",
-                                           choices = data_list_childdev, status = "primary",
-                                           direction = "vertical", justified = T))),
-           column(4, selectizeInput("geotype_childdev", "Step 2 - Select a geography level and then an area of interest.",
-                                    choices = c("Scotland", "Health board"), selected = "Scotland"),
-                  uiOutput("geoname_childdev_ui")),
-           column(4,actionButton("btn_childdev_modal", "Data source and definitions",
-                                 icon = icon('question-circle')),
-                  fluidRow(br()),
-                  downloadButton("download_childdev_data", "Download data"),
-                  fluidRow(br()),
-                  actionButton('jump_commentary_childdev','Go to commentary'))
-         ), #well panel
+           filters_ui(id = "childdev", measure_choices = data_list_childdev,
+                      area_choices = c("Scotland", "Health board")), # Filters and options
          mainPanel(width = 12,
                    uiOutput("childdev_explorer")
          )# mainPanel bracket

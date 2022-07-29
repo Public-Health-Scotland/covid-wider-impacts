@@ -29,7 +29,7 @@ summary_tab <-
                                                  choices = c("Weekly", "Monthly"), selected = "Weekly")),
                     downloadButton('download_chart_data', 'Download data'),
                     fluidRow(br()),
-                    actionButton('jump_commentary_summary','Go to commentary')
+                    actionButton('summary-commentary','Go to commentary')
              )
            ), #wellPanel bracket
            mainPanel(width = 12,
