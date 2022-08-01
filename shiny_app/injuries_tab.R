@@ -37,6 +37,18 @@ injury_colour <- reactive({case_when(input$type_select == "age" ~ 1,
             input$type_select == "sex" ~	3)
 })
 
+ui_data <- reactive({
+  switch(
+    input$`injury-measure`,
+    "ui_smr01_all" = ui_smr01_all,
+    "ui_smr01_rta" = ui_smr01_rta,
+    "ui_smr01_poison" = ui_smr01_poison,
+    "ui_smr01_falls" = ui_smr01_falls,
+    "ui_smr01_other" = ui_smr01_other,
+    "ui_smr01_assaults" = ui_smr01_assaults) %>% 
+    filter(area_name == input$`injury-geoname`)
+})
+
 
 ###############################################.
 ## Reactive controls  ----
@@ -65,78 +77,22 @@ observeEvent(input$`injury-measure`, {
   )
 })
 
-
 ###############################################.
 ## Charts ----
 ###############################################.
-###############################################.
-# Creating plots for each cut and dataset
-# Injury time trend charts
-
-                    
-output$ui_smr01_all_overall <- renderPlotly({
-  plot_overall_chart(ui_smr01_all  %>% filter(area_name == input$`injury-geoname` & category=="All"),
+# Overall time trend comparison
+output$injury_overall <- renderPlotly({
+  plot_overall_chart(ui_data() %>% filter(category=="All"),
                      var2020 = "count", var_aver = "count_average", filtering = F,
                      data_name = "ui_smr01_all", period = "monthly" )})
-output$ui_smr01_rta_overall <- renderPlotly({
-  plot_overall_chart(ui_smr01_rta %>% filter(area_name == input$`injury-geoname` & category=="All"),  
-                     var2020 = "count", var_aver = "count_average", filtering = F,
-                     data_name = "ui_smr01_rta", period = "monthly" )})
-output$ui_smr01_poison_overall <- renderPlotly({
-  plot_overall_chart(ui_smr01_poison %>% filter(area_name == input$`injury-geoname` & category=="All"), 
-                     var2020 = "count", var_aver = "count_average", filtering = F, 
-                     data_name = "ui_smr01_poison", period = "monthly" )})
-output$ui_smr01_falls_overall <- renderPlotly({
-  plot_overall_chart(ui_smr01_falls %>% filter(area_name == input$`injury-geoname` & category=="All"),  
-                     var2020 = "count", var_aver = "count_average", filtering = F,
-                     data_name = "ui_smr01_falls", period = "monthly" )})
-output$ui_smr01_other_overall <- renderPlotly({
-  plot_overall_chart(ui_smr01_other %>% filter(area_name == input$`injury-geoname` & category=="All"),  
-                     var2020 = "count", var_aver = "count_average", filtering = F,
-                     data_name = "ui_smr01_other", period = "monthly" )})
-output$ui_smr01_assaults_overall <- renderPlotly({
-  plot_overall_chart(ui_smr01_assaults %>% filter(area_name == input$`injury-geoname` & category=="All"),  
-                     var2020 = "count", var_aver = "count_average", filtering = F,
-                     data_name = "ui_smr01_assaults", period = "monthly" )})
-
- output$ui_smr01_all_sex <- renderPlotly({
-   plot_trend_chart(ui_smr01_all %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select),
+# Chart for variation against baseline
+ output$injury_var <- renderPlotly({
+   plot_trend_chart(ui_data(), pal_inj[[injury_colour()]], c(input$type_select),
                     type = "variation", data_name = "ui_smr01_all" , tab = "injuries", period = "monthly")})
- output$ui_smr01_rta_sex <- renderPlotly({
-   plot_trend_chart(ui_smr01_rta %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select), 
-                    type = "variation", data_name = "ui_smr01_rta" , tab = "injuries")})
- output$ui_smr01_poison_sex <- renderPlotly({
-   plot_trend_chart(ui_smr01_poison %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select), 
-                    type = "variation",data_name = "ui_smr01_poison" , tab = "injuries",period = "monthly")})
- output$ui_smr01_falls_sex <- renderPlotly({
-   plot_trend_chart(ui_smr01_falls %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select), 
-                    type = "variation",  data_name = "ui_smr01_falls" , tab = "injuries",period = "monthly")})
- output$ui_smr01_other_sex <- renderPlotly({
-   plot_trend_chart(ui_smr01_other %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select), 
-                    type = "variation", data_name = "ui_smr01_other" , tab = "injuries",period = "monthly")})
- output$ui_smr01_assaults_sex <- renderPlotly({
-   plot_trend_chart(ui_smr01_assaults %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select), 
-                    type = "variation", data_name = "ui_smr01_assaults" , tab = "injuries",period = "monthly")})
- 
- output$ui_smr01_all_tot <- renderPlotly({
-   plot_trend_chart(ui_smr01_all %>% filter(area_name == input$`injury-geoname`),pal_inj[[injury_colour()]], c(input$type_select), type = "total", 
+ #Chart for total number of admissions
+ output$injury_tot <- renderPlotly({
+   plot_trend_chart(ui_data() ,pal_inj[[injury_colour()]], c(input$type_select), type = "total", 
                     data_name = "ui_smr01_all", tab = "injuries",period = "monthly")})
- output$ui_smr01_rta_tot <- renderPlotly({
-   plot_trend_chart(ui_smr01_rta %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select), type = "total", 
-                    data_name = "ui_smr01_rta", tab = "injuries",period = "monthly")})
- output$ui_smr01_poison_tot <- renderPlotly({
-   plot_trend_chart(ui_smr01_poison %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select), type = "total", 
-                    data_name = "ui_smr01_poison", tab = "injuries",period = "monthly")})
- output$ui_smr01_falls_tot <- renderPlotly({
-   plot_trend_chart(ui_smr01_falls %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select), type = "total", 
-                    data_name = "ui_smr01_falls", tab = "injuries",period = "monthly")})
- output$ui_smr01_other_tot <- renderPlotly({
-   plot_trend_chart(ui_smr01_other %>% filter(area_name == input$`injury-geoname`),pal_inj[[injury_colour()]], c(input$type_select), type = "total", 
-                    data_name = "ui_smr01_other", tab = "injuries",period = "monthly")})
- output$ui_smr01_assaults_tot <- renderPlotly({
-   plot_trend_chart(ui_smr01_assaults %>% filter(area_name == input$`injury-geoname`), pal_inj[[injury_colour()]], c(input$type_select), type = "total", 
-                    data_name = "ui_smr01_assaults", tab = "injuries",period = "monthly")})
-# Adding 'observeEvent' to allow reactive 'area of interest' selection on injuries tab
 
  ###############################################.
  ## Reactive layout ----
@@ -164,10 +120,11 @@ output$injuries_explorer <- renderUI({
  
     tagList( # injuries
       h3(paste0("Monthly admissions for ", injury_select)),
+      plot_box(paste0("2020 and 2021 compared with 2018-2019 average ",", ",input$geoname_injuries), "injury_overall"),
       plot_box(paste0(paste0("Percentage change in admissions for ", injury_select, " compared with the corresponding time in 2018-2019, by ", injury_split),
-                      ", ", input$`injury-geoname`), paste0(dataset,"_sex")),
+                      ", ", input$`injury-geoname`), "injury_var"),
       plot_box(paste0(paste0("Monthly number of admissions for ",injury_select,", by ", injury_split),
-                      ", ", input$`injury-geoname`), paste0(dataset,"_tot")))
+                      ", ", input$`injury-geoname`), "injury_tot"))
 }) 
 
 ###############################################.
