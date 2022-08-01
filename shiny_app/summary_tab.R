@@ -26,7 +26,7 @@ observeEvent({input$`summary-measure`}, {
                       label = "Step 3. Select type of admission.",
                       choices = c("All", "Emergency", "Planned"),
                       selected = "All")
-  } else if (input$`summary-measure` == "outpats") {
+  } else if (input$`summary-measure` == "op") {
     disable("adm_type")
     enable("appt_type")
 
@@ -76,11 +76,8 @@ spec_modal_op <- modalDialog(
 observeEvent(input$btn_spec_groups_rapid, { showModal(spec_modal_rapid) })
 observeEvent(input$btn_spec_groups_op, { showModal(spec_modal_op) })
 
-
-
 ###############################################.
 #modal to describe dataset
-# Link action button click to modal launch
 observeEvent(input$btn_dataset_modal,
 
              if (input$`summary-measure` == "rapid") {
@@ -281,7 +278,7 @@ observeEvent(input$btn_dataset_modal,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
 
-               } else if (input$`summary-measure` == "outpats"){
+               } else if (input$`summary-measure` == "op"){
                  showModal(modalDialog( # OUTPATIENTS MODAL
                    title = "What is the data source?",
                    p("The analyses shown here are derived from person level",
@@ -448,6 +445,15 @@ summ_chart_data <- reactive({
   "deaths" = deaths,
   "op" = op_filt()) })
 
+#Monthly or weekly time peiod
+summ_time_period <- reactive({
+  if(input$`summary-measure` == "op"){
+    time_period <- tolower(input$time_type)
+  } else{
+    time_period <- "weekly"
+  }
+}) 
+
 ###############################################.
 ## Reactive layout  ----
 ###############################################.
@@ -461,7 +467,7 @@ output$data_explorer <- renderUI({
                        input$`summary-measure` == "ooh" ~ "cases",
                        input$`summary-measure` == "sas" ~ "incidents",
                        input$`summary-measure` == "deaths" ~ "deaths",
-                       input$`summary-measure` == "outpats" ~ "appointments")
+                       input$`summary-measure` == "op" ~ "appointments")
 
   if (input$`summary-measure` == "deaths"){
     variation_title <- paste0("Percentage change in ", dataset,
@@ -471,15 +477,7 @@ output$data_explorer <- renderUI({
                               " compared with the corresponding time in 2018-2019 by ")
   }
 
-  if(input$`summary-measure` == "outpats"){
-    if(input$time_type == "Monthly"){
-      time_period <- "Monthly"
-    } else{
-      time_period <- "Weekly"
-    }
-  } else{
-      time_period <- "Weekly"
-    }
+  time_period <- str_to_title (summ_time_period())
   
   total_title <- paste0(time_period, " number of ", dataset, " by ")
   
@@ -490,7 +488,7 @@ output$data_explorer <- renderUI({
   extra_chars <- paste0(c(rep("_", diff_chars), "."), collapse = '')
 
   #update date for outpatients and the rest is different
-  upd_date_summ <- case_when(input$`summary-measure` == "outpats" ~ "15 June 2022",
+  upd_date_summ <- case_when(input$`summary-measure` == "op" ~ "15 June 2022",
                              TRUE ~ "6 July 2022")
 
   # Function to create the standard layout for all the different charts/sections
@@ -524,7 +522,7 @@ output$data_explorer <- renderUI({
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
         plot_box(paste0("2020 to 2022 compared with the 2015-2019 average"), paste0("summ_overall"))) #different averaging period for deaths
-        } else if (input$`summary-measure` == "outpats") {
+        } else if (input$`summary-measure` == "op") {
           plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         } else {
           plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0("summ_overall"))
@@ -648,33 +646,7 @@ output$data_explorer <- renderUI({
     cut_charts(title= "Weekly number of deaths",
                source = "NRS Death Registrations", data_name ="deaths")
 
-  } else if (input$`summary-measure` == "outpats") { # Outpatients data
-      eth_op_ui <- tagList(#Add ethnicity charts
-        fluidRow(column(6,
-                        h4(paste0(variation_title, "ethnic group")),
-                        tags$em("Please note that this data is only available by month.")),
-                 column(6,
-                        h4(paste0("Monthly number of ", dataset, " by ethnic group")),
-                        tags$em("Please note that this data is only available by month."))),
-        
-        ###Adding adm_type here to make clear what is selected
-        fluidRow(column(6,
-                        pickerInput("op_ethnicity", "Select one or more ethnic groups",
-                                    choices = eth_list_op, 
-                                    multiple = TRUE,
-                                    selected = eth_list_op,
-                                    options = list(
-                                      `actions-box` = TRUE))),
-                 column(6,
-                        actionButton("btn_modal_eth", "Interpretation of this chart", 
-                                     icon = icon('fas fa-exclamation-circle')))),
-        fluidRow(column(6,
-                        withSpinner(plotlyOutput("op_eth_var"))),
-                 column(6,
-                        withSpinner(plotlyOutput("op_eth_tot"))))
-      )
-      
-    if(input$time_type == "Weekly"){
+  } else if (input$`summary-measure` == "op") { # Outpatients data
       tagList(tags$b(span("Please note that these data are for management information only, and care should",
                           "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
                           tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
@@ -713,53 +685,31 @@ output$data_explorer <- renderUI({
                               withSpinner(plotlyOutput("op_moc_var"))),
                        column(6,
                               withSpinner(plotlyOutput("op_moc_tot")))),
-              eth_op_ui
+              #Add ethnicity charts
+                fluidRow(column(6,
+                                h4(paste0(variation_title, "ethnic group")),
+                                tags$em("Please note that this data is only available by month.")),
+                         column(6,
+                                h4(paste0("Monthly number of ", dataset, " by ethnic group")),
+                                tags$em("Please note that this data is only available by month."))),
+                
+                ###Adding adm_type here to make clear what is selected
+                fluidRow(column(6,
+                                pickerInput("op_ethnicity", "Select one or more ethnic groups",
+                                            choices = eth_list_op, 
+                                            multiple = TRUE,
+                                            selected = eth_list_op,
+                                            options = list(
+                                              `actions-box` = TRUE))),
+                         column(6,
+                                actionButton("btn_modal_eth", "Interpretation of this chart", 
+                                             icon = icon('fas fa-exclamation-circle')))),
+                fluidRow(column(6,
+                                withSpinner(plotlyOutput("op_eth_var"))),
+                         column(6,
+                                withSpinner(plotlyOutput("op_eth_tot"))))
                                           
       )
-    } else if(input$time_type == "Monthly"){
-      
-      tagList(tags$b(span("Please note that these data are for management information only, and care should",
-                          "be taken when interpreting these figures. For more information on methodology and data quality please see the ",
-                          tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
-                                 "Acute Activity and NHS Beds quarterly publication",  
-                                 target="_blank"), ". Did Not Attend appointments (DNAs) are not included in the figures shown here.",
-                          style="color:red")),
-              cut_charts(title= paste0(time_period, " outpatient appointments"),
-                         source = "SMR00", data_name = "monthly_op"),
-              fluidRow(column(6,
-                              h4(paste0(variation_title, "specialty group"))),
-                       # Adding adm_type here to make clear what is selected
-                       column(6,
-                              h4(paste0(total_title, "specialty group")))),
-              ###Adding adm_type here to make clear what is selected
-              fluidRow(column(6,
-                              pickerInput("op_specialty", "Select one or more specialty groups",
-                                          choices = spec_list_op, 
-                                          multiple = TRUE,
-                                          selected = c("Medical", "Surgery"))),
-                       column(6,
-                              actionButton("btn_spec_groups_op", 
-                                           "Specialties and their groups",
-                                           icon = icon('question-circle')))),
-              fluidRow(column(6,
-                              withSpinner(plotlyOutput("monthly_op_spec_var"))),
-                       column(6,
-                              withSpinner(plotlyOutput("monthly_op_spec_tot")))),
-              fluidRow(column(6,
-                              h4(paste0(variation_title, "mode of clinical interaction"))),
-                       # Adding adm_type here to make clear what is selected
-                       column(6,
-                              h4(paste0(total_title, "mode of clinical interaction")))),
-              fluidRow(actionButton("btn_modal_moc", "Interpretation of this chart", 
-                                    icon = icon('fas fa-exclamation-circle'))),
-              fluidRow(column(6,
-                              withSpinner(plotlyOutput("monthly_op_moc_var"))),
-                       column(6,
-                              withSpinner(plotlyOutput("monthly_op_moc_tot")))),
-              eth_op_ui
-      )
-
-    } 
   }
 })
 
@@ -774,54 +724,40 @@ output$ooh_cons_overall <- renderPlotly({plot_overall_chart(ooh_cons, data_name 
 
 # Sex variation and total charts
 output$summ_sex_var <- renderPlotly({
-  plot_trend_chart(summ_chart_data(), pal_sex, "sex", data_name = input$`summary-measure`)})
+  plot_trend_chart(summ_chart_data(), pal_sex, "sex", 
+                   data_name = input$`summary-measure`, period = summ_time_period())})
 
-output$summ_sex_tot <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_sex, "sex", 
-                                                      "total", data_name = input$`summary-measure`)})
+output$summ_sex_tot <- renderPlotly({
+  plot_trend_chart(summ_chart_data(), pal_sex, "sex", 
+                   "total", data_name = input$`summary-measure`, period = summ_time_period())})
 #Deprivation variation and total charts
-output$summ_depr_var <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_depr, 
-                                                       "dep", data_name = input$`summary-measure`)})
+output$summ_depr_var <- renderPlotly({
+  plot_trend_chart(summ_chart_data(), pal_depr, "dep", 
+                   data_name = input$`summary-measure`, period = summ_time_period())})
 
-output$summ_depr_tot <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_depr, "dep", 
-                                                       "total", data_name = input$`summary-measure`)})
+output$summ_depr_tot <- renderPlotly({
+  plot_trend_chart(summ_chart_data(), pal_depr, "dep", "total",
+                   data_name = input$`summary-measure`, period = summ_time_period())})
 
 #Age variation and total charts
-output$summ_age_var <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_age, 
-                                                       "age", data_name = input$`summary-measure`)})
+output$summ_age_var <- renderPlotly({
+  plot_trend_chart(summ_chart_data(), pal_age, "age", 
+                   data_name = input$`summary-measure`, period = summ_time_period())})
 
-output$summ_age_tot <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_age, "age", 
-                                                       "total", data_name = input$`summary-measure`)})
+output$summ_age_tot <- renderPlotly({
+  plot_trend_chart(summ_chart_data(), pal_age, "age", "total", 
+                   data_name = input$`summary-measure`, period = summ_time_period())})
 
 # Admissions to hospital charts
 output$adm_spec_var <- renderPlotly({plot_spec("variation", rapid_spec())})
 output$adm_spec_tot <- renderPlotly({plot_spec("total", rapid_spec())})
 
 # Outpatients charts
-output$op_overall <- renderPlotly({plot_overall_chart(op_filt(), "op", op = T)})
-output$op_sex_var <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", data_name = "op")})
-output$op_age_var <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", data_name = "op")})
-output$op_depr_var <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", data_name = "op")})
-output$op_moc_var <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", data_name = "op")})
-output$op_sex_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", "total", "op")})
-output$op_age_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", "total", "op")})
-output$op_depr_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", "total", "op")})
-output$op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", "total", "op")})
-output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80, op = T)})
-output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80, op = T)})
-
-# Monthly Outpatients charts
-output$monthly_op_overall <- renderPlotly({plot_overall_chart(op_filt(), "op", op = T, period = "monthly")})
-output$monthly_op_sex_var <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", data_name = "op", period = "monthly")})
-output$monthly_op_age_var <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", data_name = "op", period = "monthly")})
-output$monthly_op_depr_var <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", data_name = "op", period = "monthly")})
-output$monthly_op_moc_var <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", data_name = "op", period = "monthly")})
-output$monthly_op_sex_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_sex, "sex", "total", "op", period = "monthly")})
-output$monthly_op_age_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_age, "age", "total", "op", period = "monthly")})
-output$monthly_op_depr_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_depr, "dep", "total", "op", period = "monthly")})
-output$monthly_op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", "total", "op", period = "monthly")})
-output$monthly_op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80, op = T, period = "monthly")})
-output$monthly_op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80, op = T, period = "monthly")})
-
+output$op_overall <- renderPlotly({plot_overall_chart(op_filt(), "op", op = T, period = summ_time_period())})
+output$op_moc_var <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", data_name = "op", period = summ_time_period())})
+output$op_moc_tot <- renderPlotly({plot_trend_chart(op_filt(), pal_moc, "moc", "total", "op", period = summ_time_period())})
+output$op_spec_var <- renderPlotly({plot_spec("variation", op_spec(), marg = 80, op = T, period = summ_time_period())})
+output$op_spec_tot <- renderPlotly({plot_spec("total", op_spec(), marg = 80, op = T, period = summ_time_period())})
 
 output$op_eth_tot <- renderPlotly({
   
@@ -839,7 +775,7 @@ pal_spec <- reactive({
   #Creating palette of colors: colorblind proof
   #First obtaining length of each geography type, if more than 6, then 6,
   # this avoids issues. Extra selections will not be plotted
-  if (input$`summary-measure` == "outpats") {
+  if (input$`summary-measure` == "op") {
     trend_length <- length(input$op_specialty)
   } else {
     trend_length <- length(input$adm_specialty)
@@ -850,7 +786,7 @@ pal_spec <- reactive({
   trend_palette <- c("#000000", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99",
                      "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#b15928")
 
-  if (input$`summary-measure` == "outpats") {
+  if (input$`summary-measure` == "op") {
     trend_scale <- c(setNames(trend_palette,
                                  unique(op_spec()$spec)[1:trend_length]))
   } else {
@@ -868,7 +804,7 @@ symbol_spec <- reactive({
   symbols_palette <-  c('circle', 'diamond', 'circle', 'diamond', 'circle', 'diamond',
                         'square','triangle-up', 'square','triangle-up', 'square','triangle-up')
 
-  if (input$`summary-measure` == "outpats") {
+  if (input$`summary-measure` == "op") {
   #Creating palette of colors: colorblind proof
   #First obtaining length of each geography type, if more than 6, then 6,
   # this avoids issues. Extra selections will not be plotted
@@ -929,7 +865,7 @@ overall_data_download <- reactive({
     "deaths" = filter_data(deaths) %>% rename(average_2015_2019 = count_average) %>% 
       mutate(week_ending = format(week_ending, "%d %b %y")) %>%
       select(area_name, week_ending, count, starts_with("average")),
-    "outpats" = filter_data(op_filt() %>% rename(average_2018_2019 = count_average), op = T) %>% 
+    "op" = filter_data(op_filt() %>% rename(average_2018_2019 = count_average), op = T) %>% 
       mutate(week_ending = ifelse(time_split == "Monthly", format(week_ending, "%b %y"),
                                   format(week_ending, "%d %b %y"))) %>%
       rename(time_ending = week_ending) %>%

@@ -293,7 +293,7 @@ data_list <- c(
   "NHS 24 completed contacts" = "nhs24",
   "Out of hours cases and consultations" = "ooh", "Scottish Ambulance Service" = "sas",
   "Excess mortality" = "deaths",
-  "Outpatient appointments" = "outpats")
+  "Outpatient appointments" = "op")
 
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
