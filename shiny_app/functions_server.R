@@ -106,7 +106,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   # If variation selected different values
   if (type == "variation") {
 
-    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24",
+    aver_period <- paste0(case_when(data_name %in% c("rapid", "aye", "ooh", "nhs24",
                                                      "sas", "drug_presc", "cath",
                                                      "mentalhealth_drugs", "mh_ooh",
                                                      "ooh_cardiac", "sas_cardiac", "ui_smr01_all", "ui_smr01_assaults",
@@ -143,7 +143,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
       ###############################################.
       # Creating objects that change depending on dataset
-      yaxis_title <- case_when(data_name == "adm" | substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions",
+      yaxis_title <- case_when(data_name == "rapid" | substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions",
                                data_name == "aye" ~ "Number of attendances",
                                substr(data_name, 1, 3) == "ooh" | data_name == "cath" ~ "Number of cases",
                                data_name == "nhs24" ~ "Number of completed contacts",
@@ -156,7 +156,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       #Modifying standard layout
       yaxis_plots[["title"]] <- yaxis_title
 
-      measure_name <- case_when(data_name %in% c("adm", "cardio_admissions") | 
+      measure_name <- case_when(data_name %in% c("rapid", "cardio_admissions") | 
                                   substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ",
                                 data_name == "aye" ~ "Attendances: ",
                                 substr(data_name, 1, 3) == "ooh" | data_name == "cath" ~ "Cases: ",
@@ -242,7 +242,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
     ###############################################.
     # Creating objects that change depending on dataset
-    yaxis_title <- case_when(data_name %in% c("adm", "cardio_admissions") 
+    yaxis_title <- case_when(data_name %in% c("rapid", "cardio_admissions") 
                              | substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
                              substr(data_name, 1, 3) == "ooh" | data_name == "cath"  ~ "Number of cases",
@@ -263,7 +263,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
     hist_legend_covid <- case_when(data_name %in% c("cath")  ~ "2020", TRUE ~ "2020 - 2022")
 
-    measure_name <- case_when(data_name %in% c("adm", "cardio_admissions") 
+    measure_name <- case_when(data_name %in% c("rapid", "cardio_admissions") 
                               | substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ",
                               data_name == "aye" ~ "Attendances: ",
                               substr(data_name, 1, 3) == "ooh" | data_name == "cath"  ~ "Cases: ",

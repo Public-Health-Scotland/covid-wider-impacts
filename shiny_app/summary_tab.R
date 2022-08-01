@@ -437,6 +437,17 @@ op_eth <- reactive({
              category %in% input$op_ethnicity)   
 })
 
+# Data used for overall and trend charts for most of the summary datasets
+summ_chart_data <- reactive({
+  switch(input$`summary-measure`,
+  "rapid" = rapid_filt(),
+  "aye" = aye,
+  "ooh" = ooh,
+  "nhs24" = nhs24,
+  "sas" = sas,
+  "deaths" = deaths,
+  "op" = op_filt()) })
+
 ###############################################.
 ## Reactive layout  ----
 ###############################################.
@@ -512,27 +523,27 @@ output$data_explorer <- renderUI({
           Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
-        plot_box(paste0("2020 to 2022 compared with the 2015-2019 average"), paste0(data_name, "_overall"))) #different averaging period for deaths
+        plot_box(paste0("2020 to 2022 compared with the 2015-2019 average"), paste0("summ_overall"))) #different averaging period for deaths
         } else if (input$`summary-measure` == "outpats") {
           plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
         } else {
-          plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+          plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0("summ_overall"))
         },
       
      if (input$`summary-measure` != "ooh" | (input$`summary-measure` == "ooh" & input$ooh_appt_type == "All cases")) { 
-       tagList(plot_cut_box(paste0(variation_title, "sex"), paste0(data_name, "_sex_var"),
-                   paste0(total_title, "sex"), paste0(data_name, "_sex_tot")),
-      plot_cut_box(paste0(variation_title, "age group"), paste0(data_name, "_age_var"),
-                   paste0(total_title, "age group"), paste0(data_name, "_age_tot")),
+       tagList(plot_cut_box(paste0(variation_title, "sex"), "summ_sex_var",
+                   paste0(total_title, "sex"), "summ_sex_tot"),
+      plot_cut_box(paste0(variation_title, "age group"), "summ_age_var",
+                   paste0(total_title, "age group"), "summ_age_tot"),
       fluidRow(column(6, h4(paste0(variation_title, "SIMD quintile"))),
                column(6, h4(paste0(total_title, "SIMD quintile")))),
       fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?",
                             icon = icon('question-circle'))),
-      fluidRow(column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_var")))),
-               column(6, withSpinner(plotlyOutput(paste0(data_name, "_depr_tot")))))
+      fluidRow(column(6, withSpinner(plotlyOutput("summ_depr_var"))),
+               column(6, withSpinner(plotlyOutput("summ_depr_tot"))))
       )
      } else {
-       tags$b(p("Out of Hours demographic data is only available for Cases. Please Select 'All cases' in Step 4.", style="text-align:center; font-size:16px"),
+       tags$b(p("Out of Hours demographic data is only available for cases. Please Select 'All cases' in Step 4.", style="text-align:center; font-size:16px"),
        br(),
        br(),
        br())
@@ -757,64 +768,33 @@ output$data_explorer <- renderUI({
 ###############################################.
 ## Charts ----
 ###############################################.
-###############################################.
-# Creating plots for each cut and dataset
-# A&E charts
-output$aye_overall <- renderPlotly({plot_overall_chart(aye, data_name = "aye")})
-output$aye_sex_var <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", data_name = "aye")})
-output$aye_age_var <- renderPlotly({plot_trend_chart(aye, pal_age, "age", data_name = "aye")})
-output$aye_depr_var <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", data_name = "aye")})
-output$aye_sex_tot <- renderPlotly({plot_trend_chart(aye, pal_sex, "sex", "total", "aye")})
-output$aye_age_tot <- renderPlotly({plot_trend_chart(aye, pal_age, "age", "total", "aye")})
-output$aye_depr_tot <- renderPlotly({plot_trend_chart(aye, pal_depr, "dep", "total", "aye")})
-
-# OOH charts
-output$ooh_overall <- renderPlotly({plot_overall_chart(ooh, "ooh")})
+# Overall charts comparing pandemic period with baseline
+output$summ_overall <- renderPlotly({plot_overall_chart(summ_chart_data(), data_name = input$`summary-measure`)})
 output$ooh_cons_overall <- renderPlotly({plot_overall_chart(ooh_cons, data_name = "ooh_cons")})
-output$ooh_sex_var <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", data_name = "ooh")})
-output$ooh_age_var <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", data_name = "ooh")})
-output$ooh_depr_var <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", data_name = "ooh")})
-output$ooh_sex_tot <- renderPlotly({plot_trend_chart(ooh, pal_sex, "sex", "total", "ooh")})
-output$ooh_age_tot <- renderPlotly({plot_trend_chart(ooh, pal_age, "age", "total", "ooh")})
-output$ooh_depr_tot <- renderPlotly({plot_trend_chart(ooh, pal_depr, "dep", "total", "ooh")})
 
-# NHS24 charts
-output$nhs24_overall <- renderPlotly({plot_overall_chart(nhs24, "nhs24")})
-output$nhs24_sex_var <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex", data_name = "nhs24")})
-output$nhs24_age_var <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age", data_name = "nhs24")})
-output$nhs24_depr_var <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep", data_name = "nhs24")})
-output$nhs24_sex_tot <- renderPlotly({plot_trend_chart(nhs24, pal_sex, "sex", "total", "nhs24")})
-output$nhs24_age_tot <- renderPlotly({plot_trend_chart(nhs24, pal_age, "age", "total", "nhs24")})
-output$nhs24_depr_tot <- renderPlotly({plot_trend_chart(nhs24, pal_depr, "dep", "total", "nhs24")})
+# Sex variation and total charts
+output$summ_sex_var <- renderPlotly({
+  plot_trend_chart(summ_chart_data(), pal_sex, "sex", data_name = input$`summary-measure`)})
 
-# SAS charts
-output$sas_overall <- renderPlotly({plot_overall_chart(sas, "sas")})
-output$sas_sex_var <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex", data_name = "sas")})
-output$sas_age_var <- renderPlotly({plot_trend_chart(sas, pal_age, "age", data_name = "sas")})
-output$sas_depr_var <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep", data_name = "sas")})
-output$sas_sex_tot <- renderPlotly({plot_trend_chart(sas, pal_sex, "sex", "total", "sas")})
-output$sas_age_tot <- renderPlotly({plot_trend_chart(sas, pal_age, "age", "total", "sas")})
-output$sas_depr_tot <- renderPlotly({plot_trend_chart(sas, pal_depr, "dep", "total", "sas")})
+output$summ_sex_tot <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_sex, "sex", 
+                                                      "total", data_name = input$`summary-measure`)})
+#Deprivation variation and total charts
+output$summ_depr_var <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_depr, 
+                                                       "dep", data_name = input$`summary-measure`)})
+
+output$summ_depr_tot <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_depr, "dep", 
+                                                       "total", data_name = input$`summary-measure`)})
+
+#Age variation and total charts
+output$summ_age_var <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_age, 
+                                                       "age", data_name = input$`summary-measure`)})
+
+output$summ_age_tot <- renderPlotly({plot_trend_chart(summ_chart_data(), pal_age, "age", 
+                                                       "total", data_name = input$`summary-measure`)})
 
 # Admissions to hospital charts
-output$adm_overall <- renderPlotly({plot_overall_chart(rapid_filt(), "adm")})
-output$adm_sex_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", data_name = "adm")})
-output$adm_age_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", data_name = "adm")})
-output$adm_depr_var <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", data_name = "adm")})
-output$adm_sex_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_sex, "sex", "total", "adm")})
-output$adm_age_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_age, "age", "total", "adm")})
-output$adm_depr_tot <- renderPlotly({plot_trend_chart(rapid_filt(), pal_depr, "dep", "total", "adm")})
 output$adm_spec_var <- renderPlotly({plot_spec("variation", rapid_spec())})
 output$adm_spec_tot <- renderPlotly({plot_spec("total", rapid_spec())})
-
-# Deaths charts
-output$deaths_overall <- renderPlotly({plot_overall_chart(deaths, "deaths")})
-output$deaths_sex_var <- renderPlotly({plot_trend_chart(deaths, pal_sex, "sex", data_name = "deaths")})
-output$deaths_age_var <- renderPlotly({plot_trend_chart(deaths, pal_age, "age", data_name = "deaths")})
-output$deaths_depr_var <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep", data_name = "deaths")})
-output$deaths_sex_tot <- renderPlotly({plot_trend_chart(deaths, pal_sex, "sex", "total", "deaths")})
-output$deaths_age_tot <- renderPlotly({plot_trend_chart(deaths, pal_age, "age", "total", "deaths")})
-output$deaths_depr_tot <- renderPlotly({plot_trend_chart(deaths, pal_depr, "dep", "total", "deaths")})
 
 # Outpatients charts
 output$op_overall <- renderPlotly({plot_overall_chart(op_filt(), "op", op = T)})
@@ -848,12 +828,6 @@ output$op_eth_tot <- renderPlotly({
   plot_nodata(text_nodata = "Data is only available for Scotland")
   plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", type = "total", 
                    data_name = "op", period = "monthly")})
-
-
-# plot_nodata <- function(height_plot = 450, text_nodata = "Data not available due to small numbers") {
-#   text_na <- list(x = 5, y = 5, text = text_nodata , size = 20,
-#                   xref = "x", yref = "y",  showarrow = FALSE)
-
  
 output$op_eth_var <- renderPlotly({
   plot_trend_chart(dataset = op_eth(), pal_chose = pal_eth, split = "eth", 
