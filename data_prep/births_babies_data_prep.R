@@ -46,7 +46,9 @@ create_delivery <- function(folderdate) {
                    value=perc_csection_emer, median=ext_csection_emer) %>%
     runchart_flags(shift="csection_elec_shift", trend="csection_elec_trend", 
                    value=perc_csection_elec, median=ext_csection_elec) %>%
-    ungroup()
+    ungroup() %>% 
+    # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed
+    filter(!(area_name == "NHS Forth Valley" & month == "2022-04-01"))
   
   saveRDS(mod_runchart, "shiny_app/data/mod_runchart_data.rds")
   saveRDS(mod_runchart, paste0(data_folder,"final_app_files/mod_runchart_data_", 
@@ -84,7 +86,9 @@ create_delivery <- function(folderdate) {
     group_by(area_name, month) %>% 
     mutate(tot_births=sum(births/2), # divide by two because total births already a row in the dataset
            percent_births=(births/tot_births)*100) %>% 
-    ungroup()
+    ungroup() %>% 
+    # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed
+    filter(!(area_name == "NHS Forth Valley" & month == "2022-04-01"))
   
   mod_linechart <- mod_linechart %>%
     mutate(mode = recode(mode, "Spontaneous" = "Spontaneous vaginal", "Assisted" = "Assisted vaginal", "Caesarean - Emergency" = "Emergency caesarean",
@@ -111,7 +115,9 @@ create_delivery <- function(folderdate) {
     mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                                area_name=="Scotland" ~ "Scotland"),
            chart_category="All",
-           chart_type= area_type)
+           chart_type= area_type) %>% 
+    # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed
+    filter(!(area_name == "NHS Forth Valley" & month_of_discharge == "Apr 2022"))
   
   saveRDS(mod_download, "shiny_app/data/mod_download_data.rds")  
   saveRDS(mod_download, paste0(data_folder,"final_app_files/mod_download_data_", 
@@ -142,7 +148,7 @@ create_delivery <- function(folderdate) {
                                                 "5 - least deprived", "Unknown") ~ paste0(variable),
                                 TRUE ~ "All")) %>% 
     mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
-                                TRUE ~ "All"))
+                                TRUE ~ "All")) 
   
   file.remove(paste0(open_data,"method_delivery.rds")) #to avoid permission issues
   
@@ -177,7 +183,9 @@ create_delivery <- function(folderdate) {
     #median: which column in dataset contains the median against which value is tested
     runchart_flags(shift="induction_shift", trend="induction_trend",
                    value=perc_ind_37_42, median=ext_ind_37_42) %>%
-    ungroup()
+    ungroup() %>% 
+    # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed
+    filter(!(area_name == "NHS Forth Valley" & month == "2022-04-01"))
   
   saveRDS(induct_runchart, "shiny_app/data/induct_runchart_data.rds")
   saveRDS(induct_runchart, paste0(data_folder,"final_app_files/induct_runchart_data_",
@@ -218,7 +226,9 @@ create_delivery <- function(folderdate) {
            #NOTE the gestation categories are not mutually exclusive - <37 contains <32
            ind=case_when(ind=="ind_37_42" ~ "Births that followed induction",
                          ind=="births_37_42" ~ "All births",
-                         TRUE~as.character(ind)))
+                         TRUE~as.character(ind))) %>% 
+    # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed
+    filter(!(area_name == "NHS Forth Valley" & month == "2022-04-01"))
   
   saveRDS(induct_linechart, "shiny_app/data/induct_linechart_data.rds")
   saveRDS(induct_linechart, paste0(data_folder,"final_app_files/induct_linechart_data_",
@@ -238,7 +248,9 @@ create_delivery <- function(folderdate) {
     mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                                area_name=="Scotland" ~ "Scotland"),
            chart_category="All",
-           chart_type= area_type)
+           chart_type= area_type) %>% 
+    # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed
+    filter(!(area_name == "NHS Forth Valley" & month_of_discharge == "Apr 2022"))
   
   saveRDS(induct_download, "shiny_app/data/induct_download_data.rds")
   saveRDS(induct_download, paste0(data_folder,"final_app_files/induct_download_data_",
@@ -309,7 +321,9 @@ create_delivery <- function(folderdate) {
                    value=perc_32_36, median=ext_32_36) %>%
     runchart_flags(shift="gest_42plus_shift", trend="gest_42plus_trend",
                    value=perc_42plus, median=ext_42plus) %>%
-    ungroup()
+    ungroup() %>% 
+    # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed
+    filter(!(area_name == "NHS Forth Valley" & month == "2022-04-01"))
   
   saveRDS(gestation_runchart, "shiny_app/data/gestation_runchart_data.rds")
   saveRDS(gestation_runchart, paste0(data_folder,"final_app_files/gestation_runchart_data_",
@@ -354,7 +368,9 @@ create_delivery <- function(folderdate) {
                           gest=="births_37_41" ~ "37 to 41 weeks",
                           gest=="births_18_44" ~ "All gestations (18-44 weeks)",
                           gest=="births_42plus" ~ "42 weeks plus",
-                          TRUE~as.character(gest)))
+                          TRUE~as.character(gest))) %>% 
+    # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed
+    filter(!(area_name == "NHS Forth Valley" & month == "2022-04-01"))
   
   saveRDS(gestation_linechart, "shiny_app/data/gestation_linechart_data.rds")
   saveRDS(gestation_linechart, paste0(data_folder,"final_app_files/gestation_linechart_data_",
@@ -380,7 +396,9 @@ create_delivery <- function(folderdate) {
     mutate(area_type=case_when(substr(area_name,1,3)=="NHS" ~ "Health board",
                                area_name=="Scotland" ~ "Scotland"),
            chart_category="All",
-           chart_type= area_type)
+           chart_type= area_type) %>% 
+    # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed
+    filter(!(area_name == "NHS Forth Valley" & month_of_discharge == "Apr 2022"))
   
   saveRDS(gestation_download, "shiny_app/data/gestation_download_data.rds")
   saveRDS(gestation_download, paste0(data_folder,"final_app_files/gestation_download_data_",
