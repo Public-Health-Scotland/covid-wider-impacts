@@ -71,32 +71,32 @@ sas <- readRDS("data/sas.rds") # OOH data
 deaths <- readRDS("data/deaths.rds") # deaths data
 outpats <- readRDS("data/outpats.rds") # outpatients data
 
-# #Cardiovascular data
-# ae_cardio <- readRDS("data/ae_cardio.rds") %>% filter(type != 'dep') # A&E cardio data
-# cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
-# cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
-# ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
-# sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
-# cardio_admissions <- readRDS("data/cardio_admissions.rds") # cardio admissions data
-# cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
-# 
-# #Cancer data
-# 
-# cancer_data2 <- readRDS("data/cancer_data_2.rds")
-# 
-# cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
-#   mutate(dep = factor(dep)) %>%
-#   mutate(quarter_no = factor(quarter_no, ordered = TRUE))
-# 
-# cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
-#   mutate(dep = factor(dep)) %>%
-#   mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
-#                                                     "Jul-Sep 2020", "Oct-Dec 2020",
-#                                                     "Jan-Mar 2021", "Apr-Jun 2021",
-#                                                     "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
-# 
-# 
-# cancer_extract_date <- "04 April 2022"
+#Cardiovascular data
+ae_cardio <- readRDS("data/ae_cardio.rds") %>% filter(type != 'dep') # A&E cardio data
+cardio_drugs <- readRDS("data/cardio_drugs.rds") # Cardio drugs data
+cath_lab <- readRDS("data/cath_lab.rds") # Cath lab data
+ooh_cardiac <-  readRDS("data/ooh_cardiac.rds") # OOH cardiac data
+sas_cardiac <-  readRDS("data/sas_cardiac.rds") # SAS cardiac data
+cardio_admissions <- readRDS("data/cardio_admissions.rds") # cardio admissions data
+cardio_deaths <- readRDS("data/cardio_deaths.rds") # cardio deaths data
+
+#Cancer data
+
+cancer_data2 <- readRDS("data/cancer_data_2.rds")
+
+cancer_data_quarters <- readRDS("data/cancer_data_quarters.rds") %>%
+  mutate(dep = factor(dep)) %>%
+  mutate(quarter_no = factor(quarter_no, ordered = TRUE))
+
+cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
+  mutate(dep = factor(dep)) %>%
+  mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
+                                                    "Jul-Sep 2020", "Oct-Dec 2020",
+                                                    "Jan-Mar 2021", "Apr-Jun 2021",
+                                                    "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
+
+
+cancer_extract_date <- "04 April 2022"
 
 # SACT data
 sact_data <- readRDS("data/sact_data.rds")
@@ -263,14 +263,14 @@ tears_download <- readRDS("data/tears_download_data.rds")
 
 #Drugs data
 
- # ADP_names<-readRDS('data/ADP_names.rds')
- # Health_board<-readRDS('data/Health_board.rds')
- # DTR_data<-readRDS('data/DTR_data.rds')
- # THN_by_HB<-readRDS('data/THN_by_HB.rds')
- # SASdata<-readRDS('data/SASdata.rds')
- # OST_paid<-readRDS('data/OST_paid.rds')
- # OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
- # Drug_AE_attendances <- readRDS('data/Drug_AE_attendances.rds')
+ ADP_names<-readRDS('data/ADP_names.rds')
+ Health_board<-readRDS('data/Health_board.rds')
+ DTR_data<-readRDS('data/DTR_data.rds')
+ THN_by_HB<-readRDS('data/THN_by_HB.rds')
+ SASdata<-readRDS('data/SASdata.rds')
+ OST_paid<-readRDS('data/OST_paid.rds')
+ OST_paid_quantity<-readRDS('data/OST_paid_quantity.rds')
+ Drug_AE_attendances <- readRDS('data/Drug_AE_attendances.rds')
 
 
 ###############################################.
