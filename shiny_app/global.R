@@ -97,7 +97,7 @@ cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
                                                     "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
 
 
-cancer_extract_date <- "04 April 2022"
+cancer_extract_date <- "02 June 2022"
 
 # SACT data
 sact_data <- readRDS("data/sact_data.rds")
@@ -407,7 +407,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Mesothelioma" = "Mesothelioma",
                       "Multiple Myeloma and malignant plasma cell neoplasms" = "Multiple Myeloma and malignant plasma cell neoplasms",
                       "Non-Melanoma Skin Cancer" = "Non-Melanoma Skin Cancer",
-                      "Non-Hodgkin Lymphoma" = "Non Hodgkin Lymphoma",
+                      "Non-Hodgkin Lymphoma" = "Non-Hodgkin Lymphoma",
                       "Oesophagus" = "Oesophagus",
                       "Other" = "Other",
                       "Ovary - Females only" = "Ovary - Females only",
@@ -499,11 +499,11 @@ pal_sact <- c('#3F3685',
               '#000000' )
 
 
-pal_cancer_diff <- c("1 (least deprived)" = '#000080',
+pal_cancer_diff <- c("1 (most deprived)" = '#000080',
                      "2" = '#DCDCDC',
                      "3" = '#D3D3D3',
                      "4" = '#C0C0C0',
-                     "5 (most deprived)" = '#0000FF')
+                     "5 (least deprived)" = '#0000FF')
 
 
 pal_eth <- c('#E39C8C',

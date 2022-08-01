@@ -345,7 +345,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 ## Function for overall cancer charts ----
 ###############################################.
 
-plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_chosen, data_name) {
+plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_chosen, var4_chosen, data_name) {
 
   # set plot display if no data
   if (is.data.frame(dataset) && nrow(dataset) == 0)
@@ -374,6 +374,8 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
     value2 <- dataset[[var2_chosen]]
 
     value3 <- dataset[[var3_chosen]]
+    
+    value4 <- dataset[[var4_chosen]]
 
     tooltip_1 <- c(paste0("Year: 2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, value1))
@@ -383,6 +385,9 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
 
     tooltip_3 <- c(paste0("Year: 2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, value3))
+    
+    tooltip_3.1 <- c(paste0("Year: 2022", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, value4))
 
     tooltip_4 <- c(paste0("Year: 2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
@@ -409,6 +414,9 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
     #Creating time trend plot for cumulative totals and incidence
     plot_ly(data=dataset, x=~week_ending) %>%
 
+      add_lines(y = ~get(var4_chosen), line = list(color = "red", opacity = 0.3, width = 3),
+                text=tooltip_3.1, hoverinfo="text", name = "2022") %>%
+      
       # 2021 line
       add_lines(y = ~get(var3_chosen), line = list(color = "blue", opacity = 0.3, width = 3),
                 text=tooltip_3, hoverinfo="text", name = "2021") %>%

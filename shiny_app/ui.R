@@ -1,6 +1,7 @@
 #UI
 
-  #secure_app( #uncomment if needing password protection
+#  secure_app( #uncomment if needing password protection
+
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -270,12 +271,12 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                                            selected = "None")))),
                                  wellPanel(width = 12,
                                            uiOutput("cancer_explorer3"))
-                        ) , # tabpanel bracket
+                        ),  # tabpanel bracket
 
-                         ###############################################.
-                         ## SACT ----
-                         ###############################################.
-
+                        #  ###############################################.
+                        #  ## SACT ----
+                        #  ###############################################.
+                        #
 
                          #### MONTHLY TAB
 
@@ -369,12 +370,12 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                                  mainPanel(width = 12,
                                            uiOutput("sact_wk_explorer")
                                  )# mainPanel bracket
-                              ) #, # tabpanel bracket
+                               ) # tabpanel bracket
 
-                        ###############################################.
-                        ## DCE ----
-                        ###############################################.
-
+                        # ###############################################.
+                        # ## DCE ----
+                        # ###############################################.
+                        # 
                         # tabPanel(title = "Cancer Staging - DCE Data", icon = icon("clock"), value = "dce",
                         #          wellPanel(h4(strong("Cancer Staging - Detect Cancer Early Data (Breast, Colorectal & Lung)")),
                         #                    # p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer
@@ -411,7 +412,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                    #
                         #                    #   tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
                         #                    #           diagnoses, which was only lower than expected in April 2020.")),
-                        #
+                        # 
                         #                    p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                         #                    ),
                         #          wellPanel(
@@ -869,7 +870,6 @@ tabPanel(title = "Data", icon = icon("table"), value = "table",
        ) # tabpanel bracket
    ) # page bracket
  )# taglist bracket
-
 
  #)#secure app
 
