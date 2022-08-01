@@ -1,7 +1,7 @@
 # Code for the UI side of the summary trends tab
 summary_tab <- 
   tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
-           wellPanel(actionButton("browser", "browser"),
+           wellPanel(#actionButton("browser", "browser"),
              column(4, selectdata_ui("summary", measure_choices = data_list)),
              column(4,
                     conditionalPanel(condition = "input['summary-measure'] != 'outpats' ", 
