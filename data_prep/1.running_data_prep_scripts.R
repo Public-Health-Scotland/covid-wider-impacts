@@ -11,11 +11,13 @@
 ###############################################.
 source("data_prep/births_babies_data_prep.R") # This sources the functions for the section
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
-create_delivery(folderdate = "2022-06-13") # Mode of delivery, induction and gestation data
+
+# 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed for delivery data
+create_delivery(folderdate = "2022-07-18") # Mode of delivery, induction and gestation data
 create_perinatal(foldermonth = "aug22") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2022_06_13", max_date = "2022-03-31") # Apgar scores
+create_apgar(folderdate = "2022_07_13", max_date = "2022-04-30") # Apgar scores
 create_preterm(preterm_date = "2022_06_13", max_date = "2022-03-31") # Preterm
-create_tears(tears_date = "2022_06_13", max_date = "2022-03-31") # Perineal tears
+create_tears(tears_date = "2022_07_13", max_date = "2022-04-30") # Perineal tears
 
 # For delivery, apgar, preterm, tears and antenatal change dates in global script
 # For perinatal change dates in perinatal_tab script
@@ -66,19 +68,18 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # (quicker once the extraction has been done once)
 
 create_rapid(last_week =  "2022-07-24", extract = T) # this requires access to the RAPID dataset
-create_ae(filedate = "2022-06-30", last_week =  "2022-06-26")
-create_ooh(filename = "2022-07-04", last_week = "2022-06-26")
-create_nhs24(filedate = "2022-07-04", last_week =  "2022-06-26")
-create_sas(filedate = "2022-07-04", last_week =  "2022-06-26")
-create_ooh_cons(filename = "2022-07-04", last_week = "2022-06-26")
-
+create_ae(filedate = "2022-07-28", last_week =  "2022-07-24")
+create_ooh(filename = "2022-08-01", last_week = "2022-07-24")
+create_nhs24(filedate = "2022-08-01", last_week =  "2022-07-24")
+create_sas(filedate = "2022-08-01", last_week =  "2022-07-24")
+create_ooh_cons(filename = "2022-08-01", last_week = "2022-07-24")
 
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function
 # Note: there will be a warning from match_area() about a few hundred thousand
 # geography codes not 9 characters in length - this is caused by the "Scotland"
 # rows, and is not a problem.
-create_deaths(last_week =  "2022-06-26")
+create_deaths(last_week =  "2022-07-24")
 
 ############## Remember to change final_app_files script dates
 # Then you need to change the update date in the summary_tab script
@@ -91,8 +92,10 @@ file.edit("shiny_app/summary_tab.R")
 ## Pregnancy datasets ----
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
+
 create_terminations(top_date = "2022-07-12")
-create_antebooking(booking_date = "15062022", max_book_date = "2022-06-12")
+create_antebooking(booking_date = "13072022", max_book_date = "2022-07-10")
+
 
 #For terminations change global extract date, and in terminations tab, update date.
 # Add here what needs to be changed in the shiny scripts

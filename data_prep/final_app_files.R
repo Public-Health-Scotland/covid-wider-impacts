@@ -26,7 +26,7 @@ save_final_file <- function(dataset, date_saved) {
 ###############################################.
 ###############################################.
 ## Deaths ----
-save_final_file("deaths", "04_Jul_22")
+save_final_file("deaths", "01_Aug_22")
 ##########################################################.
 ## Cancer ----#
 save_final_file("cancer_data_2", "23_May_22")
@@ -35,8 +35,8 @@ save_final_file("cancer_data_quarters_2yr", "23_May_22")
 
 ##########################################################.
 ## SACT ----
-save_final_file("sact_data", "25_Jul_22")
-save_final_file("sact_weekly_data", "25_Jul_22")
+save_final_file("sact_data", "01_Aug_22")
+save_final_file("sact_weekly_data", "01_Aug_22")
 
 ##########################################################.
 ## DCE ----
@@ -55,18 +55,18 @@ save_final_file("ui_smr01_assaults", ui_update_date)
 
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "04_Jul_22")
+save_final_file("rapid", "01_Aug_22")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
-save_final_file("ooh", "04_Jul_22")
+save_final_file("ooh", "01_Aug_22")
 ## OOH_cons ----
-save_final_file("ooh_cons", "04_Jul_22")
+save_final_file("ooh_cons", "01_Aug_22")
 ## A&E ----
-save_final_file("ae", "04_Jul_22")
+save_final_file("ae", "01_Aug_22")
 ## NHS24 ----
-save_final_file("nhs24", "04_Jul_22")
+save_final_file("nhs24", "01_Aug_22")
 ## SAS ----
-save_final_file("sas", "04_Jul_22")
+save_final_file("sas", "01_Aug_22")
 ### Outpatients ----
 save_final_file("outpats", "24_May_22")
 save_final_file("spec_lookup_op", "24_May_22")
@@ -129,42 +129,42 @@ save_final_file("child_dev_domains", ch_date)
 save_final_file("breastfeeding", ch_date)
 ##########################################################.
 ## Pregnancy - Antenatal bookings ----
-save_final_file("ante_booking", "23_Jun_22")
-save_final_file("ante_booking_download", "23_Jun_22")
+save_final_file("ante_booking", "20_Jul_22")
+save_final_file("ante_booking_download", "20_Jul_22")
 ## Pregnancy - Terminations ----
 save_final_file("top", "15_Jul_22")
 save_final_file("top_download", "15_Jul_22")
 ##########################################################.
 ## B&B - Mode/Method of Delivery ----
-save_final_file("mod_runchart_data", "23_Jun_22")
-save_final_file("mod_scot_data", "23_Jun_22")
-save_final_file("mod_linechart_data", "23_Jun_22")
-save_final_file("mod_download_data", "23_Jun_22")
+save_final_file("mod_runchart_data", "21_Jul_22")
+save_final_file("mod_scot_data", "21_Jul_22")
+save_final_file("mod_linechart_data", "21_Jul_22")
+save_final_file("mod_download_data", "21_Jul_22")
 ## B&B - Inductions ----
-save_final_file("induct_runchart_data", "23_Jun_22")
-save_final_file("induct_scot_data", "23_Jun_22")
-save_final_file("induct_linechart_data", "23_Jun_22")
-save_final_file("induct_download_data", "23_Jun_22")
+save_final_file("induct_runchart_data", "21_Jul_22")
+save_final_file("induct_scot_data", "21_Jul_22")
+save_final_file("induct_linechart_data", "21_Jul_22")
+save_final_file("induct_download_data", "21_Jul_22")
 ## B&B - Gestation at Delivery ----
-save_final_file("gestation_runchart_data", "23_Jun_22")
-save_final_file("gestation_scot_data", "23_Jun_22")
-save_final_file("gestation_linechart_data", "23_Jun_22")
-save_final_file("gestation_download_data", "23_Jun_22")
+save_final_file("gestation_runchart_data", "21_Jul_22")
+save_final_file("gestation_scot_data", "21_Jul_22")
+save_final_file("gestation_linechart_data", "21_Jul_22")
+save_final_file("gestation_download_data", "21_Jul_22")
 ## B&B - Stillbirths and perinatal mortality ----
 save_final_file("perinatal", "21_Jul_22")
 ## B&B - Apgar ----
-save_final_file("apgar_runchart_data", "23_Jun_22")
-save_final_file("apgar_scot_data", "23_Jun_22")
-save_final_file("apgar_linechart_data", "23_Jun_22")
-save_final_file("apgar_download_data", "23_Jun_22")
+save_final_file("apgar_runchart_data", "20_Jul_22")
+save_final_file("apgar_scot_data", "20_Jul_22")
+save_final_file("apgar_linechart_data", "20_Jul_22")
+save_final_file("apgar_download_data", "20_Jul_22")
 ## B&B - Preterm ----
 save_final_file("preterm_linechart_data", "23_Jun_22")
 save_final_file("preterm", "23_Jun_22")
 ## B&B - Tears ----
-save_final_file("tears_runchart_data", "23_Jun_22")
-save_final_file("tears_scot_data", "23_Jun_22")
-save_final_file("tears_linechart_data", "23_Jun_22")
-save_final_file("tears_download_data", "23_Jun_22")
+save_final_file("tears_runchart_data", "20_Jul_22")
+save_final_file("tears_scot_data", "20_Jul_22")
+save_final_file("tears_linechart_data", "20_Jul_22")
+save_final_file("tears_download_data", "20_Jul_22")
 ##########################################################.
 ## Mental health  ----
 save_final_file("mentalhealth_drugs", "01_Aug_22") # Prescribing
