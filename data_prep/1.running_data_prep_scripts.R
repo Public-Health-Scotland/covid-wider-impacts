@@ -27,12 +27,12 @@ create_tears(tears_date = "2022_07_13", max_date = "2022-04-30") # Perineal tear
 ###############################################.
 source("data_prep/cardio_data_prep.R") # This sources the functions for the section
 # Filedate: date on filename for each update, last week = last week of data to be included
-create_aecardio(filedate = "2022-06-30", last_week =  "2022-06-26")
-create_sascardio(filedate = "2022-07-04", last_week =  "2022-06-26") #there is currently a duplicates issue with this data so it is not being updated until resolved.
-create_cardiodrugs(filedate = "2022-07-11", last_week =  "2022-06-26")
+create_aecardio(filedate = "2022-07-28", last_week =  "2022-07-24")
+create_sascardio(filedate = "2022-08-01", last_week =  "2022-07-24") #there is currently a duplicates issue with this data so it is not being updated until resolved.
+create_cardiodrugs(filedate = "2022-07-28", last_week =  "2022-07-24")
 # Coding changed in July 2021, so earlier and later data isn't comparable.
 # comparison_end removes the comparison to historical data from that date.
-create_oohcardio(filedate = "2022-07-04", last_week =  "2022-06-26", comparison_end = "2021-07-01")
+create_oohcardio(filedate = "2022-08-01", last_week =  "2022-07-24", comparison_end = "2021-07-01")
 create_cardioadmissions(last_week =  "2021-12-31") #updated quarterly
 create_cardiodeaths(last_week =  "2021-12-31") #updated quarterly
 
@@ -74,7 +74,6 @@ create_nhs24(filedate = "2022-08-01", last_week =  "2022-07-24")
 create_sas(filedate = "2022-08-01", last_week =  "2022-07-24")
 create_ooh_cons(filename = "2022-08-01", last_week = "2022-07-24")
 
-
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function
 # Note: there will be a warning from match_area() about a few hundred thousand
@@ -105,12 +104,12 @@ create_antebooking(booking_date = "13072022", max_book_date = "2022-07-10")
 ## Mental health datasets ----
 ###############################################.
 source("data_prep/mh_data_prep.R") # This sources the functions for the section
-create_aemh(filedate = "2022-07-03", last_week =  "2022-06-26") #takes a while
-create_oohmh(filedate = "2022-07-04", last_week =  "2022-06-26") #file generated on monday of update - last week should be 2 sundays previous (as in 8 days prior)
+create_aemh(filedate = "2022-07-31", last_week =  "2022-07-24") #takes a while
+create_oohmh(filedate = "2022-08-01", last_week =  "2022-07-24") #file generated on monday of update - last week should be 2 sundays previous (as in 8 days prior)
 # There will be a warning about duplicate rows, 63 rows removed - this is fine,
 # Glasgow City HSCP appears with 2 different codes earlier in the data, summing
 # count is correct.
-create_drugsmh(last_week =  "2022-06-26") #last week should be sunday before date file created
+create_drugsmh(last_week =  "2022-07-24") #last week should be sunday before date file created
 
 # Change update date in mental_health_tab.R script - approx line 324 in code
 file.edit("shiny_app/mental_health_tab.R")
