@@ -20,8 +20,8 @@ require(lubridate)||install.packages("lubridate")
 # Date Input (Monday of data refresh)
 
 year <- "2022"
-month <- "06"
-day <- "06"
+month <- "08"
+day <- "01"
 
 release_date <- paste(year, month, day, sep = "-")
 path_monthly_data <- paste0("////PHI_conf//SCRIS//SACT//Projects//20210205-SACT-dashboard//R Shiny//SACT Dashboard Data//SummaryMonthlyPatients-", release_date, ".csv")
@@ -67,7 +67,7 @@ sact$area <-  recode(sact$area, "NHS AYRSHIRE AND ARRAN" = "NHS Ayrshire & Arran
                      "NHS TAYSIDE" = "NHS Tayside",
                      "NHS WESTERN ISLES" = "NHS Western Isles")
 
-sact$site <-  recode(sact$site, "BONE SARCOMA" = "Bone Sarcoma",
+sact$site <-  recode(sact$site, 
                      "BREAST" = "Breast",
                      "CNS" = "Central Nervous System",
                      "CUP" = "Cancer of Unknown Origin",
@@ -79,8 +79,8 @@ sact$site <-  recode(sact$site, "BONE SARCOMA" = "Bone Sarcoma",
                      "LOWER GI" = "Lower GI",
                      "LUNG AND CHEST" = "Lung & Chest",
                      "NEUROENDOCRINE" = "Neuroendocrine",
+                     "SARCOMA" = "Sarcoma",
                      "SKIN" = "Skin",
-                     "SOFT TISSUE SARCOMA" = "Soft Tissue Sarcoma",
                      "UPPER GI" = "Upper GI",
                      "UROLOGICAL" = "Urological",
                      "Unknown" = "Unknown")
@@ -131,7 +131,7 @@ sact_weekly_new$area <-  recode(sact_weekly_new$area, "NHS AYRSHIRE AND ARRAN" =
                                 "NHS TAYSIDE" = "NHS Tayside",
                                 "NHS WESTERN ISLES" = "NHS Western Isles")
 
-sact_weekly_new$site <-  recode(sact_weekly_new$site, "BONE SARCOMA" = "Bone Sarcoma",
+sact_weekly_new$site <-  recode(sact_weekly_new$site, 
                                 "BREAST" = "Breast",
                                 "CNS" = "Central Nervous System",
                                 "CUP" = "Cancer of Unknown Origin",
@@ -143,8 +143,8 @@ sact_weekly_new$site <-  recode(sact_weekly_new$site, "BONE SARCOMA" = "Bone Sar
                                 "LOWER GI" = "Lower GI",
                                 "LUNG AND CHEST" = "Lung & Chest",
                                 "NEUROENDOCRINE" = "Neuroendocrine",
+                                "SARCOMA" = "Sarcoma",
                                 "SKIN" = "Skin",
-                                "SOFT TISSUE SARCOMA" = "Soft Tissue Sarcoma",
                                 "UPPER GI" = "Upper GI",
                                 "UROLOGICAL" = "Urological",
                                 "Unknown" = "Unknown")

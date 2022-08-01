@@ -12,6 +12,7 @@ data_table <- reactive({
          "ae_cardio" = ae_cardio %>% rename(average_2018_2019 = count_average),
          "nhs24" = nhs24 %>% rename(average_2018_2019 = count_average),
          "ooh" = ooh %>% rename(average_2018_2019 = count_average),
+         "ooh_cons" = ooh_cons %>% rename(average_2018_2019 = count_average),
          "sas" = sas %>% rename(average_2018_2019 = count_average),
          "deaths" = deaths %>% rename(average_2015_2019 = count_average),
          "cardio_drugs" = cardio_drugs %>% rename(average_2018_2019 = count_average),
@@ -59,7 +60,9 @@ data_table <- reactive({
         'THN_by_HB'=THN_by_HB,
         'DTR_data'=DTR_data,
         'OST_paid'=OST_paid,
-       'SASdata'=SASdata[,c(1,2,5,6)]
+       'SASdata'=SASdata[,c(1,2,5,6)],
+       'Drug_AE'=Drug_AE_attendances %>% select(Geography_type, Board, Gender, Date, Type, `2020 & 2021`, `Average 2018 & 2019`) %>% rename(`2020, 2021 & 2022` = `2020 & 2021`) %>% filter(Board %in% c('NHS Fife', 'NHS Greater Glasgow & Clyde', 'NHS Lothian') & Gender == "All" |
+                                                                                                                                                                                              Geography_type == "Scotland") %>% arrange(Gender, Date)
   ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -419,6 +422,18 @@ data_table <- reactive({
                                   TRUE ~ "All")) %>% 
       mutate(subgroup = case_when(subgroup %in% c("SIMD", "AGEGRP") ~ paste0(subgroup),
                                   TRUE ~ "All"))
+  } else if (input$data_select == "ooh_cons") {
+    table_data %<>%
+      # Formatting to a "nicer" style
+            mutate("Consultation type" = recode_factor(type, 
+                                                 "COVID" = "Covid related", 
+                                                 "NON COVID" = "Non-covid related",
+                                                 "ALL" = "All consultations"),
+             week_ending = format(week_ending, "%d %b %y"),
+             variation = case_when(type == "COVID" ~ 0,
+                                   T ~ variation)) %>% 
+      rename("Variation (%)" = variation) %>%
+      select(-category, -type)
   }
   
   
@@ -427,7 +442,7 @@ data_table <- reactive({
     mutate_if(is.numeric, round, 1)
   
   if (!(input$data_select %in% c("childdev", "breastfeeding", "cancer", "sact_weekly", 
-                                 "sact_monthly"))) {
+                                 "sact_monthly", "Drug_AE"))) {
     table_data %<>% 
       select(sort(current_vars()))  # order columns alphabetically
   }
