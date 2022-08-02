@@ -23,13 +23,9 @@ antenatal_tab <-
 terminations_tab <- 
   tabPanel(title = "Termination of pregnancy", value = "terminations",
          wellPanel(
-           column(4, div(title="Select a breakdown",
-                         p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                         selectInput("geotype_top", label = NULL, choices= c("Scotland", "Health board"),
-                                     selected = "Scotland")),
-                  uiOutput("geoname_ui_top")),
-           column(4,offset=4,
-                  actionButton("btn_top_modal", "Data source: Notifications of Abortion", icon = icon('question-circle')),
+           column(4, selectgeo_ui("top", area_choices =  c("Scotland", "Health board"), step_no = "1")),
+           column(4,offset=2,
+                  sourcemodal_ui("top"),
                   fluidRow(br()),
                   downloadButton("download_termination_data", "Download data"),
                   fluidRow(br()),

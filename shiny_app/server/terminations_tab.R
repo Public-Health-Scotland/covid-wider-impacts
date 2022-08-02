@@ -1,7 +1,7 @@
 ##Server script for terminations tab..
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_top_modal,
+observeEvent(input$`top-source-modal`,
              showModal(modalDialog(#Maternal HEALTH MODAL
                title = "What is the data source?",
                p("These data are derived from the Notifications of Abortion to the Chief Medical Officer for Scotland (CMO) under the Abortion (Scotland) Regulations 1991."),
@@ -21,15 +21,10 @@ observeEvent(input$btn_top_rules, runchart_modal())
 observeEvent(input$btn_modal_simd_top, simd_modal("Women"))
 
 ###############################################.
-## ToP Reactive controls  ----
+## Reactive controls  ----
 ###############################################.
-
-# Pregnancy reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_top <- renderUI({
-  #Lists areas available in
-  areas_summary_top <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_top])
-  selectizeInput("geoname_top", label = NULL, choices = areas_summary_top, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("top") 
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -38,8 +33,8 @@ output$geoname_ui_top <- renderUI({
 #Dataset behind trend plot (available at scotland and NHS board level)
 top_filter <- function(){
 
-  top %>% filter(area_name == input$geoname_top &
-                       area_type == input$geotype_top &
+  top %>% filter(area_name == input$`top-geoname` &
+                       area_type == input$`top-geotype` &
                        type %in% c("Scotland","Health board"))
 }
 
@@ -53,7 +48,7 @@ top_filter_split <- function(split){
 }
 
 ###############################################.
-## Termination Charts ----
+## Charts ----
 ###############################################.
 
 # chart outputs for trend
@@ -77,7 +72,7 @@ output$top_explorer <- renderUI({
 
   # text for titles of cut charts
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)
-  top_trend_title <- paste0("Termination of pregnancy: ",input$geoname_top)
+  top_trend_title <- paste0("Termination of pregnancy: ",input$`top-geoname`)
   top_title_n <-  paste0("Number of terminations of pregnancy")
   top_title_g <-   paste0("Average gestation at termination")
   top_title_g2 <-   paste0("(based on completed weeks of pregnancy)")
@@ -120,7 +115,7 @@ output$top_explorer <- renderUI({
                             p(top_subtitle),
                             p(chart_explanation))),
             #only if scotland selected display age and deprivation breakdowns
-            if (input$geotype_top == "Scotland"){
+            if (input$`top-geotype` == "Scotland"){
               tagList(
                 fluidRow(column(12,h4("Terminations of pregnancy, by age group: Scotland"))),
                 fluidRow(column(6,
@@ -168,7 +163,7 @@ plot_top_trend <- function(measure, shift, trend){
   } else {
 
     # chart legend labels
-    centreline_name <- paste0(input$geoname_top," average up to end Feb 2020")
+    centreline_name <- paste0(input$`top-geoname`," average up to end Feb 2020")
     dottedline_name <- "Projected average"
 
     #switch y-axis according to which measure is selected
