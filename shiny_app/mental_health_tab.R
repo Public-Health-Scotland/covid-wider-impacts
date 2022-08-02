@@ -3,8 +3,7 @@
 ###############################################.
 ## Reactive controls ----
 ###############################################.
-# Helper function
-`%notin%` <- Negate(`%in%`)
+
 # Reactive control for areatype
 output$geotype_mh_ui <- renderUI({
 if (input$measure_mh_select == "mhdrugs") {
