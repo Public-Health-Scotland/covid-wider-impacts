@@ -3,7 +3,7 @@
 
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_mod_modal,
+observeEvent(input$`mod-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("The data used for the method of delivery page comes from the Scottish Morbidity Record 02 (SMR02) database.  An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care.  From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended homebirths."),
@@ -20,15 +20,10 @@ observeEvent(input$btn_mod_rules, runchart_modal())
 observeEvent(input$btn_modal_simd_mod, simd_modal("Women"))
 
 ###############################################.
-## Deliveries Reactive controls  ----
+## Reactive controls  ----
 ###############################################.
-
-# deliveries reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_mod <- renderUI({
-  #Lists areas available in
-  areas_summary_mod <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_mod])
-  selectizeInput("geoname_mod", label = NULL, choices = areas_summary_mod, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("mod") 
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -37,8 +32,8 @@ output$geoname_ui_mod <- renderUI({
 #Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 mod_filter <- function(){
 
-  mod_runchart %>% filter(area_name == input$geoname_mod &
-                            area_type == input$geotype_mod &
+  mod_runchart %>% filter(area_name == input$`mod-geoname` &
+                            area_type == input$`mod-geotype` &
                             type %in% c("Scotland","Health board"))
 }
 
@@ -53,8 +48,8 @@ mod_linechart_split <- function(split){
 #Dataset 3: behind line chart (available at scotland and NHS board level)
 mod_linechart_filter <- function(){
 
-  mod_linechart %>% filter(area_name == input$geoname_mod &
-                   area_type == input$geotype_mod &
+  mod_linechart %>% filter(area_name == input$`mod-geoname` &
+                   area_type == input$`mod-geotype` &
                    type %in% c("Scotland","Health board"))
 }
 
@@ -85,7 +80,7 @@ output$mod_explorer <- renderUI({
 
   # text for titles of cut charts
   mod_data_timeperiod <-  paste0("Figures based on data extracted ",mod_extract_date)
-  mod_title <- paste0("Percentage of singleton live births delivered by caesarean section: ",input$geoname_mod)
+  mod_title <- paste0("Percentage of singleton live births delivered by caesarean section: ",input$`mod-geoname`)
 
   chart_explanation <-
     tagList(p("We have used ",
@@ -104,7 +99,7 @@ output$mod_explorer <- renderUI({
                                     charts_plural = TRUE)))
 
   # Charts if data is available and one sign for the three charts if not
-  if (input$geoname_mod %in% c("NHS Shetland", "NHS Orkney", "NHS Western Isles") ){
+  if (input$`mod-geoname` %in% c("NHS Shetland", "NHS Orkney", "NHS Western Isles") ){
     charts_mod <-  tagList(fluidRow(br()),
                             column(12,
                                    br(),
@@ -130,7 +125,7 @@ output$mod_explorer <- renderUI({
              p(chart_explanation)),
       column(12,
              br(), #spacing
-             h4(paste0("Number of singleton live births by method of delivery: ",input$geoname_mod))),
+             h4(paste0("Number of singleton live births by method of delivery: ",input$`mod-geoname`))),
       column(12,
              withSpinner(plotlyOutput("mod_linechart_number")))
     )
@@ -143,7 +138,7 @@ output$mod_explorer <- renderUI({
                           actionButton("btn_mod_rules", "How do we identify patterns in the data?")),
                    charts_mod,
                    #only if scotland selected display age and deprivation breakdowns
-                   if (input$geotype_mod == "Scotland"){
+                   if (input$`mod-geotype` == "Scotland"){
                      tagList(
                        fluidRow(column(12,
                                        h4("Singleton live births delivered by caesarean section by maternal age group: Scotland"))),
@@ -189,7 +184,7 @@ plot_mod_trend <- function(measure, shift, trend){
 
 
     # centrelines
-    centreline_name <- paste0(input$geoname_mod," average up to end Feb 2020")
+    centreline_name <- paste0(input$`mod-geoname`," average up to end Feb 2020")
     dottedline_name = "Projected average"
 
     # format y axis

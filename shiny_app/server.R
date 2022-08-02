@@ -172,7 +172,7 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_top, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")})
 
-  observeEvent(input$jump_commentary_mod, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`mod-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Method of delivery")})
 
   observeEvent(input$`induct-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")

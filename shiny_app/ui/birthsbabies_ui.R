@@ -22,18 +22,13 @@ inductions_tab <-
 mode_delivery_tab <- 
   tabPanel(title = "Method of delivery", value = "mod",
            wellPanel(
-             column(4, div(title="Select a breakdown",
-                           p(tags$b("Step 1. Select a geography level and then an area of interest.")),
-                           selectInput("geotype_mod", label = NULL, choices= c("Scotland", "Health board"),
-                                       selected = "Scotland")),
-                    uiOutput("geoname_ui_mod")),
-             column(4,offset=4,
-                    actionButton("btn_mod_modal", "Data source: SMR02", icon = icon('question-circle')),
+             column(4, selectgeo_ui("mod", area_choices =  c("Scotland", "Health board"), step_no = "1")),
+             column(4,offset=2,
+                    sourcemodal_ui("mod"),
                     fluidRow(br()),
                     downloadButton("download_mod_data", "Download data"),
                     fluidRow(br()),
-                    
-                    actionButton('jump_commentary_mod','Go to commentary'))
+                    actionButton('mod-commentary','Go to commentary'))
            ), #well panel
            mainPanel(width = 12,
                      uiOutput("mod_explorer")
