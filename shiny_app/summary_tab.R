@@ -78,7 +78,7 @@ observeEvent(input$btn_spec_groups_op, { showModal(spec_modal_op) })
 
 ###############################################.
 #modal to describe dataset
-observeEvent(input$btn_dataset_modal,
+observeEvent(input$`summ-source-modal`,
 
              if (input$`summary-measure` == "rapid") {
                showModal(modalDialog(#RAPID ADMISSIONS MODAL
@@ -495,10 +495,7 @@ output$data_explorer <- renderUI({
   cut_charts <- function(title, source, data_name) {
     tagList(
       h3(title),
-      fluidRow(column(6,
-                      actionButton("btn_dataset_modal", paste0("Data source: ", source),
-                                   icon = icon('question-circle'))),
-
+      fluidRow(column(6, sourcemodal_ui("summ")),
                column(6, p("Last updated: ", upd_date_summ))),
 
       if (input$`summary-measure` == "nhs24"){
@@ -521,14 +518,13 @@ output$data_explorer <- renderUI({
           Scotland in any particular week.  Comparing the number of deaths in the most recent weeks to the
           average over the past 5 years allows estimation of the numbers of excess deaths.
           Volatility of the trends will be observed in some charts due to small counts."),
-        plot_box(paste0("2020 to 2022 compared with the 2015-2019 average"), paste0("summ_overall"))) #different averaging period for deaths
+        plot_box(paste0("2020 to 2022 compared with the 2015-2019 average"), "summ_overall")) #different averaging period for deaths
         } else if (input$`summary-measure` == "op") {
-          plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0(data_name, "_overall"))
+          plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), "op_overall")
         } else {
-          plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0("summ_overall"))
+          plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), "summ_overall")
         },
       
-     if (input$`summary-measure` != "ooh" | (input$`summary-measure` == "ooh" & input$ooh_appt_type == "All cases")) { 
        tagList(plot_cut_box(paste0(variation_title, "sex"), "summ_sex_var",
                    paste0(total_title, "sex"), "summ_sex_tot"),
       plot_cut_box(paste0(variation_title, "age group"), "summ_age_var",
@@ -539,17 +535,11 @@ output$data_explorer <- renderUI({
                             icon = icon('question-circle'))),
       fluidRow(column(6, withSpinner(plotlyOutput("summ_depr_var"))),
                column(6, withSpinner(plotlyOutput("summ_depr_tot"))))
-      )
-     } else {
-       tags$b(p("Out of Hours demographic data is only available for cases. Please Select 'All cases' in Step 4.", style="text-align:center; font-size:16px"),
-       br(),
-       br(),
-       br())
-     }
+      ) #tag list end
         
-    )
+    ) #tag list end
 
-  }
+  } #function end
 
   # Charts and rest of UI
   if (input$`summary-measure` == "rapid") {
@@ -579,7 +569,7 @@ output$data_explorer <- renderUI({
                source = "PHS Unscheduled Care Datamart", data_name ="nhs24")
 
   } else if (input$`summary-measure` == "ooh") { #Out of hours cases
-      if (input$ooh_appt_type == "All cases"){
+      if (input$ooh_appt_type == "All cases"){ # For OOH cases
           tagList(
            tags$b(span("Please note that the data on this page now includes individuals coming to
                 Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.",
@@ -591,10 +581,17 @@ output$data_explorer <- renderUI({
                        style = "color:red")),
              br(),
     
-          cut_charts(title = "Weekly cases in out of hours services",
-               source = "PHS GP OOH Datamart", data_name ="ooh"))
-        } else if(input$ooh_appt_type == "COVID") {
+          cut_charts(title = "Weekly cases in out of hours services", data_name ="ooh"))
+        
+        } else if(input$ooh_appt_type != "All cases") { #For OOH consultations
+          ooh_cons_type <- case_when(input$ooh_appt_type == "NON COVID" ~ "Non-Covid related ",
+                                     input$ooh_appt_type == "COVID" ~ "Covid related ",
+                                     input$ooh_appt_type == "ALL" ~ "", T ~ "")
+          
           tagList(
+            h3(paste0("Weekly ", ooh_cons_type, "consultations in out of hours services")),
+            fluidRow(column(6, sourcemodal_ui("summ")),
+                     column(6, p("Last updated: ", upd_date_summ))),
             tags$b(span("Please note that the data on this page now includes individuals coming to
                 Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", 
                         br(),
@@ -604,35 +601,12 @@ output$data_explorer <- renderUI({
                        These will impact on Scotland figures and comparisons with previous years.",
                         style = "color:red")),
             br(),
-            
-            cut_charts(title = "Weekly Covid related consultations in out of hours services",
-            source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
-        } else if(input$ooh_appt_type == "NON COVID"){
-          tagList(tags$b(span("Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
-                       PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
-                       These will impact on Scotland figures and comparisons with previous years.",
-                              style = "color:red")),
+            plot_box(paste0("2020 to 2022 compared with the 2018-2019 average"), paste0("ooh_cons_overall")),
+            tags$b(p("Out of Hours demographic data is only available for cases. Please Select 'All cases' in Step 4.", style="text-align:center; font-size:16px")),
             br(),
-            
-            cut_charts(title = "Weekly Non-covid related consultations in out of hours services",
-                       source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
-        } else if(input$ooh_appt_type == "ALL"){
-          tagList(
-            tags$b(span("Please note that the data on this page now includes individuals coming to
-                Primary Care Out of Hours services via the COVID Pathway. This pathway was closed from 31st March 2022.", 
-                        br(),
-                        br(),
-                        "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
-                        PHS are working with data suppliers to resolve this.  NHS Tayside data missing for 2 – 12 June 2022 inclusive. 
-                        These will impact on Scotland figures and comparisons with previous years.",
-                        style = "color:red")),
-            br(),
-            
-            cut_charts(title = "Weekly Non-covid related consultations in out of hours services",
-                       source = "PHS GP OOH Datamart", data_name ="ooh_cons"))
-        }
-    
-  } else if (input$`summary-measure` == "sas") {
+            br())
+        } #end of OOH 
+        } else if (input$`summary-measure` == "sas") {
     tagList(# SAS data
         p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
         tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
@@ -709,8 +683,8 @@ output$data_explorer <- renderUI({
                          column(6,
                                 withSpinner(plotlyOutput("op_eth_tot"))))
                                           
-      )
-  }
+      ) #tag list end
+  } #op end
 })
 
 

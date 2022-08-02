@@ -20,7 +20,7 @@ summary_tab <-
                                      selectInput("ooh_appt_type", label = "Step 4. Select type of appointment for overall chart.",
                                                  choices = c("All cases", "All consultations" = "ALL",
                                                              "Covid consultations" = "COVID", "Non-covid consultations" = "NON COVID"),
-                                                 selected = "All Cases")),
+                                                 selected = "All cases")),
                     conditionalPanel(condition = "input['summary-measure'] == 'op' ",
                                      selectInput("appt_type", label = "Step 3. Select type of appointment.",
                                                  choices = c("All", "New", "Return"), selected = "All")),
