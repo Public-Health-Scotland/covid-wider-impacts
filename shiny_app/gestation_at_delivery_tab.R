@@ -1,9 +1,12 @@
 
 ##Server script for pregnancy gestation at delivery tab..
 
+###############################################.
+## Modals ----
+###############################################.
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_gest_modal,
+observeEvent(input$`gest-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("The data used for the gestation at delivery page comes from the Scottish Morbidity Record 02 (SMR02) database.  An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care.  From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended homebirths."),
@@ -15,45 +18,15 @@ observeEvent(input$btn_gest_modal,
                size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
-observeEvent(input$btn_gest_rules,
-             showModal(modalDialog(
-               title = "How do we identify patterns in the data?",
-               p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
-               p("Further information on these methods of presenting data can be found in the ",
-                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts', target="_blank"),"."),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
+observeEvent(input$btn_gest_rules, runchart_modal())
 #Modal to explain SIMD and deprivation
-#Link action button click to modal launch
-observeEvent(input$btn_modal_simd_gest, { showModal(
-  modalDialog(
-    h5("What is SIMD and deprivation?"),
-    p("Women have been allocated to different levels of deprivation based on the small area (data zone) in which they live and the",
-      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
-             class="externallink"), "SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: income; employment; health; education, skills and training; housing; geographic access; and crime.
-    In this tool we have presented results for women living in different SIMD ‘quintiles’. To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) of the overall population of Scotland are identified.
-    Women living in the most and least deprived areas that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
-    size = "l",
-    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  ))})
-
+observeEvent(input$btn_modal_simd_gest, simd_modal("Women"))
 
 ###############################################.
-## Gestation at delivery Reactive controls  ----
+## Reactive controls  ----
 ###############################################.
-
-# deliveries reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_gest <- renderUI({
-  #Lists areas available in
-  areas_summary_gest <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_gest])
-  selectizeInput("geoname_gest", label = NULL, choices = areas_summary_gest, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("gest")
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -62,8 +35,8 @@ output$geoname_ui_gest <- renderUI({
 #Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 gest_filter <- function(){
 
-  gestation_runchart %>% filter(area_name == input$geoname_gest &
-                            area_type == input$geotype_gest &
+  gestation_runchart %>% filter(area_name == input$`gest-geoname` &
+                            area_type == input$`gest-geotype` &
                             type %in% c("Scotland","Health board"))
 }
 
@@ -78,22 +51,22 @@ gest_linechart_split <- function(split){
 #Dataset 3: behind line chart  (available at scotland and NHS board level)
 gest_linechart_filter_one <- function(){
 
-  gestation_linechart %>% filter(area_name == input$geoname_gest &
-                             area_type == input$geotype_gest &
+  gestation_linechart %>% filter(area_name == input$`gest-geoname` &
+                             area_type == input$`gest-geotype` &
                              type %in% c("Scotland","Health board") &
                                gest %in% c("37 to 41 weeks", "All gestations (18-44 weeks)"))
 }
 
 gest_linechart_filter_two <- function(){
 
-  gestation_linechart %>% filter(area_name == input$geoname_gest &
-                                   area_type == input$geotype_gest &
+  gestation_linechart %>% filter(area_name == input$`gest-geoname` &
+                                   area_type == input$`gest-geotype` &
                                    type %in% c("Scotland","Health board") &
                                    gest %in% c("Under 32 weeks", "32 to 36 weeks", "42 weeks plus"))
 }
 
 ###############################################.
-## Gestation at delivery Charts ----
+## Charts ----
 ###############################################.
 
 # chart outputs for trend
@@ -123,7 +96,7 @@ output$gestation_explorer <- renderUI({
 
   # text for titles of cut charts
   gest_data_timeperiod <-  paste0("Figures based on data extracted ",gestation_extract_date)
-  gest_title <- paste0("Percentage of singleton live births delivered at stated gestation: ",input$geoname_gest)
+  gest_title <- paste0("Percentage of singleton live births delivered at stated gestation: ",input$`gest-geoname`)
 
   chart_explanation <-
     tagList(p("We have used ",
@@ -167,7 +140,7 @@ output$gestation_explorer <- renderUI({
                             p(chart_explanation)),
                      column(12,
                             br(), #spacing
-                            h4(paste0("Number of singleton live births delivered at stated gestation: ",input$geoname_gest))),
+                            h4(paste0("Number of singleton live births delivered at stated gestation: ",input$`gest-geoname`))),
                      column(6,
                             h4("37-41 weeks gestation and all births"),
                             withSpinner(plotlyOutput("gest_linechart_number_37_41_all"))),
@@ -175,7 +148,7 @@ output$gestation_explorer <- renderUI({
                             h4("Under 32 weeks, 32-36 weeks, and at or over 42 weeks gestation"),
                             withSpinner(plotlyOutput("gest_linechart_number_32_3236_42plus"))),
                      #only if scotland selected display age and deprivation breakdowns
-                     if (input$geotype_gest == "Scotland"){
+                     if (input$`gest-geotype` == "Scotland"){
                        tagList(
                          fluidRow(column(12,
                                          h4("Singleton live births delivered at under 37 weeks gestation by maternal age group: Scotland"))),
@@ -216,7 +189,7 @@ output$gestation_explorer <- renderUI({
 
 
 #############################################.
-## Gestation chart functions ----
+## functions ----
 ############################################.
 
 ## RUNCHART:  trend chart for monthly c-section percentages : Scotland & NHS Board (except island boards)
@@ -233,7 +206,7 @@ plot_gest_trend <- function(measure, shift, trend){
   } else {
 
     # chart legend labels
-    centreline_name <- paste0(input$geoname_gest," average up to end Feb 2020")
+    centreline_name <- paste0(input$`gest-geoname`," average up to end Feb 2020")
     dottedline_name = "Projected average"
 
     # format y axis
@@ -289,7 +262,7 @@ plot_gest_trend <- function(measure, shift, trend){
   }}
 
 
-#####################################################################################################################
+#####################################################################################################################.
 ## LINECHART SCOTLAND: caesarean delivery by age group and deprivation, numbers and percentages - Scotland level only
 plot_gest_split <- function(dataset, split, measure){
 
@@ -341,7 +314,7 @@ plot_gest_split <- function(dataset, split, measure){
 
 }
 
-#####################################################################################################################
+#####################################################################################################################.
 ## LINECHART SCOTLAND & NHS BOARD: Births by gestation numbers and percentages
 
 plot_gest_linechart_one <- function(measure){
@@ -392,7 +365,7 @@ plot_gest_linechart_one <- function(measure){
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
 }
 
-#####################################################################################################################
+#####################################################################################################################.
 ## LINECHART SCOTLAND & NHS BOARD: Births by gestation numbers and percentages
 
 plot_gest_linechart_two <- function(measure){
@@ -472,6 +445,8 @@ observeEvent(input$switch_to_gestation,{
 output$gestation_commentary <- renderUI({
   tagList(
     bsButton("jump_to_gestation",label = "Go to data"), #this button can only be used once
+    h2("Gestation at delivery - 3rd August 2022"),
+    p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births that are delivered pre-term and post-term in this month are likely to change in future releases of the dashboard. Data submissions from NHS Forth Valley were insufficient to report for April 2022. These will be updated in future dashboard releases."),
     h2("Gestation at delivery - 6th July 2022"),
     p("Data are thought to be incomplete for NHS Forth Valley in March 2022 and for NHS Fife in February 2022, so the proportion of births that are delivered pre-term and post-term in these months are likely to change in future releases of the dashboard."),
     h2("Gestation at delivery - 1st June 2022"),

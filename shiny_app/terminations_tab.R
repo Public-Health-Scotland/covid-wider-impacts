@@ -16,38 +16,9 @@ observeEvent(input$btn_top_modal,
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
-observeEvent(input$btn_top_rules,
-             showModal(modalDialog(
-               title = "How do we identify patterns in the data?",
-               p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
-               p("Further information on these methods of presenting data can be found in the ",
-                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts', target="_blank"),"."),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
+observeEvent(input$btn_top_rules, runchart_modal())
 # Modal to explain SIMD and deprivation
-# Link action button click to modal launch
-observeEvent(input$btn_modal_simd_top, { showModal(
-  modalDialog(
-    h5("What is SIMD and deprivation?"),
-    p("Women have been allocated to different levels of deprivation based on the small area (data zone)
-      in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
-                                          class="externallink"), "score for that area.
-      SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains:
-      income; employment; health; education, skills and training; housing; geographic access; and crime.
-      In this tool we have presented results for women living in different SIMD ‘quintiles’.
-      To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%)
-      of the overall population of Scotland are identified. Women living in the most and least deprived areas
-      that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
-    size = "l",
-    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  )
-) })
+observeEvent(input$btn_modal_simd_top, simd_modal("Women"))
 
 ###############################################.
 ## ToP Reactive controls  ----
@@ -102,7 +73,7 @@ output$top_dep_g <- renderPlotly({plot_top_split(dataset=top_filter_split("dep")
 # The charts and text shown on the app will depend on what the user wants to see
 output$top_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 1 June 2022"))
+  data_last_updated <- tagList(p("Last updated: 3 August 2022"))
 
   # text for titles of cut charts
   top_subtitle <-  paste0("Figures based on data extracted ",top_extract_date)

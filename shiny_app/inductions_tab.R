@@ -3,7 +3,7 @@
 
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_induct_modal,
+observeEvent(input$`induct-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("The data used for the induction of labour page comes from the Scottish Morbidity Record 02 (SMR02) database.  An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care.  From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended homebirths."),
@@ -15,45 +15,15 @@ observeEvent(input$btn_induct_modal,
                size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
-observeEvent(input$btn_induct_rules,
-             showModal(modalDialog(
-               title = "How do we identify patterns in the data?",
-               p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
-               p("Further information on these methods of presenting data can be found in the ",
-                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts', target="_blank"),"."),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
+observeEvent(input$btn_induct_rules, runchart_modal())
 #Modal to explain SIMD and deprivation
-#Link action button click to modal launch
-observeEvent(input$btn_modal_simd_induct, { showModal(
-  modalDialog(
-    h5("What is SIMD and deprivation?"),
-    p("Women have been allocated to different levels of deprivation based on the small area (data zone) in which they live and the",
-      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
-             class="externallink"), "SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: income; employment; health; education, skills and training; housing; geographic access; and crime.
-    In this tool we have presented results for women living in different SIMD ‘quintiles’. To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) of the overall population of Scotland are identified.
-    Women living in the most and least deprived areas that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
-    size = "l",
-    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  ))})
-
+observeEvent(input$btn_modal_simd_induct, simd_modal("Women"))
 
 ###############################################.
 ## Induction Reactive controls  ----
 ###############################################.
-
-# deliveries reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_induct <- renderUI({
-  #Lists areas available in
-  areas_summary_induct <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_induct])
-  selectizeInput("geoname_induct", label = NULL, choices = areas_summary_induct, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("induct")
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -62,8 +32,8 @@ output$geoname_ui_induct <- renderUI({
 #Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 induct_filter <- function(){
 
-  induct_runchart %>% filter(area_name == input$geoname_induct &
-                            area_type == input$geotype_induct &
+  induct_runchart %>% filter(area_name == input$`induct-geoname` &
+                            area_type == input$`induct-geotype` &
                             type %in% c("Scotland","Health board"))
 }
 
@@ -78,8 +48,8 @@ induct_linechart_split <- function(split){
 #Dataset 3: behind line chart  (available at scotland and NHS board level)
 induct_linechart_filter <- function(){
 
-  induct_linechart %>% filter(area_name == input$geoname_induct &
-                                area_type == input$geotype_induct &
+  induct_linechart %>% filter(area_name == input$`induct-geoname` &
+                                area_type == input$`induct-geotype` &
                                 type %in% c("Scotland","Health board"))
 }
 
@@ -108,7 +78,7 @@ output$induct_explorer <- renderUI({
 
   # text for titles of cut charts
   induct_data_timeperiod <-  paste0("Figures based on data extracted ",induct_extract_date)
-  induct_title <- paste0("of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$geoname_induct)
+  induct_title <- paste0("of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$`induct-geoname`)
 
   chart_explanation <-
     tagList(p("We have used ",
@@ -141,11 +111,11 @@ output$induct_explorer <- renderUI({
                             p(chart_explanation)),
                      column(12,
                             br(), #spacing
-                            h4(paste0("Number of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$geoname_induct))),
+                            h4(paste0("Number of singleton live births at 37-42 weeks gestation that followed induction of labour: ",input$`induct-geoname`))),
                      column(12,
                             withSpinner(plotlyOutput("induct_linechart_number"))),
                      #only if scotland selected display age and deprivation breakdowns
-                     if (input$geotype_induct == "Scotland"){
+                     if (input$`induct-geotype` == "Scotland"){
                        tagList(
                          fluidRow(column(12,
                                          h4("Singleton live births at 37-42 weeks gestation that followed induction of labour by maternal age group: Scotland"))),
@@ -199,7 +169,7 @@ plot_induct_trend <- function(measure, shift, trend){
   } else {
 
     # centrelines
-    centreline_name <- paste0(input$geoname_induct," average up to end Feb 2020")
+    centreline_name <- paste0(input$`induct-geoname`," average up to end Feb 2020")
     dottedline_name <- "Projected average"
     centreline_data = plot_data$median_ind_37_42
     dottedline_data = plot_data$ext_ind_37_42
@@ -224,7 +194,7 @@ plot_induct_trend <- function(measure, shift, trend){
 
   }}
 
-#####################################################################################################################
+#####################################################################################################################.
 ## LINECHART SCOTLAND & NHS BOARD: births (37-42 weeks gestation) where delivery induced, numbers and percentages - Scotland level only
 plot_induct_linechart <- function(measure){
 
@@ -277,7 +247,7 @@ plot_induct_linechart <- function(measure){
 }
 
 
-#####################################################################################################################
+#####################################################################################################################.
 ## LINECHART SCOTLAND: inductced deliveries by age group and deprivation, numbers and percentages - Scotland level only
 plot_induct_split <- function(dataset, split, measure){
 
@@ -358,6 +328,8 @@ observeEvent(input$switch_to_induction,{
 output$induction_commentary <- renderUI({
   tagList(
     bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
+    h2("Induction of labour - 3rd August 2022"),
+    p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births that are induced in this month is likely to change in future releases of the dashboard. Data submissions from NHS Forth Valley were insufficient to report for April 2022. These will be updated in future dashboard releases."),
     h2("Induction of labour - 6th July 2022"),
     p("Data are thought to be incomplete for NHS Forth Valley in March 2022 and for NHS Fife in February 2022, so the proportion of births that are induced in these months is likely to change in future releases of the dashboard."),
     h2("Induction of labour - 1st June 2022"),

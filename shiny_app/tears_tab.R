@@ -24,58 +24,9 @@ observeEvent(input$btn_tears_modal,
       size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
-observeEvent(input$btn_tears_rules,
-             showModal(modalDialog(
-               title = "How do we identify patterns in the data?",
-               p("Run charts use a series of rules to help identify important
-                 changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points
-                               above or below the centreline. Points on the
-                               centreline neither break nor contribute to a
-                               shift (marked on chart)."),
-                       tags$li("Trends: Five or more consecutive data points
-                               which are increasing or decreasing. An
-                               observation that is the same as the preceding
-                               value does not count towards a trend (marked on
-                               chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of
-                               one or more consecutive observations on the same
-                               side of the centreline. Any observations falling
-                               directly on the centreline can be ignored. If
-                               there are too many or too few runs (i.e. the
-                               median is crossed too many or too few times)
-                               that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is
-                               distinctly different from the rest. Different
-                               people looking at the same graph would be
-                               expected to recognise the same data point as
-                               astronomical (or not).")),
-               p("Further information on these methods of presenting data can be found in the ",
-                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts', target="_blank"),"."),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
+observeEvent(input$btn_tears_rules, runchart_modal())
 #Modal to explain SIMD and deprivation
-#Link action button click to modal launch
-observeEvent(input$btn_modal_simd_tears, { showModal(
-  modalDialog(
-    h5("What is SIMD and deprivation?"),
-    p("Women have been allocated to different levels of deprivation based on the
-      small area (data zone) in which they live and the Scottish Index of
-      Multiple Deprivation (SIMD). SIMD scores are based on data for local areas
-      reflecting 38 indicators across 7 domains: income; employment; health;
-      education, skills and training; housing; geographic access; and crime.
-      In this tool we have presented results for women living in different SIMD
-      ‘quintiles’. To produce quintiles, data zones are ranked by their SIMD score
-      then the areas each containing a fifth (20%) of the overall population of
-      Scotland are identified. Women living in the most and least deprived areas
-      that each contain a fifth of the population are assigned to SIMD quintile
-      1 and 5 respectively."),
-    size = "l",
-    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  ))})
-
+observeEvent(input$btn_modal_simd_tears, simd_modal("Women"))
 
 ###############################################.
 ## Reactive controls  ----
@@ -416,8 +367,10 @@ observeEvent(input$switch_to_tears,{
 output$tears_commentary <- renderUI({
   tagList(
     bsButton("jump_to_tears",label = "Go to data"), #this button can only be used once
+    h2("Perineal tears - 3rd August 2022"),
+    p("Data are thought to be incomplete for NHS Fife and NHS Forth Valley in April 2022, so the proportion of births that result in a tear in this month is likely to change in future releases of the dashboard. "),
     h2("Perineal tears - 2nd February 2022"),
-    p("The percentage of women resident in NHS Lanarkshire giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation, and who have a third or fourth degree perineal tear has been above the pre-pandemic average for six successive quarters (covering the period April 2020-Sept 2021).  The pre-pandemic rate was 3% and that for July-Sept 2021 3.7%. It is important to note that some women resident in NHS Lanarkshire receive delivery care from bordering health boards.  At Scotland level the pre-pandemic rate of third and fourth degree perineal tears was 3.5% and that for July-Sept 2021 was 3.2%.  NHS Lanarkshire have been made aware of this data and PHS will continue to monitor."),
+    p("The percentage of women resident in NHS Lanarkshire giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation, and who have a third or fourth degree perineal tear has been above the pre-pandemic average for six successive quarters (covering the period April 2020-Sept 2021). The pre-pandemic rate was 3% and that for July-Sept 2021 3.7%. It is important to note that some women resident in NHS Lanarkshire receive delivery care from bordering health boards.  At Scotland level the pre-pandemic rate of third and fourth degree perineal tears was 3.5% and that for July-Sept 2021 was 3.2%.  NHS Lanarkshire have been made aware of this data and PHS will continue to monitor."),
     h2("Perineal tears - 3rd November 2021"),
     p("The percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear has been above the pre-pandemic average for seven successive quarters (including April-June 2021) in both NHS Dumfries & Galloway and NHS Greater Glasgow & Clyde. We are working with these two boards in order to investigate this further. NHS Dumfries & Galloway have indicated that their overall numbers of third and fourth degree tears are small. They routinely review all women who have had a third or fourth degree tear at their Clinical Incident Review Group and they have not so far identified any common themes."),
     h2("Perineal tears - 16th June 2021"),

@@ -3,6 +3,8 @@ credentials <- readRDS("admin/credentials.rds")
 
 function(input, output, session) {
 
+  source(file.path('ui/modules_ui.R'),  local = TRUE)$value 
+  
   # Shinymanager Auth
 
   res_auth <- secure_server(
@@ -15,7 +17,7 @@ function(input, output, session) {
 
 
   # For debugging
-  # observeEvent(input$browser, browser())
+ # observeEvent(input$browser, browser())
 
   ##############################################.
   # New content and future updates ----
@@ -25,23 +27,22 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("20 July 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("3 August 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("3 August 2022 - Monthly update of data (most sections)."),
+                   tags$li("3 August 2022 - Cancer pathology data update."),
                    tags$li("6 July 2022 - Monthly update of data (most sections)."),
                    tags$li("6 July 2022 - Update on injuries data."),
                    tags$li("29 June 2022 - Substance use data update and new dataset on A&E attendances due to substance misuse."),
                    tags$li("15 June 2022 - Outpatient activity data update."),
                    tags$li("1 June 2022 - Monthly update of data (most sections)."),
                    tags$li("25 May 2022 - Additional data for the cardiovascular section: hospital admissions and excess mortality."),
-                   tags$li("25 May 2022 - Cancer pathology data update."),
-                   tags$li("30 March 2022 - New data on ambulance administered naloxone and update of substance use section."),
-                   tags$li("16 February 2022 - Adding ethnicity data to the outpatients activity dataset."),
-                   tags$li("2 February 2022 - Improvements to visualisations in pregnancy, births and babies, and child health section.")
+                   tags$li("30 March 2022 - New data on ambulance administered naloxone and update of substance use section.")
                    ),
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("27 July 2022 - Systemic anti-cancer therapies data update."),
-                   tags$li("3 August 2022 - Monthly update of data (most sections).")
+                   tags$li("10 August 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("7 September 2022 - Monthly update of data (most sections).")
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
@@ -150,7 +151,7 @@ function(input, output, session) {
   ## jump to commentary tab from data tabs ----
   ###############################################.
   # To jump to commentary tab and ensures correct panel is expanded - requires multiple lines becuase action buttons must have unique ID
-  observeEvent(input$jump_commentary_imm, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`immun-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Immunisation")})
 
   observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -159,7 +160,7 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Cardiovascular")})
 
-  observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`summary-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Summary trends")})
 
   observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -174,7 +175,7 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_mod, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Method of delivery")})
 
-  observeEvent(input$jump_commentary_induction, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`induct-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Induction of labour")})
 
   observeEvent(input$jump_commentary_apgar, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -186,13 +187,13 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_tears, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Perineal tears")})
 
-  observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`gest-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
 
-  observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`childdev-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Child development")})
 
-  observeEvent(input$jump_commentary_breastfed, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`bf-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Breastfeeding")})
 
   observeEvent(input$jump_commentary_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "comment")

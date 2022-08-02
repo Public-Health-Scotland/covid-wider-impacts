@@ -4,7 +4,7 @@
 
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_booking_modal,
+observeEvent(input$`booking-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("The Antenatal Booking Data presented is based on a new data collection established as a rapid response to COVID-19. Data is collected each week, from the clinical information system - BadgerNet Maternity (most NHS boards) or TrakCare Maternity (Lothian) - used by the midwives who ‘book’ the pregnant woman for maternity care."),br(),
@@ -12,52 +12,17 @@ observeEvent(input$btn_booking_modal,
                p("The charts presented on this page show the number of women booking for antenatal care in each week from the week beginning 1 April 2019 onwards.  Data is shown at all Scotland level and for each mainland NHS Board of residence.  Due to small numbers, weekly data is not shown for individual Island Boards of residence (NHS Orkney, NHS Shetland, and NHS Western Isles), however the Island Boards are included in the Scotland total.  In addition to the weekly data, the ‘Download data’ button provides monthly data (based on exact month of booking rather than summation of sequential weeks) for each NHS Board of residence, including the Island Boards."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+
 # Modal to explain run charts rules
-observeEvent(input$btn_booking_rules,
-             showModal(modalDialog(
-               title = "How do we identify patterns in the data?",
-               p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance.")),
-               p("Further information on these methods of presenting data can be found in the ",
-                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts', target="_blank"),"."),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
+observeEvent(input$btn_booking_rules, runchart_modal())
 # Modal to explain SIMD and deprivation
-# Link action button click to modal launch
-observeEvent(input$btn_modal_simd_booking, { showModal(
-  modalDialog(
-    h5("What is SIMD and deprivation?"),
-    p("Women have been allocated to different levels of deprivation based on the small area (data zone) in which they live and the",
-      tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
-    class="externallink"), "SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: income; employment; health; education, skills and training; housing; geographic access; and crime.
-    In this tool we have presented results for women living in different SIMD ‘quintiles’. To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) of the overall population of Scotland are identified.
-    Women living in the most and least deprived areas that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
-    size = "l",
-    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  ))})
-
-# Pop-up modal explaining source of data
-observeEvent(input$btn_tayside_modal,
-             showModal(modalDialog(
-               title = "Why is there a second centreline?",
-               p("Insert text explaining second centre line here."),br(),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+observeEvent(input$btn_modal_simd_booking, simd_modal("Women"))
 
 ###############################################.
-## Pregnancy Reactive controls  ----
+## Reactive controls  ----
 ###############################################.
-
-# Pregnancy reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_booking <- renderUI({
-  #Lists areas available in
-  areas_summary_booking <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_booking])
-  selectizeInput("geoname_booking", label = NULL, choices = areas_summary_booking, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("booking")
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -67,8 +32,8 @@ ante_booking_filter <- function(){
 
   booking %>%
     select(-g_u10wks,-g_10to12wks,-g_13pluswks) %>%
-    filter(area_name == input$geoname_booking &
-                       area_type == input$geotype_booking &
+    filter(area_name == input$`booking-geoname` &
+                       area_type == input$`booking-geotype` &
                        type %in% c("Scotland","Health board"))# %>%
     # temp fix for june 2022 update
     # filter(case_when(area_name == "NHS Greater Glasgow & Clyde" | area_name == "Scotland" ~ week_book_starting < "2022-04-19",
@@ -114,7 +79,7 @@ output$booking_explorer <- renderUI({
 
   # text for titles of trend charts
   booking_subtitle <-  paste0("Figures based on data extracted ",booking_extract_date)
-  booking_trend_title <- paste0("Women booking for antenatal care: ",input$geoname_booking)
+  booking_trend_title <- paste0("Women booking for antenatal care: ",input$`booking-geoname`)
   booking_title_n <-  paste0("Number of women booking for antenatal care")
   booking_title_g <-  paste0("Average gestation at booking")
   booking_title_g2 <-  paste0("(based on completed weeks of pregnancy)")
@@ -141,7 +106,7 @@ output$booking_explorer <- renderUI({
 
   # Function to create common layout to all immunisation charts
   booking_layout <- function(plot_trend_n,plot_trend_g, plot_age_n, plot_age_g, plot_dep_n, plot_dep_g){
-    tagList(if (input$geoname_booking == "NHS Tayside"){
+    tagList(if (input$`booking-geoname` == "NHS Tayside"){
             fluidRow(column(12,
                             h4(booking_trend_title),
                             actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
@@ -159,7 +124,7 @@ output$booking_explorer <- renderUI({
                             br(), # spacing
                             p(booking_subtitle),
                             p(chart_explanation)))
-    } else if (input$geoname_booking == "NHS Forth Valley"){
+    } else if (input$`booking-geoname` == "NHS Forth Valley"){
       fluidRow(column(12,
                       h4(booking_trend_title),
                       actionButton("btn_booking_rules", "How do we identify patterns in the data?")),
@@ -198,7 +163,7 @@ output$booking_explorer <- renderUI({
                       p(chart_explanation)))
       },
             # only if scotland selected display age and deprivation breakdowns
-            if (input$geotype_booking == "Scotland"){
+            if (input$`booking-geotype` == "Scotland"){
               tagList(
                 fluidRow(column(12,h4("Women booking for antenatal care, by age group: Scotland"))),
                 fluidRow(column(6,
@@ -247,8 +212,8 @@ plot_booking_trend <- function(measure, shift, trend){
 
   } else {
     # chart legend labels
-    centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")
-    dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020")
+    centreline_name <- paste0(input$`booking-geoname`," average up to end Feb 2020")
+    dottedline_name <- paste0(input$`booking-geoname`," projected average from Mar 2020")
 
     #switch y-axis according to which measure is selected
     if(measure == "booked_no"){
@@ -263,14 +228,14 @@ plot_booking_trend <- function(measure, shift, trend){
 
     } else if (measure  == "ave_gest") {
       # chart legend labels, for most boards and the different centrelines of Tayside and FV
-      centreline_name <- paste0(input$geoname_booking," average up to end Feb 2020")
-      centreline_name_t <- paste0(input$geoname_booking, " average from Aug 2020 to end Dec 2020")
-      centreline_name_v <- paste0(input$geoname_booking, " average from Mar 2021 to Jun 2021")
-      dottedline_name <- paste0(input$geoname_booking," projected average from Mar 2020")
-      dottedline_name_t <- paste0(input$geoname_booking," projected average from Jan 2021")
-      dottedline_name_v <- paste0(input$geoname_booking," projected average from Jul 2021")
-      dottedline_name_ts <- paste0(input$geoname_booking," projected average from Mar 2020 to end Jul 2020")
-      dottedline_name_fv <- paste0(input$geoname_booking," projected average from Mar 2020 to end Feb 2021")
+      centreline_name <- paste0(input$`booking-geoname`," average up to end Feb 2020")
+      centreline_name_t <- paste0(input$`booking-geoname`, " average from Aug 2020 to end Dec 2020")
+      centreline_name_v <- paste0(input$`booking-geoname`, " average from Mar 2021 to Jun 2021")
+      dottedline_name <- paste0(input$`booking-geoname`," projected average from Mar 2020")
+      dottedline_name_t <- paste0(input$`booking-geoname`," projected average from Jan 2021")
+      dottedline_name_v <- paste0(input$`booking-geoname`," projected average from Jul 2021")
+      dottedline_name_ts <- paste0(input$`booking-geoname`," projected average from Mar 2020 to end Jul 2020")
+      dottedline_name_fv <- paste0(input$`booking-geoname`," projected average from Mar 2020 to end Feb 2021")
 
       yaxis_plots[["range"]] <- c(0, 16)  # forcing range from 0 to 16 weeks to ensure doesn't change when NHS board selected
       tooltip_booking <- c(paste0("Week commencing: ",format(plot_data$week_book_starting,"%d %b %y"),"<br>",
@@ -289,7 +254,7 @@ plot_booking_trend <- function(measure, shift, trend){
 
 
     # Adding a couple of different centrelines for average gestation in FV and Tayside
-    if (measure == "ave_gest" & input$geoname_booking == "NHS Tayside") {
+    if (measure == "ave_gest" & input$`booking-geoname` == "NHS Tayside") {
 
       main_dottedline_name = dottedline_name_ts
 
@@ -298,7 +263,7 @@ plot_booking_trend <- function(measure, shift, trend){
       dottedline_2_data = dotted_line_t
       dottedline_2_name = dottedline_name_t
 
-    } else if (measure == "ave_gest" & input$geoname_booking == "NHS Forth Valley") {
+    } else if (measure == "ave_gest" & input$`booking-geoname` == "NHS Forth Valley") {
 
       main_dottedline_name = dottedline_name_fv
 

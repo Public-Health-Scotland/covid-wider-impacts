@@ -5,7 +5,7 @@
 ###############################################.
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_childdev_modal,
+observeEvent(input$`childdev-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("Data source: CHSP Pre-School"),
@@ -25,90 +25,47 @@ observeEvent(input$btn_childdev_modal,
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain SPC charts rules
-observeEvent(input$btn_childdev_rules,
-             showModal(modalDialog(
-               title = "How do we identify patterns in the data?",
-               p("Run charts use a series of rules to help identify important changes in the data.
-                 These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
-               p("Further information on these methods of presenting data can be found in the ",
-                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts', target="_blank"),"."),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+observeEvent(input$childdev_rules, runchart_modal())
 
 ###############################################.
 # Modal to explain SIMD and deprivation
-child_dev_simd_modal <- modalDialog(
-  h5("What is SIMD and deprivation?"),
-  p("The", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD)",
-                  target="_blank"), "is the Scottish Government's
-    official tool for identifying areas in Scotland with concentrations of deprivation
-    by incorporating several different aspects of deprivation (multiple-deprivations)
-    and combining them into a single index. Concentrations of deprivation are identified
-    in SIMD at Data Zone level and can be analysed using this small geographical unit.
-    The use of data for such small areas helps to identify 'pockets' (or concentrations)
-    of deprivation that may be missed in analyses based on larger areas such as council
-    areas. By identifying small areas where there are concentrations of multiple deprivation,
-    the SIMD can be used to target policies and resources at the places with the greatest need.
-    The SIMD identifies deprived areas, not deprived individuals."),
-  p("In this tool we use the concept of quintile, which refers to a fifth of the population.
-    For example when we talk about the most deprived quintile, this means the 20% of the population
-    living in the most deprived areas."),
-  size = "l",
-  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  )
-# Link action button click to modal launch
-observeEvent(input$btton_childdev_modal_simd, { showModal(child_dev_simd_modal) })
+observeEvent(input$childdev_modal_simd, simd_modal() )
 
 ###############################################.
 ## Reactive controls  ----
 ###############################################.
-
 # Show list of area names depending on areatype selected
-output$geoname_childdev_ui <- renderUI({
-
-  areas_summary <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_childdev])
-
-  selectizeInput("geoname_childdev", label = NULL,
-                 choices = areas_summary, selected = "")
-
-})
+geoname_server("childdev")
 
 ###############################################.
 ##  Reactive datasets  ----
 ###############################################.
+
+review_chosen <- reactive({
+
+case_when( input$`childdev-measure` == "13_15mnth" ~ "13-15 month",
+           input$`childdev-measure` == "27_30mnth" ~ "27-30 month")
+})
+
 child_dev_filt <- reactive({
 
-  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
-                              input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
-
-  child_dev %>% filter(area_name == input$geoname_childdev &
-                         area_type == input$geotype_childdev &
-                         review == review_chosen)
+  child_dev %>% filter(area_name == input$`childdev-geoname` &
+                         area_type == input$`childdev-geotype` &
+                         review == review_chosen())
 })
 
 child_dev_depr_filt <- reactive({
 
-  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
-                              input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
-
-  child_dev_depr %>% filter(area_name == input$geoname_childdev &
+  child_dev_depr %>% filter(area_name == input$`childdev-geoname` &
                          simd == input$simd_childdev &
-                         review == review_chosen)
+                         review == review_chosen())
 })
 
 child_dev_domains_filt <- reactive({
   
-  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
-                              input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
-  
-  child_dev_domains %>% filter(area_name == input$geoname_childdev &
-                                 area_type == input$geotype_childdev &
-                                 review == review_chosen)
+  child_dev_domains %>% filter(area_name == input$`childdev-geoname` &
+                                 area_type == input$`childdev-geotype` &
+                                 review == review_chosen())
 })
 
 
@@ -117,11 +74,6 @@ child_dev_domains_filt <- reactive({
 ###############################################.
 # The charts and text shown on the app will depend on what the user wants to see
 output$childdev_explorer <- renderUI({
-
-  review_title <- case_when(input$measure_select_childdev == "13_15mnth" ~
-                             "13-15 month" ,
-                            input$measure_select_childdev == "27_30mnth" ~
-                              "27-30 month")
 
   control_chart_commentary <-
     tagList(
@@ -140,28 +92,28 @@ output$childdev_explorer <- renderUI({
   tagList(
     fluidRow(column(12,
                     h4(paste0("Percentage of children with 1 or more developmental concerns recorded at the ",
-                              review_title, " review")))),
-    actionButton("btn_childdev_rules", "How do we identify patterns in the data?",
+                              review_chosen(), " review")))),
+    actionButton("childdev_rules", "How do we identify patterns in the data?",
                  icon = icon('question-circle')),
     fluidRow(withSpinner(plotlyOutput("childdev_no_concerns",
                                       height = height_run_chart))),
     br(), #spacing
     control_chart_commentary,
     fluidRow(column(12,
-                    h4(paste0("Number of ", review_title,
+                    h4(paste0("Number of ", review_chosen(),
                               " reviews; reviews with full meaningful data on child development recorded; and children with 1 or more developmental concerns recorded")))),
     fluidRow(withSpinner(plotlyOutput("childdev_no_reviews"))),
     br(), #spacing
     # Only give domain breakdown for Scotland
-    if (input$geotype_childdev == "Scotland") {
+    if (input$`childdev-geotype` == "Scotland") {
       tagList(
-        h4(paste0("Percentage of ", review_title,
+        h4(paste0("Percentage of ", review_chosen(),
                   " reviews with a new or previous concern recorded by developmental domain")),
       fluidRow(withSpinner(plotlyOutput("childdev_domains"))),
       br(), #spacing
     # Only give SIMD breakdown for Scotland
         h4(paste0("Percentage of children with 1 or more developmental concerns recorded at the ",
-                  review_title, " review by SIMD deprivation quintile")),
+                  review_chosen(), " review by SIMD deprivation quintile")),
         fluidRow(
           column(6, selectizeInput("simd_childdev",
                                    "Select SIMD deprivation quintile",
@@ -169,7 +121,7 @@ output$childdev_explorer <- renderUI({
                                      setNames(1:5, c("1 - most deprived",
                                                      "2", "3", "4",
                                                      "5 - least deprivation")))),
-          column(6, actionButton("btton_childdev_modal_simd",
+          column(6, actionButton("childdev_modal_simd",
                                  "What is SIMD and deprivation?",
                                  icon = icon('question-circle')))),
         fluidRow(withSpinner(plotlyOutput("childdev_depr",
@@ -238,8 +190,8 @@ output$childdev_no_concerns <- renderPlotly({
                           "<br>", "% children with developmental concerns: ", trend_data$pc_1_plus, "%"))
 
     # Dotted line for projected tails of centreline. It changes depending on area.
-    if (input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
-        input$measure_select_childdev == "13_15mnth") {
+    if (input$`childdev-geoname` %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
+        input$`childdev-measure` == "13_15mnth") {
 
       centreline_name = "Average from May 19 to February 20"
       centreline_start = ymd(20190501)
@@ -322,8 +274,8 @@ output$childdev_depr <- renderPlotly({
                           "<br>", "% meaningful reviews: ", trend_data$pc_meaningful, "%"))
 
     # Dotted line for projected tails of centreline. It changes depending on area.
-    if (input$geoname_childdev %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
-        input$measure_select_childdev == "13_15mnth") {
+    if (input$`childdev-geoname` %in% c("Scotland", "NHS Greater Glasgow & Clyde") &
+        input$`childdev-measure` == "13_15mnth") {
 
       centreline_name = "Average from May 19 to February 20"
       centreline_start = ymd(20190501)
@@ -457,19 +409,16 @@ output$childdev_domains <- renderPlotly({
 ## Data downloads ----
 ###############################################.
 childdev_down <- reactive({
-
-  review_chosen <- case_when( input$measure_select_childdev == "13_15mnth" ~ "13-15 month",
-                              input$measure_select_childdev == "27_30mnth" ~ "27-30 month")
-
+  
   child_dev %>%
-    filter(review == review_chosen) %>%
+    filter(review == review_chosen()) %>%
     select(-hscp2019_code, -shift, -trend, -ends_with(".split")) %>%
     mutate(month_review = format(month_review, "%b %y")) %>%
     rename(no_reviews_meaningful_data = no_meaningful_reviews, pc_meaningful_data = pc_meaningful)
 })
 
 
-output$download_childdev_data <- downloadHandler(
+output$`childdev-download-data` <- downloadHandler(
   filename ="child_development_extract.csv",
   content = function(file) {
     write_csv(childdev_down(), file) }

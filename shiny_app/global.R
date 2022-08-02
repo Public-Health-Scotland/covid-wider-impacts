@@ -16,13 +16,14 @@ library(shinycssloaders) #for loading icons, see line below
 library(shinyjs) # for enable/disable functions
 library(readr) # for writing/reading csvs
 library(stringr) #for manipulating strings
-library(flextable)
+library(flextable) # for tables
 library(shinyBS) #for collapsible panels in commentary
-library(zoo)
-library(magrittr)
-library(shinymanager)
-library(lubridate)
+library(zoo) # for dates
+library(magrittr) # more pipe operators
+library(shinymanager) # for password protection
+library(lubridate) # for dates
 library(tidyr) # for uncount()
+library(listviewer) # for some plotly features
 
 ###############################################.
 ## Functions ----
@@ -96,7 +97,7 @@ cancer_data_quarters_2 <- readRDS("data/cancer_data_quarters_2yr.rds") %>%
                                                     "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE))
 
 
-cancer_extract_date <- "04 April 2022"
+cancer_extract_date <- "02 June 2022"
 
 # SACT data
 sact_data <- readRDS("data/sact_data.rds")
@@ -157,7 +158,7 @@ ae_mh <- readRDS("data/mh_A&E.rds") %>% filter(type != 'dep')
 mh_ooh <- readRDS("data/mh_ooh.rds")
 
 ## Child Health Data
-child_extract_date <- "27 June 2022"
+child_extract_date <- "25 July 2022"
 first <- readRDS("data/first_visit.rds") # first health visit at 2 weeks
 firsttable <- readRDS("data/first_visit_datatable.rds")
 firstdata <- readRDS("data/first_visit_data.rds")
@@ -175,7 +176,7 @@ fourtofivetable <- readRDS("data/fourtofive_datatable.rds")
 fourtofivedata <- readRDS("data/fourtofive_data.rds")
 
 ## Immunisation Data
-immunisation_extract_date <- "27 June 2022"
+immunisation_extract_date <- "25 July 2022"
 month_elig_imm <- readRDS("data/month_eligibility_immun.rds") #flextable with imm month eligibility
 age_defs_imm_6inone <- readRDS("data/age_defs_imm_6inone.rds")
 age_defs_imm_mmr <- readRDS("data/age_defs_imm_mmr.rds")
@@ -204,17 +205,17 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "13 June 2022"
+booking_extract_date <- "13 July 2022"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
 #terminations
-top_extract_date <- "14 June 2022"
+top_extract_date <- "12 July 2022"
 top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "13 June 2022"
+mod_extract_date <- "18 July 2022"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
@@ -243,7 +244,7 @@ child_dev_domains <- readRDS("data/child_dev_domains.rds")
 
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "13 June 2022"
+apgar_extract_date <- "13 July 2022"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
@@ -331,7 +332,7 @@ data_list <- c(
   "NHS 24 completed contacts" = "nhs24",
   "Out of hours cases and consultations" = "ooh", "Scottish Ambulance Service" = "sas",
   "Excess mortality" = "deaths",
-  "Outpatient appointments" = "outpats")
+  "Outpatient appointments" = "op")
 
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
@@ -445,7 +446,7 @@ cancer_type_list <- c("All Malignant Neoplasms (Excl. C44)" = "All Malignant Neo
                       "Mesothelioma" = "Mesothelioma",
                       "Multiple Myeloma and malignant plasma cell neoplasms" = "Multiple Myeloma and malignant plasma cell neoplasms",
                       "Non-Melanoma Skin Cancer" = "Non-Melanoma Skin Cancer",
-                      "Non-Hodgkin Lymphoma" = "Non Hodgkin Lymphoma",
+                      "Non-Hodgkin Lymphoma" = "Non-Hodgkin Lymphoma",
                       "Oesophagus" = "Oesophagus",
                       "Other" = "Other",
                       "Ovary - Females only" = "Ovary - Females only",
@@ -503,7 +504,7 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
                "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141",
                "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff",
-               "APR 2022" = "#bcbddc")
+               "APR 2022" = "#bcbddc", "MAY 2022" = "#7300e6")
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
@@ -515,7 +516,7 @@ pal_child <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
                "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141",
                "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff",
-               "APR 2022" = "#bcbddc")
+               "APR 2022" = "#bcbddc", "MAY 2022" = "#7300e6")
 
 pal_inj <- list(pal_age,pal_depr,pal_sex)
 
@@ -537,11 +538,11 @@ pal_sact <- c('#3F3685',
               '#000000' )
 
 
-pal_cancer_diff <- c("1 (least deprived)" = '#000080',
+pal_cancer_diff <- c("1 (most deprived)" = '#000080',
                      "2" = '#DCDCDC',
                      "3" = '#D3D3D3',
                      "4" = '#C0C0C0',
-                     "5 (most deprived)" = '#0000FF')
+                     "5 (least deprived)" = '#0000FF')
 
 
 pal_eth <- c('#E39C8C',
