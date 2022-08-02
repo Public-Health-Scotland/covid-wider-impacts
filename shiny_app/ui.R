@@ -41,7 +41,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
            mainPanel(width = 9,
                      # Summary trends
                      conditionalPanel(condition= 'input.commentary_select == "summary"',
-                                      tagList(uiOutput("summary_comment"))),
+                                      summary_comment),
                      # Cardiovascular
                      conditionalPanel(condition= 'input.commentary_select == "cardio"',
                                       tagList( uiOutput("cardio_commentary"))),
