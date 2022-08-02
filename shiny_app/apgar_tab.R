@@ -365,6 +365,8 @@ observeEvent(input$switch_to_apgar,{
 output$apgar_commentary <- renderUI({
   tagList(
     bsButton("jump_to_apgar",label = "Go to data"), #this button can only be used once
+    h2("Apgar scores - 3rd August 2022"),
+    p("Data are thought to be incomplete for NHS Fife and NHS Forth Valley in April 2022, so the proportion of babies with a low Apgar score in this month is likely to change in future releases of the dashboard."),
     h2("Apgar scores - 2nd June 2021"),
     p("In this release of information on Apgar scores (2nd June 2021) data have been updated to include women discharged after delivery up to and including February 2021. The data show that, at all Scotland level, the percentage of singleton live born babies delivered at 37-42 weeks gestation which have a low 5 minute Apgar score (less than 7) in February 2021 was at a very similar level to the pre-pandemic average at 1.8%."),
     p("The Apgar score data by NHS Board are presented quarterly and this information will next be updated on 7th July 2021."),

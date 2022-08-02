@@ -31,8 +31,7 @@ tagList( #needed for shinyjs
              intro_tab, #Introduction ----
              ###############################################.
              ## Commentary ----
-             ###############################################.
-             
+             ###############################################.         
              tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                       wellPanel(column(12,
                                        p("Select topic areas to find commentary relating to data presented in this tool."))),
@@ -80,8 +79,7 @@ tagList( #needed for shinyjs
                                         bsCollapsePanel("Injuries", uiOutput("injuries_commentary")),
                                         bsCollapsePanel("Substance use", uiOutput("drug_commentary"))
                              )))
-             ), #tab panel
-             
+             ), #tab panel       
              ##############################################.
              # Section tabs ----
              #############################################.
