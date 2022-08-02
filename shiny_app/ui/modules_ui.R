@@ -42,8 +42,7 @@ selectdata_ui <- function(id, measure_choices) {
 # area_choices - types of geography levels available. Vector.
 selectgeo_ui <- function(id, area_choices, step_no = "2") {
   div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
-      p(tags$b("Step ", step_no,". Select a geography level and then an area of interest.")),
-      selectInput(NS(id, "geotype"), label = NULL,
+      selectInput(NS(id, "geotype"), label = paste0("Step ", step_no,". Select a geography level and then an area of interest."),
                   choices = area_choices,
                   selected = "Scotland"),
       uiOutput(NS(id, "geoname")))
