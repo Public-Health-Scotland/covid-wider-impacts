@@ -3,6 +3,8 @@ credentials <- readRDS("admin/credentials.rds")
 
 function(input, output, session) {
 
+  source(file.path('ui/modules_ui.R'),  local = TRUE)$value 
+  
   # Shinymanager Auth
 
   res_auth <- secure_server(
