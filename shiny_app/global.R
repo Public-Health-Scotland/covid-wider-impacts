@@ -577,7 +577,7 @@ pal_eth <- c('#E39C8C',
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
-                    showline = TRUE, fixedrange=TRUE, rangeslider = TRUE)
+                    showline = TRUE, fixedrange=TRUE, rangeslider = FALSE)
 
 yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
                     tickfont = list(size=14), titlefont = list(size=14))
