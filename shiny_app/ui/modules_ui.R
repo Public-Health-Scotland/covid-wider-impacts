@@ -56,4 +56,24 @@ sourcemodal_ui <- function(id) {
   actionButton(NS(id, "source-modal"), "Data source and definitions", icon = icon('question-circle'))
 }
 
+###############################################.
+## Plot box functions ----
+###############################################.
+# Used mainly in the summary section
+plot_box <- function(title_plot, plot_output) {
+  tagList(h4(title_plot),
+          withSpinner(plotlyOutput(plot_output)))
+}
+
+plot_cut_box <- function(title_plot1, plot_output1,
+                         title_plot2, plot_output2, extra_content = NULL) {
+  tagList(
+    fluidRow(column(6, h4(title_plot1)),
+             column(6, h4(title_plot2))),
+    extra_content,
+    fluidRow(column(6, withSpinner(plotlyOutput(plot_output1))),
+             column(6, withSpinner(plotlyOutput(plot_output2))))
+  )
+}
+
 ##END
