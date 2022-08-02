@@ -60,7 +60,7 @@
 /* INFO BUTTONS */
 
 /* Change the buttons to light blue background with dark blue font - must go above the radio button styling otherwise it is overridden */
-.btn {
+.btn:not(.dropdown-toggle):not(.btn-primary) {
   margin: 0;
   font-weight: bold;
   background-color: #E6F2FB;
@@ -74,27 +74,34 @@
 
 /* FILTERS */
 
+/* this adds light purple background behind the title of the data type selectors */
+.form-group {
+  margin-bottom: 5px;
+  background-color: #ECEBF3;
+  border-radius: 10px;
+} 
+
 /* this adds a light purple shading to behind the drop-down boxes to make them standout */
-  .shiny-input-container:not(.shiny-input-container-inline) {
+  .shiny-input-container:not(.shiny-input-container-inline):not(.shiny-input-radiogroup){
     width: auto;
     background-color: #ECEBF3;
     padding: 0 5px 0 5px; 
     border-radius: 10px;
   } 
 
-/* this adds light purple background behind the title of the radio button selectors */
-.form-group {
-  margin-bottom: 5px;
+
+ 
+/* this adds some padding around the filter titles*/
+.control-label {
+  padding:5px;
+} 
+
+/* shiny-bound-output shiny-html-output */
+#geoname_ui.shiny-html-output {
+  padding-top: 5px; 
   background-color: #ECEBF3;
   border-radius: 10px;
 } 
- 
-/* this adds some padding around the filter titles  */
-.control-label {
-  padding:5px;
-}
-
-
 
 
 /* SIDE BAR SELECTORS */
@@ -165,8 +172,8 @@ h3, h4 {
   
 }
 
-/* Changes the colour on the plot slider to light purple */
+/* Changes the colour on the plot slider to light purple - the colour can be changed in functions server script
 .rangeslider-max-min {
   background-color: #ECEBF3;
   
-}
+} */
