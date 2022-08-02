@@ -7,7 +7,7 @@
 ###############################################.
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_tears_modal,
+observeEvent(input$`tears-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
       p("The data used for the perineal tears page comes from the Scottish Morbidity Record 02 (SMR02) database. An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care. From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended home births."),
@@ -31,13 +31,8 @@ observeEvent(input$btn_modal_simd_tears, simd_modal("Women"))
 ###############################################.
 ## Reactive controls  ----
 ###############################################.
-
-# deliveries reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_tears <- renderUI({
-  #Lists areas available in
-  areas_summary_tears <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_tears])
-  selectizeInput("geoname_tears", label = NULL, choices = areas_summary_tears, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("tears") 
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -46,8 +41,8 @@ output$geoname_ui_tears <- renderUI({
 #Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 tears_filter <- function(){
 
-tears_filt <- tears_runchart %>% filter(area_name == input$geoname_tears &
-                               area_type == input$geotype_tears &
+tears_filt <- tears_runchart %>% filter(area_name == input$`tears-geoname` &
+                               area_type == input$`tears-geotype` &
                                type %in% c("Scotland", "Health board"))
 tears_filt %>%
     # Sorting levels based on date
@@ -65,8 +60,8 @@ tears_linechart_split <- function(split){
 #Dataset 3: behind line chart  (available at scotland and NHS board level)
 tears_linechart_filter <- function(){
 
-  tears_linechart %>% filter(area_name == input$geoname_tears &
-                                area_type == input$geotype_tears &
+  tears_linechart %>% filter(area_name == input$`tears-geoname` &
+                                area_type == input$`tears-geotype` &
                                 type %in% c("Scotland","Health board"))
 }
 
@@ -98,7 +93,7 @@ output$tears_explorer <- renderUI({
   tears_title <- paste0("of women giving birth vaginally to a singleton live or
                         stillborn baby with a cephalic presentation between 37-42
                         weeks gestation who have a third or fourth degree
-                        perineal tear: ",input$geoname_tears)
+                        perineal tear: ",input$`tears-geoname`)
 
   chart_explanation <-
     tagList(
@@ -148,12 +143,12 @@ output$tears_explorer <- renderUI({
                     p(chart_explanation_quarter)),
              column(12,
                     br(), #spacing
-                    h4(paste0("Number of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear: ",input$geoname_tears))),
+                    h4(paste0("Number of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear: ",input$`tears-geoname`))),
              column(12,
                     withSpinner(plotlyOutput("tears_linechart_number")))))
 
    # Only include some plots if Scotland selected
-    if (input$geotype_tears == "Scotland") {
+    if (input$`tears-geotype` == "Scotland") {
       layout_tags =
         tagList(layout_tags,
                 tagList(
@@ -197,7 +192,7 @@ plot_tears_trend <- function(measure, shift, trend){
 
 
     # chart legend labels
-    centreline_name <- paste0(input$geoname_tears," average up to end Feb 2020")
+    centreline_name <- paste0(input$`tears-geoname`," average up to end Feb 2020")
     dottedline_name <- "Projected average"
     centreline_data = plot_data$median_tears_37plus
     dottedline_data = plot_data$ext_median_tears_37plus
@@ -206,7 +201,7 @@ plot_tears_trend <- function(measure, shift, trend){
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10%
     y_label <- "Percentage of women (%)"
 
-    tick_freq <- case_when(input$geotype_tears == "Scotland" ~ 6, T ~ 2)
+    tick_freq <- case_when(input$`tears-geotype` == "Scotland" ~ 6, T ~ 2)
 
     #specify tool tip
     tooltip_top <- c(paste0(format(plot_data$date_type),": ",format(plot_data$date_label),"<br>",
@@ -261,7 +256,7 @@ plot_tears_linechart <- function(measure){
                 text_nodata = "Chart not shown as unstable due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
 
-    tick_freq <- case_when(input$geotype_tears == "Scotland" ~ 6, T ~ 2)
+    tick_freq <- case_when(input$`tears-geotype` == "Scotland" ~ 6, T ~ 2)
 
     xaxis_plots <- c(xaxis_plots,
                      dtick =tick_freq, tickangle = 0,
