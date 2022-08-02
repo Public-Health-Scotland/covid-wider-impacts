@@ -32,54 +32,74 @@ tagList( #needed for shinyjs
              ###############################################.
              ## Commentary ----
              ###############################################.         
-             tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
-                      wellPanel(column(12,
-                                       p("Select topic areas to find commentary relating to data presented in this tool."))),
-                      wellPanel(column(2,
-                                       p("Select topic:"),
-                                       actionLink("summary_button", "Summary trends", width = "150px"),br(),
-                                       actionLink("cardio_button", "Cardiovascular", width="150px"),br(),
-                                       actionLink("immunisation_button", "Immunisation", width = "150px"),br(),
-                                       actionLink("ch_review_button", "Child health reviews", width="150px"), br(),
-                                       actionLink("breastfeeding_button", "Breastfeeding", width="150px"), br(),
-                                       actionLink("childdev_button", "Child development", width="150px"), br(),
-                                       actionLink("perinatal_button", "Stillbirths and infant deaths", width="150px"), br(),
-                                       actionLink("booking_button", "Antenatal bookings", width="150px"), br(),
-                                       actionLink("top_button", "Termination of pregnancy", width="150px"),br(),
-                                       actionLink("mentalhealth_button", "Mental health", width="150px"),br(),
-                                       actionLink("mod_button", "Method of delivery", width="150px"), br(),
-                                       actionLink("induction_button", "Induction of labour", width="150px"),br(),
-                                       actionLink("gestation_button", "Gestation at delivery", width="150px"), br(),
-                                       actionLink("apgar_button", "Apgar scores", width="150px"),br(),
-                                       actionLink("preterm_button", "Location of extremely preterm deliveries", width="150px"),br(),
-                                       actionLink("tears_button", "Perineal tears", width="150px"),br(),
-                                       actionLink("cancer_button", "Cancer", width="150px"),br(),
-                                       actionLink("injuries_button", "Injuries", width="150px"), br(),
-                                       actionLink("drug_button", "Substance use", width="150px")
-                      ),
-                      column(10,
-                             bsCollapse(id = "collapse_commentary", open = "Panel 1", #PanelSet id
-                                        bsCollapsePanel("Summary trends", uiOutput("summary_comment")), #collapsible panel for summary tab
-                                        bsCollapsePanel("Cardiovascular",uiOutput("cardio_commentary")),#collapsible panel for cardiovascular tab
-                                        bsCollapsePanel("Immunisation", uiOutput("immun_commentary_section")),
-                                        bsCollapsePanel("Child health reviews", uiOutput("child_comments")),
-                                        bsCollapsePanel("Breastfeeding", uiOutput("breastfeeding_commentary")),
-                                        bsCollapsePanel("Child development", uiOutput("childdev_commentary")),
-                                        bsCollapsePanel("Stillbirths and infant deaths", uiOutput("perinatal_commentary")),
-                                        bsCollapsePanel("Mental health", uiOutput("mentalhealth_commentary")),
-                                        bsCollapsePanel("Antenatal bookings", uiOutput("booking_commentary")),
-                                        bsCollapsePanel("Termination of pregnancy", uiOutput("top_commentary")),
-                                        bsCollapsePanel("Method of delivery", uiOutput("mod_commentary")),
-                                        bsCollapsePanel("Induction of labour", uiOutput("induction_commentary")),
-                                        bsCollapsePanel("Gestation at delivery", uiOutput("gestation_commentary")),
-                                        bsCollapsePanel("Apgar scores", uiOutput("apgar_commentary")),
-                                        bsCollapsePanel("Location of extremely preterm deliveries", uiOutput("preterm_commentary")),
-                                        bsCollapsePanel("Perineal tears", uiOutput("tears_commentary")),
-                                        bsCollapsePanel("Cancer", uiOutput("cancer_commentary")),
-                                        bsCollapsePanel("Injuries", uiOutput("injuries_commentary")),
-                                        bsCollapsePanel("Substance use", uiOutput("drug_commentary"))
-                             )))
-             ), #tab panel       
+tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
+         sidebarLayout(
+           sidebarPanel(width = 3,
+                        radioGroupButtons("commentary_select",
+                                          choices = commentary_list, status = "primary",
+                                          direction = "vertical", justified = T)),
+           mainPanel(width = 9,
+                     # Summary trends
+                     conditionalPanel(condition= 'input.commentary_select == "summary"',
+                                      tagList(uiOutput("summary_comment"))),
+                     # Cardiovascular
+                     conditionalPanel(condition= 'input.commentary_select == "cardio"',
+                                      tagList( uiOutput("cardio_commentary"))),
+                     # Immunisation
+                     conditionalPanel(condition= 'input.commentary_select == "immunisation"',
+                                      tagList( uiOutput("immun_commentary_section"))),
+                     # Child health
+                     conditionalPanel(condition= 'input.commentary_select == "child-health"',
+                                      tagList( uiOutput("child_comments"))),
+                     # Breastfeeding
+                     conditionalPanel(condition= 'input.commentary_select == "breastfeeding"',
+                                      tagList( uiOutput("breastfeeding_commentary"))),
+                     # Child development
+                     conditionalPanel(condition= 'input.commentary_select == "child-dev"',
+                                      tagList( uiOutput("childdev_commentary"))),
+                     # Stillbirths and infant deaths
+                     conditionalPanel(condition= 'input.commentary_select == "perinatal"',
+                                      tagList( uiOutput("perinatal_commentary"))),
+                     # Mental health
+                     conditionalPanel(condition= 'input.commentary_select == "mental-health"',
+                                      tagList( uiOutput("mentalhealth_commentary"))),
+                     # Antenatal bookings
+                     conditionalPanel(condition= 'input.commentary_select == "booking"',
+                                      tagList( uiOutput("booking_commentary"))),
+                     # Terminations
+                     conditionalPanel(condition= 'input.commentary_select == "termination"',
+                                      tagList( uiOutput("top_commentary"))),
+                     # Mode of delivery
+                     conditionalPanel(condition= 'input.commentary_select == "delivery"',
+                                      tagList( uiOutput("mod_commentary"))),
+                     # Induction of labour
+                     conditionalPanel(condition= 'input.commentary_select == "induction"',
+                                      tagList( uiOutput("induction_commentary"))),
+                     # Gestation at delivery
+                     conditionalPanel(condition= 'input.commentary_select == "gestation"',
+                                      tagList( uiOutput("gestation_commentary"))),
+                     # Apgar scores
+                     conditionalPanel(condition= 'input.commentary_select == "apgar"',
+                                      tagList( uiOutput("apgar_commentary"))),
+                     # Location of extremely preterm babies
+                     conditionalPanel(condition= 'input.commentary_select == "preterm"',
+                                      tagList( uiOutput("preterm_commentary"))),
+                     # Perineal tears
+                     conditionalPanel(condition= 'input.commentary_select == "tears"',
+                                      tagList( uiOutput("tears_commentary"))),
+                     # Cancer
+                     conditionalPanel(condition= 'input.commentary_select == "cancer"',
+                                      tagList( uiOutput("cancer_commentary"))),
+                     # Injuries
+                     conditionalPanel(condition= 'input.commentary_select == "injuries"',
+                                      tagList( uiOutput("injuries_commentary"))),
+                     # Substance use
+                     conditionalPanel(condition= 'input.commentary_select == "drugs"',
+                                      tagList( uiOutput("drug_commentary")))
+                     
+           )#mainPanel
+         ) #sidebarLayout
+), #tab panel 
              ##############################################.
              # Section tabs ----
              #############################################.

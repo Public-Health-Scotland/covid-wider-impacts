@@ -277,6 +277,45 @@ tears_download <- readRDS("data/tears_download_data.rds")
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
+ 
+# List of sections in Home tab
+home_list <- c("About" = "about",
+                "Using the dashboard" = "use",
+                "Further information" = "info",
+                "Accessibility" = "accessibility")
+ 
+ # List of sections in Commentary tab
+ commentary_list <- c("Summary trends" = "summary",
+                      "Cardiovascular" = "cardio",
+                      "Immunisation" = "immunisation",
+                      "Child health" = "child-health",
+                      "Breastfeeding" = "breastfeeding",
+                      "Child development" = "child-dev",
+                      "Stillbirths and infant deaths" = "perinatal",
+                      "Mental health" = "mental-health",
+                      "Antenatal bookings" = "booking",
+                      "Termination of pregnancy" = "termination",
+                      "Induction of labour" = "induction",
+                      "Gestation at delivery" = "gestation",
+                      "Apgar scores" = "apgar",
+                      "Location of extremely preterm babies" = "preterm",
+                      "Perineal tears" = "tears",
+                      "Cancer" = "cancer",
+                      "Injuries" = "injuries",
+                      "Substance use" = "drugs"
+                      )
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
                           "Medical (incl. Cardiology & Cancer)",
@@ -539,7 +578,7 @@ pal_eth <- c('#E39C8C',
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
-                    showline = TRUE, fixedrange=TRUE)
+                    showline = TRUE, fixedrange=TRUE, rangeslider = FALSE)
 
 yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
                     tickfont = list(size=14), titlefont = list(size=14))
