@@ -208,7 +208,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     }
     
     # Add a range slider to filter the time period in the chart
-    xaxis_plots[["rangeslider"]] <- "week_ending"
+    xaxis_plots[["rangeslider"]] <- list(range="week_ending", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
+    
     
     # For annotation
     zoom_hover_text =
@@ -220,7 +221,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
            hovertext = zoom_hover_text,
            showarrow = TRUE, ax = 0, ay = 18,
            x = 0, xref = "paper", xanchor = "left",
-           y = -0.35,
+           y = -0.26,
            yref = "paper", yanchor = "middle")
 
     #Creating time trend plot
@@ -234,8 +235,9 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
              legend = list(orientation = "h", x=0, y=1.2),
              annotations = zoom_annotation) %>% #position of legend
       # leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
-
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
+    
+    
   }
 }
 
@@ -290,7 +292,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     yaxis_plots[["title"]] <- yaxis_title
     
     # Add a range slider to filter the time period in the chart
-    xaxis_plots[["rangeslider"]] <- "xvar"
+    xaxis_plots[["rangeslider"]] <- list(range="xvar", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
       
 
     hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
@@ -342,7 +344,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
            hovertext = zoom_hover_text,
            showarrow = TRUE, ax = 0, ay = 18,
            x = 0, xref = "paper", xanchor = "left",
-           y = -0.35,
+           y = -0.26,
            yref = "paper", yanchor = "middle")
 
     #Creating time trend plot
@@ -363,7 +365,6 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
              annotations = zoom_annotation) %>% 
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
-   # list(rangeslider = list(type = "xvar")),
 
 
   }
@@ -1446,7 +1447,7 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
   }
 
   # Add a range slider to filter the time period in the chart
-  xaxis_plots[["rangeslider"]] <- "week_ending"
+  xaxis_plots[["rangeslider"]] <- list(range="week_ending", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
   
   # For annotation
   zoom_hover_text =
@@ -1458,7 +1459,7 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
          hovertext = zoom_hover_text,
          showarrow = TRUE, ax = 0, ay = 18,
          x = 0, xref = "paper", xanchor = "left",
-         y = -0.35,
+         y = -0.36,
          yref = "paper", yanchor = "middle")
 
   #Creating time trend plot
