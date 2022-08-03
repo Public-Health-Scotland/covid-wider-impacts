@@ -41,10 +41,10 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
            mainPanel(width = 9,
                      # Summary trends
                      conditionalPanel(condition= 'input.commentary_select == "summary"',
-                                      summary_comment),
+                                      summary_commentary),
                      # Cardiovascular
                      conditionalPanel(condition= 'input.commentary_select == "cardio"',
-                                      tagList( uiOutput("cardio_commentary"))),
+                                      cardio_commentary),
                      # Immunisation
                      conditionalPanel(condition= 'input.commentary_select == "immunisation"',
                                       tagList( uiOutput("immun_commentary_section"))),
