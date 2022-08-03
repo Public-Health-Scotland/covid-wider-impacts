@@ -5,26 +5,26 @@
 ###############################################.
 
 # Modal to explain SIMD and deprivation
-# Link action button click to modal launch 
+# Link action button click to modal launch
 observeEvent(input$btn_modal_simd_imm, { showModal(
   modalDialog(
     h5("What is SIMD and deprivation?"),
-    p("Children have been allocated to different levels of deprivation based on the small area (data zone) 
+    p("Children have been allocated to different levels of deprivation based on the small area (data zone)
       in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
-                                          target="_blank"), "score for that area. 
-      SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains: 
-      income; employment; health; education, skills and training; housing; geographic access; and crime. 
-      In this tool we have presented results for children living in different SIMD ‘quintiles’. 
-      To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%) 
-      of the overall population of Scotland are identified. Children living in the most and least deprived areas 
+                                          target="_blank"), "score for that area.
+      SIMD scores are based on data for local areas reflecting 38 indicators across 7 domains:
+      income; employment; health; education, skills and training; housing; geographic access; and crime.
+      In this tool we have presented results for children living in different SIMD ‘quintiles’.
+      To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%)
+      of the overall population of Scotland are identified. Children living in the most and least deprived areas
       that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
-    size = "l", 
+    size = "l",
     easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
   )
-    ) }) 
+    ) })
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_immune_modal, 
+observeEvent(input$btn_immune_modal,
              showModal(modalDialog(
                title = "What is the data source?",
                p("The information shown on the numbers of children eligible for, and receiving, routine preschool immunisations is taken from the ",
@@ -45,26 +45,26 @@ observeEvent(input$btn_immune_modal,
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Pop-up modal explaining source of data
-observeEvent(input$imm_elig_defs, 
+observeEvent(input$imm_elig_defs,
              showModal(modalDialog(
                title = "Immunisation eligibility definitions",
                p("Month of eligibility for each immunisation is defined based on complete weeks (Monday to Sunday)",
                  tags$sup("1"), ":"),
                month_elig_imm %>% autofit() %>% htmltools_value(), #showing month eligibility chart
                br(),
-               p("6-in-1 immunisation uptake: Eligible age and uptake rates by 
+               p("6-in-1 immunisation uptake: Eligible age and uptake rates by
                  age stage", tags$sup("2"), " shown in the tables."),
                age_defs_imm_6inone %>% autofit() %>% htmltools_value(),
                br(),
-               p("MMR immunisation uptake: Eligible age and uptake rates by age stage", tags$sup("2"), 
-                 " shown in the tables. Note that ages are defined in weeks but are 
+               p("MMR immunisation uptake: Eligible age and uptake rates by age stage", tags$sup("2"),
+                 " shown in the tables. Note that ages are defined in weeks but are
                  labelled in years and/or months of age."),
                age_defs_imm_mmr %>% autofit() %>% htmltools_value(),
                p(tags$sup("1 "), "The immunisation indicators included in the tool are updated each month.
                  With each update an additional month will be added to the presentation."),
-               p(tags$sup("2 "), "Uptake rates by a specified age refers to children who have 
-                 received the vaccine before turning the relevant age. For example, 
-                 uptake of the second dose of MMR vaccine by 3 years 5  months is defined as 
+               p(tags$sup("2 "), "Uptake rates by a specified age refers to children who have
+                 received the vaccine before turning the relevant age. For example,
+                 uptake of the second dose of MMR vaccine by 3 years 5  months is defined as
                  children receiving the second dose before reaching 178 weeks of age."),
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
@@ -75,16 +75,16 @@ observeEvent(input$imm_elig_defs,
 
 # Immunisation reactive drop-down control showing list of area names depending on areatype selected
 output$geoname_ui_immun <- renderUI({
-  #Lists areas available in   
+  #Lists areas available in
   areas_summary_immun <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_immun])
-  
+
   if (input$geotype_immun == "Scotland"){areas_summary_immun <- c("Scotland")}
   selectizeInput("geoname_immun", label = NULL, choices = areas_summary_immun, selected = "")
 })
 
 # Get list of available time periods for plotting
 # Assumes that the time periods available are the same for all data
-available_time_periods_immun = 
+available_time_periods_immun =
   six_alldose %>%
   filter(substr(time_period_eligible,1,3)!="W/B") %>%
   # using pull to get a vector rather than select because the selectizeInput didn't work otherwise
@@ -97,7 +97,7 @@ default_time_periods_immun = tail(available_time_periods_immun, 7)
 
 # Immunisation reactive drop-down control showing list of time periods
 output$dates_ui_immun <- renderUI({
-  selectizeInput("dates_immun", label = NULL, choices = available_time_periods_immun, 
+  selectizeInput("dates_immun", label = NULL, choices = available_time_periods_immun,
                  selected = default_time_periods_immun, multiple = TRUE,
                  options = list(placeholder = 'Select time periods',
                                 plugins = c('remove_button')))
@@ -105,14 +105,14 @@ output$dates_ui_immun <- renderUI({
 
 # Reactive dataset for flextable filter on geographical area, dose, and time period
 filter_table_data_immun <- function(dataset){
-  
+
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_immun
-  
-  dataset %>% filter(area_name == input$geoname_immun & 
+
+  dataset %>% filter(area_name == input$geoname_immun &
                        str_detect(immunisation, #filter immunisation scurve data on dose
-                                  substr(input$measure_select_immun, 
-                                         nchar(input$measure_select_immun), 
+                                  substr(input$measure_select_immun,
+                                         nchar(input$measure_select_immun),
                                          nchar(input$measure_select_immun))),
                        # we don't want this function to re-execute every time dates_immun changes, so isolate()
                        time_period_eligible %in% isolate(input$dates_immun))
@@ -134,11 +134,11 @@ mmr_alldose_filt <- reactive({
 ###############################################.
 
 # Creating plots for each dataset
-#run chart function to generate s curves  
+#run chart function to generate s curves
 output$immun_scurve <- renderPlotly({
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_immun
-  
+
   if (substr(input$measure_select_immun, 1, 3) == "six") {
     scurve_data <-  six_alldose_filt()
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
@@ -148,64 +148,64 @@ output$immun_scurve <- renderPlotly({
   dose <- paste("dose", #extracting dose from input
                 substr(input$measure_select_immun, nchar(input$measure_select_immun),
                        nchar(input$measure_select_immun)))
-  
+
   imm_type <- substr(unique(scurve_data$immunisation),1,3)
-  
+
   # Age week starting for each dose
   age_week <- case_when(imm_type == "six" & dose == "dose 1" ~ "8",
                         imm_type == "six" & dose == "dose 2" ~ "12",
                         imm_type == "six" & dose == "dose 3" ~ "16",
                         imm_type == "mmr" & dose == "dose 1" ~ "1",
                         imm_type == "mmr" & dose == "dose 2" ~ "3")
-  
+
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian" && dose== "dose 2")
-  { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age. 
+  { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age.
                 Data is available from the data download option.")
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
-  } else {     
-    
+  } else {
+
     # Create tooltip for scurve
     tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
-    
+
     #Modifying standard yaxis name applies to all curves
     yaxis_plots[["title"]] <- "% of children who have received their vaccine"
     yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
     xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
-    
+
     ## chart axis for all 6-in-1 scurves
     if(imm_type == "six"){ # this doesn't seem like very efficient logic but it works
-      
+
       xaxis_plots[["title"]] <- "Age of children in weeks"
       xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
       xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
       xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) # To adjust x-axis min and max depending on which dose selected
-      
+
       age_unit <- paste0(age_week, " weeks") #string for legend label
     }
     ##chart axis for MMR dose 1 scurve
     else if(imm_type == "mmr" && dose== "dose 1" ){ #set chart parameters for mmr dose 1
-      
+
       xaxis_plots[["title"]] <- "Age of children in months"
       xaxis_plots[["tickvals"]] <- c(0, seq(343, 459, by = 29), 490) # xaxis days 343 (49 weeks) to 490 (70 weeks)
       xaxis_plots[["ticktext"]] <- c(0, seq(11, 16, by = 1))  # xaxis labels 11 months (49 weeks) to 16 months (70 weeks)
       xaxis_plots[["range"]] <- c((7*49),(7*70))  # To adjust x-axis min and max depending on which dose selected
-      
+
       age_unit <- paste0("12 months") #string for legend label
     }
-    
+
     ##chart axis for MMR dose 2 scurve
     else if(imm_type == "mmr" && dose== "dose 2" ){ #set chart parameters for mmr dose 2
-      
+
       xaxis_plots[["title"]] <- "Age of children in years and months"
       xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1306, by = 29), 1337) #xaxis 1190 days (170 week) to 1337 days (191 weeks)
       xaxis_plots[["ticktext"]] <- c(0, seq(3.3,3.8 , by = 0.1))  # xaxis labels in years and months (works even though months are not decimals because we only show part of a year?)
       xaxis_plots[["range"]] <- c((7*170),(7*191))  # To adjust x-axis min and max depending on which dose selected
-      
+
       age_unit <- paste0("3y 4months") #string for legend label
     }
-    
-    
+
+
     #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
       add_trace(type = 'scatter', mode = 'lines',
@@ -221,39 +221,39 @@ output$immun_scurve <- renderPlotly({
   }
 })
 
-#run function to generate data tables linked to s-curves  
+#run function to generate data tables linked to s-curves
 output$immun_table <- renderUI({
   if (substr(input$measure_select_immun, 1, 3) == "six") {
     dataset <-  sixtable
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
     dataset <-  mmrtable
   }
-  
+
   dose <- paste("dose", #extracting dose from input
                 substr(input$measure_select_immun, nchar(input$measure_select_immun),
                        nchar(input$measure_select_immun)))
-  
+
   table_data <- filter_table_data_immun(dataset)
-  
+
   imm_type <- substr(unique(table_data$immunisation),1,3)
-  
+
   # Age week starting for each dose
   age_week <- case_when(imm_type == "six" & dose == "dose 1" ~ 8,
                         imm_type == "six" & dose == "dose 2" ~ 12,
                         imm_type == "six" & dose == "dose 3" ~ 16,
                         imm_type == "mmr" & dose == "dose 1" ~ 1,
                         imm_type == "mmr" & dose == "dose 2" ~ 3)
-  
+
   #add data completeness depending on whether six in one or mmr is being looked at (sometimes will cover different time periods)
   no_complete_row_six1 <- with(table_data, time_period_eligible %in% c("MAR 2022", "APR 2022"))
   no_complete_row_mmr <- with(table_data, time_period_eligible %in% c("FEB 2022", "MAR 2022", "APR 2022"))
-  
+
   if (age_week == 8) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_12weeks_num","uptake_24weeks_num","uptake_tot_num")
-    
+
     imm_table <- table_data %>%
-      select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_24weeks_num, 
+      select (time_period_eligible, denominator,uptake_12weeks_num,uptake_12weeks_percent,uptake_24weeks_num,
               uptake_24weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
       flextable() %>%
       set_header_labels(uptake_12weeks_num="Children recorded as receiving their vaccine by 12 weeks of age",
@@ -261,85 +261,85 @@ output$immun_table <- renderUI({
                         uptake_24weeks_num="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)",
                         uptake_24weeks_percent="Children recorded as receiving their vaccine by 24 weeks of age (or younger if children have not reached 24 weeks of age by the date data was extracted for analysis)") %>%
       # Italics and colour if not 24 weeks
-      color(i = no_complete_row_six1, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>% 
+      color(i = no_complete_row_six1, j = c("uptake_24weeks_num", "uptake_24weeks_percent"), color="#0033cc")  %>%
       italic(i = no_complete_row_six1, j = c("uptake_24weeks_num", "uptake_24weeks_percent"))
-    age_unit <- "8 weeks" #text inserted into 
+    age_unit <- "8 weeks" #text inserted into
     age_max <- "24 weeks" #test inserted into note #3 under summary table
   } else if (age_week == 12) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_16weeks_num","uptake_28weeks_num","uptake_tot_num")
-    
+
     imm_table <- table_data %>%
-      select (time_period_eligible, denominator,uptake_16weeks_num,uptake_16weeks_percent,uptake_28weeks_num, 
+      select (time_period_eligible, denominator,uptake_16weeks_num,uptake_16weeks_percent,uptake_28weeks_num,
               uptake_28weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
       flextable() %>%
       set_header_labels(uptake_16weeks_num="Children recorded as receiving their vaccine by 16 weeks of age",
                         uptake_16weeks_percent="Children recorded as receiving their vaccine by 16 weeks of age ",
                         uptake_28weeks_num="Children recorded as receiving their vaccine by 28 weeks of age (or younger if children have not reached 28 weeks of age by the date data was extracted for analysis)",
-                        uptake_28weeks_percent="Children recorded as receiving their vaccine by 28 weeks of age (or younger if children have not reached 28 weeks of age by the date data was extracted for analysis)") %>% 
+                        uptake_28weeks_percent="Children recorded as receiving their vaccine by 28 weeks of age (or younger if children have not reached 28 weeks of age by the date data was extracted for analysis)") %>%
       # Italics and colour if not 24 weeks
-      color(i = no_complete_row_six1, j = c("uptake_28weeks_num", "uptake_28weeks_percent"), color="#0033cc")  %>% 
-      italic(i = no_complete_row_six1, j = c("uptake_28weeks_num", "uptake_28weeks_percent")) 
+      color(i = no_complete_row_six1, j = c("uptake_28weeks_num", "uptake_28weeks_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row_six1, j = c("uptake_28weeks_num", "uptake_28weeks_percent"))
     age_unit <- "12 weeks"
     age_max <- "28 weeks" #test inserted into note #3 under summary table
   }else if (age_week == 16) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_20weeks_num","uptake_32weeks_num","uptake_tot_num")
-    
+
     imm_table <- table_data %>%
-      select (time_period_eligible, denominator,uptake_20weeks_num,uptake_20weeks_percent,uptake_32weeks_num, 
+      select (time_period_eligible, denominator,uptake_20weeks_num,uptake_20weeks_percent,uptake_32weeks_num,
               uptake_32weeks_percent,uptake_tot_num,uptake_tot_percent) %>%
       flextable() %>%
       set_header_labels(uptake_20weeks_num="Children recorded as receiving their vaccine by 20 weeks of age",
                         uptake_20weeks_percent="Children recorded as receiving their vaccine by 20 weeks of age ",
                         uptake_32weeks_num="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 32 weeks of age by the date data was extracted for analysis)",
-                        uptake_32weeks_percent="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 32 weeks of age by the date data was extracted for analysis)") %>% 
+                        uptake_32weeks_percent="Children recorded as receiving their vaccine by 32 weeks of age (or younger if children have not reached 32 weeks of age by the date data was extracted for analysis)") %>%
       # Italics and colour if not  weeks
-      color(i = no_complete_row_six1, j = c("uptake_32weeks_num", "uptake_32weeks_percent"), color="#0033cc")  %>% 
-      italic(i = no_complete_row_six1, j = c("uptake_32weeks_num", "uptake_32weeks_percent")) 
+      color(i = no_complete_row_six1, j = c("uptake_32weeks_num", "uptake_32weeks_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row_six1, j = c("uptake_32weeks_num", "uptake_32weeks_percent"))
     age_unit <- "16 weeks"
     age_max <- "32 weeks" #test inserted into note #3 under summary table
   }else if (age_week == 1) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_13m_num","uptake_16m_num","uptake_tot_num")
-    
+
     imm_table <- table_data %>%
-      select (time_period_eligible, denominator,uptake_13m_num,uptake_13m_percent,uptake_16m_num, 
+      select (time_period_eligible, denominator,uptake_13m_num,uptake_13m_percent,uptake_16m_num,
               uptake_16m_percent,uptake_tot_num,uptake_tot_percent) %>%
       flextable() %>%
       set_header_labels(uptake_13m_num="Children recorded as receiving their vaccine by 13 months of age",
                         uptake_13m_percent="Children recorded as receiving their vaccine by 13 months of age ",
                         uptake_16m_num="Children recorded as receiving their vaccine by 16 months of age (or younger if children have not reached 16 months of age by the date data was extracted for analysis)",
-                        uptake_16m_percent="Children recorded as receiving their vaccine by 16 months of age (or younger if children have not reached 16 months of age by the date data was extracted for analysis)") %>% 
+                        uptake_16m_percent="Children recorded as receiving their vaccine by 16 months of age (or younger if children have not reached 16 months of age by the date data was extracted for analysis)") %>%
       # Italics and colour if not  weeks
-      color(i = no_complete_row_mmr, j = c("uptake_16m_num", "uptake_16m_percent"), color="#0033cc")  %>% 
-      italic(i = no_complete_row_mmr, j = c("uptake_16m_num", "uptake_16m_percent")) 
+      color(i = no_complete_row_mmr, j = c("uptake_16m_num", "uptake_16m_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row_mmr, j = c("uptake_16m_num", "uptake_16m_percent"))
     age_unit <- "12 months"
     age_max <- "16 months" #test inserted into note #3 under summary table
   }else if (age_week == 3) {
     #Apply different column names and formatting according to which dataset selected
     format_col <- c("denominator","uptake_3y5m_num","uptake_3y8m_num","uptake_tot_num")
-    
+
     imm_table <- table_data %>%
-      select (time_period_eligible, denominator,uptake_3y5m_num,uptake_3y5m_percent,uptake_3y8m_num, 
+      select (time_period_eligible, denominator,uptake_3y5m_num,uptake_3y5m_percent,uptake_3y8m_num,
               uptake_3y8m_percent,uptake_tot_num,uptake_tot_percent) %>%
       flextable() %>%
       set_header_labels(uptake_3y5m_num="Children recorded as receiving their vaccine by 3 years and 5 months of age",
                         uptake_3y5m_percent="Children recorded as receiving their vaccine by 3 years and 5 months of age ",
                         uptake_3y8m_num="Children recorded as receiving their vaccine by 3 years and 8 months of age (or younger if children have not reached 3 years and 8 months of age by the date data was extracted for analysis)",
-                        uptake_3y8m_percent="Children recorded as receiving their vaccine by 3 years and 8 months of age (or younger if children have not reached 3 years and 8 months of age by the date data was extracted for analysis)") %>% 
+                        uptake_3y8m_percent="Children recorded as receiving their vaccine by 3 years and 8 months of age (or younger if children have not reached 3 years and 8 months of age by the date data was extracted for analysis)") %>%
       # Italics and colour if not  weeks
-      color(i = no_complete_row_mmr, j = c("uptake_3y8m_num", "uptake_3y8m_percent"), color="#0033cc")  %>% 
-      italic(i = no_complete_row_mmr, j = c("uptake_3y8m_num", "uptake_3y8m_percent")) 
+      color(i = no_complete_row_mmr, j = c("uptake_3y8m_num", "uptake_3y8m_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row_mmr, j = c("uptake_3y8m_num", "uptake_3y8m_percent"))
     age_unit <- "3 years and 4 months"
     age_max <- "3 years and 8 months" #test inserted into note #3 under summary tabl
   }
-  
-  imm_table %>% 
+
+  imm_table %>%
     set_header_labels(time_period_eligible= paste0("Children turning ", age_unit," in:"),
                       denominator="Total number of children",
                       uptake_tot_num=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")"),
-                      uptake_tot_percent=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")")) %>% 
+                      uptake_tot_percent=paste0("Children recorded as receiving their vaccine by the date information was extracted for analysis (", immunisation_extract_date ,")")) %>%
     footnote(i = 1, j = c(2,5),
              value = as_paragraph(c(
                "Cohort sizes are dependent on time periods, whether annual or monthly (4 or 5 weeks)",
@@ -356,121 +356,212 @@ output$immun_table <- renderUI({
     htmltools_value()
 })
 
-#run function to generate SIMD bar charts relative changes (only available at scotland level)
-output$imm_6in1_simd_chan_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1",
-                                                               var_plot = "week12_abs_diff")})
-output$imm_6in1_simd_chan_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose2, age_week = "12", dose= "dose 2",
-                                                               var_plot = "week16_abs_diff")})
-output$imm_6in1_simd_chan_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose3, age_week = "16", dose= "dose 3",
-                                                               var_plot = "week20_abs_diff")})
-output$imm_mmr_simd_chan_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose1, age_week = "1", dose= "dose 1",
-                                                              var_plot = "week57_abs_diff")})
-output$imm_mmr_simd_chan_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2",
-                                                              var_plot = "week178_abs_diff")})
+# # Specify items to display in immunisation ui based on step 2 selection
+plot_choice <- reactive({switch(input$measure_select_immun,
+                                "sixin_dose1" = c("plot_six1_simd", "plot_six1_simd_bar", "plot_six1_simd_change"),
+                                "sixin_dose2" = c("plot_six2_simd", "plot_six2_simd_bar", "plot_six2_simd_change"),
+                                "sixin_dose3" = c("plot_six3_simd", "plot_six3_simd_bar", "plot_six3_simd_change"),
+                                "mmr_dose1" = c("plot_mmr1_simd", "plot_mmr1_simd_bar", "plot_mmr1_simd_change"),
+                                "mmr_dose2" = c("plot_mmr2_simd", "plot_mmr2_simd_bar", "plot_mmr2_simd_change")
+) # switch bracket
+})
 
-#run function to generate SIMD bar charts absolute uptake (only available at scotland level)
-output$imm_6in1_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose1, age_week = "8", dose= "dose 1", 
-                                                              var_plot = "uptake_12weeks_percent", base_var = "baseline_12weeks")})
-output$imm_6in1_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose2, age_week = "12", dose= "dose 2", 
-                                                              var_plot = "uptake_16weeks_percent", base_var = "baseline_16weeks")})
-output$imm_6in1_simd_tot_dose3 <- renderPlotly({plot_imm_simd(dataset=six_simd_dose3, age_week = "16", dose= "dose 3", 
-                                                              var_plot = "uptake_20weeks_percent", base_var = "baseline_20weeks")})
-output$imm_mmr_simd_tot_dose1 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose1, age_week = "1", dose= "dose 1", 
-                                                             var_plot = "uptake_57weeks_percent", base_var = "baseline_57weeks")})
-output$imm_mmr_simd_tot_dose2 <- renderPlotly({plot_imm_simd(dataset=mmr_simd_dose2, age_week = "3", dose= "dose 2", 
-                                                             var_plot = "uptake_178weeks_percent", base_var = "baseline_178weeks")})
+# Creating plots for each dataset
+#run chart function to generate s curves
+output$immun_scurve <- renderPlotly({
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+
+  if (substr(input$measure_select_immun, 1, 3) == "six") {
+    scurve_data <-  six_alldose_filt()
+  } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
+    scurve_data <-  mmr_alldose_filt()
+  }
+
+  dose <- paste("dose", #extracting dose from input
+                substr(input$measure_select_immun, nchar(input$measure_select_immun),
+                       nchar(input$measure_select_immun)))
+
+  imm_type <- substr(unique(scurve_data$immunisation),1,3)
+
+  # Age week starting for each dose
+  age_week <- case_when(imm_type == "six" & dose == "dose 1" ~ "8",
+                        imm_type == "six" & dose == "dose 2" ~ "12",
+                        imm_type == "six" & dose == "dose 3" ~ "16",
+                        imm_type == "mmr" & dose == "dose 1" ~ "1",
+                        imm_type == "mmr" & dose == "dose 2" ~ "3")
+
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian" && dose== "dose 2")
+  { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age.
+                Data is available from the data download option.")
+  } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  { plot_nodata(height = 50)
+  } else {
+
+    # Create tooltip for scurve
+    tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
+
+    #Modifying standard yaxis name applies to all curves
+    yaxis_plots[["title"]] <- "% of children who have received their vaccine"
+    yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
+    xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
+
+    ## chart axis for all 6-in-1 scurves
+    if(imm_type == "six"){ # this doesn't seem like very efficient logic but it works
+
+      xaxis_plots[["title"]] <- "Age of children in weeks"
+      xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
+      xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
+      xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) # To adjust x-axis min and max depending on which dose selected
+
+      age_unit <- paste0(age_week, " weeks") #string for legend label
+    }
+    ##chart axis for MMR dose 1 scurve
+    else if(imm_type == "mmr" && dose== "dose 1" ){ #set chart parameters for mmr dose 1
+
+      xaxis_plots[["title"]] <- "Age of children in months"
+      xaxis_plots[["tickvals"]] <- c(0, seq(343, 459, by = 29), 490) # xaxis days 343 (49 weeks) to 490 (70 weeks)
+      xaxis_plots[["ticktext"]] <- c(0, seq(11, 16, by = 1))  # xaxis labels 11 months (49 weeks) to 16 months (70 weeks)
+      xaxis_plots[["range"]] <- c((7*49),(7*70))  # To adjust x-axis min and max depending on which dose selected
+
+      age_unit <- paste0("12 months") #string for legend label
+    }
+
+    ##chart axis for MMR dose 2 scurve
+    else if(imm_type == "mmr" && dose== "dose 2" ){ #set chart parameters for mmr dose 2
+
+      xaxis_plots[["title"]] <- "Age of children in years and months"
+      xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1306, by = 29), 1337) #xaxis 1190 days (170 week) to 1337 days (191 weeks)
+      xaxis_plots[["ticktext"]] <- c(0, seq(3.3,3.8 , by = 0.1))  # xaxis labels in years and months (works even though months are not decimals because we only show part of a year?)
+      xaxis_plots[["range"]] <- c((7*170),(7*191))  # To adjust x-axis min and max depending on which dose selected
+
+      age_unit <- paste0("3y 4months") #string for legend label
+    }
+
+
+    #Creating time trend plot
+    plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
+      add_trace(type = 'scatter', mode = 'lines',
+                color = ~time_period_eligible, colors = pal_immun,
+                text= tooltip_scurve, hoverinfo="text") %>%
+      #Layout
+      layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(title=list(text=paste0("Children turning ", age_unit, " in:")),
+                           x = 100, y = 0.8, yanchor="top")) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }
+  })
+
+# outputs - monthly line graphs
+output$plot_six1_simd <- renderPlotly({ plot_immun_simd(six_simd_dose1) })
+output$plot_six2_simd <- renderPlotly({ plot_immun_simd(six_simd_dose2) })
+output$plot_six3_simd <- renderPlotly({ plot_immun_simd(six_simd_dose3) })
+output$plot_mmr1_simd <- renderPlotly({ plot_immun_simd(mmr_simd_dose1) })
+output$plot_mmr2_simd <- renderPlotly({ plot_immun_simd(mmr_simd_dose2) })
+# # outputs - yearly bar charts
+output$plot_six1_simd_bar <- renderPlotly({ plot_imm_simd_bar(six_simd_dose1) })
+output$plot_six2_simd_bar <- renderPlotly({ plot_imm_simd_bar(six_simd_dose2) })
+output$plot_six3_simd_bar <- renderPlotly({ plot_imm_simd_bar(six_simd_dose3) })
+output$plot_mmr1_simd_bar <- renderPlotly({ plot_imm_simd_bar(mmr_simd_dose1) })
+output$plot_mmr2_simd_bar <- renderPlotly({ plot_imm_simd_bar(mmr_simd_dose2) })
+
+# outputs - absolute change graphs
+output$plot_six1_simd_change <- renderPlotly({ plot_imm_simd_change(six_simd_dose1)})
+output$plot_six2_simd_change <- renderPlotly({ plot_imm_simd_change(six_simd_dose2)})
+output$plot_six3_simd_change <- renderPlotly({ plot_imm_simd_change(six_simd_dose3)})
+output$plot_mmr1_simd_change <- renderPlotly({ plot_imm_simd_change(mmr_simd_dose1)})
+output$plot_mmr2_simd_change <- renderPlotly({ plot_imm_simd_change(mmr_simd_dose2)})
 
 ###############################################.
-## Reactive layout  ----
+## Layout ----
 ###############################################.
 
-# The charts and text shown on the app will depend on what the user wants to see
-output$immunisation_explorer <- renderUI({
-  
-  # text for titles of cut charts
+output$immunisation_deprivation_output <- renderUI({
+
+  imm_trends_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland",
+                                input$measure_select_immun == "sixin_dose2" ~ "Uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland",
+                                input$measure_select_immun == "sixin_dose3" ~ "Uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation: Scotland",
+                                input$measure_select_immun == "mmr_dose1" ~ "Uptake of first dose of MMR vaccine by 13 months of age by deprivation: Scotland",
+                                input$measure_select_immun == "mmr_dose2" ~ "Uptake of second dose of MMR vaccine by 3 years 5 months of age by deprivation: Scotland")
+
+  imm_change_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Change in uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland (compared to baseline of children turning 8 weeks in 2019)",
+                                input$measure_select_immun == "sixin_dose2" ~ "Change in uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland (compared to baseline of children turning 12 weeks in 2019)",
+                                input$measure_select_immun == "sixin_dose3" ~ "Change in uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation: Scotland (compared to baseline of children turning 16 weeks in 2019)",
+                                input$measure_select_immun == "mmr_dose1" ~ "Change in uptake of first dose of MMR vaccine by 13 months of age by deprivation: Scotland (compared to baseline of children turning 12-13 months in 2019)",
+                                input$measure_select_immun == "mmr_dose2" ~ "Change in uptake of second dose of MMR vaccine by 3 years 5 months of age by deprivation: Scotland (compared to baseline of children turning 3 years 4 months in 2019)")
+
+
+  tagList(# Intro paragraph within immunisation tab
+    p("Immunisation protects children against certain serious infections.  It is important that children ",
+      tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
+             "continue to receive their routine immunisations during the Covid-19 pandemic", target="_blank"),".",
+      "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
+      tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ", target="_blank"),
+      " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),"."),
+
+    p(strong("S-curve and table here"))
+  ) # taglist bracket
+
   immune_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
                                                                                  input$geoname_immun),
                             input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
                             input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun),
                             input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$geoname_immun),
                             input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun))
+
   immune_subtitle <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
-  
-  # text for SIMD titles of cut charts - SIMD only available at scotland level so no need for variable geography
-  immune_simd_chan_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Change in uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland (Compared to baseline of children turning 8 weeks in 2019)",
-                                      input$measure_select_immun == "sixin_dose2" ~ "Change in uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland (Compared to baseline of children turning 12 weeks in 2019)",
-                                      input$measure_select_immun == "sixin_dose3" ~ "Change in uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation: Scotland (Compared to baseline of children turning 16 weeks in 2019)",
-                                      input$measure_select_immun == "mmr_dose1" ~ "Change in uptake of first dose MMR vaccine by 13 months of age by deprivation: Scotland (Compared to baseline of children turning 12-13 months in 2019)",
-                                      input$measure_select_immun == "mmr_dose2" ~ "Change in uptake of second dose MMR vaccine by 3 years 5 months of age by deprivation: Scotland (Compared to baseline of children turning 3 years and 4 months in 2019)")
-  
-  immune_simd_tot_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ "Uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland",
-                                     input$measure_select_immun == "sixin_dose2" ~ "Uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland",
-                                     input$measure_select_immun == "sixin_dose3" ~ "Uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation",
-                                     input$measure_select_immun == "mmr_dose1" ~ "Uptake of first dose MMR vaccine by 13 months of age by deprivation",
-                                     input$measure_select_immun == "mmr_dose2" ~ "Uptake of second dose MMR vaccine by 3 years 5 months of by age deprivation")
-  
-  
-  # Intro paragraph within imumunisation tab
-  intro_6in1 <- p("Immunisation protects children against certain serious infections.
-                  Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
-                 tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform (external website)", target="_blank"),".")
-  
-  #Additional commentart/meta data to appear on immunisation tab
-  commentary_6in1 <-  tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age and the data tables provide the uptake rates at three specific time-points.  Data is provided  on children who have become eligible for immunisation during the pandemic (from March 2020 onwards) and for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison."),
-                              p("After a child becomes eligible for an immunisation, it takes time for them to attend their appointment, and for a record of the immunisation provided to subsequently be entered into the SIRS system. We have allowed a 6-week window for this, therefore each release of this page will report on children becoming eligible for an immunisation up to 6 weeks before the date the data were extracted for analysis. Although children will generally have their immunisation, and their SIRS record updated accordingly, within 6 weeks of becoming eligible, the pandemic may have influenced not only how quickly eligible children receive their immunisations, but also how long it takes for children’s SIRS records to be updated once an immunisation has been given. Any disruption to SIRS data entry may vary across NHS Boards. Data provided for the most recent cohorts of children will therefore not be fully complete in SIRS and should be viewed as provisional. The uptake rates for each cohort will be refreshed with more up-to-date data every 4 to 5 weeks, and rates for the most recent cohorts may increase slightly as relevant records are updated in SIRS."),
-                              p("On this page, data for yearly and monthly cohorts are shown for Scotland and for NHS Board areas. For the second dose of MMR vaccine at the 3 year 4 months appointment specifically, results for NHS Grampian are not shown separately, and NHS Grampian is excluded from the ‘Scotland’ totals. This is because children in NHS Grampian are offered the second dose of MMR vaccine at 4 years of age rather than 3 years 4 months. Separate figures on uptake of the second dose of MMR vaccine from age 4 years are available for NHS Grampian only through the data download button at the top of the page. "),
-                              p("The data downloads also include information by Health and Social Care Partnerships, as well as weekly cohorts. Note that due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland and NHS Western Isles are provided for monthly and yearly cohorts only."),
-                              p("Some NHS Boards and HSCPs have small numbers of children eligible for immunisation. Uptake rates based on these small numbers are prone to fluctuation, and it is important to bear this in mind when interpreting uptake rates.")
-  )
-  
-  depr_imm <- tagList(
-    p("The deprivation chart on the left shows the immunisation uptake for children becoming eligible for their immunisation during the Covid-19 pandemic, compared to those who became eligible in 2019, at all Scotland level. Early uptake achieved by 4 weeks after the children became eligible for their immunisation is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort. The early uptake rates are shown for children living in areas with different levels of deprivation."),
-    p("The deprivation chart on the right shows the change in early uptake for children becoming eligible for their immunisation during the Covid-19 pandemic, compared to those who became eligible in 2019.  Again, results are shown for children living in areas with different levels of deprivation. So, for example, if early uptake for children becoming eligible for an immunisation in 2019 and in March 2020 was 80% and 84% respectively, this would be shown on the ‘change’ chart as a 4% absolute increase in early uptake for children becoming eligible in March 2020. The deprivation data download (available through the button above the ‘change’ chart) also provides the relative change (5% in this example) as this allows an easier comparison across deprivation groups if the baseline level of uptake varies between groups.")
-  )
-  
-  # Function to create common layout to all immunisation charts
-  imm_layout <- function(s_table, simd_tot_plot, simd_chan_plot, age_def = "") {
-    tagList(fluidRow(column(12, renderUI(intro_6in1),
-                            h4(paste0(immune_title)),
-                            p(immune_subtitle))),
-            fluidRow(column(6,br(), br(),
-                            withSpinner(plotlyOutput("immun_scurve")),
-                            p(age_def)),
-                     column(6, uiOutput("immun_table"))),
-            fluidRow(column(12, renderUI(commentary_6in1))),
-            if (input$geotype_immun == "Scotland"){
-              tagList(fluidRow(column(6, h4(paste0(immune_simd_tot_title))),
-                               column(6, h4(paste0(immune_simd_chan_title))),
-                               column(6,
-                                      actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
-                                                   icon = icon('question-circle'))),
-                               column(6,
-                                      downloadButton('download_imm_simd_data', 'Download deprivation data'))),
-                      fluidRow(column(6, br(), withSpinner(plotlyOutput(simd_tot_plot))),
-                               column(6, br(), withSpinner(plotlyOutput(simd_chan_plot))),
-                               depr_imm
-                      )
-              ) #tagList from if statement
-            }
-    ) #tagList barcket
-  }
-  
-  # Specify items to display in immunisation ui based on step 2 selection 
-  if (input$measure_select_immun == "sixin_dose1") {
-    imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose1", simd_chan_plot = "imm_6in1_simd_chan_dose1")
-  }  else if (input$measure_select_immun == "sixin_dose2"){
-    imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose2", simd_chan_plot = "imm_6in1_simd_chan_dose2")
-  }  else if (input$measure_select_immun == "sixin_dose3"){
-    imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose3", simd_chan_plot = "imm_6in1_simd_chan_dose3")
-  }  else if (input$measure_select_immun == "mmr_dose1"){
-    imm_layout(simd_tot_plot = "imm_mmr_simd_tot_dose1", simd_chan_plot = "imm_mmr_simd_chan_dose1",
-               age_def = "12 months defined as 53 weeks")
-  } else if (input$measure_select_immun == "mmr_dose2"){
-    imm_layout(simd_tot_plot = "imm_mmr_simd_tot_dose2", simd_chan_plot = "imm_mmr_simd_chan_dose2", 
-               age_def = "3 year 4 months defined as 174 weeks")
-  }
-  
-}) #close immunisation_explorer function
+
+  tagList(fluidRow(column(12,
+                          h4(paste0(immune_title)),
+                          p(immune_subtitle))),
+          fluidRow(column(6,br(), br(),
+                          withSpinner(plotlyOutput("immun_scurve"))#,
+                          #p(age_defs_imm_6inone)
+          ),
+          column(6, uiOutput("immun_table"))),
+
+          tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age and the data tables provide the uptake rates at three specific time-points.  Data is provided  on children who have become eligible for immunisation during the pandemic (from March 2020 onwards) and for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison."),
+                  p("After a child becomes eligible for an immunisation, it takes time for them to attend their appointment, and for a record of the immunisation provided to subsequently be entered into the SIRS system. We have allowed a 6-week window for this, therefore each release of this page will report on children becoming eligible for an immunisation up to 6 weeks before the date the data were extracted for analysis. Although children will generally have their immunisation, and their SIRS record updated accordingly, within 6 weeks of becoming eligible, the pandemic may have influenced not only how quickly eligible children receive their immunisations, but also how long it takes for children’s SIRS records to be updated once an immunisation has been given. Any disruption to SIRS data entry may vary across NHS Boards. Data provided for the most recent cohorts of children will therefore not be fully complete in SIRS and should be viewed as provisional. The uptake rates for each cohort will be refreshed with more up-to-date data every 4 to 5 weeks, and rates for the most recent cohorts may increase slightly as relevant records are updated in SIRS."),
+                  p("On this page, data for yearly and monthly cohorts are shown for Scotland and for NHS Board areas. For the second dose of MMR vaccine at the 3 year 4 months appointment specifically, results for NHS Grampian are not shown separately, and NHS Grampian is excluded from the ‘Scotland’ totals. This is because children in NHS Grampian are offered the second dose of MMR vaccine at 4 years of age rather than 3 years 4 months. Separate figures on uptake of the second dose of MMR vaccine from age 4 years are available for NHS Grampian only through the data download button at the top of the page. "),
+                  p("The data downloads also include information by Health and Social Care Partnerships, as well as weekly cohorts. Note that due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland and NHS Western Isles are provided for monthly and yearly cohorts only."),
+                  p("Some NHS Boards and HSCPs have small numbers of children eligible for immunisation. Uptake rates based on these small numbers are prone to fluctuation, and it is important to bear this in mind when interpreting uptake rates.")),
+
+
+          h3("Deprivation"),
+
+
+
+
+          fluidRow(
+            column(12, h4(paste0(imm_trends_title))),
+            column(12, actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
+                                    icon = icon('question-circle'))),
+            br(),
+            column(6, withSpinner(plotlyOutput(plot_choice()[[1]]))),
+            column(6, withSpinner(plotlyOutput(plot_choice()[[2]]))),
+
+            br(),
+
+            tagList(
+              p("The deprivation charts above show the immunisation uptake for children becoming eligible for their immunisation during the Covid-19 pandemic. The graph on the left shows this uptake by month, and the graph on the left  compared to those who became eligible in 2019, at all Scotland level. Early uptake achieved by 4 weeks after the children became eligible for their immunisation is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort. The early uptake rates are shown for children living in areas with different levels of deprivation."),
+
+              br()),
+
+            column(12, h4(paste0(imm_change_title))),
+            column(12,
+                   downloadButton('download_imm_simd_data', 'Download deprivation data')),
+            br(),
+            column(12, withSpinner(plotlyOutput(plot_choice()[[3]]))),
+            br(),
+
+            tagList(
+              p("The deprivation chart above shows the change in early uptake for children becoming eligible for their immunisation during the Covid-19 pandemic, compared to those who became eligible in 2019.  Again, results are shown for children living in areas with different levels of deprivation. So, for example, if early uptake for children becoming eligible for an immunisation in 2019 and in March 2020 was 80% and 84% respectively, this would be shown on the ‘change’ chart as a 4% absolute increase in early uptake for children becoming eligible in March 2020. The deprivation data download (available through the button above the ‘change’ chart) also provides the relative change (5% in this example) as this allows an easier comparison across deprivation groups if the baseline level of uptake varies between groups."))
+
+          ) # fluid row bracket
+  )# taglist bracket
+})
 
 ###############################################.
 ## Data downloads ----
@@ -480,13 +571,13 @@ output$immunisation_explorer <- renderUI({
 # need to think how to allow downloading for each chart
 # Reactive dataset that gets the data the user is visualisaing ready to download
 imm_data_download <- reactive({
-  
+
   if (input$measure_select_immun == "mmr_dose2" & input$geoname_immun == "NHS Grampian") {
     mmrtable_dose2_gramp %>%
-      select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>% 
+      select(immunisation, area_name, time_period_eligible, denominator, starts_with("uptake"))  %>%
       rename(cohort = time_period_eligible)
   } else {
-    
+
     data_down <- switch(
       input$measure_select_immun,
       # for data download filter on dose for table appearing in the app
@@ -494,11 +585,11 @@ imm_data_download <- reactive({
       "sixin_dose2" = filter(sixtable,str_detect(immunisation,"dose 2")),
       "sixin_dose3" = filter(sixtable,str_detect(immunisation,"dose 3")),
       "mmr_dose1" = filter(mmrtable,str_detect(immunisation,"dose 1")),
-      "mmr_dose2"= filter(mmrtable,str_detect(immunisation,"dose 2"))) %>% 
-      select(-cohort) %>% 
-      rename(cohort = time_period_eligible) %>% 
+      "mmr_dose2"= filter(mmrtable,str_detect(immunisation,"dose 2"))) %>%
+      select(-cohort) %>%
+      rename(cohort = time_period_eligible) %>%
       mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))#forcing variables to show one decimal digit.
-    
+
     if (input$measure_select_immun %in% "sixin_dose1") {
       data_down <- data_down %>%
         select(immunisation, area_name, cohort, denominator,
@@ -524,8 +615,8 @@ imm_data_download <- reactive({
         select(immunisation, area_name, cohort, denominator,
                uptake_3y5m_num, uptake_3y5m_percent,
                uptake_3y8m_num, uptake_3y8m_percent, uptake_tot_num, uptake_tot_percent)
-    }  
-    
+    }
+
     data_down %>% #forcing variables to show one decimal digit.
       mutate_at(vars(contains("percent")), ~format(., digits=1, nsmall=1))#forcing variables to show one decimal digit.
   }
@@ -535,22 +626,22 @@ output$download_imm_data <- downloadHandler(
   filename ="immunisation_extract.csv",
   content = function(file) {
     write_csv(imm_data_download(),
-              file) } 
+              file) }
 )
 
 ##download immunisation SIMD data
 imm_simd_data_download <- reactive ({
-  
+
   data_down <- switch(
     input$measure_select_immun,
     "sixin_dose1" = six_simd_dose1,
     "sixin_dose2" = six_simd_dose2,
     "sixin_dose3" = six_simd_dose3,
     "mmr_dose1" = mmr_simd_dose1,
-    "mmr_dose2"= mmr_simd_dose2) %>% 
-    select(-cohort) %>% 
+    "mmr_dose2"= mmr_simd_dose2) %>%
+    select(-cohort) %>%
     rename(cohort = time_period_eligible, deprivation_quintile = simdq)
-  
+
   if (input$measure_select_immun %in% "sixin_dose1") {
     data_down <- data_down %>%
       select(immunisation, area_name, cohort, deprivation_quintile,
@@ -562,7 +653,7 @@ imm_simd_data_download <- reactive ({
              uptake_12weeks_2019_percent = baseline_12weeks,
              absolute_change_from_baseline_percent = week12_abs_diff,
              relative_change_from_baseline_percent = week12_rel_diff)
-    
+
   } else   if (input$measure_select_immun %in% "sixin_dose2") {
     data_down <- data_down %>%
       select(immunisation, area_name, cohort, deprivation_quintile,
@@ -574,7 +665,7 @@ imm_simd_data_download <- reactive ({
              uptake_16weeks_2019_percent = baseline_16weeks,
              absolute_change_from_baseline_percent = week16_abs_diff,
              relative_change_from_baseline_percent = week16_rel_diff)
-    
+
   } else   if (input$measure_select_immun %in% "sixin_dose3") {
     data_down <- data_down %>%
       select(immunisation, area_name, cohort, deprivation_quintile,
@@ -597,7 +688,7 @@ imm_simd_data_download <- reactive ({
              uptake_13months_2019_percent = baseline_57weeks,
              absolute_change_from_baseline_percent = week57_abs_diff,
              relative_change_from_baseline_percent = week57_rel_diff)
-    
+
   } else   if (input$measure_select_immun %in% "mmr_dose2") {
     data_down <- data_down %>%
       select(immunisation, area_name, cohort, deprivation_quintile,
@@ -610,19 +701,19 @@ imm_simd_data_download <- reactive ({
              absolute_change_from_baseline_percent = week178_abs_diff,
              relative_change_from_baseline_percent = week178_rel_diff)
   }
-  
+
   data_down %>% #forcing variables to show one decimal digit.
     mutate_at(vars(starts_with("uptake"), absolute_change_from_baseline_percent,
-                   relative_change_from_baseline_percent), 
+                   relative_change_from_baseline_percent),
               ~format(., digits=1, nsmall=1))
-  
+
 })
 
 
 output$download_imm_simd_data <- downloadHandler(
   filename ="immunisation_extract_by_deprivation.csv",
   content = function(file) {
-    write_csv(imm_simd_data_download(), file) } 
+    write_csv(imm_simd_data_download(), file) }
 )
 
 ###############################################.
@@ -634,35 +725,35 @@ output$immun_commentary_section <- renderUI({
   tagList(
     bsButton("jump_to_immunisation",label = "Go to data"), #this button can only be used once
     h2("Immunisations - 2nd March 2022"),
-    p("When a cohort becomes eligible for any of the immunisations reported this data will now only be refreshed for the next 12 months; as the data becomes more complete, uptake rates for these cohorts stabilise within this period. 
+    p("When a cohort becomes eligible for any of the immunisations reported this data will now only be refreshed for the next 12 months; as the data becomes more complete, uptake rates for these cohorts stabilise within this period.
       Only minor changes to uptake rates are observed if the data is updated monthly beyond 12 months and this is mainly driven by movements into or out of the cohort, such as a child leaving Scotland.
       Older data will continue to be reported but will no longer be refreshed."),
     h2("Immunisations - 6th October 2021"),
-    p("Information on the uptake of pre-school immunisations was updated in this tool on 6 October and includes information on cohorts eligible for their immunisations to week beginning 9 August 2021. 
-      It should be noted that the data recorded for the most recent eligible cohorts will not be fully complete at this stage. 
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 6 October and includes information on cohorts eligible for their immunisations to week beginning 9 August 2021.
+      It should be noted that the data recorded for the most recent eligible cohorts will not be fully complete at this stage.
       This means that immunisation uptake is likely to be under-reported and will be updated as the data becomes more complete."),
-    p("Please note that going forward the dashboard will continue to be updated on the first Wednesday of each month, but the commentary will only be updated in the case of exceptions. 
+    p("Please note that going forward the dashboard will continue to be updated on the first Wednesday of each month, but the commentary will only be updated in the case of exceptions.
       Background information on interpreting the data is provided in the commentary for previous updates below. Information on final achieved uptake will continue to be provided through ",
       tags$a(href="https://publichealthscotland.scot/publications/childhood-immunisation-statistics-scotland/",
              "official statistics publications", target="_blank"), "."),
      h2("Immunisations - 1st September 2021"),
-     p("Information on the uptake of pre-school immunisations was updated in this tool on 1 September and includes information on cohorts eligible for their immunisations  
+     p("Information on the uptake of pre-school immunisations was updated in this tool on 1 September and includes information on cohorts eligible for their immunisations
        to week beginning 5 July 2021."),
      p("Background information on interpreting the data is provided in the commentary for previous updates below."),
      h2("Immunisations - 4th August 2021"),
-     p("Information on the uptake of pre-school immunisations was updated in this tool on 4 August and includes information on cohorts eligible for their immunisations  
+     p("Information on the uptake of pre-school immunisations was updated in this tool on 4 August and includes information on cohorts eligible for their immunisations
        to week beginning 7 June 2021."),
      p("Background information on interpreting the data is provided in the commentary for previous updates below."),
     h2("Immunisations - 7th July 2021"),
-    p("Information on the uptake of pre-school immunisations was updated in this tool on 7 July. It should be noted that the data recorded for the 
-      most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake 
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 7 July. It should be noted that the data recorded for the
+      most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake
       is likely to be under-reported and will be updated as the data becomes more complete."),
     p("Uptake of pre-school immunisations has remained high for children who became eligible during the Covid-19 pandemic. Information on final achieved uptake will continue to be provided through ",
       tags$a(href="https://publichealthscotland.scot/publications/childhood-immunisation-statistics-scotland/",
              "official statistics publications", target="_blank"), "."),
     h2("Immunisations - 2nd June 2021"),
-    p("Information on the uptake of pre-school immunisations was updated in this tool on 2 June. It should be noted that the data recorded for the 
-      most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake 
+    p("Information on the uptake of pre-school immunisations was updated in this tool on 2 June. It should be noted that the data recorded for the
+      most recent eligible cohorts will not be fully complete at this stage. This means that immunisation uptake
       is likely to be under-reported and will be updated as the data becomes more complete."),
     p("Uptake of pre-school immunisations has remained high for children who became eligible during the Covid-19 pandemic. Information on final achieved uptake will continue to be provided through ",
       tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/",
@@ -724,18 +815,18 @@ output$immun_commentary_section <- renderUI({
       tags$a(href="https://beta.isdscotland.org/find-publications-and-data/population-health/child-health/","routinely published statistics", target="_blank",".")),
     p("The second dose of MMR vaccine is offered at 3 year 4 months. Data before the pandemic, for children eligible in 2019 show that uptake was 52.0% by 3 years 5 months. There was a small decrease in uptake rates by 3 years 5 months for children eligible for immunisation in March 2020 to 49.6%. However, as seen for the first dose of MMR, early uptake rates (by 3 years 5 months) have since increased for children eligible in April and early May 2020, with uptake in each of the latest 3 weeks exceeding 60%."),
     p("This release also includes updated uptake data on each of the doses of the 6-in-1 vaccine, offered at 8, 12 and 16 weeks, to include children eligible in each week in April and early May 2020. Uptake of each of the doses have been maintained throughout the pandemic. For children eligible in April and early May, the pattern of more children than usual receiving their immunisations soon after becoming eligible, is also observed, most notably for the third dose of vaccine, although the effect is less pronounced than was observed for the MMR immunisations. This is because uptake within 4 weeks of becoming eligible is already high for immunisations offered at the earliest ages, as shown in the data before the pandemic. Doses of vaccine which are routinely offered later in schedule of childhood immunisations take longer to reach the high levels of uptake compared to the immunisations offered at the first appointment due to the cumulative effect of missed appointments, and the need to have appropriate intervals between receiving doses of vaccine."),br(),
-    h2("Immunisations - 17th June 2020"), 
+    h2("Immunisations - 17th June 2020"),
     p("Information on the uptake of ",
-      tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
+      tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that
              are routinely offered to all preschool children (external website)", target="_blank"),
       " has been included in this tool for the first time on 3 June 2020.", br(),
-      "Immunisation protects children against many serious infectious diseases including diphtheria, 
+      "Immunisation protects children against many serious infectious diseases including diphtheria,
       whooping cough, and measles.",
       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
              "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic (external website)",  target="_blank"),".",
-      "It is important to maintain the best possible immunisation uptake rates to ensure children 
-      remain protected and to prevent a resurgence of these infections.  Including information on 
-      childhood immunisation rates in this tool will help us to ensure that immunisation rates remain 
+      "It is important to maintain the best possible immunisation uptake rates to ensure children
+      remain protected and to prevent a resurgence of these infections.  Including information on
+      childhood immunisation rates in this tool will help us to ensure that immunisation rates remain
       high throughout the pandemic.",br(),
       "The 6-in-1 vaccine is given to babies at 8, 12 and 16 weeks of age. The vaccine protects against diphtheria, tetanus, pertussis (whooping cough), polio, Haemophilus influenzae type b (Hib) and Hepatitis B.",br(),
       "On 3 June 2020, information was provided on the uptake of the first dose of the 6-in-1 vaccine, offered at 8 weeks of age. This showed uptake continues to exceed 90% among children who were due their first dose of the 6-in-1 vaccine in March and early April.",br(),
@@ -744,26 +835,26 @@ output$immun_commentary_section <- renderUI({
       "It is important to note that uptake of the second and third doses take longer to reach 90% and above compared to the first dose, as demonstrated by the data on uptake before the pandemic. This is because some children receive the first dose later than when first offered the vaccine, for example due to missed appointments. As each dose of vaccine is offered 4 weeks apart, missed appointments has a cumulative effect in increasing the time it takes for uptake of the second and third doses to reach and exceed 90%."), br(),
     h2("Immunisations - 3rd June 2020"),
     p("Information on the uptake of ",
-      tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
+      tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that
              are routinely offered to all preschool children (external website)", target="_blank"),
       " has been included in this tool for the first time on 3 June 2020.", br(),
-      "Immunisation protects children against many serious infectious diseases including diphtheria, 
+      "Immunisation protects children against many serious infectious diseases including diphtheria,
       whooping cough, and measles.",
       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
              "Immunisation services throughout Scotland are continuing during the Covid-19 pandemic (external website)",  target="_blank"),".",
-      "It is important to maintain the best possible immunisation uptake rates to ensure children 
-      remain protected and to prevent a resurgence of these infections.  Including information on 
-      childhood immunisation rates in this tool will help us to ensure that immunisation rates remain 
+      "It is important to maintain the best possible immunisation uptake rates to ensure children
+      remain protected and to prevent a resurgence of these infections.  Including information on
+      childhood immunisation rates in this tool will help us to ensure that immunisation rates remain
       high throughout the pandemic.",br(),
-      "On 3 June 2020, information has been provided on the uptake of the first dose of the 6-in-1 
-      vaccine, which is offered to children at 8 weeks of age. The vaccine protects against diphtheria, 
-      tetanus, pertussis (whooping cough), polio, Haemophilus influenzae type b (Hib) and Hepatitis B. 
+      "On 3 June 2020, information has been provided on the uptake of the first dose of the 6-in-1
+      vaccine, which is offered to children at 8 weeks of age. The vaccine protects against diphtheria,
+      tetanus, pertussis (whooping cough), polio, Haemophilus influenzae type b (Hib) and Hepatitis B.
       Children should also receive a second dose of the vaccine at 12 weeks and a third dose at 16 weeks.",br(),
       "Uptake rates for this immunisation have remained high during the pandemic.  Uptake continues to exceed 90% among
       children who were due their first dose of the 6-in-1 vaccine in March and early April. The recording of data on
       immunisations given by the reporting date will not be fully complete at this stage, particularly for the most recent
       cohorts, so uptake rates are slightly under-reported. In addition, some children will receive the vaccine at a later age,
-      for example due to missed or rescheduled appointments, so uptake rates are expected to continue to increase as children age 
+      for example due to missed or rescheduled appointments, so uptake rates are expected to continue to increase as children age
       (as shown in the 2019 data provided for comparison)."
       ))
 })

@@ -410,7 +410,7 @@ tabPanel(title = "Cardiovascular", icon = icon("heartbeat"), value = "cardio",
                         #                    #
                         #                    #   tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
                         #                    #           diagnoses, which was only lower than expected in April 2020.")),
-                        # 
+                        #
                         #                    p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
                         #                    ),
                         #          wellPanel(
@@ -697,7 +697,8 @@ navbarMenu("Child health", icon = icon("child"),
                                     radioGroupButtons("measure_select_immun",
                                                       label= "Step 1. Select the data you want to explore.",
                                                       choices = data_list_immun, status = "primary",
-                                                      direction = "vertical", justified = T))),
+                                                      direction = "vertical", justified = T)
+                      )),
                       column(4, div(title="Select a geography level first, then select the are you want from the list. You can click in the box, hit backspace and start to type if you want to start searching.",
                                     p(tags$b("Step 2. Select a geography level and then an area of interest.")),
                                     selectInput("geotype_immun", label = NULL, choices= c("Scotland", "Health board"),
@@ -707,8 +708,9 @@ navbarMenu("Child health", icon = icon("child"),
                                  p(tags$b("Step 3. Select time periods of interest.")),
                                  uiOutput("dates_ui_immun"),
                                  actionButton("btn_update_time_immun", "Update time periods")
-                             )
-                      ),
+                             )),
+
+
                       column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
                              fluidRow(br()),
                              actionButton("imm_elig_defs", "Eligibility definitions",  icon = icon('question-circle')),
@@ -716,12 +718,12 @@ navbarMenu("Child health", icon = icon("child"),
                              downloadButton('download_imm_data', 'Download data'),
                              fluidRow(br()),
                              actionButton('jump_commentary_imm','Go to commentary')
-                      )
-                    ), #well panel
-                    mainPanel(width = 12,
-                              uiOutput("immunisation_explorer")
-                    )# mainPanel bracket
-           ), # tabpanel bracket
+                      ),
+
+                      mainPanel(width = 12,
+                                uiOutput("immunisation_deprivation_output")
+                      )# mainPanel bracket
+                    )), # tabpanel bracket
            ##############################################.
            # Child Health reviews ----
            #############################################.
