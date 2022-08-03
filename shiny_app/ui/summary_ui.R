@@ -44,11 +44,13 @@ summary_tab <-
 ## Commentary  ----
 ###############################################.
 
-summary_comment <- 
+summary_commentary <- 
   tagList(
-    bsButton("jump_to_summary", label = "Go to data"), #this button can only be used once
-    
-    h3("15th June 2022 - Outpatient appointments"),
+     #this button can only be used once
+    fluidRow(
+    column(8, h2("Summary trends")), 
+    column(4, div(bsButton("jump_to_summary", label = "Go to data"), style="float:right"))),
+    p(h3("15th June 2022 - Outpatient appointments")),
     p("Data are taken from Scottish Morbidity Record (SMR00) and show weekly outpatient appointments to week ending 26 December 2021, 
       with monthly information shown to 31 December 2021. Further information is available by following the 'Data source: SMR00' 
       links on the dashboard."),
