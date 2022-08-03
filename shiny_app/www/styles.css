@@ -160,7 +160,7 @@ color: #ffffff;
 /* FONT COLOURS AND CHART FORMATS */
 
 /* Change font colour of all headers to PHS dark purple */
-h3, h4 {
+h2, h3, h4 {
   color: #3F3685;
   font-weight: bold;
   

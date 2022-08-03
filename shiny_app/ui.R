@@ -45,6 +45,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                      # Cardiovascular
                      conditionalPanel(condition= 'input.commentary_select == "cardio"',
                                       cardio_commentary),
+                     # Cancer
+                     conditionalPanel(condition= 'input.commentary_select == "cancer"',
+                                      cancer_commentary),
                      # Immunisation
                      conditionalPanel(condition= 'input.commentary_select == "immunisation"',
                                       tagList( uiOutput("immun_commentary_section"))),
@@ -87,9 +90,6 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                      # Perineal tears
                      conditionalPanel(condition= 'input.commentary_select == "tears"',
                                       tagList( uiOutput("tears_commentary"))),
-                     # Cancer
-                     conditionalPanel(condition= 'input.commentary_select == "cancer"',
-                                      tagList( uiOutput("cancer_commentary"))),
                      # Injuries
                      conditionalPanel(condition= 'input.commentary_select == "injuries"',
                                       tagList( uiOutput("injuries_commentary"))),
