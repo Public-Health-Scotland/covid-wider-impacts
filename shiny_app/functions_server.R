@@ -34,9 +34,9 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   }
 
   #If no data available for that period then plot message saying data is missing
-  if (split == "eth" & is.data.frame(trend_data) && nrow(trend_data) == 0) 
+  if (split == "eth" & is.data.frame(trend_data) && nrow(trend_data) == 0)
   {plot_nodata(text_nodata = "Data is only available at Scotland level") }
-  
+
   else if (split != "eth" & is.data.frame(trend_data) && nrow(trend_data) == 0)
   {
     plot_nodata(height = 50)
@@ -51,10 +51,10 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                                         "75 - 84", "85 and over")))
 
       } else if (tab == "cardio") {
-        trend_data <- trend_data %>% 
+        trend_data <- trend_data %>%
           mutate(category = factor(category, levels = c("All", "Under 5", "5 - 14", "Under 65", "Under 75", "15 - 24", "15 - 44", "25 - 44",
-                                                        "45 - 64", "<65", "65 - 74", "65+","65 and over", 
-                                                        "75 - 84", "75 and over", "85 and over"))) 
+                                                        "45 - 64", "<65", "65 - 74", "65+","65 and over",
+                                                        "75 - 84", "75 and over", "85 and over")))
       } else if (tab == "cancer") {
         trend_data <- trend_data %>%
           mutate(category = factor(category, levels = c("Under 5", "5-9", "10-14", "15-19",
@@ -102,7 +102,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
                              period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")),
-                             period == "quarterly" ~ paste0("Quarter: ", format(trend_data$week_ending, "%b %y")))  
+                             period == "quarterly" ~ paste0("Quarter: ", format(trend_data$week_ending, "%b %y")))
 
   # If variation selected different values
   if (type == "variation") {
@@ -188,10 +188,10 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                   "<br>", "Historic average: ",
                                   trend_data$count_average))
 
-        
+
       } else if (split == "eth"){
         tooltip_trend <- c(paste0(trend_data$category, "<br>",
-                                  period_data, 
+                                  period_data,
                                   "<br>", measure_name, trend_data$count))
 
       } else {
@@ -273,13 +273,13 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     yaxis_plots[["title"]] <- yaxis_title
 
     hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
-                                                       "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
+                                                       "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths",
                                                        "cath", "mentalhealth_drugs", "mh_ooh",
                                                        "op") ~ "Average 2018-2019",
                                       data_name == "deaths" ~ "Average 2015-2019")
 
     hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
-                                                    "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
+                                                    "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths",
                                                     "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 - 2022",
 
                                    data_name %in% c("cath")  ~ "2020")
@@ -300,12 +300,12 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                               data_name == "op" ~ "Appointments: ",
                               data_name == "cardio_admissions" ~ "Admissions: ",
                               data_name == "cardio_deaths" ~ "Deaths: ")
-    
+
     # Input for tooltip based on weekly/monthly
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
                              period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")),
                              period == "quarterly" ~ paste0("Quarter: ", format(trend_data$week_ending, "%b %y")))
-    
+
     #Text for tooltip
     tooltip_trend <- c(paste0(period_data,
                               "<br>", measure_name, trend_data$count,
@@ -440,39 +440,39 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
-  
-  # set plot display if no data  
+
+  # set plot display if no data
   if (is.data.frame(dataset) && nrow(dataset) == 0)
   { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
   } else {
-    
+
     # Set x axis label
     xaxis_title <-  "Quarter"
-    
+
     xaxis_plots[["title"]] <- xaxis_title
-    
+
     # Set y axis label
     yaxis_title <-  "% Change from 2019 Quarter"
 
-    yaxis_plots[["title"]] <- yaxis_title 
-    
-    #Text for tooltips  
+    yaxis_plots[["title"]] <- yaxis_title
+
+    #Text for tooltips
     measure_name <- "Percentage(%) Change:"
 
     value1 <- dataset[[diffvar1]]
 
     tooltip_1 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
-        
-    tooltip_2 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>", 
+
+    tooltip_2 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>",
                           "Age group: ", dataset$age_group, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
 
-    tooltip_3 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>", 
+    tooltip_3 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>",
                           "Deprivation Quintile: ", dataset$dep, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
-    
-    
+
+
     # Function for vertical line at start of lockdown
     vline <- function(x = 0, color = "grey") {
       list(
@@ -487,51 +487,51 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
     }
 
 
-    #Creating time trend plot for difference 
-    
-   diff_plot <- plot_ly(data=dataset, x = ~get(periodvar)) 
-    
+    #Creating time trend plot for difference
+
+   diff_plot <- plot_ly(data=dataset, x = ~get(periodvar))
+
    if (input$breakdown == "None"){ # DIFF PLOT - No breakdown
-     
+
      diff_plot <- diff_plot %>%
-       
+
        add_trace(y = ~get(diffvar1),
-                type = 'scatter', 
+                type = 'scatter',
                 mode = 'line',
                 color = 'purple',
                 text = tooltip_1,
                 hoverinfo="text")
-     
+
    } else if (input$breakdown == "Age Group") { # DIFF PLOT - AGE BREAKDOWN
-     
+
      diff_plot <- diff_plot %>%
-       
+
        add_trace(y = ~get(diffvar1),
-                 type = 'scatter', 
+                 type = 'scatter',
                  mode = 'line',
                  color = ~age_group,
                  colors = pal_sact,
-                 text = tooltip_2, 
+                 text = tooltip_2,
                  hoverinfo="text")
-     
+
    } else if (input$breakdown == "Deprivation") { #DIFF PLOT - Deprivation BREAKDOWN
-    
-     diff_plot <- diff_plot %>% 
-       
+
+     diff_plot <- diff_plot %>%
+
       add_trace(y = ~get(diffvar1),
-                type = 'scatter', 
+                type = 'scatter',
                 mode = 'line',
                 color = ~dep,
                 colors = pal_cancer_diff,
-                text = tooltip_3, 
-                hoverinfo="text") 
-       
+                text = tooltip_3,
+                hoverinfo="text")
+
    }
-      
+
       #Layout
        diff_plot %>%  layout(margin = list(b = 80, t=5),
              xaxis = xaxis_plots, yaxis = yaxis_plots,
-             legend = list(orientation = 'h', x = 0, y = 1.1)) %>% 
+             legend = list(orientation = 'h', x = 0, y = 1.1)) %>%
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
@@ -1365,8 +1365,8 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 
     # Input for tooltip based on weekly/monthly
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
-                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))  
-    
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))
+
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$spec, "<br>",
                               period_data,
@@ -1384,17 +1384,17 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
     #Modifying standard layout
     if (op == T){
       yaxis_plots[["title"]] <- "Number of appointments"
-      
+
       measure_name <- "Appointments: "
     } else{
     yaxis_plots[["title"]] <- "Number of admissions"
 
     measure_name <- "Admissions: "
     }
-    
+
     # Input for tooltip based on weekly/monthly
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
-                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))  
+                             period == "monthly" ~ paste0("Month: ", format(trend_data$week_ending, "%b %y")))
 
     #Text for tooltip
     tooltip_trend <- c(paste0(trend_data$spec, "<br>",
@@ -1449,74 +1449,252 @@ filter_data <- function(dataset, data_name = "other", area = T, op = F) {
 ##Immunisations-functions ----
 
 ######################################################################.
-#Function to create bar-plot for Scotland immunisation data by SIMD
-plot_imm_simd <- function(dataset, age_week, dose,
-                          var_plot, base_var = F) {
+plot_immun_simd <- function(imm_simd_data){
 
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_immun
 
-  imm_simd_data <- dataset %>% filter(exclude == 0,
-                                      # filter to selected time periods, but don't re-execute each time input changes
-                                      time_period_eligible %in% isolate(input$dates_immun))
 
-  #count the number of distinct months in the dataset - used later to correctly adjust chart
-  month_count <- length(unique(imm_simd_data$time_period_eligible))
+  dataset_name <- deparse(substitute(imm_simd_data)) # character name of the data
 
-  dataset_name <- deparse(substitute(dataset)) # character name of the data
+  title <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
+                     dataset_name == "six_simd_dose2" ~ "16 weeks",
+                     dataset_name == "six_simd_dose3" ~ "20 weeks",
+                     dataset_name == "mmr_simd_dose1" ~ "13 months",
+                     dataset_name == "mmr_simd_dose2" ~ "3y 5 months")
 
   elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
                     dataset_name == "six_simd_dose2" ~ "16 weeks",
                     dataset_name == "six_simd_dose3" ~ "20 weeks",
-                    dataset_name == "mmr_simd_dose1" ~ "13 months",
-                    dataset_name == "mmr_simd_dose2" ~ "3y 5 months")
+                    dataset_name== "mmr_simd_dose1" ~ "13 months",
+                    dataset_name== "mmr_simd_dose2" ~ "3y 5 months")
 
-  # Create tooltip for scurve
-  tooltip_scurve <- c(paste0("Cohort: ", imm_simd_data$time_period_eligible))
-  tooltip_2019 <- c(paste0("Cohort: 2019"))
+  percent_name <- case_when(dataset_name == "six_simd_dose1" ~ "12weeks",
+                            dataset_name == "six_simd_dose2" ~ "16weeks",
+                            dataset_name == "six_simd_dose3" ~ "20weeks",
+                            dataset_name == "mmr_simd_dose1" ~ "57weeks",
+                            dataset_name == "mmr_simd_dose2" ~ "178weeks")
 
-  ## String text for legend title label
-  age_unit <- case_when(substr(dataset_name,1,3) == "six" ~ paste0(age_week, " weeks:"),
-                        dataset_name == "mmr_simd_dose1" ~ paste0("12 months:"),
-                        dataset_name == "mmr_simd_dose2" ~ paste0("3y 4months:"))
+  graph_data <- imm_simd_data %>%
+    filter(cohort == "monthly") %>%
+    mutate(time_period_eligible = paste0("01", time_period_eligible)) %>%
+    mutate(time_period_eligible = dmy(time_period_eligible)) %>%
+    select(time_period_eligible, simdq, paste0("uptake_", percent_name, "_percent")) %>%
+    pivot_wider(names_from = simdq,
+                values_from = paste0("uptake_", percent_name, "_percent"))
 
-  #Modifying standard yaxis name applies to all curves
-  xaxis_plots[["title"]] <- "SIMD quintile"
+  #Modifying standard xaxis name applies to all curves
+  xaxis_plots[["title"]] <- "Month"
   xaxis_plots[["tickangle"]] <- 315
 
-  if (base_var != F) {
-    yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
-    yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
+  yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
+  yaxis_plots[["title"]] <- paste0("% uptake by ", elig) # elig isn't working
 
-  } else {
-    yaxis_plots[["range"]] <- c(-30, 30) # some baseline changes are lower than -10
-    yaxis_plots[["title"]] <- paste0("Change in % uptake by ", elig)
+  #count the number of distinct months in the dataset - used later to correctly adjust chart
+  month_count <- length(unique(graph_data$time_period_eligible))
 
-  }
+  # not formatted correctly
+  tooltip_trend <- c(paste0("Month: ", graph_data$time_period_eligible,
+                            "br<>","1 - most deprived: ", graph_data$`1 - most deprived`, "%",
+                            "br<>","2: ", graph_data$`2`, "%",
+                            "br<>","3: ", graph_data$`3`, "%",
+                            "br<>","4: ", graph_data$`4`, "%",
+                            "br<>","5 - least deprived: ", graph_data$`5 - least deprived`))
 
-  #Creating bar plot
-  simd_plot <- plot_ly(data=imm_simd_data, x = ~simdq) %>%
-    add_trace(type = 'bar', y = ~get(var_plot), split = ~time_period_eligible,
-              color=~time_period_eligible,
-              colors = pal_immun, textposition="none",
-              text= tooltip_scurve, hoverinfo="text")
+  p <- graph_data %>%
+    plot_ly( x = ~`time_period_eligible`) %>%
+    add_lines(
+      y = ~`1 - most deprived`, line = list(color="#AF69A9"), name = '1 - most deprived', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
+    add_lines(
+      y = ~`2`, line = list(color="#3393DD"), name = '2', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
+    add_lines(
+      y = ~`3`, line = list(color="#655E9D"), name = '3', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
+    add_lines(
+      y = ~`4`, line = list(color="#6B5C85"), name = '4', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
+    add_lines(
+      y = ~`5 - least deprived`, line = list(color="#1E7F84"), name = '5 - least deprived', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
 
-  if (base_var != F) {
-    simd_plot <- simd_plot %>%
-      add_trace(type = 'bar', y = ~get(base_var)/month_count,
-                name = "2019", marker = list(color = "black"),
-                text= tooltip_2019, hoverinfo="text", textposition="none")
-  }
-
-  simd_plot %>% #Layout
-    layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-           yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.8, yanchor="top", #position of legend
-                         title=list(text=paste0("Children turning ", age_unit))),
-           showlegend = T) %>%
+    layout(margin = list(b = 80, t = 5),
+           yaxis = yaxis_plots,
+           xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T) %>%
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 
+  return(p)
+
+}
+
+
+plot_imm_simd_bar <- function(imm_simd_data){
+
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+
+  dataset_name <- deparse(substitute(imm_simd_data)) # character name of the data
+
+  # define changing y axis depending on dataset
+  elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
+                    dataset_name == "six_simd_dose2" ~ "16 weeks",
+                    dataset_name == "six_simd_dose3" ~ "20 weeks",
+                    dataset_name == "mmr_simd_dose1" ~ "13 months",
+                    dataset_name == "mmr_simd_dose2" ~ "3years 5 months")
+
+  # define changing percentage uptake column name depending on dataset
+  percent_name <- case_when(dataset_name == "six_simd_dose1" ~ "12weeks",
+                            dataset_name == "six_simd_dose2" ~ "16weeks",
+                            dataset_name == "six_simd_dose3" ~ "20weeks",
+                            dataset_name == "mmr_simd_dose1" ~ "57weeks",
+                            dataset_name == "mmr_simd_dose2" ~ "178weeks")
+
+  graph_data <- imm_simd_data %>%
+    filter(cohort == "yearly") %>%
+    select(time_period_eligible, simdq, paste0("uptake_", percent_name, "_percent"), paste0("baseline_", percent_name))
+
+  #Modifying standard xaxis name applies to all curves
+  xaxis_plots[["title"]] <- "SIMD Quintile"
+  xaxis_plots[["tickangle"]] <- 315
+
+  yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
+  yaxis_plots[["title"]] <- paste0("% uptake by ", elig) # elig isn't working
+
+  #count the number of distinct months in the dataset - used later to correctly adjust chart
+  year_count <- length(unique(graph_data$time_period_eligible))
+
+  graph_data %<>% dplyr::rename("baseline_var" = names(select(imm_simd_data, ends_with("weeks"))))
+  graph_data %<>% dplyr::rename("percent_var" = names(select(imm_simd_data, ends_with("_percent"))))
+
+  tooltip_2019 <- c(paste0("baseline_", percent_name))
+
+  #browser()
+
+  #Creating bar plot
+  simd_plot <- plot_ly(data=graph_data, x = ~simdq) %>%
+    add_trace(type = 'bar',
+              y=~(baseline_var/year_count),
+              name = "2019",
+              marker = list(color = "#3F3685"),
+              text= tooltip_2019,
+              #hoverinfo="text",
+              textposition="none"
+    ) %>%
+    add_bars(y = ~percent_var,
+             split = ~time_period_eligible,
+             color=~time_period_eligible,
+             textposition="none",
+             colors=list(color = c("#83BB26", "#0078D4"))
+             #marker = list(color = 'c("#83BB26", "#DCDCDC")')
+             # text= tooltip_scurve,
+             #hoverinfo="text"
+    )%>%
+    layout(margin = list(b = 80, t = 5),
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T) %>%
+
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+
+  return(simd_plot)
+
+}
+
+plot_imm_simd_change <- function(imm_simd_data){
+
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+
+  dataset_name <- deparse(substitute(imm_simd_data)) # character name of the data
+
+  # define changing y axis depending on dataset
+  elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
+                    dataset_name == "six_simd_dose2" ~ "16 weeks",
+                    dataset_name == "six_simd_dose3" ~ "20 weeks",
+                    dataset_name == "mmr_simd_dose1" ~ "13 months",
+                    dataset_name == "mmr_simd_dose2" ~ "3years 5 months")
+
+
+  # define changing baseline column name depending on dataset
+  baseline <- case_when(dataset_name == "six_simd_dose1" ~ "week12",
+                        dataset_name == "six_simd_dose2" ~ "week16",
+                        dataset_name == "six_simd_dose3" ~ "week20",
+                        dataset_name == "mmr_simd_dose1" ~ "week57",
+                        dataset_name == "mmr_simd_dose2" ~ "week178")
+
+
+  # should this be relative change?? confused
+  abs_change <- imm_simd_data %>%
+    filter(cohort == "monthly") %>%
+    mutate(simdq = as.factor(simdq)) %>%
+    mutate(time_period_eligible = paste0("01", time_period_eligible)) %>%
+    mutate(time_period_eligible = dmy(time_period_eligible)) %>%
+    select(time_period_eligible, simdq, paste0(baseline, "_abs_diff"))
+
+  abs_change %<>% dplyr::rename("abs_diff" = names(select(imm_simd_data, ends_with("_abs_diff"))))
+
+  #Modifying standard xaxis name applies to all curves
+  xaxis_plots[["title"]] <- "Month"
+  xaxis_plots[["tickangle"]] <- 315
+
+  yaxis_plots[["range"]] <- c(-30, 30) # enforcing range from -30 to 30%
+  yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
+  yaxis_plots[["zerolinecolor"]] <- "#C73918"
+  yaxis_plots[["zerolinewidth"]] <- 2
+
+  abs_change_1 <- abs_change %>%
+    filter(simdq == "1 - most deprived") %>%
+    plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "1 - most deprived",
+             type = 'scatter', mode = 'lines', line = list(color="#AF69A9") ) %>%
+    layout(xaxis = xaxis_plots,
+           yaxis = yaxis_plots)
+
+  abs_change_2 <- abs_change %>%
+    filter(simdq == "2") %>%
+    plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "2",
+             type = 'scatter', mode = 'lines' , line = list(color="#3393DD")) %>%
+    layout(xaxis = xaxis_plots,
+           yaxis = yaxis_plots)
+
+  abs_change_3 <- abs_change %>%
+    filter(simdq == "3") %>%
+    plot_ly( x = ~`time_period_eligible`, y=~`abs_diff`, name = "3",
+             type = 'scatter', mode = 'lines' , line = list(color="#655E9D"))%>%
+    layout(xaxis = list(title = "Month", tickangle = 315,
+                        tickfont = list(size=14), titlefont = list(size=14),
+                        showline = TRUE, fixedrange=TRUE),
+           yaxis = yaxis_plots)
+
+
+  abs_change_4 <- abs_change %>%
+    filter(simdq == "4") %>%
+    plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "4",
+             type = 'scatter', mode = 'lines' , line = list(color="#6B5C85"))%>%
+    layout(xaxis = xaxis_plots,
+           yaxis = yaxis_plots)
+
+  abs_change_5 <- abs_change %>%
+    filter(simdq == "5 - least deprived") %>%
+    plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "5 - least deprived",
+             type = 'scatter', mode = 'lines' , line = list(color="#1E7F84")) %>%
+    layout(xaxis = xaxis_plots,
+           yaxis = yaxis_plots)
+
+  abs_change_plot <- subplot(abs_change_1, abs_change_2, abs_change_3, abs_change_4, abs_change_5,
+                             shareY = TRUE, shareX = TRUE) %>%
+    layout(legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T) %>%
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+
+  return(abs_change_plot)
 
 }
 
