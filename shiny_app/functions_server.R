@@ -1494,12 +1494,10 @@ plot_immun_simd <- function(imm_simd_data){
   month_count <- length(unique(graph_data$time_period_eligible))
 
   # not formatted correctly
-  tooltip_trend <- c(paste0("Month: ", graph_data$time_period_eligible,
-                            "br<>","1 - most deprived: ", graph_data$`1 - most deprived`, "%",
-                            "br<>","2: ", graph_data$`2`, "%",
-                            "br<>","3: ", graph_data$`3`, "%",
-                            "br<>","4: ", graph_data$`4`, "%",
-                            "br<>","5 - least deprived: ", graph_data$`5 - least deprived`))
+  tooltip_trend <- paste0("Month: ", format(graph_data$time_period_eligible, "%B %Y"),"<br>",
+                          "Deprivation quintile: ", graph_data$simdq, "<br>",
+                          "Percentage uptake: ",format(as.numeric(graph_data$`1 - most deprived`)), "%"
+                            )
 
   p <- graph_data %>%
     plot_ly( x = ~`time_period_eligible`) %>%
@@ -1574,9 +1572,16 @@ plot_imm_simd_bar <- function(imm_simd_data){
   graph_data %<>% dplyr::rename("baseline_var" = names(select(imm_simd_data, ends_with("weeks"))))
   graph_data %<>% dplyr::rename("percent_var" = names(select(imm_simd_data, ends_with("_percent"))))
 
-  tooltip_2019 <- c(paste0("baseline_", percent_name))
+  tooltip_2019 <- c(paste0("Cohort: 2019", "<br>",
+                           "Deprivation quintile: ", graph_data$simdq, "<br>",
+                           "Percentage uptake: ", graph_data$percent_var, "%"))
+  tooltip_bars <- c(paste0("Cohort: ", graph_data$time_period_eligible, "<br>",
+                           "Deprivation quintile: ", graph_data$simdq, "<br>",
+                           "Percentage uptake: ", graph_data$percent_var, "%"))
 
-  #browser()
+  #tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
+
+  yr_pal <- c('#0078D4', '#DFDDE3', '#DFDDE3', '#DFDDE3', '#83BB26')
 
   #Creating bar plot
   simd_plot <- plot_ly(data=graph_data, x = ~simdq) %>%
@@ -1585,17 +1590,16 @@ plot_imm_simd_bar <- function(imm_simd_data){
               name = "2019",
               marker = list(color = "#3F3685"),
               text= tooltip_2019,
-              #hoverinfo="text",
+              hoverinfo="text",
               textposition="none"
     ) %>%
     add_bars(y = ~percent_var,
-             split = ~time_period_eligible,
+             #split = ~time_period_eligible,
              color=~time_period_eligible,
              textposition="none",
-             colors=list(color = c("#83BB26", "#0078D4"))
-             #marker = list(color = 'c("#83BB26", "#DCDCDC")')
-             # text= tooltip_scurve,
-             #hoverinfo="text"
+             colors=yr_pal,
+             text= tooltip_bars,
+             hoverinfo="text"
     )%>%
     layout(margin = list(b = 80, t = 5),
            yaxis = yaxis_plots, xaxis = xaxis_plots,
