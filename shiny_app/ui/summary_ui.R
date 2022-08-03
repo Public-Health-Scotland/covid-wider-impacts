@@ -49,11 +49,11 @@ summary_commentary <-
     fluidRow(
     column(8, h2("Summary trends")), 
     column(4, div(bsButton("jump_to_summary", label = "Go to data"), style="float:right"))),  #this button can only be used once
-    p(h3("15th June 2022 - Outpatient appointments")),
+    
+    p(h3("15 June 2022 - Outpatient appointments")),
     p("Data are taken from Scottish Morbidity Record (SMR00) and show weekly outpatient appointments to week ending 26 December 2021, 
       with monthly information shown to 31 December 2021. Further information is available by following the 'Data source: SMR00' 
       links on the dashboard."),
-    
     h4("Initial findings: outpatient appointments"),
     tags$ul(
       tags$li("Outpatient appointments fell from the second week of March 2020 onwards: by week ending 19 April 2020, all outpatient 
@@ -84,15 +84,14 @@ summary_commentary <-
               Black’) and 4% lower (‘White Other’). It is important to note that the trends for ethnic groups with small populations should 
               be interpreted with caution, as they will be subject to greater variability due to small numbers.")
       ),
-    
     h4("Interpreting these figures"),
     p("Please exercise caution when interpreting these figures, as these data are for management information only.
       For more information on methodology and data quality, please see the ",
       tags$a(href = "https://publichealthscotland.scot/publications/acute-hospital-activity-and-nhs-beds-information-quarterly/",
              "Acute Activity and NHS Beds quarterly publication.",
-             target="_blank"),
+             target="_blank")),
       
-      h3("23rd September 2020 - Revision of baseline OOH"),
+      h3("23 September 2020 - Revision of baseline OOH"),
       p("An issue with previously published 2018 and 2019 baseline Out of Hours (OOH) data was
         identified and has now been corrected. OOH figures from January 2018 to 22nd March 2020 had previously
         referred to numbers of consultations whereas those presented after 23rd March referred to numbers of cases.
@@ -103,7 +102,7 @@ summary_commentary <-
         The post-pandemic reductions in OOH activity previously reported were also over-estimated
         by around 6% each week, and this has now been corrected. The impact of the data revisions at a sub-national level may vary."),
       
-      h3("10th June 2020 - Excess mortality"),
+      h3("10 June 2020 - Excess mortality"),
       p("Each week National Records for Scotland (NRS) release provisional deaths data and a ",
         tags$a(href="https://www.nrscotland.gov.uk/covid19stats", "report (external website)",  target="_blank"), 
         " about the numbers of deaths involving COVID-19 in Scotland.
@@ -119,7 +118,7 @@ summary_commentary <-
       was between 72% and 98% in the week ending 19 April, and had reduced to less than 25%
       for all quintiles by the latest week (ending 24 May)."),
       
-      h3("3rd June 2020"),
+      h3("3 June 2020"),
       p("From the second week of March 2020 there was an abrupt and steep fall in hospital admissions, 
         attendances at Accident and Emergency (A&E) departments and cases in out of hours services.
         Use of all of these services fell to around half the average levels seen 2018-19 and has since recovered
@@ -194,8 +193,9 @@ summary_commentary <-
       h4("Future work"),
       p("Work is under way to broaden the range of data sources available – within the next few weeks
       we expect to publish information on health visitor checks, perinatal mortality,
-      excess mortality (in collaboration with NRS), prescribing and cardiovascular presentations."
-      )))
+      excess mortality (in collaboration with NRS), prescribing and cardiovascular presentations."),
+      br()
+      )
 
 
 #END 

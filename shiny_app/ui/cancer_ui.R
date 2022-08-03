@@ -297,7 +297,7 @@ cancer_commentary <-
     ## AUGUST 2022 update ----
     ###################################.
     
-    h3("3rd August 2022 - Pathology data updated to 2nd February 2022 (extracted 02/06/2022)"),
+    h3("3 August 2022 - Pathology data updated to 2 February 2022 (extracted 02/06/2022)"),
     p("In 2022 (weeks ending 5th January to 2nd February), there was little difference in the total number of individuals with a pathological
       diagnosis of cancer (Excl.C44) compared with those in 2019 over the same dates (4046 and 3986 in 2022 and 2019 respectively, a difference
       of approximately 1.5%). It should be noted that there are usually fewer cancer diagnoses in late December and early 
@@ -395,7 +395,7 @@ cancer_commentary <-
     ###################################.
     
     
-    h3("15th June 2022 - Pathology data updated to 31st December 2021 (extracted 20/04/2022)"),
+    h3("15 June 2022 - Pathology data updated to 31 December 2021 (extracted 20/04/2022)"),
     p("In 2021 (weeks ending 05th January to 27th December), there was little difference in the total number
       of individuals with a pathological diagnosis of cancer (Excl. C44) compared with those in 2019 (33086 and 33345 in 2021 and 2019
       respectively, a difference of approximately 0.8%).  However, within cancer sites, some were higher and some lower than
@@ -478,7 +478,7 @@ cancer_commentary <-
     ###################################.
     
     
-    h3("22nd September 2021 - Pathology data updated to 14th June 2021 (extracted 19/8/2021)"),
+    h3("22 September 2021 - Pathology data updated to 14 June 2021 (extracted 19/8/2021)"),
     p("In the first half of 2021 (weeks ending 05 January to 14 June), there was little difference in the total number
       of individuals with a pathological diagnosis of cancer compared with those in 2019 (16455 and 16569 in 2021 and 2019,
       respectively, a difference of less than 1%).  However, within cancer sites, some were higher and some lower than
@@ -540,7 +540,7 @@ cancer_commentary <-
     
     ###################################.
     
-    h3("29th July 2021 - Pathology data updated to 26th February 2021 (extracted 20/5/2021)"),
+    h3("29 July 2021 - Pathology data updated to 26 February 2021 (extracted 20/5/2021)"),
     p(("By the end of 2020 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
        cancer (excluding non-melanoma skin cancers) in Scotland was "),  
       strong ("28,474 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -625,7 +625,7 @@ cancer_commentary <-
     
     ###################################.
     
-    h3("10th March 2021 - Pathology data updated to 29/11/2020 (extracted 22/2/2021)"),
+    h3("10 March 2021 - Pathology data updated to 29 November 2020 (extracted 22/2/2021)"),
     p("By the week ending 29th November 2020, the total number of individuals in Scotland with a pathological confirmation of 
       cancer (excluding non-melanoma skin cancers) in Scotland was 40,343 in 2019 and 33,341 in 2020, an absolute difference 
       of 7,002 individuals (-17%).  That is to say, just over 7,000 fewer 
@@ -661,7 +661,7 @@ cancer_commentary <-
     ##############################################.
     
     
-    h3("23rd December 2020 - Pathology data updated to 30th August 2020 (extracted 27/11/2020)"),
+    h3("23 December 2020 - Pathology data updated to 30 August 2020 (extracted 27/11/2020)"),
     p("By the week ending 30th August 2020, the total number of individuals in Scotland with a pathologically confirmed 
       cancer (excluding non-melanoma skin cancers) in Scotland was 23,375 in 2020 and 29,364 in 2019, an absolute difference 
       of 5,989 individuals (and an overall cumulative difference of 26%).  That is to say, just under 6,000 fewer 
@@ -689,7 +689,7 @@ cancer_commentary <-
     br(),
     
     
-    h3("18th November 2020 - Pathology data updated to 21st June 2020 (extracted 16/9/2020)"),
+    h3("18 November 2020 - Pathology data updated to 21 June 2020 (extracted 16/9/2020)"),
     p("By the week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer 
       (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference of 
       4,063 individuals (and an overall cumulative difference of 19%).  That is to say, around 4,000 fewer 
@@ -738,8 +738,8 @@ cancer_commentary <-
       drop of 35%."),
     
     
-    p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "Data Source (external website)"))
-    
+    p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "Data Source (external website)")),
+    br()
       ) 
   
 

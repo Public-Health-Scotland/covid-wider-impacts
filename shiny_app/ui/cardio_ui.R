@@ -33,12 +33,13 @@ cardio_commentary <-
     fluidRow(
       column(8, h2("Cardiovascular")), 
       column(4, div(bsButton("jump_to_cardio", label = "Go to data"), style="float:right"))),
-    h3("5th May 2022"),
+    h3("5 May 2022"),
     h4("Cardiovascular hospital admissions and excess mortality"),
     tags$ul(
       tags$li("Data now available for cardiovascular hospital admissions and excess mortality.
               Information is available by quarter for diagnosis Heart Attack, Heart Failure and Stroke.")),
-    h3("16th December 2020"),
+    
+    h3("16 December 2020"),
     h4("Cardiovascular GP out of hour cases"),
     tags$ul(
       tags$li("For GP out of hours services there was a sharp fall of around 30% in cases for cardiovascular problems
@@ -50,7 +51,8 @@ cardio_commentary <-
       tags$li("For Scottish Ambulance Service incidents, there was a sharp initial fall of around 40% in cardiovascular
               related incidents that started in early April 2020, shortly after the introduction of lockdown restrictions.
               This continued until mid-July. The fall in incidents was greatest in the most deprived groups.")),
-    h3("17th June 2020"),
+    
+    h3("17 June 2020"),
     h4("Prescribing"),
     p("Information on prescriptions issued for cardiovascular medicines through
       General Practice has been included for the first time on 17th June 2020.
@@ -94,7 +96,8 @@ cardio_commentary <-
       tags$li("The change in percutaneous coronary interventions has been less pronounced. A significant
                proportion of coronary interventions occur in a context of patients suffering a heart
                attack. A proportion of coronary interventions are also planned and elective in nature. "),
-      tags$li("The number of device procedures has been lower than expected since the end of March 2020."))
+      tags$li("The number of device procedures has been lower than expected since the end of March 2020.")),
+    br()
     )
 
 
