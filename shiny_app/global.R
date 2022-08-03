@@ -285,13 +285,10 @@ home_list <- c("About" = "about",
                 "Accessibility" = "accessibility")
  
  # List of sections in Commentary tab
- commentary_list <- c("Summary trends" = "summary",
+commentary_list <- c("Summary trends" = "summary",
                       "Cardiovascular" = "cardio",
-                      "Immunisation" = "immunisation",
-                      "Child health" = "child-health",
-                      "Breastfeeding" = "breastfeeding",
-                      "Child development" = "child-dev",
-                      "Stillbirths and infant deaths" = "perinatal",
+                      "Cancer" = "cancer",
+                      "Injuries" = "injuries",
                       "Mental health" = "mental-health",
                       "Antenatal bookings" = "booking",
                       "Termination of pregnancy" = "termination",
@@ -300,23 +297,14 @@ home_list <- c("About" = "about",
                       "Apgar scores" = "apgar",
                       "Location of extremely preterm babies" = "preterm",
                       "Perineal tears" = "tears",
-                      "Cancer" = "cancer",
-                      "Injuries" = "injuries",
+                      "Stillbirths and infant deaths" = "perinatal",
+                      "Immunisation" = "immunisation",
+                      "Child health" = "child-health",
+                      "Breastfeeding" = "breastfeeding",
+                      "Child development" = "child-dev",
                       "Substance use" = "drugs"
                       )
  
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-
 spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
                           "Medical (incl. Cardiology & Cancer)",
                           "Paediatrics (medical & surgical)")) # specialty list
