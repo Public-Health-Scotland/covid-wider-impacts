@@ -287,6 +287,7 @@ cancer_commentary <-
       pandemic by the end of September 2020. It should be noted that there were important variations in patterns between types of cancer."),
     p("In 2021, overall numbers remained close to those seen in 2019.  This varied by cancer type and there were some 
       notably higher and lower than expected numbers (see relevant updates)."),
+    br(),
     
     #################################################################################################################   .
     
@@ -387,7 +388,6 @@ cancer_commentary <-
     p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
       skin cancers, these showed the largest decreases in diagnoses remained among people from the most deprived areas, showing 
       a shortfall of 9.8% by the end of Q4 2021.The least deprived were down 4.5% by the same period."),
-    p("---------------------------------------------------------------------------------------------------------------------"),
     br(),
     
     ###################################.
@@ -395,7 +395,7 @@ cancer_commentary <-
     ###################################.
     
     
-    h3("15th June 2022: For pathology data to 31st December 2021 (extracted 20/04/2022)"),
+    h3("15th June 2022 - Pathology data updated to 31st December 2021 (extracted 20/04/2022)"),
     p("In 2021 (weeks ending 05th January to 27th December), there was little difference in the total number
       of individuals with a pathological diagnosis of cancer (Excl. C44) compared with those in 2019 (33086 and 33345 in 2021 and 2019
       respectively, a difference of approximately 0.8%).  However, within cancer sites, some were higher and some lower than
@@ -456,7 +456,7 @@ cancer_commentary <-
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
              data to the end of December 2021 compared to 2019:")),
     
-    h4(strong("Age")),
+    h4("Age"),
     p("For all cancers except non-melanoma skin cancers, the proportionate fall in pathologically confirmed cancers by December 2021 were
       much smaller than at the end of 2020, and there was less difference between age groups.
       The reduction in breast and colorectal cancer diagnoses, which were both affected by pauses in the screening
@@ -465,11 +465,10 @@ cancer_commentary <-
       in those of screening age (50-69) by the end of Q4 2021, compared to a shortfall of 1.6% for those under 50.
       For colorectal cancers, numbers in 50-69 years olds showed a shortfall of
       11.2% by the end of Q4 2021; however, the total falls in under 50s had shown less improvement, a shortfall of 17.2%."),
-    h4(strong("Socio-economic deprivation")),
+    h4("Socio-economic deprivation"),
     p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
       skin cancers, these showed the largest decreases in diagnoses remained among people from the most deprived areas, showing 
       a shortfall of 12.9% by the end of Q4 2021.The least deprived were down 6% by the same period."),
-    p("---------------------------------------------------------------------------------------------------------------------"),
     br(),
     
     
@@ -479,7 +478,7 @@ cancer_commentary <-
     ###################################.
     
     
-    h4(strong("Update 22/9/2021: For pathology data to 14th June 2021 (extracted 19/8/2021)")),
+    h3("22nd September 2021 - Pathology data updated to 14th June 2021 (extracted 19/8/2021)"),
     p("In the first half of 2021 (weeks ending 05 January to 14 June), there was little difference in the total number
       of individuals with a pathological diagnosis of cancer compared with those in 2019 (16455 and 16569 in 2021 and 2019,
       respectively, a difference of less than 1%).  However, within cancer sites, some were higher and some lower than
@@ -512,7 +511,7 @@ cancer_commentary <-
       and prostate."),
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
              data to the end of December in 2020 compared to 2019:")),
-    h4(strong("Age")),
+    h4("Age"),
     p("For all cancers except non-melanoma skin cancers, the largest proportionate fall in
       pathologically confirmed cancers were among those aged 50-69 years and the smallest falls were in those under 50 years.
       This difference is more clearly seen in breast and colorectal cancers, which were both affected by pauses in the screening
@@ -522,7 +521,7 @@ cancer_commentary <-
       -20% by the end of Q3 with little recovery by the end of the year; while the total annual falls in under 50s and 70 and over
       were -17% and -14%, respectively."),
     br(),
-    h4(strong("Socio-economic deprivation")),
+    h4("Socio-economic deprivation"),
     p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
       skin cancers, these showed the largest decreases in diagnoses were among people from the most deprived areas (a maximum
       fall of -18% by the end of Q3).The smallest was among the least deprived (-11% by Q3). There was a greater recovery in the most
@@ -537,11 +536,11 @@ cancer_commentary <-
       (-25%).  For prostate cancer, the greatest reduction in diagnoses by the end of the year was -23% for those in the most
       deprived areas; -15% for those in the least deprived areas; and smallest for those in the middle quintile (-12%)."),
     
-    
+    br(),
     
     ###################################.
     
-    h4(strong("Update 29/7/2021: For pathology data to 26th February 2021 (extracted 20/5/2021)")),
+    h3("29th July 2021 - Pathology data updated to 26th February 2021 (extracted 20/5/2021)"),
     p(("By the end of 2020 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
        cancer (excluding non-melanoma skin cancers) in Scotland was "),  
       strong ("28,474 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -626,7 +625,7 @@ cancer_commentary <-
     
     ###################################.
     
-    h4(strong("Update 10/3/2021: For pathology data to 29/11/2020 (extracted 22/2/2021)")),
+    h3("10th March 2021 - Pathology data updated to 29/11/2020 (extracted 22/2/2021)"),
     p("By the week ending 29th November 2020, the total number of individuals in Scotland with a pathological confirmation of 
       cancer (excluding non-melanoma skin cancers) in Scotland was 40,343 in 2019 and 33,341 in 2020, an absolute difference 
       of 7,002 individuals (-17%).  That is to say, just over 7,000 fewer 
@@ -662,7 +661,7 @@ cancer_commentary <-
     ##############################################.
     
     
-    h4(strong("Update 23/12/2020: For pathology data to 30/8/2020 (extracted 27/11/2020)")),
+    h3("23rd December 2020 - Pathology data updated to 30th August 2020 (extracted 27/11/2020)"),
     p("By the week ending 30th August 2020, the total number of individuals in Scotland with a pathologically confirmed 
       cancer (excluding non-melanoma skin cancers) in Scotland was 23,375 in 2020 and 29,364 in 2019, an absolute difference 
       of 5,989 individuals (and an overall cumulative difference of 26%).  That is to say, just under 6,000 fewer 
@@ -690,7 +689,7 @@ cancer_commentary <-
     br(),
     
     
-    h4(strong("Update 18/11/2020: For pathology data to 21/6/2020 (extracted 16/9/2020)")),
+    h3("18th November 2020 - Pathology data updated to 21st June 2020 (extracted 16/9/2020)"),
     p("By the week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer 
       (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference of 
       4,063 individuals (and an overall cumulative difference of 19%).  That is to say, around 4,000 fewer 
@@ -739,7 +738,7 @@ cancer_commentary <-
       drop of 35%."),
     
     
-    p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "(Data Source)"))
+    p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "Data Source (external website)"))
     
       ) 
   
