@@ -13,7 +13,7 @@ cancerpath_tab <-
                                     selected = "All Malignant Neoplasms (Excl. C44)")),
              column(4,
                     fluidRow(br()),
-                    actionButton("btn_cancer_modal", "Data source and definitions ", icon = icon('question-circle')),
+                    sourcemodal_ui("cancer"),
                     fluidRow(br()),
                     downloadButton('download_cancer_data', 'Download data'),
                     fluidRow(br()),
