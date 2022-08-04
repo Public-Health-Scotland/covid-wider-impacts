@@ -1,9 +1,5 @@
 
 ## Data Release - COVID Wider Impacts Dashboard            ##
-## Original Author - Róisín Farrell                        ##
-## Original Date - November 2020                           ##
-## Latest Update Author - Mark Hamilton                    ##
-## Latest Update Date - December 2021                      ##
 ##                                                         ##
 ## Type - Extraction/preparation                           ##
 ## Written/run on - R Studio SERVER                        ##
@@ -221,24 +217,6 @@ weekly_data <- data_2020
 weekly_data <- weekly_data %>%
   mutate(time_split = "Weekly")
 
-# saveRDS(data_2020, paste0(data_folder, "outpats.rds"))
-# # saveRDS(data_2020, paste0(WID_folder,"outpats.rds"))
-# saveRDS(data_2020, paste0(WID_folder,"final_app_files/outpats_",
-#                           format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-# saveRDS(data_2020, paste0(WID_folder, "outpats.rds"))
-
-### Creating area type lookup for dashboard ----
-area_type_op <- dataset %>%
-  group_by(area_name, area_type) %>%
-  summarise(count = n()) %>%
-  ungroup() %>%
-  select(-count) %>%
-  arrange(area_type)
-
-saveRDS(area_type_op, paste0(WID_folder, "final_app_files/area_type_op_",
-                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-saveRDS(area_type_op, paste0(data_folder, "area_type_op.rds"))
-
 # time taken.
 end <- Sys.time()
 end - start
@@ -247,7 +225,7 @@ end - start
 
 # remove datasets
 rm(outpats_agg, op_adm, op_adm_age, op_adm_all, op_adm_depr, op_adm_moc, op_adm_sex, 
-   historic_data, dataset, data_2020, area_type_op)
+   historic_data, dataset, data_2020)
 
 ###############
 ### MONTHLY ###

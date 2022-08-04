@@ -33,7 +33,7 @@ op_lookup <- readRDS("shiny_app/data/outpats.rds") %>%
   filter(areatype == "Scotland")
 
 # Adding extra area types
-geo_lookup <- rbind(
+geo_lookup <- bind_rows(
   tibble(code = "S00000001", areaname = "Scotland", areatype = "Scotland"), 
   geo_lookup,
   op_lookup,
