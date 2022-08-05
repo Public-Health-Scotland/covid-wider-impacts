@@ -1,6 +1,5 @@
-
-##Server script for pregnancy mode of delivery tab..
-
+# Wider impacts dashboard - Births and babies - method of delivery section
+# Server code
 
 # Pop-up modal explaining source of data
 observeEvent(input$`mod-source-modal`,
@@ -345,76 +344,6 @@ output$download_mod_data <- downloadHandler(
     write_csv(mod_download_data(),
               file) }
 )
-
-###############################################.
-## Commentary tab content  ----
-###############################################.
-
-#action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
-observeEvent(input$switch_to_mod,{
-  updateTabsetPanel(session, "intabset", selected = "comment")
-  updateCollapse(session, "collapse_commentary", open = "Method of delivery")
-})
-
-
-output$mod_commentary <- renderUI({
-  tagList(
-    bsButton("jump_to_mod",label = "Go to data"), #this button can only be used once
-    h2("Method of delivery - 3rd August 2022"),
-    p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births that are delivered by caesarean section in this month is likely to change in future releases of the dashboard. Data submissions from NHS Forth Valley were insufficient to report for April 2022. These will be updated in future dashboard releases."),
-    h2("Method of delivery - 6th July 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley in March 2022 and for NHS Fife in February 2022, so the proportion of births that are delivered by caesarean section in these months is likely to change in future releases of the dashboard."),
-    h2("Method of delivery - 1st June 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley and for NHS Fife in February 2022, so the proportion of births that are delivered by caesarean section in February 2022 is likely to change in future releases of the dashboard."),
-    h2("Method of delivery - 4th May 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley for December 2021 and January 2022 so the proportion of births that are delivered by caesarean section for these months is likely to change in future releases of the dashboard."),
-    h2("Method of delivery - 6th April 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley for December 2021 so the proportion of births that are delivered by elective caesarean section, which appears lower than that for most other NHS Boards, is likely to change in future releases of the dashboard"),
-    h2("Method of delivery - 6th October 2021"),
-    p("The proportion of all caesarean sections in Scotland has risen and remains higher than the pre-pandemic average for a number of consecutive months with the proportion approaching 40%.
-      Over the last five months the proportions of births recorded as caesarean sections in NHS Greater Glasgow & Clyde have been consistently above 40%. We are linking with NHS Greater Glasgow & Clyde to investigate this further."),
-    h2("Method of delivery - 1st September 2021"),
-    p("In this release of information on method of delivery (1st September 2021) data have been updated to include women discharged after delivery up to and including May 2021. The data for all Scotland show that the proportion of all caesarean sections has risen, they remain higher than the pre-pandemic average in the last 12 consecutive months and are now approaching 40%.  In recent months the proportions recorded for NHS Grampian have been particularly high, approaching 50%. We are linking with NHS Grampian to investigate this further."),
-    h2("Method of delivery - 7th July 2021"),
-    p("In this release of information on method of delivery (7th July 2021) data have been updated to include women discharged after delivery up to and including March 2021. The data for all Scotland show that the proportion of all caesarean sections has risen, they remain higher than the pre-pandemic average in the last 12 consecutive months and are now approaching 40%."),
-    p("A sharp increase was noted for NHS Fife in the most recent month. We are linking with NHS Fife to explore possible reasons for this."),
-    h2("Method of delivery - 2nd June 2021"),
-    p("In this release of information on method of delivery (2nd June 2021) data have been updated to include women discharged after delivery up to and including February 2021. The data for all Scotland show that the proportion of both emergency caesarean sections and elective caesarean sections have remained higher than the pre-pandemic average in recent months (at least the last 11 consecutive months). However, the shift in the proportion of elective caesarean sections (and of all caesarean sections) predates the COVID-19 pandemic. Including February 2021, NHS Grampian, NHS Greater Glasgow & Clyde and NHS Highland recorded a higher proportion of elective sections than their pre-pandemic average for at least the last 6 consecutive months. In NHS Ayrshire & Arran there has been a sequential month-on-month decrease in the proportion of emergency caesarean sections in the last 5 consecutive months. NHS Dumfries & Galloway, NHS Fife, NHS Grampian, NHS Greater Glasgow & Clyde, and NHS Lothian have continued, in February 2021, to show at least 6 consecutive months with a higher proportion of emergency sections than their pre-pandemic average. Including February 2021, NHS Dumfries & Galloway, NHS Fife, NHS Grampian, NHS Greater Glasgow & Clyde and NHS Lothian have continued to show at least 6 consecutive months with a higher proportion of all caesarean sections than their pre-pandemic average. However there has been a sequential month-on-month decrease in the proportion of all caesarean sections in the last 5 consecutive months in NHS Lothian."),
-    h2("Method of delivery - 5th May 2021"),
-    p("In this release of information on method of delivery (5th May 2021) data have been updated to include women discharged after delivery up to and including January 2021. The data for all Scotland show that the proportion of both emergency caesarean sections and elective caesarean sections have remained higher than the pre-pandemic average in recent months (at least the last 10 consecutive months). However, the shift in the proportion of elective caesarean sections predates the COVID-19 pandemic. Including January 2021, NHS Grampian and NHS Highland recorded a higher proportion of elective sections than their pre-pandemic average for at least the last 6 consecutive months. NHS Dumfries & Galloway, NHS Greater Glasgow & Clyde and NHS Lothian have continued, in January 2021, to show at least 6 consecutive months with a higher proportion of emergency sections than their pre-pandemic average. In January 2021, NHS Dumfries & Galloway and NHS Lothian have continued to show at least 6 consecutive months with a higher proportion of all caesarean sections than their pre-pandemic average. Including Jan 2021, NHS Greater Glasgow & Clyde have shown 5 consecutive months where a sequential month-on-month decrease in the proportion of all caesarean sections has occurred."),
-    h2("Method of delivery - 7th April 2021"),
-    p("In this third release of information on method of delivery (7th April 2021) data have been updated to include women discharged after delivery up to and including December 2020. The data for all Scotland show that the proportion of both emergency caesarean sections and elective caesarean sections have remained higher than the pre-pandemic average in recent months (at least the last nine consecutive months). However, the shift in the proportion of elective caesarean sections predates the COVID-19 pandemic. In December 2020, NHS Grampian recorded a higher proportion of elective sections than their pre-pandemic average for the 14th consecutive month. NHS Dumfries & Galloway and NHS Greater Glasgow & Clyde have continued in December 2020 to show at least 6 consecutive months with a higher proportion of emergency sections than their pre-pandemic average. In December 2020, NHS Fife and NHS Lothian have continued to show at least 6 consecutive months with a higher proportion of all caesarean sections than their pre-pandemic average. However, data are thought to be incomplete for NHS Fife for December 2020 so this proportion could change in future releases of the dashboard."),
-    h2("Method of delivery - 3rd March 2021"),
-    p("In this third release of information on method of delivery (3rd March 2021) data have been updated to include women discharged after delivery up to and including November 2020.  The data for all Scotland show that both the proportion of emergency caesarean sections and elective caesarean sections have remained higher than the pre-pandemic average for a number of consecutive months.  However, the shift in the proportion of elective caesarean sections predates the COVID-19 pandemic.  In November 2020, NHS Ayrshire & Arran and NHS Grampian continue their run of consecutive months showing a higher proportion of elective sections than their pre-pandemic average. NHS Dumfries & Galloway, NHS Greater Glasgow & Clyde and NHS Fife have continued to show consecutive months with a higher proportion of emergency sections than their pre-pandemic average.  However, data are thought to be incomplete for NHS Fife for November 2020 so this proportion could change in future releases of the dashboard."),
-    h2("Method of delivery - 3rd February 2021"),
-    p("In this second release of information on method of delivery (3rd February 2021) data have been updated to include women discharged after delivery up to and including October 2020.  Both the proportion of emergency caesarean sections and elective caesarean sections in Scotland as a whole have increased over this time. The rise appears to be driven by the increase in elective caesarean proportions with a notable increase in deliveries by elective caesarean from 16.4% to 18.4% between August and October 2020. The data by NHS Board of residence show more varied patterns. An increase in the proportion of elective caesareans is evident in some, but not all, NHS Board areas. For example NHS Greater Glasgow & Clyde (GGC), NHS Tayside and NHS Ayrshire and Arran, have a higher proportion of elective sections, although the shift precedes the pandemic period in GGC and the proportion of emergency sections in GGC is also elevated from April to October 2020. NHS Lothian and NHS Grampian also show an increase in both categories of caesarean section during 2020. The percentage of emergency and all caesarean sections are up in NHS Dumfries & Galloway from May to October 2020.  The percentage of emergency caesarean sections is down in NHS Lanarkshire from February to September 2020.  NHS Fife shows a sharper increase in emergency caesarean section proportions than elective caesareans, however, data are thought to be incomplete for NHS Fife for October 2020 so this proportion is likely to change in future releases of the dashboard."),
-    h2("Method of delivery - 16th December 2020"),
-    p("Information on method of delivery was included in this tool for the first time on 16 December 2020."),
-    p("The ‘",
-      tags$a(href="https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/assisted-birth", "method of delivery (external website) ",class="externallink",target="_blank"),
-      "' refers to the way a baby is born.  Different methods of delivery include spontaneous vaginal delivery (a natural birth); assisted vaginal delivery (including vaginal delivery by forceps or ventouse, or vaginal delivery of a breech baby); or a caesarean section (an operation to deliver the baby through a cut in the mother’s abdomen).  A caesarean section can be elective (planned in advance and provided before labour has started) or emergency (unplanned, and usually but not always provided after labour has started)."),
-    p("Care for women around the time they are giving birth is an essential, time critical service that cannot be deferred.  As such, it has been provided throughout the COVID-19 pandemic, and maternity staff have not been redeployed to support other services.  The way that some elements of this care are provided has changed in response to COVID-19 however, to minimise the risk of infection and to allow services to continue to provide safe care during times when a high number of staff may be off work, for example due to needing to isolate."),
-    p("Guidance issued by the ",
-      tags$a(href="https://www.gov.scot/collections/coronavirus-covid-19-guidance/#health,careandsocialwork", "Scottish Government (external website)",class="externallink",target="_blank"),
-      " and ",
-      tags$a(href="https://www.rcog.org.uk/coronavirus-pregnancy", "Royal College of Obstetricians and Gynaecologists (external website)",class="externallink",target="_blank"),
-      "to maternity services at the height of the first wave of the pandemic noted that:"),
-    tags$ul(
-      tags$li("It may be necessary for services to temporarily suspend the option for women to deliver at home or in midwife led units, and to concentrate delivery care within obstetric units"),
-      tags$li("Additional restrictions on the use of water births were recommended"),
-      tags$li("Care pathways for women requiring induction of labour should be amended to ensure the early stages of the induction process were delivered on an outpatient basis wherever possible"),
-      tags$li("Services should consider deferring a planned induction of labour or elective caesarean section if a woman was isolating due to having COVID-19, or having been in contact with a case, if it was safe to do so"),
-      tags$li("Services should support low risk women in the early latent phase of labour to remain at home wherever possible"),
-      tags$li("In general, strict restrictions on visitors for patients in hospital were advised, however women giving birth could still be accompanied by their chosen birth partner")
-    ),
-    p("The information on method of delivery presented through this tool is taken from hospital discharge records, specifically records relating to the care of women delivering a singleton live birth (i.e. one baby, not twins or more) at any stage of pregnancy.  Further technical information is available through the ‘Data source’ button on the dashboard page."),
-    p("The data shows that, at all Scotland level, the percentage of singleton live births delivered by caesarean section (the ‘caesarean section rate’) has gradually increased from January 2018 (when the data shown starts) to end September 2020 (the latest point for which data is currently available).  The increase is particularly seen in the elective caesarean section rate, but is also evident in the emergency caesarean section rate.  The upward trend in the elective and emergency caesarean section rates predates the COVID-19 pandemic, and it has continued during the pandemic. Whilst caesarean section can be a lifesaving operation for mothers and babies, the high and rising caesarean section rate seen in many countries over recent years is a ",
-      tags$a(href="https://obgyn.onlinelibrary.wiley.com/doi/full/10.1111/1471-0528.13526", "cause for concern (external website)",class="externallink",target="_blank"),
-      ". Excessive use of caesarean sections can carry unnecessary risks for mothers and babies."),
-    p("Prior to the COVID-19 pandemic, the caesarean section rate was somewhat variable between NHS Board areas of residence.  There is also some variation between areas in how the caesarean section rate has changed around the time of the pandemic, for example the emergency caesarean section rate has increased noticeably for women living in NHS Fife, whereas the elective and emergency caesarean section rates have decreased for women living in NHS Lanarkshire."),
-    p("There is a very clear gradient in the caesarean section rate by maternal age, with the rate being lowest among mothers in the youngest (<20 years) age group and highest among mothers in the oldest (40+ years) age group. These patterns have persisted during the COVID-19 pandemic. As women from the least deprived areas of Scotland tend to have their children at older ages than women from more deprived areas, this means that the caesarean section rate tends to be highest among mothers living in the least deprived areas.")
-    )
-})
 
 
 ##END

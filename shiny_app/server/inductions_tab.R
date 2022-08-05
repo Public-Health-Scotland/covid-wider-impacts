@@ -1,6 +1,5 @@
-
-##Server script for pregnancy - inductions tab..
-
+# Wider impacts dashboard - Induction of labour tab
+# Server code
 
 # Pop-up modal explaining source of data
 observeEvent(input$`induct-source-modal`,
@@ -313,67 +312,6 @@ output$download_induct_data <- downloadHandler(
     write_csv(induct_download_data(),
               file) }
 )
-
-###############################################.
-## Commentary tab content  ----
-###############################################.
-
-#action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
-observeEvent(input$switch_to_induction,{
-  updateTabsetPanel(session, "intabset", selected = "comment")
-  updateCollapse(session, "collapse_commentary", open = "Induction of labour")
-})
-
-
-output$induction_commentary <- renderUI({
-  tagList(
-    bsButton("jump_to_induction",label = "Go to data"), #this button can only be used once
-    h2("Induction of labour - 3rd August 2022"),
-    p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births that are induced in this month is likely to change in future releases of the dashboard. Data submissions from NHS Forth Valley were insufficient to report for April 2022. These will be updated in future dashboard releases."),
-    h2("Induction of labour - 6th July 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley in March 2022 and for NHS Fife in February 2022, so the proportion of births that are induced in these months is likely to change in future releases of the dashboard."),
-    h2("Induction of labour - 1st June 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley and for NHS Fife in February 2022, so the proportion of births that are induced in February 2022 is likely to change in future releases of the dashboard."),
-    h2("Induction of labour - 4th May 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley for December 2021 and January 2022 so the proportion of births that are induced for these months is likely to change in future releases of the dashboard."),
-    h2("Induction of labour - 1st December 2021"),
-    p("The percentage in NHS Greater Glasgow & Clyde of singleton live births at 37-42 weeks gestation that followed induction of labour has been consistently higher than the pre-pandemic average since October 2020, and reached 44% in August 2021. When undertaken for appropriate reasons, and by appropriate methods, induction is useful and benefits both mothers and newborn. We will continue to monitor and are working with NHS Greater Glasgow & Clyde to explore further. "),
-    h2("Induction of labour - 1st September 2021"),
-    p("The data at all Scotland level show that the proportion induced (the percentage of singleton live births at 37-42 weeks gestation that followed induction of labour) has continued to show little change across the period presented (January 2018 to May 2021). However, some NHS Boards have shown recent increases in the proportion of women induced with NHS Ayrshire & Arran, NHS Dumfries & Galloway, NHS Fife and NHS Greater Glasgow & Clyde all now reporting 40% of women induced or higher."),
-    h2("Induction of labour - 2nd June 2021"),
-    p("In this release of information on induction of labour (2nd June 2021) data have been updated to include women discharged after delivery up to and including February 2021. The data at all Scotland level show that the proportion induced (the percentage of singleton live births at 37-42 weeks gestation that followed induction of labour) has continued to show little change across the period presented (January 2018 to February 2021). The data by NHS Board of residence are more varied. In February 2021, NHS Borders, NHS Dumfries & Galloway and NHS Forth Valley have continued the pattern of at least 6 consecutive months showing a lower proportion of inductions compared to their pre-pandemic average. NHS Ayrshire & Arran have recorded an 11th consecutive month showing a higher proportion of inductions compared to their pre-pandemic average. However there has been a sequential month-on-month decrease in the proportion of inductions in the last 3 consecutive months in NHS Ayrshire and Arran."),
-    h2("Induction of labour - 5th May 2021"),
-    p("In this release of information on induction of labour (5th May 2021) data have been updated to include women discharged after delivery up to and including January 2021. The data at all Scotland level show that the proportion induced (the percentage of singleton live births at 37-42 weeks gestation that followed induction of labour) has continued to show little change across the period presented (January 2018 to January 2021). The data by NHS Board of residence are more varied. In January 2021, NHS Dumfries & Galloway and NHS Forth Valley have continued the pattern of at least 6 consecutive months showing a lower proportion of inductions compared to their pre-pandemic average (although both also showed periods of lower proportions of inductions in 2019). NHS Ayrshire & Arran have recorded a 10th consecutive month showing a higher proportion of inductions compared to their pre-pandemic average."),
-    h2("Induction of labour - 7th April 2021"),
-    p("In this third release of information on induction of labour (7th April 2021) data have been updated to include women discharged after delivery up to and including December 2020. The data at all Scotland level show that the proportion induced (the percentage of singleton live births at 37-42 weeks gestation that followed induction of labour) has continued to show little change across the period presented (January 2018 to December 2020). Data show that the percentage of women aged under 20 who were induced in December 2020 was recorded at its highest level (55%) during the last 3 years. The data by NHS Board of residence are more varied. In December 2020, NHS Dumfries & Galloway and NHS Forth Valley have continued the pattern of at least 6 consecutive months showing a lower proportion of inductions compared to their pre-pandemic average (although both also showed periods of lower proportions of inductions in 2019). NHS Ayrshire & Arran have recorded a 9th consecutive month showing a higher proportion of inductions compared to their pre-pandemic average."),
-    h2("Induction of labour - 3rd March 2021"),
-    p("In this third release of information on induction of labour (3rd March 2021) data have been updated to include women discharged after delivery up to and including November 2020. The data at all Scotland level show that the proportion induced (the percentage of singleton live births at 37-42 weeks gestation that followed induction of labour) has continued to show little change across the period presented (January 2018 to November 2020). The data by NHS Board of residence are more varied. In November 2020, NHS Dumfries & Galloway and NHS Forth Valley have continued the pattern of a number of consecutive months showing a lower proportion of inductions compared to their pre-pandemic average (although both showed periods of lower proportions of inductions in 2019). After a period where the proportion of births following induction was below the pre-pandemic average, the proportion in NHS Highland is noted to have increased in November 2020 to a level higher than the Health Board average (42%). NHS Ayrshire & Arran and NHS Fife have continued the pattern of a number of consecutive months showing a higher proportion of inductions compared to their pre-pandemic average. However, data are thought to be incomplete for NHS Fife for November 2020 so this proportion could change in future releases of the dashboard."),
-    h2("Induction of labour - 3rd February 2021"),
-    p("In this second release of information on induction of labour (3rd February 2021) data have been updated to include women discharged after delivery up to and including October 2020. The data at all Scotland level show that the proportion induced (the percentage of singleton live births at 37-42 weeks gestation that followed induction of labour) has continued to show little change across the period presented (January 2018 to October 2020). The data by NHS Board of residence are more varied. NHS Dumfries & Galloway, NHS Forth Valley and NHS Highland have shown lower proportions of inductions in recent months than their pre-pandemic average (although both NHS Dumfries & Galloway and NHS Forth Valley  also showed periods of lower proportions of inductions in 2019). NHS Lanarkshire showed a period of lower inductions in January to July 2020 but this has returned close to the long-term pre-pandemic average. NHS Ayrshire & Arran have shown slightly higher proportions since April 2020. Data for NHS Fife also show higher proportions of induction than their pre-pandemic average over recent months, particularly in October 2020. However, data are thought to be incomplete for NHS Fife for October 2020 so this proportion is likely to change in future releases of the dashboard."),
-    h2("Induction of labour - 16th December 2020"),
-    p("Information on induction of labour was included in this tool for the first time on 16 December 2020."),
-    p("'",
-      tags$a(href="https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/getting-ready-for-the-birth/induced-labour", "Induction of labour (external website)",class="externallink",target="_blank"),
-      "' is when a woman is given a medical intervention to start her labour, rather than waiting for labour to start spontaneously.  It is offered because there are medical reasons meaning it is considered safer (for the mother or baby) for the baby to be born, or because a woman is past her ‘due date’.  There are different approaches to inducing labour, for example using medicines, a medical ‘balloon’ device that sits at the neck of the womb, and/or breaking the woman’s waters."),
-    p("Care for women around the time they are giving birth is an essential, time critical service that cannot be deferred.  As such, it has been provided throughout the COVID-19 pandemic, and maternity staff have not been redeployed to support other services.  The way that some elements of this care are provided has changed in response to COVID-19 however, to minimise the risk of infection and to allow services to continue to provide safe care during times when a high number of staff may be off work, for example due to needing to isolate."),
-    p("Guidance issued by the ",
-      tags$a(href="https://www.gov.scot/collections/coronavirus-covid-19-guidance/#health,careandsocialwork", "Scottish Government (external website)",class="externallink",target="_blank"),
-      " and ",
-      tags$a(href="https://www.rcog.org.uk/coronavirus-pregnancy", "Royal College of Obstetricians and Gynaecologists (external website)",class="externallink",target="_blank"),
-      "to maternity services at the height of the first wave of the pandemic noted that:"),
-    tags$ul(
-      tags$li("It may be necessary for services to temporarily suspend the option for women to deliver at home or in midwife led units, and to concentrate delivery care within obstetric units"),
-      tags$li("Additional restrictions on the use of water births were recommended"),
-      tags$li("Care pathways for women requiring induction of labour should be amended to ensure the early stages of the induction process were delivered on an outpatient basis wherever possible"),
-      tags$li("Services should consider deferring a planned induction of labour or elective caesarean section if a woman was isolating due to having COVID-19, or having been in contact with a case, if it was safe to do so"),
-      tags$li("Services should support low risk women in the early latent phase of labour to remain at home wherever possible"),
-      tags$li("In general, strict restrictions on visitors for patients in hospital were advised, however women giving birth could still be accompanied by their chosen birth partner")
-      ),
-    p("The information on induction of labour presented through this tool is taken from hospital discharge records, specifically records relating to the care of women delivering a singleton live birth (i.e. one baby, not twins or more) at 37-42 weeks gestation (i.e. up to 3 weeks before or after their due date).  Further technical information is available through the ‘Data source’ button on the dashboard page."),
-    p("The data shows that, at all Scotland level, the percentage of singleton live births at 37-42 weeks gestation that followed induction of labour (the ‘induction rate’) has remained broadly constant (at around 34%) from January 2018 (when the data shown starts) to end September 2020 (the latest point for which data is currently available).  Prior to the COVID-19 pandemic, the induction rate was somewhat variable between NHS Board areas of residence.  There is also variation between areas in how the induction rate has changed around the time of the pandemic, with some areas (for example NHS Ayrshire & Arran and NHS Greater Glasgow & Clyde) showing a small increase and other areas (for example NHS Dumfries & Galloway, NHS Forth Valley, and NHS Lanarkshire) showing a small decrease."),
-    p("The induction rate tends to be highest among mothers in the youngest (<20 years) and oldest (40+ years) age groups, and among mothers living in the most deprived areas of Scotland.  These patterns have persisted during the COVID-19 pandemic.")
-     )
-})
 
 
 ##END

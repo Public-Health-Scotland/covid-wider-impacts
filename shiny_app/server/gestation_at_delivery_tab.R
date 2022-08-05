@@ -1,5 +1,5 @@
-
-##Server script for pregnancy gestation at delivery tab..
+# Wider impacts dashboard - Births and babies tab - Gestation at delivery section
+# Server code
 
 ###############################################.
 ## Modals ----
@@ -430,86 +430,6 @@ output$download_gest_data <- downloadHandler(
     write_csv(gest_download_data(),
               file) }
 )
-
-###############################################.
-## Commentary tab content  ----
-###############################################.
-
-#action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
-observeEvent(input$switch_to_gestation,{
-  updateTabsetPanel(session, "intabset", selected = "comment")
-  updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")
-})
-
-
-output$gestation_commentary <- renderUI({
-  tagList(
-    bsButton("jump_to_gestation",label = "Go to data"), #this button can only be used once
-    h2("Gestation at delivery - 3rd August 2022"),
-    p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births that are delivered pre-term and post-term in this month are likely to change in future releases of the dashboard. Data submissions from NHS Forth Valley were insufficient to report for April 2022. These will be updated in future dashboard releases."),
-    h2("Gestation at delivery - 6th July 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley in March 2022 and for NHS Fife in February 2022, so the proportion of births that are delivered pre-term and post-term in these months are likely to change in future releases of the dashboard."),
-    h2("Gestation at delivery - 1st June 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley and for NHS Fife in February 2022,  so the proportions of births that are delivered pre-term and post-term in February 2022 are likely to change in future releases of the dashboard."),
-    h2("Gestation at delivery - 4th May 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley for December 2021 and January 2022 so the proportions of births that are delivered pre-term and post-term for these months are likely to change in future releases of the dashboard."),
-    h2("Gestation at delivery - 6th April 2022"),
-    p("Data are thought to be incomplete for NHS Forth Valley for December 2021 so the proportion of births that are preterm, which appears lower than that for most other NHS Boards, is likely to change in future releases of the dashboard."),
-    h2("Gestation at Delivery – 2nd March 2022"),
-    p("The percentage of singleton live births delivered at or over 42 weeks (‘post-term’) in NHS Grampian has been increasing and has remained above the pre-pandemic average for the last 8 consecutive months, although it should be noted that numbers of post-term births delivered each month are very small.  NHS Grampian have been made aware of the data and PHS will continue to monitor."),
-    h2("Gestation at delivery - 1st December 2021"),
-    p("NHS Tayside have shown a recent drop in their proportion of births delivered at 32-36 weeks gestation, however, numbers involved are very small and so are likely to fluctuate from month to month. "),
-    h2("Gestation at delivery - 3rd November 2021"),
-    p("Following 11 months (October 2019 to September 2020) where the percentage of singleton live births in NHS Lothian delivered at or over 42 weeks (‘post-term’) was below the pre-pandemic average of 1.9%, the proportion of post-term births has now been above the pre-pandemic average for 10 consecutive months (October 2020 to July 2021). We are working with the board in order to investigate this further."),
-    h2("Gestation at delivery - 2nd June 2021"),
-    p("In this release of information on gestation at delivery (2nd June 2021) data have been updated to include women discharged after delivery up to and including February 2021. The data at all Scotland level show that the preterm proportion (the percentage of singleton live births delivered at under 37 weeks gestation) has decreased in February 2021 to a level of 5.5%, although the previous two months were either side of the pre-pandemic average. The data by NHS Board vary. In February 2021, NHS Borders and NHS Ayrshire & Arran have recorded a preterm proportion lower than their pre-pandemic average for at least 6 consecutive months. In the last 5 consecutive months, NHS Fife have shown a sequential month-on-month increasing trend in the proportion of singleton live births delivered at under 32 weeks gestation. Including February 2021, NHS Borders have shown 8 consecutive months where the proportion of births delivered between 32-36 weeks gestation was lower than their pre-pandemic average."),
-    p("In February 2021, the percentage of singleton live births in Scotland delivered at or over 42 weeks (‘post-term’) has continued to be below its usual historical level (for a 16th consecutive month). In February 2021, NHS Greater Glasgow & Clyde recorded a lower than average post-term proportion for the 17th consecutive month."),
-    h2("Gestation at delivery - 5th May 2021"),
-    p("In this release of information on gestation at delivery (5th May 2021) data have been updated to include women discharged after delivery up to and including January 2021. The data at all Scotland level show that the preterm proportion (the percentage of singleton live births delivered at under 37 weeks gestation) in January 2021 is 6.5%, a level similar to the pre-pandemic average. The data by NHS Board vary. In January 2021, NHS Borders has recorded a preterm proportion lower than their pre-pandemic average for the 7th consecutive month albeit based on very small numbers. NHS Fife has recorded unusually high preterm proportions in December 2020 and January 2021. However, data are thought to be incomplete for NHS Fife for these two periods so these proportions could change in future releases of the dashboard. PHS are working with NHS Fife to clarify this situation. Including Jan 21, NHS Tayside have shown 6 consecutive months where the proportion of births delivered between 32-36 weeks gestation was lower than their pre-pandemic average."),
-    p("In January 2021, the percentage of singleton live births in Scotland delivered at or over 42 weeks (‘post-term’) has continued to be below its usual historical level (for a 15th consecutive month). In January 2021, NHS Greater Glasgow & Clyde recorded a lower than average post-term proportion for the 16th consecutive month. Including Jan 21, NHS Highland have shown 5 consecutive months where a sequential month-on-month decrease in the proportion of post-term births has occurred."),
-    h2("Gestation at delivery - 7th April 2021"),
-    p("In this third release of information on gestation at delivery (7th April 2021) data have been updated to include women discharged after delivery up to and including December 2020. The data at all Scotland level show that the preterm proportion (the percentage of singleton live births delivered at under 37 weeks gestation) in December 2020 is at a level very similar to the pre-pandemic average at 7.0%. The data by NHS Board vary.  In December 2020, NHS Borders has recorded a preterm proportion lower than their pre-pandemic average for the sixth consecutive month albeit based on very small numbers. NHS Fife has recorded an unusually high preterm proportion in December 2020. However, data are thought to be incomplete for NHS Fife for December 2020 so this proportion could change in future releases of the dashboard."),
-    p("In December 2020, the percentage of singleton live births in Scotland delivered at or over 42 weeks (‘post-term’) has continued to be below its usual historical level (for a 14th consecutive month). In December 2020, NHS Greater Glasgow & Clyde recorded a lower than average post-term proportion for the 15th consecutive month."),
-    h2("Gestation at delivery - 3rd March 2021"),
-    p("In this third release of information on gestation at delivery (3rd March 2021) data have been updated to include women discharged after delivery up to and including November 2020. The data at all Scotland level show that the preterm proportion (the percentage of singleton live births delivered at under 37 weeks gestation) still remains fractionally below the pre-pandemic average in November 2020. The data by NHS Board vary but there are no notable changes in the preterm proportion for November 2020."),
-    p("In November 2020, the percentage of singleton live births in Scotland delivered at or over 42 weeks (‘post-term’) has continued to be below its usual historical level. NHS Greater Glasgow & Clyde have continued their run of consecutive months showing a lower than average post-term proportion."),
-    h2("Gestation at delivery - 3rd February 2021"),
-    p("In this second release of information on gestation at delivery (3rd February 2021) data have been updated to include women discharged after delivery up to and including October 2020.  The data at all Scotland level show that the preterm proportion (the percentage of singleton live births delivered at under 37 weeks gestation), having been lower than the pre-pandemic average during the period March to July 2020, has increased slightly but still remains fractionally below the pre-pandemic average at 6.7% in October 2020."),
-    p("The data by NHS Board of residence show more varied patterns.  NHS Forth Valley has shown quite low proportions of preterm births in recent months compared to their pre-pandemic average with 4.9% in October 2020.  NHS Ayrshire & Arran, NHS Dumfries & Galloway and NHS Lothian also show periods where the percentage of preterm births is lower than the long-term average. However these periods start before the pandemic period. No NHS Boards are showing particularly high preterm numbers. Data are thought to be incomplete for NHS Fife for October 2020 so the proportion of births that are preterm, which is higher than that for most other NHS Boards, is likely to change in future releases of the dashboard."),
-    p("The percentage of singleton live births in Scotland delivered at or over 42 weeks ( ‘post-term’) has continued to be fractionally below its usual historical level. This pattern began in November 2019, and no specific change in the post-term proportion has been seen during the COVID-19 pandemic. The pattern at board level is more variable. NHS Greater Glasgow & Clyde has shown a decrease over recent months with the percentage for October 2020 being the lowest in the period shown at 0.7%."),
-    h2("Gestation at delivery - 16th December 2020"),
-    p("Information on gestation at delivery was included in this tool for the first time on 16 December 2020."),
-    p("‘Gestation at delivery’ refers to the number of completed weeks pregnant a woman is when she delivers her baby. Babies are ‘due’ at 40 completed weeks gestation. Those born between 37 and 41 weeks inclusive are considered to be born ‘at term’. Babies born at under 37 weeks (more than three weeks before their due date) are considered ",
-      tags$a(href = "https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/after-the-birth/premature-babies", "preterm or premature (external website)",  target="_blank"),
-      ", with those born at under 32 weeks considered very preterm and those born at 32 to 36 weeks inclusive considered moderately preterm. Babies born at or over 42 weeks (more than two weeks after their due date) are considered post-term or over-due. Babies born preterm are at increased risk of both short and long term health and developmental problems, with the ",
-      tags$a(href = "https://www.tommys.org/pregnancy-information/premature-birth/how-long-do-you-stay-in-hospital-after-birth/gestational-age-and-medical-needs", "risk increasing the earlier a baby is born (external website)",  target="_blank"),
-      ". Babies are also at increased risk when pregnancies extend post-term, in particular the ",
-      tags$a(href = "https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/getting-ready-for-the-birth/induced-labour", "risk of stillbirth (external website)",  target="_blank"),
-      " increases from 42 weeks gestation onwards."),
-    p("Care for women and babies around the time they are giving birth/being born is an essential, time critical service that cannot be deferred.  As such, it has been provided throughout the COVID-19 pandemic, and maternity and neonatal staff have not been redeployed to support other services.  The way that some elements of this care are provided has changed in response to COVID-19 however, to minimise the risk of infection and to allow services to continue to provide safe care during times when a high number of staff may be off work, for example due to needing to isolate.  Relevant guidance has been issued by the ",
-      tags$a(href = "https://www.gov.scot/collections/coronavirus-covid-19-guidance/#health,careandsocialwork", "Scottish Government (external website)",  target="_blank"),
-      ", the ",
-      tags$a(href = "https://www.rcog.org.uk/coronavirus-pregnancy", "Royal College of Obstetricians and Gynaecologists (external website)",  target="_blank"),
-      ", and the ",
-      tags$a(href = "https://www.bapm.org/pages/182-perinatal-covid-19-resources", "British Association for Perinatal Medicine (external website)",  target="_blank"),
-      "."),
-    p("The current evidence suggests that ",
-      tags$a(href = "https://www.birmingham.ac.uk/research/who-collaborating-centre/pregcov/about/publications.aspx", "women with COVID-19 are at increased risk of preterm delivery (external website)",  target="_blank"),
-      ". Conversely, several studies (for example from the ",
-      tags$a(href = "https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(20)30223-1/fulltext", "Netherlands (external website)",  target="_blank"),
-      ", ",
-      tags$a(href = "https://www.medrxiv.org/content/10.1101/2020.05.22.20109793v1", "Denmark (external website)",  target="_blank"),
-      ",  and ",
-      tags$a(href = "https://gh.bmj.com/content/5/9/e003075", "Ireland (external website)",  target="_blank"),
-      ") have reported that the overall number or proportion of babies born preterm or with low birthweight fell during the ‘lockdown’ period implemented in response to COVID-19.  The reasons for this finding are currently unclear, but may reflect the combined impact of factors such as a reduction in infections other than COVID-19, improved air quality, and changes to antenatal care, which together more than outweigh any direct effect of COVID-19.",
-      p("The information on gestation at delivery presented through this tool is taken from hospital discharge records, specifically records relating to the care of women delivering a singleton live birth (i.e. one baby, not twins or more) at a known gestation (between 18-44 weeks inclusive).  Further technical information is available through the ‘Data source’ button on the dashboard page."),
-      p("The data shows that, at all Scotland level, the percentage of singleton live births delivered at under 37 weeks gestation (the ‘preterm rate’) was slightly lower than usual over the period March to July 2020 (at just over 6% compared to the more usual 6.8%).  This was driven by a dip in the percentage of births delivered at 32-36 weeks (the ‘moderately preterm rate’): there has been no change in the percentage of births delivered at under 32 weeks (the ‘very preterm rate’).  The percentage of singleton live births delivered at or over 42 weeks (the ‘post-term rate’) has been fractionally below its usual historical level since November 2019, but no specific change in the post-term rate has been seen during the COVID-19 pandemic."),
-      p("Prior to the COVID-19 pandemic, the preterm rate was somewhat variable between NHS Board areas of residence.  There is also some variation between areas in how the preterm rate has changed around the time of the pandemic.  The preterm rate for women living in NHS Ayrshire & Arran and NHS Lothian has shown a particularly pronounced fall during the pandemic.  No area has seen a sustained increase in the preterm rate during the pandemic.  The hospital delivery discharge records returned to Public Health Scotland that are used in this tool are incomplete for NHS Fife for September 2020: this is likely to account for the unusually high very preterm rate seen for women living in NHS Fife in this month specifically.  We expect this unusually high rate to change when more records are received and this page of the dashboard is refreshed."),
-      p("The preterm rate tends to be highest among mothers in the youngest (<20 years) and oldest (40+ years) age groups, however differences between age groups are not pronounced.  There is a clear gradient in the preterm rate by deprivation, with the rate being highest among mothers living in the most deprived areas of Scotland.  These patterns have persisted during the COVID-19 pandemic.")
-    )
-  )
-})
-
 
 
 
