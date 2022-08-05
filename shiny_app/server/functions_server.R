@@ -86,7 +86,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
       } else if (tab == "injuries") {
         trend_data <- trend_data %>%
-          filter(type %in% split & area_name == input$geoname_injuries,
+          filter(type %in% split & area_name == input$`injury-geoname`,
                  category != "all")
     } else {
     trend_data <- trend_data
