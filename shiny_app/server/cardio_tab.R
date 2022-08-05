@@ -95,14 +95,14 @@ observeEvent(input$`cardio-source-modal`,
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/",
                           "Public Health Scotland (PHS).",  target="_blank")),
                  p("Attendances", week_standard),
-                 p(tags$em("Important note: It is not possible to accurately report total attendances for specific conditions 
+                 p("Important note: It is not possible to accurately report total attendances for specific conditions 
                            using the national A&E dataset, due to the quality of the data available.  Diagnosis/reason for 
                            attendance can be recorded in a variety of ways, including in free text fields - and not all NHS 
                            Boards submit this information.  The numbers presented in these dashboards therefore give only a 
                            high level indication of differences over time and by age and sex, and should be interpreted with 
                            caution.  Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the 
                            demographic profile of the areas represented in the data available. PHS are planning work to improve 
-                           consistency.")),
+                           consistency."),
                  p("The table below shows the ICD-10 codes that were considered for the cardiovascular A&E data subset,
                    where this information was available."),
                  actionButton("toggleCodeTable", "Show / Hide Table"),
@@ -479,7 +479,7 @@ output$cardio_explorer <- renderUI({
       )
     } else if (input$`cardio-measure` == "aye") {
       tagList(# A&E attendances (cardiovascular only)
-        tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
+        p("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
                  incomplete for a number of NHS Boards. Thus, the figures reported for cardiovascular-related
                  attendances offer only a very approximate indication of attendances. In addition, due to a technical
                  issue in the A&E diagnosis recording for the weeks ending in 2nd and 9th August
@@ -503,7 +503,7 @@ output$cardio_explorer <- renderUI({
       )
     } else if (input$`cardio-measure` == "drug_presc") {
       tagList(# Prescribing - items dispensed
-        tags$em("Please note that an improved drugs mapping procedure was implemented for the August 2021 update,
+        p("Please note that an improved drugs mapping procedure was implemented for the August 2021 update,
                 which increased the number of prescriptions compared to what was previously published. The mean increase
                 across all time periods and areas was 4%, and the majority of individual increases were less than 10%."),
         h3(paste0("Weekly number of cardiovascular medicines prescribed in ", input$`cardio-geoname`)),
@@ -540,12 +540,12 @@ output$cardio_explorer <- renderUI({
         )
      } else if (input$`cardio-measure` == "sas_cardiac") {
        tagList(# SAS incidents
-         tags$em(p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
+         p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
                 tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
                        "Unscheduled Care Operational Statistics (external website)", target="_blank"), ". The data published by SAS is sourced from a 
                         different operational system than that used for the PHS reporting. This means that the data published 
                         by SAS will at times be slightly different to that reported by PHS source.")),
-         h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$`cardio-geoname`)),
+         h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$`cardio-geoname`),
          fluidRow(column(6, sourcemodal_ui("cardio")),
                   column(6,data_last_updated)),
          plot_box("2020 to 2022 compared with 2018-2019 average", "sas_cardio_all"),
