@@ -542,10 +542,11 @@ output$cardio_explorer <- renderUI({
        tagList(# SAS incidents
          p("SAS currently publish weekly unscheduled care operational statistics at the following ", 
                 tags$a(href="https://www.scottishambulance.com/publications/unscheduled-care-operational-statistics/", 
-                       "Unscheduled Care Operational Statistics (external website)", target="_blank"), ". The data published by SAS is sourced from a 
+                       "Unscheduled Care Operational Statistics (external website)", target="_blank"), 
+                        ". The data published by SAS is sourced from a 
                         different operational system than that used for the PHS reporting. This means that the data published 
-                        by SAS will at times be slightly different to that reported by PHS source.")),
-         h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$`cardio-geoname`),
+                        by SAS will at times be slightly different to that reported by PHS source."),
+         h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$`cardio-geoname`)),
          fluidRow(column(6, sourcemodal_ui("cardio")),
                   column(6,data_last_updated)),
          plot_box("2020 to 2022 compared with 2018-2019 average", "sas_cardio_all"),
