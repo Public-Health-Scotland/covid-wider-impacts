@@ -30,14 +30,25 @@ geo_lookup <- phsmethods::area_lookup %>% filter(substr(geo_code,1,3) %in% c("S3
 op_lookup <- readRDS("shiny_app/data/outpats.rds") %>%
   select(areaname = area_name, areatype = area_type) %>%
   distinct() %>% arrange(areatype) %>% 
-  filter(areatype == "Scotland")
+  filter(areatype != "Scotland")
 
 # Adding extra area types
 geo_lookup <- bind_rows(
   tibble(code = "S00000001", areaname = "Scotland", areatype = "Scotland"), 
   geo_lookup,
   op_lookup,
-  tibble(code = paste0("S9900000", 1:3), areaname = c("NCA", "SCAN", "WOSCAN"), areatype = "Cancer network")
+  tibble(code = paste0("S9900000", 1:3), areaname = c("NCA", "SCAN", "WOSCAN"), areatype = "Cancer network"),
+  tibble(code = paste0("S9800000", 1:31), areatype = "Alcohol and drug partnership",
+         areaname = c("Aberdeen City ADP", "Aberdeenshire ADP", "Angus ADP", "Argyll & Bute ADP", 
+                  "City of Edinburgh ADP", "City of Glasgow ADP", "Clackmannanshire ADP", 
+                  "Dumfries & Galloway ADP", "Dundee City ADP", "East Ayrshire ADP", 
+                  "East Dunbartonshire ADP", "East Renfrewshire ADP", "Falkirk ADP", 
+                  "Fife ADP", "Highland ADP", "Inverclyde ADP", "Mid and East Lothian ADP", 
+                  "Moray ADP", "North Ayrshire ADP", "North Lanarkshire ADP", "Orkney Islands ADP", 
+                  "Perth & Kinross ADP", "Renfrewshire ADP", "Scottish Borders ADP", 
+                  "Shetland Islands ADP", "South Ayrshire ADP", "South Lanarkshire ADP", 
+                  "Stirling ADP", "West Dunbartonshire ADP", "West Lothian ADP", 
+                  "Western Isles ADP"))
 )
 
 saveRDS(geo_lookup, "shiny_app/data/geo_lookup.rds")
