@@ -24,16 +24,6 @@ antenatal_tab <-
       ##############################################.
       # Antenatal booking commentary ----
       ##############################################.
-# observeEvent(input$switch_to_top,{
-#   updateTabsetPanel(session, "intabset", selected = "comment")
-#   updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")
-# })
-
-
-# observeEvent(input$switch_to_top,{
-#   conditionalPanel(condition= 'input.commentary_select == "termination"', top_commentary)
-# })
-
 
 booking_commentary <- 
   tagList(
@@ -257,23 +247,28 @@ booking_commentary <-
       by week remained broadly constant from April 2019 (when the data starts) to the end of 2019. 
       As would be expected there was then a dip reflecting the Christmas holidays, with higher numbers 
       of women booking just before and just after the holidays. The number of women booking then returned 
-      to previous levels until mid-May 2020.  From mid-May to end September (the latest point for which data is currently available), the number of women booking has been consistently lower than expected based on previous average levels.  Over the 19 weeks from week beginning 18 May 2020 to week beginning 21 September 2020, around 1,400 fewer women than would have been expected based on pre-pandemic levels have booked for antenatal care in Scotland.  As women most commonly book at around 9 weeks gestation, women booking from mid-May onwards will broadly reflect women getting pregnant from late March 2020 onwards, i.e. the point at which the initial UK wide lockdown was implemented in response to COVID-19."),
+      to previous levels until mid-May 2020.  From mid-May to end September (the latest point for which 
+      data is currently available), the number of women booking has been consistently lower than expected 
+      based on previous average levels.  Over the 19 weeks from week beginning 18 May 2020 to week 
+      beginning 21 September 2020, around 1,400 fewer women than would have been expected based on 
+      pre-pandemic levels have booked for antenatal care in Scotland.  As women most commonly book at 
+      around 9 weeks gestation, women booking from mid-May onwards will broadly reflect women getting 
+      pregnant from late March 2020 onwards, i.e. the point at which the initial UK wide lockdown was 
+      implemented in response to COVID-19."),
     p("Looking at the data for women living in different NHS Board areas across Scotland, the pattern 
       of a recent fall in the number of women booking for antenatal care is evident in some but not all areas."),
     p("Fewer women booking for antenatal care could reflect fewer women who become pregnant choosing 
       to continue with their pregnancy and/or fewer women becoming pregnant. It is therefore helpful 
       to consider the data on antenatal booking alongside the data on terminations of pregnancy provided 
-      through this tool",
-      actionLink("switch_to_top","(see the Commentary on Terminations of pregnancy  for more information)"),
-      ".  Considering both sets of data, it seems likely that both reasons apply. It is likely that 
-      the higher than usual number of terminations of pregnancy provided in March and April 2020 at 
-      least partially contributed to the initial fall in the number of women booking for antenatal 
-      care from mid-May. Conversely, the subsequent sustained reduction seen in both the number of 
-      terminations and the number of women booking for antenatal care is likely to reflect a reduction 
-      in the number of women becoming pregnant from April 2020 onwards. Further analysis is required 
-      to accurately examine trends in the number of women becoming pregnant during the COVID-19 pandemic, 
-      their subsequent choices to continue with or terminate their pregnancy, and what this means for 
-      future trends in the number of births in Scotland."),
+      through this tool (see the Commentary on Terminations of pregnancy for more information). Considering 
+      both sets of data, it seems likely that both reasons apply. It is likely that the higher than usual 
+      number of terminations of pregnancy provided in March and April 2020 at least partially contributed 
+      to the initial fall in the number of women booking for antenatal care from mid-May. Conversely, 
+      the subsequent sustained reduction seen in both the number of terminations and the number of women 
+      booking for antenatal care is likely to reflect a reduction in the number of women becoming pregnant 
+      from April 2020 onwards. Further analysis is required to accurately examine trends in the number 
+      of women becoming pregnant during the COVID-19 pandemic, their subsequent choices to continue with 
+      or terminate their pregnancy, and what this means for future trends in the number of births in Scotland."),
     p("At all Scotland level, prior to COVID-19, the average gestation at which women booked for 
       antenatal care was around 9 and a half weeks of pregnancy.  This fell slightly from the end 
       of March 2020, reaching around 8 and a half weeks by end June 2020 before increasing back 
@@ -284,7 +279,14 @@ booking_commentary <-
       lower than usual from April 2020 onwards."),
     p("Looking at the data for women living in different NHS Board areas across Scotland, the 
       pattern of a temporary dip in gestation at booking coinciding with the first wave of the 
-      COVID-19 pandemic in Scotland is evident in some but not all areas.  This probably reflects the fact that the detail of how maternity services were reconfigured in response to COVID-19 varied across Scotland.  From August 2020 onwards, the recorded gestation at booking has been higher than usual for women living in NHS Tayside.  This is due to a temporary data recording issue following implementation of a new clinical information system in NHS Tayside at that time.  Public Health Scotland is working with NHS Tayside to resolve this and we expect that future releases of the antenatal booking data through this tool will see the average gestation return to a level which is more typical for NHS Tayside."),
+      COVID-19 pandemic in Scotland is evident in some but not all areas.  This probably reflects 
+      the fact that the detail of how maternity services were reconfigured in response to COVID-19 
+      varied across Scotland.  From August 2020 onwards, the recorded gestation at booking has been 
+      higher than usual for women living in NHS Tayside.  This is due to a temporary data recording 
+      issue following implementation of a new clinical information system in NHS Tayside at that time. 
+      Public Health Scotland is working with NHS Tayside to resolve this and we expect that future 
+      releases of the antenatal booking data through this tool will see the average gestation return 
+      to a level which is more typical for NHS Tayside."),
     p("At all Scotland level, the recent reduction in the number of women booking for antenatal 
       care has been more evident in younger (compared to older) women, and in women living in 
       more (compared to less) deprived areas. In general, there is no substantial variation 
@@ -323,13 +325,6 @@ terminations_tab <-
       ###############################################.
       # Termination of pregnancy commentary ----
       ###############################################.
-
-# #action associated with action links within commentary text - this observe event linked to an actionLink within the TOP commentary which will take the user from TOP commentary to ANB commentary easily.
-# observeEvent(input$switch_to_anb,{
-#   updateTabsetPanel(session, "intabset", selected = "comment")
-#   updateCollapse(session, "collapse_commentary", open = "Antenatal bookings")
-# })
-
 
 top_commentary <-
   tagList(
@@ -503,23 +498,23 @@ top_commentary <-
       tags$a(href = "http://www.gov.scot/publications/consultation-future-arrangements-early-medical-abortion-home/", 
              "consultation (external website)", class="externallink", target="_blank"),
       " on whether the recent changes extending women’s access to early medical termination at home 
-      should be retained after the COVID-19 pandemic.  The consultation will be open until 5 January 2021."),
-    p("The data shows that, at all Scotland level, the number of terminations of pregnancy provided 
-      month by month remained broadly constant from January 2018 (when the data shown starts) to 
-      February 2020 inclusive. The number of terminations was then higher than usual in March and April 
-      2020, before falling to lower than usual levels in May, June, and July 2020 (with July 2020 being 
-      the latest month for which data are currently available).  Over March and April 2020, around 500 
-      more terminations than would have been expected based on pre-pandemic average levels were provided 
-      in Scotland. This is likely to reflect a higher proportion than usual of women who found they were 
-      pregnant at the start of the COVID-19 pandemic in Scotland choosing not to continue with their 
-      pregnancy. As discussed in the ",
-      actionLink("switch_to_anb","Commentary on the Antenatal booking data"),
-      " provided through this tool, it is likely that the lower than usual numbers of termination 
-      provided from May 2020 onwards reflects a reduction in the number of women becoming pregnant 
-      from April 2020 onwards.  Further analysis is required to accurately examine trends in the 
-      number of women becoming pregnant during the COVID-19 pandemic, their subsequent choices to 
-      continue with or terminate their pregnancy, and what this means for future trends in the 
-      number of births in Scotland."),
+      should be retained after the COVID-19 pandemic. The consultation will be open until 5 
+      January 2021."),
+    p("The data shows that, at all Scotland level, the number of terminations of pregnancy 
+      provided month by month remained broadly constant from January 2018 (when the data 
+      shown starts) to February 2020 inclusive. The number of terminations was then higher 
+      than usual in March and April 2020, before falling to lower than usual levels in May, 
+      June, and July 2020 (with July 2020 being the latest month for which data are currently 
+      available). Over March and April 2020, around 500 more terminations than would have been 
+      expected based on pre-pandemic average levels were provided in Scotland. This is likely 
+      to reflect a higher proportion than usual of women who found they were pregnant at the 
+      start of the COVID-19 pandemic in Scotland choosing not to continue with their pregnancy. 
+      As discussed in the commentary on the Antenatal booking data provided through this tool, 
+      it is likely that the lower than usual numbers of termination provided from May 2020 onwards 
+      reflects a reduction in the number of women becoming pregnant from April 2020 onwards. Further 
+      analysis is required to accurately examine trends in the number of women becoming pregnant during 
+      the COVID-19 pandemic, their subsequent choices to continue with or terminate their pregnancy, 
+      and what this means for future trends in the number of births in Scotland."),
     p("Looking at the data for women living in different NHS Board areas across Scotland, the 
       pattern of an increase in the number of terminations of pregnancy in March and April 2020, 
       then a subsequent fall from May 2020 onwards is evident in some but not all areas."),
