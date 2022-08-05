@@ -1,16 +1,11 @@
 drugs_tab <- 
   tabPanel(title = "Substance use", icon = icon("tablets"), value = "drugs",
          wellPanel(
-           column(4, div(title="Select the data you want to explore", # tooltip
-                         radioGroupButtons("drug_subcategories",
-                                           label= "Step 1 – Select the data you want to explore",
-                                           choices = c('Take home naloxone kits',
-                                                       'Scottish Ambulance Service naloxone administration'= 'SAS naloxone administration',
-                                                       'Drug and alcohol treatment referrals',
-                                                       'Opioid substitution therapy prescribing'='OST prescribing',
-                                                       'A&E attendances for drug overdose/intoxication'),
-                                           status = "primary",
-                                           direction = "vertical", justified = T))),
+           column(4, selectdata_ui("drugs", measure_choices =  c('Take home naloxone kits',
+                                                                 'Scottish Ambulance Service naloxone administration'= 'SAS naloxone administration',
+                                                                 'Drug and alcohol treatment referrals',
+                                                                 'Opioid substitution therapy prescribing'='OST prescribing',
+                                                                 'A&E attendances for drug overdose/intoxication'))),
            column(4,uiOutput('area_drugs_select'),
                   uiOutput("geoname_ui_drugs")),
            
@@ -18,8 +13,7 @@ drugs_tab <-
            column(4,downloadButton('download_drugs_data', 'Download data'),
                   actionButton('jump_commentary_drugs','Go to commentary'),
                   fluidRow(br()),
-                  actionButton("btn_drugs_modal", "Data source and definitions",
-                               icon = icon('question-circle'))
+                  sourcemodal_ui("drugs")
            )
          ),#wellPanel bracket
          
@@ -27,17 +21,17 @@ drugs_tab <-
                    #actionButton('browser','browser'),
                    p('Last updated: 29 June 2022'),
                    fluidRow(br()),
-                   uiOutput('Quan_plot'),
+                   uiOutput('drugs_quan_plot'),
                    fluidRow(br()),
-                   uiOutput('TwoYrComparison'),
-                   fluidRow(br()),
-                   fluidRow(br()),
-                   uiOutput('Cum_plot'),
+                   uiOutput('drugs_2yr_comp'),
                    fluidRow(br()),
                    fluidRow(br()),
-                   uiOutput('Prop_barplot'),
-                   uiOutput('PercentChange'),
-                   uiOutput('drug_AE_explorer'),
+                   uiOutput('drugs_cum_plot'),
+                   fluidRow(br()),
+                   fluidRow(br()),
+                   uiOutput('drugs_prop_barplot'),
+                   uiOutput('drugs_perc_change'),
+                   uiOutput('drugs_ae_explorer'),
                    fluidRow(br())
                    
          )# mainPanel bracket

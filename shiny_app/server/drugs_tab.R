@@ -1,6 +1,15 @@
 #Server side for drugs tab.
-observeEvent(input$btn_drugs_modal, 
-             if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
+
+# TODO:
+# Too many functions/objects have very generic names
+# Needs commenting
+
+###############################################.
+## Modals ----
+###############################################.
+# Modal for data source and definitions
+observeEvent(input$`drugs-source-modal`, 
+             if(input$`drugs-measure` == 'Drug and alcohol treatment referrals'){
              showModal(modalDialog(
                title = "What is the data source?",
               p('This section of the PHS Covid-19 wider impacts dashboard provides the weekly number of referrals to specialist alcohol and 
@@ -35,7 +44,7 @@ observeEvent(input$btn_drugs_modal,
                  tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
-             else if(input$drug_subcategories == 'Take home naloxone kits'){
+             else if(input$`drugs-measure` == 'Take home naloxone kits'){
               showModal(modalDialog(
                  title = "What is the data source?",
               p('Accidental overdose is a common cause of death among users of opioids such as heroin and morphine. 
@@ -55,7 +64,7 @@ observeEvent(input$btn_drugs_modal,
                 tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
-             else if(input$drug_subcategories == 'SAS naloxone administration'){
+             else if(input$`drugs-measure` == 'SAS naloxone administration'){
                showModal(modalDialog(
                  title = "What is the data source?",
                  p('Scottish Ambulance Service (SAS) data on weekly numbers of incidents at which naloxone was administered to a patient have been shared with Public Health Scotland to facilitate the monitoring of drug-related harms and assist in preserving life and informing harm prevention activity. '),
@@ -69,7 +78,7 @@ observeEvent(input$btn_drugs_modal,
                    tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
-             else if(input$drug_subcategories == 'OST prescribing'){
+             else if(input$`drugs-measure` == 'OST prescribing'){
                showModal(modalDialog(
                  title = "What is the data source?",
                  p('Information on the characteristics of community prescribing for Opioid Substitution Therapy (OST) drugs (methadone and buprenorphine) in Scotland is obtained from the Prescribing Information System. '),
@@ -86,7 +95,7 @@ observeEvent(input$btn_drugs_modal,
                    tags$b(tags$a(href="mailto:phs.drugsteam@phs.scot", "phs.drugsteam@phs.scot",  target="_blank")),'.'),
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
-             else if(input$drug_subcategories == 'A&E attendances for drug overdose/intoxication'){
+             else if(input$`drugs-measure` == 'A&E attendances for drug overdose/intoxication'){
                showModal(modalDialog(
                  title = "What is the data source?",
                  p('A weekly breakdown of the number of drug-related attendances at Emergency Departments in Scotland is obtained from Public Health Scotland’s Accident & Emergency Datamart'),
@@ -106,17 +115,20 @@ observeEvent(input$btn_drugs_modal,
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              }
                )
-#observeEvent(input$browser, browser())
+
+###############################################.
+## Reactive controls ----
+###############################################.
 
 output$area_drugs_select<-renderUI({
   
-  if(input$drug_subcategories == 'Drug and alcohol treatment referrals'){
+  if(input$`drugs-measure` == 'Drug and alcohol treatment referrals'){
     selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
                    choices = c('Scotland','NHS Board','Alcohol and Drug Partnership'), selected = "Scotland")
   }
 
   
-  else if (input$drug_subcategories == 'Take home naloxone kits'||input$drug_subcategories=='SAS naloxone administration'||input$drug_subcategories == 'OST prescribing'||input$drug_subcategories == 'A&E attendances for drug overdose/intoxication'){
+  else if (input$`drugs-measure` == 'Take home naloxone kits'||input$`drugs-measure`=='SAS naloxone administration'||input$`drugs-measure` == 'OST prescribing'||input$`drugs-measure` == 'A&E attendances for drug overdose/intoxication'){
     selectizeInput("area_drugs_select", "Step 2 - Select the area of interest",
                    choices = c('Scotland','NHS Board'), selected = "Scotland")
   }
@@ -140,28 +152,33 @@ output$geoname_ui_drugs <- renderUI({
 })
 
 output$types<-renderUI({
-  if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+  if(input$`drugs-measure`=='Drug and alcohol treatment referrals'){
     column(8,
            radioButtons("types", label="Step 3 - Select type of referral",
                         choices = c('All','Drug','Alcohol', 'Co-dependency'),selected = 'All'))
   }
-  else if(input$drug_subcategories=='Take home naloxone kits'){
+  else if(input$`drugs-measure`=='Take home naloxone kits'){
     column(8,
            radioButtons("types", label="Step 3 - Select source of supply",
                         choices = c('All','Community','Dispensed by community pharmacies'='Prescribing','Prison'),selected = 'All'))
   }
-  else if (input$drug_subcategories=='OST prescribing'){
+  else if (input$`drugs-measure`=='OST prescribing'){
     column(8, 
            radioButtons('types',label='Step 3 - Select type of treatment',
                         choices=c('Methadone','Buprenorphine'),selected='Methadone'))
   }
-  # else if(input$drug_subcategories=='A&E attendances for drug overdose/intoxication'){
+  # else if(input$`drugs-measure`=='A&E attendances for drug overdose/intoxication'){
   #   column(8,
   #          radioButtons("types", label="Step 3 - Select type of attendance",
   #                       choices = c('Drug Overdoses','Alcohol Overdoses', 'Drug and Alcohol Overdoses'),selected = 'Drug and Alcohol Overdoses'))
   # }
 })
  
+###############################################.
+## Reactive datasets ----
+###############################################.
+
+
 location<-reactive({
   if (input$area_drugs_select=='Scotland'){
     location<-'Scotland'
@@ -174,32 +191,36 @@ location<-reactive({
 
 plot_data<-reactive({ 
   
-  if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+  if(input$`drugs-measure`=='Drug and alcohol treatment referrals'){
     plot_data<-subset(DTR_data,(Board==location()) & Type==input$types)
   }
-  else if(input$drug_subcategories=='Take home naloxone kits'){
+  else if(input$`drugs-measure`=='Take home naloxone kits'){
     plot_data<-subset(THN_by_HB,(Board==location()) )
   }
-  else if(input$drug_subcategories=='OST prescribing'){
+  else if(input$`drugs-measure`=='OST prescribing'){
     plot_data<-subset(OST_paid,(Board==location()) & (Type==input$types))
   }
-  else if(input$drug_subcategories=='SAS naloxone administration'){
+  else if(input$`drugs-measure`=='SAS naloxone administration'){
     plot_data<-subset(SASdata,(Board==location()))
   }
-  else if(input$drug_subcategories=='A&E attendances for drug overdose/intoxication'){
+  else if(input$`drugs-measure`=='A&E attendances for drug overdose/intoxication'){
     plot_data<-subset(Drug_AE_attendances,(Board==location()))
   }
   plot_data
 })
 
 
-output$TwoYrComparison<-renderUI({
+###############################################.
+## Charts ----
+###############################################.
+
+output$drugs_2yr_comp<-renderUI({
   
   ####DTR section####
   plot_data<-plot_data()
   
   
-  if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+  if(input$`drugs-measure`=='Drug and alcohol treatment referrals'){
     output$trend<-renderPlotly({
     lab.text<-c(paste0("Date: ", format(plot_data$Date, format = "%b %d, %Y"),
                        "<br>", 'Number of referrals: ', plot_data$`2020, 2021 & 2022`,
@@ -231,7 +252,7 @@ output$TwoYrComparison<-renderUI({
  
   #### Naloxone Section ####
   
-  else if(input$drug_subcategories=='Take home naloxone kits'){
+  else if(input$`drugs-measure`=='Take home naloxone kits'){
     output$trend<-renderPlotly({
     plot_data<-subset(plot_data(),(Type==input$types))
     lab_text<-c(paste0("Month: ", unique(plot_data$Date),
@@ -266,7 +287,7 @@ output$TwoYrComparison<-renderUI({
   
   #### OST prescribing section ####
   
-  else if(input$drug_subcategories=='OST prescribing'){
+  else if(input$`drugs-measure`=='OST prescribing'){
     output$trend<-renderPlotly({
     
       
@@ -334,7 +355,7 @@ output$TwoYrComparison<-renderUI({
     plotlyOutput('trend',width='100%')
   }
   #### SAS Naloxone section ####
-  else if(input$drug_subcategories=='SAS naloxone administration'){
+  else if(input$`drugs-measure`=='SAS naloxone administration'){
     if(location()=='NHS Shetland'||location()=='NHS Orkney'||location()=='NHS Western Isles'){
       output$data_message<-renderText('Data not shown due to small numbers. Data for the Island Boards is included in the Scotland total')
       textOutput('data_message')
@@ -372,7 +393,7 @@ output$TwoYrComparison<-renderUI({
     }}
   
   #### Drug related A&E attendances ####
-  else if(input$drug_subcategories=='A&E attendances for drug overdose/intoxication'){
+  else if(input$`drugs-measure`=='A&E attendances for drug overdose/intoxication'){
     tagList(#A&E attendances
       p("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E dataset, due to the quality of the data available.  
         Diagnosis/reason for attendance can be recorded in a variety of ways, including in free text fields - and not all NHS Boards submit this information.  
@@ -431,10 +452,10 @@ output$TwoYrComparison<-renderUI({
   
 })
 
-
-output$Prop_barplot<-renderUI({
+# Chart for proportions
+output$drugs_prop_barplot<-renderUI({
   
-  if(input$drug_subcategories=='Take home naloxone kits'){
+  if(input$`drugs-measure`=='Take home naloxone kits'){
     
     output$prop_plot<-renderPlotly({
       
@@ -475,9 +496,9 @@ output$Prop_barplot<-renderUI({
   
 })
 
-output$Cum_plot<-renderUI({
+output$drugs_cum_plot<-renderUI({
   
-  if(input$drug_subcategories=='Take home naloxone kits'){
+  if(input$`drugs-measure`=='Take home naloxone kits'){
     output$cum_plot<-renderPlotly({
     plot_data<-subset(plot_data(),(Type==input$types))
     plot_data1<-plot_data[1:12,]
@@ -513,7 +534,7 @@ output$Cum_plot<-renderUI({
     }
 
 
- else if(input$drug_subcategories=='SAS naloxone administration'){
+ else if(input$`drugs-measure`=='SAS naloxone administration'){
    if(location()!='NHS Shetland'&&location()!='NHS Orkney'&&location()!='NHS Western Isles'){
 
    output$cum_plot<-renderPlotly({
@@ -584,9 +605,9 @@ output$Cum_plot<-renderUI({
 })
 
 
-output$PercentChange<-renderUI({
+output$drugs_perc_change<-renderUI({
   
-  if (input$drug_subcategories == 'Drug and alcohol treatment referrals') {
+  if (input$`drugs-measure` == 'Drug and alcohol treatment referrals') {
     
     plot_data<-plot_data()
     
@@ -641,8 +662,8 @@ textOutput('data_message')
   
 })
 
-output$Quan_plot<-renderUI({
-  if (input$drug_subcategories=='OST prescribing'){
+output$drugs_quan_plot<-renderUI({
+  if (input$`drugs-measure`=='OST prescribing'){
     
     output$quan_plot<-renderPlotly({
       
@@ -717,7 +738,7 @@ output$drug_gender_plot<-renderPlotly({
 })
 
 ## A&E Drug attendances - Pct change
-output$Drug_AE_change_plot<-renderPlotly({
+output$drug_ae_change_plot<-renderPlotly({
   
   plot_data <- subset(plot_data(), (Gender == "All"))
   
@@ -759,11 +780,12 @@ output$Drug_AE_change_plot<-renderPlotly({
 }
 
 })    
-    
+###############################################.
+## Reactive layout ----
+###############################################.
+
 ## This section combines the two A&E sub-plots together (Pct change and Gender)    
-output$drug_AE_explorer <- renderUI({
-  
-  data_last_updated <- tagList(p("Last updated: 29 June 2022"))
+output$drugs_ae_explorer <- renderUI({
   
   note_average <- p("Please note that due to small numbers we are presenting 3-week rolling average figures.")
   
@@ -772,17 +794,17 @@ output$drug_AE_explorer <- renderUI({
                      The numbers presented in these dashboards therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with caution.  
                      Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of the areas represented in the data available. PHS are planning work to improve consistency.")
   
-  note_smallBoards <- p("")
+  note_smallboards <- p("")
   
-  if (input$drug_subcategories=='A&E attendances for drug overdose/intoxication') {
+  if (input$`drugs-measure`=='A&E attendances for drug overdose/intoxication') {
    if(location()=='Scotland') {
-     tagList(note_dataQual, note_average, br(), data_last_updated,
+     tagList(note_dataQual, note_average, 
       plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug overdose/intoxications \nin ", location(), " (2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
-                   plot_output1 = "Drug_AE_change_plot",
+                   plot_output1 = "drug_ae_change_plot",
                    title_plot2 = paste0("3-Week average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
                    plot_output2 = "drug_gender_plot"))
    } else {
-     tagList(note_smallBoards)
+     tagList(note_smallboards)
      }
   }
 })
@@ -894,23 +916,23 @@ output$download_drugs_data <- downloadHandler(
   filename ="drugs_extract.csv",
   content = function(file) {
 
-    if(input$drug_subcategories=='Drug and alcohol treatment referrals'){
+    if(input$`drugs-measure`=='Drug and alcohol treatment referrals'){
       write_csv(DTR_data,
                 file) }
 
-    else if(input$drug_subcategories=='Take home naloxone kits'){
+    else if(input$`drugs-measure`=='Take home naloxone kits'){
       write_csv(THN_by_HB,
                 file) }
     
-    else if(input$drug_subcategories=='SAS naloxone administration'){
+    else if(input$`drugs-measure`=='SAS naloxone administration'){
       write_csv(SASdata[c(1,2,5,6)],
                 file) }
-    else if(input$drug_subcategories=='OST prescribing'){
+    else if(input$`drugs-measure`=='OST prescribing'){
       write_csv(OST_paid,
                 file)
       write_csv(OST_paid_quantity,
                 file) }
-    else if(input$drug_subcategories=='A&E attendances for drug overdose/intoxication'){
+    else if(input$`drugs-measure`=='A&E attendances for drug overdose/intoxication'){
       if (location() == "Scotland") {
         x <- Drug_AE_attendances %>%
           filter(Board == "Scotland") %>%

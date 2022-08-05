@@ -4,12 +4,8 @@
 source("data_prep/functions_packages_data_prep.R")
 
 library(readxl)
-library(lubridate)
-library(tidyr)
 library(ISOweek)
-library(tidyverse)
 library(reshape2)
-library(zoo)
 
 ###############################################.
 ## Drug and alcohol treatment referrals ----
