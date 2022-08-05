@@ -446,6 +446,26 @@ cath_lab_type <- reactive({
     select(-category) %>% rename(category = groups) %>% droplevels()
 })
 
+# Cardio deaths area/diagnosis reactive filter
+# remove  & type_admission == input$type_adm_select
+cardio_disch_filter <- reactive({
+  cardio_admissions %>% 
+    filter(area_name == input$`cardio-geoname` &
+             diagnosis == input$diagnosis_select)
+  
+})
+
+# Cardio deaths area/diagnosis reactive filter
+cardio_dth_filter <- reactive({
+  cardio_deaths %>% 
+    filter(area_name == input$`cardio-geoname` &
+             diagnosis == input$diagnosis_select)
+  
+})
+
+
+
+
 ###############################################.
 ## Reactive layout  ----
 ###############################################.
@@ -491,7 +511,7 @@ output$cardio_explorer <- renderUI({
         h3("Weekly cardiovascular A&E attendances in Scotland"),
         fluidRow(column(6, sourcemodal_ui("cardio")),
         column(6,data_last_updated)),
-        plot_box("2020 to 2022 compared with 2018-2019 average", "ae_cardio_overall"),
+        plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_overall"),
         plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by age group", "ae_cardio_age_var",
                      "Weekly number of cardiovascular A&E attendances in Scotland by age group", "ae_cardio_age_tot")
@@ -509,7 +529,7 @@ output$cardio_explorer <- renderUI({
         h3(paste0("Weekly number of cardiovascular medicines prescribed in ", input$`cardio-geoname`)),
         fluidRow(column(6, sourcemodal_ui("cardio")),
                  column(6,data_last_updated)),
-        plot_box("2020 to 2022 compared with 2018-2019 average", "prescribing_all"),
+        plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_overall"),
         plot_cut_box(paste0("Percentage change in cardiovascular medicines prescribed in ", input$`cardio-geoname`, " compared with the corresponding
                      time in 2018-2019 by medicine groupings"), "cardio_drugs_var",
                      paste0("Weekly number of cardiovascular medicines prescribed in ", input$`cardio-geoname`, " by medicine groupings"), "cardio_drugs_tot")
@@ -525,7 +545,7 @@ output$cardio_explorer <- renderUI({
           h3(paste0("Weekly chest pain cases in out of hours services in ", input$`cardio-geoname`)),
           fluidRow(column(6, sourcemodal_ui("cardio")),
                    column(6,data_last_updated)),
-          plot_box("2020 to 2022 compared with 2018-2019 average", "ooh_cardio_all"),
+          plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_overall"),
           plot_cut_box(paste0("Percentage change in chest pain cases in ", input$`cardio-geoname`, " compared with the corresponding
                      time in 2018-2019 by sex"), "ooh_cardio_sex_var",
                        paste0("Weekly number of chest pain cases in ", input$`cardio-geoname`, " by sex"), "ooh_cardio_sex_tot"),
@@ -549,7 +569,7 @@ output$cardio_explorer <- renderUI({
          h3(paste0("Weekly attended cardiovascular incidents by Scottish Ambulance Service in ", input$`cardio-geoname`)),
          fluidRow(column(6, sourcemodal_ui("cardio")),
                   column(6,data_last_updated)),
-         plot_box("2020 to 2022 compared with 2018-2019 average", "sas_cardio_all"),
+         plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_overall"),
          plot_cut_box(paste0("Percentage change in cardiovascular incidents in ", input$`cardio-geoname`, " compared with the corresponding
                      time in 2018-2019 by sex"), "sas_cardio_sex_var",
                       paste0("Weekly number of cardiovascular incidents in ", input$`cardio-geoname`, " by sex"), "sas_cardio_sex_tot"),
@@ -568,7 +588,7 @@ output$cardio_explorer <- renderUI({
          h3(paste0("Quarterly ", input$diagnosis_select, " ", "Emergency admissions in ", input$`cardio-geoname`)),
          fluidRow(column(6, sourcemodal_ui("cardio")),
                   column(6,data_last_updated)),
-         plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_admissions_all"),
+         plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_overall"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "Emergency admissions in ", input$`cardio-geoname`, " compared with the corresponding
                      time in 2018-2019 by sex"), "cardio_admissions_sex_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", "Emergency admissions in ", input$`cardio-geoname`, " by sex"), "cardio_admissions_sex_tot"),
@@ -586,7 +606,7 @@ output$cardio_explorer <- renderUI({
          h3(paste0("Quarterly ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`)),
          fluidRow(column(6, sourcemodal_ui("cardio")),
                   column(6,data_last_updated)),
-         plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_deaths_all"),
+         plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_overall"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " compared with the corresponding
                      time in 2018-2019 by sex (Only totals are shown at board level due to small numbers)"), "cardio_deaths_sex_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " by sex (Only totals are shown at board level due to small numbers)"), "cardio_deaths_sex_tot"),
@@ -601,29 +621,6 @@ output$cardio_explorer <- renderUI({
        )       
     }
 })
-
-
-###############################################.
-## Reactive datasets ----
-###############################################.
-
-# Cardio deaths area/diagnosis reactive filter
-# remove  & type_admission == input$type_adm_select
-cardio_disch_filter <- reactive({
-  cardio_admissions %>% 
-    filter(area_name == input$`cardio-geoname` &
-             diagnosis == input$diagnosis_select)
-  
-})
-
-# Cardio deaths area/diagnosis reactive filter
-cardio_dth_filter <- reactive({
-  cardio_deaths %>% 
-    filter(area_name == input$`cardio-geoname` &
-             diagnosis == input$diagnosis_select)
-  
-})
-
 
 ###############################################.
 ## Charts ----
@@ -642,20 +639,40 @@ output$cath_type_tot <- renderPlotly({plot_trend_chart(cath_lab_type(),
                    pal_sex, type = "total", data_name = "cath")})
 
 ###############################################.
+# Overal chart comparing pre-pandemic and pandemic period 
+output$cardio_overall <- renderPlotly({
+  if (input$`cardio-measure` == "aye") {
+    plot_overall_chart(ae_cardio, data_name = "aye", area = "All")
+  } else if (input$`cardio-measure` == "drug_presc") {
+    plot_overall_chart(cardio_drugs %>% filter(area_name == input$`cardio-geoname`),
+                       data_name = "drug_presc", area = "All")
+  } else if (input$`cardio-measure` == "ooh_cardiac") {
+    plot_overall_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
+                       data_name = "ooh_cardiac", area = "All",
+                       fix_x_range = TRUE) %>%
+      add_cardio_ooh_coding_line()
+  } else if (input$`cardio-measure` == "sas_cardiac") {
+    plot_overall_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
+                       data_name = "sas_cardiac", area = "All")
+  } else if (input$`cardio-measure` == "cardio_admissions") {
+    plot_overall_chart(cardio_disch_filter(),
+                       data_name = "cardio_admissions", area = "All", period = "quarterly")
+  } else if (input$`cardio-measure` == "cardio_deaths") {
+    plot_overall_chart(cardio_dth_filter(),
+                       data_name = "cardio_deaths", area = "All", period = "quarterly")
+  }
+})
+###############################################.
 # A&E Cardio charts
-output$ae_cardio_overall <- renderPlotly({plot_overall_chart(ae_cardio, data_name = "aye", area = "All")})
 output$ae_cardio_age_var <- renderPlotly({plot_trend_chart(ae_cardio, pal_sex, c("age", "all"), data_name = "aye",tab = "cardio")})
 output$ae_cardio_age_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_sex, c("age", "all"), "total", "aye", tab = "cardio")})
-output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
-output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
+# output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
+# output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
 
 ###############################################.
 # Prescribing charts
-output$prescribing_all <- renderPlotly({plot_overall_chart(cardio_drugs %>% filter(area_name == input$`cardio-geoname`),
-                                                           data_name = "drug_presc", area = "All")})
 output$cardio_drugs_var <- renderPlotly({plot_trend_chart(cardio_drugs, pal_med, c("condition"), data_name = "drug_presc", tab = "cardio")})
 output$cardio_drugs_tot <- renderPlotly({plot_trend_chart(cardio_drugs, pal_med, c("condition"), "total", data_name = "drug_presc", tab = "cardio")})
-###############################################.
 
 ###############################################.
 # OOH charts
@@ -675,11 +692,6 @@ after this date are not comparable to those before it."
             hovertext = hovertext)
 }
 
-
-output$ooh_cardio_all <- renderPlotly({plot_overall_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                                                          data_name = "ooh_cardiac", area = "All",
-                                                          fix_x_range = TRUE) %>%
-                                        add_cardio_ooh_coding_line()})
 output$ooh_cardio_sex_var <- renderPlotly({plot_trend_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
                                                             pal_sex, split = "sex", type = "variation",
                                                             data_name = "ooh_cardiac", tab = "cardio",
@@ -710,13 +722,9 @@ output$ooh_cardio_depr_tot <- renderPlotly({plot_trend_chart(ooh_cardiac %>% fil
                                                              data_name = "ooh_cardiac", tab = "cardio",
                                                              fix_x_range = TRUE) %>%
                                             add_cardio_ooh_coding_line()})
-###############################################.
-
 
 ###############################################.
 # SAS charts
-output$sas_cardio_all <- renderPlotly({plot_overall_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                                                            data_name = "sas_cardiac", area = "All")})
 output$sas_cardio_sex_var <- renderPlotly({plot_trend_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
                                                               pal_sex, split = "sex", type = "variation", data_name = "sas_cardiac", tab = "cardio")})
 output$sas_cardio_sex_tot <- renderPlotly({plot_trend_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
@@ -729,13 +737,9 @@ output$sas_cardio_depr_var <- renderPlotly({plot_trend_chart(sas_cardiac %>% fil
                                                                pal_depr, split = "dep", type = "variation",data_name = "sas_cardiac", tab = "cardio")})
 output$sas_cardio_depr_tot <- renderPlotly({plot_trend_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
                                                                pal_depr, split = "dep", type = "total",data_name = "sas_cardiac", tab = "cardio")})
-###############################################.
-
 
 ###############################################.
 # Admissions charts
-output$cardio_admissions_all <- renderPlotly({plot_overall_chart(cardio_disch_filter(),
-                                                          data_name = "cardio_admissions", area = "All", period = "quarterly")})
 output$cardio_admissions_sex_var <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
                                                             pal_sex, split = "sex", type = "variation", data_name = "cardio_admissions", tab = "cardio", period = "quarterly")})
 output$cardio_admissions_sex_tot <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
@@ -748,13 +752,9 @@ output$cardio_admissions_depr_var <- renderPlotly({plot_trend_chart(cardio_disch
                                                              pal_depr, split = "dep", type = "variation",data_name = "cardio_admissions", tab = "cardio", period = "quarterly")})
 output$cardio_admissions_depr_tot <- renderPlotly({plot_trend_chart(cardio_disch_filter(),
                                                              pal_depr, split = "dep", type = "total",data_name = "cardio_admissions", tab = "cardio", period = "quarterly")})
-###############################################.
-
 
 ###############################################.
 # Deaths charts
-output$cardio_deaths_all <- renderPlotly({plot_overall_chart(cardio_dth_filter(),
-                                                                 data_name = "cardio_deaths", area = "All", period = "quarterly")})
 output$cardio_deaths_sex_var <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
                                                                    pal_sex, split = "sex", type = "variation", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")})
 output$cardio_deaths_sex_tot <- renderPlotly({plot_trend_chart(cardio_dth_filter(),
