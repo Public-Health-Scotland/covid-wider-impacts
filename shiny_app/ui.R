@@ -81,22 +81,18 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                      # Stillbirths and infant deaths
                      conditionalPanel(condition= 'input.commentary_select == "perinatal"',
                                       perinatal_commentary),
-                     
-                     
-                     
-                     
-                     # Immunisation
+                     # Immunisations
                      conditionalPanel(condition= 'input.commentary_select == "immunisation"',
-                                      tagList( uiOutput("immun_commentary_section"))),
-                     # Child health
+                                      immun_commentary_section),
+                     # Child health reviews1
                      conditionalPanel(condition= 'input.commentary_select == "child-health"',
-                                      tagList( uiOutput("child_comments"))),
+                                      child_comments),
                      # Breastfeeding
                      conditionalPanel(condition= 'input.commentary_select == "breastfeeding"',
-                                      tagList( uiOutput("breastfeeding_commentary"))),
+                                      breastfeeding_commentary),
                      # Child development
                      conditionalPanel(condition= 'input.commentary_select == "child-dev"',
-                                      tagList( uiOutput("childdev_commentary"))),
+                                      childdev_commentary),
 
 
 
