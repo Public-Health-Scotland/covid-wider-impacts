@@ -93,18 +93,9 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                      # Child development
                      conditionalPanel(condition= 'input.commentary_select == "child-dev"',
                                       childdev_commentary),
-
-
-
-
-
-
-
-
-
                      # Substance use
                      conditionalPanel(condition= 'input.commentary_select == "drugs"',
-                                      tagList( uiOutput("drug_commentary")))
+                                      drug_commentary)
                      
            )#mainPanel
          ) #sidebarLayout
