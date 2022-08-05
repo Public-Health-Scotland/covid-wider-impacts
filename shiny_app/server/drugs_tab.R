@@ -189,7 +189,7 @@ location<-reactive({
 }) 
 
 
-plot_data<-reactive({ 
+drugs_plot_data<-reactive({ 
   
   if(input$`drugs-measure`=='Drug and alcohol treatment referrals'){
     plot_data<-subset(DTR_data,(Board==location()) & Type==input$types)
@@ -217,7 +217,7 @@ plot_data<-reactive({
 output$drugs_2yr_comp<-renderUI({
   
   ####DTR section####
-  plot_data<-plot_data()
+  plot_data<-drugs_plot_data()
   
   
   if(input$`drugs-measure`=='Drug and alcohol treatment referrals'){
@@ -247,14 +247,14 @@ output$drugs_2yr_comp<-renderUI({
     trend <- trend %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
      })
-    plotlyOutput('trend',width='100%')
+    withSpinner(plotlyOutput('trend',width='100%'))
     }
  
   #### Naloxone Section ####
   
   else if(input$`drugs-measure`=='Take home naloxone kits'){
     output$trend<-renderPlotly({
-    plot_data<-subset(plot_data(),(Type==input$types))
+    plot_data<-subset(drugs_plot_data(),(Type==input$types))
     lab_text<-c(paste0("Month: ", unique(plot_data$Date),
                        "<br>", 'Number of THN: ', plot_data$`2020 & 2021`,
                        "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
@@ -282,7 +282,7 @@ output$drugs_2yr_comp<-renderUI({
     trend <- trend %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     })
-    plotlyOutput('trend',width='100%')
+    withSpinner(plotlyOutput('trend',width='100%'))
   }
   
   #### OST prescribing section ####
@@ -291,8 +291,8 @@ output$drugs_2yr_comp<-renderUI({
     output$trend<-renderPlotly({
     
       
-      plot_item<-subset(plot_data(),(Measurement=='Items'))
-      plot_qpi<-subset(plot_data(),(Measurement=='Quantity per item'))
+      plot_item<-subset(drugs_plot_data(),(Measurement=='Items'))
+      plot_qpi<-subset(drugs_plot_data(),(Measurement=='Quantity per item'))
       lab_text<-c(paste0("Month: ", plot_item$Date,
                          "<br>", 'Number of items: ', plot_item$`2020, 2021 & 2022`,
                          "<br>", "Historic average: ", plot_item$`Average 2018 & 2019`))
@@ -352,7 +352,7 @@ output$drugs_2yr_comp<-renderUI({
         displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
       
     })
-    plotlyOutput('trend',width='100%')
+    withSpinner(plotlyOutput('trend',width='100%'))
   }
   #### SAS Naloxone section ####
   else if(input$`drugs-measure`=='SAS naloxone administration'){
@@ -363,17 +363,17 @@ output$drugs_2yr_comp<-renderUI({
     else{
     output$trend<-renderPlotly({
     
-    lab_text1<-c(paste0("Date: ", plot_data()$Date,
-                        "<br>", 'No. of SAS naloxone incidents: ', plot_data()$`2020, 2021 & 2022`,
-                        "<br>", "Historic average: ", plot_data()$`Average 2018 & 2019`))
-    trend <- plot_ly(data = plot_data(),x=plot_data()$Date) %>% 
+    lab_text1<-c(paste0("Date: ", drugs_plot_data()$Date,
+                        "<br>", 'No. of SAS naloxone incidents: ', drugs_plot_data()$`2020, 2021 & 2022`,
+                        "<br>", "Historic average: ", drugs_plot_data()$`Average 2018 & 2019`))
+    trend <- plot_ly(data = drugs_plot_data(),x=drugs_plot_data()$Date) %>% 
       add_trace(y = ~ `2020, 2021 & 2022`,name='2020, 2021 & 2022',type='scatter', mode='lines', 
                 line=list(color=pal_overall[1]),text=lab_text1,hoverinfo='text') %>% 
       add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',
                 type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
                 text=lab_text1,hoverinfo='text') %>% 
       layout(shapes=lockdown('2020-03-23','grey'),
-      annotations=annote("2020-03-01",plot_data()$`Average 2018 & 2019`,plot_data()$`2020, 2021 & 2022`),
+      annotations=annote("2020-03-01",drugs_plot_data()$`Average 2018 & 2019`,drugs_plot_data()$`2020, 2021 & 2022`),
       margin=list(t=80),
       title = (sprintf("3-Week average of the number of SAS incidents where naloxone was administered in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",location())),
       xaxis=list(
@@ -389,7 +389,7 @@ output$drugs_2yr_comp<-renderUI({
     trend <- trend %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     })
-    plotlyOutput('trend',width='100%')
+    withSpinner(plotlyOutput('trend',width='100%'))
     }}
   
   #### Drug related A&E attendances ####
@@ -408,7 +408,7 @@ output$drugs_2yr_comp<-renderUI({
     else{
       output$trend <- renderPlotly({
         ## set out the plot data, based on what the user has selected
-        plot_data <- subset(plot_data(), (Gender == "All"))
+        plot_data <- subset(drugs_plot_data(), (Gender == "All"))
         
         lab_text<-c(paste0("Average of weeks beginning ",format(plot_data$Date-7, "%d %b %y"), ", ", format(plot_data$Date, "%d %b %y"), ", ", format(plot_data$Date+7, "%d %b %y"),
                             "<br>", 'Number of attendances: ', round(plot_data$`2020 & 2021`,1),
@@ -446,7 +446,7 @@ output$drugs_2yr_comp<-renderUI({
                                    displayModeBar = TRUE, 
                                    modeBarButtonsToRemove = bttn_remove)
       })
-      plotlyOutput('trend',width='100%')
+      withSpinner(plotlyOutput('trend',width='100%'))
      }
   }
   
@@ -459,7 +459,7 @@ output$drugs_prop_barplot<-renderUI({
     
     output$prop_plot<-renderPlotly({
       
-      plot_data<-plot_data()
+      plot_data<-drugs_plot_data()
       months<-length(unique(plot_data$Date)) #number of unique dates 
       prop <- plot_ly(data = plot_data, x =seq(1:months),
                       y = plot_data$`2020 & 2021`[which(plot_data$Type=='Community')],
@@ -490,7 +490,7 @@ output$drugs_prop_barplot<-renderUI({
           config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     })
     
-    plotlyOutput('prop_plot', width='100%')
+    withSpinner(plotlyOutput('prop_plot', width='100%'))
     
   }
   
@@ -500,7 +500,7 @@ output$drugs_cum_plot<-renderUI({
   
   if(input$`drugs-measure`=='Take home naloxone kits'){
     output$cum_plot<-renderPlotly({
-    plot_data<-subset(plot_data(),(Type==input$types))
+    plot_data<-subset(drugs_plot_data(),(Type==input$types))
     plot_data1<-plot_data[1:12,]
     plot_21<-plot_data[13:nrow(plot_data),]
     lab_text<-function(x,y,z){
@@ -530,7 +530,7 @@ output$drugs_cum_plot<-renderUI({
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     
       })
-    plotlyOutput('cum_plot')
+    withSpinner(plotlyOutput('cum_plot'))
     }
 
 
@@ -538,7 +538,7 @@ output$drugs_cum_plot<-renderUI({
    if(location()!='NHS Shetland'&&location()!='NHS Orkney'&&location()!='NHS Western Isles'){
 
    output$cum_plot<-renderPlotly({
-   plot_data<-plot_data()
+   plot_data<-drugs_plot_data()
    plot_data<- plot_data %>%
          mutate(month = format(Date, "%m"), year = format(Date, "%Y")) 
    plot_data1<-subset(plot_data,Date<'2021-01-04')
@@ -598,7 +598,7 @@ output$drugs_cum_plot<-renderUI({
      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
    })
    
-   plotlyOutput('cum_plot')
+   withSpinner(plotlyOutput('cum_plot'))
    
   }}
 
@@ -609,7 +609,7 @@ output$drugs_perc_change<-renderUI({
   
   if (input$`drugs-measure` == 'Drug and alcohol treatment referrals') {
     
-    plot_data<-plot_data()
+    plot_data<-drugs_plot_data()
     
     if(length(which(is.na(plot_data$Change)))==0){
 
@@ -643,7 +643,7 @@ output$drugs_perc_change<-renderUI({
     change <- change %>%  config(
       displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
       })
-      plotlyOutput('change_plot',width='90%')
+      withSpinner(plotlyOutput('change_plot',width='90%'))
     }  
     
    
@@ -697,7 +697,7 @@ output$drugs_quan_plot<-renderUI({
       trend <- trend %>%  config(
         displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     })
-    plotlyOutput('quan_plot')
+    withSpinner(plotlyOutput('quan_plot'))
   }
   
 })
@@ -705,7 +705,7 @@ output$drugs_quan_plot<-renderUI({
 ## A&E Drug attendances by sex
 output$drug_gender_plot<-renderPlotly({
   
-  plot_drug_sex <- subset(plot_data(), (Board == location()) & (Gender %in% c("All", "Male","Female")))
+  plot_drug_sex <- subset(drugs_plot_data(), (Board == location()) & (Gender %in% c("All", "Male","Female")))
   
   lab_text<-c(paste0("Average of weeks beginning: ", format(plot_drug_sex$Date-7, "%d %b %Y"), ", ", format(plot_drug_sex$Date, "%d %b %Y"), ", ", format(plot_drug_sex$Date+7, "%d %b %Y"),
                      "<br>", 'Number of attendances: ', round(plot_drug_sex$`2020 & 2021`,1)))
@@ -740,7 +740,7 @@ output$drug_gender_plot<-renderPlotly({
 ## A&E Drug attendances - Pct change
 output$drug_ae_change_plot<-renderPlotly({
   
-  plot_data <- subset(plot_data(), (Gender == "All"))
+  plot_data <- subset(drugs_plot_data(), (Gender == "All"))
   
   if(length(which(is.na(plot_data$Change)))==0){      
       tooltip_trend<-c(paste0(
@@ -789,7 +789,7 @@ output$drugs_ae_explorer <- renderUI({
   
   note_average <- p("Please note that due to small numbers we are presenting 3-week rolling average figures.")
   
-  note_dataQual <- p("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E dataset, due to the quality of the data available.  
+  note_dataqual <- p("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E dataset, due to the quality of the data available.  
                      Diagnosis/reason for attendance can be recorded in a variety of ways, including in free text fields - and not all NHS Boards submit this information.  
                      The numbers presented in these dashboards therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with caution.  
                      Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of the areas represented in the data available. PHS are planning work to improve consistency.")
@@ -798,7 +798,7 @@ output$drugs_ae_explorer <- renderUI({
   
   if (input$`drugs-measure`=='A&E attendances for drug overdose/intoxication') {
    if(location()=='Scotland') {
-     tagList(note_dataQual, note_average, 
+     tagList(note_dataqual, note_average, 
       plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug overdose/intoxications \nin ", location(), " (2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
                    plot_output1 = "drug_ae_change_plot",
                    title_plot2 = paste0("3-Week average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
