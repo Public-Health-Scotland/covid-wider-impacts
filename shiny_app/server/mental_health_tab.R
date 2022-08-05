@@ -3,30 +3,21 @@
 ###############################################.
 ## Reactive controls ----
 ###############################################.
-
-# Reactive control for areatype
-output$geotype_mh_ui <- renderUI({
-if (input$measure_mh_select == "mhdrugs") {
-  areas <- c("Scotland", "Health board", "HSC partnership")
-} else if (input$measure_mh_select %in% c("aye", "ooh")) {
-  areas <- c("Scotland", "Health board")
-}
-
-selectizeInput("area_mh_select", "Step 2 - Select the area of interest",
-               choices = areas, selected = "Scotland")
-})
-
 # Show list of area names depending on areatype selected
-output$geoname_mh_ui <- renderUI({
+geoname_server("mh")
 
-  areas_summary_mh <- sort(geo_lookup$areaname[geo_lookup$areatype == ifelse(input$area_mh_select %notin%
-                                                                            c("Scotland", "Health board", "HSC partnership"),
-                                                                          "Scotland",
-                                                                          input$area_mh_select)])
-  selectizeInput("geoname_mh", label = NULL,
-                 choices = areas_summary_mh, selected = "")
-
+# Adding 'observeEvent' to allow reactive 'area of interest' selction 
+observeEvent(input$`mh-measure`, {
+  
+  if (input$`mh-measure` == "mhdrugs") {
+    areas <- c("Scotland", "Health board", "HSC partnership")
+  } else if (input$`mh-measure` %in% c("aye", "ooh")) {
+    areas <- c("Scotland", "Health board")
+  }
+  
+  updateSelectInput(session, "mh-geotype", choices = areas)
 })
+
 
 ###############################################.
 ## Modal ----
@@ -37,8 +28,8 @@ The year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we 
 the 2018-2019 average of week 52 value as a comparator for 2020’s week 53."
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_mentalhealth_modal,
-             if (input$measure_mh_select == "aye") {
+observeEvent(input$`mh-source-modal`,
+             if (input$`mh-measure` == "aye") {
                showModal(modalDialog(# MH AYE MODAL
                  title = "What is the data source?",
                  p("This tool provides a weekly summary of people attending A&E departments (Emergency Departments)
@@ -61,11 +52,11 @@ observeEvent(input$btn_mentalhealth_modal,
                    tags$a(href="https://www.isdscotland.org/Health-Topics/Emergency-Care/Emergency-Department-Activity/",
                           "Public Health Scotland (PHS).", class="externallink")),
                  p("Attendances", week_standard),
-                 p(tags$em("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
+                 p("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
                            incomplete for a number of NHS Boards. Thus, the figures reported for mental health related
                            attendances offer only a very approximate indication of attendances.
                            Additionally, some NHS Boards have moved to a new recording standard which
-                           has not been fully consolidated in the A&E datamart as yet.")),
+                           has not been fully consolidated in the A&E datamart as yet."),
                  p("Mental health related A&E attendances were identified using these parameters:"),
                  tags$ul(
                    tags$li("Diagnosis of mental and behavioural disorders (excluding dementia and learning disabilities) - ICD10 codes F."),
@@ -78,7 +69,7 @@ observeEvent(input$btn_mentalhealth_modal,
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
-             } else if (input$measure_mh_select == "mhdrugs") {
+             } else if (input$`mh-measure` == "mhdrugs") {
              showModal(modalDialog(# MH DRUGS MODAL
                title = "What is the data source?",
                p(strong("Data source: ePrescribed Messages.")),
@@ -192,7 +183,7 @@ observeEvent(input$btn_mentalhealth_modal,
                size = "1",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              ))
-            } else if (input$measure_mh_select == "ooh") {
+            } else if (input$`mh-measure` == "ooh") {
               showModal(modalDialog(# MH OOH MODAL
                 title = "What is the data source?",
                 p("The Primary Care Out of Hours service provides urgent access to a nurse or doctor,
@@ -238,8 +229,8 @@ observeEvent(input$btn_mentalhealth_modal,
 ###############################################.
 ## Reactive datasets ----
 ###############################################.
-ae_mh_filt <- reactive({ae_mh %>% filter(area_type == input$area_mh_select &
-                                           area_name == input$geoname_mh)
+ae_mh_filt <- reactive({ae_mh %>% filter(area_type == input$`mh-geotype` &
+                                           area_name == input$`mh-geoname`)
   })
 
 ae_mh_aver <- reactive({ae_mh_filt() %>%
@@ -250,8 +241,8 @@ ae_mh_aver <- reactive({ae_mh_filt() %>%
     ungroup
 })
 
-mh_ooh_filt <- reactive({mh_ooh %>% filter(area_type == input$area_mh_select &
-                                           area_name == input$geoname_mh)
+mh_ooh_filt <- reactive({mh_ooh %>% filter(area_type == input$`mh-geotype` &
+                                           area_name == input$`mh-geoname`)
 })
 
 mh_ooh_aver <- reactive({mh_ooh_filt() %>%
@@ -268,7 +259,7 @@ mh_ooh_aver <- reactive({mh_ooh_filt() %>%
 
 ###############################################.
 # MH Prescribing charts
-output$mh_prescribing_all <- renderPlotly({plot_overall_chart(mentalhealth_drugs %>% filter(area_name == input$geoname_mh),
+output$mh_prescribing_all <- renderPlotly({plot_overall_chart(mentalhealth_drugs %>% filter(area_name == input$`mh-geoname`),
                                                               data_name = "mentalhealth_drugs", area = "All")})
 output$mh_drugs_var <- renderPlotly({
   plot_trend_chart(mentalhealth_drugs, pal_med, split = "condition",
@@ -325,35 +316,32 @@ output$mh_explorer <- renderUI({
                     "we are presenting 3-week rolling average figures.",
                     "Single-week figures can be obtained from the download button at the top of the page.")
 
-  if (input$measure_mh_select == "mhdrugs") {
+  if (input$`mh-measure` == "mhdrugs") {
     tagList(# Prescribing - items dispensed
-      h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh)),
+      h3(paste0("Number of patients starting a new treatment course for selected mental health medicines in ", input$`mh-geoname`)),
       fluidRow(column(6,
-                      actionButton("btn_mentalhealth_modal", "Data source and definitions",
+                      actionButton("mh-source-modal", "Data source and definitions",
                                    icon = icon('question-circle'))),
                column(6,data_last_updated)),
       plot_box("2020 to 2022 compared with 2018-2019 average", "mh_prescribing_all"),
-      plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh,
+      plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$`mh-geoname`,
                           " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
-                   paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$geoname_mh, " by medicine groupings"), "mh_drugs_tot"))
-  } else if (input$measure_mh_select == "aye") {
+                   paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$`mh-geoname`, " by medicine groupings"), "mh_drugs_tot"))
+  } else if (input$`mh-measure` == "aye") {
     tagList(#A&E attendances
-      tags$em("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E 
+      p("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E 
               dataset, due to the quality of the data available.  Diagnosis/reason for attendance can be recorded in a variety of ways, 
               including in free text fields - and not all NHS Boards submit this information.  The numbers presented in these dashboards 
               therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with 
               caution.  Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of 
               the areas represented in the data available. PHS are planning work to improve consistency."),
-      br(),
-      tags$em(span("An issue had been identified with the number of A&E attendances in NHS Lanarkshire for
-                  the week ending 4 July 2021. This has been resolved.")),
-      h3(paste0("Weekly mental health A&E attendances in ", input$geoname_mh)),
+      h3(paste0("Weekly mental health A&E attendances in ", input$`mh-geoname`)),
       fluidRow(column(6,
-                      actionButton("btn_mentalhealth_modal", "Data source and definitions",
+                      actionButton("mh-source-modal", "Data source and definitions",
                                    icon = icon('question-circle'))),
                column(6,data_last_updated)),
       plot_box("2020 to 2022 compared with 2018-2019 average", "ae_mh_overall"),
-    if (input$geoname_mh == "Scotland") {
+    if (input$`mh-geoname` == "Scotland") {
       tagList(
         plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
                      time in 2018-2019 by sex", "ae_mh_sex_var",
@@ -375,19 +363,19 @@ output$mh_explorer <- renderUI({
     }
     )  #taglist bracket from aye section
 
-    } else if (input$measure_mh_select == "ooh") {
+    } else if (input$`mh-measure` == "ooh") {
       tagList(#OOH attendances
         tags$b(span("New clinical codes have been introduced for out of hours cases, which has had an
                     impact on the number of mental health cases we report in the latter half of 2021.
                     We are currently investigating this issue.",
                     style = "color:red")),
-        h3(paste0("Weekly mental health out of hours cases in ", input$geoname_mh)),
+        h3(paste0("Weekly mental health out of hours cases in ", input$`mh-geoname`)),
         fluidRow(column(6,
-                        actionButton("btn_mentalhealth_modal", "Data source and definitions",
+                        actionButton("mh-source-modal", "Data source and definitions",
                                      icon = icon('question-circle'))),
                  column(6,data_last_updated)),
         plot_box("2020 to 2022 compared with 2018-2019 average", "mh_ooh_overall"),
-        if (input$geoname_mh == "Scotland") {
+        if (input$`mh-geoname` == "Scotland") {
           tagList(
             plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
                      time in 2018-2019 by sex", "mh_ooh_sex_var",
@@ -415,13 +403,13 @@ output$mh_explorer <- renderUI({
 
 mh_down_data <- reactive({
   switch(
-    input$measure_mh_select,
-    "mhdrugs" = mentalhealth_drugs %>% filter(area_name == input$geoname_mh &
-                                                area_type == input$area_mh_select),
-    "aye" = ae_mh %>% filter(area_name == input$geoname_mh &
-                               area_type == input$area_mh_select),
-    "ooh" = mh_ooh %>% filter(area_name == input$geoname_mh &
-                                area_type == input$area_mh_select)
+    input$`mh-measure`,
+    "mhdrugs" = mentalhealth_drugs %>% filter(area_name == input$`mh-geoname` &
+                                                area_type == input$`mh-geotype`),
+    "aye" = ae_mh %>% filter(area_name == input$`mh-geoname` &
+                               area_type == input$`mh-geotype`),
+    "ooh" = mh_ooh %>% filter(area_name == input$`mh-geoname` &
+                                area_type == input$`mh-geotype`)
   ) %>%
     rename(average_2018_2019 = count_average) %>% select(-type)
 

@@ -75,7 +75,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
           ))
       } else if (tab == "mh") {
         trend_data <- trend_data %>%
-          filter(type %in% split & area_name == input$geoname_mh,
+          filter(type %in% split & area_name == input$`mh-geoname`,
                  category != "All") %>%
           mutate(category = case_when(
             category == "SSRI SNRI" ~ "Depression medicine",
