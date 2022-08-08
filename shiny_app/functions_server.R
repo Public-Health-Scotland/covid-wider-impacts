@@ -1454,7 +1454,6 @@ plot_immun_simd <- function(imm_simd_data){
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_immun
 
-
   dataset_name <- deparse(substitute(imm_simd_data)) # character name of the data
 
   title <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
@@ -1555,9 +1554,26 @@ plot_imm_simd_bar <- function(imm_simd_data){
                             dataset_name == "mmr_simd_dose1" ~ "57weeks",
                             dataset_name == "mmr_simd_dose2" ~ "178weeks")
 
+  imm_simd_data %<>% dplyr::rename("percent_var" = names(select(imm_simd_data, ends_with("_percent"))))
+
+  recent_year <- imm_simd_data %>%
+    filter(cohort == "monthly") %>%
+    group_by(simdq) %>%
+    mutate(uptake_2022 = mean(percent_var)) %>%
+    select(simdq, uptake_2022)
+
   graph_data <- imm_simd_data %>%
     filter(cohort == "yearly") %>%
-    select(time_period_eligible, simdq, paste0("uptake_", percent_name, "_percent"), paste0("baseline_", percent_name))
+    left_join(recent_year) %>%
+    # group_by(simdq) %>%
+    # mutate(uptake_2022 = mean(percent_var)) %>%
+    #mutate(uptake_2022 = ((paste0("uptake_", percent_name, "_percent")/mean_denom)*100)) %>%
+    #ungroup() %>%
+    #round(uptake_2022, 1) #%>%
+    select(time_period_eligible, simdq, percent_var,
+           #paste0("uptake_", percent_name, "_percent"),
+           paste0("baseline_", percent_name), uptake_2022)
+
 
   #Modifying standard xaxis name applies to all curves
   xaxis_plots[["title"]] <- "SIMD Quintile"
@@ -1570,7 +1586,6 @@ plot_imm_simd_bar <- function(imm_simd_data){
   year_count <- length(unique(graph_data$time_period_eligible))
 
   graph_data %<>% dplyr::rename("baseline_var" = names(select(imm_simd_data, ends_with("weeks"))))
-  graph_data %<>% dplyr::rename("percent_var" = names(select(imm_simd_data, ends_with("_percent"))))
 
   tooltip_2019 <- c(paste0("Cohort: 2019", "<br>",
                            "Deprivation quintile: ", graph_data$simdq, "<br>",
@@ -1578,6 +1593,9 @@ plot_imm_simd_bar <- function(imm_simd_data){
   tooltip_bars <- c(paste0("Cohort: ", graph_data$time_period_eligible, "<br>",
                            "Deprivation quintile: ", graph_data$simdq, "<br>",
                            "Percentage uptake: ", graph_data$percent_var, "%"))
+  tooltip_2022 <- c(paste0("Cohort: 2022*", "<br>",
+                           "Deprivation quintile: ", graph_data$simdq, "<br>",
+                           "Percentage uptake: ", graph_data$uptake_2022, "%"))
 
   #tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
 
@@ -1600,6 +1618,14 @@ plot_imm_simd_bar <- function(imm_simd_data){
              colors=yr_pal,
              text= tooltip_bars,
              hoverinfo="text"
+    )%>%
+    add_trace(type = 'bar',
+              y=~(uptake_2022/year_count),
+              name = "2022*",
+              marker = list(color = "#d3d3d3"),
+              text= tooltip_2022,
+              hoverinfo="text",
+              textposition="none"
     )%>%
     layout(margin = list(b = 80, t = 5),
            yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -1634,8 +1660,6 @@ plot_imm_simd_change <- function(imm_simd_data){
                         dataset_name == "mmr_simd_dose1" ~ "week57",
                         dataset_name == "mmr_simd_dose2" ~ "week178")
 
-
-  # should this be relative change?? confused
   abs_change <- imm_simd_data %>%
     filter(cohort == "monthly") %>%
     mutate(simdq = as.factor(simdq)) %>%

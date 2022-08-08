@@ -543,6 +543,9 @@ output$immunisation_deprivation_output <- renderUI({
             br(),
 
             tagList(
+              br(),
+              p(em("* Please note that data for the most recent year are incomplete, calculated as the mean uptake of the months of the year so far.")),
+              br(),
               p("The deprivation charts above show the immunisation uptake for children becoming eligible for their immunisation during the Covid-19 pandemic. The graph on the left shows this uptake by month, and the graph on the left  compared to those who became eligible in 2019, at all Scotland level. Early uptake achieved by 4 weeks after the children became eligible for their immunisation is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort. The early uptake rates are shown for children living in areas with different levels of deprivation."),
 
               br()),
