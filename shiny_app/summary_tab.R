@@ -412,10 +412,13 @@ observeEvent(input$btn_modal_eth, { showModal(eth_modal) })
 # Modal to explain ethnicity chart - rapid section
 rapid_eth_modal <- modalDialog(
   h5(tags$b("Interpretation of this chart")),
-  p("From late June 2020, the data collected for the RAPID dataset was expanded to include ethnicity.
-  The following list is the current ethnicity classification (2011 Census categories) 
-  used by NHS Scotland organisations, and the ethnic groupings 
-  that we have used in this dashboard."),
+  
+  p("Ethnicity fields were added to Rapid Preliminary Inpatient Data (RAPID) submissions 
+    in June 2020 to aid the COVID-19 response. NHS Boards were asked to re-submit 
+    admissions data from 1 March 2020 onwards to include ethnicity information."),
+  p("The following list is the current ethnicity classification (2011 Census categories) 
+    used by NHS Scotland organisations, and the ethnic groupings that we have used in 
+    this dashboard."),
   renderTable(eth_lookup),  
   p("The ‘Missing’ ethnic group category includes those where ethnic group was 
     recorded as 'Not Known', 'Refused/Not Provided by the Patient' or was not recorded at all."),
@@ -595,13 +598,10 @@ output$data_explorer <- renderUI({
     
     eth_rapid_ui <- tagList(#Add ethnicity charts
       fluidRow(
-        # column(6,
-        #               h4(paste0(variation_title, "ethnic group")),
-        #               tags$em("Please note that this data is only available by month.")),
                column(12,
                       h4(paste0("Monthly number of ", dataset, " by ethnic group")),
-                      p("Please note that this data is only available by month. The chart presents data from March 2020
-                        onwards as ethnic group was not widely recorded in the RAPID dataset prior to March 2020."))),
+                      p("Please note that ethnic group was not recorded in RAPID for 
+                        admissions prior to March 2020. This data is only available by month."))),
 
       fluidRow(column(9,
                       pickerInput("rapid_ethnicity", "Select one or more ethnic groups",
@@ -614,8 +614,6 @@ output$data_explorer <- renderUI({
                                      icon = icon('fas fa-exclamation-circle')))),
 
       fluidRow(
-        # column(6,
-        #               withSpinner(plotlyOutput("adm_eth_var"))),
                column(12,
                       withSpinner(plotlyOutput("adm_eth_tot")))))
     
