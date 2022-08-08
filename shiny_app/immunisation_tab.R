@@ -499,9 +499,8 @@ output$immunisation_deprivation_output <- renderUI({
              "continue to receive their routine immunisations during the Covid-19 pandemic", target="_blank"),".",
       "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
       tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ", target="_blank"),
-      " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),"."),
+      " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),".")
 
-    p(strong("S-curve and table here"))
   ) # taglist bracket
 
   immune_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
@@ -517,8 +516,8 @@ output$immunisation_deprivation_output <- renderUI({
                           h4(paste0(immune_title)),
                           p(immune_subtitle))),
           fluidRow(column(6,br(), br(),
-                          withSpinner(plotlyOutput("immun_scurve")),
-                          p(age_defs_imm_6inone)
+                          withSpinner(plotlyOutput("immun_scurve"))#,
+                          #p(age_def) #??
           ),
           column(6, uiOutput("immun_table"))),
 
@@ -531,8 +530,7 @@ output$immunisation_deprivation_output <- renderUI({
 
           h3("Deprivation"),
 
-
-
+          p(em("Click on legend to select or deselect categories - single click on an item to remove it from the plot and double click on an item to view only that line.")),
 
           fluidRow(
             column(12, h4(paste0(imm_trends_title))),
