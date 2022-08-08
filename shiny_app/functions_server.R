@@ -1565,7 +1565,7 @@ plot_imm_simd_bar <- function(imm_simd_data){
   graph_data <- imm_simd_data %>%
     filter(cohort == "yearly") %>%
     left_join(recent_year) %>%
-    # group_by(simdq) %>%
+    group_by(simdq) %>%
     # mutate(uptake_2022 = mean(percent_var)) %>%
     #mutate(uptake_2022 = ((paste0("uptake_", percent_name, "_percent")/mean_denom)*100)) %>%
     #ungroup() %>%

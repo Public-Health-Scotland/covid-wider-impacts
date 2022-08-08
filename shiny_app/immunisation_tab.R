@@ -363,8 +363,11 @@ plot_choice <- reactive({switch(input$measure_select_immun,
                                 "sixin_dose3" = c("plot_six3_simd", "plot_six3_simd_bar", "plot_six3_simd_change"),
                                 "mmr_dose1" = c("plot_mmr1_simd", "plot_mmr1_simd_bar", "plot_mmr1_simd_change"),
                                 "mmr_dose2" = c("plot_mmr2_simd", "plot_mmr2_simd_bar", "plot_mmr2_simd_change")
-) # switch bracket
-})
+                                ) # switch bracket
+  })
+
+noplot_choice <- reactive({switch(input$geotype_immun,
+                                  "Health board" = "empty_plot")})
 
 # Creating plots for each dataset
 #run chart function to generate s curves
@@ -473,6 +476,8 @@ output$plot_six2_simd_change <- renderPlotly({ plot_imm_simd_change(six_simd_dos
 output$plot_six3_simd_change <- renderPlotly({ plot_imm_simd_change(six_simd_dose3)})
 output$plot_mmr1_simd_change <- renderPlotly({ plot_imm_simd_change(mmr_simd_dose1)})
 output$plot_mmr2_simd_change <- renderPlotly({ plot_imm_simd_change(mmr_simd_dose2)})
+
+output$empty_plot <- renderPlotly({ plot_nodata() })
 
 ###############################################.
 ## Layout ----
