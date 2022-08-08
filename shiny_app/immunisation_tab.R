@@ -517,8 +517,8 @@ output$immunisation_deprivation_output <- renderUI({
                           h4(paste0(immune_title)),
                           p(immune_subtitle))),
           fluidRow(column(6,br(), br(),
-                          withSpinner(plotlyOutput("immun_scurve"))#,
-                          #p(age_defs_imm_6inone)
+                          withSpinner(plotlyOutput("immun_scurve")),
+                          p(age_defs_imm_6inone)
           ),
           column(6, uiOutput("immun_table"))),
 
