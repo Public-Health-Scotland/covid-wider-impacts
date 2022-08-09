@@ -6,7 +6,7 @@
 ###############################################.
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_perinatal_modal,
+observeEvent(input$`perinatal-source-modal`,
              showModal(modalDialog(#RAPID ADMISSIONS MODAL
                title = "What is the data source?",
                p("Data source: NRS vital event registrations."),
@@ -47,7 +47,7 @@ observeEvent(input$btn_perinatal_rules,
 ###############################################.
 # Reactive dataset used
 peri_filt <- reactive({
-  perinatal %>% filter(type == input$measure_select_perinatal & area_name == "Scotland") %>%
+  perinatal %>% filter(type == input$`perinatal-measure` & area_name == "Scotland") %>%
     filter(month_of_year == max(month_of_year, na.rm = T))
 })
 
@@ -58,15 +58,15 @@ peri_filt <- reactive({
 output$perinatal_explorer <- renderUI({
 
   # text for titles of cut charts
-  perinatal_title <- case_when(input$measure_select_perinatal == "stillbirths" ~
+  perinatal_title <- case_when(input$`perinatal-measure` == "stillbirths" ~
                                  paste0("Monthly rate of stillbirths per 1,000 total (live + still) births in Scotland", input$geoname_perinatal),
-                               input$measure_select_perinatal == "pnnd" ~
+                               input$`perinatal-measure` == "pnnd" ~
                                  paste0("Monthly rate of post-neonatal deaths per 1,000 live births in Scotland", input$geoname_perinatal),
-                               input$measure_select_perinatal == "nnd" ~
+                               input$`perinatal-measure` == "nnd" ~
                                  paste0("Monthly rate of neonatal deaths per 1,000 live births in Scotland", input$geoname_perinatal),
-                               input$measure_select_perinatal == "extperi" ~
+                               input$`perinatal-measure` == "extperi" ~
                                  paste0("Monthly rate of extended perinatal deaths per 1,000 total (live + still) births in Scotland", input$geoname_perinatal),
-                               input$measure_select_perinatal == "infantdeaths" ~
+                               input$`perinatal-measure` == "infantdeaths" ~
                                  paste0("Monthly rate of infant deaths per 1,000 live births in Scotland", input$geoname_perinatal))
 
   # Link used in intro text
@@ -93,7 +93,7 @@ output$perinatal_explorer <- renderUI({
   no_births <- peri_filt() %>% pull(sample_size) %>% format(big.mark=",")
 
   # Intro paragraph within perinatal tab
-  if (input$measure_select_perinatal == "stillbirths") {
+  if (input$`perinatal-measure` == "stillbirths") {
     intro_text <- p("Stillbirths refer to", tags$a(href=link_perinatal,
                     "a child born after the 24th week of pregnancy which did not breathe or show any signs of life (external website).", target="_blank"),
                     peri_common_intro,
@@ -101,7 +101,7 @@ output$perinatal_explorer <- renderUI({
                            "have produced guidelines", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
                     Whilst each stillbirth is clearly a tragedy for the family involved, stillbirths are uncommon events in Scotland: ", no_stillperi ," stillbirths (and ", no_births ," total
                     [live and still] births) occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
-  } else if (input$measure_select_perinatal == "pnnd") {
+  } else if (input$`perinatal-measure` == "pnnd") {
     intro_text <- p("Post-neonatal deaths refer to", tags$a(href=link_perinatal,
                     "deaths occuring after the first 4 weeks but within the first year (external website)", target="_blank"), "of life.",
                     peri_common_intro,
@@ -109,7 +109,7 @@ output$perinatal_explorer <- renderUI({
                            "have produced guidelines (external website)", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
                     Whilst each post-neonatal death is clearly a tragedy for the family involved, post-neonatal deaths are uncommon events in Scotland: ", no_stillperi ," post-neonatal deaths
                     (and ", no_births ," live births) occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
-  } else if (input$measure_select_perinatal == "nnd") {
+  } else if (input$`perinatal-measure` == "nnd") {
     intro_text <- p("Neonatal deaths refer to", tags$a(href=link_perinatal,
                   "deaths in the first four weeks (external website)", target="_blank"), "of life.",
                   peri_common_intro,
@@ -117,7 +117,7 @@ output$perinatal_explorer <- renderUI({
                          "have produced guidelines (external website)", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
                   Whilst each neonatal death is clearly a tragedy for the family involved, neonatal deaths are uncommon events in Scotland: ", no_stillperi ," neonatal deaths (and ", no_births ," live births)
                   occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
-  } else if (input$measure_select_perinatal == "extperi") {
+  } else if (input$`perinatal-measure` == "extperi") {
     intro_text <- p("Extended perinatal deaths refer to", tags$a(href=link_perinatal,
 "the sum of stillbirths and neonatal mortality (external website)", target="_blank"), "(deaths within the first 4 weeks of life).",
 peri_common_intro,
@@ -125,7 +125,7 @@ tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-
        "have produced guidelines (external website)", target="_blank"), "for attending antenatal and postnatal care appointments during the pandemic.
 Whilst each extended perinatal death is clearly a tragedy for the family involved, extended perinatal deaths are uncommon events in Scotland: ", no_stillperi ," extended perinatal deaths (and ", no_births ," total
 [live and still] births) occurring in Scotland in ", last_month_peri, " had been registered by ", cutdate_peri, ".")
-  } else if (input$measure_select_perinatal == "infantdeaths") {
+  } else if (input$`perinatal-measure` == "infantdeaths") {
     intro_text <- p("Infant deaths refer to", tags$a(href=link_perinatal,
                     "all deaths in the first year (external website)", target="_blank"), "of life;
                     this includes neonatal and post-neonatal deaths, but not stillbirths. ",
@@ -181,10 +181,10 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
 
   #run chart function to generate spc charts
   output$perinatal_chart <- renderPlotly({
-    trend_data <- perinatal %>% filter(type == input$measure_select_perinatal)
+    trend_data <- perinatal %>% filter(type == input$`perinatal-measure`)
 
-    yaxis_plots[["title"]] <- case_when(input$measure_select_perinatal %in% c("pnnd", "nnd", "infantdeaths") ~ "Rate per 1,000 live births",
-                                        input$measure_select_perinatal %in% c("extperi", "stillbirths") ~ "Rate per 1,000 (live + still) births")
+    yaxis_plots[["title"]] <- case_when(input$`perinatal-measure` %in% c("pnnd", "nnd", "infantdeaths") ~ "Rate per 1,000 live births",
+                                        input$`perinatal-measure` %in% c("extperi", "stillbirths") ~ "Rate per 1,000 (live + still) births")
     xaxis_plots[["title"]] <- "Month"
 
     xaxis_plots[["ticktext"]] <- list("Jul 2017", "Jan 2018", "Jul 2018", "Jan 2019", "Jul 2019", "Jan 2020",
@@ -193,11 +193,11 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
     xaxis_plots[["tickvals"]] <- list("2017-07-01", "2018-01-01", "2018-07-01", "2019-01-01", "2019-07-01", "2020-01-01",
                                       "2020-07-01", "2021-01-01", "2021-07-01", "2022-01-01")
     # Tooltip
-    measure_selected <- case_when(input$measure_select_perinatal == "stillbirths" ~ "Still births",
-                                  input$measure_select_perinatal ==   "pnnd" ~ "Post-neonatal deaths",
-                                  input$measure_select_perinatal ==    "nnd" ~ "Neonatal deaths",
-                                  input$measure_select_perinatal ==   "extperi" ~ "Extended perinatal deaths",
-                                  input$measure_select_perinatal ==    "infantdeaths" ~ "Infant deaths")
+    measure_selected <- case_when(input$`perinatal-measure` == "stillbirths" ~ "Still births",
+                                  input$`perinatal-measure` ==   "pnnd" ~ "Post-neonatal deaths",
+                                  input$`perinatal-measure` ==    "nnd" ~ "Neonatal deaths",
+                                  input$`perinatal-measure` ==   "extperi" ~ "Extended perinatal deaths",
+                                  input$`perinatal-measure` ==    "infantdeaths" ~ "Infant deaths")
 
     tooltip_trend <- c(paste0(measure_selected, "<br>",
                               format(trend_data$month_of_year, "%B %y"), "<br>",
@@ -257,16 +257,16 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
 
 
 perinatal_down_data <- reactive({
-  perinatal %>% filter(type == input$measure_select_perinatal)
+  perinatal %>% filter(type == input$`perinatal-measure`)
 
-  if (input$measure_select_perinatal %in% c("pnnd", "nnd", "infantdeaths")) {
-    perinatal <- perinatal %>% filter(type == input$measure_select_perinatal) %>%
+  if (input$`perinatal-measure` %in% c("pnnd", "nnd", "infantdeaths")) {
+    perinatal <- perinatal %>% filter(type == input$`perinatal-measure`) %>%
       rename(live_births=sample_size) %>%
       select(month_of_year:centreline, upper_cl_3_std_dev:area_name) %>%
       mutate(month_of_year = format(month_of_year, "%b %y")) }
 
-   else if (input$measure_select_perinatal %in% c("extperi", "stillbirths")) {
-    perinatal <- perinatal %>% filter(type == input$measure_select_perinatal) %>%
+   else if (input$`perinatal-measure` %in% c("extperi", "stillbirths")) {
+    perinatal <- perinatal %>% filter(type == input$`perinatal-measure`) %>%
       rename(total_births=sample_size) %>%
       select(month_of_year:centreline, upper_cl_3_std_dev:area_name) %>%
       mutate(month_of_year = format(month_of_year, "%b %y")) }

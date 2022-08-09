@@ -15,13 +15,8 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
   if (split != FALSE) {
     if (tab == "summary") {
-      if (input$`summary-measure` != "op") {
         trend_data <- dataset %>% # filtering data by cut and area name
           filter(type == split & area_name == input$`summary-geoname`)
-      } else { #for outpatients data
-        trend_data <- dataset %>% # filtering data by cut and area name
-          filter(type == split & area_name == input$`op-geoname`)
-      }
 
     } else if (tab %in% c("cardio", "mh", "injuries")) {
 
@@ -71,7 +66,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     } else if (split == "condition") {
       if (tab == "cardio") {
         trend_data <- trend_data %>%
-          filter(type %in% split & area_name == input$geoname_cardio,
+          filter(type %in% split & area_name == input$`cardio-geoname`,
                  category != "All") %>%
           # Wrapping long legend names
           mutate(category = case_when(
@@ -80,7 +75,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
           ))
       } else if (tab == "mh") {
         trend_data <- trend_data %>%
-          filter(type %in% split & area_name == input$geoname_mh,
+          filter(type %in% split & area_name == input$`mh-geoname`,
                  category != "All") %>%
           mutate(category = case_when(
             category == "SSRI SNRI" ~ "Depression medicine",
@@ -91,7 +86,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
       } else if (tab == "injuries") {
         trend_data <- trend_data %>%
-          filter(type %in% split & area_name == input$geoname_injuries,
+          filter(type %in% split & area_name == input$`injury-geoname`,
                  category != "all")
     } else {
     trend_data <- trend_data
@@ -1214,11 +1209,7 @@ filter_data <- function(dataset, data_name = "other", area = T, op = F) {
   if (data_name == "ooh_cons"){
     dataset %>% filter(area_name == input$`summary-geoname` &
                          type == input$ooh_appt_type)
-  } else if (area == T & op == T) {
-    dataset %>% filter(type == "sex") %>%
-      filter(area_name == input$`op-geoname` &
-               category == "All")
-  } else if (area == T & op == F) {
+  } else if (area == T) {
     dataset %>% filter(type == "sex") %>%
       filter(area_name == input$`summary-geoname` &
                category == "All")

@@ -6,7 +6,7 @@
 ###############################################.
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_preterm_modal,
+observeEvent(input$`preterm-source-modal`,
              showModal(modalDialog(#RAPID ADMISSIONS MODAL
                title = "What is the data source?",
                p("Data source: SMR02"),

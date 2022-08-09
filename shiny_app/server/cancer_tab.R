@@ -5,7 +5,7 @@
 ## Modals ----
 ###############################################.
 # Pop-up modal explaining source of data
-observeEvent(input$btn_cancer_modal, 
+observeEvent(input$`cancer-source-modal`, 
              showModal(modalDialog(
                title = "What is the data source?",
                p("",

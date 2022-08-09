@@ -8,16 +8,20 @@
 # Show list of area names depending on areatype selected
 geoname_server("summary")
 
-# op_geoname <- callModule(geotype_value, "op")
-
-output$`op-geoname` <- renderUI({
-
-  areas_summary <- sort(area_type_op$area_name[area_type_op$area_type == input$`op-geotype`])
-  selectizeInput("op-geoname", label = NULL,
-                 choices = areas_summary, selected = "")
-
+# Adding 'observeEvent' to allow reactive 'area of interest' selction on  tab
+observeEvent(input$`summary-measure`, {
+  
+  if (input$`summary-measure` == "op") {
+    summ_choices = c("Scotland", "Health board of treatment",
+                       "Health board of residence",
+                       "HSC partnership of residence")
+  } else {
+    summ_choices = c("Scotland", "Health board", "HSC partnership")
+  }
+  
+  updateSelectInput(session, "summary-geotype",
+                    choices = summ_choices)
 })
-
 
 # Disabling  admissions type if no admissions to hospital selected and
 # updating labels to say it's not available
@@ -411,7 +415,7 @@ op_filt <- reactive({
   outpats %>%
     filter(admission_type == input$appt_type &
              spec == "All" &
-             area_type == input$`op-geotype` &
+             area_type == input$`summary-geotype` &
              time_split == input$time_type)
 })
 
@@ -419,11 +423,11 @@ op_filt <- reactive({
 op_spec <- reactive({
   outpats %>%
     filter(type == "sex") %>%
-    filter(area_name == input$`op-geoname` &
+    filter(area_name == input$`summary-geoname` &
              admission_type == input$appt_type &
              category == "All" &
              spec %in% input$op_specialty &
-             area_type == input$`op-geotype` &
+             area_type == input$`summary-geotype` &
              time_split == input$time_type)   
 
 })

@@ -5,15 +5,7 @@ summary_tab <-
   tabPanel(title = "Summary trends", icon = icon("area-chart"), value = "summary",
            wellPanel(#actionButton("browser", "browser"),
              column(3, selectdata_ui("summary", measure_choices = data_list)),
-             column(4,
-                    conditionalPanel(condition = "input['summary-measure'] != 'op' ", 
-                                     selectgeo_ui("summary", area_choices =  c("Scotland", "Health board", "HSC partnership"))),
-                    # If outpatients selected bring other set of choices
-                    conditionalPanel(condition = "input['summary-measure'] == 'op' ", 
-                                     selectgeo_ui("op", area_choices = c("Scotland", "Health board of treatment",
-                                                                "Health board of residence",
-                                                                "HSC partnership of residence")))
-             ),
+             column(4, selectgeo_ui("summary", area_choices =  c("Scotland", "Health board", "HSC partnership"))),
              column(3,
                     conditionalPanel(condition = "input['summary-measure'] != 'op' ", 
                                      selectInput("adm_type", label = "Step 3. Select type of admission.",

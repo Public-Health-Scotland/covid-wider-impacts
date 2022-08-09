@@ -122,7 +122,7 @@ output$injuries_explorer <- renderUI({
  
     tagList( # injuries
       h3(paste0("Monthly admissions for ", injury_select)),
-      plot_box(paste0("2020 and 2021 compared with 2018-2019 average ",", ",input$geoname_injuries), "injury_overall"),
+      plot_box(paste0("2020 and 2021 compared with 2018-2019 average ",", ",input$`injury-geoname`), "injury_overall"),
       plot_box(paste0(paste0("Percentage change in admissions for ", injury_select, " compared with the corresponding time in 2018-2019, by ", injury_split),
                       ", ", input$`injury-geoname`), "injury_var"),
       plot_box(paste0(paste0("Monthly number of admissions for ",injury_select,", by ", injury_split),
