@@ -498,8 +498,8 @@ output$data_explorer <- renderUI({
   cut_charts <- function(title, source, data_name) {
     tagList(
       fluidRow(column(10, p("Last updated: ", upd_date_summ))),
-      fluidRow(column(9, h3(title)),
-               column(3, sourcemodal_ui("summ"))),
+      fluidRow(column(10, h3(title)),
+               column(2, sourcemodal_ui("summ"))),
 
       if (input$`summary-measure` == "nhs24"){
         tagList(
