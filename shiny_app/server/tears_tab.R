@@ -1,6 +1,5 @@
-
-##Server script for births and babies - apgar tab..
-
+# Wider impacts dashboard - Births and babies tab - perineal tears section
+# Server code
 
 ###############################################.
 ## Modals ----
@@ -346,52 +345,6 @@ output$download_tears_data <- downloadHandler(
     write_csv(tears_download_data(),
               file) }
 )
-
-###############################################.
-## Commentary tab content  ----
-###############################################.
-
-#action associated with action links within commentary text - this observe event linked
-# to an actionLink within the commentary which will take the user to commentary easily.
-observeEvent(input$switch_to_tears,{
-  updateTabsetPanel(session, "intabset", selected = "comment")
-  updateCollapse(session, "collapse_commentary", open = "Perineal Tears")
-})
-
-
-output$tears_commentary <- renderUI({
-  tagList(
-    bsButton("jump_to_tears",label = "Go to data"), #this button can only be used once
-    h2("Perineal tears - 3rd August 2022"),
-    p("Data are thought to be incomplete for NHS Fife and NHS Forth Valley in April 2022, so the proportion of births that result in a tear in this month is likely to change in future releases of the dashboard. "),
-    h2("Perineal tears - 2nd February 2022"),
-    p("The percentage of women resident in NHS Lanarkshire giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation, and who have a third or fourth degree perineal tear has been above the pre-pandemic average for six successive quarters (covering the period April 2020-Sept 2021). The pre-pandemic rate was 3% and that for July-Sept 2021 3.7%. It is important to note that some women resident in NHS Lanarkshire receive delivery care from bordering health boards.  At Scotland level the pre-pandemic rate of third and fourth degree perineal tears was 3.5% and that for July-Sept 2021 was 3.2%.  NHS Lanarkshire have been made aware of this data and PHS will continue to monitor."),
-    h2("Perineal tears - 3rd November 2021"),
-    p("The percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a third or fourth degree perineal tear has been above the pre-pandemic average for seven successive quarters (including April-June 2021) in both NHS Dumfries & Galloway and NHS Greater Glasgow & Clyde. We are working with these two boards in order to investigate this further. NHS Dumfries & Galloway have indicated that their overall numbers of third and fourth degree tears are small. They routinely review all women who have had a third or fourth degree tear at their Clinical Incident Review Group and they have not so far identified any common themes."),
-    h2("Perineal tears - 16th June 2021"),
-    p("Information on perineal tears was included in this tool for the first time on 16 June 2021."),
-    p("When a woman is giving birth, the baby stretches the mother’s vagina and perineum.  Occasionally, the tissues cannot stretch enough, and a tear (called a ",
-                 tags$a(href= 'https://www.rcog.org.uk/en/patients/patient-leaflets/third--or-fourth-degree-tear-during-childbirth/',
-                        "'perineal tear (external website)'", target="_blank"),") occurs.  The perineum is the area between a woman’s vagina and anus."),
-    p("Perineal tears are classified as 1st to 4th degree, with 4th degree tears being the most serious.  First degree tears just involve the skin of the perineum or lining of the lower vagina.  Second degree tears also involve the muscles of the perineum.  Third degree tears extend further back and also involve the muscles surrounding the anus.  Fourth degree tears extend further into the lining of the anus or rectum (lower bowel)."),
-    p("Third and 4th degree tears are also known as obstetric anal sphincter injury.  These tears require surgical repair immediately after delivery.  Most women recover completely following a 3rd or 4th degree tear, however some are left with persistent problems controlling their bowels (anal incontinence)."),
-    p("Most tears are unexpected and it’s hard to predict which women will have a tear, although tears are more common during a woman’s first vaginal delivery, if the baby is big (over 4kg birthweight), or if the second stage of labour goes on for a long time."),
-    p("An ",
-      tags$a(href= 'https://www.nhsinform.scot/ready-steady-baby/labour-and-birth/assisted-birth/perineal-tears-and-episiotomy',
-             'episiotomy (external website)', target="_blank")," may be offered if a woman is thought to be at risk of a tear.  An episiotomy is a controlled cut made by a healthcare professional through the vaginal wall and perineum that is repaired with stitches after delivery.  An episiotomy does not guarantee that a tear will not happen, as the episiotomy cut may extend and become a tear.  Women requiring assisted vaginal delivery (with forceps or ventouse) are at high risk of a tear so would generally be offered an episiotomy."),
-    p("Care for women around the time they are giving birth is an essential, time critical service that cannot be deferred.  As such, it has been provided throughout the COVID-19 pandemic, and maternity staff have not been redeployed to support other services."),
-    p("However, there have been some changes to how delivery care is provided in response to COVID-19, to minimise the risk of infection and to allow services to continue to provide safe care during times when a high number of staff may be off work, for example due to needing to isolate.  These changes have varied over time and between areas.  For example, guidance issued by the  ",
-      tags$a(href= 'https://www.gov.scot/collections/coronavirus-covid-19-guidance/#health,careandsocialwork',
-             'Scottish Government (external website)', target="_blank")," and ",
-      tags$a(href= 'https://www.rcog.org.uk/coronavirus-pregnancy',
-             'Royal College of Obstetricians and Gynaecologists (external website)', target="_blank")," to maternity services at the height of the first wave of the pandemic (spring 2020) noted that it may be necessary for services to temporarily suspend the option for women to deliver at home or in midwife led units, and to concentrate delivery care within obstetric units.  This tool allows us to monitor whether changes to care provision associated with COVID-19 have led to any changes in the outcomes of women or babies."),
-    p("The information on perineal tears presented through this tool is taken from hospital discharge records, specifically records relating to the care of women undergoing spontaneous or assisted vaginal delivery of a singleton live or stillborn baby (i.e. one baby, not twins or more) with cephalic (i.e. ‘head first’) presentation at 37-42 weeks gestation (i.e. up to 3 weeks before or after their due date).  Further technical information is available through the ‘Data source’ button on the dashboard page."),
-    p("The data shows that, at all Scotland level, the percentage of women giving birth vaginally to a singleton live or stillborn baby with a cephalic presentation between 37-42 weeks gestation who have a 3rd or 4th degree perineal tear (the ‘tear rate’) has remained broadly constant at around 3.5% from January 2018 (when the data shown starts) to end February 2021 (the latest point for which data is currently available)."),
-    p("The tear rate varies somewhat between NHS Board areas of residence: for example the average rates in mainland Boards in the period prior to the COVID-19 pandemic ranged from 1.5% for women in NHS Dumfries & Galloway to 4.6% in NHS Lothian.  No areas have shown a clear change in the tear rate since the start of the COVID-19 pandemic."),
-    p("The tear rate does not show any clear relationship to maternal age.  The tear rate tends to be highest among mothers living in the least deprived areas of Scotland, and this pattern has not changed during the COVID-19 pandemic.")
-    )
-
-})
 
 
 ##END

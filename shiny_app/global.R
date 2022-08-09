@@ -255,23 +255,24 @@ home_list <- c("About" = "about",
                 "Accessibility" = "accessibility")
  
  # List of sections in Commentary tab
- commentary_list <- c("Summary trends" = "summary",
+commentary_list <- c("Summary trends" = "summary",
                       "Cardiovascular" = "cardio",
-                      "Immunisation" = "immunisation",
-                      "Child health" = "child-health",
-                      "Breastfeeding" = "breastfeeding",
-                      "Child development" = "child-dev",
-                      "Stillbirths and infant deaths" = "perinatal",
+                      "Cancer" = "cancer",
+                      "Injuries" = "injuries",
                       "Mental health" = "mental-health",
                       "Antenatal bookings" = "booking",
                       "Termination of pregnancy" = "termination",
                       "Induction of labour" = "induction",
+                      "Method of delivery" = "delivery",
                       "Gestation at delivery" = "gestation",
                       "Apgar scores" = "apgar",
                       "Location of extremely preterm babies" = "preterm",
                       "Perineal tears" = "tears",
-                      "Cancer" = "cancer",
-                      "Injuries" = "injuries",
+                      "Stillbirths and infant deaths" = "perinatal",
+                      "Immunisations" = "immunisation",
+                      "Child health reviews" = "child-health",
+                      "Breastfeeding" = "breastfeeding",
+                      "Child development" = "child-dev",
                       "Substance use" = "drugs"
                       )
 
