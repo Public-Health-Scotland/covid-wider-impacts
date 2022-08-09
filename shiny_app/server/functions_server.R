@@ -1955,7 +1955,8 @@ plot_run_chart =
 
 
   yaxis_plots[["title"]] = y_label
-
+  
+ 
   # Setting a specific range stops chart jumping when turning markers on and off
   if (is.null(yaxis_plots[["range"]])) {
     yaxis_plots[["range"]] = c(0, 1.05*max(plot_data[[measure]]))
@@ -2011,9 +2012,11 @@ plot_run_chart =
 
   xaxis_plots[["rangeslider"]] =
     list(type = "date",
-         thickness = 0.075,
+         thickness = 0.05,
+         bgcolor = "#ECEBF3",
          # Without this, range will change when adding/removing markers
          range = range_x)
+  
 
   # Set starting range for x axis
   xaxis_plots[["range"]] = range_x
