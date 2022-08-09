@@ -70,8 +70,6 @@
 }
 
 
-
-
 /* FILTERS */
 
 /* this adds light purple background behind the title of the data type selectors */
@@ -96,12 +94,43 @@
   padding:5px;
 } 
 
-/* shiny-bound-output shiny-html-output */
-#geoname_ui.shiny-html-output {
-  padding-top: 5px; 
-  background-color: #ECEBF3;
-  border-radius: 10px;
-} 
+
+/* These remove the light purple shading from the buttons on the Cancer tab */
+#baseline.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#gender.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#cum_baseline.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#breakdown.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_treatment.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_plot_filter.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_wk_treatment.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_wk_appt_reg.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_plot_wk_filter.shiny-input-container {
+  background-color: #ffffff;
+}
 
 
 /* SIDE BAR SELECTORS */
@@ -160,7 +189,7 @@ color: #ffffff;
 /* FONT COLOURS AND CHART FORMATS */
 
 /* Change font colour of all headers to PHS dark purple */
-h3, h4 {
+h2, h3, h4 {
   color: #3F3685;
   font-weight: bold;
   

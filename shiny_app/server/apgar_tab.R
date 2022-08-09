@@ -1,6 +1,5 @@
-
-##Server script for births and babies - apgar tab..
-
+# Wider impacts dashboard - Births and babies tab - apgar section
+# Server code
 
 ###############################################.
 ## Modals ----
@@ -350,36 +349,6 @@ output$download_apgar_data <- downloadHandler(
               file) }
 )
 
-###############################################.
-## Commentary tab content  ----
-###############################################.
-
-#action associated with action links within commentary text - this observe event linked
-# to an actionLink within the commentary which will take the user to commentary easily.
-observeEvent(input$switch_to_apgar,{
-  updateTabsetPanel(session, "intabset", selected = "comment")
-  updateCollapse(session, "collapse_commentary", open = "Apgar 5")
-})
-
-
-output$apgar_commentary <- renderUI({
-  tagList(
-    bsButton("jump_to_apgar",label = "Go to data"), #this button can only be used once
-    h2("Apgar scores - 3rd August 2022"),
-    p("Data are thought to be incomplete for NHS Fife and NHS Forth Valley in April 2022, so the proportion of babies with a low Apgar score in this month is likely to change in future releases of the dashboard."),
-    h2("Apgar scores - 2nd June 2021"),
-    p("In this release of information on Apgar scores (2nd June 2021) data have been updated to include women discharged after delivery up to and including February 2021. The data show that, at all Scotland level, the percentage of singleton live born babies delivered at 37-42 weeks gestation which have a low 5 minute Apgar score (less than 7) in February 2021 was at a very similar level to the pre-pandemic average at 1.8%."),
-    p("The Apgar score data by NHS Board are presented quarterly and this information will next be updated on 7th July 2021."),
-    h2("Apgar scores - 14th April 2021"),
-    p("Information on Apgar scores was included in this tool for the first time on 14 April 2021."),
-    p("The Apgar score measures the condition of newborn babies.  It was developed to allow health professionals to quickly identify babies needing resuscitation after delivery.  Babies are scored 0, 1, or 2 for each of their heart rate; respiratory effort; muscle tone; response to stimulation; and colour.  Scores therefore range from 0 to 10, with higher scores indicating a better condition.  Scores of 7 or over are generally interpreted as ‘reassuring’, with scores of 4-6 considered moderately low, and scores of 0-3 considered very low.  The Apgar score is measured at 1 and 5 minutes after delivery for all babies in Scotland."),
-    p("Low Apgar scores at 5 minutes after delivery are associated with a higher risk of neonatal death, neonatal morbidity, and longer term problems with babies’ development.  Babies born preterm can have lower scores due to their overall immaturity rather than a specific problem such as lack of oxygen during delivery.  Due to this, the association between low Apgar scores and poor outcomes is generally stronger for babies born at term (at 37-41 weeks gestation) or post-term (at ≥42 weeks gestation) compared to those born preterm (at <37 weeks gestation)."),
-    p("The information on Apgar scores presented through this tool is taken from hospital discharge records, specifically records relating to the care of women delivering a singleton live birth (i.e. one baby, not twins or more) at 37-42 weeks gestation inclusive.  Further technical information is available through the ‘Data source’ button on the dashboard page."),
-    p("The data shows that, at all Scotland level, just under 2% of singleton, live born babies delivered at 37-42 weeks gestation have a low 5 minute Apgar score (less than 7).  The percentage of babies with a low score has been broadly similar over the whole period examined (January 2018 to, currently, December 2020).  In particular, no increase in the percentage of babies with a low score has been seen during the COVID-19 pandemic. In fact the percentage of babies born with a 5 minute Apgar score of less than 7 was consistently slightly lower from Jan to Sep 2020 than the Jan 2018 to Feb 2020 average."),
-    p("Prior to the COVID-19 pandemic, the percentage of babies with a low 5 minute Apgar score was similar across mainland NHS Boards, ranging from around 1% of babies born to mothers living in NHS Highland to around 2.5% of babies born to mothers living in NHS Lanarkshire.  Within each Board, the percentage of babies with a low score fluctuates over time, as would be expected by chance.  No increase in the percentage of babies with a low score has been seen during the COVID-19 pandemic in any Board."),
-    p("The percentage of babies with a low 5 minute Apgar score is similar for babies born to mothers from different age groups, and for babies born to mothers living in areas with different levels of deprivation.  No changes to these patterns have been seen during the COVID-19 pandemic."))
-
-})
 
 
 ##END
