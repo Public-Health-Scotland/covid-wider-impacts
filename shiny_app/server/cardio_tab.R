@@ -12,8 +12,8 @@ observeEvent(input$`cardio-measure`, {
   x <- input$`cardio-measure`
   cardio_choices <- case_when(x == "cath" ~ list(c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")),
                               x == "aye" ~ list(c("Scotland")),
-                              x == "drug_presc" ~ c("Scotland", "Health board", "HSC partnership"),
-                              TRUE ~ ~ c("Scotland", "Health board")) %>% unlist()
+                              x == "drug_presc" ~ list(c("Scotland", "Health board", "HSC partnership")),
+                              TRUE ~ list(c("Scotland", "Health board"))) %>% unlist()
   if (x == "cath") {
     shinyjs::hide("diagnosis_select")
     hide("cardio-geoname")
