@@ -7,50 +7,32 @@
 # Show list of area names depending on areatype selected
 geoname_server("cardio")
 
-
 # Adding 'observeEvent' to allow reactive 'area of interest' selction on cardio tab
 observeEvent(input$`cardio-measure`, {
   x <- input$`cardio-measure`
-
+  cardio_choices <- case_when(x == "cath" ~ list(c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")),
+                              x == "aye" ~ list(c("Scotland")),
+                              x == "drug_presc" ~ list(c("Scotland", "Health board", "HSC partnership")),
+                              TRUE ~ list(c("Scotland", "Health board"))) %>% unlist()
   if (x == "cath") {
-    cardio_choices = c("All", "Royal Infirmary of Edinburgh", "Golden Jubilee National Hospital")
     shinyjs::hide("diagnosis_select")
     hide("cardio-geoname")
     enable("cardio-geotype")
   }
 
   if (x == "aye") {
-    cardio_choices = c("Scotland")
     shinyjs::hide("diagnosis_select")
     hide("cardio-geoname")
     disable("cardio-geotype")
   }
 
-  if (x == "drug_presc") {
-    cardio_choices = c("Scotland", "Health board", "HSC partnership")
+  if (x %in% c("drug_presc", "sas_cardiac", "ooh_cardiac")) {
     shinyjs::hide("diagnosis_select")
-    shinyjs::show("cardio-geoname")
-    enable("cardio-geotype")
-  }
-
-  if (x %in% c("sas_cardiac", "ooh_cardiac")) {
-    cardio_choices = c("Scotland", "Health board")
-    shinyjs::hide("diagnosis_select")
-    shinyjs::show("cardio-geoname")
-    enable("cardio-geotype")
-  }
-
-  if (x == "cardio_admissions") {
-    cardio_choices = c("Scotland", "Health board")
-    shinyjs::show("diagnosis_select")
-    updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
-                      choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")
     shinyjs::show("cardio-geoname")
     enable("cardio-geotype")
   }
   
-  if (x == "cardio_deaths") {
-    cardio_choices = c("Scotland", "Health board")
+  if (x %in% c("cardio_deaths", "cardio_admissions")) {
     shinyjs::show("diagnosis_select")
     updateSelectInput(session, "diagnosis_select", label = "Step 3. Select diagnosis",
                 choices = c("Heart Attack","Heart Failure","Stroke"), selected = "Heart Attack")
@@ -419,13 +401,10 @@ observeEvent(input$btn_cath_modal,
 )
 
 # Rendering A&E Cardio Codes table here for inclusion to modal above
-output$ae_cardio_codes_tbl <- DT::renderDataTable(
-  ae_cardio_codes
-)
+output$ae_cardio_codes_tbl <- DT::renderDataTable(ae_cardio_codes)
 
 # Including 'observeEvent' here so that SIMD modal can be called from A&E Cardio section
 observeEvent(input$btn_modal_simd_cardio, simd_modal())
-
 
 ###############################################.
 ## Reactive datasets ----
@@ -464,8 +443,16 @@ cardio_dth_filter <- reactive({
   
 })
 
-
-
+# Data for cardio charts
+cardio_chart_data <- reactive({
+  switch(input$`cardio-measure`,
+         "drug_presc" = cardio_drugs %>% filter(area_name == input$`cardio-geoname`),
+         "aye" = ae_cardio,
+         "ooh_cardiac" = ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
+         "sas_cardiac" = sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
+         "cardio_admissions" = cardio_disch_filter(),
+         "cardio_deaths" = cardio_dth_filter()) 
+})
 
 ###############################################.
 ## Reactive layout  ----
@@ -516,11 +503,6 @@ output$cardio_explorer <- renderUI({
         plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
                      time in 2018-2019 by age group", "cardio_age_var",
                      "Weekly number of cardiovascular A&E attendances in Scotland by age group", "cardio_age_tot")
-        # plot_cut_box("Percentage change in cardiovascular A&E attendances in Scotland compared with the corresponding
-        #              time in 2018-2019 by SIMD quintile", "ae_cardio_dep_var",
-        #              "Weekly number of cardiovascular A&E attendances in Scotland by SIMD quintile", "ae_cardio_dep_tot",
-        #              extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
-        #                                           icon = icon('question-circle')))
       )
     } else if (input$`cardio-measure` == "drug_presc") {
       tagList(# Prescribing - items dispensed
@@ -540,8 +522,7 @@ output$cardio_explorer <- renderUI({
      } else if (input$`cardio-measure` == "ooh_cardiac") {
         tagList(# OOH Attendances
           tags$b("The numbers of cases reported from July 2021 onwards are not comparable to
-                    those in earlier weeks."),
-          p("The clinical codes used to categorise out of hours diagnoses changed in that month,
+                    those in earlier weeks. The clinical codes used to categorise out of hours diagnoses changed in that month,
              affecting the number of cases that are categorised as chest pain."),
           h3(paste0("Weekly chest pain cases in out of hours services in ", input$`cardio-geoname`)),
           fluidRow(column(6, sourcemodal_ui("cardio")),
@@ -640,150 +621,105 @@ output$cath_type_tot <- renderPlotly({plot_trend_chart(cath_lab_type(),
                    pal_sex, type = "total", data_name = "cath")})
 
 ###############################################.
+# Cardio chart parameters 
+cardio_x_range <- reactive({case_when(input$`cardio-measure` == "ooh_cardiac" ~ T, TRUE ~ F)})
+cardio_period <- reactive({case_when(input$`cardio-measure` %in% c("cardio_admissions", "cardio_deaths") ~ "quarterly",
+                           TRUE ~ "weekly")})
+###############################################.
 # Overal chart comparing pre-pandemic and pandemic period 
 output$cardio_overall <- renderPlotly({
-  if (input$`cardio-measure` == "aye") {
-    plot_overall_chart(ae_cardio, data_name = "aye", area = "All")
-  } else if (input$`cardio-measure` == "drug_presc") {
-    plot_overall_chart(cardio_drugs %>% filter(area_name == input$`cardio-geoname`),
-                       data_name = "drug_presc", area = "All")
-  } else if (input$`cardio-measure` == "ooh_cardiac") {
-    plot_overall_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                       data_name = "ooh_cardiac", area = "All", fix_x_range = TRUE) %>%
-      add_cardio_ooh_coding_line()
-  } else if (input$`cardio-measure` == "sas_cardiac") {
-    plot_overall_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                       data_name = "sas_cardiac", area = "All")
-  } else if (input$`cardio-measure` == "cardio_admissions") {
-    plot_overall_chart(cardio_disch_filter(),
-                       data_name = "cardio_admissions", area = "All", period = "quarterly")
-  } else if (input$`cardio-measure` == "cardio_deaths") {
-    plot_overall_chart(cardio_dth_filter(),
-                       data_name = "cardio_deaths", area = "All", period = "quarterly")
-  }
+    
+  cardio_plot <- plot_overall_chart(cardio_chart_data(), data_name = input$`cardio-measure`, 
+                                    area = F, period = cardio_period(), fix_x_range = cardio_x_range())
+  
+  if (input$`cardio-measure` == "ooh_cardiac") {
+    cardio_plot <- cardio_plot %>% add_cardio_ooh_coding_line()
+  } 
+  cardio_plot
 })
+
 ###############################################.
 # Age 
 output$cardio_age_var <- renderPlotly({
-  if (input$`cardio-measure` == "aye") {
-    plot_trend_chart(ae_cardio, pal_sex, c("age", "all"), data_name = "aye",tab = "cardio")
-  }  else if (input$`cardio-measure` == "ooh_cardiac") {
-    plot_trend_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_age, split = "age", type = "variation",
-                     data_name = "ooh_cardiac", tab = "cardio", fix_x_range = TRUE) %>%
-      add_cardio_ooh_coding_line()
-  } else if (input$`cardio-measure` == "sas_cardiac") {
-    plot_trend_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_age, split = "age", type = "variation", data_name = "sas_cardiac", tab = "cardio")
-  } else if (input$`cardio-measure` == "cardio_admissions") {
-    plot_trend_chart(cardio_disch_filter(),
-                     pal_age, split = "age", type = "variation", data_name = "cardio_admissions", tab = "cardio", period = "quarterly")
-  } else if (input$`cardio-measure` == "cardio_deaths") {
-    plot_trend_chart(cardio_dth_filter(),
-                     pal_2ages, split = "age", type = "variation", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")
-  }
-  })
+  cardio_pal <- case_when(input$`cardio-measure` == "aye" ~ list(pal_sex), 
+                          input$`cardio-measure` == "cardio_deaths" ~ list(pal_2ages), 
+                          TRUE ~ list(pal_age)) %>% unlist()
+  cardio_split <- case_when(input$`cardio-measure` == "aye" ~ c("age", "all"), TRUE ~ "age")
+  
+  cardio_plot <- plot_trend_chart(cardio_chart_data(), cardio_pal, split = cardio_split, 
+                                  type = "variation", data_name = input$`cardio-measure`, 
+                                  tab = "cardio", fix_x_range = cardio_x_range(), period = cardio_period())
+  
+  if (input$`cardio-measure` == "ooh_cardiac") {
+    cardio_plot <- cardio_plot %>% add_cardio_ooh_coding_line()
+  } 
+  cardio_plot
+})
 
 output$cardio_age_tot <- renderPlotly({
-  if (input$`cardio-measure` == "aye") {
-    plot_trend_chart(ae_cardio, pal_sex, c("age", "all"), "total", data_name = "aye",tab = "cardio")
-  }  else if (input$`cardio-measure` == "ooh_cardiac") {
-    plot_trend_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_age, split = "age", type = "total",
-                     data_name = "ooh_cardiac", tab = "cardio", fix_x_range = TRUE) %>%
-      add_cardio_ooh_coding_line()
-  } else if (input$`cardio-measure` == "sas_cardiac") {
-    plot_trend_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_age, split = "age", type = "total", data_name = "sas_cardiac", tab = "cardio")
-  } else if (input$`cardio-measure` == "cardio_admissions") {
-    plot_trend_chart(cardio_disch_filter(),
-                     pal_age, split = "age", type = "total", data_name = "cardio_admissions", tab = "cardio", period = "quarterly")
-  } else if (input$`cardio-measure` == "cardio_deaths") {
-    plot_trend_chart(cardio_dth_filter(),
-                     pal_2ages, split = "age", type = "total", data_name = "cardio_deaths", tab = "cardio", period = "quarterly")
-  }
+  cardio_pal <- case_when(input$`cardio-measure` == "aye" ~ list(pal_sex), 
+                          input$`cardio-measure` == "cardio_deaths" ~ list(pal_2ages), 
+                          TRUE ~ list(pal_age)) %>% unlist()
+  cardio_split <- case_when(input$`cardio-measure` == "aye" ~ c("age", "all"), TRUE ~ "age")
+  
+  cardio_plot <- plot_trend_chart(cardio_chart_data(), cardio_pal, split = cardio_split, 
+                                  type = "total", data_name = input$`cardio-measure`, 
+                                  tab = "cardio", fix_x_range = cardio_x_range(), period = cardio_period())
+  
+  if (input$`cardio-measure` == "ooh_cardiac") {
+    cardio_plot <- cardio_plot %>% add_cardio_ooh_coding_line()
+  } 
+  cardio_plot
 })
 
 ###############################################.
 # Sex 
 output$cardio_sex_var <- renderPlotly({
+  cardio_plot <- plot_trend_chart(cardio_chart_data(), pal_sex, split = "sex", 
+                                  type = "variation", data_name = input$`cardio-measure`, 
+                                  tab = "cardio", fix_x_range = cardio_x_range(), period = cardio_period())
+  
   if (input$`cardio-measure` == "ooh_cardiac") {
-    plot_trend_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_sex, split = "sex", type = "variation",
-                     data_name = "ooh_cardiac", tab = "cardio", fix_x_range = TRUE) %>%
-      add_cardio_ooh_coding_line()
-  } else if (input$`cardio-measure` == "sas_cardiac") {
-    plot_trend_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_sex, split = "sex", type = "variation", data_name = "sas_cardiac", tab = "cardio")
-  } else if (input$`cardio-measure` == "cardio_admissions") {
-    plot_trend_chart(cardio_disch_filter(), pal_sex, split = "sex", type = "variation", 
-                     data_name = "cardio_admissions", tab = "cardio", period = "quarterly")
-  } else if (input$`cardio-measure` == "cardio_deaths") {
-    plot_trend_chart(cardio_dth_filter(), pal_sex, split = "sex", type = "variation", 
-                      data_name = "cardio_deaths", tab = "cardio", period = "quarterly")
-  }
+    cardio_plot <- cardio_plot %>% add_cardio_ooh_coding_line()
+  } 
+  cardio_plot
 })
 
 output$cardio_sex_tot <- renderPlotly({
+
+  cardio_plot <- plot_trend_chart(cardio_chart_data(), pal_sex, split = "sex", 
+                                  type = "total", data_name = input$`cardio-measure`, 
+                                  tab = "cardio", fix_x_range = cardio_x_range(), period = cardio_period())
+  
   if (input$`cardio-measure` == "ooh_cardiac") {
-    plot_trend_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_sex, split = "sex", type = "total",
-                     data_name = "ooh_cardiac", tab = "cardio", fix_x_range = TRUE) %>%
-      add_cardio_ooh_coding_line()
-  } else if (input$`cardio-measure` == "sas_cardiac") {
-    plot_trend_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_sex, split = "sex", type = "total", data_name = "sas_cardiac", tab = "cardio")
-  } else if (input$`cardio-measure` == "cardio_admissions") {
-    plot_trend_chart(cardio_disch_filter(), pal_sex, split = "sex", type = "total", 
-                     data_name = "cardio_admissions", tab = "cardio", period = "quarterly")
-  } else if (input$`cardio-measure` == "cardio_deaths") {
-    plot_trend_chart(cardio_dth_filter(), pal_sex, split = "sex", type = "total", 
-                     data_name = "cardio_deaths", tab = "cardio", period = "quarterly")
-  }
+    cardio_plot <- cardio_plot %>% add_cardio_ooh_coding_line()
+  } 
+  cardio_plot
 })
 
 ###############################################.
 # Deprivation 
 output$cardio_depr_var <- renderPlotly({
+  cardio_plot <- plot_trend_chart(cardio_chart_data(), pal_depr, split = "dep", 
+                                  type = "variation", data_name = input$`cardio-measure`, 
+                                  tab = "cardio", fix_x_range = cardio_x_range(), period = cardio_period())
+  
   if (input$`cardio-measure` == "ooh_cardiac") {
-    plot_trend_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_depr, split = "dep", type = "variation",
-                     data_name = "ooh_cardiac", tab = "cardio",  fix_x_range = TRUE) %>%
-      add_cardio_ooh_coding_line()
-  } else if (input$`cardio-measure` == "sas_cardiac") {
-    plot_trend_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_depr, split = "dep", type = "variation",data_name = "sas_cardiac", tab = "cardio")
-  } else if (input$`cardio-measure` == "cardio_admissions") {
-    plot_trend_chart(cardio_disch_filter(), pal_depr, split = "dep", type = "variation",
-                     data_name = "cardio_admissions", tab = "cardio", period = "quarterly")
-  } else if (input$`cardio-measure` == "cardio_deaths") {
-    plot_trend_chart(cardio_dth_filter(), pal_depr, split = "dep", type = "variation",
-                     data_name = "cardio_deaths", tab = "cardio", period = "quarterly")
-  }
+    cardio_plot <- cardio_plot %>% add_cardio_ooh_coding_line()
+  } 
+  cardio_plot
 })
 
 output$cardio_depr_tot <- renderPlotly({
+  cardio_plot <- plot_trend_chart(cardio_chart_data(), pal_depr, split = "dep", 
+                                  type = "total", data_name = input$`cardio-measure`, 
+                                  tab = "cardio", fix_x_range = cardio_x_range(), period = cardio_period())
+  
   if (input$`cardio-measure` == "ooh_cardiac") {
-    plot_trend_chart(ooh_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_depr, split = "dep", type = "total",
-                     data_name = "ooh_cardiac", tab = "cardio",  fix_x_range = TRUE) %>%
-      add_cardio_ooh_coding_line()
-  } else if (input$`cardio-measure` == "sas_cardiac") {
-    plot_trend_chart(sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
-                     pal_depr, split = "dep", type = "total",data_name = "sas_cardiac", tab = "cardio")
-  } else if (input$`cardio-measure` == "cardio_admissions") {
-    plot_trend_chart(cardio_disch_filter(), pal_depr, split = "dep", type = "total",
-                     data_name = "cardio_admissions", tab = "cardio", period = "quarterly")
-  } else if (input$`cardio-measure` == "cardio_deaths") {
-    plot_trend_chart(cardio_dth_filter(), pal_depr, split = "dep", type = "total",
-                     data_name = "cardio_deaths", tab = "cardio", period = "quarterly")
-  }
+    cardio_plot <- cardio_plot %>% add_cardio_ooh_coding_line()
+  } 
+  cardio_plot
 })
-
-###############################################.
-# A&E Cardio charts
-# output$ae_cardio_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_cardio, pal_chose = pal_depr, split = "dep", type = "variation", data_name = "aye", tab = "cardio")})
-# output$ae_cardio_dep_tot <- renderPlotly({plot_trend_chart(ae_cardio, pal_depr, split = "dep", type = "total", data_name = "aye", tab = "cardio")})
 
 ###############################################.
 # Prescribing charts
@@ -820,29 +756,11 @@ overall_cardio_download <- reactive({
     selection <- c("week_ending", "count", "count_average", "variation")
     new_var_name <- "count_2019"
   }
-  # A&E branch
-  if (input$`cardio-measure` == "aye") {
+  # A&E, prescribing, OOH and SAS
+  if (input$`cardio-measure` %in% c("aye", "drug_presc", "ooh_cardiac", "sas_cardiac")) {
     selection <- c("week_ending", "area_name", "count", "count_average", "variation")
     new_var_name <- "average_2018_2019"
   }
-  # Prescribing
-  if (input$`cardio-measure` == "drug_presc") {
-    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
-    new_var_name <- "average_2018_2019"
-  }
-
-  # OOH
-  if (input$`cardio-measure` == "ooh_cardiac") {
-  selection <- c("week_ending", "area_name", "count", "count_average", "variation")
-  new_var_name <- "average_2018_2019"
-  }
-
-  # SAS
-  if (input$`cardio-measure` == "sas_cardiac") {
-    selection <- c("week_ending", "area_name", "count", "count_average", "variation")
-    new_var_name <- "average_2018_2019"
-  }
-
   # Admissions
   if (input$`cardio-measure` == "cardio_admissions") {
     selection <- c("week_ending", "area_name", "diagnosis", "type_admission", "count", "count_average", "variation")
@@ -877,7 +795,5 @@ output$download_cardio_data <- downloadHandler(
     write_csv(overall_cardio_download(),
               file) }
 )
-
-
 
 ##END

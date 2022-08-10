@@ -103,7 +103,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
     aver_period <- paste0(case_when(data_name %in% c("rapid", "aye", "ooh", "nhs24",
                                                      "sas", "drug_presc", "cath",
-                                                     "mentalhealth_drugs", "mh_ooh",
+                                                     "mhdrugs", "mh_ooh",
                                                      "ooh_cardiac", "sas_cardiac", "ui_smr01_all", "ui_smr01_assaults",
                                                      "ui_smr01_falls", "ui_smr01_other", "ui_smr01_poison",
                                                      "ui_smr01_rta","op","cardio_admissions") ~ "2018-2019",
@@ -145,7 +145,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                substr(data_name, 1, 3) == "sas" ~ "Number of incidents",
                                data_name == "drug_presc" ~ "Number of items prescribed",
                                data_name == "deaths" ~ "Number of deaths",
-                               data_name == "mentalhealth_drugs" ~ "Number of patients",
+                               data_name == "mhdrugs" ~ "Number of patients",
                                data_name == "op" ~ "Number of appointments")
 
       #Modifying standard layout
@@ -160,7 +160,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
                                 data_name == "drug_presc" ~ "Items prescribed: ",
                                 data_name == "cancer" ~ "Referrals: ",
                                 data_name %in% c("cardio_deaths", "deaths") ~ "Deaths: ",
-                                data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
+                                data_name == "mhdrugs" ~ "Patients prescribed medicine: ",
                                 data_name == "op" ~ "Appointments: ")
 
       #Text for tooltip
@@ -266,7 +266,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                              data_name == "drug_presc" ~ "Number of items prescribed",
                              data_name %in% c("deaths", "cardio_deaths") ~ "Number of deaths",
                              data_name == "cancer" ~ "Number of referrals",
-                             data_name == "mentalhealth_drugs" ~ "Number of patients",
+                             data_name == "mhdrugs" ~ "Number of patients",
                              data_name == "op" ~ "Number of appointments")
 
     #Modifying standard layout
@@ -291,7 +291,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                               data_name == "cath" ~ "Cases: ",
                               data_name == "drug_presc" ~ "Items prescribed: ",
                               data_name %in% c("deaths", "cardio_deaths") ~ "Deaths: ",
-                              data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
+                              data_name == "mhdrugs" ~ "Patients prescribed medicine: ",
                               data_name == "op" ~ "Appointments: ")
     
     # Input for tooltip based on weekly/monthly

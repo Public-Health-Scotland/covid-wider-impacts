@@ -19,7 +19,6 @@ observeEvent(input$`mh-measure`, {
   updateSelectInput(session, "mh-geotype", choices = areas)
 })
 
-
 ###############################################.
 ## Modal ----
 ###############################################.
@@ -118,69 +117,31 @@ observeEvent(input$`mh-source-modal`,
                                  shinyjs::toggle(id = "mh_drug_codes")),
                 shinyjs::hidden(div(id="mh_drug_codes",
                   br(),
-                  HTML({
-                    "
-                    <table style='width:100%'>
-                    <tr>
-                    <th colspan='1'>Anxiety Medicines</th>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Diazepam (excluding rectal preparations)</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Lorazepam</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Oxazepam</td>
-                    </tr>
-                    <tr>
-                    <th colspan='1'>Insomnia Medicines</th>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Nitrazepam</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Loprazolam</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Lormetazepam</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Temazepam</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Zolpidem</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Zopiclone</td>
-                    </tr>
-                    <tr>
-                    <th colspan='1'>Depression Medicines</th>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Citalopram</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Fluoxetine</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Fluvoxamine</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Paroxetine</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Sertraline</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Duloxetine</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Venlafaxine</td>
-                    </tr>
-                    </table>
-                    "
-                    }),
+                  tags$b("Anxiety medicines"),
+                  tags$ul(
+                    tags$li("Diazepam (excluding rectal preparations)"),
+                    tags$li("Lorazepam"),
+                    tags$li("Oxazepam")
+                    ),
+                  tags$b("Insomnia medicines"),
+                  tags$ul(
+                    tags$li("Nitrazepam"),
+                    tags$li("Loprazolam"),
+                    tags$li("Lormetazepam"),
+                    tags$li("Temazepam"),
+                    tags$li("Zolpidem"),
+                    tags$li("Zopiclone")
+                  ),
+                  tags$b("Depression medicines"),
+                  tags$ul(
+                    tags$li("Citalopram"),
+                    tags$li("Fluoxetine"),
+                    tags$li("Fluvoxamine"),
+                    tags$li("Paroxetine"),
+                    tags$li("Sertraline"),
+                    tags$li("Duloxetine"),
+                    tags$li("Venlafaxine")
+                  ),
                size = "1",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              ))
@@ -225,28 +186,21 @@ observeEvent(input$`mh-source-modal`,
                 easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
                 })
 
-
-
 ###############################################.
 ## Reactive datasets ----
 ###############################################.
-ae_mh_filt <- reactive({ae_mh %>% filter(area_type == input$`mh-geotype` &
-                                           area_name == input$`mh-geoname`)
+mh_filt <- reactive({
+  dataset <- switch(input$`mh-measure`,
+                    "aye" = ae_mh,
+                    "mhdrugs" = mentalhealth_drugs,
+                    "ooh" = mh_ooh)
+  
+  dataset %>% filter(area_type == input$`mh-geotype` & 
+                       area_name == input$`mh-geoname`)
   })
-
-ae_mh_aver <- reactive({ae_mh_filt() %>%
-    group_by(type, category) %>%
-    mutate(count = round(rollmean(count, k = 3, fill = NA),1),
-           count_average = round(rollmean(count_average, k = 3, fill = NA),1),
-           variation = round(-1 * ((count_average - count)/count_average * 100), 1)) %>%
-    ungroup
-})
-
-mh_ooh_filt <- reactive({mh_ooh %>% filter(area_type == input$`mh-geotype` &
-                                           area_name == input$`mh-geoname`)
-})
-
-mh_ooh_aver <- reactive({mh_ooh_filt() %>%
+# Data with 3 week rolling averages for sex, dep and age charts
+mh_aver <- reactive({
+  mh_filt() %>%
     group_by(type, category) %>%
     mutate(count = round(rollmean(count, k = 3, fill = NA),1),
            count_average = round(rollmean(count_average, k = 3, fill = NA),1),
@@ -257,53 +211,42 @@ mh_ooh_aver <- reactive({mh_ooh_filt() %>%
 ###############################################.
 ## Charts ----
 ###############################################.
+# MH Overall chart
+output$mh_overall <- renderPlotly({plot_overall_chart(mh_filt(), data_name = input$`mh-measure`, area = F)})
+###############################################.
+# MH Sex charts
+output$mh_sex_var <- renderPlotly({plot_trend_chart(mh_aver(), pal_sex, c("sex", "all"), "variation",
+                                                       data_name = input$`mh-measure`, tab = "mh", aver_week = T)})
+output$mh_sex_tot <- renderPlotly({plot_trend_chart(mh_aver(), pal_sex, c("sex", "all"), "total", 
+                                                    data_name = input$`mh-measure`, tab = "mh",  aver_week = T)})
+###############################################.
+# MH age charts
+output$mh_age_var <- renderPlotly({
+  plot_trend_chart(mh_aver() %>% filter(type == "age") %>% 
+                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
+                     pal_age, c("age", "all"), "variation",
+                     data_name = input$`mh-measure`, tab = "mh", aver_week = T)})
+output$mh_age_tot <- renderPlotly({
+  plot_trend_chart(mh_aver() %>% filter(type == "age") %>% 
+                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))), 
+                   pal_age, c("age", "all"), "total",
+                   data_name = input$`mh-measure`, tab = "mh", aver_week = T)})
+
+###############################################.
+# MH Deprivation charts
+output$mh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_aver(), pal_chose = pal_depr, split = "dep",
+                                                    type = "variation", data_name = input$`mh-measure`, tab = "mh", aver_week = T)})
+output$mh_dep_tot <- renderPlotly({plot_trend_chart(mh_aver(), pal_depr, split = "dep", type = "total", 
+                                                    data_name = input$`mh-measure`, tab = "mh",  aver_week = T)})
 
 ###############################################.
 # MH Prescribing charts
-output$mh_prescribing_all <- renderPlotly({plot_overall_chart(mentalhealth_drugs %>% filter(area_name == input$`mh-geoname`),
-                                                              data_name = "mentalhealth_drugs", area = "All")})
 output$mh_drugs_var <- renderPlotly({
   plot_trend_chart(mentalhealth_drugs, pal_med, split = "condition",
                    data_name = "mentalhealth_drugs", tab = "mh")})
 output$mh_drugs_tot <- renderPlotly({
   plot_trend_chart(mentalhealth_drugs, pal_med, split = "condition", type = "total",
                    data_name = "mentalhealth_drugs", tab = "mh")})
-
-###############################################.
-# MH A&E charts
-output$ae_mh_overall <- renderPlotly({plot_overall_chart(ae_mh_filt(), data_name = "aye", area = "All")})
-output$ae_mh_sex_var <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_sex, c("sex", "all"),
-                                                       data_name = "aye",tab = "mh", aver_week = T)})
-output$ae_mh_sex_tot <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_sex, c("sex", "all"), "total", "aye", tab = "mh",  aver_week = T)})
-output$ae_mh_age_var <- renderPlotly({
-  plot_trend_chart(ae_mh_aver() %>% filter(type == "age") %>%
-                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))),
-                   pal_age, c("age", "all"), data_name = "aye",tab = "mh", aver_week = T)})
-output$ae_mh_age_tot <- renderPlotly({
-  plot_trend_chart(ae_mh_aver() %>% filter(type == "age") %>%
-                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))),
-                   pal_age, c("age", "all"), "total", "aye", tab = "mh",  aver_week = T)})
-# output$ae_mh_dep_var <- renderPlotly({plot_trend_chart(dataset = ae_mh_aver(), pal_chose = pal_depr, split = "dep",
-#                                                        type = "variation", data_name = "aye", tab = "mh", aver_week = T)})
-# output$ae_mh_dep_tot <- renderPlotly({plot_trend_chart(ae_mh_aver(), pal_depr, split = "dep", type = "total", data_name = "aye", tab = "mh",  aver_week = T)})
-
-###############################################.
-# MH OOH charts
-output$mh_ooh_overall <- renderPlotly({plot_overall_chart(mh_ooh_filt(), data_name = "ooh", area = "All")})
-output$mh_ooh_sex_var <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_sex, c("sex", "all"),
-                                                        data_name = "ooh",tab = "mh", aver_week = T)})
-output$mh_ooh_sex_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_sex, c("sex", "all"), "total", "ooh", tab = "mh",  aver_week = T)})
-output$mh_ooh_age_var <- renderPlotly({
-  plot_trend_chart(mh_ooh_aver() %>% filter(type == "age") %>%
-                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))),
-                   pal_age, c("age", "all"),  data_name = "ooh",tab = "mh", aver_week = T)})
-output$mh_ooh_age_tot <- renderPlotly({
-  plot_trend_chart(mh_ooh_aver() %>% filter(type == "age") %>%
-                     mutate(category = factor(category, levels = c("5 - 17", "18 - 44", "45 - 64", "65 and over"))),
-                   pal_age, c("age", "all"), "total", "ooh", tab = "mh",  aver_week = T)})
-output$mh_ooh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_ooh_aver(), pal_chose = pal_depr, split = "dep",
-                                                        type = "variation", data_name = "ooh", tab = "mh", aver_week = T)})
-output$mh_ooh_dep_tot <- renderPlotly({plot_trend_chart(mh_ooh_aver(), pal_depr, split = "dep", type = "total", data_name = "ooh", tab = "mh",  aver_week = T)})
 
 ###############################################.
 ##  Reactive layout  ----
@@ -316,6 +259,9 @@ output$mh_explorer <- renderUI({
   note_average <- p("Please note that to ease interpretation of these charts ",
                     "we are presenting 3-week rolling average figures.",
                     "Single-week figures can be obtained from the download button at the top of the page.")
+  
+  mh_type <- case_when(input$`mh-measure` == "aye" ~ "A&E attendances",
+                            input$`mh-measure` == "ooh" ~ "out of hours cases")
 
   if (input$`mh-measure` == "mhdrugs") {
     tagList(# Prescribing - items dispensed
@@ -324,79 +270,51 @@ output$mh_explorer <- renderUI({
                       actionButton("mh-source-modal", "Data source and definitions",
                                    icon = icon('question-circle'))),
                column(6,data_last_updated)),
-      plot_box("2020 to 2022 compared with 2018-2019 average", "mh_prescribing_all"),
+      plot_box("2020 to 2022 compared with 2018-2019 average", "mh_overall"),
       plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$`mh-geoname`,
                           " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
                    paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$`mh-geoname`, " by medicine groupings"), "mh_drugs_tot"))
-  } else if (input$`mh-measure` == "aye") {
+  } else if (input$`mh-measure` %in% c("aye", "ooh")) {
     tagList(#A&E attendances
+      if (input$`mh-measure` %in% c("aye")) {
       p("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E 
-              dataset, due to the quality of the data available.  Diagnosis/reason for attendance can be recorded in a variety of ways, 
-              including in free text fields - and not all NHS Boards submit this information.  The numbers presented in these dashboards 
+              dataset, due to the quality of the data available. Diagnosis/reason for attendance can be recorded in a variety of ways, 
+              including in free text fields - and not all health boards submit this information. The numbers presented in these dashboards 
               therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with 
-              caution.  Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of 
-              the areas represented in the data available. PHS are planning work to improve consistency."),
-      h3(paste0("Weekly mental health A&E attendances in ", input$`mh-geoname`)),
+              caution. Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of 
+              the areas represented in the data available. PHS are planning work to improve consistency.")},
+      h3(paste0("Weekly mental health ", mh_type, " in ", input$`mh-geoname`)),
       fluidRow(column(6,
                       actionButton("mh-source-modal", "Data source and definitions",
                                    icon = icon('question-circle'))),
                column(6,data_last_updated)),
-      plot_box("2020 to 2022 compared with 2018-2019 average", "ae_mh_overall"),
+      plot_box("2020 to 2022 compared with 2018-2019 average", "mh_overall"),
     if (input$`mh-geoname` == "Scotland") {
       tagList(
-        plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
-                     time in 2018-2019 by sex", "ae_mh_sex_var",
-                     "Weekly number of mental health A&E attendances by sex", "ae_mh_sex_tot",
+        plot_cut_box(paste0("Percentage change in mental health ", mh_type, " compared with the corresponding
+                     time in 2018-2019 by sex"), "mh_sex_var",
+                     paste0("Weekly number of mental health ", mh_type, " by sex"), "mh_sex_tot",
                      extra_content = note_average),
-        plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
-                     time in 2018-2019 by age group", "ae_mh_age_var",
-                     "Weekly number of mental health A&E attendances by age group", "ae_mh_age_tot",
+        plot_cut_box(paste0("Percentage change in mental health ", mh_type, " compared with the corresponding
+                     time in 2018-2019 by age group"), "mh_age_var",
+                     paste0("Weekly number of mental health ", mh_type, " by age group"), "mh_age_tot",
                      extra_content = note_average),
-        # plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
-        #              time in 2018-2019 by SIMD quintile", "ae_mh_dep_var",
-        #              "Weekly number of mental health A&E attendances by SIMD quintile", "ae_mh_dep_tot",
-        #              extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
-        #                                           icon = icon('question-circle')),
-        #                                      note_average)
-        #              )
-      ) #taglist bracket from if statement
-
-    }
+      if (input$`mh-measure` == "ooh") {
+        tagList(
+          plot_cut_box(paste0("Percentage change in mental health ", mh_type, " compared with the corresponding
+                       time in 2018-2019 by SIMD quintile"), "mh_dep_var",
+                       paste0("Weekly number of mental health ", mh_type, " by SIMD quintile"), "mh_dep_tot",
+                       extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
+                                                            icon = icon('question-circle')),
+                                               note_average)
+          )
+        )
+      }
     )  #taglist bracket from aye section
 
-    } else if (input$`mh-measure` == "ooh") {
-      tagList(#OOH attendances
-        tags$b(span("New clinical codes have been introduced for out of hours cases, which has had an
-                    impact on the number of mental health cases we report in the latter half of 2021.
-                    We are currently investigating this issue.",
-                    style = "color:red")),
-        h3(paste0("Weekly mental health out of hours cases in ", input$`mh-geoname`)),
-        fluidRow(column(6,
-                        actionButton("mh-source-modal", "Data source and definitions",
-                                     icon = icon('question-circle'))),
-                 column(6,data_last_updated)),
-        plot_box("2020 to 2022 compared with 2018-2019 average", "mh_ooh_overall"),
-        if (input$`mh-geoname` == "Scotland") {
-          tagList(
-            plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
-                     time in 2018-2019 by sex", "mh_ooh_sex_var",
-                         "Weekly number of mental health out of hours cases by sex", "mh_ooh_sex_tot",
-                         extra_content = note_average),
-            plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
-                     time in 2018-2019 by age group", "mh_ooh_age_var",
-                         "Weekly number of mental health out of hours cases by age group", "mh_ooh_age_tot",
-                         extra_content = note_average),
-            plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
-                     time in 2018-2019 by SIMD quintile", "mh_ooh_dep_var",
-                         "Weekly number of mental health out of hours cases by SIMD quintile", "mh_ooh_dep_tot",
-                         extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
-                                                      icon = icon('question-circle')),
-                                                 note_average)
-                         )
-          ) #taglist bracket from if statement
-          }
-      ) #taglist bracket from ooh section
-      }
+    }
+    )
+  }
 })
 ###############################################.
 ## Data downloads ----
@@ -407,11 +325,8 @@ mh_down_data <- reactive({
     input$`mh-measure`,
     "mhdrugs" = mentalhealth_drugs %>% filter(area_name == input$`mh-geoname` &
                                                 area_type == input$`mh-geotype`),
-    "aye" = ae_mh %>% filter(area_name == input$`mh-geoname` &
-                               area_type == input$`mh-geotype`),
-    "ooh" = mh_ooh %>% filter(area_name == input$`mh-geoname` &
-                                area_type == input$`mh-geotype`)
-  ) %>%
+    "aye" = ae_mh_filt(),
+    "ooh" = mh_ooh_filt()) %>%
     rename(average_2018_2019 = count_average) %>% select(-type)
 
 })
