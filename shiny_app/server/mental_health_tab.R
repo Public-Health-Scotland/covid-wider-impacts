@@ -233,6 +233,13 @@ output$mh_age_tot <- renderPlotly({
                    data_name = input$`mh-measure`, tab = "mh", aver_week = T)})
 
 ###############################################.
+# MH Deprivation charts
+output$mh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_aver(), pal_chose = pal_depr, split = "dep",
+                                                    type = "variation", data_name = input$`mh-measure`, tab = "mh", aver_week = T)})
+output$mh_dep_tot <- renderPlotly({plot_trend_chart(mh_aver(), pal_depr, split = "dep", type = "total", 
+                                                    data_name = input$`mh-measure`, tab = "mh",  aver_week = T)})
+
+###############################################.
 # MH Prescribing charts
 output$mh_drugs_var <- renderPlotly({
   plot_trend_chart(mentalhealth_drugs, pal_med, split = "condition",
@@ -240,12 +247,6 @@ output$mh_drugs_var <- renderPlotly({
 output$mh_drugs_tot <- renderPlotly({
   plot_trend_chart(mentalhealth_drugs, pal_med, split = "condition", type = "total",
                    data_name = "mentalhealth_drugs", tab = "mh")})
-
-###############################################.
-# MH OOH charts
-output$mh_dep_var <- renderPlotly({plot_trend_chart(dataset = mh_aver(), pal_chose = pal_depr, split = "dep",
-                                                        type = "variation", data_name = input$`mh-measure`, tab = "mh", aver_week = T)})
-output$mh_dep_tot <- renderPlotly({plot_trend_chart(mh_aver(), pal_depr, split = "dep", type = "total", data_name = input$`mh-measure`, tab = "mh",  aver_week = T)})
 
 ###############################################.
 ##  Reactive layout  ----
@@ -258,6 +259,9 @@ output$mh_explorer <- renderUI({
   note_average <- p("Please note that to ease interpretation of these charts ",
                     "we are presenting 3-week rolling average figures.",
                     "Single-week figures can be obtained from the download button at the top of the page.")
+  
+  mh_type <- case_when(input$`mh-measure` == "aye" ~ "A&E attendances",
+                            input$`mh-measure` == "ooh" ~ "out of hours cases")
 
   if (input$`mh-measure` == "mhdrugs") {
     tagList(# Prescribing - items dispensed
@@ -270,15 +274,16 @@ output$mh_explorer <- renderUI({
       plot_cut_box(paste0("Percentage change in the number of patients starting a new treatment course for selected mental health medicines in ", input$`mh-geoname`,
                           " compared with average of the corresponding time in 2018 and 2019 by medicine groupings"), "mh_drugs_var",
                    paste0("Weekly number of patients starting a new treatment course for selected mental health medicines in ", input$`mh-geoname`, " by medicine groupings"), "mh_drugs_tot"))
-  } else if (input$`mh-measure` == "aye") {
+  } else if (input$`mh-measure` %in% c("aye", "ooh")) {
     tagList(#A&E attendances
+      if (input$`mh-measure` %in% c("aye")) {
       p("Important note: It is not possible to accurately report total attendances for specific conditions using the national A&E 
-              dataset, due to the quality of the data available.  Diagnosis/reason for attendance can be recorded in a variety of ways, 
-              including in free text fields - and not all NHS Boards submit this information.  The numbers presented in these dashboards 
+              dataset, due to the quality of the data available. Diagnosis/reason for attendance can be recorded in a variety of ways, 
+              including in free text fields - and not all health boards submit this information. The numbers presented in these dashboards 
               therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with 
-              caution.  Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of 
-              the areas represented in the data available. PHS are planning work to improve consistency."),
-      h3(paste0("Weekly mental health A&E attendances in ", input$`mh-geoname`)),
+              caution. Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of 
+              the areas represented in the data available. PHS are planning work to improve consistency.")},
+      h3(paste0("Weekly mental health ", mh_type, " in ", input$`mh-geoname`)),
       fluidRow(column(6,
                       actionButton("mh-source-modal", "Data source and definitions",
                                    icon = icon('question-circle'))),
@@ -286,48 +291,30 @@ output$mh_explorer <- renderUI({
       plot_box("2020 to 2022 compared with 2018-2019 average", "mh_overall"),
     if (input$`mh-geoname` == "Scotland") {
       tagList(
-        plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
-                     time in 2018-2019 by sex", "mh_sex_var",
-                     "Weekly number of mental health A&E attendances by sex", "mh_sex_tot",
+        plot_cut_box(paste0("Percentage change in mental health ", mh_type, " compared with the corresponding
+                     time in 2018-2019 by sex"), "mh_sex_var",
+                     paste0("Weekly number of mental health ", mh_type, " by sex"), "mh_sex_tot",
                      extra_content = note_average),
-        plot_cut_box("Percentage change in mental health A&E attendances compared with the corresponding
-                     time in 2018-2019 by age group", "mh_age_var",
-                     "Weekly number of mental health A&E attendances by age group", "mh_age_tot",
-                     extra_content = note_average)
-      ) #taglist bracket from if statement
-
-    }
+        plot_cut_box(paste0("Percentage change in mental health ", mh_type, " compared with the corresponding
+                     time in 2018-2019 by age group"), "mh_age_var",
+                     paste0("Weekly number of mental health ", mh_type, " by age group"), "mh_age_tot",
+                     extra_content = note_average),
+      if (input$`mh-measure` == "ooh") {
+        tagList(
+          plot_cut_box(paste0("Percentage change in mental health ", mh_type, " compared with the corresponding
+                       time in 2018-2019 by SIMD quintile"), "mh_dep_var",
+                       paste0("Weekly number of mental health ", mh_type, " by SIMD quintile"), "mh_dep_tot",
+                       extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
+                                                            icon = icon('question-circle')),
+                                               note_average)
+          )
+        )
+      }
     )  #taglist bracket from aye section
 
-    } else if (input$`mh-measure` == "ooh") {
-      tagList(#OOH attendances
-        h3(paste0("Weekly mental health out of hours cases in ", input$`mh-geoname`)),
-        fluidRow(column(6,
-                        actionButton("mh-source-modal", "Data source and definitions",
-                                     icon = icon('question-circle'))),
-                 column(6,data_last_updated)),
-        plot_box("2020 to 2022 compared with 2018-2019 average", "mh_overall"),
-        if (input$`mh-geoname` == "Scotland") {
-          tagList(
-            plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
-                     time in 2018-2019 by sex", "mh_sex_var",
-                         "Weekly number of mental health out of hours cases by sex", "mh_sex_tot",
-                         extra_content = note_average),
-            plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
-                     time in 2018-2019 by age group", "mh_age_var",
-                         "Weekly number of mental health out of hours cases by age group", "mh_age_tot",
-                         extra_content = note_average),
-            plot_cut_box("Percentage change in mental health out of hours cases compared with the corresponding
-                     time in 2018-2019 by SIMD quintile", "mh_dep_var",
-                         "Weekly number of mental health out of hours cases by SIMD quintile", "mh_dep_tot",
-                         extra_content = tagList(actionButton("btn_modal_simd_mh", "What is SIMD and deprivation?",
-                                                      icon = icon('question-circle')),
-                                                 note_average)
-                         )
-          ) #taglist bracket from if statement
-          }
-      ) #taglist bracket from ooh section
-      }
+    }
+    )
+  }
 })
 ###############################################.
 ## Data downloads ----
