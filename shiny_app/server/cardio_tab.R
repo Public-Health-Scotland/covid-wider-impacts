@@ -7,7 +7,6 @@
 # Show list of area names depending on areatype selected
 geoname_server("cardio")
 
-
 # Adding 'observeEvent' to allow reactive 'area of interest' selction on cardio tab
 observeEvent(input$`cardio-measure`, {
   x <- input$`cardio-measure`
@@ -402,13 +401,10 @@ observeEvent(input$btn_cath_modal,
 )
 
 # Rendering A&E Cardio Codes table here for inclusion to modal above
-output$ae_cardio_codes_tbl <- DT::renderDataTable(
-  ae_cardio_codes
-)
+output$ae_cardio_codes_tbl <- DT::renderDataTable(ae_cardio_codes)
 
 # Including 'observeEvent' here so that SIMD modal can be called from A&E Cardio section
 observeEvent(input$btn_modal_simd_cardio, simd_modal())
-
 
 ###############################################.
 ## Reactive datasets ----
@@ -456,9 +452,7 @@ cardio_chart_data <- reactive({
          "sas_cardiac" = sas_cardiac %>% filter(area_name == input$`cardio-geoname`),
          "cardio_admissions" = cardio_disch_filter(),
          "cardio_deaths" = cardio_dth_filter()) 
-  
 })
-
 
 ###############################################.
 ## Reactive layout  ----
@@ -801,7 +795,5 @@ output$download_cardio_data <- downloadHandler(
     write_csv(overall_cardio_download(),
               file) }
 )
-
-
 
 ##END
