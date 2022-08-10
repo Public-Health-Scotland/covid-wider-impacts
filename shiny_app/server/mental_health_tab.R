@@ -117,69 +117,31 @@ observeEvent(input$`mh-source-modal`,
                                  shinyjs::toggle(id = "mh_drug_codes")),
                 shinyjs::hidden(div(id="mh_drug_codes",
                   br(),
-                  HTML({
-                    "
-                    <table style='width:100%'>
-                    <tr>
-                    <th colspan='1'>Anxiety Medicines</th>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Diazepam (excluding rectal preparations)</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Lorazepam</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Oxazepam</td>
-                    </tr>
-                    <tr>
-                    <th colspan='1'>Insomnia Medicines</th>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Nitrazepam</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Loprazolam</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Lormetazepam</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Temazepam</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Zolpidem</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Zopiclone</td>
-                    </tr>
-                    <tr>
-                    <th colspan='1'>Depression Medicines</th>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Citalopram</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Fluoxetine</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Fluvoxamine</td>
-                    </tr>
-                    <tr>
-                    <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Paroxetine</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Sertraline</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Duloxetine</td>
-                    </tr>
-                    <tr>
-                   <td colspan='1'>&nbsp;&nbsp;&nbsp;&nbsp;Venlafaxine</td>
-                    </tr>
-                    </table>
-                    "
-                    }),
+                  tags$b("Anxiety medicines"),
+                  tags$ul(
+                    tags$li("Diazepam (excluding rectal preparations)"),
+                    tags$li("Lorazepam"),
+                    tags$li("Oxazepam")
+                    ),
+                  tags$b("Insomnia medicines"),
+                  tags$ul(
+                    tags$li("Nitrazepam"),
+                    tags$li("Loprazolam"),
+                    tags$li("Lormetazepam"),
+                    tags$li("Temazepam"),
+                    tags$li("Zolpidem"),
+                    tags$li("Zopiclone")
+                  ),
+                  tags$b("Depression medicines"),
+                  tags$ul(
+                    tags$li("Citalopram"),
+                    tags$li("Fluoxetine"),
+                    tags$li("Fluvoxamine"),
+                    tags$li("Paroxetine"),
+                    tags$li("Sertraline"),
+                    tags$li("Duloxetine"),
+                    tags$li("Venlafaxine")
+                  ),
                size = "1",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
              ))
