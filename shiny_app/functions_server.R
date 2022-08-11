@@ -1595,7 +1595,7 @@ plot_imm_simd_bar <- function(imm_simd_data){
                            "Percentage uptake: ", graph_data$percent_var, "%"))
   tooltip_2022 <- c(paste0("Cohort: 2022*", "<br>",
                            "Deprivation quintile: ", graph_data$simdq, "<br>",
-                           "Percentage uptake: ", graph_data$uptake_2022, "%"))
+                           "Percentage uptake: ", round(graph_data$uptake_2022,1), "%"))
 
   #tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
 

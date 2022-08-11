@@ -498,6 +498,8 @@ output$immunisation_deprivation_output <- renderUI({
                                 input$measure_select_immun == "mmr_dose2" ~ "Change in uptake of second dose of MMR vaccine by 3 years 5 months of age by deprivation: Scotland (compared to baseline of children turning 3 years 4 months in 2019)")
 
 
+  if(input$geotype_immun == "Scotland"){
+
   tagList(# Intro paragraph within immunisation tab
     p("Immunisation protects children against certain serious infections.  It is important that children ",
       tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
@@ -567,6 +569,45 @@ output$immunisation_deprivation_output <- renderUI({
 
           ) # fluid row bracket
   )# taglist bracket
+  }
+  else{
+    tagList(# Intro paragraph within immunisation tab
+      p("Immunisation protects children against certain serious infections.  It is important that children ",
+        tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
+               "continue to receive their routine immunisations during the Covid-19 pandemic", target="_blank"),".",
+        "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
+        tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ", target="_blank"),
+        " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),".")
+
+    ) # taglist bracket
+
+    immune_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
+                                                                                   input$geoname_immun),
+                              input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
+                              input$measure_select_immun == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$geoname_immun),
+                              input$measure_select_immun == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$geoname_immun),
+                              input$measure_select_immun == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$geoname_immun))
+
+    immune_subtitle <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
+
+    tagList(fluidRow(column(12,
+                            h4(paste0(immune_title)),
+                            p(immune_subtitle))),
+            fluidRow(column(6,br(), br(),
+                            withSpinner(plotlyOutput("immun_scurve"))#,
+                            #p(age_def) #??
+            ),
+            column(6, uiOutput("immun_table"))),
+
+            tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age and the data tables provide the uptake rates at three specific time-points.  Data is provided  on children who have become eligible for immunisation during the pandemic (from March 2020 onwards) and for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison."),
+                    p("After a child becomes eligible for an immunisation, it takes time for them to attend their appointment, and for a record of the immunisation provided to subsequently be entered into the SIRS system. We have allowed a 6-week window for this, therefore each release of this page will report on children becoming eligible for an immunisation up to 6 weeks before the date the data were extracted for analysis. Although children will generally have their immunisation, and their SIRS record updated accordingly, within 6 weeks of becoming eligible, the pandemic may have influenced not only how quickly eligible children receive their immunisations, but also how long it takes for children’s SIRS records to be updated once an immunisation has been given. Any disruption to SIRS data entry may vary across NHS Boards. Data provided for the most recent cohorts of children will therefore not be fully complete in SIRS and should be viewed as provisional. The uptake rates for each cohort will be refreshed with more up-to-date data every 4 to 5 weeks, and rates for the most recent cohorts may increase slightly as relevant records are updated in SIRS."),
+                    p("On this page, data for yearly and monthly cohorts are shown for Scotland and for NHS Board areas. For the second dose of MMR vaccine at the 3 year 4 months appointment specifically, results for NHS Grampian are not shown separately, and NHS Grampian is excluded from the ‘Scotland’ totals. This is because children in NHS Grampian are offered the second dose of MMR vaccine at 4 years of age rather than 3 years 4 months. Separate figures on uptake of the second dose of MMR vaccine from age 4 years are available for NHS Grampian only through the data download button at the top of the page. "),
+                    p("The data downloads also include information by Health and Social Care Partnerships, as well as weekly cohorts. Note that due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland and NHS Western Isles are provided for monthly and yearly cohorts only."),
+                    p("Some NHS Boards and HSCPs have small numbers of children eligible for immunisation. Uptake rates based on these small numbers are prone to fluctuation, and it is important to bear this in mind when interpreting uptake rates.")))
+
+
+
+  }
 })
 
 ###############################################.
