@@ -55,7 +55,7 @@ data_table <- reactive({
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
-        "outpats" = outpats %>% 
+        "op" = outpats %>% 
           rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average),
         'THN_by_HB'=THN_by_HB,
         'DTR_data'=DTR_data,

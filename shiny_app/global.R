@@ -359,7 +359,7 @@ data_list_data_tab <- c(data_list, "Cardiovascular prescribing" = "cardio_drugs"
                         "Road traffic accidents" = "ui_smr01_rta",
                         "Poisonings" = "ui_smr01_poison",
                         "Falls" = "ui_smr01_falls",
-                        "Other" = "ui_smr01_other",
+                        "Other injuries" = "ui_smr01_other",
                         "Assaults" = "ui_smr01_assaults",
                         "Out of hours consultations" = "ooh_cons"
                         )
