@@ -25,40 +25,10 @@ library(lubridate) # for dates
 library(tidyr) # for uncount()
 library(listviewer) # for some plotly features
 
-###############################################.
-## Functions ----
-###############################################.
-plot_box <- function(title_plot, plot_output) {
-  tagList(h4(title_plot),
-          withSpinner(plotlyOutput(plot_output)))
-}
-
-plot_cut_box <- function(title_plot1, plot_output1,
-                         title_plot2, plot_output2, extra_content = NULL) {
-  tagList(
-    fluidRow(column(6, h4(title_plot1)),
-             column(6, h4(title_plot2))),
-    extra_content,
-    fluidRow(column(6, withSpinner(plotlyOutput(plot_output1))),
-             column(6, withSpinner(plotlyOutput(plot_output2))))
-  )
-}
-
-#Function to create boxes for intro sumamry
-#Creating big boxes for main tabs in the landing page (see ui for formatting css)
-intro_box <- function(title_box, button_name, description) {
-  div(class="landing-page-box",
-      div(title_box, class = "landing-page-box-title"),
-      actionButton(button_name, NULL, class="landing-page-button")
-  )
-}
-
-
 ##############################################.
 # Data ----
 ##############################################.
 geo_lookup <- readRDS("data/geo_lookup.rds")
-area_type_op <- readRDS("data/area_type_op.rds")
 spec_lookup_rapid <- readRDS("data/spec_lookup_rapid.rds")
 spec_lookup_op <- readRDS("data/spec_lookup_op.rds")
 ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
@@ -277,6 +247,34 @@ tears_download <- readRDS("data/tears_download_data.rds")
 ###############################################.
 ## Objects, names, lists ----
 ###############################################.
+ 
+# List of sections in Home tab
+home_list <- c("About" = "about",
+                "Using the dashboard" = "use",
+                "Further information" = "info",
+                "Accessibility" = "accessibility")
+ 
+ # List of sections in Commentary tab
+commentary_list <- c("Summary trends" = "summary",
+                      "Cardiovascular" = "cardio",
+                      "Cancer" = "cancer",
+                      "Injuries" = "injuries",
+                      "Mental health" = "mental-health",
+                      "Antenatal bookings" = "booking",
+                      "Termination of pregnancy" = "termination",
+                      "Induction of labour" = "induction",
+                      "Method of delivery" = "delivery",
+                      "Gestation at delivery" = "gestation",
+                      "Apgar scores" = "apgar",
+                      "Location of extremely preterm babies" = "preterm",
+                      "Perineal tears" = "tears",
+                      "Stillbirths and infant deaths" = "perinatal",
+                      "Immunisations" = "immunisation",
+                      "Child health reviews" = "child-health",
+                      "Breastfeeding" = "breastfeeding",
+                      "Child development" = "child-dev",
+                      "Substance use" = "drugs"
+                      )
 
 spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
                           "Medical (incl. Cardiology & Cancer)",
@@ -293,7 +291,7 @@ data_list <- c(
   "NHS 24 completed contacts" = "nhs24",
   "Out of hours cases and consultations" = "ooh", "Scottish Ambulance Service" = "sas",
   "Excess mortality" = "deaths",
-  "Outpatient appointments" = "outpats")
+  "Outpatient appointments" = "op")
 
 #List of data items available in step 2 of immunisation tab
 data_list_immun <- c("6-in-1 first dose" = "sixin_dose1",
@@ -539,7 +537,7 @@ pal_eth <- c('#E39C8C',
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
-                    showline = TRUE, fixedrange=TRUE)
+                    showline = TRUE, fixedrange=TRUE, rangeslider = FALSE)
 
 yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
                     tickfont = list(size=14), titlefont = list(size=14))

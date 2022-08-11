@@ -15,20 +15,14 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
   if (split != FALSE) {
     if (tab == "summary") {
-      if (input$measure_select != "outpats") {
         trend_data <- dataset %>% # filtering data by cut and area name
-          filter(type == split & area_name == input$geoname)
-      } else { #for outpatients data
-        trend_data <- dataset %>% # filtering data by cut and area name
-          filter(type == split & area_name == input$geoname_op)
-      }
+          filter(type == split & area_name == input$`summary-geoname`)
 
     } else if (tab %in% c("cardio", "mh", "injuries")) {
 
       trend_data <- dataset %>% # filtering data by cut and area name
         filter(type %in% split)
     }
-    # if (tab == "summary") {area_name == input$geoname} else if (tab == "cardio") {area_name == input$geoname_cardio})
   } else { # for cases outside summary tab
     trend_data <- dataset
   }
@@ -72,7 +66,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
     } else if (split == "condition") {
       if (tab == "cardio") {
         trend_data <- trend_data %>%
-          filter(type %in% split & area_name == input$geoname_cardio,
+          filter(type %in% split & area_name == input$`cardio-geoname`,
                  category != "All") %>%
           # Wrapping long legend names
           mutate(category = case_when(
@@ -81,7 +75,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
           ))
       } else if (tab == "mh") {
         trend_data <- trend_data %>%
-          filter(type %in% split & area_name == input$geoname_mh,
+          filter(type %in% split & area_name == input$`mh-geoname`,
                  category != "All") %>%
           mutate(category = case_when(
             category == "SSRI SNRI" ~ "Depression medicine",
@@ -92,7 +86,7 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
       } else if (tab == "injuries") {
         trend_data <- trend_data %>%
-          filter(type %in% split & area_name == input$geoname_injuries,
+          filter(type %in% split & area_name == input$`injury-geoname`,
                  category != "all")
     } else {
     trend_data <- trend_data
@@ -107,9 +101,9 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
   # If variation selected different values
   if (type == "variation") {
 
-    aver_period <- paste0(case_when(data_name %in% c("adm", "aye", "ooh", "nhs24",
+    aver_period <- paste0(case_when(data_name %in% c("rapid", "aye", "ooh", "nhs24",
                                                      "sas", "drug_presc", "cath",
-                                                     "mentalhealth_drugs", "mh_ooh",
+                                                     "mhdrugs", "mh_ooh",
                                                      "ooh_cardiac", "sas_cardiac", "ui_smr01_all", "ui_smr01_assaults",
                                                      "ui_smr01_falls", "ui_smr01_other", "ui_smr01_poison",
                                                      "ui_smr01_rta","op","cardio_admissions") ~ "2018-2019",
@@ -144,37 +138,30 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
 
       ###############################################.
       # Creating objects that change depending on dataset
-      yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
+      yaxis_title <- case_when(data_name == "rapid" | substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions",
                                data_name == "aye" ~ "Number of attendances",
-                               substr(data_name, 1, 3) == "ooh" ~ "Number of cases",
+                               substr(data_name, 1, 3) == "ooh" | data_name == "cath" ~ "Number of cases",
                                data_name == "nhs24" ~ "Number of completed contacts",
                                substr(data_name, 1, 3) == "sas" ~ "Number of incidents",
-                               data_name == "cath" ~ "Number of cases",
                                data_name == "drug_presc" ~ "Number of items prescribed",
                                data_name == "deaths" ~ "Number of deaths",
-                               data_name == "mentalhealth_drugs" ~ "Number of patients",
-                               data_name == "mh_ooh" ~ "Number of consultations",
-                               data_name == "op" ~ "Number of appointments",
-                               substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions")
+                               data_name == "mhdrugs" ~ "Number of patients",
+                               data_name == "op" ~ "Number of appointments")
 
       #Modifying standard layout
       yaxis_plots[["title"]] <- yaxis_title
 
-      measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
+      measure_name <- case_when(data_name %in% c("rapid", "cardio_admissions") | 
+                                  substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ",
                                 data_name == "aye" ~ "Attendances: ",
-                                substr(data_name, 1, 3) == "ooh" ~ "Cases: ",
+                                substr(data_name, 1, 3) == "ooh" | data_name == "cath" ~ "Cases: ",
                                 data_name == "nhs24" ~ "Completed contacts: ",
                                 substr(data_name, 1, 3) == "sas" ~ "Incidents: ",
-                                data_name == "cath" ~ "Cases: ",
                                 data_name == "drug_presc" ~ "Items prescribed: ",
                                 data_name == "cancer" ~ "Referrals: ",
-                                data_name == "deaths" ~ "Deaths: ",
-                                data_name == "cardio_deaths" ~ "Deaths: ",
-                                data_name == "cardio_admissions" ~ "Admissions: ",
-                                data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
-                                data_name == "mh_ooh" ~ "Consultations: ",
-                                data_name == "op" ~ "Appointments: ",
-                                substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ")
+                                data_name %in% c("cardio_deaths", "deaths") ~ "Deaths: ",
+                                data_name == "mhdrugs" ~ "Patients prescribed medicine: ",
+                                data_name == "op" ~ "Appointments: ")
 
       #Text for tooltip
       if (aver_week == T) {
@@ -205,6 +192,23 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~count)
 
     }
+    
+    # Add a range slider to filter the time period in the chart
+    xaxis_plots[["rangeslider"]] <- list(range="week_ending", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
+    
+    
+    # For annotation
+    zoom_hover_text =
+      "Drag the markers at either end of<br>the bar to view specific time periods"
+    
+    # We need an annotation to show user how to use the rangeslider
+    zoom_annotation =
+      list(text = "Drag to zoom", borderpad = 2,
+           hovertext = zoom_hover_text,
+           showarrow = TRUE, ax = 0, ay = 18,
+           x = 0, xref = "paper", xanchor = "left",
+           y = -0.26,
+           yref = "paper", yanchor = "middle")
 
     if (isTRUE(fix_x_range)) {
       xaxis_plots[["range"]] = c(min(trend_data$week_ending, na.rm = TRUE),
@@ -219,10 +223,12 @@ plot_trend_chart <- function(dataset, pal_chose, split = F, type = "variation",
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
+             legend = list(orientation = "h", x=0, y=1.2),
+             annotations = zoom_annotation) %>% #position of legend
       # leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
-
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove ) 
+    
+    
   }
 }
 
@@ -250,60 +256,43 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
 
     ###############################################.
     # Creating objects that change depending on dataset
-    yaxis_title <- case_when(data_name == "adm" ~ "Number of admissions",
+    yaxis_title <- case_when(data_name %in% c("rapid", "cardio_admissions") 
+                             | substr(data_name, 1, 6) == "ui_smr" ~ "Number of admissions",
                              data_name == "aye" ~ "Number of attendances",
-                             data_name == "ooh" ~ "Number of cases",
+                             substr(data_name, 1, 3) == "ooh" | data_name == "cath"  ~ "Number of cases",
                              data_name == "ooh_cons" ~ "Number of consultations",
                              data_name == "nhs24" ~ "Number of completed contacts",
-                             data_name == "sas" ~ "Number of incidents",
-                             data_name == "cath" ~ "Number of cases",
+                             substr(data_name, 1, 3) == "sas" ~ "Number of incidents",
                              data_name == "drug_presc" ~ "Number of items prescribed",
-                             data_name == "ooh_cardiac" ~ "Number of cases",
-                             data_name == "sas_cardiac" ~ "Number of incidents",
-                             data_name == "deaths" ~ "Number of deaths",
+                             data_name %in% c("deaths", "cardio_deaths") ~ "Number of deaths",
                              data_name == "cancer" ~ "Number of referrals",
-                             data_name == "mentalhealth_drugs" ~ "Number of patients",
-                             data_name == "mh_ooh" ~ "Number of consultations",
-                             data_name == "op" ~ "Number of appointments",
-                             data_name == "ui_smr01_all" ~ "Number of admissions",
-                             data_name == "ui_smr01_assaults" ~ "Number of admissions",
-                             data_name == "ui_smr01_falls" ~ "Number of admissions",
-                             data_name == "ui_smr01_other" ~ "Number of admissions",
-                             data_name == "ui_smr01_poison" ~ "Number of admissions",
-                             data_name == "ui_smr01_rta" ~ "Number of admissions",
-                             data_name == "cardio_admissions" ~ "Number of admissions",
-                             data_name == "cardio_deaths" ~ "Number of deaths")
+                             data_name == "mhdrugs" ~ "Number of patients",
+                             data_name == "op" ~ "Number of appointments")
 
     #Modifying standard layout
     yaxis_plots[["title"]] <- yaxis_title
+    
+    # Add a range slider to filter the time period in the chart
+    xaxis_plots[["rangeslider"]] <- list(range="xvar", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
+      
 
-    hist_legend_previous <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
-                                                       "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
-                                                       "cath", "mentalhealth_drugs", "mh_ooh",
-                                                       "op") ~ "Average 2018-2019",
-                                      data_name == "deaths" ~ "Average 2015-2019")
+    hist_legend_previous <- case_when(data_name == "deaths" ~ "Average 2015-2019",
+                                      TRUE ~ "Average 2018-2019")
 
-    hist_legend_covid <- case_when(data_name %in% c("adm", "aye", "ooh", "ooh_cons", "nhs24", "sas", "drug_presc",
-                                                    "ooh_cardiac", "sas_cardiac", "cardio_admissions", "cardio_deaths", 
-                                                    "mentalhealth_drugs", "mh_ooh", "deaths", "op") ~ "2020 - 2022",
-                                   data_name %in% c("cath")  ~ "2020")
+    hist_legend_covid <- case_when(data_name %in% c("cath")  ~ "2020", TRUE ~ "2020 - 2022")
 
-    measure_name <- case_when(data_name == "adm" ~ "Admissions: ",
+    measure_name <- case_when(data_name %in% c("rapid", "cardio_admissions") 
+                              | substr(data_name, 1, 6) == "ui_smr" ~ "Admissions: ",
                               data_name == "aye" ~ "Attendances: ",
-                              data_name == "ooh" ~ "Cases: ",
+                              substr(data_name, 1, 3) == "ooh" | data_name == "cath"  ~ "Cases: ",
                               data_name == "ooh_cons" ~ "Consultations: ",
                               data_name == "nhs24" ~ "Completed contacts: ",
-                              data_name == "sas" ~ "Incidents: ",
+                              substr(data_name, 1, 3) == "sas" ~ "Incidents: ",
                               data_name == "cath" ~ "Cases: ",
                               data_name == "drug_presc" ~ "Items prescribed: ",
-                              data_name == "ooh_cardiac" ~ "Cases: ",
-                              data_name == "sas_cardiac" ~ "Incidents: ",
-                              data_name == "deaths" ~ "Deaths: ",
-                              data_name == "mentalhealth_drugs" ~ "Patients prescribed medicine: ",
-                              data_name == "mh_ooh" ~ "Consultations: ",
-                              data_name == "op" ~ "Appointments: ",
-                              data_name == "cardio_admissions" ~ "Admissions: ",
-                              data_name == "cardio_deaths" ~ "Deaths: ")
+                              data_name %in% c("deaths", "cardio_deaths") ~ "Deaths: ",
+                              data_name == "mhdrugs" ~ "Patients prescribed medicine: ",
+                              data_name == "op" ~ "Appointments: ")
     
     # Input for tooltip based on weekly/monthly
     period_data <- case_when(period == "weekly" ~ paste0("Week ending: ", format(trend_data$week_ending, "%d %b %y")),
@@ -314,6 +303,19 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     tooltip_trend <- c(paste0(period_data,
                               "<br>", measure_name, trend_data$count,
                               "<br>", "Historic average: ", trend_data$count_average))
+    
+    # For annotation
+    zoom_hover_text =
+      "Drag the markers at either end of<br>the bar to view specific time periods"
+    
+    # We need an annotation to show user how to use the rangeslider
+    zoom_annotation =
+      list(text = "Drag to zoom", borderpad = 2,
+           hovertext = zoom_hover_text,
+           showarrow = TRUE, ax = 0, ay = 18,
+           x = 0, xref = "paper", xanchor = "left",
+           y = -0.26,
+           yref = "paper", yanchor = "middle")
 
     if (isTRUE(fix_x_range)) {
       xaxis_plots[["range"]] = c(min(trend_data[[xvar]], na.rm = TRUE),
@@ -332,10 +334,13 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
                 name = hist_legend_previous) %>%
       #Layout
       layout(margin = list(b = 80, t=5), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(x = 100, y = 0.5)) %>% #position of legend
+             yaxis = yaxis_plots, 
+             xaxis = xaxis_plots,
+             legend = list(orientation = "h", x=0, y=1.2), #position of legend
+             annotations = zoom_annotation) %>% 
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+
 
   }
 
@@ -394,19 +399,6 @@ plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_ch
 
     tooltip_5 <- c(paste0("Year: 2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
                           "<br>", measure_name, paste0(format(round(value3, 2), nsmall = 2), "%")))
-
-    # Function for verical line at start of lockdown
-    vline <- function(x = 0, color = "lightgrey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
 
 
 
@@ -487,18 +479,6 @@ plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
                           "Deprivation Quintile: ", dataset$dep, "<br>",
                           measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
         
-    # Function for vertical line at start of lockdown
-    vline <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
 
     #Creating time trend plot for difference 
     
@@ -729,32 +709,7 @@ plot_sact_wk_incidence_chart <- function(sact_wk_dataset) {
     sact_tooltip_lockdown <- c(paste0("Start of 1st lockdown"))
 
 
-    # Function for vertical line at start of lockdown
 
-    vline1 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
-
-    # Function for verical line at 2nd lockdown
-    vline2 <- function(x = 0, color = "grey") {
-      list(
-        type = "line",
-        y0 = 0,
-        y1 = 1,
-        yref = "paper",
-        x0 = x,
-        x1 = x,
-        line = list(color = color, dash = 'dash')
-      )
-    }
 
 
     # #Creating time trend plot for weekly incidence
@@ -1158,84 +1113,6 @@ plot_sact_wk_difference_chart_treatment <- function(sact_wk_dataset) {
 
   }
 }
-###############################################.
-## Function for overall injury charts ----
-###############################################.
-
-plot_overall_injury_chart <- function(dataset, var1_chosen, var2_chosen, data_name) {
-
-  # set plot display if no data
-  if (is.data.frame(dataset) && nrow(dataset) == 0)
-  { plot_nodata(height = 30, text_nodata = "Data not avaiable due to small numbers")
-  } else {
-
-
-    # Set y axis label
-    yaxis_title <- "Number of admissions"
-
-    yaxis_plots[["title"]] <- yaxis_title
-
-
-    #Text for tooltips
-
-    measure_name <- case_when(data_name == "ui_smr01_all" ~ "All unintentional injuries",
-                              data_name == "ui_smr01_rta" ~ "RTAs",
-                              data_name == "ui_smr01_falls" ~ "Falls",
-                              data_name == "ui_smr01_other" ~ "Other",
-                              data_name == "ui_smr01_poison" ~ "Poisoning",
-                              data_name == "ui_smr01_assaults" ~ "Assaults")
-
-    value1 <- dataset[[var1_chosen]]
-
-    value2 <- dataset[[var2_chosen]]
-
-
-    tooltip_1 <- c(paste0("Month: ", format(dataset$week_ending, "%b %y"),
-                          "<br>", "Admissions from ",measure_name,": ", value1))
-    tooltip_2 <- c(paste0("Month: ", format(dataset$week_ending, "%b %y"),
-                          "<br>", "Admissions from ",measure_name,": ", value2))
-
-    tooltip_3 <- c(paste0("Month: ", format(dataset$week_ending, "%b %y"),
-                          "<br>", "Admissions: ", paste0(format(round(value1, 2), nsmall = 2), "%")))
-
-    if(data_name != "dif") {
-
-      #Creating time trend plot for cumulative totals and incidence
-      plot_ly(data=dataset, x=~week_ending) %>%
-
-        # 2020 line
-        add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_1, hoverinfo="text",
-                  name = "2020 & 2021") %>%
-        # 2019 line
-        add_lines(y = ~get(var2_chosen), line = list(color = pal_overall[2], dash = 'dash'),text=tooltip_2,
-                  hoverinfo="text", name = "Average 2018 & 2019") %>%
-
-        #Layout
-        layout(margin = list(b = 80, t=5),
-               yaxis = yaxis_plots, xaxis = xaxis_plots,
-               legend = list(x = 100, y = 0.5)) %>%
-
-        # leaving only save plot button
-        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-
-    } else {
-
-      #Creating time trend plot for difference
-      plot_ly(data=dataset, x=~week_ending) %>%
-
-        # 2020 line
-        add_lines(y = ~get(var1_chosen), line = list(color = pal_overall[1]),text=tooltip_3, hoverinfo="text",
-                  name = "2020") %>%
-
-        #Layout
-        layout(margin = list(b = 80, t=5),
-               yaxis = yaxis_plots, xaxis = list(title = "Month", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 60*60*24*7*1000),
-               legend = list(x = 100, y = 0.5)) %>%
-
-        # leaving only save plot button
-        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)}
-  }
-}
 
 ###############################################.
 ## # Function that creates specialty charts.   ----
@@ -1257,7 +1134,7 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 
     #Modifying standard layout
     yaxis_plots[["title"]] <- "% change from 2018-19 average"
-
+    
     #Creating time trend plot
     trend_plot <- plot_ly(data=trend_data, x=~week_ending,  y = ~variation)
 
@@ -1290,18 +1167,36 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 
   }
 
+  # Add a range slider to filter the time period in the chart
+  xaxis_plots[["rangeslider"]] <- list(range="week_ending", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
+  
+  # For annotation
+  zoom_hover_text =
+    "Drag the markers at either end of<br>the bar to view specific time periods"
+  
+  # We need an annotation to show user how to use the rangeslider
+  zoom_annotation =
+    list(text = "Drag to zoom", borderpad = 2,
+         hovertext = zoom_hover_text,
+         showarrow = TRUE, ax = 0, ay = 18,
+         x = 0, xref = "paper", xanchor = "left",
+         y = -0.36,
+         yref = "paper", yanchor = "middle")
 
   #Creating time trend plot
   trend_plot %>%
-    add_trace(type = 'scatter', mode = 'lines+markers',
-              color = ~spec, colors = pal_spec(), marker = list(size = 8),
-              symbol = ~spec, symbols = symbol_spec(),
+    add_trace(type = 'scatter', mode = 'lines',
+              color = ~spec, colors = pal_spec(), 
+              #marker = list(size = 8),
+              #symbol = ~spec, 
+              #symbols = symbol_spec(),
               text=tooltip_trend, hoverinfo="text") %>%
     #Layout
     layout(margin = list(b = marg, t=5), #to avoid labels getting cut out
-           showlegend = TRUE, # always show legen
+           showlegend = TRUE, # always show legend
            yaxis = yaxis_plots, xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.5)) %>% # position of legend
+           legend = list(orientation = "h", x=0, y=1.2), # position of legend
+           annotations = zoom_annotation) %>% 
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 }
@@ -1312,15 +1207,11 @@ plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
 # Function to filter the datasets for the overall charts and download data based on user input
 filter_data <- function(dataset, data_name = "other", area = T, op = F) {
   if (data_name == "ooh_cons"){
-    dataset %>% filter(area_name == input$geoname &
+    dataset %>% filter(area_name == input$`summary-geoname` &
                          type == input$ooh_appt_type)
-  } else if (area == T & op == T) {
+  } else if (area == T) {
     dataset %>% filter(type == "sex") %>%
-      filter(area_name == input$geoname_op &
-               category == "All")
-  } else if (area == T & op == F) {
-    dataset %>% filter(type == "sex") %>%
-      filter(area_name == input$geoname &
+      filter(area_name == input$`summary-geoname` &
                category == "All")
   } else { #this works for cath data
     dataset %>%
@@ -1429,7 +1320,7 @@ plot_scurve_child <- function(dataset, age_week) {
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_child
 
-  scurve_data <- dataset %>% filter(area_name == input$geoname_child,
+  scurve_data <- dataset %>% filter(area_name == input$`childr-geoname`,
                                     # filter to selected time periods, but don't re-execute each time input changes
                                     time_period_eligible %in% isolate(input$dates_child))
   # %>%
@@ -2055,7 +1946,8 @@ plot_run_chart =
 
 
   yaxis_plots[["title"]] = y_label
-
+  
+ 
   # Setting a specific range stops chart jumping when turning markers on and off
   if (is.null(yaxis_plots[["range"]])) {
     yaxis_plots[["range"]] = c(0, 1.05*max(plot_data[[measure]]))
@@ -2111,9 +2003,11 @@ plot_run_chart =
 
   xaxis_plots[["rangeslider"]] =
     list(type = "date",
-         thickness = 0.075,
+         thickness = 0.05,
+         bgcolor = "#ECEBF3",
          # Without this, range will change when adding/removing markers
          range = range_x)
+  
 
   # Set starting range for x axis
   xaxis_plots[["range"]] = range_x
@@ -2142,9 +2036,75 @@ plot_run_chart =
     #leaving only save plot button
     config(displaylogo = FALSE, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
+  }
+
+###############################################.
+## Select geography ----
+###############################################.
+# geotype_value <- function(input, output, session) {
+#   geotype <- reactive({input$geotype})
+#   return(geotype)
+# }
+
+geoname_server <- function(id, lookup = geo_lookup) {
+  moduleServer(
+    id,
+    function(input, output, session) {
+
+          output$geoname <- renderUI({
+            ns <- session$ns #obtaining namespace
+            
+      areas_summary <- sort(lookup$areaname[lookup$areatype == input$geotype])
+      selectizeInput(ns("geoname"), label = NULL,
+                     choices = areas_summary, selected = "")
+      
+    })
 }
 
-### END
+  )
+}
+
+###############################################.
+## Run chart modal ----
+###############################################.
+runchart_modal <-  function() {
+  showModal(modalDialog(
+    title = "How do we identify patterns in the data?",
+    p("Run charts use a series of rules to help identify important changes in the data.
+                 These are the ones we used for these charts:"),
+    tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
+            tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
+            tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
+            tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
+    p("Further information on these methods of presenting data can be found in the ",
+      tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
+             'PHS guide to statistical process control charts', target="_blank"),"."),
+    size = "m",
+    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+}
+
+###############################################.
+## SIMD modal ----
+###############################################.
+simd_modal <- function(group = "People") {
+  showModal(modalDialog(
+    title = "What is SIMD and deprivation?",
+    p(group, " have been allocated to different levels of deprivation based on the small area (data zone)
+      in which they live and the", tags$a(href="https://simd.scot/", "Scottish Index of Multiple Deprivation (SIMD) (external website).",
+                                          class="externallink"), "score for that area.
+      SIMD scores are based on data for 38 indicators covering seven topic areas:
+      income, employment, health, education, skills and training, housing, geographic access, and crime."),
+    p("By identifying small areas where there are concentrations of multiple deprivation,
+    the SIMD can be used to target policies and resources at the places with the greatest need.
+    The SIMD identifies deprived areas, not deprived individuals."),
+    p("In this tool we have presented results for ", tolower(group), " living in different SIMD ‘quintiles’.
+      To produce quintiles, data zones are ranked by their SIMD score then the areas each containing a fifth (20%)
+      of the overall population of Scotland are identified. ", group, " living in the most and least deprived areas
+      that each contain a fifth of the population are assigned to SIMD quintile 1 and 5 respectively."),
+    size = "m",
+    easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)")))
+}
+
 
 ###############################################.
 ## Functions to modify charts ----
@@ -2203,3 +2163,45 @@ add_vline = function(fig, x, text, text_align = "center", text_y = 1,
   return(fig)
 
 }
+
+# Function for vertical line at start of lockdown
+vline <- function(x = 0, color = "grey") {
+  list(
+    type = "line",
+    y0 = 0,
+    y1 = 1,
+    yref = "paper",
+    x0 = x,
+    x1 = x,
+    line = list(color = color, dash = 'dash')
+  )
+}
+
+# Function for vertical line at start of lockdown
+
+vline1 <- function(x = 0, color = "grey") {
+  list(
+    type = "line",
+    y0 = 0,
+    y1 = 1,
+    yref = "paper",
+    x0 = x,
+    x1 = x,
+    line = list(color = color, dash = 'dash')
+  )
+}
+
+# Function for verical line at 2nd lockdown
+vline2 <- function(x = 0, color = "grey") {
+  list(
+    type = "line",
+    y0 = 0,
+    y1 = 1,
+    yref = "paper",
+    x0 = x,
+    x1 = x,
+    line = list(color = color, dash = 'dash')
+  )
+}
+
+### END

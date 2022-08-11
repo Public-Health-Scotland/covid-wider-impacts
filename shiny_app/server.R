@@ -3,6 +3,8 @@ credentials <- readRDS("admin/credentials.rds")
 
 function(input, output, session) {
 
+  source(file.path('ui/modules_ui.R'),  local = TRUE)$value 
+  
   # Shinymanager Auth
 
   res_auth <- secure_server(
@@ -50,74 +52,74 @@ function(input, output, session) {
   # Sourcing server files for each tab ----
   ###############################################.
   # Sourcing file with functions code
-  source(file.path("functions_server.R"),  local = TRUE)$value
+  source(file.path("server/functions_server.R"),  local = TRUE)$value
 
   ###############################################.
   # Summary trends tab
-  source(file.path("summary_tab.R"),  local = TRUE)$value
+  source(file.path("server/summary_tab.R"),  local = TRUE)$value
 
   ##############################################.
   # Cardiovascular tab
-  source(file.path("cardio_tab.R"),  local = TRUE)$value
+  source(file.path("server/cardio_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Immunisation tab
-  source(file.path("immunisation_tab.R"),  local = TRUE)$value
+  source(file.path("server/immunisation_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Child health reviews tab
-  source(file.path("child_health_tab.R"),  local = TRUE)$value
+  source(file.path("server/child_health_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Pregnancy tabs
-  source(file.path("antenatal_booking_tab.R"),  local = TRUE)$value
-  source(file.path("terminations_tab.R"),  local = TRUE)$value
+  source(file.path("server/antenatal_booking_tab.R"),  local = TRUE)$value
+  source(file.path("server/terminations_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Births and Babies tabs
-  source(file.path("perinatal_tab.R"),  local = TRUE)$value
-  source(file.path("apgar_tab.R"),  local = TRUE)$value
-  source(file.path("preterm_tab.R"),  local = TRUE)$value
-  source(file.path("tears_tab.R"),  local = TRUE)$value
-  source(file.path("mode_of_delivery_tab.R"),  local = TRUE)$value
-  source(file.path("inductions_tab.R"),  local = TRUE)$value
-  source(file.path("gestation_at_delivery_tab.R"),  local = TRUE)$value
+  source(file.path("server/perinatal_tab.R"),  local = TRUE)$value
+  source(file.path("server/apgar_tab.R"),  local = TRUE)$value
+  source(file.path("server/preterm_tab.R"),  local = TRUE)$value
+  source(file.path("server/tears_tab.R"),  local = TRUE)$value
+  source(file.path("server/mode_of_delivery_tab.R"),  local = TRUE)$value
+  source(file.path("server/inductions_tab.R"),  local = TRUE)$value
+  source(file.path("server/gestation_at_delivery_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Child development tab
-  source(file.path("child_dev_tab.R"),  local = TRUE)$value
+  source(file.path("server/child_dev_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Breastfeeding tab
-  source(file.path("breastfeeding_tab.R"),  local = TRUE)$value
+  source(file.path("server/breastfeeding_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Mental health tab
-  source(file.path("mental_health_tab.R"),  local = TRUE)$value
+  source(file.path("server/mental_health_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Cancer tab
-  source(file.path("cancer_tab.R"),  local = TRUE)$value
+  source(file.path("server/cancer_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # SACT tab
-  source(file.path("sact_tab.R"),  local = TRUE)$value
+  source(file.path("server/sact_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # DCE tab - Not in place yet
-  # source(file.path("dce_tab.R"),  local = TRUE)$value
+  # source(file.path("server/dce_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Drugs tab
-  source(file.path("drugs_tab.R"),  local = TRUE)$value
+  source(file.path("server/drugs_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Unintentional Injuries tab
-  source(file.path("injuries_tab.R"),  local = TRUE)$value
+  source(file.path("server/injuries_tab.R"),  local = TRUE)$value
 
   ###############################################.
   # Data tab
-  source(file.path("data_tab.R"),  local = TRUE)$value
+  source(file.path("server/data_tab.R"),  local = TRUE)$value
 
   ##############################################.
   # jump to data pages from commentary ----
@@ -149,7 +151,7 @@ function(input, output, session) {
   ## jump to commentary tab from data tabs ----
   ###############################################.
   # To jump to commentary tab and ensures correct panel is expanded - requires multiple lines becuase action buttons must have unique ID
-  observeEvent(input$jump_commentary_imm, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`immun-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Immunisation")})
 
   observeEvent(input$jump_commentary_hv, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -158,7 +160,7 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_cardio, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Cardiovascular")})
 
-  observeEvent(input$jump_commentary_summary, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`summary-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Summary trends")})
 
   observeEvent(input$jump_commentary_perinatal, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -170,10 +172,10 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_top, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Termination of pregnancy")})
 
-  observeEvent(input$jump_commentary_mod, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`mod-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Method of delivery")})
 
-  observeEvent(input$jump_commentary_induction, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`induct-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Induction of labour")})
 
   observeEvent(input$jump_commentary_apgar, {updateTabsetPanel(session, "intabset", selected = "comment")
@@ -185,13 +187,13 @@ function(input, output, session) {
   observeEvent(input$jump_commentary_tears, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Perineal tears")})
 
-  observeEvent(input$jump_commentary_gestation, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`gest-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Gestation at delivery")})
 
-  observeEvent(input$jump_commentary_childdev, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`childdev-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Child development")})
 
-  observeEvent(input$jump_commentary_breastfed, {updateTabsetPanel(session, "intabset", selected = "comment")
+  observeEvent(input$`bf-commentary`, {updateTabsetPanel(session, "intabset", selected = "comment")
     updateCollapse(session, "collapse_commentary", open = "Breastfeeding")})
 
   observeEvent(input$jump_commentary_mentalhealth, {updateTabsetPanel(session, "intabset", selected = "comment")

@@ -1,13 +1,12 @@
-
-##Server script for births and babies - apgar tab..
-
+# Wider impacts dashboard - Births and babies tab - apgar section
+# Server code
 
 ###############################################.
 ## Modals ----
 ###############################################.
 
 # Pop-up modal explaining source of data
-observeEvent(input$btn_apgar_modal,
+observeEvent(input$`apgar-source-modal`,
              showModal(modalDialog(
                title = "What is the data source?",
                p("The data used for the Apgar scores page comes from the Scottish Morbidity Record 02 (SMR02) database. An SMR02 record is submitted by maternity hospitals to Public Health Scotland (PHS) whenever a woman is discharged from an episode of day case or inpatient maternity care. From October 2019, maternity hospitals have also been asked to submit SMR02 records following attended home births."),
@@ -23,50 +22,15 @@ observeEvent(input$btn_apgar_modal,
                size = "m",easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
 # Modal to explain run charts rules
-observeEvent(input$btn_apgar_rules,
-             showModal(modalDialog(
-               title = "How do we identify patterns in the data?",
-               p("Run charts use a series of rules to help identify important changes in the data. These are the ones we used for these charts:"),
-               tags$ul(tags$li("Shifts: Six or more consecutive data points above or below the centreline. Points on the centreline neither break nor contribute to a shift (marked on chart)."),
-                       tags$li("Trends: Five or more consecutive data points which are increasing or decreasing. An observation that is the same as the preceding value does not count towards a trend (marked on chart)."),
-                       tags$li("Too many or too few runs: A run is a sequence of one or more consecutive observations on the same side of the centreline. Any observations falling directly on the centreline can be ignored. If there are too many or too few runs (i.e. the median is crossed too many or too few times) that’s a sign of something more than random chance."),
-                       tags$li("Astronomical data point: A data point which is distinctly different from the rest. Different people looking at the same graph would be expected to recognise the same data point as astronomical (or not).")),
-               p("Further information on these methods of presenting data can be found in the ",
-                 tags$a(href= 'https://www.isdscotland.org/health-topics/quality-indicators/statistical-process-control/_docs/Statistical-Process-Control-Tutorial-Guide-180713.pdf',
-                        'PHS guide to statistical process control charts', target="_blank"),"."),
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
-
+observeEvent(input$btn_apgar_rules, runchart_modal())
 #Modal to explain SIMD and deprivation
-#Link action button click to modal launch
-observeEvent(input$btn_modal_simd_apgar, { showModal(
-  modalDialog(
-    h5("What is SIMD and deprivation?"),
-    p("Babies have been allocated to different levels of deprivation based on the
-      small area (data zone) in which their mothers live and the Scottish Index of
-      Multiple Deprivation (SIMD). SIMD scores are based on data for local areas
-      reflecting 38 indicators across 7 domains: income; employment; health; education,
-      skills and training; housing; geographic access; and crime. In this tool we have
-      presented results for babies living in different SIMD ‘quintiles’. To produce
-      quintiles, data zones are ranked by their SIMD score then the areas each containing
-      a fifth (20%) of the overall population of Scotland are identified. Babies living
-      in the most and least deprived areas that each contain a fifth of the population are
-      assigned to SIMD quintile 1 and 5 respectively."),
-    size = "l",
-    easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-  ))})
-
+observeEvent(input$btn_modal_simd_apgar, simd_modal("Babies"))
 
 ###############################################.
 ## Reactive controls  ----
 ###############################################.
-
-# deliveries reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_apgar <- renderUI({
-  #Lists areas available in
-  areas_summary_apgar <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_apgar])
-  selectizeInput("geoname_apgar", label = NULL, choices = areas_summary_apgar, selected = "")
-})
+# Show list of area names depending on areatype selected
+geoname_server("apgar")
 
 ###############################################.
 ##  Reactive datasets  ----
@@ -75,8 +39,8 @@ output$geoname_ui_apgar <- renderUI({
 #Dataset 1: behind trend run chart  (available at scotland and NHS board level)
 apgar_filter <- function(){
 
-apgar_filt <- apgar_runchart %>% filter(area_name == input$geoname_apgar &
-                               area_type == input$geotype_apgar &
+apgar_filt <- apgar_runchart %>% filter(area_name == input$`apgar-geoname` &
+                               area_type == input$`apgar-geotype` &
                                type %in% c("Scotland", "Health board"))
 apgar_filt %>%
     # Sorting levels based on date
@@ -94,13 +58,13 @@ apgar_linechart_split <- function(split){
 #Dataset 3: behind line chart  (available at scotland and NHS board level)
 apgar_linechart_filter <- function(){
 
-  apgar_linechart %>% filter(area_name == input$geoname_apgar &
-                                area_type == input$geotype_apgar &
+  apgar_linechart %>% filter(area_name == input$`apgar-geoname` &
+                                area_type == input$`apgar-geotype` &
                                 type %in% c("Scotland","Health board"))
 }
 
 ###############################################.
-## Induction Chart calls to chart function ----
+## Chart calls to chart function ----
 ###############################################.
 
 # chart outputs for trend
@@ -124,7 +88,7 @@ output$apgar_explorer <- renderUI({
 
   # text for titles of cut charts
   apgar_data_timeperiod <-  paste0("Figures based on data extracted ",apgar_extract_date)
-  apgar_title <- paste0("of singleton live births at 37-42 weeks gestation that have a 5 minute Apgar score of <7: ",input$geoname_apgar)
+  apgar_title <- paste0("of singleton live births at 37-42 weeks gestation that have a 5 minute Apgar score of <7: ",input$`apgar-geoname`)
 
   chart_explanation <-
     tagList(p(run_chart_description("Percentage of births that have a 5 minute
@@ -153,7 +117,7 @@ output$apgar_explorer <- renderUI({
                               pandemic in Scotland)")))
 
   # Layout depending if Scotland or HB selected
-  if (input$geotype_apgar == "Health board"){
+  if (input$`apgar-geotype` == "Health board"){
     tagList(fluidRow(column(12,
                             h4(paste0("Percentage ", apgar_title)),
                             div(actionButton("btn_apgar_rules",
@@ -168,11 +132,11 @@ output$apgar_explorer <- renderUI({
                             p(chart_explanation_quarter)),
                      column(12,
                             br(), #spacing
-                            h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$geoname_apgar))),
+                            h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$`apgar-geoname`))),
                      column(12,
                             withSpinner(plotlyOutput("apgar_linechart_number")))))
 
-  } else if (input$geotype_apgar == "Scotland"){ #only if scotland selected display age and deprivation breakdowns
+  } else if (input$`apgar-geotype` == "Scotland"){ #only if scotland selected display age and deprivation breakdowns
                        tagList(fluidRow(column(12,
                                                h4(paste0("Percentage ", apgar_title)),
                                                div(actionButton("btn_apgar_rules",
@@ -187,7 +151,7 @@ output$apgar_explorer <- renderUI({
                                                p(chart_explanation)),
                                         column(12,
                                                br(), #spacing
-                                               h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$geoname_apgar))),
+                                               h4(paste0("Number of singleton live births at 37-42 weeks gestation with 5 minute Apgar score of <7: ",input$`apgar-geoname`))),
                                         column(12,
                                                withSpinner(plotlyOutput("apgar_linechart_number")))),
                          fluidRow(column(12,
@@ -229,7 +193,7 @@ plot_apgar_trend <- function(measure, shift, trend){
   } else {
 
     # centrelines
-    centreline_name <- paste0(input$geoname_apgar," average up to end Feb 2020")
+    centreline_name <- paste0(input$`apgar-geoname`," average up to end Feb 2020")
     dottedline_name = "Projected average"
     centreline_data = plot_data$median_apgar5_37plus
     dottedline_data = plot_data$ext_median_apgar5_37plus
@@ -239,7 +203,7 @@ plot_apgar_trend <- function(measure, shift, trend){
     yaxis_plots[["range"]] <- c(0, 10)  # forcing range from 0 to 10%
     y_label <- "Percentage of births (%)"
 
-    tick_freq <- case_when(input$geotype_apgar == "Scotland" ~ 6, T ~ 2)
+    tick_freq <- case_when(input$`apgar-geotype` == "Scotland" ~ 6, T ~ 2)
 
     #specify tool tip
     tooltip_top <- c(paste0(format(plot_data$date_type),": ",format(plot_data$date_label),"<br>",
@@ -294,7 +258,7 @@ plot_apgar_linechart <- function(measure){
                 text_nodata = "Chart not shown as unstable due to small numbers. Data for the Island Boards is included in the data download.")
   } else {
 
-    tick_freq <- case_when(input$geotype_apgar == "Scotland" ~ 6, T ~ 2)
+    tick_freq <- case_when(input$`apgar-geotype` == "Scotland" ~ 6, T ~ 2)
 
     xaxis_plots <- c(xaxis_plots,
                      dtick =tick_freq, tickangle = 0,
@@ -385,36 +349,6 @@ output$download_apgar_data <- downloadHandler(
               file) }
 )
 
-###############################################.
-## Commentary tab content  ----
-###############################################.
-
-#action associated with action links within commentary text - this observe event linked
-# to an actionLink within the commentary which will take the user to commentary easily.
-observeEvent(input$switch_to_apgar,{
-  updateTabsetPanel(session, "intabset", selected = "comment")
-  updateCollapse(session, "collapse_commentary", open = "Apgar 5")
-})
-
-
-output$apgar_commentary <- renderUI({
-  tagList(
-    bsButton("jump_to_apgar",label = "Go to data"), #this button can only be used once
-    h2("Apgar scores - 3rd August 2022"),
-    p("Data are thought to be incomplete for NHS Fife and NHS Forth Valley in April 2022, so the proportion of babies with a low Apgar score in this month is likely to change in future releases of the dashboard."),
-    h2("Apgar scores - 2nd June 2021"),
-    p("In this release of information on Apgar scores (2nd June 2021) data have been updated to include women discharged after delivery up to and including February 2021. The data show that, at all Scotland level, the percentage of singleton live born babies delivered at 37-42 weeks gestation which have a low 5 minute Apgar score (less than 7) in February 2021 was at a very similar level to the pre-pandemic average at 1.8%."),
-    p("The Apgar score data by NHS Board are presented quarterly and this information will next be updated on 7th July 2021."),
-    h2("Apgar scores - 14th April 2021"),
-    p("Information on Apgar scores was included in this tool for the first time on 14 April 2021."),
-    p("The Apgar score measures the condition of newborn babies.  It was developed to allow health professionals to quickly identify babies needing resuscitation after delivery.  Babies are scored 0, 1, or 2 for each of their heart rate; respiratory effort; muscle tone; response to stimulation; and colour.  Scores therefore range from 0 to 10, with higher scores indicating a better condition.  Scores of 7 or over are generally interpreted as ‘reassuring’, with scores of 4-6 considered moderately low, and scores of 0-3 considered very low.  The Apgar score is measured at 1 and 5 minutes after delivery for all babies in Scotland."),
-    p("Low Apgar scores at 5 minutes after delivery are associated with a higher risk of neonatal death, neonatal morbidity, and longer term problems with babies’ development.  Babies born preterm can have lower scores due to their overall immaturity rather than a specific problem such as lack of oxygen during delivery.  Due to this, the association between low Apgar scores and poor outcomes is generally stronger for babies born at term (at 37-41 weeks gestation) or post-term (at ≥42 weeks gestation) compared to those born preterm (at <37 weeks gestation)."),
-    p("The information on Apgar scores presented through this tool is taken from hospital discharge records, specifically records relating to the care of women delivering a singleton live birth (i.e. one baby, not twins or more) at 37-42 weeks gestation inclusive.  Further technical information is available through the ‘Data source’ button on the dashboard page."),
-    p("The data shows that, at all Scotland level, just under 2% of singleton, live born babies delivered at 37-42 weeks gestation have a low 5 minute Apgar score (less than 7).  The percentage of babies with a low score has been broadly similar over the whole period examined (January 2018 to, currently, December 2020).  In particular, no increase in the percentage of babies with a low score has been seen during the COVID-19 pandemic. In fact the percentage of babies born with a 5 minute Apgar score of less than 7 was consistently slightly lower from Jan to Sep 2020 than the Jan 2018 to Feb 2020 average."),
-    p("Prior to the COVID-19 pandemic, the percentage of babies with a low 5 minute Apgar score was similar across mainland NHS Boards, ranging from around 1% of babies born to mothers living in NHS Highland to around 2.5% of babies born to mothers living in NHS Lanarkshire.  Within each Board, the percentage of babies with a low score fluctuates over time, as would be expected by chance.  No increase in the percentage of babies with a low score has been seen during the COVID-19 pandemic in any Board."),
-    p("The percentage of babies with a low 5 minute Apgar score is similar for babies born to mothers from different age groups, and for babies born to mothers living in areas with different levels of deprivation.  No changes to these patterns have been seen during the COVID-19 pandemic."))
-
-})
 
 
 ##END

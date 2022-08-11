@@ -1,336 +1,235 @@
-# Server side for cancer tab - tes
+# Wider impacts dashboard - Cancer tab
+# UI code
 
-###############################################.
-## Modals ----
-###############################################.
-# Pop-up modal explaining source of data
-observeEvent(input$btn_cancer_modal, 
-             showModal(modalDialog(
-               title = "What is the data source?",
-               p("",
-                 tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/Scottish-Cancer-Registry/How-data-are-collected/",class="externallink")),
-               p("The Scottish Cancer Registry receives notifications of cancer from many data sources. Pathology 
-                 records are one of the main sources, these are routinely transferred to the registry from the health 
-                 board laboratories. These data are valuable to identify and maximise case ascertainment of potential 
-                 new cancers."),
-               p("Pathology records contain diagnosis information, which has been determined by examining the
-                 cells and tissues microscopically.  Microscopic examination is generally considered as the most 
-                 accurate method of diagnosis. The specimens used to determine diagnosis are received from various 
-                 procedures such as smears and fluids, simple diagnostic punch biopsies, lymph node biopsies to 
-                 fuller wide local excisions and resections. Therefore, it is highly likely that there are numerous 
-                 pathology reports for one individual. The reports received by the registry related to solid tissue 
-                 and cytology specimens. Peripheral blood smears are not included such as leukaemia diagnosed from 
-                 peripheral blood film.  The majority of pathology records will relate to new primary cancers, some 
-                 records will relate to disease recurrence or known primary cancers and/or metastatic disease."),
-               p("The three graphs show numbers of individuals from whom a pathology specimen confirmed cancer since the start of
-                 each of the years.  The Community Health Index (CHI) was used to count individuals.  If the same individual had
-                 a subsequent cancer specimen reported that year for the same type of cancer, they were not counted again; but they
-                 were counted twice or more for those with different types of cancer. "),
-               
-               p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
-               size = "m",
-               easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
+cancerpath_tab <- 
 ###############################################.
-## Reactive datasets ----
+## Cancer pathology ----
 ###############################################.
 
-
-cancer_data_cum_main <- reactive({
-  
-  cancer_data2 %>% filter(sex == input$gender, 
-                          area == input$geoname_cancer, 
-                          site == input$cancer_type,
-                          breakdown == "None")
-  
-})
-
-# Reactive datasets for the diff charts
-# cancer_data_diff <- reactive({
-#   cancer_data_quarters %>% filter(sex == input$gender, 
-#                               area == input$geoname_cancer, 
-#                               site == input$cancer_type,
-#                               breakdown == input$breakdown) %>%
-#     # Ordering factor so it shows correctly in Plotly
-#     mutate(quarter_no = factor(quarter_no, ordered = TRUE)) %>% 
-#     arrange(quarter_no)
-# })
-
-cancer_data_diff_2yrs <- reactive({
-  cancer_data_quarters_2 %>% filter(sex == input$gender, 
-                                  area == input$geoname_cancer, 
-                                  site == input$cancer_type,
-                                  breakdown == input$breakdown) %>%
-    # Ordering factor so it shows correctly in Plotly
-    mutate(quarter_no = factor(quarter_no, labels = c("Jan-Mar 2020", "Apr-Jun 2020",
-                                                      "Jul-Sep 2020", "Oct-Dec 2020",
-                                                      "Jan-Mar 2021", "Apr-Jun 2021",
-                                                      "Jul-Sep 2021", "Oct-Dec 2021"), ordered = TRUE)) %>% 
-    arrange(quarter_no)
-})
-
-cancer_data_dl <- reactive({
-  
-  cancer_data2 %>%
-    filter(sex == "All" & breakdown == "None") %>% 
-    select(area, site, week_number, count19, count20, count21) %>% 
-    rename("Area name" = area, "Cancer type" = site,
-           # "Sex" = sex,
-           # "Age Group" = age_group,
-           # "Deprivation Quintile (0=unknown)" = dep,
-           "Week Number" = week_number,
-           "Count 2019" = count19,
-           "Count 2020" = count20,
-           "Count 2021" = count21) #,
-           # "Breakdown" = breakdown)
-  
-})
+    tabPanel(title = "Cancer pathology", icon = icon("microscope"), value = "cancer",
+           wellPanel(width = 12,
+                     uiOutput("cancer_explorer2")),
+           wellPanel(
+             column(4, selectInput("geotype_cancer", label = "Select a geography level and then an area of interest.",
+                                   choices= c("Scotland", "Cancer Networks", "Health Boards"),
+                                   selected = "Scotland"),
+                    uiOutput("geoname_ui_cancer")),
+             column(4,  selectInput("cancer_type", label = "Select all or specific cancer type", choices = cancer_type_list,
+                                    selected = "All Malignant Neoplasms (Excl. C44)")),
+             column(4,
+                    fluidRow(br()),
+                    sourcemodal_ui("cancer"),
+                    fluidRow(br()),
+                    downloadButton('download_cancer_data', 'Download data'),
+                    fluidRow(br()),
+                    actionButton('jump_commentary_cancer','Go to commentary'))
+           ), #well panel
+           wellPanel(
+             column(4,
+                    div(radioButtons("baseline", "Select baseline for comparison",
+                                     list("2019", "Mean 2017-2019"), inline = TRUE,
+                                     selected = "2019"))),
+             column(8,
+                    div(radioButtons("gender", "Select sex",
+                                     list("All","Male","Female"), inline = TRUE,
+                                     selected = "All")))
+             
+           ) ,# wellPanel bracket
+           
+           wellPanel(width = 12,
+                     uiOutput("cancer_explorer")
+           ) ,# wellPanel bracket
+           
+           wellPanel(
+             column(6,
+                    div(radioButtons("cum_baseline", "Select standard/cumulative baseline",
+                                     list("Standard", "Cumulative"), inline = TRUE,
+                                     selected = "Standard"))),
+             column(6,
+                    div(radioButtons("breakdown", "Select breakdown type",
+                                     list("None","Age Group","Deprivation"), inline = TRUE,
+                                     selected = "None")))),
+           wellPanel(width = 12,
+                     uiOutput("cancer_explorer3"))
+  )  # tabpanel bracket
 
 
 ###############################################.
-## Reactive layout ----
+## SACT monthly tab ----
 ###############################################.
 
-# Cancer reactive drop-down control showing list of area names depending on areatype selected
-output$geoname_ui_cancer <- renderUI({
-  #Lists areas available in   
-  areas_summary_cancer <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_cancer])
-  if(input$geotype_cancer == "Health Boards") {
-    selectizeInput("geoname_cancer", label = NULL, choices = c("NHS Ayrshire & Arran", "NHS Borders", "NHS Dumfries & Galloway",
-                                                               "NHS Fife", "NHS Forth Valley", "NHS Grampian", 
-                                                               "NHS Greater Glasgow & Clyde", "NHS Highland",
-                                                               "NHS Lanarkshire", "NHS Lothian", "NHS Orkney",
-                                                               "NHS Shetland", "NHS Tayside", "NHS Western Isles"), 
-                   selected = "NHS Ayrshire & Arran")
-  } else if (input$geotype_cancer == "Cancer Networks") {
-    selectizeInput("geoname_cancer", label = NULL, choices = c("NCA", "SCAN", "WOSCAN"), selected = "NCA")  
-  } else if (input$geotype_cancer == "Scotland") {
-    selectizeInput("geoname_cancer", label = NULL, choices = "Scotland", selected = "Scotland")  
-  }  
-})
-
-
-# The charts and text shown on the app will depend on what the user wants to see
-output$cancer_explorer <- renderUI({
-  
-  #  text for titles of cut charts
-  cancer_site <- case_when(input$cancer_type == "All Malignant Neoplasms (Excl. C44)" ~ "All Malignant Neoplasms (Excl. C44)",
-                           input$cancer_type == "All Cancers" ~ "All Cancers",
-                           input$cancer_type == "Bladder" ~ "Bladder",
-                           input$cancer_type == "Bone and Connective Tissue" ~ "Bone and Connective Tissue",
-                           input$cancer_type == "Breast" ~ "Breast",
-                           input$cancer_type == "Cervical - Females only" ~ "Cervical - Females only",
-                           input$cancer_type == "Colorectal" ~ "Colorectal",
-                           input$cancer_type == "Head and Neck" ~ "Head and Neck",
-                           input$cancer_type == "Hodgkin Lymphoma" ~ "Hodgkin Lymphoma",
-                           input$cancer_type == "Kidney" ~ "Kidney",
-                           input$cancer_type == "Leukaemias" ~ "Leukaemias",
-                           input$cancer_type == "Liver and Intrahepatic Bile Ducts" ~ "Liver and Intrahepatic Bile Ducts",
-                           input$cancer_type == "Brain Tumour" ~ "Brain Tumour",
-                           input$cancer_type == "Malignant Melanoma of the Skin" ~ "Malignant Melanoma of the Skin",
-                           input$cancer_type == "Mesothelioma" ~ "Mesothelioma",
-                           input$cancer_type == "Multiple Myeloma and malignant plasma cell neoplasms" ~ "Multiple Myeloma and malignant plasma cell neoplasms",
-                           input$cancer_type %in% c("Non-Hodgkin Lymphoma") ~ "Non-Hodgkin Lymphoma",
-                           input$cancer_type == "Non-Melanoma Skin Cancer" ~ "Non-Melanoma Skin Cancer",
-                           input$cancer_type == "Oesophagus" ~ "Oesophagus",
-                           input$cancer_type == "Other" ~ "Other",
-                           input$cancer_type == "Ovary - Females only" ~ "Ovary - Females only",
-                           input$cancer_type == "Pancreas" ~ "Pancreas",
-                           input$cancer_type == "Penis - Males only" ~ "Penis - Males Only",
-                           input$cancer_type == "Prostate - Males only" ~ "Prostate - Males only",
-                           input$cancer_type == "Stomach" ~ "Stomach",
-                           input$cancer_type == "Testis - Males only" ~ "Testis - Males only",
-                           input$cancer_type == "Thyroid" ~ "Thyroid",
-                           input$cancer_type == "Trachea, Bronchus and Lung" ~ "Trachea, Bronchus and Lung",
-                           input$cancer_type == "Uterus - Females only" ~ "Uterus - Females only",
-                           input$cancer_type == "Vagina - Females only" ~ "Vagina - Females only",
-                           input$cancer_type == "Vulva - Females only" ~ "Vulva - Females only"
-  )
-  
-  
-  tagList(
-    plot_box(paste0("Total count of individuals having a cancer of type:  ", input$cancer_type, #cancer_site,
-                    " confirmed on a pathological specimen since January for 2019 to 2022"), 
-             "cancer_overall"),
-    p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt")),
-    br(),
-    plot_box(paste0("Weekly count of individuals having a cancer of type: ", input$cancer_type, #cancer_site,
-                    " confirmed on a pathological specimen since January for 2019 to 2022"), 
-             "cancer_incidence"),
-    p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt"))
-  )  
-  
-})
-
-################## ADDITION 18-8-21 TO RE-ARRANGE PAGE #####################
-
-output$cancer_explorer3 <- renderUI({
-  
-  tagList(
-    if(input$breakdown == "Age Group") {
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, 
-                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 by Age Group - ", 
-                      input$geoname_cancer), "cancer_split")
-      
-    } else if (input$breakdown == "Deprivation") {
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, 
-                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 by Deprivation 
-                        quintile - ",
-                       input$geoname_cancer), "cancer_split")
-    } else {
-      plot_box(paste0("Percentage change of individuals having a cancer of type: ", input$cancer_type, 
-                      " confirmed on a pathological specimen by quarter against equivalent quarter 2019 - ",
-                      input$geoname_cancer), "cancer_split")
-    },
-    
-    p(em(paste0(cancer_extract_date), style = "font-family: 'calibri'; font-si15pt")),
-    br(),
-    p(em("Note: registrations for non-melanoma skin cancer (ICD-10 C44) are likely to be less complete and less accurate 
-         than for other cancer sites. Such cancers are relatively common and usually non-fatal. There is a propensity 
-         for multiple tumours to occur in one individual and cancer registries adopt different practices in recording 
-         these. The tumours are most common in the elderly population and the completeness of registration in the very 
-         elderly is likely to be less than for younger patients. Furthermore, increasing numbers of these cancers are 
-         diagnosed and treated within GP surgeries and the registration scheme is not confident that all such cases 
-         are notified. Because cancer registries across the world have different practices for recording non-melanoma 
-         skin cancer (some do not record them at all), the category 'All Malignant Neoplasms (Excl. C44)' omits these tumours 
-         in the interests of making international comparisons of cancer incidence more valid.", style = "font-family: 'calibri'; font-si15pt")))
-  
-})
-
-################# ADDITION MAY 21 TO RE-ARRANGE PAGE ##############
-
-# MAIN PAGE TEXT
-output$cancer_explorer2 <- renderUI({
-  
-  
-  
-  tagList(
-    p("Cancer services in Scotland have been disrupted since late March 2020 as a result of the coronavirus
-      pandemic.  It is important to understand whether fewer patients have been diagnosed with cancer as a
-      result of these changes.  The Scottish Cancer Registry published its high quality figures on cancer
-      incidence for 2020 on 2nd June 2022.  As a proxy measure of new cancer diagnoses, this dashboard presents
-      numbers of individuals from whom a pathology sample found cancer in 2020 through to 2022 and compares them to 2019.
-      While only proxy measures, the size of the changes corresponds approximately with those reported by cancer clinicians."),
-    p(strong("Note - this does not include all patients who have been newly diagnosed with cancer (by other methods), 
-              and will also include some patients who are being followed-up from a pre-2019 diagnosis of cancer.")),
-    p(("By the end of 2021 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
-       cancer (excluding non-melanoma skin cancers) in Scotland was "),
-      strong ("33,162 ", style = "font-family: 'arial'; font-si20pt;"),
-      ("in 2021, "),
-      strong ("28,784 ", style = "font-family: 'arial'; font-si20pt;"),
-      ("in 2020 and"),
-      strong ("33,345 ", style = "font-family: 'arial'; font-si20pt;"),
-      ("in 2019, absolute differences of "), 
-      strong ("4,561 ", style = "font-family: 'arial'; font-si20pt;"),
-      ("individuals in 2020 (an overall cumulative difference of "),
-      strong ("-13.7% ", style = "font-family: 'arial'; font-si20pt;"),
-      ("), and "),
-      strong ("183 ", style = "font-family: 'arial'; font-si20pt;"),
-      ("individuals in 2021 (an overall cumulative difference of "),
-      strong ("-0.6% ", style = "font-family: 'arial'; font-si20pt;"),
-      (").  That is to say, "),
-      strong ("4,561 / 183 ", style = "font-family: 'arial'; font-si20pt;"),
-      ("fewer patients in Scotland had a pathologically confirmed cancer diagnosis by the end of 2020/2021 than would have 
-       been expected.")),
-    p("The commonest cancers in Scotland are of the lung, breast (females), prostate (males) and colorectal."),
-    p("By the week ending 27th December 2020, compared to the same week in 2019, there were ",
-      strong ("570 ", style = "font-family: 'arial'; font-si20pt;"),
-        "fewer lung cancers (a total fall of ",
-      strong ("20.1%", style = "font-family: 'arial'; font-si20pt;"),
-      "); ",
-      strong ("806 ", style = "font-family: 'arial'; font-si20pt;"),
-      "fewer breast cancers (a total fall of ",
-      strong ("15.0%", style = "font-family: 'arial'; font-si20pt;"),
-      "); ",
-      strong ("529 ", style = "font-family: 'arial'; font-si20pt;"),
-      "fewer prostate cancers (a total fall of ",
-      strong ("16.8%", style = "font-family: 'arial'; font-si20pt;"),
-      "); and ",
-      strong ("825 ", style = "font-family: 'arial'; font-si20pt;"),
-      "fewer colorectal cancers (a total fall of ",
-      strong ("20.4%", style = "font-family: 'arial'; font-si20pt;"),
-      "). "),
-    p("By the week ending 27th December 2021, compared to the same week in 2019, there were ",
-      strong ("509 ", style = "font-family: 'arial'; font-si20pt; color:"),
-      "fewer lung cancers (a total fall of ",
-      strong ("18.0%", style = "font-family: 'arial'; font-si20pt; color:"),
-      "); ",
-      strong ("4 ", style = "font-family: 'arial'; font-si20pt;"),
-      "more breast cancers (a total increase of less than",
-      strong ("1%", style = "font-family: 'arial'; font-si20pt;"),
-      "); ",
-      strong ("508 ", style = "font-family: 'arial'; font-si20pt;"),
-      "more prostate cancers (a total increase of ",
-      strong ("16.2%", style = "font-family: 'arial'; font-si20pt;"),
-      "); and ",
-      strong ("30 ", style = "font-family: 'arial'; font-si20pt;"),
-      "more colorectal cancers (a total increase of less than",
-      strong ("1%", style = "font-family: 'arial'; font-si20pt;"),
-      "). "),
-    strong("Note: as the information provided by this dashboard is updated, it will both add more recent data, and
-           may also update historical data."),
-    br(),
-    p(strong(paste0("Last updated: - 3rd August 2022 ;  date of extraction of data: ",cancer_extract_date, ", with pathological records to week ending
-             2nd February 2022."))))
-  
-  
-})
+sact_tabm <- 
+  tabPanel(title = "SACT (Chemotherapy) Monthly Patients ", icon = icon("syringe"), value = "sact",
+           wellPanel(h4(strong("SACT Treatment Activity in Scotland - Monthly Patient Data")),
+                     p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
+                                  of cancer. The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments
+                                  such as targeted agents and immunotherapies."),
+                     p("The weekly and monthly activity reports are generated from the SACT national MVP data platform
+                                  held by PHS, which is updated weekly from the five instances of ChemoCare across Scotland.
+                                  All SACT and non-SACT (e.g. other drugs used to treat cancer such as hormones and supportive medicines
+                                  such as anti-sickness medicines and steroids) activity which is prescribed
+                                  in secondary care settings and is recorded on ChemoCare is included. Paediatric patient activity
+                                  and prescriptions not recorded on a ChemoCare system are not included."),
+                     p("Local values have been used in the calculations, however, national mappings
+                                  and derivations were applied to define tumour groups and identify the administration route."),
+                     p("Due to differences in recording practice",
+                       em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
+                       style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+                     
+                     actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle')),
+                     downloadButton('download_sact_monthly_data', 'Download data')), # well panel
+           
+           wellPanel(column(7, selectInput("geotype_sact", label = "Select a geography level and then an area of interest",
+                                           choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
+                            uiOutput("geoname_ui_sact"),
+                            uiOutput("treatment_ui_sact")),
+                     column(5,  selectInput("sact_type", label = "Select all or specific cancer type",
+                                            choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
+                                                        "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
+                                                        "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
+                                                        "Upper GI", "Urological", "Unknown"), selected = "All"),
+                            div(radioButtons("sact_plot_filter", "Select data breakdown to display together:",
+                                             list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
+                                             selected = "Standard graph")))
+           ), #well panel
+           
+           mainPanel(width = 12,
+                     uiOutput("sact_explorer")
+           )# mainPanel bracket
+  ) # tabpanel bracket
 
 ###############################################.
-## Charts ----
-###############################################.
-# Creating plots for each cut and dataset
-
-output$cancer_overall <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), 
-                                                                 var1_chosen = "cum_count20",
-                                                                 if(input$baseline == "2019"){
-                                                                   var2_chosen = "cum_count19"
-                                                                 } else {
-                                                                   var2_chosen = "cum_count_mean_17_19"  
-                                                                 },
-                                                                 var3_chosen = "cum_count21",
-                                                                 var4_chosen = "cum_count22",
-                                                                 data_name = "cum")})
-
-output$cancer_incidence <- renderPlotly({plot_overall_cancer_chart(cancer_data_cum_main(), 
-                                                                   var1_chosen = "count20",
-                                                                   if(input$baseline == "2019"){
-                                                                     var2_chosen = "count19"
-                                                                   } else {
-                                                                     var2_chosen = "count_mean_17_19"  
-                                                                   },
-                                                                   var3_chosen = "count21",
-                                                                   var4_chosen = "count22",
-                                                                   data_name = "inc")})
-
-# Difference charts
-output$cancer_split <- renderPlotly({plot_diff_cancer_chart(cancer_data_diff_2yrs(), periodvar = "quarter_no",
-                                                            if(input$cum_baseline == "Standard"){
-                                                              diffvar1 = "difference"
-                                                              } else {
-                                                              diffvar1 = "cum_difference"  
-                                                              })})
-
-###############################################.
-## Data downloads ----
+## SACT weekly tab ----
 ###############################################.
 
+sact_tabw <- 
+  tabPanel(title = "SACT (Chemotherapy) Weekly Appointments", icon = icon("syringe"), value = "sact",
+           wellPanel(h4(strong("SACT Treatment Activity in Scotland - Weekly Appointment Data")),
+                     #p(strong("Data from the ChemoCare system in the North Cancer Alliance (NCA) Highland has not
+                     #          refreshed on the 28th of June 2021. Data from this instance is therefore only deemed
+                     #         complete up to the week beginning 7th of June and only presented in the graphs up to
+                     #        that date. This affects Scotland level data, NCA network level data and NCA Highland
+                     #       health boards: NHS Highland and NHS Western Isles."),
+                     #style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+                     p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
+                                  of cancer. The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments
+                                  such as targeted agents and immunotherapies."),
+                     p("The weekly and monthly activity reports are generated from the SACT national MVP data platform
+                                  held by PHS, which is updated weekly from the five instances of ChemoCare across Scotland.
+                                  All SACT and non-SACT (e.g. other drugs used to treat cancer such as hormones and supportive medicines
+                                  such as anti-sickness medicines and steroids) activity which is prescribed
+                                  in secondary care settings and is recorded on ChemoCare is included. Paediatric patient activity
+                                  and prescriptions not recorded on a ChemoCare system are not included."),
+                     p("Local values have been used in the calculations, however, national mappings
+                                  and derivations were applied to define tumour groups and identify the administration route."),
+                     p("Due to differences in recording practice",
+                       em(strong("it would be inappropriate to make direct comparisons between the cancer networks.")),
+                       style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
+                     p("Activity data is released two week in arrears. The latest data currently available in the
+                                  dashboard is for the week beginning", strong(format(max(sact_weekly_data$week_beginning), "%d %B %Y"))),
+                     
+                     actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle')),
+                     downloadButton('download_sact_weekly_data', 'Download data')), # well panel
+           
+           wellPanel(column(7, selectInput("geotype_wk_sact", label = "Select a geography level and then an area of interest",
+                                           choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
+                            uiOutput("geoname_ui_wk_sact"),
+                            uiOutput("treatment_ui_wk_sact")),
+                     
+                     column(5, selectInput("sact_wk_type", label = "Select all or specific cancer type",
+                                           choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
+                                                       "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
+                                                       "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
+                                                       "Upper GI", "Urological", "Unknown"), selected = "All"),
+                            div(radioButtons("sact_wk_appt_reg", "Select method of administration route derivation",
+                                             list("Appointment level","Regimen level"), inline = TRUE,
+                                             selected = "Appointment level")),
+                            div(radioButtons("sact_plot_wk_filter", "Select data breakdown to display together:",
+                                             list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
+                                             selected = "Standard graph")))
+           ), #well panel
+           
+           mainPanel(width = 12,
+                     uiOutput("sact_wk_explorer")
+           )# mainPanel bracket
+  ) #, # tabpanel bracket
 
-output$download_cancer_data <- downloadHandler(
-  filename ="cancer_extract.csv",
-  content = function(file) {
-    write_csv(cancer_data_dl(),
-              file) } 
-) 
+###############################################.
+## DCE - not in use ----
+###############################################.
+
+# dce_tab <-             
+#   tabPanel(title = "Cancer Staging - DCE Data", icon = icon("clock"), value = "dce",
+#            wellPanel(h4(strong("Cancer Staging - Detect Cancer Early Data (Breast, Colorectal & Lung)")),
+#                      # p("Cancer is one of the major causes of death in Scotland. In 2018, 16,153 people died of cancer
+#                      #    in Scotland and approximately 34,000 people were diagnosed with cancer, excluding non-melanoma
+#                      #      skin cancer. The most common causes of cancer diagnosis are lung, breast, prostate and colorectal cancer."),
+#                      # p("In February 2012 the Cabinet Secretary for Health and Wellbeing formally launched the Detect Cancer Early
+#                      #    programme . One aim of the Detect Cancer Early programme was to increase the proportion of people who were
+#                      #    diagnosed early in the disease process (with stage 1 disease). The programme concentrates on breast, colorectal
+#                      #    and lung cancers, which collectively account for 42.6% of all cancers diagnosed in Scotland in 2018."),
+#                      p("Cancer staging is the process of determining the extent to which a cancer has developed and spread.
+#                                   For the majority of patients with cancer it is common practice to assign a number from 1 to 4 to a cancer,
+#                                   with 1 indicating the cancer is confined to the original organ in which it occurred and 4 being a cancer
+#                                   which has spread beyond the original organ and its local lymph glands (regional lymph nodes). Patients
+#                                   diagnosed with stage 1 disease tend to have better outcomes and longer survival compared with patients
+#                                   diagnosed with stage 4 disease."),
+#                      p("This dashboard looks at breast, colorectal and lung cancer data separately to examine the
+#                                   different changes on stage at diagnosis from the year the coronavirus pandemic began compared with 2019."),
+#                      p("The proportions of patients with any given cancer stage may be affected by a number of things, including
+#                                   changes in the proportions of other stages (including those that are not known).  These data can only
+#                                   describe patients who were diagnosed with cancer and in a separate section of this dashboard, it is estimated
+#                                   that total breast, colorectal and lung cancer diagnoses fell by 16%, 21% and 21%, respectively, in 2020
+#                                   compared with 2019. Temporary pausing of the national screening programmes for breast and colorectal cancer
+#                                   in 2020 is likely to have particularly reduced numbers of early stage cancers being diagnosed.  A full
+#                                   understanding of the various determinants of any changes in stage of cancer when it was diagnosed after
+#                                   the pandemic began, and of the status of the people who were not diagnosed with cancer as expected in 2020,
+#                                   will take time to be reached."),
+#                      # tags$ul(
+#                      #   tags$li("For breast cancer, there were large falls numbers in stages 1 and 2 (35% and 15% respectively). In
+#                      #           contrast, there were small increases in stages 3 and 4 (5% and 7%), with the biggest increase seen for
+#                      #           those of unknown stage (34%)."),
+#                      #
+#                      #   tags$li("For Colorectal Cancer, there were substantial drops (30% and more) in the numbers diagnosed with
+#                      #           stages 1, 2 or 3 colorectal cancer; whereas there was only a 4% drop for metastatic colorectal cancer."),
+#                      #
+#                      #   tags$li("For Lung Cancer, there were falls of 11%-13% for stages 1, 2 and 3; but only a fall of 4% for stage 4
+#                      #           diagnoses, which was only lower than expected in April 2020.")),
+#                      
+#                      p(strong(paste0("Figures presented based on data extracted on ",dce_extract_date)))
+#            ),
+#            wellPanel(
+#              column(5, selectInput("geotype_dce", label = "Select a geography level",
+#                                    choices= c("Scotland", "Cancer Network"),
+#                                    selected = "Scotland"),
+#                     uiOutput("geoname_ui_dce")),
+#              column(5,  selectInput("dce_type", label = "Select all or specific cancer type",
+#                                     choices = c("Breast", "Colorectal", "Lung"), selected = "Breast")),
+#              column(2,
+#                     fluidRow(br()),
+#                     actionButton("btn_dce_modal", "Data source: ", icon = icon('question-circle')),
+#                     fluidRow(br()),
+#                     downloadButton('download_dce_data', 'Download data')) #,
+#            ) , #well panel
+#            mainPanel(width = 12,
+#                      uiOutput("dce_explorer1") ,
+#                      div(radioButtons("dce_stage", "Select stage of cancer (NK - Not Known)",
+#                                       list("1","2","3","4","NK"), inline = TRUE,
+#                                       selected = "1")),
+#                      uiOutput("dce_explorer2")
+#            )# mainPanel bracket
+#   ) # tabpanel bracket
+
 
 ###############################################.
 ## Commentary ----
 ###############################################.
-output$cancer_commentary <- renderUI({
+cancer_commentary <- 
   tagList(
-    bsButton("jump_to_cancer",label = "Go to data"), #this button can only be used once
-    
-    h3(strong("Cancer in Scotland in 2019 to 2022")),
+    fluidRow(
+      column(8, h2("Cancer in Scotland in 2019 to 2022")), 
+      column(4, div(bsButton("jump_to_cancer", label = "Go to data"), style="float:right"))),  #this button can only be used once
     p(strong("Note: as the information provided in this dashboard is updated, it will both add more recent 
              data and may also change historical data. This commentary includes reference to pathological specimens 
              reported to the week ending 2nd February 2022, which were available for inclusion in the analysis 
@@ -342,7 +241,7 @@ output$cancer_commentary <- renderUI({
     #          ending 21st February 2021, extracted on 20th May 2021. These revisions are shown in red.",
     #          style = "font-family: 'arial'; font-si20pt; color: #DC143C;")),
     
-    h4(strong("Background")),
+    h4("Background"),
     p("COVID-19 has had a wide impact on cancer in Scotland since it led to widespread social disruption 
       from the end of March 2020. Some parts of this are better understood than others. For example, cancer 
       screening programmes were paused and urgent referrals for suspected cancer fell substantially. The 
@@ -350,7 +249,7 @@ output$cancer_commentary <- renderUI({
       in usual treatment, are less clear. We explored how many patients had their cancers confirmed pathologically from 2020 onwards compared with how 
       many there were in 2019, as a proxy measure of changes in cancer incidence. "),
     
-    h4(strong("What these data do and do not show")),
+    h4("What these data do and do not show"),
     p("The numbers in this dashboard are individuals from whom a pathology sample found cancer in 2019 onwards 
       in Scotland. Each individual was counted once the first time they appeared from 1st January; any subsequent 
       samples for the same individual were not counted (except when reporting cancer type-specific numbers, where 
@@ -381,13 +280,14 @@ output$cancer_commentary <- renderUI({
       work is being carried out to validate the pathology dashboard figures."),
     
     
-    h4(strong("Overall trends in pathologically confirmed cancers")),
+    h4("Overall trends in pathologically confirmed cancers"),
     p("In 2020, numbers were similar to 2019 until towards the end of March. After the first national lockdown, 
       the numbers fell by about 40% of those seen in comparable weeks in 2019. Numbers then rose from late April 2020. 
       Overall, the weekly numbers of patients with pathologically confirmed cancers were close to those before the 
       pandemic by the end of September 2020. It should be noted that there were important variations in patterns between types of cancer."),
     p("In 2021, overall numbers remained close to those seen in 2019.  This varied by cancer type and there were some 
       notably higher and lower than expected numbers (see relevant updates)."),
+    br(),
     
     #################################################################################################################   .
     
@@ -397,7 +297,7 @@ output$cancer_commentary <- renderUI({
     ## AUGUST 2022 update ----
     ###################################.
     
-    h4(strong("Update 03/08/2022: For pathology data to 2nd February 2022 (extracted 02/06/2022)")),
+    h3("3 August 2022 - Pathology data updated to 2 February 2022 (extracted 02/06/2022)"),
     p("In 2022 (weeks ending 5th January to 2nd February), there was little difference in the total number of individuals with a pathological
       diagnosis of cancer (Excl.C44) compared with those in 2019 over the same dates (4046 and 3986 in 2022 and 2019 respectively, a difference
       of approximately 1.5%). It should be noted that there are usually fewer cancer diagnoses in late December and early 
@@ -406,32 +306,32 @@ output$cancer_commentary <- renderUI({
     p("For this update, we review patterns in the most common types of cancer for early 2022 as well as
       updating the results for the calendar year 2021."),
     
-    h4(strong("Early 2022 data")),
+    h4("Early 2022 data"),
     p("Among the most common cancer types, comparing January to week ending 2nd February in 2022 and 2019, respectively:"),
     
     tags$ul(
       tags$li("Lung cancer: 230 versus 274 pathological diagnoses.  
               This indicates a continued deficit (-16%) which was also seen through 2021"),
-    
+      
       tags$li("Breast cancer (females only):  804 versus 739 pathological diagnoses. 
               This indicates an increase in diagnoses of 9% after the return to typical numbers of diagnoses in 2021."),
-    
+      
       tags$li("Prostate cancer:  476 versus 350 pathological diagnoses.
               This indicates a further increase in diagnoses of  36%, a continuation of the increase seen in 2021."),
-    
+      
       tags$li("Colorectal (bowel) cancer: 538 versus 486 pathological diagnoses.  This indicates an
               increase of 11% after the return to typical number of diagnoses in 2021."),
-    
+      
       tags$li("Liver and intrahepatic bile ducts: 38 versus 29 pathological diagnoses. 
               This indicates an increase of 31%, a continued increase in diagnoses also seen in 2021."),
-    
+      
       tags$li("Oesophagus: 112 versus 104 pathological diagnoses.  This indicates an increase of 8% and a
               continuation of the increase in diagnoses seen in 2021.")),
-  
-  p("These early results therefore show a mixture of some continued under-diagnoses and some “catching-up” 
+    
+    p("These early results therefore show a mixture of some continued under-diagnoses and some “catching-up” 
       with the under-diagnoses seen earlier in the pandemic."),
     
-    h4(strong("Revisions of 2021 data")),
+    h4("Revisions of 2021 data"),
     p("As pathology data are continually updated, a revision of the January to week ending 27th December in 2021 and 2019, 
       in this latest extract is given below:"),
     tags$ul(
@@ -456,7 +356,7 @@ output$cancer_commentary <- renderUI({
     p("A new chart comparing 2019 quarterly totals to the same quarters in 2020 and 2021 shows that after initial falls in diagnoses, 
       there was some recovery or catching-up in the cumulative figures, repeating 2019 figures over two years for comparison with the 2020-2021 period:"),
     tags$ul(
-
+      
       tags$li("All excl. NMSC: 33162 (2021) and 28784 (2020) compared with 33345 in 2019.  That is, down 4744 in total by December 2021.  
               No overall reduction in the number of “missing” patients although it is important to look at each cancer type to understand 
               what has happened."),
@@ -469,13 +369,13 @@ output$cancer_commentary <- renderUI({
       
       tags$li("Cervical: 358 (2021) and 309 (2020) compared with 371 in 2019.  That is, down 75 in total by December 2021."),
       
-       tags$li("Prostate: 3651 (2021) and 2614 (2020) compared with 3143 in 2019.  That is, down only 21 patients in total by December 2021 – 
+      tags$li("Prostate: 3651 (2021) and 2614 (2020) compared with 3143 in 2019.  That is, down only 21 patients in total by December 2021 – 
               suggesting that those missing in 2020 were largely identified in 2021 and there is little ongoing deficit.")),
     
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
              data to the end of December 2021 compared to 2019:")),
     
-    h4(strong("Age")),
+    h4("Age"),
     p("For all cancers except non-melanoma skin cancers, the proportionate fall in cumulative pathologically confirmed cancers by December 2021 were
       much smaller than at the end of 2020, and there was less difference between age groups.
       The reduction in breast and colorectal cancer diagnoses, which were both affected by pauses in the screening
@@ -484,11 +384,10 @@ output$cancer_commentary <- renderUI({
       in those of screening age (50-69) by the end of Q4 2021, compared to a shortfall of 1.7% for those under 50.
       For colorectal cancers, numbers in 50-69 years olds showed a shortfall of
       10.5% by the end of Q4 2021; however, the total falls in under 50s had shown less improvement, a shortfall of 18.0%."),
-    h4(strong("Socio-economic deprivation")),
+    h4("Socio-economic deprivation"),
     p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
       skin cancers, these showed the largest decreases in diagnoses remained among people from the most deprived areas, showing 
       a shortfall of 9.8% by the end of Q4 2021.The least deprived were down 4.5% by the same period."),
-    p("---------------------------------------------------------------------------------------------------------------------"),
     br(),
     
     ###################################.
@@ -496,7 +395,7 @@ output$cancer_commentary <- renderUI({
     ###################################.
     
     
-    h4(strong("Update 15/06/2022: For pathology data to 31st December 2021 (extracted 20/04/2022)")),
+    h3("15 June 2022 - Pathology data updated to 31 December 2021 (extracted 20/04/2022)"),
     p("In 2021 (weeks ending 05th January to 27th December), there was little difference in the total number
       of individuals with a pathological diagnosis of cancer (Excl. C44) compared with those in 2019 (33086 and 33345 in 2021 and 2019
       respectively, a difference of approximately 0.8%).  However, within cancer sites, some were higher and some lower than
@@ -530,34 +429,34 @@ output$cancer_commentary <- renderUI({
               what has happened."),
       tags$li("Lung: 2319 (2021) and 2250 (2020) compared with 2833 in 2019.  That is, 1097 down in total by December 2021.  
               So the continued under-diagnosis in 2021 added to the total “missing”."),
-
+      
       tags$li("Colorectal: 4057 (2021) and 3187 (2020) compared with 4041 in 2019.  That is, 838 down in total by December 2021."),
-
+      
       tags$li("Breast (females only): 5314 (2021) and 4488 (2020) compared with 5295 in 2019.  That is, down 788 in total by December 2021."),
-
+      
       tags$li("Cervical: 307 (2021) and 357 (2020) compared with 371 in 2019.  That is, down 78 in total by December 2021."),
-
+      
       tags$li("Prostate: 2587 (2021) and 3646 (2020) compared with 3143 in 2019.  That is, down only 53 patients in total by December 2021 – 
               suggesting that those missing in 2020 were largely identified in 2021 and there is little ongoing deficit.")),
     
-      # tags$li("Lung cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 19.3% lower."),
-      
-      # tags$li("Breast cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 7.6% lower."),
-      # 
-      # tags$li("Prostate cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 0.4% lower."),
-      # 
-      # tags$li("Colorectal(bowel) cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10% lower."),
-      # 
-      # tags$li("Liver and intrahepatic bile ducts: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.5% higher."),
-      # 
-      # tags$li("Oesophagus: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.3% higher."),
-      # 
-      # tags$li("Cervical: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10.2% lower.")),
-      
+    # tags$li("Lung cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 19.3% lower."),
+    
+    # tags$li("Breast cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 7.6% lower."),
+    # 
+    # tags$li("Prostate cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 0.4% lower."),
+    # 
+    # tags$li("Colorectal(bowel) cancer: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10% lower."),
+    # 
+    # tags$li("Liver and intrahepatic bile ducts: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.5% higher."),
+    # 
+    # tags$li("Oesophagus: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 6.3% higher."),
+    # 
+    # tags$li("Cervical: by December 27th 2021, total numbers of diagnoses since the start of 2020 were 10.2% lower.")),
+    
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
              data to the end of December 2021 compared to 2019:")),
     
-    h4(strong("Age")),
+    h4("Age"),
     p("For all cancers except non-melanoma skin cancers, the proportionate fall in pathologically confirmed cancers by December 2021 were
       much smaller than at the end of 2020, and there was less difference between age groups.
       The reduction in breast and colorectal cancer diagnoses, which were both affected by pauses in the screening
@@ -566,21 +465,20 @@ output$cancer_commentary <- renderUI({
       in those of screening age (50-69) by the end of Q4 2021, compared to a shortfall of 1.6% for those under 50.
       For colorectal cancers, numbers in 50-69 years olds showed a shortfall of
       11.2% by the end of Q4 2021; however, the total falls in under 50s had shown less improvement, a shortfall of 17.2%."),
-    h4(strong("Socio-economic deprivation")),
+    h4("Socio-economic deprivation"),
     p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
       skin cancers, these showed the largest decreases in diagnoses remained among people from the most deprived areas, showing 
       a shortfall of 12.9% by the end of Q4 2021.The least deprived were down 6% by the same period."),
-    p("---------------------------------------------------------------------------------------------------------------------"),
     br(),
     
-   
+    
     
     ###################################.
     ## SEPTEMBER 2021 UPDATE ----
     ###################################.
     
     
-    h4(strong("Update 22/9/2021: For pathology data to 14th June 2021 (extracted 19/8/2021)")),
+    h3("22 September 2021 - Pathology data updated to 14 June 2021 (extracted 19/8/2021)"),
     p("In the first half of 2021 (weeks ending 05 January to 14 June), there was little difference in the total number
       of individuals with a pathological diagnosis of cancer compared with those in 2019 (16455 and 16569 in 2021 and 2019,
       respectively, a difference of less than 1%).  However, within cancer sites, some were higher and some lower than
@@ -613,7 +511,7 @@ output$cancer_commentary <- renderUI({
       and prostate."),
     p(strong("New information on age and socio-economic deprivation has been added to the dashboard, reviewing the annual
              data to the end of December in 2020 compared to 2019:")),
-    h4(strong("Age")),
+    h4("Age"),
     p("For all cancers except non-melanoma skin cancers, the largest proportionate fall in
       pathologically confirmed cancers were among those aged 50-69 years and the smallest falls were in those under 50 years.
       This difference is more clearly seen in breast and colorectal cancers, which were both affected by pauses in the screening
@@ -623,7 +521,7 @@ output$cancer_commentary <- renderUI({
       -20% by the end of Q3 with little recovery by the end of the year; while the total annual falls in under 50s and 70 and over
       were -17% and -14%, respectively."),
     br(),
-    h4(strong("Socio-economic deprivation")),
+    h4("Socio-economic deprivation"),
     p("For deprivation, the least and most deprived quintiles are highlighted in colour.  For all cancers except non-melanomas
       skin cancers, these showed the largest decreases in diagnoses were among people from the most deprived areas (a maximum
       fall of -18% by the end of Q3).The smallest was among the least deprived (-11% by Q3). There was a greater recovery in the most
@@ -637,12 +535,12 @@ output$cancer_commentary <- renderUI({
       (-11%) and greater for those in the most deprived quintile (-20%), but the greatest was for those in the second most deprived quintile
       (-25%).  For prostate cancer, the greatest reduction in diagnoses by the end of the year was -23% for those in the most
       deprived areas; -15% for those in the least deprived areas; and smallest for those in the middle quintile (-12%)."),
-  
- 
- 
+    
+    br(),
+    
     ###################################.
     
-    h4(strong("Update 29/7/2021: For pathology data to 26th February 2021 (extracted 20/5/2021)")),
+    h3("29 July 2021 - Pathology data updated to 26 February 2021 (extracted 20/5/2021)"),
     p(("By the end of 2020 (week ending 27th December), the total number of individuals in Scotland with a pathological confirmation of 
        cancer (excluding non-melanoma skin cancers) in Scotland was "),  
       strong ("28,474 ", style = "font-family: 'arial'; font-si20pt; color: #DC143C;"),
@@ -727,7 +625,7 @@ output$cancer_commentary <- renderUI({
     
     ###################################.
     
-    h4(strong("Update 10/3/2021: For pathology data to 29/11/2020 (extracted 22/2/2021)")),
+    h3("10 March 2021 - Pathology data updated to 29 November 2020 (extracted 22/2/2021)"),
     p("By the week ending 29th November 2020, the total number of individuals in Scotland with a pathological confirmation of 
       cancer (excluding non-melanoma skin cancers) in Scotland was 40,343 in 2019 and 33,341 in 2020, an absolute difference 
       of 7,002 individuals (-17%).  That is to say, just over 7,000 fewer 
@@ -763,7 +661,7 @@ output$cancer_commentary <- renderUI({
     ##############################################.
     
     
-    h4(strong("Update 23/12/2020: For pathology data to 30/8/2020 (extracted 27/11/2020)")),
+    h3("23 December 2020 - Pathology data updated to 30 August 2020 (extracted 27/11/2020)"),
     p("By the week ending 30th August 2020, the total number of individuals in Scotland with a pathologically confirmed 
       cancer (excluding non-melanoma skin cancers) in Scotland was 23,375 in 2020 and 29,364 in 2019, an absolute difference 
       of 5,989 individuals (and an overall cumulative difference of 26%).  That is to say, just under 6,000 fewer 
@@ -791,7 +689,7 @@ output$cancer_commentary <- renderUI({
     br(),
     
     
-    h4(strong("Update 18/11/2020: For pathology data to 21/6/2020 (extracted 16/9/2020)")),
+    h3("18 November 2020 - Pathology data updated to 21 June 2020 (extracted 16/9/2020)"),
     p("By the week ending 21st June 2020, the total number of individuals with a pathologically confirmed cancer 
       (excluding non-melanoma skin cancers) was 16,899 in 2020 and 20,962 in 2019, an absolute difference of 
       4,063 individuals (and an overall cumulative difference of 19%).  That is to say, around 4,000 fewer 
@@ -840,8 +738,9 @@ output$cancer_commentary <- renderUI({
       drop of 35%."),
     
     
-    p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "(Data Source)"))
-    
+    p(tags$a(href="https://www.isdscotland.org/Health-Topics/Cancer/FAQ/#15", "Data Source (external website)")),
+    br()
       ) 
   
-})
+
+#END
