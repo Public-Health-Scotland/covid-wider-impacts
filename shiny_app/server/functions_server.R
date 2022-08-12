@@ -746,7 +746,7 @@ plot_sact_wk_incidence_chart <- function(sact_wk_dataset) {
 
       #Layout
       layout(margin = list(b = 80, t=5),
-             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             shapes = list(vline("2020-03-23"), vline("2020-12-26")),
              yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13),
                                                tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
              # shapes=list(type='line', x0= 13, x1= 13, y0=min(sact_wk_var), y1=max(sact_wk_var), line=list(dash='dot', width=1)),
@@ -819,7 +819,7 @@ plot_sact_wk_incidence_chart_area <- function(sact_wk_dataset) {
 
       #Layout
       layout(margin = list(b = 80, t=5),
-             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             shapes = list(vline("2020-03-23"), vline("2020-12-26")),
              yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13),
                                                tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
              # shapes=list(type='line', x0= 13, x1= 13, y0=min(sact_wk_var), y1=max(sact_wk_var), line=list(dash='dot', width=1)),
@@ -895,7 +895,7 @@ plot_sact_wk_incidence_chart_treatment <- function(sact_wk_dataset) {
 
       #Layout
       layout(margin = list(b = 80, t=5),
-             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             shapes = list(vline("2020-03-23"), vline("2020-12-26")),
              yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13),
                                                tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
              # shapes=list(type='line', x0= 13, x1= 13, y0=min(sact_wk_var), y1=max(sact_wk_var), line=list(dash='dot', width=1)),
@@ -965,7 +965,7 @@ plot_sact_wk_difference_chart <- function(sact_wk_dataset) {
 
       #Layout
       layout(margin = list(b = 80, t=5),
-             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             shapes = list(vline("2020-03-23"), vline("2020-12-26")),
              yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
              legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
 
@@ -1034,7 +1034,7 @@ plot_sact_wk_difference_chart_area <- function(sact_wk_dataset) {
 
       #Layout
       layout(margin = list(b = 80, t=5),
-             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             shapes = list(vline("2020-03-23"), vline("2020-12-26")),
              yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
              legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
 
@@ -1104,7 +1104,7 @@ plot_sact_wk_difference_chart_treatment <- function(sact_wk_dataset) {
 
       #Layout
       layout(margin = list(b = 80, t=5),
-             shapes = list(vline1("2020-03-23"), vline2("2020-12-26")),
+             shapes = list(vline("2020-03-23"), vline("2020-12-26")),
              yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
              legend = list(orientation = 'h', x = 0, y = 1.1)) %>%
 
@@ -1517,29 +1517,6 @@ child_table <- function(dataset, age_week, age_not_reached) {
     autofit() %>%
     htmltools_value()
 
-}
-###############################################.
-## Function for drug charts ----
-###############################################.
-
-lockdown<-function(x,col){
-  list(
-    type = "line",
-    y0 = 0,
-    y1 = 1,
-    yref = "paper",
-    x0 = x,
-    x1 = x,
-    line = list(color = col, dash = 'dash')
-  )
-}
-annote<-function(loc, x,y){
-  list(x = loc,
-       y =max(max(x,na.rm = T),max(y,na.rm=T)) ,
-       text = "1st lockdown",
-       xref = "1",
-       yref = "1",
-       showarrow = F)
 }
 
 
@@ -2164,7 +2141,7 @@ add_vline = function(fig, x, text, text_align = "center", text_y = 1,
 
 }
 
-# Function for vertical line at start of lockdown
+# Function for vertical line for example at start of lockdown
 vline <- function(x = 0, color = "grey") {
   list(
     type = "line",
@@ -2177,31 +2154,16 @@ vline <- function(x = 0, color = "grey") {
   )
 }
 
-# Function for vertical line at start of lockdown
-
-vline1 <- function(x = 0, color = "grey") {
-  list(
-    type = "line",
-    y0 = 0,
-    y1 = 1,
-    yref = "paper",
-    x0 = x,
-    x1 = x,
-    line = list(color = color, dash = 'dash')
-  )
+# Annotations for lockdown vline
+annote<-function(loc, x,y){
+  list(x = loc,
+       y =max(max(x,na.rm = T),max(y,na.rm=T)) ,
+       text = "1st lockdown",
+       xref = "1",
+       yref = "1",
+       showarrow = F)
 }
 
-# Function for verical line at 2nd lockdown
-vline2 <- function(x = 0, color = "grey") {
-  list(
-    type = "line",
-    y0 = 0,
-    y1 = 1,
-    yref = "paper",
-    x0 = x,
-    x1 = x,
-    line = list(color = color, dash = 'dash')
-  )
-}
+
 
 ### END

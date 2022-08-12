@@ -231,7 +231,7 @@ output$drugs_2yr_comp<-renderUI({
     trend<-trend %>% add_trace(x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
                                text=lab.text,hoverinfo='text')
     trend <- trend %>% layout(
-      shapes=lockdown('2020-03-23','grey'),
+      shapes=vline('2020-03-23'),
       annotations=annote("2020-03-01", plot_data$`Average 2018 & 2019`,plot_data$`2020, 2021 & 2022`),
       margin=list(t=80),
       title = (ifelse(test = input$types == 'Co-dependency',
@@ -277,7 +277,7 @@ output$drugs_2yr_comp<-renderUI({
       yaxis = list(title = "Number of THN kits",
                    rangemode='tozero',
                    fixedrange=TRUE),
-      shapes=lockdown('3.77','grey'),
+      shapes=vline('3.77'),
       annotations=annote("3.2", plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`)
     )
     trend <- trend %>%  config(
@@ -306,7 +306,7 @@ output$drugs_2yr_comp<-renderUI({
       trend<-trend %>% add_trace(data=plot_qpi, x=seq(1:nrow(plot_qpi)),y = ~ `2020, 2021 & 2022`,name='QPI: 2020, 2021 & 2022',type='scatter',yaxis='y2', mode='lines', line=list(color=pal_overall[2],width=3),text=lab_text1,hoverinfo='text')
       trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='QPI: Average \n2018-2019',type='scatter', mode='lines',yaxis='y2', line=list(color=pal_overall[2],dash='dot'),text=lab_text1,hoverinfo='text')
       trend<-trend %>% layout(
-        shapes=lockdown('3.77','grey'),
+        shapes=vline('3.77'),
         annotations=annote("3.2",plot_item$`Average 2018 & 2019`,plot_item$`2020, 2021 & 2022` ),
         title=(sprintf("%s prescribing (number of items and quantity (mg) per item (QPI)) by month in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",input$types,location())),
         margin=list(t=140),
@@ -373,7 +373,7 @@ output$drugs_2yr_comp<-renderUI({
       add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',
                 type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
                 text=lab_text1,hoverinfo='text') %>% 
-      layout(shapes=lockdown('2020-03-23','grey'),
+      layout(shapes=vline('2020-03-23'),
       annotations=annote("2020-03-01",drugs_plot_data()$`Average 2018 & 2019`,drugs_plot_data()$`2020, 2021 & 2022`),
       margin=list(t=80),
       title = (sprintf("3-Week average of the number of SAS incidents where naloxone was administered in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",location())),
@@ -440,7 +440,7 @@ output$drugs_2yr_comp<-renderUI({
                                   yaxis = list(title = "Number of attendances",
                                              rangemode='tozero',
                                              fixedrange=TRUE),
-                                  shapes = lockdown(as.Date('2020-03-23'),'grey'),
+                                  shapes = vline(as.Date('2020-03-23')),
                                   annotations = annote(as.Date("2020-03-01"), plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`))
         
         trend <- trend %>%  config(displaylogo = F, 
@@ -523,7 +523,7 @@ output$drugs_cum_plot<-renderUI({
           title='Month',
           fixedrange=TRUE
         ),
-        shapes=lockdown('4.77','black'),
+        shapes=vline('4.77'),
         annotations=annote("4.2",cumsum(plot_data$`2020 & 2021`),cumsum(plot_data$`Average 2018 & 2019`)),
         yaxis = list(title = "Cumulative number of THN kits",
                      fixedrange=TRUE))
@@ -592,7 +592,7 @@ output$drugs_cum_plot<-renderUI({
          title='Month',
          fixedrange=TRUE
        ),
-       shapes=lockdown('4.77','black'),
+       shapes=vline('4.77'),
        annotations=annote("4.2",y_1819,y_20),
        yaxis = list(title = "Cumulative number SAS naloxone incidents",
                     fixedrange=TRUE)) %>% 
@@ -632,7 +632,7 @@ output$drugs_perc_change<-renderUI({
       yaxis = list(title = "% Change",
                    fixedrange=TRUE),
       xaxis=list(fixedrange=TRUE),
-      shapes=lockdown('2020-03-23','grey'),
+      shapes=vline('2020-03-23'),
       annotations=list(x = "2020-03-01",
                        y = max(plot_data$Change),
                        text = "1st lockdown",
@@ -686,7 +686,7 @@ output$drugs_quan_plot<-renderUI({
         yaxis=list(title='Quantity (mg)',
                    rangemode='tozero',
                    fixedrange=TRUE),
-        shapes=lockdown('27.77','grey'),
+        shapes=vline('27.77'),
         annotations=list(x = "27.2",
                          y = max(plot_quantity$Quantity),
                          text = "1st lockdown",
@@ -729,7 +729,7 @@ output$drug_gender_plot<-renderPlotly({
            yaxis = list(title = "Number of attendances",
                         rangemode='tozero',
                         fixedrange=TRUE) ,
-           shapes = lockdown(as.Date('2020-03-23'),'grey'),
+           shapes = vline(as.Date('2020-03-23')),
            annotations = annote(as.Date("2020-03-01"), plot_drug_sex$`Average 2018 & 2019`,plot_drug_sex$`2020 & 2021`))
   
   trend_sex <- trend_sex %>%  
@@ -759,7 +759,7 @@ output$drug_ae_change_plot<-renderPlotly({
         yaxis = list(title = "% Change",
                      fixedrange=TRUE),
         xaxis=list(fixedrange=TRUE),
-        shapes=lockdown('2020-03-23','grey'),
+        shapes=vline('2020-03-23'),
         annotations=list(x = "2020-03-01",
                          y = max(plot_data$Change),
                          text = "1st lockdown",
