@@ -1493,10 +1493,30 @@ plot_immun_simd <- function(imm_simd_data){
   month_count <- length(unique(graph_data$time_period_eligible))
 
   # not formatted correctly
-  tooltip_trend <- paste0("Month: ", format(graph_data$time_period_eligible, "%B %Y"),"<br>",
+  tooltip_trend <- c(paste0("Month: ", format(graph_data$time_period_eligible, "%B %Y"),"<br>",
                           "Deprivation quintile: ", graph_data$simdq, "<br>",
-                          "Percentage uptake: ",format(as.numeric(graph_data$`1 - most deprived`)), "%"
-                            )
+                          "Percentage uptake: ",format(as.numeric(graph_data$simdq)), "%"
+                            ))
+
+  # tooltip_trend <- c(paste0(trend_data$category, "<br>",
+  #                           period_data,
+  #                           "<br>", "Change from ", aver_period, " average: ",
+  #                           round(trend_data$variation, 1), "%"))
+
+  xaxis_plots[["rangeslider"]] <- list(range="week_ending", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
+
+  # For annotation
+  zoom_hover_text =
+    "Drag the markers at either end of<br>the bar to view specific time periods"
+
+  # We need an annotation to show user how to use the rangeslider
+  zoom_annotation =
+    list(text = "Drag to zoom", borderpad = 2,
+         hovertext = zoom_hover_text,
+         showarrow = TRUE, ax = 0, ay = 18,
+         x = 0, xref = "paper", xanchor = "left",
+         y = -0.35, yref = "paper", yanchor = "middle")
+
 
   p <- graph_data %>%
     plot_ly( x = ~`time_period_eligible`) %>%
@@ -1524,7 +1544,8 @@ plot_immun_simd <- function(imm_simd_data){
     layout(margin = list(b = 80, t = 5),
            yaxis = yaxis_plots,
            xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T) %>%
+           legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T,
+           annotations = zoom_annotation) %>%
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 
@@ -1672,16 +1693,22 @@ plot_imm_simd_change <- function(imm_simd_data){
   #Modifying standard xaxis name applies to all curves
   xaxis_plots[["title"]] <- "Month"
   xaxis_plots[["tickangle"]] <- 315
+  # rangeslider doesn't work so well with subplot
+  #xaxis_plots[["rangeslider"]] <- list(range="week_ending", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
 
   yaxis_plots[["range"]] <- c(-30, 30) # enforcing range from -30 to 30%
   yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
   yaxis_plots[["zerolinecolor"]] <- "#C73918"
   yaxis_plots[["zerolinewidth"]] <- 2
 
+  tooltip_subplot <- c(paste0("Cohort: ", abs_change$time_period_eligible, "<br>",
+                           "Deprivation quintile: ", abs_change$simdq, "<br>",
+                           "Percentage uptake: ", abs_change$abs_diff, "%"))
+
   abs_change_1 <- abs_change %>%
     filter(simdq == "1 - most deprived") %>%
     plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "1 - most deprived",
-             type = 'scatter', mode = 'lines', line = list(color="#AF69A9") ) %>%
+             type = 'scatter', mode = 'lines', line = list(color="#AF69A9")) %>%
     layout(xaxis = xaxis_plots,
            yaxis = yaxis_plots)
 
@@ -1718,7 +1745,9 @@ plot_imm_simd_change <- function(imm_simd_data){
 
   abs_change_plot <- subplot(abs_change_1, abs_change_2, abs_change_3, abs_change_4, abs_change_5,
                              shareY = TRUE, shareX = TRUE) %>%
-    layout(legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T) %>%
+    layout(legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T,
+           text= tooltip_subplot,
+           hoverinfo="text" ) %>%
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 

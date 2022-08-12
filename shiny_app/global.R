@@ -466,6 +466,48 @@ pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff",
                "APR 2022" = "#bcbddc")
 
+# pal_immun <- c( #need 31
+#   "2019"="#604675", #phs purple
+#   "2020"="#1d91c0", #teal/light blue
+#                "2021" = "#660066", #dark pink
+# "#7fcdbb", #mint
+# "#41b6c4", #blue
+# "#c7e9b4", #light green
+#                "#ffbf80", #orange
+#
+#                "#00BA42", #green
+#
+#
+#
+#                "#edf8b1",#light yellow
+#   "#a81141",#deep pink/red - 10
+#   "#8e23a0", #purple
+#   "#e3b419",#mustard
+#                  "#0d38b0",#purple/blue
+#                "#ff9966",#orange
+#   "#9999ff",#lilac
+#
+#                  "#253494", #purple
+#                "#41b6c4", #blue
+#                "#ff5050", #coral
+#   "#006400", # dark green
+#   "#696969", #dim grey -20
+# "#ff00ff",#bright pink
+# "#9acd32",#yellow green
+# "#bcbddc", #light purple
+# "#40e0d0", #turquoise
+# "#bc8f8f", #rosy brown
+# "#2e8b57",#sea green
+# "#5f9ea0", #cadet blue
+# "#ff1493", #deep pink
+# "#ffa07a", #salmon
+# "#a64208",#brown
+#
+#
+#                "#682c50"# deep purple -31
+#
+#   )
+
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
                "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",

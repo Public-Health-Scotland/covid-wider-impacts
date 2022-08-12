@@ -500,16 +500,6 @@ output$immunisation_deprivation_output <- renderUI({
 
   if(input$geotype_immun == "Scotland"){
 
-  tagList(# Intro paragraph within immunisation tab
-    p("Immunisation protects children against certain serious infections.  It is important that children ",
-      tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
-             "continue to receive their routine immunisations during the Covid-19 pandemic", target="_blank"),".",
-      "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
-      tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ", target="_blank"),
-      " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),".")
-
-  ) # taglist bracket
-
   immune_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
                                                                                  input$geoname_immun),
                             input$measure_select_immun == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$geoname_immun),
@@ -520,6 +510,9 @@ output$immunisation_deprivation_output <- renderUI({
   immune_subtitle <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
 
   tagList(fluidRow(column(12,
+                          p("Immunisation protects children against certain serious infections. Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
+                                  tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
+                                         "NHS inform (external website)", target="_blank"),"."),
                           h4(paste0(immune_title)),
                           p(immune_subtitle))),
           fluidRow(column(6,br(), br(),
@@ -540,26 +533,34 @@ output$immunisation_deprivation_output <- renderUI({
           p(em("Click on legend to select or deselect categories - single click on an item to remove it from the plot and double click on an item to view only that line.")),
 
           fluidRow(
-            column(12, h4(paste0(imm_trends_title))),
-            column(12, actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
+
+            column(4, actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
                                     icon = icon('question-circle'))),
+            column(4,
+                   downloadButton('download_imm_simd_data', 'Download deprivation data')),
+            br(), br(),
+
+            column(12, h4(paste0(imm_trends_title))),
+
             br(),
+
             column(6, withSpinner(plotlyOutput(plot_choice()[[1]]))),
+
+
             column(6, withSpinner(plotlyOutput(plot_choice()[[2]]))),
 
             br(),
 
             tagList(
-              br(),
+              br(), br(), br(),
               p(em("* Please note that data for the most recent year are incomplete, calculated as the mean uptake of the months of the year so far.")),
               br(),
               p("The deprivation charts above show the immunisation uptake for children becoming eligible for their immunisation during the Covid-19 pandemic. The graph on the left shows this uptake by month, and the graph on the left  compared to those who became eligible in 2019, at all Scotland level. Early uptake achieved by 4 weeks after the children became eligible for their immunisation is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort. The early uptake rates are shown for children living in areas with different levels of deprivation."),
+              p("The deprivation chart below shows the change in early uptake for children becoming eligible for their immunisation during the Covid-19 pandemic, compared to those who became eligible in 2019. Again, results are shown for children living in areas with different levels of deprivation. So, for example, if early uptake for children becoming eligible for an immunisation in 2019 and in March 2020 was 80% and 84% respectively, this would be shown on the ‘change’ chart as a 4% absolute increase in early uptake for children becoming eligible in March 2020. The deprivation data download (available through the button above the ‘change’ chart) also provides the relative change (5% in this example) as this allows an easier comparison across deprivation groups if the baseline level of uptake varies between groups."),
 
               br()),
 
             column(12, h4(paste0(imm_change_title))),
-            column(12,
-                   downloadButton('download_imm_simd_data', 'Download deprivation data')),
             br(),
             column(12, withSpinner(plotlyOutput(plot_choice()[[3]]))),
             br(),
@@ -571,15 +572,6 @@ output$immunisation_deprivation_output <- renderUI({
   )# taglist bracket
   }
   else{
-    tagList(# Intro paragraph within immunisation tab
-      p("Immunisation protects children against certain serious infections.  It is important that children ",
-        tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
-               "continue to receive their routine immunisations during the Covid-19 pandemic", target="_blank"),".",
-        "Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
-        tags$a(href="https://twitter.com/NHSImmuniseScot"," Immunise Scotland ", target="_blank"),
-        " and ",tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform", target="_blank"),".")
-
-    ) # taglist bracket
 
     immune_title <- case_when(input$measure_select_immun == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
                                                                                    input$geoname_immun),
@@ -591,6 +583,9 @@ output$immunisation_deprivation_output <- renderUI({
     immune_subtitle <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
 
     tagList(fluidRow(column(12,
+                            p("Immunisation protects children against certain serious infections. Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
+                              tags$a(href="https://www.nhsinform.scot/illnesses-and-conditions/infections-and-poisoning/coronavirus-covid-19/healthy-living/coronavirus-covid-19-immunisation-and-screening",
+                                     "NHS inform (external website)", target="_blank"),"."),
                             h4(paste0(immune_title)),
                             p(immune_subtitle))),
             fluidRow(column(6,br(), br(),
