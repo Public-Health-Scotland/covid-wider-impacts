@@ -2154,16 +2154,4 @@ vline <- function(x = 0, color = "grey") {
   )
 }
 
-# Annotations for lockdown vline
-annote<-function(loc, x,y){
-  list(x = loc,
-       y =max(max(x,na.rm = T),max(y,na.rm=T)) ,
-       text = "1st lockdown",
-       xref = "1",
-       yref = "1",
-       showarrow = F)
-}
-
-
-
 ### END
