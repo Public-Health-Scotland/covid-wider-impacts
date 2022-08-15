@@ -8,40 +8,28 @@ cancerpath_tab <-
 ###############################################.
 
     tabPanel(title = "Cancer pathology", icon = icon("microscope"), value = "cancer",
-           wellPanel(width = 12,
-                     uiOutput("cancer_explorer2")),
-           wellPanel(
-             column(4, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
+           wellPanel(uiOutput("cancer_explorer2"),
+             column(3, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
                                    choices= c("Scotland", "Cancer Networks", "Health Boards"),
                                    selected = "Scotland"),
                     uiOutput("geoname_ui_cancer")),
-             column(4,  selectInput("cancer_type", label = "Step 3. Select all or specific cancer type", choices = cancer_type_list,
-                                    selected = "All Malignant Neoplasms (Excl. C44)")),
-             column(4,
-                    fluidRow(br()),
+             column(3, selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
+                                selected = "All Malignant Neoplasms (Excl. C44)")),
+             column(3,  radioButtons("baseline", "Step 3. Select baseline for comparison",
+                                     list("2019", "Mean 2017-2019"), inline = TRUE,
+                                     selected = "2019"),
+                    radioButtons("gender", "Step 4. Select sex",
+                                 list("All","Male","Female"), inline = TRUE,
+                                 selected = "All")),
+             column(3,
                     sourcemodal_ui("cancer"),
                     fluidRow(br()),
                     downloadButton('download_cancer_data', 'Download data'),
                     fluidRow(br()),
                     actionButton('jump_commentary_cancer','Go to commentary'))
            ), #well panel
-           wellPanel(
-             column(4,
-                    div(radioButtons("baseline", "Step 2. Select baseline for comparison",
-                                     list("2019", "Mean 2017-2019"), inline = TRUE,
-                                     selected = "2019"))),
-             column(8,
-                    div(radioButtons("gender", "Step 4. Select sex",
-                                     list("All","Male","Female"), inline = TRUE,
-                                     selected = "All")))
-             
-           ) ,# wellPanel bracket
-           
-           wellPanel(width = 12,
-                     uiOutput("cancer_explorer")
-           ) ,# wellPanel bracket
-           
-           wellPanel(
+           mainPanel(width = 12,
+                     uiOutput("cancer_explorer"),
              column(6,
                     div(radioButtons("cum_baseline", "Select standard/cumulative baseline",
                                      list("Standard", "Cumulative"), inline = TRUE,
@@ -49,9 +37,9 @@ cancerpath_tab <-
              column(6,
                     div(radioButtons("breakdown", "Select breakdown type",
                                      list("None","Age Group","Deprivation"), inline = TRUE,
-                                     selected = "None")))),
-           wellPanel(width = 12,
-                     uiOutput("cancer_explorer3"))
+                                     selected = "None"))),
+                     uiOutput("cancer_explorer3")
+             )#mainPanel bracket
   )  # tabpanel bracket
 
 
@@ -80,10 +68,10 @@ sact_tabm <-
                      actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle')),
                      downloadButton('download_sact_monthly_data', 'Download data')), # well panel
            
-           wellPanel(column(7, selectInput("geotype_sact", label = "Step 1. Select a geography level and then an area of interest",
+           wellPanel(column(4, selectInput("geotype_sact", label = "Step 1. Select a geography level and then an area of interest",
                                            choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
-                            uiOutput("geoname_ui_sact"),
-                            selectInput("sact_type", label = "Step 2. Select all or specific cancer type",
+                            uiOutput("geoname_ui_sact")),
+                      column(3,   selectInput("sact_type", label = "Step 2. Select all or specific cancer type",
                                         choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
                                                     "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
                                                     "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
@@ -132,10 +120,10 @@ sact_tabw <-
                      actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle')),
                      downloadButton('download_sact_weekly_data', 'Download data')), # well panel
            
-           wellPanel(column(7, selectInput("geotype_wk_sact", label = "Step 1. Select a geography level and then an area of interest",
+           wellPanel(column(4, selectInput("geotype_wk_sact", label = "Step 1. Select a geography level and then an area of interest",
                                            choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
-                            uiOutput("geoname_ui_wk_sact"),
-                            selectInput("sact_wk_type", label = "Step 2. Select all or specific cancer type",
+                            uiOutput("geoname_ui_wk_sact")),
+                     column(3, selectInput("sact_wk_type", label = "Step 2. Select all or specific cancer type",
                                         choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
                                                     "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
                                                     "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
