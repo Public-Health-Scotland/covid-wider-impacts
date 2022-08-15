@@ -422,14 +422,14 @@ output$drugs_2yr_comp<-renderUI({
         
         trend <- trend %>% layout(xaxis = list(fixedrange=TRUE,
                                            title='Date'),
-                                  title = (paste0("3-Week average of number of attendances for Drug Overdose/Intoxication Attendances \nat Emergency Departments in 2020 - 2022 compared with 2018-19 average (",location(), ")")),
+                                  title = (paste0("3-week average of number of attendances for Drug Overdose/Intoxication Attendances \nat Emergency Departments in 2020 - 2022 compared with 2018-19 average (",location(), ")")),
                                   yaxis = list(title = "Number of attendances",
                                              rangemode='tozero',
                                              fixedrange=TRUE)) %>% 
           add_vline(x = '2020-03-23', text = "1st lockdown", margin = list(t=80)) %>% 
           config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
       })
-      withSpinner(plotlyOutput('trend',width='100%'))
+      withSpinner(plotlyOutput('trend', width='100%'))
      }
   }
   
@@ -672,7 +672,7 @@ output$drug_gender_plot<-renderPlotly({
     layout(xaxis = list(fixedrange=TRUE, title='Date'), 
            yaxis = list(title = "Number of attendances",
                         rangemode='tozero', fixedrange=TRUE)) %>% 
-    add_vline(x = '2020-03-23', text = "1st lockdown", margin = list(t=80)) %>% 
+    add_vline(x = '2020-03-23', text = "1st lockdown") %>% 
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 })
 
@@ -695,7 +695,7 @@ output$drug_ae_change_plot<-renderPlotly({
         layout(
         yaxis = list(title = "% Change", fixedrange=TRUE),
         xaxis=list(fixedrange=TRUE)) %>% 
-        add_vline(x = '2020-03-23', text = "1st lockdown", margin = list(t=80)) %>% 
+        add_vline(x = '2020-03-23', text = "1st lockdown") %>% 
         config(displaylogo = F,  displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     }
   else if(length(which(is.na(plot_data$Change)))!=0){
@@ -726,13 +726,17 @@ output$drugs_ae_explorer <- renderUI({
      tagList(note_dataqual, note_average, 
       plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug overdose/intoxications \nin ", location(), " (2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
                    plot_output1 = "drug_ae_change_plot",
-                   title_plot2 = paste0("3-Week average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
+                   title_plot2 = paste0("3-week average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
                    plot_output2 = "drug_gender_plot"))
    } else {
      tagList(note_smallboards)
      }
   }
 })
+
+###############################################.
+## Download data ----
+###############################################.
 
 
   #### Data for download ####

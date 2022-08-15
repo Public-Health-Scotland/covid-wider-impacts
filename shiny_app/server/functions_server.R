@@ -679,7 +679,7 @@ plot_sact_wk_incidence_chart <- function(sact_wk_dataset) {
                                                tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
              legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
       add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
-                x2 = '2020-12-26', text2 = "2nd lockdown", margin = list(b = 80, t = 20)) %>% 
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
   }
@@ -717,9 +717,9 @@ plot_sact_wk_incidence_chart_area <- function(sact_wk_dataset) {
                 hoverinfo="text") %>%
       layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13),
                                                tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
-             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
+             legend = list(orientation = 'h', x = 0, y = 1.2, traceorder = 'reversed')) %>%
       add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
-                x2 = '2020-12-26', text2 = "2nd lockdown", margin = list(b = 80, t = 20)) %>% 
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }
 }
@@ -755,11 +755,11 @@ plot_sact_wk_incidence_chart_treatment <- function(sact_wk_dataset) {
                 colors = pal_sact,
                 text=sact_tooltip_wk_inc,
                 hoverinfo="text") %>%
-      layout(yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13),
+      layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13),
                                                tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
-             legend = list(orientation = 'h', x = 0, y = 1.1)) %>%
+             legend = list(orientation = 'h', x = 0, y = 1.2)) %>%
       add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
-                x2 = '2020-12-26', text2 = "2nd lockdown", margin = list(b = 80, t = 20)) %>% 
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
   }
@@ -799,7 +799,7 @@ plot_sact_wk_difference_chart <- function(sact_wk_dataset) {
       layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
              legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
       add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
-                x2 = '2020-12-26', text2 = "2nd lockdown", margin = list(b = 80, t = 20)) %>% 
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
   }
 }
@@ -835,9 +835,9 @@ plot_sact_wk_difference_chart_area <- function(sact_wk_dataset) {
                 text=sact_tooltip_wk_dif,
                 hoverinfo="text") %>%
       layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
-             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
+             legend = list(orientation = 'h', x = 0, y = 1.2, traceorder = 'reversed')) %>%
       add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
-                x2 = '2020-12-26', text2 = "2nd lockdown", margin = list(b = 80, t = 20)) %>% 
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
   }
@@ -875,10 +875,10 @@ plot_sact_wk_difference_chart_treatment <- function(sact_wk_dataset) {
                 colors = pal_sact,
                 text=sact_tooltip_wk_dif,
                 hoverinfo="text") %>%
-      layout(yaxis = yaxis_plots, xaxis = list(title = "Week Beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
-             legend = list(orientation = 'h', x = 0, y = 1.1)) %>%
+      layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             legend = list(orientation = 'h', x = 0, y = 1.2)) %>%
       add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
-                x2 = '2020-12-26', text2 = "2nd lockdown", margin = list(b = 80, t = 20)) %>% 
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 
   }
