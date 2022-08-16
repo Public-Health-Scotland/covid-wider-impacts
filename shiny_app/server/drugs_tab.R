@@ -222,67 +222,67 @@ output$drugs_2yr_comp<-renderUI({
   
   
   if(input$`drugs-measure`=='Drug and alcohol treatment referrals'){
+    
     output$trend<-renderPlotly({
-    lab.text<-c(paste0("Date: ", format(plot_data$Date, format = "%b %d, %Y"),
-                       "<br>", 'Number of referrals: ', plot_data$`2020, 2021 & 2022`,
-                       "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
-    trend<-plot_ly(data = plot_data, x = ~Date,y = ~ `2020, 2021 & 2022`,name='2020,2021 & 2022',type='scatter', mode='lines', line=list(color=pal_overall[1]),
-                   text=lab.text,hoverinfo='text')
-    trend<-trend %>% add_trace(x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
-                               text=lab.text,hoverinfo='text')
-    trend <- trend %>% layout(
-      shapes=lockdown('2020-03-23','grey'),
-      annotations=annote("2020-03-01", plot_data$`Average 2018 & 2019`,plot_data$`2020, 2021 & 2022`),
-      margin=list(t=80),
-      title = (ifelse(test = input$types == 'Co-dependency',
-                      yes = 'Number of co-dependency treatment referrals in 2020, 2021, and 2022.',
-                      no = sprintf("Number of %s treatment referrals in 2020, 2021, and 2022 \n compared with 2018-19 average (%s)",
-                                   tolower(input$types),location()))),
-      yaxis = list(title = "Number of referrals",
-                   rangemode='tozero',
-                   fixedrange=TRUE),
-      xaxis=list(
-        fixedrange=TRUE,
-        angle=90)
-    )
-    trend <- trend %>%  config(
-      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-     })
+      
+      lab.text<-c(paste0("Date: ", format(plot_data$Date, format = "%b %d, %Y"),
+                         "<br>", 'Number of referrals: ', plot_data$`2020, 2021 & 2022`,
+                         "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
+      
+      trend<-plot_ly(data = plot_data, x = ~Date,y = ~ `2020, 2021 & 2022`,name='2020,2021 & 2022',
+                     type='scatter', mode='lines', line=list(color=pal_overall[1]),
+                     text=lab.text,hoverinfo='text') %>% 
+        add_trace(x=~Date,y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter',
+                  mode='lines', line=list(color=pal_overall[2],dash='dot'),
+                  text=lab.text,hoverinfo='text') %>%
+        layout(
+          title = (ifelse(test = input$types == 'Co-dependency',
+                          yes = 'Number of co-dependency treatment referrals in 2020, 2021, and 2022.',
+                          no = sprintf("Number of %s treatment referrals in 2020, 2021, and 2022 \n compared with 2018-19 average (%s)",
+                                       tolower(input$types),location()))),
+          yaxis = list(title = "Number of referrals",
+                       rangemode='tozero',
+                       fixedrange=TRUE),
+          xaxis=list(
+            fixedrange=TRUE,
+            angle=90)) %>% 
+        add_vline(x = '2020-03-23', text = "1st lockdown", margin=list(t=80)) %>%  
+        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    })
     withSpinner(plotlyOutput('trend',width='100%'))
-    }
+  }
  
   #### Naloxone Section ####
   
   else if(input$`drugs-measure`=='Take home naloxone kits'){
+    
     output$trend<-renderPlotly({
     plot_data<-subset(drugs_plot_data(),(Type==input$types))
+    
     lab_text<-c(paste0("Month: ", unique(plot_data$Date),
                        "<br>", 'Number of THN: ', plot_data$`2020 & 2021`,
                        "<br>", "Historic average: ", plot_data$`Average 2018 & 2019`))
-    trend<-plot_ly(data = plot_data, x =seq(1:nrow(plot_data)))
-    trend<-trend %>% add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text,hoverinfo='text')
-    trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),text=lab_text,hoverinfo='text')
-    trend<-trend %>% layout(
-      margin=list(t=80),
+    
+    trend<-plot_ly(data = plot_data, x =seq(1:nrow(plot_data))) %>% 
+      add_trace(y = ~ `2020 & 2021`,name='2020 & 2021',type='scatter', mode='lines', 
+                line=list(color=pal_overall[1]),text=lab_text,hoverinfo='text') %>% 
+      add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',type='scatter', 
+                mode='lines', line=list(color=pal_overall[2],dash='dot'),
+                text=lab_text,hoverinfo='text') %>% 
+      layout(
       xaxis=list(
         tickmode='array',
         tickvals=seq(1,nrow(plot_data),2),
         ticktext=as.character(unique(plot_data$Date))[c( TRUE , rep(FALSE, 1)) ],
         fixedrange=TRUE,
-        title='Date'
-      )
-    )
-    trend <- trend %>% layout(
+        title='Date'),
       title = (sprintf("Number of take home naloxone supplied in 2020 and 2021 \n compared with 2018-19 average (%s,%s)",location(),input$types)),
       yaxis = list(title = "Number of THN kits",
                    rangemode='tozero',
-                   fixedrange=TRUE),
-      shapes=lockdown('3.77','grey'),
-      annotations=annote("3.2", plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`)
-    )
-    trend <- trend %>%  config(
-      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
-    })
+                   fixedrange=TRUE)) %>% 
+      add_vline(x = "3.77", text = "1st lockdown", margin=list(t=80)) %>%  
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)})
+    
     withSpinner(plotlyOutput('trend',width='100%'))
   }
   
@@ -306,10 +306,7 @@ output$drugs_2yr_comp<-renderUI({
       trend<-trend %>% add_trace(data=plot_qpi, x=seq(1:nrow(plot_qpi)),y = ~ `2020, 2021 & 2022`,name='QPI: 2020, 2021 & 2022',type='scatter',yaxis='y2', mode='lines', line=list(color=pal_overall[2],width=3),text=lab_text1,hoverinfo='text')
       trend<-trend %>% add_trace(y = ~ `Average 2018 & 2019`,name='QPI: Average \n2018-2019',type='scatter', mode='lines',yaxis='y2', line=list(color=pal_overall[2],dash='dot'),text=lab_text1,hoverinfo='text')
       trend<-trend %>% layout(
-        shapes=lockdown('3.77','grey'),
-        annotations=annote("3.2",plot_item$`Average 2018 & 2019`,plot_item$`2020, 2021 & 2022` ),
         title=(sprintf("%s prescribing (number of items and quantity (mg) per item (QPI)) by month in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",input$types,location())),
-        margin=list(t=140),
         xaxis=list(
           title='Date',
           tickmode='array',
@@ -347,10 +344,9 @@ output$drugs_2yr_comp<-renderUI({
                    label = "Quantity per item")
             )
           )
-        ))
-      
-      trend <- trend %>%  config(
-        displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+        )) %>% 
+        add_vline(x = '3.77', text = "1st lockdown", margin=list(t=140)) %>%  
+        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
       
     })
     withSpinner(plotlyOutput('trend',width='100%'))
@@ -367,28 +363,19 @@ output$drugs_2yr_comp<-renderUI({
     lab_text1<-c(paste0("Date: ", drugs_plot_data()$Date,
                         "<br>", 'No. of SAS naloxone incidents: ', drugs_plot_data()$`2020, 2021 & 2022`,
                         "<br>", "Historic average: ", drugs_plot_data()$`Average 2018 & 2019`))
+    
     trend <- plot_ly(data = drugs_plot_data(),x=drugs_plot_data()$Date) %>% 
       add_trace(y = ~ `2020, 2021 & 2022`,name='2020, 2021 & 2022',type='scatter', mode='lines', 
                 line=list(color=pal_overall[1]),text=lab_text1,hoverinfo='text') %>% 
       add_trace(y = ~ `Average 2018 & 2019`,name='Average \n2018-2019',
                 type='scatter', mode='lines', line=list(color=pal_overall[2],dash='dot'),
                 text=lab_text1,hoverinfo='text') %>% 
-      layout(shapes=lockdown('2020-03-23','grey'),
-      annotations=annote("2020-03-01",drugs_plot_data()$`Average 2018 & 2019`,drugs_plot_data()$`2020, 2021 & 2022`),
-      margin=list(t=80),
-      title = (sprintf("3-Week average of the number of SAS incidents where naloxone was administered in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",location())),
-      xaxis=list(
-        title='Date',
-        fixedrange=TRUE
-        
-      ),
+      layout(title = (sprintf("3-Week average of the number of SAS incidents where naloxone was administered in 2020, 2021 and 2022 \n compared with 2018-19 average (%s)",location())),
+      xaxis=list(title='Date', fixedrange=TRUE ),
       yaxis=list(title='No. of SAS naloxone incidents',
-                 rangemode='tozero',
-                 fixedrange=TRUE)
-      
-    )
-    trend <- trend %>%  config(
-      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+                 rangemode='tozero',fixedrange=TRUE)) %>% 
+      add_vline(x = '2020-03-23', text = "1st lockdown", margin = list(t=80)) %>% 
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     })
     withSpinner(plotlyOutput('trend',width='100%'))
     }}
@@ -433,21 +420,16 @@ output$drugs_2yr_comp<-renderUI({
                                      line = list(color=pal_overall[2],dash='dot'),
                                      text = lab_text,hoverinfo='text')
         
-        trend <- trend %>% layout(margin = list(t=80),
-                                  xaxis = list(fixedrange=TRUE,
+        trend <- trend %>% layout(xaxis = list(fixedrange=TRUE,
                                            title='Date'),
-                                  title = (paste0("3-Week average of number of attendances for Drug Overdose/Intoxication Attendances \nat Emergency Departments in 2020 - 2022 compared with 2018-19 average (",location(), ")")),
+                                  title = (paste0("3-week average of number of attendances for Drug Overdose/Intoxication Attendances \nat Emergency Departments in 2020 - 2022 compared with 2018-19 average (",location(), ")")),
                                   yaxis = list(title = "Number of attendances",
                                              rangemode='tozero',
-                                             fixedrange=TRUE),
-                                  shapes = lockdown(as.Date('2020-03-23'),'grey'),
-                                  annotations = annote(as.Date("2020-03-01"), plot_data$`Average 2018 & 2019`,plot_data$`2020 & 2021`))
-        
-        trend <- trend %>%  config(displaylogo = F, 
-                                   displayModeBar = TRUE, 
-                                   modeBarButtonsToRemove = bttn_remove)
+                                             fixedrange=TRUE)) %>% 
+          add_vline(x = '2020-03-23', text = "1st lockdown", margin = list(t=80)) %>% 
+          config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
       })
-      withSpinner(plotlyOutput('trend',width='100%'))
+      withSpinner(plotlyOutput('trend', width='100%'))
      }
   }
   
@@ -515,20 +497,16 @@ output$drugs_cum_plot<-renderUI({
     trend<-trend %>% add_trace(data=plot_21, x=seq(1:(nrow(plot_21)+1)),y=c(0,cumsum(plot_21$`2020 & 2021`)), name='2021', type='scatter',mode='lines',line=list(color='blue'),text=lab_text('2021',c('',substr(plot_21$Date,1,3)),c(0,cumsum(plot_21$`2020 & 2021`))),hoverinfo='text')
     trend<-trend %>% 
       layout(
-        margin=list(t=80,l=2),
         title=(sprintf("Cumulative number of take home naloxone supplied in 2020 and 2021 \n compared with 2018-19 average (%s, %s)",location(),input$types)),
         xaxis=list(
           tickvals=seq(1:(nrow(plot_data1)+1)),
           ticktext=c('',substr(plot_data1$Date,1,3)),
           title='Month',
-          fixedrange=TRUE
-        ),
-        shapes=lockdown('4.77','black'),
-        annotations=annote("4.2",cumsum(plot_data$`2020 & 2021`),cumsum(plot_data$`Average 2018 & 2019`)),
+          fixedrange=TRUE),
         yaxis = list(title = "Cumulative number of THN kits",
-                     fixedrange=TRUE))
-      trend <- trend %>%  config(
-      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+                     fixedrange=TRUE)) %>%
+      add_vline(x = '4.77', text = "1st lockdown", margin = list(t=80, l = 2)) %>% 
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     
       })
     withSpinner(plotlyOutput('cum_plot'))
@@ -584,18 +562,15 @@ output$drugs_cum_plot<-renderUI({
               text=lab_text('2022',c('',month.abb[as.numeric(plot_22$month)]),c(0,y_22)),
               hoverinfo='text') %>% 
      layout(
-       margin=list(t=80,l=2),
        title=(sprintf("Cumulative number of SAS incidents where naloxone was administered in 2020, 2021, and 2022 \n compared with 2018-19 average (%s)",location())),
        xaxis=list(
          tickvals=seq(1:(nrow(plot_data1)+1)),
          ticktext=c('',month.abb[as.numeric(plot_data1$month)]),
          title='Month',
-         fixedrange=TRUE
-       ),
-       shapes=lockdown('4.77','black'),
-       annotations=annote("4.2",y_1819,y_20),
+         fixedrange=TRUE),
        yaxis = list(title = "Cumulative number SAS naloxone incidents",
                     fixedrange=TRUE)) %>% 
+     add_vline(x = '4.77', text = "1st lockdown", margin = list(t = 80, l = 2)) %>% 
      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
    })
    
@@ -620,29 +595,16 @@ output$drugs_perc_change<-renderUI({
                           "Date: ", format(plot_data$Date, format = "%b %d, %Y"),
                           "<br>", "Change from 2018-2019 average: ",ifelse(plot_data$Change >= 0, "+", ""), plot_data$Change, "%"))
     change<-plot_ly(data = plot_data, x = ~Date, y = ~Change,
-                    type='scatter',
-                    mode='lines',
+                    type='scatter', mode='lines',
                     line=list(color=pal_overall[1]),
                     text=tooltip_trend,
-                    hoverinfo="text")
-
-    change <- change %>% layout(
-      margin=list(t=80),
+                    hoverinfo="text") %>% 
+      layout(
       title = (sprintf("Percentage difference in the number of %s treatment referrals in 2020, 2021, and 2022 \n compared with 2018-2019 average (%s)",tolower(input$types),location())),
-      yaxis = list(title = "% Change",
-                   fixedrange=TRUE),
-      xaxis=list(fixedrange=TRUE),
-      shapes=lockdown('2020-03-23','grey'),
-      annotations=list(x = "2020-03-01",
-                       y = max(plot_data$Change),
-                       text = "1st lockdown",
-                       xref = "1",
-                       yref = "1",
-                       showarrow=FALSE,
-                       align='left')
-    )
-    change <- change %>%  config(
-      displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+      yaxis = list(title = "% Change", fixedrange=TRUE),
+      xaxis=list(fixedrange=TRUE)) %>% 
+      add_vline(x = '2020-03-23', text = "1st lockdown", margin = list(t=80)) %>% 
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
       })
       withSpinner(plotlyOutput('change_plot',width='90%'))
     }  
@@ -671,32 +633,19 @@ output$drugs_quan_plot<-renderUI({
       plot_quantity<-subset(OST_paid_quantity,(Board==location()) & (Type==input$types))
       lab_text<-c(paste0("Month: ", plot_quantity$Date,
                          "<br>", 'Quantity: ', plot_quantity$Quantity, ' mg'))
-      trend<-plot_ly(data = plot_quantity,x=seq(1:nrow(plot_quantity)))
-      trend<-trend %>% add_trace(y = ~ Quantity,type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text,hoverinfo='text')
-      trend<-trend %>% layout(
-        margin=list(t=80),
+      trend<-plot_ly(data = plot_quantity,x=seq(1:nrow(plot_quantity))) %>% 
+        add_trace(y = ~ Quantity,type='scatter', mode='lines', line=list(color=pal_overall[1]),text=lab_text,hoverinfo='text') %>% 
+        layout(
         title=(sprintf('Total quantity (mg) of %s prescribed per month since January 2018 (%s)',tolower(input$types),location())),
         xaxis=list(
           title=('Date'),
           tickmode='array',
           tickvals=seq(1,nrow(plot_quantity),6),
           ticktext=as.character(plot_quantity$Date)[c( TRUE , rep(FALSE, 5)) ],
-          fixedrange=TRUE
-        ),
-        yaxis=list(title='Quantity (mg)',
-                   rangemode='tozero',
-                   fixedrange=TRUE),
-        shapes=lockdown('27.77','grey'),
-        annotations=list(x = "27.2",
-                         y = max(plot_quantity$Quantity),
-                         text = "1st lockdown",
-                         xref = "1",
-                         yref = "1",
-                         showarrow=FALSE,
-                         align='left')
-      )
-      trend <- trend %>%  config(
-        displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+          fixedrange=TRUE),
+        yaxis=list(title='Quantity (mg)', rangemode='tozero', fixedrange=TRUE)) %>% 
+        add_vline(x = '27.77', text = "1st lockdown", margin = list(t=80)) %>% 
+        config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     })
     withSpinner(plotlyOutput('quan_plot'))
   }
@@ -712,30 +661,19 @@ output$drug_gender_plot<-renderPlotly({
                      "<br>", 'Number of attendances: ', round(plot_drug_sex$`2020 & 2021`,1)))
   
   trend_sex <- plot_ly(data = plot_drug_sex, 
-                   x = ~ Date)
-  
-  trend_sex <- trend_sex %>% 
+                   x = ~ Date) %>% 
     add_trace(y = ~`2020 & 2021`,
               color = ~ Gender,
               type = 'scatter',
               mode = 'lines', 
               colors = pal_sex,
               text = lab_text,
-              hoverinfo = 'text')
-  
-  trend_sex <- trend_sex %>% 
+              hoverinfo = 'text') %>% 
     layout(xaxis = list(fixedrange=TRUE, title='Date'), 
-           margin=list(t=80),
            yaxis = list(title = "Number of attendances",
-                        rangemode='tozero',
-                        fixedrange=TRUE) ,
-           shapes = lockdown(as.Date('2020-03-23'),'grey'),
-           annotations = annote(as.Date("2020-03-01"), plot_drug_sex$`Average 2018 & 2019`,plot_drug_sex$`2020 & 2021`))
-  
-  trend_sex <- trend_sex %>%  
-    config(displaylogo = F, 
-           displayModeBar = TRUE,
-           modeBarButtonsToRemove = bttn_remove)
+                        rangemode='tozero', fixedrange=TRUE)) %>% 
+    add_vline(x = '2020-03-23', text = "1st lockdown") %>% 
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
 })
 
 ## A&E Drug attendances - Pct change
@@ -747,32 +685,18 @@ output$drug_ae_change_plot<-renderPlotly({
       tooltip_trend<-c(paste0(
         "Average of weeks beginning: ", format(plot_data$Date-7, "%d %b %Y"), ", ", format(plot_data$Date, "%d %b %Y"), ", ", format(plot_data$Date+7, "%d %b %Y"),
         "<br>", "Change from 2018-2019 average: ",ifelse(plot_data$Change >= 0, "+", ""), round(plot_data$Change,1), "%"))
+      
       change<-plot_ly(data = plot_data, x = ~Date, y = ~Change,
                       type='scatter',
                       mode='lines',
                       line=list(color=pal_overall[1]),
                       text=tooltip_trend,
-                      hoverinfo="text")
-      
-      change <- change %>% layout(
-        margin=list(t=80),
-        yaxis = list(title = "% Change",
-                     fixedrange=TRUE),
-        xaxis=list(fixedrange=TRUE),
-        shapes=lockdown('2020-03-23','grey'),
-        annotations=list(x = "2020-03-01",
-                         y = max(plot_data$Change),
-                         text = "1st lockdown",
-                         xref = "1",
-                         yref = "1",
-                         showarrow=FALSE,
-                         align='left')
-      )
-      change <- change %>%  
-        config(
-        displaylogo = F, 
-        displayModeBar = TRUE, 
-        modeBarButtonsToRemove = bttn_remove)
+                      hoverinfo="text") %>% 
+        layout(
+        yaxis = list(title = "% Change", fixedrange=TRUE),
+        xaxis=list(fixedrange=TRUE)) %>% 
+        add_vline(x = '2020-03-23', text = "1st lockdown") %>% 
+        config(displaylogo = F,  displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
     }
   else if(length(which(is.na(plot_data$Change)))!=0){
   
@@ -802,13 +726,17 @@ output$drugs_ae_explorer <- renderUI({
      tagList(note_dataqual, note_average, 
       plot_cut_box(title_plot1 = paste0("Percentage change in the number of A&E attendances for Drug overdose/intoxications \nin ", location(), " (2020-2022) compared with average of the corresponding time in 2018 and 2019"), 
                    plot_output1 = "drug_ae_change_plot",
-                   title_plot2 = paste0("3-Week average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
+                   title_plot2 = paste0("3-week average of number of attendances for Drug overdose/intoxication \nat Emergency Departments  by sex (", location(),", 2020-2022)"),
                    plot_output2 = "drug_gender_plot"))
    } else {
      tagList(note_smallboards)
      }
   }
 })
+
+###############################################.
+## Download data ----
+###############################################.
 
 
   #### Data for download ####
@@ -858,6 +786,6 @@ output$download_drugs_data <- downloadHandler(
 )
   
   
-
+## END
 
 

@@ -8,40 +8,28 @@ cancerpath_tab <-
 ###############################################.
 
     tabPanel(title = "Cancer pathology", icon = icon("microscope"), value = "cancer",
-           wellPanel(width = 12,
-                     uiOutput("cancer_explorer2")),
-           wellPanel(
-             column(4, selectInput("geotype_cancer", label = "Select a geography level and then an area of interest.",
+           wellPanel(uiOutput("cancer_explorer2"),
+             column(3, selectInput("geotype_cancer", label = "Step 1. Select a geography level and then an area of interest.",
                                    choices= c("Scotland", "Cancer Networks", "Health Boards"),
                                    selected = "Scotland"),
                     uiOutput("geoname_ui_cancer")),
-             column(4,  selectInput("cancer_type", label = "Select all or specific cancer type", choices = cancer_type_list,
-                                    selected = "All Malignant Neoplasms (Excl. C44)")),
-             column(4,
-                    fluidRow(br()),
+             column(3, selectInput("cancer_type", label = "Step 2. Select all or specific cancer type", choices = cancer_type_list,
+                                selected = "All Malignant Neoplasms (Excl. C44)")),
+             column(3,  radioButtons("baseline", "Step 3. Select baseline for comparison",
+                                     list("2019", "Mean 2017-2019"), inline = TRUE,
+                                     selected = "2019"),
+                    radioButtons("gender", "Step 4. Select sex",
+                                 list("All","Male","Female"), inline = TRUE,
+                                 selected = "All")),
+             column(3,
                     sourcemodal_ui("cancer"),
                     fluidRow(br()),
                     downloadButton('download_cancer_data', 'Download data'),
                     fluidRow(br()),
                     actionButton('jump_commentary_cancer','Go to commentary'))
            ), #well panel
-           wellPanel(
-             column(4,
-                    div(radioButtons("baseline", "Select baseline for comparison",
-                                     list("2019", "Mean 2017-2019"), inline = TRUE,
-                                     selected = "2019"))),
-             column(8,
-                    div(radioButtons("gender", "Select sex",
-                                     list("All","Male","Female"), inline = TRUE,
-                                     selected = "All")))
-             
-           ) ,# wellPanel bracket
-           
-           wellPanel(width = 12,
-                     uiOutput("cancer_explorer")
-           ) ,# wellPanel bracket
-           
-           wellPanel(
+           mainPanel(width = 12,
+                     uiOutput("cancer_explorer"),
              column(6,
                     div(radioButtons("cum_baseline", "Select standard/cumulative baseline",
                                      list("Standard", "Cumulative"), inline = TRUE,
@@ -49,9 +37,9 @@ cancerpath_tab <-
              column(6,
                     div(radioButtons("breakdown", "Select breakdown type",
                                      list("None","Age Group","Deprivation"), inline = TRUE,
-                                     selected = "None")))),
-           wellPanel(width = 12,
-                     uiOutput("cancer_explorer3"))
+                                     selected = "None"))),
+                     uiOutput("cancer_explorer3")
+             )#mainPanel bracket
   )  # tabpanel bracket
 
 
@@ -60,8 +48,8 @@ cancerpath_tab <-
 ###############################################.
 
 sact_tabm <- 
-  tabPanel(title = "SACT (Chemotherapy) Monthly Patients ", icon = icon("syringe"), value = "sact",
-           wellPanel(h4(strong("SACT Treatment Activity in Scotland - Monthly Patient Data")),
+  tabPanel(title = "SACT (Chemotherapy) monthly patients ", icon = icon("syringe"), value = "sact",
+           wellPanel(h4(strong("SACT treatment activity in Scotland - Monthly patient data")),
                      p("Systemic Anti-Cancer Treatments (SACT) is a collective term for drugs that are used in the treatment
                                   of cancer. The main type of drugs are cytotoxic chemotherapy drugs but there are other treatments
                                   such as targeted agents and immunotherapies."),
@@ -80,16 +68,16 @@ sact_tabm <-
                      actionButton("btn_sact_modal", "FAQs", icon = icon('question-circle')),
                      downloadButton('download_sact_monthly_data', 'Download data')), # well panel
            
-           wellPanel(column(7, selectInput("geotype_sact", label = "Select a geography level and then an area of interest",
+           wellPanel(column(4, selectInput("geotype_sact", label = "Step 1. Select a geography level and then an area of interest",
                                            choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
-                            uiOutput("geoname_ui_sact"),
-                            uiOutput("treatment_ui_sact")),
-                     column(5,  selectInput("sact_type", label = "Select all or specific cancer type",
-                                            choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
-                                                        "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
-                                                        "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
-                                                        "Upper GI", "Urological", "Unknown"), selected = "All"),
-                            div(radioButtons("sact_plot_filter", "Select data breakdown to display together:",
+                            uiOutput("geoname_ui_sact")),
+                      column(3,   selectInput("sact_type", label = "Step 2. Select all or specific cancer type",
+                                        choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
+                                                    "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
+                                                    "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
+                                                    "Upper GI", "Urological", "Unknown"), selected = "All")),
+                     column(5,  uiOutput("treatment_ui_sact"),
+                            div(radioButtons("sact_plot_filter", "Step 4. Select data breakdown to display together:",
                                              list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
                                              selected = "Standard graph")))
            ), #well panel
@@ -104,8 +92,8 @@ sact_tabm <-
 ###############################################.
 
 sact_tabw <- 
-  tabPanel(title = "SACT (Chemotherapy) Weekly Appointments", icon = icon("syringe"), value = "sact",
-           wellPanel(h4(strong("SACT Treatment Activity in Scotland - Weekly Appointment Data")),
+  tabPanel(title = "SACT (Chemotherapy) weekly appointments", icon = icon("syringe"), value = "sact",
+           wellPanel(h4(strong("SACT treatment activity in Scotland - Weekly appointment data")),
                      #p(strong("Data from the ChemoCare system in the North Cancer Alliance (NCA) Highland has not
                      #          refreshed on the 28th of June 2021. Data from this instance is therefore only deemed
                      #         complete up to the week beginning 7th of June and only presented in the graphs up to
@@ -132,22 +120,21 @@ sact_tabw <-
                      actionButton("btn_sact_wk_modal", "FAQs", icon = icon('question-circle')),
                      downloadButton('download_sact_weekly_data', 'Download data')), # well panel
            
-           wellPanel(column(7, selectInput("geotype_wk_sact", label = "Select a geography level and then an area of interest",
+           wellPanel(column(4, selectInput("geotype_wk_sact", label = "Step 1. Select a geography level and then an area of interest",
                                            choices= c("Scotland", "Cancer Network", "Health Board"),selected = "Scotland"),
-                            uiOutput("geoname_ui_wk_sact"),
-                            uiOutput("treatment_ui_wk_sact")),
-                     
-                     column(5, selectInput("sact_wk_type", label = "Select all or specific cancer type",
-                                           choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
-                                                       "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
-                                                       "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
-                                                       "Upper GI", "Urological", "Unknown"), selected = "All"),
-                            div(radioButtons("sact_wk_appt_reg", "Select method of administration route derivation",
+                            uiOutput("geoname_ui_wk_sact")),
+                     column(3, selectInput("sact_wk_type", label = "Step 2. Select all or specific cancer type",
+                                        choices = c("All", "Breast", "Cancer of Unknown Origin", "Central Nervous System",
+                                                    "Germ Cell", "Gynaecology", "Haematology", "Head & Neck", "Lower GI",
+                                                    "Lung & Chest", "Neuroendocrine", "Other", "Sarcoma", "Skin",
+                                                    "Upper GI", "Urological", "Unknown"), selected = "All")),
+                     column(5, div(radioButtons("sact_wk_appt_reg", "Step 3. Select method of administration route derivation",
                                              list("Appointment level","Regimen level"), inline = TRUE,
                                              selected = "Appointment level")),
-                            div(radioButtons("sact_plot_wk_filter", "Select data breakdown to display together:",
+                            div(radioButtons("sact_plot_wk_filter", "Step 4. Select data breakdown to display together:",
                                              list("Geographic area","Treatment administration", "Standard graph"), inline = TRUE,
-                                             selected = "Standard graph")))
+                                             selected = "Standard graph")),
+                            uiOutput("treatment_ui_wk_sact"))
            ), #well panel
            
            mainPanel(width = 12,
