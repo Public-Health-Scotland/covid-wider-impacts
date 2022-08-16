@@ -93,7 +93,7 @@ file.edit("shiny_app/summary_tab.R")
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
 
-create_terminations(top_date = "2022-07-12")
+create_terminations(top_date = "2022-08-16")
 create_antebooking(booking_date = "13072022", max_book_date = "2022-07-10")
 
 
