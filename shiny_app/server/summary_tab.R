@@ -583,14 +583,14 @@ output$data_explorer <- renderUI({
                  data_name = "adm"),
       fluidRow(column(6, h4(paste0(variation_title, "specialty group - (admission type: ", tolower(input$adm_type), ")"))), # Adding adm_type here to make clear what is selected
                column(6, h4(paste0(total_title, "specialty group - (admission type: ", tolower(input$adm_type), ")")))), # Adding adm_type here to make clear what is selected
-      fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
+      fluidRow(column(4, pickerInput("adm_specialty", "Select one or more specialty groups",
                                      choices = if (input$`summary-geotype` == "Scotland") {
                                        spec_list_rapid} else {
                                          spec_list_rapid[c(1:8,11)]}, multiple = TRUE,
                                      selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics (medical & surgical)"))),
-               column(6, actionButton("btn_spec_groups_rapid",
+               column(8, div(actionButton("btn_spec_groups_rapid",
                                       "Specialties and their groups",
-                                      icon = icon('question-circle')))),
+                                      icon = icon('question-circle'), style="float:right")))),
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                column(6, withSpinner(plotlyOutput("adm_spec_tot")))),
       fluidRow(
@@ -599,15 +599,15 @@ output$data_explorer <- renderUI({
                p("Please note that ethnic group was not recorded in RAPID for 
                         admissions prior to March 2020. This data is only available by month."))),
       
-      fluidRow(column(9,
+      fluidRow(column(4,
                       pickerInput("rapid_ethnicity", "Select one or more ethnic groups",
                                   choices = eth_list_op, 
                                   multiple = TRUE,
                                   selected = eth_list_op,
                                   options = list(
                                     `actions-box` = TRUE))),
-               column(3,actionButton("btn_modal_eth_rapid", "Interpretation of this chart",
-                                     icon = icon('fas fa-exclamation-circle')))),
+               column(8, div(actionButton("btn_modal_eth_rapid", "Interpretation of this chart",
+                                     icon = icon('fas fa-exclamation-circle'), style="float:right")))),
       
       fluidRow(
         column(12,
