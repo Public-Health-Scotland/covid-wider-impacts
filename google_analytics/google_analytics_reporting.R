@@ -24,18 +24,18 @@ data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/google_analytics/"
 list_events <- data.frame( stringsAsFactors = F,
   eventlabel = c("apgar",  "booking", "breastfeeding", "cancer", 
                  "cardio",  "child_dev", "child_health", 
-                 "comment", "drugs", "imm", "inductions", "injuries", "intro", 
+                 "comment", "drugs", "gestation", "imm", "inductions", "injuries", "intro", 
                  "mentalhealth", "mod", "perinatal_mortality",  "preterm", 
                  "sact", "summary", "table", "tears", "terminations"),
   tabname = c("Apgar scores", "Antenatal bookings", "Breastfeeding", "Cancer pathology",
               "Cardiovascular", "Child development", "Child health reviews", "Commentary",
-              "Substance use", "Immunisations", "Induction of labour", "Injuries", "Home page",
+              "Substance use", "Gestation at delivery", "Immunisations", "Induction of labour", "Injuries", "Home page",
               "Mental health", "Mode of delivery", "Stillbirths and infant deaths",
               "Location of extremely preterm deliveries", "SACT", "Summary trends",
               "Data", "Perineal tears", "Termination of pregnancy"),
   tabarea = c("Pregnancy/births/babies", "Pregnancy/births/babies", "Child health", 
               "Cancer", "Others", "Child health", "Child health", "Others",
-              "Substance use", "Child health", "Pregnancy/births/babies", "Others", "Others",
+              "Substance use", "Pregnancy/births/babies", "Child health", "Pregnancy/births/babies", "Others", "Others",
               "Others", "Pregnancy/births/babies", "Pregnancy/births/babies",
               "Pregnancy/births/babies", "Cancer", "Others",
               "Others", "Pregnancy/births/babies", "Pregnancy/births/babies"))
@@ -112,6 +112,13 @@ events <- left_join(events_ga, list_events)
 events %<>% 
   filter(!eventlabel %in% c("(not set)", "Births and babies", "Cancer",
                             "Child health", "Pregnancy", "intro"))
+
+# Creating yearly totals
+events_year <- events %>% 
+  group_by(tabname, tabarea) %>% 
+  summarise(count = sum(totalEvents, na.rm = T)) %>% ungroup()
+
+saveRDS(events_year, paste0(data_folder, "tabvisits_yearly.rds"))
 
 # Calculating week ending and aggregating to obtain totals
 events %<>% 

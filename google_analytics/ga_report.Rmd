@@ -30,6 +30,7 @@ data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/google_analytics/"
 
 sessions <- readRDS(paste0(data_folder, "sessions.rds"))
 tabvisits <- readRDS(paste0(data_folder, "tabvisits.rds"))
+tabvisits_year <- readRDS(paste0(data_folder, "tabvisits_yearly.rds"))
 device <- readRDS(paste0(data_folder, "device.rds"))
 source <- readRDS(paste0(data_folder, "source.rds"))
 
@@ -161,6 +162,31 @@ plot_ly(sessions) %>%
 ```
 
 ## Visits to each tab
+
+### Visits since 7 February 2022
+```{r taboverallvisits}
+#Tooltip for the sessions chart
+tooltip_tabvisits <- c(paste0("Section: ", tabvisits_year$tabname, "<br>",
+                         "Visits: ", tabvisits_year$count))
+
+# Adjusting some of the axis formatting
+yaxis_bar <- xaxis_plots
+yaxis_bar[["rangeslider"]] <- NULL
+yaxis_bar[["categoryorder"]] <- "array"
+yaxis_bar[["categoryarray"]] <- tabvisits_year %>% arrange(count) %>% pull(tabname)
+
+# Plot for the overall visits
+plot_ly(tabvisits_year) %>% 
+  add_bars(y = ~tabname, x = ~count, textposition="none",
+            text=tooltip_tabvisits, hoverinfo="text") %>% 
+  layout(yaxis = yaxis_bar, xaxis = yaxis_plots
+         # margin = list(b = 80, t = 5, r = 25)
+         ) %>%  # to avoid labels getting cut off
+  # leaving only save plot button
+  config(displaylogo = F, displayModeBar = TRUE, 
+             modeBarButtonsToRemove = bttn_remove )
+
+```
 
 ### Pregnancy, births and babies
 

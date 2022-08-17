@@ -55,12 +55,14 @@ data_table <- reactive({
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
-        "outpats" = outpats %>% 
+        "op" = outpats %>% 
           rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average),
         'THN_by_HB'=THN_by_HB,
         'DTR_data'=DTR_data,
         'OST_paid'=OST_paid,
-       'SASdata'=SASdata[,c(1,2,5,6)]
+       'SASdata'=SASdata[,c(1,2,5,6)],
+       'Drug_AE'=Drug_AE_attendances %>% select(Geography_type, Board, Gender, Date, Type, `2020 & 2021`, `Average 2018 & 2019`) %>% rename(`2020, 2021 & 2022` = `2020 & 2021`) %>% filter(Board %in% c('NHS Fife', 'NHS Greater Glasgow & Clyde', 'NHS Lothian') & Gender == "All" |
+                                                                                                                                                                                              Geography_type == "Scotland") %>% arrange(Gender, Date)
   ) %>% 
     # Note: character variables are converted to factors in each
     # dataset for use in the table
@@ -444,7 +446,7 @@ data_table <- reactive({
     mutate_if(is.numeric, round, 1)
   
   if (!(input$data_select %in% c("childdev", "breastfeeding", "cancer", "sact_weekly", 
-                                 "sact_monthly"))) {
+                                 "sact_monthly", "Drug_AE"))) {
     table_data %<>% 
       select(sort(current_vars()))  # order columns alphabetically
   }

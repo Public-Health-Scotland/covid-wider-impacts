@@ -239,7 +239,7 @@ ooh %<>% gather(area_type, area_name, c(area_name, hscp, scot)) %>% ungroup() %>
   filter(between(week_ending, as.Date("2018-01-01"), as.Date("2020-04-26")))
 
 #new data extract from week ending 03 may 2020 up to present
-ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/", filename, ".xlsx")) %>% 
+ooh_may_onwards <- read_excel(paste0(data_folder, "GP_OOH/WIDER IMPACT PC OOH DATA_", filename, ".xlsx")) %>% 
   janitor::clean_names() %>%
   rename(count=number_of_cases, hscp=hscp_of_residence_name_current, age_group=age_band,
          hb=treatment_nhs_board_name, sex=gender, dep=prompt_dataset_deprivation_scot_quintile) %>%
@@ -291,7 +291,7 @@ print("ooh.rds file prepared and saved, including open data")
 
 create_ooh_cons <- function(filename, last_week) {
   
-ooh_cons <- read_xlsx(paste0(data_folder, "GP_OOH_cons/", filename)) %>% 
+ooh_cons <- read_xlsx(paste0(data_folder, "GP_OOH_cons/WIDER IMPACT PC OOH_CONS DATA_", filename, ".xlsx")) %>% 
   janitor::clean_names() %>%
   rename(hb=treatment_nhs_board_name, hscp=hscp_of_residence_name_current,
          type=all_cons, count=number_of_consultations) %>%

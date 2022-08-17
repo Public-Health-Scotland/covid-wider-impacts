@@ -4,146 +4,115 @@
 source("data_prep/functions_packages_data_prep.R")
 
 library(readxl)
-library(lubridate)
-library(tidyr)
 library(ISOweek)
-library(tidyverse)
 library(reshape2)
-library(zoo)
 
 ###############################################.
 ## Drug and alcohol treatment referrals ----
 ###############################################.
 #When updating for future updates the following lines must be updated:
 #Line 22: Update filepath to data
-#Line 52 and 68: Update number of weeks
+
 
 # Reading data
-Referrals_breakdown <- read_excel(paste0(data_folder,"drugs/Referrals_25022022_breakdown.xlsx"),
+Referrals_breakdown <- read_excel(paste0(data_folder,"drugs/Referrals_23052022_breakdown.xlsx"),
                                   col_types = c("text", "text", "date", "numeric")) %>% 
   #Extracting isoweek and year from date
   mutate(Week = isoweek(DateReferralReceived),
-         Year = isoyear(DateReferralReceived))
-
-colnames(Referrals_breakdown)[1:4]<-c('Type','Board','Date','DTR')
-
-#Splitting data frame by years 
-SepYears<-split(Referrals_breakdown, Year)
-
-#Using all combinations of NHS board, type of treatment and date to make complete data frames
-Hb<-unique(SepYears$`2018`$Board)#using 2018 data as 2015/2016 has NA as an option for health board
-type<-c(unique(SepYears$`2021`$Type), 'All')#want to include co-dependency
-dates<-unique(SepYears$`2020`$Week)#want to include leap year
-
-#Forming complete data frames for each year
-comp.2018<-complete(SepYears$`2018`, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0)) %>% select(Week, Board, Type, `2018` = DTR)
-comp.2019<-complete(SepYears$`2019`, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0)) %>% select(`2019` = DTR)
-comp.2020<-complete(SepYears$`2020`, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0)) %>% select (`2020` = DTR)
-comp.2021<-complete(SepYears$`2021`, Board=Hb, Type=type, Week=dates,
-                    fill=list(DTR=0)) %>% select(`2021` = DTR)
-
-#Merging the all years into one data set
-full <- cbind(comp.2018, comp.2019, comp.2020, comp.2021) %>% 
-  arrange(Week)
-
-full$`2021`[(full$Week>51)]<-NA #MUST UPDATE THIS WITH FUTURE UPDATES
-full$`2018`[(full$Week==53)]<-full$`2018`[(full$Week==52)] #REPEATING LAST 2018 & 2019 OBSERVATION TO MATCH 2020 DATA
-full$`2019`[(full$Week==53)]<-full$`2019`[(full$Week==52)]
-
-# rownames(full)<-seq(1:nrow(full))#Row names get jumbled up when data is reordered so just ordering it again here
-full <- full %>% #Taking 2018/19 average
-  mutate('Average 2018 & 2019' = (`2018`+`2019`)/2)
-
-###adding % change column 
-full <- full %>%
-  mutate('Change' = (`2020` - `Average 2018 & 2019`)/`Average 2018 & 2019`*100)
-
-full$Change[is.nan(full$Change)]<-NA # NaNs to NA
-
-##### Formatting for long x axis 
-####MUST UPDATE BLOCK FOR EACH UPDATE OF DATA WITH WEEK NUMBER
-block <- nrow(subset(full, Week<=51))
-long.axis <- rbind(full[,c(1:3,8,6)],full[c(1:(block+1)),c(1:3,8,6)])
-long.axis$`2020`[c((nrow(full)+1):nrow(long.axis))]<-full$`2021`[1:(block+1)]
+         Year = isoyear(DateReferralReceived)) %>% 
+  rename('Type' = 'ClientType',
+         'Board'= 'location',
+         'Date' = 'DateReferralReceived',
+         'DTR'  = 'n') %>% 
+  filter(Year >= 2018)
 
 
-date_in_week <- function(year, week, weekday){
-  'FUNCTION FOR CONVERTING ISO WEEK TO DATE'
-  w <- paste0(year, "-W", sprintf("%02d", week), "-", weekday)
-  ISOweek2date(w)
-}
+# Create an 'All' category. 
+Referrals_breakdown_All <- Referrals_breakdown %>% 
+  group_by(Board,Date,Week,Year) %>% 
+  summarise(DTR = sum(DTR)) %>% 
+  mutate(Type = 'All')
 
-Date <- date_in_week(2020,sub.full[,1],1)
-Date2 <- date_in_week(2021,sub.full[1:(block+1),1],1)
-Date<-append(Date,Date2)
+Referrals_breakdown <- bind_rows(Referrals_breakdown,Referrals_breakdown_All)
 
-long.axis$Week<-Date
+# Pivot data so that two year averages across 2018 and 2019 can be calculated
 
-long.axis <- long.axis %>% rename(Date = Week, `2020 & 2021` = `2020`)
-long.axis<-long.axis[-nrow(long.axis),]#removing last row 
-#######Edit to add 'All' option###
+Ref_2018_2019_Average <- Referrals_breakdown %>% 
+  filter(Year %in% c(2018,2019)) %>% 
+  select(-Date) %>% 
+  complete(Type,Board,Week,Year) %>% 
+  pivot_wider(names_from = Year, values_from = DTR) %>% 
+  mutate(across(c('2018':'2019'), ~replace_na(.x, 0))) %>% 
+  rowwise() %>% 
+  mutate(two_year_avg = mean(c(`2018`,`2019`)))
 
-iter<-seq(2,(nrow(long.axis)-2),4)
+# Complete data set across types 
+# As we have dates this is easiest done separately. 
+# Use date and add Isoweek back in
 
-for(i in iter){
-  'Adding drug and alcohol to All type'
-  long.axis$`Average 2018 & 2019`[i]<-sum(long.axis$`Average 2018 & 2019`[i-1],long.axis$`Average 2018 & 2019`[i+1],long.axis$`Average 2018 & 2019`[i+2],na.rm=T)
-  long.axis$`2020 & 2021`[i]<-sum(long.axis$`2020 & 2021`[i-1],long.axis$`2020 & 2021`[i+1],long.axis$`2020 & 2021`[i+2],na.rm=T)
-}
+Referrals_breakdown_2020 <- Referrals_breakdown %>% 
+  filter(Year == 2020) %>% 
+  complete(Date,Type,Board,Year,fill = list(DTR = 0)) %>% 
+  mutate(Week = isoweek(Date))
 
-# iter2<-seq(1,(nrow(long.axis)-3),4)
-# for (i in iter2){
-#   'This loop adds codependency values to both the alcohol and drug values'
-#   'Co-dependency will not be shown as an option'
-#   short.subset<-long.axis[c(i:(i+3)),]
-#   a<-which(short.subset$Type=='Alcohol')
-#   d<-which(short.subset$Type=='Drug')
-#   c<-which(short.subset$Type=='Co-dependency')
-#   short.subset$`Average 2018 & 2019`[a]<-short.subset$`Average 2018 & 2019`[a]+short.subset$`Average 2018 & 2019`[c]
-#   short.subset$`Average 2018 & 2019`[d]<-short.subset$`Average 2018 & 2019`[d]+short.subset$`Average 2018 & 2019`[c]
-#   short.subset$`2020 & 2021`[a]<-short.subset$`2020 & 2021`[a]+short.subset$`2020 & 2021`[c]
-#   short.subset$`2020 & 2021`[d]<-short.subset$`2020 & 2021`[d]+short.subset$`2020 & 2021`[c]
-#   long.axis[c(i:(i+3)),]<-short.subset
-# }
+Referrals_breakdown_2021 <- Referrals_breakdown %>% 
+  filter(Year == 2021) %>% 
+  complete(Date,Type,Board,Year,fill = list(DTR = 0)) %>% 
+  mutate(Week = isoweek(Date))
 
-#calculating percent change
-long.axis<-cbind(long.axis,(long.axis$`2020 & 2021`- long.axis$`Average 2018 & 2019`)/long.axis$`Average 2018 & 2019`*100)
-colnames(long.axis)[6]<-'Change'
-long.axis$Change[is.nan(long.axis$Change)]<-0
-long.axis$Change[is.infinite(long.axis$Change)]<-NA
+Referrals_breakdown_2022 <- Referrals_breakdown %>% 
+  filter(Year == 2022) %>% 
+  complete(Date,Type,Board,Year,fill = list(DTR = 0)) %>% 
+  mutate(Week = isoweek(Date))
 
-long.axis$Change<-as.numeric(format(round(long.axis$Change, 1), nsmall = 1) )#rounding to 1dp
+Referrals_breakdown <- bind_rows(Referrals_breakdown_2020,Referrals_breakdown_2021,Referrals_breakdown_2022)
 
-###Making all pre-DAISY co-dependency entries NA
+# Match on averages. 
 
-long.axis<-long.axis %>% 
+Referrals_breakdown <- left_join(Referrals_breakdown,Ref_2018_2019_Average)
+
+# We need to add in averages for a 53 week.
+# We do this by duplicating week 52. 
+Referrals_breakdown <- Referrals_breakdown %>% 
+  arrange(Board,Type,Date) %>% 
+  mutate(two_year_avg_check = if_else(Week == 53, lag(two_year_avg),two_year_avg))
+
+# Create percentage change variable. 
+
+Referrals_breakdown <- Referrals_breakdown %>% 
+  mutate(Change = round_half_up(x = (DTR-two_year_avg_check)/two_year_avg_check*100,digits = 1))
+
+
+# Select necessary variables and rename as necessary
+Referrals_breakdown <- Referrals_breakdown %>% 
+  select(Date,Board,Type,two_year_avg_check,DTR,Change) %>% 
+  rename('Average 2018 & 2019' = two_year_avg_check,
+         '2020 & 2021' = DTR)
+
+# Change all codepency averages and change values to 0. 
+Referrals_breakdown<-Referrals_breakdown %>% 
   mutate(`Average 2018 & 2019` = replace(`Average 2018 & 2019`, Type=='Co-dependency', NA))
-
-long.axis<-long.axis %>% 
+Referrals_breakdown<-Referrals_breakdown %>% 
+  mutate(Change = replace(Change, Type=='Co-dependency', NA))
+# And values before 2020-12-01
+Referrals_breakdown<-Referrals_breakdown %>% 
   mutate(`2020 & 2021` = replace(`2020 & 2021`,Date<'2020-12-01' & Type=='Co-dependency', NA))
 
+# Just to keep consistent with previous data prep. 
+Referrals_breakdown <- Referrals_breakdown %>% 
+  mutate(Change = case_when(is.nan(Change)   ~ 0,
+                            is.infinite(Change) ~ NA_real_,
+                            TRUE ~ Change),
+         Date = as.Date(Date))
 
-# long.axis<-long.axis[which(long.axis$Type != 'Co-dependency'),] #removing co-dependency 
+# Change name of 2020/2021 variable
+Referrals_breakdown <- Referrals_breakdown %>% 
+  rename(`2020, 2021 & 2022` = `2020 & 2021`)
 
-###making a file for names of health boards and names of ADPs###
-Health_board<-Hb[grep('NHS',Hb)]
-ADP_names<-Hb[grep('ADP',Hb)]
-
-#SAVING FILES
-saveRDS(ADP_names, "shiny_app/data/ADP_names.rds")
-saveRDS(ADP_names, paste0(data_folder,"final_app_files/ADP_names_",
-                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-
-saveRDS(Health_board, "shiny_app/data/Health_board.rds")
-saveRDS(Health_board, paste0(data_folder,"final_app_files/Health_board_",
-                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
-
-saveRDS(long.axis,file="shiny_app/data/DTR_data.rds")
-saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_",
-                          format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+# Save out data. 
+saveRDS(Referrals_breakdown,file="shiny_app/data/DTR_data.rds")
+saveRDS(Referrals_breakdown, paste0(data_folder,"final_app_files/DTR_data_",
+                                    format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
 ## Take Home Naloxone ----
@@ -153,7 +122,7 @@ saveRDS(long.axis, paste0(data_folder,"final_app_files/DTR_data_",
 #Line 177: Update number of months of 2021 data 
 
 # Reading file
-dashboard_monthly_data <- readRDS(paste0(data_folder, "drugs/dashboard_monthly_data_2021_Q2.rds"))
+dashboard_monthly_data <- readRDS(paste0(data_folder, "drugs/dashboard_monthly_data_2021_Q3.rds"))
 
 HB_data<-dashboard_monthly_data[order(dashboard_monthly_data$month),] #ordering by date
 
@@ -174,7 +143,7 @@ comp.data<-complete(HB_data, Board=hb, Type=types, Date=dates,
 comp.data<-comp.data[order(comp.data$Date),]#Ordering by date
 comp.data<-comp.data[,c(3,1,2,4:8)]#Reordering columns
 
-block<-nrow(subset(comp.data,Date<=9))#CHANGE WHEN UPDATING DATA:replace with number of months of 2021 data available
+block<-nrow(subset(comp.data,Date<=12))#CHANGE WHEN UPDATING DATA:replace with number of months of 2021 data available
 comp.data.temp<-rbind(comp.data[,c(1:3,8,6)],comp.data[c(1:block),c(1:3,8,6)])
 comp.data.temp[c((nrow(comp.data)+1):(nrow(comp.data)+block)),5]<-comp.data[c(1:block),7]
 
@@ -227,7 +196,7 @@ saveRDS(new_THN, paste0(data_folder,"final_app_files/THN_by_HB_",
 #Line 319: Update number of weeks of data available
 
 # Reading file
-SAS_data <- read_excel(paste0(data_folder, "drugs/2022_1_SAS_reformat_January.xlsx"))
+SAS_data <- read_excel(paste0(data_folder, "drugs/2022_1_SAS_reformat_April.xlsx"))
 
 SAS_data<- SAS_data %>%
   rename(Date='Week Commencing')
@@ -335,6 +304,14 @@ data <- data %>%
 data$`Average 2018 & 2019`<-round(data$`Average 2018 & 2019`,1)
 data$`2020 & 2021`<- round(data$`2020 & 2021`,1)
 
+# Change name of 2020/2021 variable
+data <- data %>% 
+  rename(`2020, 2021 & 2022` = `2020 & 2021`)
+
+# Reformat date variable
+data <- data %>% 
+  mutate(Date = as.Date(Date))
+
 # SAVING Files
 saveRDS(data, "shiny_app/data/SASdata.rds")
 saveRDS(data, paste0(data_folder,"final_app_files/SASdata_",
@@ -349,23 +326,23 @@ saveRDS(data, paste0(data_folder,"final_app_files/SASdata_",
 #Check formatting code as raw data comes slightly differently every time
 
 # Methadone HB data
-raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we06032022_Methadone 1mg.ml-1.xlsx"),
+raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we01052022_Methadone 1mg.ml-1.xlsx"),
                                    sheet = "Paid Items", 
                             col_types = c("text","text", "text", "numeric", "numeric", "numeric"))                                                                           
 
 # Methadone scot data
-scot.raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we06032022_Methadone 1mg.ml-1.xlsx"),
+scot.raw.meth.paid <- read_excel(paste0(data_folder, "drugs/we01052022_Methadone 1mg.ml-1.xlsx"),
                                         sheet = "Context ePr Vs Paid", col_types = c("text",
                                                                                      "text", "numeric", "text", "numeric"))
 
 # Buprenorphine HB data
-raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we06032022 Buprenorphine_2MG_8MG_16MG.xlsx"),
+raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we01052022 Buprenorphine_2MG_8MG_16MG.xlsx"),
                                   sheet = "Paid Items", col_types = c("text",
                                                                       "text", "text", "numeric", "text",
                                                                       "numeric", "text", "numeric"))
 
 # Buprenorphine scot data
-scot.raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we06032022 Buprenorphine_2MG_8MG_16MG.xlsx"),
+scot.raw.bup.paid <- read_excel(paste0(data_folder, "drugs/we01052022 Buprenorphine_2MG_8MG_16MG.xlsx"),
                                        sheet = "Context ePr Vs Paid", col_types = c("text",
                                                                                     "text", "text", "text", "numeric",
                                                                                     "text", "numeric", "text", "numeric"))
@@ -473,7 +450,9 @@ HB_Level <- HB_Level %>%
   # pivot out all years
   pivot_wider(names_from ='Year', values_from = 'Number') %>% 
   # pivot back 2020 and 2021 only
-  pivot_longer(cols = c('2020':'2021'), names_to = 'Year', values_to = '2020 & 2021' )
+  pivot_longer(cols = c('2020':'2022'), names_to = 'Year', values_to = '2020 & 2021' ) %>% 
+  # Due to pivoting extra months/years have been created - filter down to Feb 2022
+  filter(!(as.numeric(Year) == 2022  & as.numeric(Month) >=3))
 
 # Create date variable
 HB_Level <- HB_Level %>% 
@@ -529,7 +508,9 @@ Scotland_Level <- Scotland_Level %>%
   # pivot out all years
   pivot_wider(names_from ='Year', values_from = 'Number') %>% 
   # pivot back 2020 and 2021 only
-  pivot_longer(cols = c('2020':'2021'), names_to = 'Year', values_to = '2020 & 2021' )
+  pivot_longer(cols = c('2020':'2022'), names_to = 'Year', values_to = '2020 & 2021' ) %>% 
+  # Due to pivoting extra months/years have been created - filter down to Feb 2022
+  filter(!(as.numeric(Year) == 2022  & as.numeric(Month) >=3))
 
 # Create date variable
 Scotland_Level <- Scotland_Level %>% 
@@ -542,8 +523,7 @@ str(Scotland_Level)
 # Change to factors were necessary
 Scotland_Level <- Scotland_Level %>% 
   mutate(Date = factor(Date),
-         Measurement = factor(Measurement)) %>% 
-  select(-'2022')
+         Measurement = factor(Measurement)) 
 str(Scotland_Level)
 
 # Add Scotland and HB together
@@ -611,6 +591,11 @@ str(Total_Quant)
 Total_Quant <- Total_Quant %>% 
   mutate(across(c(Quantity), ~replace_na(.x, 0)))
 
+
+# Change name of 2020/2021 variable
+Totals <- Totals %>% 
+  rename(`2020, 2021 & 2022` = `2020 & 2021`)
+
 # SAVING files
 saveRDS(Totals, "shiny_app/data/OST_paid.rds")
 saveRDS(Totals, paste0(data_folder,"final_app_files/OST_paid_", 
@@ -619,5 +604,57 @@ saveRDS(Totals, paste0(data_folder,"final_app_files/OST_paid_",
 saveRDS(Total_Quant, "shiny_app/data/OST_paid_quantity.rds")
 saveRDS(Total_Quant, paste0(data_folder,"final_app_files/OST_paid_quantity_",
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
+
+
+
+###############################################.
+## A&E data prep ----
+###############################################.
+
+Drug_AE_attendances <- readRDS(paste0(data_folder,"drugs/A&E_Scotland_HB_Gender_2020_to_30-04-2022.RDS"))
+
+Drug_AE_attendances <- Drug_AE_attendances %>%
+  rename(Type = DrugsAlcBothNone,
+         `Average 2018 & 2019` = avg_1819_ma,
+         `2020 & 2021` = Observed.20.21.22_ma,
+         Board = Geography,
+         Date = WeekBeginning) %>%
+  mutate(Type = as.factor(Type),
+         Board = as.factor(Board)) %>%
+  mutate(Type = forcats::fct_recode(Type, 
+                                    "Drug Overdose/Intoxication" = "Drug",
+                                    'Alcohol Overdose/Intoxication' = "Alcohol",
+                                    'Drug and Alcohol Overdose/Intoxication' = "Both"))
+
+## Restricting to only Drug attendences (includes Drug+OD and Drug+Alc+OD attendances)
+Drug_AE_attendances <- Drug_AE_attendances %>%
+  filter(Type == "Drug Overdose/Intoxication") %>%
+  # mutate(`2020 & 2021` = plyr::round_any(`2020 & 2021`, 5, f = round),
+  #        `Average 2018 & 2019`= plyr::round_any(`Average 2018 & 2019`, 5, f = round))
+  mutate(`2020 & 2021` = if_else(`2020 & 2021` > 0 & `2020 & 2021` < 5, NA_real_, `2020 & 2021`),
+         `Average 2018 & 2019`= if_else(`Average 2018 & 2019` > 0 & `Average 2018 & 2019` < 5, NA_real_, `Average 2018 & 2019`)) %>%
+  group_by(Board) %>%
+  mutate(avg = mean(`2020 & 2021`[Gender == "All"], na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(`2020 & 2021` = if_else(avg < 10, NA_real_, `2020 & 2021`),
+         `Average 2018 & 2019` = if_else(avg < 10, NA_real_, `Average 2018 & 2019`))
+
+
+#calculating percent change
+Drug_AE_attendances <- Drug_AE_attendances %>%
+  rowwise() %>%
+  mutate(Change = (`2020 & 2021`- `Average 2018 & 2019`)/`Average 2018 & 2019`*100,
+         Change = replace_na(Change, 0),
+         Change = replace(Change, is.nan(Change), 0),
+         Change = replace(Change, is.infinite(Change), NA_real_),
+         Change = as.numeric(format(Change, nsmall = 1)))
+
+
+
+
+
+saveRDS(Drug_AE_attendances, "shiny_app/data/Drug_AE_attendances.rds")
+saveRDS(Drug_AE_attendances, paste0(data_folder,"final_app_files/Drug_AE_attendances_", 
+                       format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ## END

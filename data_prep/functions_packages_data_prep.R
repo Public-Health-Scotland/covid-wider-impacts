@@ -270,7 +270,8 @@ prepare_final_data_m <- function(dataset, filename, last_month, extra_vars = NUL
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
 }
 # Function to format cardiac data in the right format for the Shiny app
-prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars = NULL) {
+prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars = NULL,
+                                       comparison_end = NULL) {
 
   # Needed for detecting duplicate rows later
   rows_before_deduplicate = nrow(dataset)
@@ -335,6 +336,16 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
            count_average = if_else(count_average < 5, 0, count_average),
            variation = if_else(count < 5, 0, variation))
 
+  # If comparison_end is supplied, it means data after that date is no longer
+  # comparable to the historical data. So set to NA.
+  if (!is.null(comparison_end)) {
+    data_2020 =
+      mutate(data_2020,
+             across(c(count_average, variation),
+                    ~case_when(week_ending > ymd(comparison_end) ~ NA_real_,
+                               TRUE ~ .x)))
+  }
+
   # Filter week
   data_2020 <- data_2020 %>%
     filter(week_ending <= as.Date(last_week))
@@ -347,7 +358,6 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
   saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_",
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
-
 
 }
 
@@ -366,6 +376,7 @@ prepare_final_data_m_cardiac <- function(dataset, filename, last_month, extra_va
       # Not using mean to avoid issues with missing data for some weeks
       summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% 
       ungroup()
+
 
   } else if (aver == 5) {
     # Creating average admissions of pre-covid data (2015-2019) by day of the year
