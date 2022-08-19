@@ -1468,6 +1468,8 @@ plot_immun_simd <- function(imm_simd_data){
                     dataset_name== "mmr_simd_dose1" ~ "13 months",
                     dataset_name== "mmr_simd_dose2" ~ "3y 5 months")
 
+  imm_simd_data %<>% dplyr::rename("percent_uptake" = names(select(imm_simd_data, ends_with("_percent"))))
+
   percent_name <- case_when(dataset_name == "six_simd_dose1" ~ "12weeks",
                             dataset_name == "six_simd_dose2" ~ "16weeks",
                             dataset_name == "six_simd_dose3" ~ "20weeks",
@@ -1478,9 +1480,9 @@ plot_immun_simd <- function(imm_simd_data){
     filter(cohort == "monthly") %>%
     mutate(time_period_eligible = paste0("01", time_period_eligible)) %>%
     mutate(time_period_eligible = dmy(time_period_eligible)) %>%
-    select(time_period_eligible, simdq, paste0("uptake_", percent_name, "_percent")) %>%
+    select(time_period_eligible, simdq, percent_uptake) %>%
     pivot_wider(names_from = simdq,
-                values_from = paste0("uptake_", percent_name, "_percent"))
+                values_from = percent_uptake)
 
   #Modifying standard xaxis name applies to all curves
   xaxis_plots[["title"]] <- "Month"
@@ -1492,16 +1494,13 @@ plot_immun_simd <- function(imm_simd_data){
   #count the number of distinct months in the dataset - used later to correctly adjust chart
   month_count <- length(unique(graph_data$time_period_eligible))
 
-  # not formatted correctly
   tooltip_trend <- c(paste0("Month: ", format(graph_data$time_period_eligible, "%B %Y"),"<br>",
-                          "Deprivation quintile: ", graph_data$simdq, "<br>",
-                          "Percentage uptake: ",format(as.numeric(graph_data$simdq)), "%"
-                            ))
+                            "1 (most deprived): ", format(as.numeric(graph_data$`1 - most deprived`)), "%", "<br>",
+                            "2: ", format(as.numeric(graph_data$`2`)), "%", "<br>",
+                            "3: ", format(as.numeric(graph_data$`3`)), "%", "<br>",
+                            "4: ", format(as.numeric(graph_data$`4`)), "%", "<br>",
+                            "5 (least deprived): ", format(as.numeric(graph_data$`5 - least deprived`)), "%"))
 
-  # tooltip_trend <- c(paste0(trend_data$category, "<br>",
-  #                           period_data,
-  #                           "<br>", "Change from ", aver_period, " average: ",
-  #                           round(trend_data$variation, 1), "%"))
 
   xaxis_plots[["rangeslider"]] <- list(range="week_ending", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
 
@@ -1571,8 +1570,6 @@ plot_imm_simd_bar <- function(imm_simd_data){
   imm_simd_data %<>% dplyr::rename("percent_var" = names(select(imm_simd_data, ends_with("_percent"))))
   imm_simd_data %<>% dplyr::rename("baseline_var" = names(select(imm_simd_data, ends_with("weeks"))))
 
-
-
   recent_year <- imm_simd_data %>%
     filter(cohort == "monthly") %>%
     group_by(simdq) %>%
@@ -1584,20 +1581,14 @@ plot_imm_simd_bar <- function(imm_simd_data){
     filter(cohort == "yearly") %>%
     left_join(recent_year) %>%
     distinct() %>%
-    #group_by(simdq) %>%
-    # mutate(uptake_2022 = mean(percent_var)) %>%
-    #mutate(uptake_2022 = ((paste0("uptake_", percent_name, "_percent")/mean_denom)*100)) %>%
-    #ungroup() %>%
-    #round(uptake_2022, 1) #%>%
     select(time_period_eligible, simdq, percent_var, baseline_var, uptake_2022)
-
 
   #Modifying standard xaxis name applies to all curves
   xaxis_plots[["title"]] <- "SIMD Quintile"
   xaxis_plots[["tickangle"]] <- 315
 
   yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
-  yaxis_plots[["title"]] <- paste0("% uptake by ", elig) # elig isn't working
+  yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
 
   #count the number of distinct months in the dataset - used later to correctly adjust chart
   year_count <- length(unique(graph_data$time_period_eligible))
@@ -1614,7 +1605,10 @@ plot_imm_simd_bar <- function(imm_simd_data){
 
   #tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
 
-  yr_pal <- c('#0078D4', '#DFDDE3', '#DFDDE3', '#DFDDE3', '#83BB26')
+  # yr_pal <-c("2020" = "#00008B",
+  #            "2021" = "#FF6EB4")
+
+  yr_pal <-c('#00008B','#FF6EB4')
 
   #browser()
   #Creating bar plot
@@ -1629,9 +1623,10 @@ plot_imm_simd_bar <- function(imm_simd_data){
     ) %>%
     add_bars(y = ~percent_var,
              split = ~time_period_eligible,
-             color=~time_period_eligible,
+             #color=~time_period_eligible,
              textposition="none",
              colors=yr_pal,
+             #marker=yr_pal,
              text= tooltip_bars,
              hoverinfo="text"
     )%>%
@@ -1668,7 +1663,6 @@ plot_imm_simd_change <- function(imm_simd_data){
                     dataset_name == "mmr_simd_dose1" ~ "13 months",
                     dataset_name == "mmr_simd_dose2" ~ "3years 5 months")
 
-
   # define changing baseline column name depending on dataset
   baseline <- case_when(dataset_name == "six_simd_dose1" ~ "week12",
                         dataset_name == "six_simd_dose2" ~ "week16",
@@ -1696,28 +1690,42 @@ plot_imm_simd_change <- function(imm_simd_data){
   yaxis_plots[["zerolinecolor"]] <- "#C73918"
   yaxis_plots[["zerolinewidth"]] <- 2
 
-  tooltip_subplot <- c(paste0("Cohort: ", abs_change$time_period_eligible, "<br>",
-                           "Deprivation quintile: ", abs_change$simdq, "<br>",
-                           "Percentage uptake: ", abs_change$abs_diff, "%"))
-
   abs_change_1 <- abs_change %>%
-    filter(simdq == "1 - most deprived") %>%
+    filter(simdq == "1 - most deprived")
+
+  abs_change_plot_1 <- abs_change_1 %>%
     plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "1 - most deprived",
-             type = 'scatter', mode = 'lines', line = list(color="#AF69A9")) %>%
+             type = 'scatter', mode = 'lines', line = list(color="#AF69A9"),
+             text = paste0("Cohort: ", format(abs_change_1$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 1 (most deprived) <br>",
+                           "Percentage uptake: ", round(abs_change_1$abs_diff,1), "%"),
+             hoverinfo = 'text') %>%
     layout(xaxis = xaxis_plots,
            yaxis = yaxis_plots)
 
   abs_change_2 <- abs_change %>%
-    filter(simdq == "2") %>%
+    filter(simdq == "2")
+
+  abs_change_plot_2 <- abs_change_2 %>%
     plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "2",
-             type = 'scatter', mode = 'lines' , line = list(color="#3393DD")) %>%
+             type = 'scatter', mode = 'lines' , line = list(color="#3393DD"),
+             text = paste0("Cohort: ", format(abs_change_2$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 2 <br>",
+                           "Percentage uptake: ", round(abs_change_2$abs_diff,1), "%"),
+             hoverinfo = 'text') %>%
     layout(xaxis = xaxis_plots,
            yaxis = yaxis_plots)
 
   abs_change_3 <- abs_change %>%
-    filter(simdq == "3") %>%
+    filter(simdq == "3")
+
+  abs_change_plot_3 <- abs_change_3 %>%
     plot_ly( x = ~`time_period_eligible`, y=~`abs_diff`, name = "3",
-             type = 'scatter', mode = 'lines' , line = list(color="#655E9D"))%>%
+             type = 'scatter', mode = 'lines' , line = list(color="#655E9D"),
+             text = paste0("Cohort: ", format(abs_change_3$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 3 <br>",
+                           "Percentage uptake: ", round(abs_change_3$abs_diff,1), "%"),
+             hoverinfo = 'text')%>%
     layout(xaxis = list(title = "Month", tickangle = 315,
                         tickfont = list(size=14), titlefont = list(size=14),
                         showline = TRUE, fixedrange=TRUE),
@@ -1725,24 +1733,35 @@ plot_imm_simd_change <- function(imm_simd_data){
 
 
   abs_change_4 <- abs_change %>%
-    filter(simdq == "4") %>%
+    filter(simdq == "4")
+
+  abs_change_plot_4 <- abs_change_4 %>%
     plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "4",
-             type = 'scatter', mode = 'lines' , line = list(color="#6B5C85"))%>%
+             type = 'scatter', mode = 'lines' , line = list(color="#6B5C85"),
+             text = paste0("Cohort: ", format(abs_change_4$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 4 <br>",
+                           "Percentage uptake: ", round(abs_change_4$abs_diff,1), "%"),
+             hoverinfo = 'text')%>%
     layout(xaxis = xaxis_plots,
            yaxis = yaxis_plots)
 
   abs_change_5 <- abs_change %>%
-    filter(simdq == "5 - least deprived") %>%
+    filter(simdq == "5 - least deprived")
+
+  abs_change_plot_5 <- abs_change_5 %>%
     plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "5 - least deprived",
-             type = 'scatter', mode = 'lines' , line = list(color="#1E7F84")) %>%
+             type = 'scatter', mode = 'lines' , line = list(color="#1E7F84"),
+             text = paste0("Cohort: ", format(abs_change_5$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 5 (least deprived) <br>",
+                           "Percentage uptake: ", round(abs_change_5$abs_diff,1), "%"),
+             hoverinfo = 'text'
+             ) %>%
     layout(xaxis = xaxis_plots,
            yaxis = yaxis_plots)
 
-  abs_change_plot <- subplot(abs_change_1, abs_change_2, abs_change_3, abs_change_4, abs_change_5,
+  abs_change_plot <- subplot(abs_change_plot_1, abs_change_plot_2, abs_change_plot_3, abs_change_plot_4, abs_change_plot_5,
                              shareY = TRUE, shareX = TRUE) %>%
-    layout(legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T,
-           text= tooltip_subplot,
-           hoverinfo="text" ) %>%
+    layout(legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T) %>%
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 
