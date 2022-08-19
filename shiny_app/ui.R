@@ -14,6 +14,7 @@ source(file.path('ui/drugs_ui.R'),  local = TRUE)$value
 source(file.path('ui/data_ui.R'),  local = TRUE)$value 
 
 # secure_app( #uncomment if needing password protection
+
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   

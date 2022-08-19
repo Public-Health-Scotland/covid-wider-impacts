@@ -67,12 +67,13 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # Change extract to F if you just want to run the data prep and not the extraction
 # (quicker once the extraction has been done once)
 
-create_rapid(last_week =  "2022-07-24", extract = T) # this requires access to the RAPID dataset
+create_rapid(last_week =  "2022-07-24", last_month = "2022-07-01", extract = T) # this requires access to the RAPID dataset
 create_ae(filedate = "2022-07-28", last_week =  "2022-07-24")
 create_ooh(filename = "2022-08-01", last_week = "2022-07-24")
 create_nhs24(filedate = "2022-08-01", last_week =  "2022-07-24")
 create_sas(filedate = "2022-08-01", last_week =  "2022-07-24")
 create_ooh_cons(filename = "2022-08-01", last_week = "2022-07-24")
+
 
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function

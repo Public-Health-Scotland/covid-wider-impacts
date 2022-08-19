@@ -32,6 +32,7 @@ geo_lookup <- readRDS("data/geo_lookup.rds")
 spec_lookup_rapid <- readRDS("data/spec_lookup_rapid.rds")
 spec_lookup_op <- readRDS("data/spec_lookup_op.rds")
 ae_cardio_codes <- readRDS("data/ae_cardio_codes.rds")
+eth_lookup <- readRDS("data/ethnicity_lookup.rds")
 
 rapid <- readRDS("data/rapid.rds") #RAPID data
 aye <- readRDS("data/ae.rds") #A&E data

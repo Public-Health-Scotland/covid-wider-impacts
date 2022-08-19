@@ -60,7 +60,7 @@
 /* INFO BUTTONS */
 
 /* Change the buttons to light blue background with dark blue font - must go above the radio button styling otherwise it is overridden */
-.btn:not(.dropdown-toggle):not(.btn-primary) {
+.btn:not(.dropdown-toggle):not(.btn-primary):not(.bs-select-all):not(.bs-deselect-all) {
   margin: 0;
   font-weight: bold;
   background-color: #E6F2FB;
@@ -79,23 +79,17 @@
   border-radius: 10px;
 } 
 
+
 /* this adds a light purple shading to behind the drop-down boxes to make them standout */
   .shiny-input-container:not(.shiny-input-container-inline):not(.shiny-input-radiogroup){
     width: auto;
     background-color: #ECEBF3;
-    padding: 0 5px 0 5px; 
+    padding:5px 5px 0 5px ;
     border-radius: 10px;
   } 
+  
 
-
- 
-/* this adds some padding around the filter titles*/
-.control-label {
-  padding:5px;
-} 
-
-
-/* These remove the light purple shading from the buttons on the Cancer tab */
+/* These remove the light purple shading from the buttons on the Cancer tabs and Substance use tab */
 #baseline.shiny-input-container {
   background-color: #ffffff;
 }
@@ -131,6 +125,65 @@
 #sact_plot_wk_filter.shiny-input-container {
   background-color: #ffffff;
 }
+
+#types.shiny-input-container {
+  background-color: #ffffff;
+}
+
+
+/* Remove the light purple shading from Summary tab specialty filter */
+#data_explorer > div:nth-child(13) > div:nth-child(1) > div {
+  background-color: #ffffff;
+} 
+
+/*Remove the light purple shading from Summary tab ethnicity filter */
+#data_explorer > div:nth-child(16) > div:nth-child(1) > div {
+  background-color: #ffffff;
+}
+
+/* These add padding around the title of the radio buttons (can't do globally using .control-label as 
+it adds padding to the drop downs which throws off alignment) */
+#summary-measure-label {
+  padding: 5px;
+}
+
+#cardio-measure-label {
+  padding: 5px;
+}
+
+#injury-measure-label {
+  padding: 5px;
+}
+
+#mh-measure-label {
+  padding: 5px;
+}
+
+#perinatal-measure-label {
+  padding: 5px;
+}
+
+#immun-measure-label {
+  padding: 5px;
+}
+
+#childr-measure-label {
+  padding: 5px;
+}
+
+#bf-measure-label {
+  padding: 5px;
+}
+
+#childdev-measure-label {
+  padding: 5px;
+}
+
+#drugs-measure-label {
+  padding: 5px;
+}
+
+
 
 
 /* SIDE BAR SELECTORS */
@@ -201,8 +254,4 @@ h2, h3, h4 {
   
 }
 
-/* Changes the colour on the plot slider to light purple - the colour can be changed in functions server script
-.rangeslider-max-min {
-  background-color: #ECEBF3;
-  
-} */
+

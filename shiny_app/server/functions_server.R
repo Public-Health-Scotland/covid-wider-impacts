@@ -888,7 +888,7 @@ plot_sact_wk_difference_chart_treatment <- function(sact_wk_dataset) {
 ## # Function that creates specialty charts.   ----
 ###############################################.
 # Potentially could be merge with trend one
-plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
+plot_spec <- function(type, dataset, marg = NULL, period = "weekly", op = F) {
   trend_data <- dataset
 
   if (type == "variation") {
