@@ -1568,32 +1568,28 @@ plot_imm_simd_bar <- function(imm_simd_data){
                     dataset_name == "mmr_simd_dose1" ~ "13 months",
                     dataset_name == "mmr_simd_dose2" ~ "3years 5 months")
 
-  # define changing percentage uptake column name depending on dataset
-  percent_name <- case_when(dataset_name == "six_simd_dose1" ~ "12weeks",
-                            dataset_name == "six_simd_dose2" ~ "16weeks",
-                            dataset_name == "six_simd_dose3" ~ "20weeks",
-                            dataset_name == "mmr_simd_dose1" ~ "57weeks",
-                            dataset_name == "mmr_simd_dose2" ~ "178weeks")
-
   imm_simd_data %<>% dplyr::rename("percent_var" = names(select(imm_simd_data, ends_with("_percent"))))
+  imm_simd_data %<>% dplyr::rename("baseline_var" = names(select(imm_simd_data, ends_with("weeks"))))
+
+
 
   recent_year <- imm_simd_data %>%
     filter(cohort == "monthly") %>%
     group_by(simdq) %>%
     mutate(uptake_2022 = mean(percent_var)) %>%
+    ungroup() %>%
     select(simdq, uptake_2022)
 
   graph_data <- imm_simd_data %>%
     filter(cohort == "yearly") %>%
     left_join(recent_year) %>%
-    group_by(simdq) %>%
+    distinct() %>%
+    #group_by(simdq) %>%
     # mutate(uptake_2022 = mean(percent_var)) %>%
     #mutate(uptake_2022 = ((paste0("uptake_", percent_name, "_percent")/mean_denom)*100)) %>%
     #ungroup() %>%
     #round(uptake_2022, 1) #%>%
-    select(time_period_eligible, simdq, percent_var,
-           #paste0("uptake_", percent_name, "_percent"),
-           paste0("baseline_", percent_name), uptake_2022)
+    select(time_period_eligible, simdq, percent_var, baseline_var, uptake_2022)
 
 
   #Modifying standard xaxis name applies to all curves
@@ -1605,8 +1601,6 @@ plot_imm_simd_bar <- function(imm_simd_data){
 
   #count the number of distinct months in the dataset - used later to correctly adjust chart
   year_count <- length(unique(graph_data$time_period_eligible))
-
-  graph_data %<>% dplyr::rename("baseline_var" = names(select(imm_simd_data, ends_with("weeks"))))
 
   tooltip_2019 <- c(paste0("Cohort: 2019", "<br>",
                            "Deprivation quintile: ", graph_data$simdq, "<br>",
@@ -1622,6 +1616,7 @@ plot_imm_simd_bar <- function(imm_simd_data){
 
   yr_pal <- c('#0078D4', '#DFDDE3', '#DFDDE3', '#DFDDE3', '#83BB26')
 
+  #browser()
   #Creating bar plot
   simd_plot <- plot_ly(data=graph_data, x = ~simdq) %>%
     add_trace(type = 'bar',
@@ -1633,7 +1628,7 @@ plot_imm_simd_bar <- function(imm_simd_data){
               textposition="none"
     ) %>%
     add_bars(y = ~percent_var,
-             #split = ~time_period_eligible,
+             split = ~time_period_eligible,
              color=~time_period_eligible,
              textposition="none",
              colors=yr_pal,
