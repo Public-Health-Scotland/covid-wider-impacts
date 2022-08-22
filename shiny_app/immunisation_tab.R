@@ -118,6 +118,20 @@ filter_table_data_immun <- function(dataset){
                        time_period_eligible %in% isolate(input$dates_immun))
 }
 
+filter_chart_data_immun <- function(dataset){
+
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+
+  dataset %>% filter(area_name == input$geoname_immun &
+                       str_detect(immunisation, #filter immunisation scurve data on dose
+                                  substr(input$measure_select_immun,
+                                         nchar(input$measure_select_immun),
+                                         nchar(input$measure_select_immun))),
+                     !str_detect(time_period_eligible, "W/B"))
+}
+
+
 ###############################################.
 ## Reactive data ----
 ###############################################.
@@ -128,6 +142,15 @@ six_alldose_filt <- reactive({
 mmr_alldose_filt <- reactive({
    filter_table_data_immun(mmr_alldose)
 })
+
+six_alldose_filt2 <- reactive({
+  filter_chart_data_immun(six_alldose)
+})
+
+mmr_alldose_filt2 <- reactive({
+  filter_chart_data_immun(mmr_alldose)
+})
+
 
 ###############################################.
 ## Charts ----
@@ -140,10 +163,18 @@ output$immun_scurve <- renderPlotly({
   input$btn_update_time_immun
 
   if (substr(input$measure_select_immun, 1, 3) == "six") {
-    scurve_data <-  six_alldose_filt()
+    scurve_data <-  six_alldose_filt2()
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
-    scurve_data <-  mmr_alldose_filt()
+    scurve_data <-  mmr_alldose_filt2()
   }
+
+  if (substr(input$measure_select_immun, 1, 3) == "six") {
+    scurve_data_col <- six_alldose_filt()
+  } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
+    scurve_data_col <- mmr_alldose_filt()
+  }
+
+  browser()
 
   dose <- paste("dose", #extracting dose from input
                 substr(input$measure_select_immun, nchar(input$measure_select_immun),
@@ -205,12 +236,14 @@ output$immun_scurve <- renderPlotly({
       age_unit <- paste0("3y 4months") #string for legend label
     }
 
-
     #Creating time trend plot
     plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
       add_trace(type = 'scatter', mode = 'lines',
-                color = ~time_period_eligible, colors = pal_immun,
+                color = ~time_period_eligible, colors = "#d3d3d3",
                 text= tooltip_scurve, hoverinfo="text") %>%
+      # add_trace(type = 'scatter', mode = 'lines',
+      #           color = ~time_period_eligible, colors = pal_immun,
+      #           text= tooltip_scurve, hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -376,9 +409,11 @@ output$immun_scurve <- renderPlotly({
   input$btn_update_time_immun
 
   if (substr(input$measure_select_immun, 1, 3) == "six") {
-    scurve_data <-  six_alldose_filt()
+    scurve_data <-  six_alldose_filt2()
+    scurve_data_col <- six_alldose_filt()
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
-    scurve_data <-  mmr_alldose_filt()
+    scurve_data <-  mmr_alldose_filt2()
+    scruve_data <- mmr_alldose_filt2()
   }
 
   dose <- paste("dose", #extracting dose from input
@@ -441,10 +476,15 @@ output$immun_scurve <- renderPlotly({
       age_unit <- paste0("3y 4months") #string for legend label
     }
 
+    browser()
 
     #Creating time trend plot
-    plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
-      add_trace(type = 'scatter', mode = 'lines',
+    plot_ly(x=~interv,  y = ~surv) %>%
+      add_trace(data=scurve_data, type = 'scatter', mode = 'lines',
+                color = ~time_period_eligible, colors = "#d3d3d3", #colors = pal_immun,
+                text= tooltip_scurve, hoverinfo="text") %>%
+      add_trace(data = scurve_data_col,# x=~interv, y=~surv,
+                type = 'scatter', mode = 'lines',
                 color = ~time_period_eligible, colors = pal_immun,
                 text= tooltip_scurve, hoverinfo="text") %>%
       #Layout
