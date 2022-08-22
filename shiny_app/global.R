@@ -176,7 +176,7 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "13 July 2022"
+booking_extract_date <- "17 August 2022"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
@@ -186,7 +186,7 @@ top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "18 July 2022"
+mod_extract_date <- "12 August 2022"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
@@ -215,13 +215,13 @@ child_dev_domains <- readRDS("data/child_dev_domains.rds")
 
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "13 July 2022"
+apgar_extract_date <- "12 August 2022"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
 apgar_download <- readRDS("data/apgar_download_data.rds")
 
-# Preterm
+# Preterm - updated quarterly
 preterm_extract_date <- "13 June 2022"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
@@ -256,25 +256,26 @@ home_list <- c("About" = "about",
                 "Accessibility" = "accessibility")
  
  # List of sections in Commentary tab
-commentary_list <- c("Summary trends" = "summary",
-                      "Cardiovascular" = "cardio",
-                      "Cancer" = "cancer",
-                      "Injuries" = "injuries",
-                      "Mental health" = "mental-health",
+commentary_list <- c(
+                      # "Summary trends" = "summary",
+                      # "Cardiovascular" = "cardio",
+                      # "Cancer" = "cancer",
+                      # "Injuries" = "injuries",
+                      # "Mental health" = "mental-health",
                       "Antenatal bookings" = "booking",
-                      "Termination of pregnancy" = "termination",
+                      # "Termination of pregnancy" = "termination",
                       "Induction of labour" = "induction",
                       "Method of delivery" = "delivery",
                       "Gestation at delivery" = "gestation",
                       "Apgar scores" = "apgar",
                       "Location of extremely preterm babies" = "preterm",
-                      "Perineal tears" = "tears",
-                      "Stillbirths and infant deaths" = "perinatal",
-                      "Immunisations" = "immunisation",
-                      "Child health reviews" = "child-health",
-                      "Breastfeeding" = "breastfeeding",
-                      "Child development" = "child-dev",
-                      "Substance use" = "drugs"
+                      "Perineal tears" = "tears"
+                      # "Stillbirths and infant deaths" = "perinatal",
+                      # "Immunisations" = "immunisation",
+                      # "Child health reviews" = "child-health",
+                      # "Breastfeeding" = "breastfeeding",
+                      # "Child development" = "child-dev",
+                      # "Substance use" = "drugs"
                       )
 
 spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
