@@ -102,8 +102,7 @@ observeEvent(input$`summ-source-modal`,
                           "Public Health Scotland (PHS).",  target="_blank"), "This dataset is submitted daily to 
                   PHS and relates mainly to general acute care.
                    Exclusions from the RAPID dataset are day cases, neonatal, maternity and
-                   psychiatric care admissions. Admissions to the Golden Jubilee National Hospital are
-                   also not included. Admissions related to COVID-19 will be included in totals. 
+                   psychiatric care admissions. Admissions related to COVID-19 will be included in totals. 
                   Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  p("Hospital admissions are allocated to weeks based on the ISO8601 standard. Following this standard 
                    the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 
