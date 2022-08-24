@@ -1594,7 +1594,9 @@ plot_imm_simd_bar <- function(imm_simd_data){
     select(time_period_eligible, simdq, percent_var) %>%
     rbind(additional_bars) %>%
     group_by(simdq) %>%
-    factor(time_period_eligible, levels=c("2019", "2020", "2021", "2022*"))
+    mutate(time_period_eligible = as.character(time_period_eligible))
+
+  #graph_data$time_period_eligible <- base::factor(time_period_eligible, levels=c('2019', '2020', '2021', '2022*'))
 
   #Modifying standard xaxis name applies to all curves
   xaxis_plots[["title"]] <- "SIMD Quintile"

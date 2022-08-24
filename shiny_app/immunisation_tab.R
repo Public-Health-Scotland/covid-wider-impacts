@@ -413,7 +413,7 @@ output$immun_scurve <- renderPlotly({
     scurve_data_col <- six_alldose_filt()
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
     scurve_data <-  mmr_alldose_filt2()
-    scruve_data <- mmr_alldose_filt2()
+    scruve_data_col <- mmr_alldose_filt()
   }
 
   dose <- paste("dose", #extracting dose from input
