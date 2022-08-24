@@ -38,6 +38,7 @@ geo_lookup <- bind_rows(
   geo_lookup,
   op_lookup,
   tibble(code = paste0("S9900000", 1:3), areaname = c("NCA", "SCAN", "WOSCAN"), areatype = "Cancer network"),
+  tibble(code = paste0("S08100001"), areaname = "NHS Golden Jubilee", areatype = "Health board"),
   tibble(code = paste0("S9800000", 1:31), areatype = "Alcohol and drug partnership",
          areaname = c("Aberdeen City ADP", "Aberdeenshire ADP", "Angus ADP", "Argyll & Bute ADP", 
                   "City of Edinburgh ADP", "City of Glasgow ADP", "Clackmannanshire ADP", 
@@ -49,6 +50,6 @@ geo_lookup <- bind_rows(
                   "Shetland Islands ADP", "South Ayrshire ADP", "South Lanarkshire ADP", 
                   "Stirling ADP", "West Dunbartonshire ADP", "West Lothian ADP", 
                   "Western Isles ADP"))
-)
+) %>% arrange(areatype, code, areaname)
 
 saveRDS(geo_lookup, "shiny_app/data/geo_lookup.rds")
