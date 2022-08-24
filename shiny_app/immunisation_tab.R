@@ -476,7 +476,7 @@ output$immun_scurve <- renderPlotly({
       age_unit <- paste0("3y 4months") #string for legend label
     }
 
-    browser()
+    #browser()
 
     #Creating time trend plot
     plot_ly(x=~interv,  y = ~surv) %>%
