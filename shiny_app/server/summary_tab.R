@@ -592,7 +592,7 @@ output$data_explorer <- renderUI({
                                       "Specialties and their groups",
                                       icon = icon('question-circle'), style="float:right")))),
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
-               column(6, withSpinner(plotlyOutput("adm_spec_tot")))),
+               column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
     #   fluidRow(
     #     column(12,
     #            h4(paste0("Monthly number of ", dataset, " by ethnic group")),
