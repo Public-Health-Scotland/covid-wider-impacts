@@ -128,7 +128,12 @@ filter_chart_data_immun <- function(dataset){
                                   substr(input$measure_select_immun,
                                          nchar(input$measure_select_immun),
                                          nchar(input$measure_select_immun))),
-                     !str_detect(time_period_eligible, "W/B"))
+                     !str_detect(time_period_eligible, "W/B")#,
+                     #exclude == 0
+                     ) %>%
+    mutate(colour_flag = case_when(time_period_eligible %in% isolate(input$dates_immun) ~ 1,
+                                   TRUE ~ 0)) %>%
+    group_by(colour_flag)
 }
 
 
@@ -163,18 +168,18 @@ output$immun_scurve <- renderPlotly({
   input$btn_update_time_immun
 
   if (substr(input$measure_select_immun, 1, 3) == "six") {
-    scurve_data <-  six_alldose_filt2()
+    scurve_data <-  six_alldose_filt()
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
-    scurve_data <-  mmr_alldose_filt2()
+    scurve_data <-  mmr_alldose_filt()
   }
 
   if (substr(input$measure_select_immun, 1, 3) == "six") {
-    scurve_data_col <- six_alldose_filt()
+    scurve_data_col <- six_alldose_filt2()
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
-    scurve_data_col <- mmr_alldose_filt()
+    scurve_data_col <- mmr_alldose_filt2()
   }
 
-  browser()
+  #browser()
 
   dose <- paste("dose", #extracting dose from input
                 substr(input$measure_select_immun, nchar(input$measure_select_immun),
@@ -195,9 +200,6 @@ output$immun_scurve <- renderPlotly({
   } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
   } else {
-
-    # Create tooltip for scurve
-    tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
 
     #Modifying standard yaxis name applies to all curves
     yaxis_plots[["title"]] <- "% of children who have received their vaccine"
@@ -236,14 +238,29 @@ output$immun_scurve <- renderPlotly({
       age_unit <- paste0("3y 4months") #string for legend label
     }
 
+
+
+    coloured_lines <- scurve_data_col %>%
+      filter(colour_flag == 1)
+
+    grey_lines <- scurve_data_col %>%
+      filter(colour_flag ==0)
+
+    # Create tooltip for scurves
+    tooltip_grey <- c(paste0("Cohort: ", grey_lines$time_period_eligible))
+    tooltip_col <- c(paste0("Cohort: ", coloured_lines$time_period_eligible))
+
     #Creating time trend plot
-    plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
-      add_trace(type = 'scatter', mode = 'lines',
-                color = ~time_period_eligible, colors = "#d3d3d3",
-                text= tooltip_scurve, hoverinfo="text") %>%
-      # add_trace(type = 'scatter', mode = 'lines',
-      #           color = ~time_period_eligible, colors = pal_immun,
-      #           text= tooltip_scurve, hoverinfo="text") %>%
+    plot_ly() %>%
+      add_trace(data = grey_lines, x=~interv,  y = ~surv,
+                type = 'scatter', mode = 'lines', line = list(color="d3d3d3"),
+                name = "unselected time periods",
+                text= tooltip_grey, hoverinfo="text") %>%
+      add_trace(data = coloured_lines, x=~interv,  y = ~surv,
+                type = 'scatter', mode = 'lines',
+                color = ~time_period_eligible, colors = twelve_imm_col,
+                text= tooltip_col,hoverinfo="text") %>%
+
       #Layout
       layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -402,100 +419,7 @@ plot_choice <- reactive({switch(input$measure_select_immun,
 noplot_choice <- reactive({switch(input$geotype_immun,
                                   "Health board" = "empty_plot")})
 
-# Creating plots for each dataset
-#run chart function to generate s curves
-output$immun_scurve <- renderPlotly({
-  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
-  input$btn_update_time_immun
-
-  if (substr(input$measure_select_immun, 1, 3) == "six") {
-    scurve_data <-  six_alldose_filt2()
-    scurve_data_col <- six_alldose_filt()
-  } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
-    scurve_data <-  mmr_alldose_filt2()
-    scruve_data_col <- mmr_alldose_filt()
-  }
-
-  dose <- paste("dose", #extracting dose from input
-                substr(input$measure_select_immun, nchar(input$measure_select_immun),
-                       nchar(input$measure_select_immun)))
-
-  imm_type <- substr(unique(scurve_data$immunisation),1,3)
-
-  # Age week starting for each dose
-  age_week <- case_when(imm_type == "six" & dose == "dose 1" ~ "8",
-                        imm_type == "six" & dose == "dose 2" ~ "12",
-                        imm_type == "six" & dose == "dose 3" ~ "16",
-                        imm_type == "mmr" & dose == "dose 1" ~ "1",
-                        imm_type == "mmr" & dose == "dose 2" ~ "3")
-
-  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0 && input$geoname_immun == "NHS Grampian" && dose== "dose 2")
-  { plot_nodata(height = 50, text_nodata = "Chart not available, NHS Grampian offer 2nd dose of MMR vaccine at 4 years of age.
-                Data is available from the data download option.")
-  } else if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
-  { plot_nodata(height = 50)
-  } else {
-
-    # Create tooltip for scurve
-    tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
-
-    #Modifying standard yaxis name applies to all curves
-    yaxis_plots[["title"]] <- "% of children who have received their vaccine"
-    yaxis_plots[["range"]] <- c(0, 100)  # forcing range from 0 to 100%
-    xaxis_plots[["tickmode"]] <- "array"  # For custom tick labels
-
-    ## chart axis for all 6-in-1 scurves
-    if(imm_type == "six"){ # this doesn't seem like very efficient logic but it works
-
-      xaxis_plots[["title"]] <- "Age of children in weeks"
-      xaxis_plots[["tickvals"]] <- c(0, seq(56, 308, by = 28))
-      xaxis_plots[["ticktext"]] <- c(0, seq(8, 44, by = 4))
-      xaxis_plots[["range"]] <- c((7*(as.numeric(age_week)-4)),((as.numeric(age_week)+16))*7) # To adjust x-axis min and max depending on which dose selected
-
-      age_unit <- paste0(age_week, " weeks") #string for legend label
-    }
-    ##chart axis for MMR dose 1 scurve
-    else if(imm_type == "mmr" && dose== "dose 1" ){ #set chart parameters for mmr dose 1
-
-      xaxis_plots[["title"]] <- "Age of children in months"
-      xaxis_plots[["tickvals"]] <- c(0, seq(343, 459, by = 29), 490) # xaxis days 343 (49 weeks) to 490 (70 weeks)
-      xaxis_plots[["ticktext"]] <- c(0, seq(11, 16, by = 1))  # xaxis labels 11 months (49 weeks) to 16 months (70 weeks)
-      xaxis_plots[["range"]] <- c((7*49),(7*70))  # To adjust x-axis min and max depending on which dose selected
-
-      age_unit <- paste0("12 months") #string for legend label
-    }
-
-    ##chart axis for MMR dose 2 scurve
-    else if(imm_type == "mmr" && dose== "dose 2" ){ #set chart parameters for mmr dose 2
-
-      xaxis_plots[["title"]] <- "Age of children in years and months"
-      xaxis_plots[["tickvals"]] <- c(0, seq(1190, 1306, by = 29), 1337) #xaxis 1190 days (170 week) to 1337 days (191 weeks)
-      xaxis_plots[["ticktext"]] <- c(0, seq(3.3,3.8 , by = 0.1))  # xaxis labels in years and months (works even though months are not decimals because we only show part of a year?)
-      xaxis_plots[["range"]] <- c((7*170),(7*191))  # To adjust x-axis min and max depending on which dose selected
-
-      age_unit <- paste0("3y 4months") #string for legend label
-    }
-
-    #browser()
-
-    #Creating time trend plot
-    plot_ly(x=~interv,  y = ~surv) %>%
-      add_trace(data=scurve_data, type = 'scatter', mode = 'lines',
-                color = ~time_period_eligible, colors = "#d3d3d3", #colors = pal_immun,
-                text= tooltip_scurve, hoverinfo="text") %>%
-      add_trace(data = scurve_data_col,# x=~interv, y=~surv,
-                type = 'scatter', mode = 'lines',
-                color = ~time_period_eligible, colors = pal_immun,
-                text= tooltip_scurve, hoverinfo="text") %>%
-      #Layout
-      layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
-             yaxis = yaxis_plots, xaxis = xaxis_plots,
-             legend = list(title=list(text=paste0("Children turning ", age_unit, " in:")),
-                           x = 100, y = 0.8, yanchor="top")) %>% #position of legend
-      # leaving only save plot button
-      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
-  }
-  })
+## Deprivation graphs outputs
 
 # outputs - monthly line graphs
 output$plot_six1_simd <- renderPlotly({ plot_immun_simd(six_simd_dose1) })
@@ -503,6 +427,7 @@ output$plot_six2_simd <- renderPlotly({ plot_immun_simd(six_simd_dose2) })
 output$plot_six3_simd <- renderPlotly({ plot_immun_simd(six_simd_dose3) })
 output$plot_mmr1_simd <- renderPlotly({ plot_immun_simd(mmr_simd_dose1) })
 output$plot_mmr2_simd <- renderPlotly({ plot_immun_simd(mmr_simd_dose2) })
+
 # # outputs - yearly bar charts
 output$plot_six1_simd_bar <- renderPlotly({ plot_imm_simd_bar(six_simd_dose1) })
 output$plot_six2_simd_bar <- renderPlotly({ plot_imm_simd_bar(six_simd_dose2) })
@@ -517,6 +442,7 @@ output$plot_six3_simd_change <- renderPlotly({ plot_imm_simd_change(six_simd_dos
 output$plot_mmr1_simd_change <- renderPlotly({ plot_imm_simd_change(mmr_simd_dose1)})
 output$plot_mmr2_simd_change <- renderPlotly({ plot_imm_simd_change(mmr_simd_dose2)})
 
+# no graph outputted
 output$empty_plot <- renderPlotly({ plot_nodata() })
 
 ###############################################.
@@ -629,8 +555,8 @@ output$immunisation_deprivation_output <- renderUI({
                             h4(paste0(immune_title)),
                             p(immune_subtitle))),
             fluidRow(column(6,br(), br(),
-                            withSpinner(plotlyOutput("immun_scurve"))#,
-                            #p(age_def) #??
+                            withSpinner(plotlyOutput("immun_scurve")),
+                            p(age_def)
             ),
             column(6, uiOutput("immun_table"))),
 
