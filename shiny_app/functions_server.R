@@ -1596,8 +1596,6 @@ plot_imm_simd_bar <- function(imm_simd_data){
     group_by(simdq) %>%
     mutate(time_period_eligible = as.character(time_period_eligible))
 
-  #graph_data$time_period_eligible <- base::factor(time_period_eligible, levels=c('2019', '2020', '2021', '2022*'))
-
   #Modifying standard xaxis name applies to all curves
   xaxis_plots[["title"]] <- "SIMD Quintile"
   xaxis_plots[["tickangle"]] <- 315
@@ -1709,9 +1707,7 @@ plot_imm_simd_change <- function(imm_simd_data){
                            "Deprivation quintile: 3 <br>",
                            "Percentage uptake: ", round(abs_change_3$abs_diff,1), "%"),
              hoverinfo = 'text')%>%
-    layout(xaxis = list(title = "Month", tickangle = 315,
-                        tickfont = list(size=14), titlefont = list(size=14),
-                        showline = TRUE, fixedrange=TRUE),
+    layout(xaxis = xaxis_plots,
            yaxis = yaxis_plots)
 
 
@@ -1737,8 +1733,7 @@ plot_imm_simd_change <- function(imm_simd_data){
              text = paste0("Cohort: ", format(abs_change_5$time_period_eligible, "%B %Y"), "<br>",
                            "Deprivation quintile: 5 (least deprived) <br>",
                            "Percentage uptake: ", round(abs_change_5$abs_diff,1), "%"),
-             hoverinfo = 'text'
-             ) %>%
+             hoverinfo = 'text') %>%
     layout(xaxis = xaxis_plots,
            yaxis = yaxis_plots)
 

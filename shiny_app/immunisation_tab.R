@@ -128,12 +128,9 @@ filter_chart_data_immun <- function(dataset){
                                   substr(input$measure_select_immun,
                                          nchar(input$measure_select_immun),
                                          nchar(input$measure_select_immun))),
-                     !str_detect(time_period_eligible, "W/B")#,
-                     #exclude == 0
-                     ) %>%
+                     !str_detect(time_period_eligible, "W/B")) %>%
     mutate(colour_flag = case_when(time_period_eligible %in% isolate(input$dates_immun) ~ 1,
-                                   TRUE ~ 0)) %>%
-    group_by(colour_flag)
+                                   TRUE ~ 0))
 }
 
 
@@ -178,8 +175,6 @@ output$immun_scurve <- renderPlotly({
   } else if (substr(input$measure_select_immun, 1, 3) == "mmr") {
     scurve_data_col <- mmr_alldose_filt2()
   }
-
-  #browser()
 
   dose <- paste("dose", #extracting dose from input
                 substr(input$measure_select_immun, nchar(input$measure_select_immun),
@@ -238,13 +233,33 @@ output$immun_scurve <- renderPlotly({
       age_unit <- paste0("3y 4months") #string for legend label
     }
 
+    #filter dataset to just time periods to be shown in grey
+    grey_lines <- scurve_data_col %>%
+      filter(colour_flag == 0)
 
-
+    #filter dataset to just time periods to be shown in colour
     coloured_lines <- scurve_data_col %>%
       filter(colour_flag == 1)
 
-    grey_lines <- scurve_data_col %>%
-      filter(colour_flag ==0)
+    #get names of time periods to be in colour
+    coloured_time <- coloured_lines %>%
+      ungroup() %>%
+      select(time_period_eligible) %>%
+      unique() %>%
+      .$time_period_eligible %>%
+      as.character()
+
+    #get number of columns for dataset of selected time periods
+    no_cols <- nrow(unique(coloured_time)) %>%
+      as.numeric()
+
+    #create empty list
+    colour_flag_palette = c()
+
+    #map colours from pal_immun onto list of time periods selected
+    for (i in seq_along(coloured_time)){
+      colour_flag_palette[[coloured_time[i]]] <- pal_immun[i]
+    }
 
     # Create tooltip for scurves
     tooltip_grey <- c(paste0("Cohort: ", grey_lines$time_period_eligible))
@@ -252,13 +267,15 @@ output$immun_scurve <- renderPlotly({
 
     #Creating time trend plot
     plot_ly() %>%
-      add_trace(data = grey_lines, x=~interv,  y = ~surv,
-                type = 'scatter', mode = 'lines', line = list(color="d3d3d3"),
-                name = "unselected time periods",
-                text= tooltip_grey, hoverinfo="text") %>%
+      ## commented out because add_trace() breaks colour palette
+      # add_trace(data = grey_lines, x=~interv,  y = ~surv,
+      #           type = 'scatter', mode = 'lines', line = list(color="d3d3d3"),
+      #           name = "unselected time periods",
+      #           text= tooltip_grey, hoverinfo="text") %>%
       add_trace(data = coloured_lines, x=~interv,  y = ~surv,
                 type = 'scatter', mode = 'lines',
-                color = ~time_period_eligible, colors = twelve_imm_col,
+                color = ~time_period_eligible,
+                line=list(), colors=colour_flag_palette,
                 text= tooltip_col,hoverinfo="text") %>%
 
       #Layout
@@ -482,9 +499,7 @@ output$immunisation_deprivation_output <- renderUI({
                           h4(paste0(immune_title)),
                           p(immune_subtitle))),
           fluidRow(column(6,br(), br(),
-                          withSpinner(plotlyOutput("immun_scurve"))#,
-                          #p(age_def) #??
-          ),
+                          withSpinner(plotlyOutput("immun_scurve"))),
           column(6, uiOutput("immun_table"))),
 
           tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age and the data tables provide the uptake rates at three specific time-points.  Data is provided  on children who have become eligible for immunisation during the pandemic (from March 2020 onwards) and for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison."),
@@ -521,7 +536,7 @@ output$immunisation_deprivation_output <- renderUI({
               br(), br(), br(),
               p(em("* Please note that data for the most recent year are incomplete, calculated as the mean uptake of the months of the year so far.")),
               br(),
-              p("The deprivation charts above show the immunisation uptake for children becoming eligible for their immunisation during the Covid-19 pandemic. The graph on the left shows this uptake by month, and the graph on the left  compared to those who became eligible in 2019, at all Scotland level. Early uptake achieved by 4 weeks after the children became eligible for their immunisation is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort. The early uptake rates are shown for children living in areas with different levels of deprivation."),
+              p("The deprivation charts above show the immunisation uptake for children becoming eligible for their immunisation during the Covid-19 pandemic. The graph on the left shows this uptake by month, and the graph on the right compared to those who became eligible in 2019, at all Scotland level. Early uptake achieved by 4 weeks after the children became eligible for their immunisation is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort. The early uptake rates are shown for children living in areas with different levels of deprivation."),
               p("The deprivation chart below shows the change in early uptake for children becoming eligible for their immunisation during the Covid-19 pandemic, compared to those who became eligible in 2019. Again, results are shown for children living in areas with different levels of deprivation. So, for example, if early uptake for children becoming eligible for an immunisation in 2019 and in March 2020 was 80% and 84% respectively, this would be shown on the ‘change’ chart as a 4% absolute increase in early uptake for children becoming eligible in March 2020. The deprivation data download (available through the button above the ‘change’ chart) also provides the relative change (5% in this example) as this allows an easier comparison across deprivation groups if the baseline level of uptake varies between groups."),
 
               br()),
@@ -529,13 +544,8 @@ output$immunisation_deprivation_output <- renderUI({
             column(12, h4(paste0(imm_change_title))),
             br(),
             column(12, withSpinner(plotlyOutput(plot_choice()[[3]]))),
-            br(),
-
-            tagList(
-              p("The deprivation chart above shows the change in early uptake for children becoming eligible for their immunisation during the Covid-19 pandemic, compared to those who became eligible in 2019.  Again, results are shown for children living in areas with different levels of deprivation. So, for example, if early uptake for children becoming eligible for an immunisation in 2019 and in March 2020 was 80% and 84% respectively, this would be shown on the ‘change’ chart as a 4% absolute increase in early uptake for children becoming eligible in March 2020. The deprivation data download (available through the button above the ‘change’ chart) also provides the relative change (5% in this example) as this allows an easier comparison across deprivation groups if the baseline level of uptake varies between groups."))
-
-          ) # fluid row bracket
-  )# taglist bracket
+            br()) # fluid row bracket
+          )# taglist bracket
   }
   else{
 
@@ -555,9 +565,7 @@ output$immunisation_deprivation_output <- renderUI({
                             h4(paste0(immune_title)),
                             p(immune_subtitle))),
             fluidRow(column(6,br(), br(),
-                            withSpinner(plotlyOutput("immun_scurve")),
-                            p(age_def)
-            ),
+                            withSpinner(plotlyOutput("immun_scurve"))),
             column(6, uiOutput("immun_table"))),
 
             tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age and the data tables provide the uptake rates at three specific time-points.  Data is provided  on children who have become eligible for immunisation during the pandemic (from March 2020 onwards) and for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison."),
