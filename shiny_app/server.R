@@ -42,7 +42,9 @@ function(input, output, session) {
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
                    tags$li("7 September 2022 - Systemic anti-cancer therapies data update."),
-                   tags$li("7 September 2022 - Monthly update of data (most sections).")
+                   tags$li("7 September 2022 - Monthly update of data (most sections)."),
+                   tags$li("5 October 2022 - Monthly update of data (most sections)."),
+                   tags$li("5 October 2022 - New section with data on cancer waiting time.")
                  ),
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
