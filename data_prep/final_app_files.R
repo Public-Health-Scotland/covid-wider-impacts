@@ -35,8 +35,8 @@ save_final_file("cancer_data_quarters_2yr", "15_Jul_22")
 
 ##########################################################.
 ## SACT ----
-save_final_file("sact_data", "22_Aug_22")
-save_final_file("sact_weekly_data", "22_Aug_22")
+save_final_file("sact_data", "29_Aug_22")
+save_final_file("sact_weekly_data", "29_Aug_22")
 
 ##########################################################.
 ## DCE ----
@@ -167,7 +167,7 @@ save_final_file("tears_linechart_data", "20_Jul_22")
 save_final_file("tears_download_data", "20_Jul_22")
 ##########################################################.
 ## Mental health  ----
-save_final_file("mentalhealth_drugs", "01_Aug_22") # Prescribing
+save_final_file("mentalhealth_drugs", "16_Aug_22") # Prescribing
 save_final_file("mh_A&E", "01_Aug_22") # A&E
 save_final_file("mh_ooh", "01_Aug_22") # OOH
 ##########################################################.
