@@ -212,7 +212,7 @@ sact_data_wk_diff_treatment <- reactive({
 
 
 ###############################################.
-## Reactive layout ---- MONTHLY
+## Reactive controls ---- 
 ###############################################.
 
 # sact reactive drop-down control showing list of area names depending on areatype selected
@@ -236,48 +236,15 @@ output$geoname_ui_sact <- renderUI({
 
 output$treatment_ui_sact <- renderUI({
   if (input$sact_plot_filter %in% c("Geographic area", "Standard graph")) {
-    div(radioButtons("sact_treatment", "Select administration route",
+    div(radioButtons("sact_treatment", "Step 3. Select administration route",
                      list("All","Intravenous","Oral","Subcutaneous","Intrathecal", "Other"), inline = TRUE,
                      selected = "All"))
   } else  {
-    div(radioButtons("sact_treatment", "Select administration route",
+    div(radioButtons("sact_treatment", "Step 3. Select administration route",
                      list("All","Intravenous","Oral","Subcutaneous","Intrathecal", "Other"), inline = TRUE,
                      selected = "All", disabled = TRUE))  
   } 
 })
-
-# The charts and text shown on the app will depend on what the user wants to see
-
-output$sact_explorer <- renderUI({
-  
-  # text for titles of cut charts
-  sact_site <- input$sact_type
-  
-  tagList(
-    
-    if(input$sact_plot_filter == "Geographic area" & input$geotype_sact %in% c("Scotland", "Cancer Network")){
-      plot_box(paste0("Monthly Number of Patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
-               "sact_incidence_area")
-    } else if (input$sact_plot_filter == "Geographic area" & input$geotype_sact == "Health Board"){
-      plot_box(paste0("Monthly Number of Patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
-               "sact_incidence")
-    } else if (input$sact_plot_filter == "Treatment administration"){
-      plot_box(paste0("Monthly Number of Patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
-               "sact_incidence_treatment")
-    } else if (input$sact_plot_filter == "Standard graph"){
-      plot_box(paste0("Monthly Number of Patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
-               "sact_incidence")
-    },
-    p(em("The monthly SACT activity shows the number of unique patients per full calendar month since January 2020. 
-         Patients receiving more than one treatment are counted once overall but may appear in counts for multiple administration 
-         routes. Monthly patient numbers are a good indication for long-term trends in SACT activity.", style = "font-family: 'calibri'; font-si15pt"))
-    ) # tag list
-  
-})
-
-###############################################.
-## Reactive layout ---- WEEKLY
-###############################################.
 
 # sact reactive drop-down control showing list of area names depending on areatype selected
 output$geoname_ui_wk_sact <- renderUI({
@@ -301,15 +268,52 @@ output$geoname_ui_wk_sact <- renderUI({
 output$treatment_ui_wk_sact <- renderUI({
   # areas_summary_sact <- sort(geo_lookup$areaname[geo_lookup$areatype == input$geotype_sact])
   if (input$sact_plot_wk_filter %in% c("Geographic area", "Standard graph")) {
-    div(radioButtons("sact_wk_treatment", "Select administration route",
+    div(radioButtons("sact_wk_treatment", "Step 5. Select administration route",
                      list("All","Intravenous","Oral","Subcutaneous","Intrathecal", "Other"), inline = TRUE,
                      selected = "All"))
   } else  {
-    div(radioButtons("sact_wk_treatment", "Select administration route",
+    div(radioButtons("sact_wk_treatment", "Step 5. Select administration route",
                      list("All","Intravenous","Oral","Subcutaneous","Intrathecal", "Other"), inline = TRUE,
                      selected = "All", disabled = TRUE))  
   } 
 })
+
+
+###############################################.
+## Reactive layout monthly ---- 
+###############################################.
+# The charts and text shown on the app will depend on what the user wants to see
+
+output$sact_explorer <- renderUI({
+  
+  # text for titles of cut charts
+  sact_site <- input$sact_type
+  
+  tagList(
+    
+    if(input$sact_plot_filter == "Geographic area" & input$geotype_sact %in% c("Scotland", "Cancer Network")){
+      plot_box(paste0("Monthly number of patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
+               "sact_incidence_area")
+    } else if (input$sact_plot_filter == "Geographic area" & input$geotype_sact == "Health Board"){
+      plot_box(paste0("Monthly number of patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
+               "sact_incidence")
+    } else if (input$sact_plot_filter == "Treatment administration"){
+      plot_box(paste0("Monthly number of patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
+               "sact_incidence_treatment")
+    } else if (input$sact_plot_filter == "Standard graph"){
+      plot_box(paste0("Monthly number of patients: ",  sact_site, " Cancers - ", input$geoname_sact), 
+               "sact_incidence")
+    },
+    p(em("The monthly SACT activity shows the number of unique patients per full calendar month since January 2020. 
+         Patients receiving more than one treatment are counted once overall but may appear in counts for multiple administration 
+         routes. Monthly patient numbers are a good indication for long-term trends in SACT activity.", style = "font-family: 'calibri'; font-si15pt"))
+    ) # tag list
+  
+})
+
+###############################################.
+## Reactive layout weekly ---- 
+###############################################.
 
 output$sact_wk_explorer <- renderUI({
   
@@ -319,16 +323,16 @@ output$sact_wk_explorer <- renderUI({
   tagList(
     
     if(input$sact_plot_wk_filter == "Geographic area" & input$geotype_wk_sact %in% c("Scotland", "Cancer Network")){
-      plot_box(paste0("Weekly Number of Patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
+      plot_box(paste0("Weekly number of patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
                "sact_wk_incidence_area")
     } else if (input$sact_plot_wk_filter == "Geographic area" & input$geotype_wk_sact == "Health Board"){
-      plot_box(paste0("Weekly Number of Patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
+      plot_box(paste0("Weekly number of patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
                "sact_wk_incidence")
     } else if (input$sact_plot_wk_filter == "Treatment administration"){
-      plot_box(paste0("Weekly Number of Patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
+      plot_box(paste0("Weekly number of patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
                "sact_wk_incidence_treatment")
     } else if (input$sact_plot_wk_filter == "Standard graph"){
-      plot_box(paste0("Weekly Number of Patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
+      plot_box(paste0("Weekly number of patients: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact), 
                "sact_wk_incidence")
     },
     
@@ -339,16 +343,16 @@ output$sact_wk_explorer <- renderUI({
     br(),
     
     if(input$sact_plot_wk_filter == "Geographic area" & input$geotype_wk_sact %in% c("Scotland", "Cancer Network")){
-      plot_box(paste0("Weekly Percentage Difference from 6 Week Average Pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
+      plot_box(paste0("Weekly percentage difference from 6-week average pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
                "sact_wk_difference_area")
     } else if (input$sact_plot_wk_filter == "Geographic area" & input$geotype_wk_sact == "Health Board"){
-      plot_box(paste0("Weekly Percentage Difference from 6 Week Average Pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
+      plot_box(paste0("Weekly percentage difference from 6-week average pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
                "sact_wk_difference")
     } else if (input$sact_plot_wk_filter == "Treatment administration"){
-      plot_box(paste0("Weekly Percentage Difference from 6 Week Average Pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
+      plot_box(paste0("Weekly percentage difference from 6-week average pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
                "sact_wk_difference_treatment")
     } else if (input$sact_plot_wk_filter == "Standard graph"){
-      plot_box(paste0("Weekly Percentage Difference from 6 Week Average Pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
+      plot_box(paste0("Weekly percentage difference from 6-week average pre-COVID: ",  sact_wk_site, " Cancers - ", input$geoname_wk_sact),
                "sact_wk_difference")
     },
     
@@ -389,9 +393,6 @@ output$sact_wk_difference_area <- renderPlotly({plot_sact_wk_difference_chart_ar
 
 output$sact_wk_difference_treatment <- renderPlotly({plot_sact_wk_difference_chart_treatment(sact_wk_dataset = sact_data_wk_diff_treatment())})
 
-
-
-
 ###############################################.
 ## Data downloads ----
 ###############################################.
@@ -425,4 +426,4 @@ output$download_sact_monthly_data <- downloadHandler(
 
 ###############################################.
 ## Commentary ----
-##################
+###############################################.

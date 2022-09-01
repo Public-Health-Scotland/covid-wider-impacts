@@ -47,8 +47,11 @@ Sys.umask("006")
 hb_lookup <- read_spss(paste0(cl_out, "National Reference Files/Health_Board_Identifiers.sav")) %>%
   janitor::clean_names() %>% select(description, hb_cypher) %>%
   rename(area_name=description) %>%
-  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
-         area_type="Health board")
+  mutate(hb_cypher=as.character(hb_cypher), 
+         area_name= as.character(area_name),
+         area_type="Health board",
+         area_name = case_when(hb_cypher == "K" ~ "NHS Golden Jubilee",
+                               TRUE ~ area_name))
 
 ###############################################.
 ## Functions ----
@@ -85,6 +88,33 @@ create_sexgroups <- function(dataset) {
 create_depgroups <- function(dataset) {
   dataset %>% mutate(dep=case_when(is.na(dep)~"Missing", dep==1 ~ "1 - most deprived",
                                    dep==5 ~"5 - least deprived", TRUE~as.character(dep)))
+}
+
+# Create ethnic groups
+create_ethgroups <- function(dataset) {
+  dataset %>% 
+    mutate(ethnic_group = case_when(ethnic_group_code == "1A" ~ "White Scottish",
+                                    ethnic_group_code == "1B" ~ "White Other British",
+                                    ethnic_group_code == "1C" ~ "White Irish",
+                                    ethnic_group_code == "1K" ~ "White Other",
+                                    ethnic_group_code == "1L" ~ "White Polish",
+                                    ethnic_group_code == "1Z" ~ "White Other",
+                                    ethnic_group_code == "2A" ~ "Mixed",
+                                    ethnic_group_code == "3F" ~ "Pakistani",
+                                    ethnic_group_code == "3G" ~ "Indian",
+                                    ethnic_group_code == "3H" ~ "Other Asian",
+                                    ethnic_group_code == "3J" ~ "Chinese",
+                                    ethnic_group_code == "3Z" ~ "Other Asian",
+                                    ethnic_group_code == "4D" ~ "African",
+                                    ethnic_group_code == "4Y" ~ "African",
+                                    ethnic_group_code == "5C" ~ "Caribbean or Black",
+                                    ethnic_group_code == "5D" ~ "Caribbean or Black",
+                                    ethnic_group_code == "5Y" ~ "Caribbean or Black",
+                                    ethnic_group_code == "6A" ~ "Other ethnic group",
+                                    ethnic_group_code == "6Z" ~ "Other ethnic group",
+                                    ethnic_group_code == "98" ~ "Missing",
+                                    ethnic_group_code == "99" ~ "Missing",
+                                    is.na(ethnic_group_code) ~ "Missing"))
 }
 
 # Convert HB names to correct format
@@ -156,16 +186,16 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL, 
                          historic_data, 
                          by = c("category", "type", "area_name", "area_type", "week_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
-    filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
-               is.na(area_name) |
+    filter(!(is.na(category) | is.na(area_name) | category %in% c("Missing", "missing", "Not Known") |
                area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND",
-                                "ENGland/Wales/Northern Ireland", "NANA"))) %>%
+                                "ENGland/Wales/Northern Ireland", "NANA"))) %>% 
     # Creating %variation from precovid to covid period
     mutate(count_average = ifelse(is.na(count_average), 0, count_average),
            variation = round(-1 * ((count_average - count)/count_average * 100), 1),
            # Dealing with infinite values from historic average = 0
            variation =  ifelse(is.infinite(variation), 8000, variation)) %>%
     select(-week_no)
+  
 
   if (aver == 3) {
     # Supressing numbers under 5
@@ -210,11 +240,17 @@ prepare_final_data_m <- function(dataset, filename, last_month, extra_vars = NUL
                          historic_data, 
                          by = c("category", "type", "area_name", "area_type", "month_no", extra_vars)) %>% 
     # Filtering cases without information on age, sex, area or deprivation (still counted in all)
-    filter(!(is.na(category) | category %in% c("Missing", "missing", "Not Known") |
-               is.na(area_name) |
+    filter(!(is.na(category) | is.na(area_name) |
                area_name %in% c("", "ENGLAND/WALES/NORTHERN IRELAND", "UNKNOWN HSCP - SCOTLAND",
-                                "ENGland/Wales/Northern Ireland", "NANA"))) %>%
+                                "ENGland/Wales/Northern Ireland", "NANA"))) 
+  
+    if (filename != "rapid_monthly") {
+      data_2020 %<>% filter(!(category %in% c("Missing", "missing", "Not Known")))
+    }
+    
+    
     # Creating %variation from precovid to covid period
+  data_2020 %<>% 
     mutate(count_average = ifelse(is.na(count_average), 0, count_average),
            variation = round(-1 * ((count_average - count)/count_average * 100), 1),
            # Dealing with infinite values from historic average = 0
@@ -237,7 +273,8 @@ prepare_final_data_m <- function(dataset, filename, last_month, extra_vars = NUL
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
 }
 # Function to format cardiac data in the right format for the Shiny app
-prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars = NULL) {
+prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars = NULL,
+                                       comparison_end = NULL) {
 
   # Needed for detecting duplicate rows later
   rows_before_deduplicate = nrow(dataset)
@@ -302,6 +339,16 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
            count_average = if_else(count_average < 5, 0, count_average),
            variation = if_else(count < 5, 0, variation))
 
+  # If comparison_end is supplied, it means data after that date is no longer
+  # comparable to the historical data. So set to NA.
+  if (!is.null(comparison_end)) {
+    data_2020 =
+      mutate(data_2020,
+             across(c(count_average, variation),
+                    ~case_when(week_ending > ymd(comparison_end) ~ NA_real_,
+                               TRUE ~ .x)))
+  }
+
   # Filter week
   data_2020 <- data_2020 %>%
     filter(week_ending <= as.Date(last_week))
@@ -314,7 +361,6 @@ prepare_final_data_cardiac <- function(dataset, filename, last_week, extra_vars 
   saveRDS(data_2020, paste0(data_folder,"final_app_files/", filename, "_",
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
   saveRDS(data_2020, paste0(open_data, filename,"_data.rds"))
-
 
 }
 
@@ -333,6 +379,7 @@ prepare_final_data_m_cardiac <- function(dataset, filename, last_month, extra_va
       # Not using mean to avoid issues with missing data for some weeks
       summarise(count_average = round((sum(count, na.rm = T))/2, 1)) %>% 
       ungroup()
+
 
   } else if (aver == 5) {
     # Creating average admissions of pre-covid data (2015-2019) by day of the year

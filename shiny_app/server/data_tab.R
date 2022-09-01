@@ -55,7 +55,7 @@ data_table <- reactive({
         "mhdrugs" = mentalhealth_drugs %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ae_mh" = ae_mh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
         "ooh_mh" = mh_ooh %>% select(-type) %>% rename(average_2018_2019 = count_average, "Variation (%)" = variation),
-        "outpats" = outpats %>% 
+        "op" = outpats %>% 
           rename(appointment_type = admission_type, specialty = spec, average_2018_2019 = count_average),
         'THN_by_HB'=THN_by_HB,
         'DTR_data'=DTR_data,
@@ -85,10 +85,14 @@ data_table <- reactive({
                                     "85 and over" = "Aged 85 and over",
                                     "Under 65" = "Aged under 65",
                                     "65 and over" = "Aged 65 and over"),
+           week_ending = case_when(type == "eth" ~ format(week_ending, "%b %y"),
+                                   TRUE ~ format(week_ending, "%d %b %y")),
            type = recode_factor(type, "sex" = "Sex", "age" = "Age Group", 
                                 "dep" = "Deprivation",
-                                "moc" = "Mode of Clinical Interaction"),
-           week_ending = format(week_ending, "%d %b %y"))
+                                "moc" = "Mode of Clinical Interaction",
+                                "eth" = "Ethnic group"))
+           #week_ending = format(week_ending, "%d %b %y"),
+
   }  else if (input$data_select %in% "outpats") { 
     table_data %<>%
       # Formatting to a "nicer" style

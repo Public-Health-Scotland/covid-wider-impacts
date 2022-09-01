@@ -5,23 +5,261 @@
 .shiny-output-error:before { visibility: hidden; }
 
 /* Style sidebars/well panels */
-.well {background-color:#ffffff; border: 0 solid #336699;
-       padding: 5px; box-shadow: none; }
-
-/* Navigation bar following PHS colour scheme */    
-.navbar-default {color: #ffffff; background-color: #433684; }
-
-.navbar-default .navbar-brand, .navbar-default:hover .navbar-brand:hover, .navbar-brand {color: #433684; background-color: #ffffff}
-
-.navbar-default .navbar-nav > li > a {color: #ffffff;}
-
-.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
-    color: #ffffff;
-    background-color: #312760;
+.well {
+  background-color:#ffffff; 
+  border: 0 solid #336699;
+  padding: 5px; 
+  box-shadow: none; 
+  
 }
 
+
+
+
+/* NAVIGATION BAR/HEADER */
+  
+/* Changes colour of Navigation bar to PHS purple */  
+.navbar-default {
+  background-color: #3F3685; 
+  
+}  
+       
+/* Creates a white background for the image and rounded edges */
+.navbar-brand, .navbar-default:hover .navbar-brand:hover {
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 0 0 5px 0;
+  
+}
+
+/* Changes font to white in nav bar */
+.navbar-default .navbar-nav > li > a {
+  color: #ffffff;
+  
+}
+
+/* Changes colour of active (clicked) tab on the nav bar and adds rounded corners */
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
+  color: #ffffff; 
+  background-color: #312760;
+  border-radius: 10px 10px 0 0;
+  
+}
+
+/* Style the tab when hovered over */
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-    color: #ffffff;     background-color: #5343a3;}
+  color: #ffffff;     
+  background-color: #5343a3;
+  border-radius: 10px 10px 0 0;
+  
+}
 
 
-                  
+
+
+/* INFO BUTTONS */
+
+/* Change the buttons to light blue background with dark blue font - must go above the radio button styling otherwise it is overridden */
+.btn:not(.dropdown-toggle):not(.btn-primary):not(.bs-select-all):not(.bs-deselect-all) {
+  margin: 0;
+  font-weight: bold;
+  background-color: #E6F2FB;
+  color: #0078D4;
+  border-color: #B3D7F2;
+  
+}
+
+
+/* FILTERS */
+
+/* this adds light purple background behind the title of the data type selectors */
+.form-group {
+  margin-bottom: 5px;
+  background-color: #ECEBF3;
+  border-radius: 10px;
+} 
+
+
+/* this adds a light purple shading to behind the drop-down boxes to make them standout */
+  .shiny-input-container:not(.shiny-input-container-inline):not(.shiny-input-radiogroup){
+    width: auto;
+    background-color: #ECEBF3;
+    padding:5px 5px 0 5px ;
+    border-radius: 10px;
+  } 
+  
+
+/* These remove the light purple shading from the buttons on the Cancer tabs and Substance use tab */
+#baseline.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#gender.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#cum_baseline.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#breakdown.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_treatment.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_plot_filter.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_wk_treatment.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_wk_appt_reg.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#sact_plot_wk_filter.shiny-input-container {
+  background-color: #ffffff;
+}
+
+#types.shiny-input-container {
+  background-color: #ffffff;
+}
+
+
+/* Remove the light purple shading from Summary tab specialty filters */
+#data_explorer > div:nth-child(13) > div:nth-child(1) > div {
+  background-color: #ffffff;
+} 
+
+#data_explorer > div:nth-child(14) > div:nth-child(1) > div {
+  background-color: #ffffff;
+}
+
+/*Remove the light purple shading from Summary tab ethnicity filters (hosp adms and outpats) */
+#data_explorer > div:nth-child(16) > div:nth-child(1) > div {
+  background-color: #ffffff;
+}
+
+#data_explorer > div:nth-child(20) > div:nth-child(1) > div {
+  background-color: #ffffff;
+}
+
+/* These add padding around the title of the radio buttons (can't do globally using .control-label as 
+it adds padding to the drop downs which throws off alignment) */
+#summary-measure-label {
+  padding: 5px;
+}
+
+#cardio-measure-label {
+  padding: 5px;
+}
+
+#injury-measure-label {
+  padding: 5px;
+}
+
+#mh-measure-label {
+  padding: 5px;
+}
+
+#perinatal-measure-label {
+  padding: 5px;
+}
+
+#immun-measure-label {
+  padding: 5px;
+}
+
+#childr-measure-label {
+  padding: 5px;
+}
+
+#bf-measure-label {
+  padding: 5px;
+}
+
+#childdev-measure-label {
+  padding: 5px;
+}
+
+#drugs-measure-label {
+  padding: 5px;
+}
+
+
+
+
+/* SIDE BAR SELECTORS */
+
+/* Changes the background colours of the buttons to match PHS colours, and adds rounded corners */
+.btn-primary {
+  color: #3F3685;
+  font-weight: bold;
+  background-color: #ECEBF3;
+  border-color: #ffffff;
+  border-radius: 10px;
+  padding: 5px;
+  
+}
+
+
+/* This changes the colour of the button when you hover over it */
+.btn-primary:hover {
+  color: #ffffff;
+  font-weight: bold;
+  background-color: #433684;
+  border-color: #ffffff;
+  
+} 
+
+
+/* This defines the colour of the active (clicked) button */
+.btn-primary.active:focus, .btn-primary.active:hover {
+color: #ffffff;
+  background-color: #3F3685;
+  border-color: #ffffff;
+  
+} 
+
+/* This defines the colour of the button that is selected when you first go to the tab */
+.btn-primary.active, .btn-primary:active, .open>.dropdown-toggle.btn-primary {
+  color: #ffffff;
+  font-weight: bold;
+  background-color: #3F3685;
+  border-color: #ffffff;
+  
+} 
+
+/* This defines the colour of the button in the instant it is clicked  */
+.btn-primary:hover:focus:active {
+  color: #ffffff;
+  font-weight: bold;
+  background-color: #3F3685;
+  border-color: #ffffff;
+  
+} 
+
+
+
+
+/* FONT COLOURS AND CHART FORMATS */
+
+/* Change font colour of all headers to PHS dark purple */
+h2, h3, h4 {
+  color: #3F3685;
+  font-weight: bold;
+  
+}
+
+/* Remove the traces from the plot slider */
+.rangeslider-rangeplot, .overplot .rangeslider-bg {
+  display:none;
+  
+}
+
+

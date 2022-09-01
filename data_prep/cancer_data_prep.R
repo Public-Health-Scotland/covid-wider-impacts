@@ -44,12 +44,12 @@ input_folder <- paste0("////PHI_conf//CancerGroup1//Topics//CancerStatistics//Pr
                        "//20200804-pathology-as-proxy-for-2020-regs//RShiny//CancerPathologyData//")
 cl_out <- "/conf/linkage/output/lookups/Unicode/"
 
-cancer <- read_csv(paste0(input_folder,"Pathology_Data_Mar_22.csv"), col_names = T) %>%  
+cancer <- read_csv(paste0(input_folder,"Pathology_Data_Jul_22.csv"), col_names = T) %>%  
   clean_names() %>% 
   select(year:data_source, icd10_conv, person_id:chi_number, sex:postcode) %>%
   mutate(incidence_date = dmy(incidence_date)) %>%
   mutate(chi_number = replace_na(chi_number, "0")) %>% 
-  filter(year != 2022)
+  filter(!c(year == 2022 & incidence_date > "2022-02-05"))
 
 cancer2017_18 <- read_csv(paste0(input_folder,"2017_2018 Covid source data pathology detail.csv"), col_names = T) %>%
   clean_names() %>%
@@ -218,12 +218,24 @@ cancer <- cancer %>%
 
 # fix incorrect week numbers (2021 only) and include data to last week
 # of complete data (check this with DM)
+
+
+## below section is new code for allocating week 53 to other weeks.
 cancer <- cancer %>%
-  mutate(week_number = case_when(year == 2021 & week_number == 53 ~ 1,
-                                 TRUE ~ week_number)) %>% 
-  # mutate(week_number = case_when(year == 2020 & week_number == 53 ~ 52,
-  #                                TRUE ~ week_number)) %>%
-  filter(!(year == 2021 & week_number > 52))
+  mutate(testmarker = case_when(week_number == 53 ~ 1,
+                                TRUE ~ 0)) %>% 
+  mutate(week_number = case_when((testmarker == 1 & year == 2021 & incidence_date < 2022-01-01) ~ 52,
+                                 (testmarker == 1 & year == 2021 & incidence_date >= 2022-01-01) ~ 1,
+                                  TRUE ~ week_number)) %>% 
+  mutate(week_number = case_when(year == 2020 & week_number == 53 ~ 52,
+                                  TRUE ~ week_number))
+
+# cancer <- cancer %>%
+#   mutate(week_number = case_when(year == 2021 & week_number == 53 ~ 1,
+#                                  TRUE ~ week_number)) %>% 
+#   # mutate(week_number = case_when(year == 2020 & week_number == 53 ~ 52,
+#   #                                TRUE ~ week_number)) %>%
+#   filter(!(year == 2021 & week_number > 52))
 
 
 # extract invalid age records
@@ -259,10 +271,19 @@ cancer <- cancer %>%
       paste0(substr(postcode, 1, 2), substr(postcode, 4, 8)),
     TRUE ~ postcode))
 
+## also correct: - instances with 1 as the first character where it should be an I.
+# - instances where the second to last letter is a 0 (instead of O)
+
+
+cancer <- cancer %>% 
+  mutate(postcode = case_when(
+    substr(postcode, 1,1) == "1" ~ sub("^.", "I", postcode),
+    TRUE ~ postcode
+  ))
+
 # Convert 8-character postcodes to 7-character postcodes.
 # 'pc7' always assumes a 7 character length and there could be zero, one or two spaces 
 # between Postcode District and Postcode Sector / Walk.
-
 
 cancer <- cancer %>%
   mutate(postcode = case_when(
@@ -276,7 +297,7 @@ cancer <- cancer %>%
 #
 # 'pc8' works in a strange way, always assuming only one space between Postcode District and 
 # Postcode Sector / Walk.
-#
+
 cancer <- cancer %>%
   mutate(postcode = case_when(
     substr(postcode, 5, 5) == 'O' ~ paste0(substr(postcode, 1, 4), '0', substring(postcode, 6)),
@@ -286,7 +307,7 @@ cancer <- cancer %>%
 #
 # VARIABLE LABELS pc8 'Postcode of Residence (8 character format)'.
 
-cancer <- cancer %>%
+cancer1 <- cancer %>%
   mutate(postcode = case_when(
     substr(postcode, 4, 4) != ' ' & substr(postcode, 5, 5) != ' ' & substr(postcode,7,7) != ' ' ~
       paste0(substr(postcode,1,4), " ", substr(postcode, 5, 7)),
@@ -294,11 +315,40 @@ cancer <- cancer %>%
   mutate(postcode = case_when(
     substr(postcode, 3, 4) == '  ' & substr(postcode, 5, 5) != ' ' & substr(postcode,7,7) != ' ' ~
       paste0(substr(postcode,1,2), " ", substr(postcode, 5, 7)),
-    TRUE ~ postcode))
+    TRUE ~ postcode)) 
 
 #format postcode to 8 digit
-cancer <- cancer %>%
+cancer <- cancer1 %>%
   mutate(postcode = format_postcode(postcode, format = "pc8"))
+
+## check postcodes that are excluded and fix those that can be fixed:
+test <- anti_join(cancer,cancer1)
+
+fix<- test %>%
+  mutate(postcode = case_when(
+           (str_length(original_postcode) == 7 & 
+              substr(original_postcode,5,5) == " " & substr(original_postcode,6,7) %in% LETTERS) ~ 
+             paste0(substr(original_postcode,1,3), " ",
+                    substr(original_postcode,4,4),
+                    substr(original_postcode,6,7)),
+          TRUE ~ postcode)) %>% 
+  filter(!is.na(postcode))
+
+fix<- test %>% 
+  mutate(postcode = case_when(
+          (str_length(original_postcode) == 8 & substr(original_postcode,4,4) == " " &
+           substr(original_postcode,6,6) == " ") ~ paste0(substr(original_postcode,1,3)," ",
+                                                         substr(original_postcode,5,5),
+                                                         substr(original_postcode,7,8)),
+         substr(original_postcode,6,6) == 0 ~ paste0(substr(original_postcode,1,5),"O",
+                                                    substr(original_postcode,7,8)))) %>% 
+  filter(!is.na(postcode)) %>% 
+  bind_rows(fix)
+
+## bind rows of fix back to cancer
+
+cancer<- bind_rows(cancer, fix)
+
 
 ### get Health Boards of residence and deprivation quintile rank from postcodes
 
@@ -740,7 +790,7 @@ base_cancer_counts <- base_cancer_slim %>%
               values_from = count,
               values_fill = 0) %>% 
   rename(area = hbres, count17 = "2017",count18 = "2018", count19 = "2019", 
-         count20 = "2020", count21 = "2021") %>% 
+         count20 = "2020", count21 = "2021", count22 = "2022") %>% 
   mutate(age_group = "All Ages", dep = 0, breakdown = "None") 
 
 base_cancer_counts19_wk53 <- base_cancer_counts %>% 
@@ -768,7 +818,7 @@ base_cancer_counts_agegroups <- base_cancer_slim %>%
               values_from = count,
               values_fill = 0) %>% 
   rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
-         count20 = "2020", count21 = "2021") %>% 
+         count20 = "2020", count21 = "2021", count22 = "2022") %>% 
   mutate(dep = 0, breakdown = "Age Group")
 
 base_cancer_counts_agegroups_19_wk53 <- base_cancer_counts_agegroups %>% 
@@ -798,7 +848,7 @@ base_cancer_counts_dep <- base_cancer_slim %>%
               values_from = count,
               values_fill = 0) %>% 
   rename(area = hbres, count17 = "2017", count18 = "2018", count19 = "2019", 
-         count20 = "2020", count21 = "2021") %>% 
+         count20 = "2020", count21 = "2021", count22 = "2022") %>% 
   mutate(age_group = "All Ages", breakdown = "Deprivation")
 
 base_cancer_counts_dep_19_wk53 <- base_cancer_counts_dep %>% 
@@ -815,7 +865,9 @@ rm(base_cancer_counts_dep_19_notwk53, base_cancer_counts_dep_19_wk53)
 
 # combine for base cancer counts with age group split and no split
 
-base_cancer_counts_all <- bind_rows(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep)
+base_cancer_counts_all <- bind_rows(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep) %>% 
+  mutate(count22 = case_when(week_number > 5 ~ NA_real_,
+                             TRUE ~ as.numeric(count22))) 
 
 rm(base_cancer_counts_agegroups, base_cancer_counts_dep)
 
@@ -835,14 +887,18 @@ base_cancer_mean <- base_cancer_counts_all %>%
 
 
 # Get Cumulative Counts for each year
+# Exclude cumulative counts beyond date of data completeness (Feb 2022 for Jul 22 update)
 
 base_cancer_cum <- base_cancer_mean %>%
-  select(region, area, site, sex, age_group, dep, week_number, count19, count20, count21, count_mean_17_19, breakdown) %>%
+  select(region, area, site, sex, age_group, dep, week_number, count19, count20, count21, count22, count_mean_17_19, breakdown) %>%
   group_by(area, site, sex, age_group, dep) %>%
   mutate(cum_count19 = cumsum(count19),
          cum_count20 = cumsum(count20),
          cum_count21 = cumsum(count21),
+         cum_count22 = cumsum(count22),
          cum_count_mean_17_19 = cumsum(count_mean_17_19)) %>%
+  mutate(cum_count22 = case_when(week_number > 5 ~ NA_real_,
+                             TRUE ~ as.numeric(cum_count22))) %>% 
   ungroup()
 
 # rm(base_cancer_mean, base_cancer_slim)
@@ -884,10 +940,12 @@ diff_data_base <- diff_data_base %>%
 
 diff_data_base <- bind_rows(diff_data_base, diff_data_base_24)
 
+## where is base_cancer_slim_q0? scratch this for now. 
 
+rm(base_cancer_counts,
+   base_cancer_cum, base_cancer_counts_all, diff_data_base_24)
 
-rm(base_cancer_counts, base_cancer_counts_agegroups, base_cancer_counts_dep,
-   base_cancer_cum, base_cancer_slim_q0, base_cancer_counts_all, diff_data_base_24)
+## base_cancer_slim_q0
 
 # OUTPUT DATA FOR CHARTS 1 & 2 - WEEKLY ----
 saveRDS(diff_data_base, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/final_app_files/", "cancer_data_2_", 
@@ -895,12 +953,13 @@ saveRDS(diff_data_base, paste0("/conf/PHSCOVID19_Analysis/shiny_input_files/fina
 saveRDS(diff_data_base, "shiny_app/data/cancer_data_2.rds")
 
 
-
+#############################################################################################################################
+### QUARTERLY DATA ----
+#############################################################################################################################
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Get QUARTERLY counts for each value of hbres and All cancer ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 base_cancer_counts_quarters <- base_cancer_slim %>% 
   group_by(year,  quarter_no, region, hbres, site, sex) %>% 
@@ -990,7 +1049,7 @@ base_cancer_counts_all_quarters <- bind_rows(base_cancer_counts_quarters,
                                              base_cancer_counts_agegroups_quarters, 
                                              base_cancer_counts_dep_quarters) %>%
                                     mutate(dep = factor(dep, levels = c(0,1,2,3,4,5), 
-                                      labels = c("0","1 (least deprived)","2","3","4","5 (most deprived)"))) 
+                                      labels = c("0","1 (most deprived)","2","3","4","5 (least deprived)"))) 
   
 
 rm(base_cancer_counts_agegroups_quarters, base_cancer_counts_dep_quarters)
