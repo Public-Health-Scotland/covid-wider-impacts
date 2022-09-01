@@ -276,7 +276,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     xaxis_plots[["rangeslider"]] <- list(range="xvar", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
       
 
-    hist_legend_previous <- case_when(data_name == "deaths" ~ "Average 2015-2019",
+    hist_legend_previous <- case_when(data_name %in% c("deaths", "cardio_deaths") ~ "Average 2015-2019",
                                       TRUE ~ "Average 2018-2019")
 
     hist_legend_covid <- case_when(data_name %in% c("cath")  ~ "2020", TRUE ~ "2020 - 2022")
