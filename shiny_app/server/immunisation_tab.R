@@ -5,7 +5,7 @@
 ## Modals  ----
 ###############################################.
 # Modal to explain SIMD and deprivation
-observeEvent(input$modal_simd_imm, simd_modal("Children")) 
+observeEvent(input$btn_modal_simd_imm, simd_modal("Children")) 
 
 # Pop-up modal explaining source of data
 observeEvent(input$`immun-source-modal`, 
