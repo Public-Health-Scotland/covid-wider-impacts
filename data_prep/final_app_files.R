@@ -100,7 +100,7 @@ save_final_file("age_defs_imm_6inone", "31_Aug_22")
 save_final_file("age_defs_imm_mmr", "31_Aug_22")
 save_final_file("month_eligibility_immun", "31_Aug_22")
 ##########################################################.
-ch_date <- "28_Jul_22"
+ch_date <- "30_Aug_22"
 ## Child health reviews - first visit ----
 save_final_file("first_visit", ch_date)
 save_final_file("first_visit_datatable", ch_date)
