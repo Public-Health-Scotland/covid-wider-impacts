@@ -240,26 +240,17 @@ output$immun_scurve <- renderPlotly({
     #filter dataset to just time periods to be shown in colour
     coloured_lines <- scurve_data_col %>%
       filter(colour_flag == 1)
+    
+    # First define the palette of colours used, then set a named vector, so each color
+    # gets assigned to an time period. But it has to be done for grays and coloured lines 
+    trend_length <- length(unique(coloured_lines$time_period_eligible))
+    grey_length <-  length(unique(grey_lines$time_period_eligible))
 
-    #get names of time periods to be in colour
-    coloured_time <- coloured_lines %>%
-      ungroup() %>%
-      select(time_period_eligible) %>%
-      unique() %>%
-      .$time_period_eligible %>%
-      as.character()
-
-    #get number of columns for dataset of selected time periods
-    no_cols <- nrow(unique(coloured_time)) %>%
-      as.numeric()
-
-    #create empty list
-    colour_flag_palette = c()
-
-    #map colours from pal_immun onto list of time periods selected
-    for (i in seq_along(coloured_time)){
-      colour_flag_palette[[coloured_time[i]]] <- pal_immun[i]
-    }
+    trend_scale <- c(setNames(pal_immun, unique(coloured_lines$time_period_eligible)[1:trend_length]))
+    trend_scale <- trend_scale[1:trend_length]
+    grey_scale <- c(setNames(rep("lightgrey", grey_length), 
+                             unique(grey_lines$time_period_eligible)[1:grey_length]))
+    all_scale <- c(grey_scale, trend_scale)
 
     # Create tooltip for scurves
     tooltip_grey <- c(paste0("Cohort: ", grey_lines$time_period_eligible))
@@ -267,17 +258,16 @@ output$immun_scurve <- renderPlotly({
 
     #Creating time trend plot
     plot_ly() %>%
-      ## commented out because add_trace() breaks colour palette
-      # add_trace(data = grey_lines, x=~interv,  y = ~surv,
-      #           type = 'scatter', mode = 'lines', line = list(color="d3d3d3"),
-      #           name = "unselected time periods",
-      #           text= tooltip_grey, hoverinfo="text") %>%
-      add_trace(data = coloured_lines, x=~interv,  y = ~surv,
-                type = 'scatter', mode = 'lines',
-                color = ~time_period_eligible,
-                line=list(), colors=colour_flag_palette,
+      # commented out because add_trace() breaks colour palette
+      add_lines(data = grey_lines,
+                x=~interv,  y = ~surv, 
+                colors = all_scale, color = ~time_period_eligible,
+                name = "unselected time periods", showlegend = FALSE,
+                text= tooltip_grey, hoverinfo="text") %>%
+      add_lines(data = coloured_lines,
+                x=~interv,  y = ~surv,
+                color = ~time_period_eligible, colors = all_scale, 
                 text= tooltip_col,hoverinfo="text") %>%
-
       #Layout
       layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
