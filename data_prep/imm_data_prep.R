@@ -10,9 +10,9 @@ source("data_prep/functions_packages_data_prep.R")
 ###############################################.
 
 #field with date all immunisation data files prepared
-imms_date <- "20220627"
+imms_date <- "20220829"
 
-six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/", imms_date, "/six_in_one_dashboard_",imms_date,".csv"), 
+six_alldose <- read_csv(paste0(data_folder,"immunisations/6in1/", imms_date, "/six_in_one_dashboard_",imms_date,".csv"),
                         col_types =list(eligible_start=col_date(format="%m/%d/%Y"),
                                         time_period_eligible=col_factor())) %>%
   janitor::clean_names()
@@ -34,7 +34,7 @@ six_alldose <- left_join(six_alldose, hb_lookup, by = c("geography" = "hb_cypher
   select (extract_date, exclude, immunisation, eligible_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
 saveRDS(six_alldose, "shiny_app/data/six_alldose.rds")
-saveRDS(six_alldose, paste0(data_folder,"final_app_files/six_alldose_", 
+saveRDS(six_alldose, paste0(data_folder,"final_app_files/six_alldose_",
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
@@ -45,25 +45,25 @@ imms_datatable <- format_immchild_table(paste0("immunisations/dashboardtable_", 
 
 six_datatable <- imms_datatable %>%
   filter(str_detect(immunisation,"six-in-one")) %>%
-  select(-uptake_13m_num:-uptake_3y8m_percent) #remove uptake columns that related to mmr 
+  select(-uptake_13m_num:-uptake_3y8m_percent) #remove uptake columns that related to mmr
 
 saveRDS(six_datatable, paste0("shiny_app/data/","sixinone_datatable.rds"))
-saveRDS(six_datatable, paste0(data_folder,"final_app_files/sixinone_datatable_", 
+saveRDS(six_datatable, paste0(data_folder,"final_app_files/sixinone_datatable_",
                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 mmr_datatable <- imms_datatable %>%
   filter(str_detect(immunisation,"mmr")) %>%
-  select(-uptake_12weeks_num:-uptake_32weeks_percent) #remove uptake columns that related to mmr 
+  select(-uptake_12weeks_num:-uptake_32weeks_percent) #remove uptake columns that related to mmr
 saveRDS(mmr_datatable, paste0("shiny_app/data/","mmr_datatable.rds"))
-saveRDS(mmr_datatable, paste0(data_folder,"final_app_files/mmr_datatable_", 
+saveRDS(mmr_datatable, paste0(data_folder,"final_app_files/mmr_datatable_",
                               format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # Grampian data
 mmr_dose2_datatable_grampian <- format_immchild_table(paste0("immunisations/mmr/", imms_date, "/dashboardtable_grampian_",imms_date),
-                                                      "mmr_dose2_grampian") 
+                                                      "mmr_dose2_grampian")
 
 ###############################################.
-## 6-in-1 simd data ---- 
+## 6-in-1 simd data ----
 six_dose1_simdtable <- format_immsimd_data(paste0("immunisations/6in1/", imms_date, "/six-in-one dose 1_simd_", imms_date),
                                            "six_dose1")
 six_dose2_simdtable <- format_immsimd_data(paste0("immunisations/6in1/", imms_date, "/six-in-one dose 2_simd_", imms_date),
@@ -75,58 +75,58 @@ six_dose3_simdtable <- format_immsimd_data(paste0("immunisations/6in1/", imms_da
 # Immunisation definitions ----
 # apply both for MRR and 6 in one
 age_defs_imm_mmr <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
-                               sheet = "mmr_dash") %>% 
+                               sheet = "mmr_dash") %>%
   mutate(defined = case_when(is.na(defined) ~ "", T ~ paste0(defined)))
 
-age_defs_imm_mmr <- age_defs_imm_mmr %>% flextable() %>% 
+age_defs_imm_mmr <- age_defs_imm_mmr %>% flextable() %>%
   set_header_labels(defined = "Defined in weeks as:",
-                    "...1" = "") %>% 
-  merge_at(i =1, j = 1:2, part ="body") %>% 
-  merge_at(i =6, j = 1:2, part ="body") %>% 
-  merge_at(i =11, j = 1:3, part ="body") %>% 
-  align(j = 1) %>% 
+                    "...1" = "") %>%
+  merge_at(i =1, j = 1:2, part ="body") %>%
+  merge_at(i =6, j = 1:2, part ="body") %>%
+  merge_at(i =11, j = 1:3, part ="body") %>%
+  align(j = 1) %>%
   bold(i =1) %>% bold(i =6) %>% bold(i = 11)
 
 age_defs_imm_mmr # checking
 
 saveRDS(age_defs_imm_mmr, "shiny_app/data/age_defs_imm_mmr.rds")
-saveRDS(age_defs_imm_mmr, paste0(data_folder,"final_app_files/age_defs_imm_mmr_", 
+saveRDS(age_defs_imm_mmr, paste0(data_folder,"final_app_files/age_defs_imm_mmr_",
                                  format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # 6 in one age eligibility
 age_defs_imm_6inone <- read_excel(paste0(data_folder, "immunisations/age definitions.xlsx"),
-                                  sheet = "6inone_dash") 
+                                  sheet = "6inone_dash")
 
-age_defs_imm_6inone <- age_defs_imm_6inone %>% flextable() %>% 
-  set_header_labels("...1" = "") %>% 
-  merge_at(i =1, j = 1:2, part ="body") %>% 
-  merge_at(i =6, j = 1:2, part ="body") %>% 
-  merge_at(i =11, j = 1:2, part ="body") %>% 
-  align(j =1) %>% 
-  bold(i =1) %>% bold(i =6) %>% bold(i = 11) 
+age_defs_imm_6inone <- age_defs_imm_6inone %>% flextable() %>%
+  set_header_labels("...1" = "") %>%
+  merge_at(i =1, j = 1:2, part ="body") %>%
+  merge_at(i =6, j = 1:2, part ="body") %>%
+  merge_at(i =11, j = 1:2, part ="body") %>%
+  align(j =1) %>%
+  bold(i =1) %>% bold(i =6) %>% bold(i = 11)
 age_defs_imm_6inone #checking
 
 saveRDS(age_defs_imm_6inone, "shiny_app/data/age_defs_imm_6inone.rds")
-saveRDS(age_defs_imm_6inone, paste0(data_folder,"final_app_files/age_defs_imm_6inone_", 
+saveRDS(age_defs_imm_6inone, paste0(data_folder,"final_app_files/age_defs_imm_6inone_",
                                     format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 # month eligibility table
 month_defs_imm <- read_excel(paste0(data_folder, "immunisations/month eligible definitions.xlsx"),
-                             sheet = "for_dash") %>% 
+                             sheet = "for_dash") %>%
   mutate("Month eligible" = format(as.Date(`Month eligible`), "%b-%Y")) %>%
   mutate("Start date \r\n(Monday)" = ymd(`Start date \r\n(Monday)`)) %>%
-  mutate("End date\r\n(Sunday)" = ymd(`End date\r\n(Sunday)`)) %>% 
+  mutate("End date\r\n(Sunday)" = ymd(`End date\r\n(Sunday)`)) %>%
   flextable() %>%
-  add_header_row(values = c("Month eligible", "Defined as children reaching relevant age in period:", "", "Number of weeks")) %>% 
-  merge_at(i = 1, j = 2:3, part = "header") %>% 
-  merge_v(j = 1:2, part = "header") %>% 
+  add_header_row(values = c("Month eligible", "Defined as children reaching relevant age in period:", "", "Number of weeks")) %>%
+  merge_at(i = 1, j = 2:3, part = "header") %>%
+  merge_v(j = 1:2, part = "header") %>%
   merge_v(j = 4, part = "header") %>%
   theme_vanilla
 
 month_defs_imm #checking everything looks ok
 
 saveRDS(month_defs_imm, "shiny_app/data/month_eligibility_immun.rds")
-saveRDS(month_defs_imm, paste0(data_folder,"final_app_files/month_eligibility_immun_", 
+saveRDS(month_defs_imm, paste0(data_folder,"final_app_files/month_eligibility_immun_",
                                format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
@@ -155,7 +155,7 @@ mmr_alldose <- left_join(mmr_alldose, hb_lookup, by = c("geography" = "hb_cypher
   select (extract_date, exclude, immunisation, eligible_start, time_period_eligible, tabno, surv, interv, cohort, area_name, area_type, week_no)
 
 saveRDS(mmr_alldose, paste0("shiny_app/data/","mmr_alldose.rds"))
-saveRDS(mmr_alldose, paste0(data_folder,"final_app_files/mmr_alldose_", 
+saveRDS(mmr_alldose, paste0(data_folder,"final_app_files/mmr_alldose_",
                             format(Sys.Date(), format = '%d_%b_%y'), ".rds"))
 
 ###############################################.
