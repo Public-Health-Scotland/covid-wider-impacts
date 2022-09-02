@@ -106,6 +106,12 @@ output$preterm_chart <- renderPlotly({
                                       
   xaxis_plots[["title"]] <- "Quarter"
   
+  # adjust the start point of the x-axis range to remove the big gap
+  quarter_num <- length(unique(trend_data$quarter))
+  
+  xaxis_plots[["range"]] <- c(-0.25, quarter_num )
+  
+  
   # Tooltip
   tooltip_trend <- c(paste0(format(trend_data$quarter), "<br>", 
                             "Percentage: ", round(trend_data$percentage_NICU_site, 1)))
@@ -163,6 +169,12 @@ output$preterm_linechart <- renderPlotly({
   pallette <- pal_age
   
   yaxis_plots[["title"]] <- "Number of deliveries"
+  
+  # adjust the start point of the x-axis range to remove the big gap
+  quarter_num <- length(unique(plot_data$quarter_label))
+  
+  xaxis_plots[["range"]] <- c(-0.25, quarter_num )
+  
 
   # Create tooltip for line chart
   tooltip <- c(paste0( plot_data$ind,"<br>",
@@ -173,11 +185,11 @@ output$preterm_linechart <- renderPlotly({
   
   xaxis_plots <- c(xaxis_plots,
                    dtick = 2, tickangle = 0,
-                   categoryorder = "array", categoryarray = ~quarter)
+                   categoryorder = "array", categoryarray = ~quarter_label)
     
     #Creating trend plot
     plot_ly(data=plot_data, x=~quarter_label,  y = ~mats) %>%
-      add_trace(type = 'scatter', mode = 'lines',
+      add_trace(type = 'scatter', mode = 'lines+markers',
                 color = ~ind, colors = pallette,
                 text= tooltip, hoverinfo="text") %>%
       #Layout

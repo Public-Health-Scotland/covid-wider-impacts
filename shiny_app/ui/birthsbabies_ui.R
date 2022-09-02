@@ -31,6 +31,11 @@ induction_commentary <-
       column(8, h2("Induction of labour")), 
       column(4, div(bsButton("jump_to_induction", label = "Go to data"), style="float:right"))),  #this button can only be used once
     
+    h3("7 September 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley in May 2022, so the proportion 
+      of births that are induced in this month is likely to change in future releases of 
+      the dashboard."),    
+    
     h3("3 August 2022"),
     p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births 
       that are induced in this month is likely to change in future releases of the dashboard. 
@@ -225,6 +230,11 @@ mod_commentary <-
     fluidRow(
       column(8, h2("Method of delivery")), 
       column(4, div(bsButton("jump_to_mod", label = "Go to data"), style="float:right"))),  #this button can only be used once
+    
+    h3("7 September 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley in May 2022, so the proportion 
+      of births that are delivered by caesarean section in this month is likely to change in 
+      future releases of the dashboard."), 
     
     h3("3 August 2022"),
     p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births 
@@ -454,6 +464,11 @@ gestation_commentary <-
     fluidRow(
       column(8, h2("Gestation at delivery")), 
       column(4, div(bsButton("jump_to_gestation", label = "Go to data"), style="float:right"))),  #this button can only be used once
+    
+    h3("7 September 2022"),
+    p("Data are thought to be incomplete for NHS Forth Valley in May 2022, so the proportion 
+      of births that are delivered pre-term and post-term in this month are likely to change 
+      in future releases of the dashboard."), 
     
     h3("3 August 2022"),
     p("Data are thought to be incomplete for NHS Fife in April 2022, so the proportion of births 
