@@ -115,7 +115,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
              mh_tab, # mental health
              # Pregnancy sections
              navbarMenu("Pregnancy", icon = icon("venus"),
-                        #antenatal_tab, # antenatal bookings
+                        antenatal_tab, # antenatal bookings
                         terminations_tab # terminations
              ) ,
              # Births and Babies sections
