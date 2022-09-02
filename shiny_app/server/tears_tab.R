@@ -259,7 +259,7 @@ plot_tears_linechart <- function(measure){
 
     xaxis_plots <- c(xaxis_plots,
                      dtick =tick_freq, tickangle = 0,
-                     categoryorder = "array", categoryarray = ~date)
+                     categoryorder = "array", categoryarray = ~date_label)
 
     #Creating trend plot
     plot_ly(data=plot_data, x=~date_label,  y = ~get(measure)) %>%
@@ -314,8 +314,8 @@ plot_tears_split <- function(dataset, split, measure){
     pallette <- pal_depr}
 
   xaxis_plots <- c(xaxis_plots,
-                   dtick = 3, tickangle = 0,
-                   categoryorder = "array", categoryarray = ~quarter)
+                   dtick = 4, tickangle = 0,
+                   categoryorder = "array", categoryarray = ~quarter_label)
 
   #Creating trend plot
   plot_ly(data=plot_data, x=~quarter_label,  y=~get(measure)) %>%
