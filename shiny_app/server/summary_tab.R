@@ -102,8 +102,7 @@ observeEvent(input$`summ-source-modal`,
                           "Public Health Scotland (PHS).",  target="_blank"), "This dataset is submitted daily to 
                   PHS and relates mainly to general acute care.
                    Exclusions from the RAPID dataset are day cases, neonatal, maternity and
-                   psychiatric care admissions. Admissions to the Golden Jubilee National Hospital are
-                   also not included. Admissions related to COVID-19 will be included in totals. 
+                   psychiatric care admissions. Admissions related to COVID-19 will be included in totals. 
                   Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  p("Hospital admissions are allocated to weeks based on the ISO8601 standard. Following this standard 
                    the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 
@@ -566,8 +565,8 @@ output$data_explorer <- renderUI({
                    paste0(total_title, "age group"), "summ_age_tot"),
       fluidRow(column(6, h4(paste0(variation_title, "SIMD quintile"))),
                column(6, h4(paste0(total_title, "SIMD quintile")))),
-      fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?",
-                            icon = icon('question-circle'))),
+      fluidRow(div(actionButton("btn_modal_simd", "What is SIMD and deprivation?",
+                            icon = icon('question-circle'), style = "float:right"))),
       fluidRow(column(6, withSpinner(plotlyOutput("summ_depr_var"))),
                column(6, withSpinner(plotlyOutput("summ_depr_tot"))))
       ) #tag list end
@@ -689,15 +688,15 @@ output$data_explorer <- renderUI({
                        column(6,
                               h4(paste0(total_title, "specialty group")))),
               ###Adding adm_type here to make clear what is selected
-              fluidRow(column(6,
+              fluidRow(column(4,
                               pickerInput("op_specialty", "Select one or more specialty groups",
                                           choices = spec_list_op, 
                                           multiple = TRUE,
                                           selected = c("Medical", "Surgery"))),
-                       column(6,
-                              actionButton("btn_spec_groups_op", 
+                       column(8,
+                              div(actionButton("btn_spec_groups_op", 
                                            "Specialties and their groups",
-                                           icon = icon('question-circle')))),
+                                           icon = icon('question-circle'), style = "float:right")))),
               fluidRow(column(6,
                               withSpinner(plotlyOutput("op_spec_var"))),
                        column(6,
@@ -707,8 +706,8 @@ output$data_explorer <- renderUI({
                        # Adding adm_type here to make clear what is selected
                        column(6,
                               h4(paste0(total_title, "mode of clinical interaction")))),
-              fluidRow(actionButton("btn_modal_moc", "Interpretation of this chart", 
-                                    icon = icon('fas fa-exclamation-circle'))),
+              fluidRow(div(actionButton("btn_modal_moc", "Interpretation of this chart", 
+                                    icon = icon('fas fa-exclamation-circle'), style = "float:right"))),
               fluidRow(column(6,
                               withSpinner(plotlyOutput("op_moc_var"))),
                        column(6,
@@ -720,22 +719,22 @@ output$data_explorer <- renderUI({
                          column(6,
                                 h4(paste0("Monthly number of ", dataset, " by ethnic group")),
                                 tags$em("Please note that this data is only available by month."))),
-                
-                ###Adding adm_type here to make clear what is selected
-                fluidRow(column(6,
+              
+              fluidRow(column(4,
                                 pickerInput("op_ethnicity", "Select one or more ethnic groups",
                                             choices = eth_list_op, 
                                             multiple = TRUE,
                                             selected = eth_list_op,
                                             options = list(
                                               `actions-box` = TRUE))),
-                         column(6,
-                                actionButton("btn_modal_eth", "Interpretation of this chart", 
-                                             icon = icon('fas fa-exclamation-circle')))),
+                         column(8,
+                                div(actionButton("btn_modal_eth", "Interpretation of this chart", 
+                                             icon = icon('fas fa-exclamation-circle'), style="float:right")))),
                 fluidRow(column(6,
                                 withSpinner(plotlyOutput("op_eth_var"))),
                          column(6,
                                 withSpinner(plotlyOutput("op_eth_tot"))))
+    
                                           
       ) #tag list end
   } #op end

@@ -35,8 +35,8 @@ save_final_file("cancer_data_quarters_2yr", "15_Jul_22")
 
 ##########################################################.
 ## SACT ----
-save_final_file("sact_data", "22_Aug_22")
-save_final_file("sact_weekly_data", "22_Aug_22")
+save_final_file("sact_data", "29_Aug_22")
+save_final_file("sact_weekly_data", "29_Aug_22")
 
 ##########################################################.
 ## DCE ----
@@ -84,23 +84,23 @@ save_final_file("cardio_admissions", "01_Jul_22") # admissions
 
 ##########################################################.
 ## Immunisations - six in one ----
-save_final_file("six_alldose", "28_Jul_22")
-save_final_file("six_dose1_simdtable", "28_Jul_22")
-save_final_file("six_dose2_simdtable", "28_Jul_22")
-save_final_file("six_dose3_simdtable", "28_Jul_22")
-save_final_file("sixinone_datatable", "28_Jul_22")
+save_final_file("six_alldose", "31_Aug_22")
+save_final_file("six_dose1_simdtable", "31_Aug_22")
+save_final_file("six_dose2_simdtable", "31_Aug_22")
+save_final_file("six_dose3_simdtable", "31_Aug_22")
+save_final_file("sixinone_datatable", "31_Aug_22")
 ## Immunisations - MMR ----
-save_final_file("mmr_alldose", "28_Jul_22")
-save_final_file("mmr_dose1_simdtable", "28_Jul_22")
-save_final_file("mmr_dose2_simdtable", "28_Jul_22")
-save_final_file("mmr_datatable", "28_Jul_22")
-save_final_file("mmr_dose2_grampian_datatable", "28_Jul_22")
+save_final_file("mmr_alldose", "31_Aug_22")
+save_final_file("mmr_dose1_simdtable", "31_Aug_22")
+save_final_file("mmr_dose2_simdtable", "31_Aug_22")
+save_final_file("mmr_datatable", "31_Aug_22")
+save_final_file("mmr_dose2_grampian_datatable", "31_Aug_22")
 # Immunisations - definitions
-save_final_file("age_defs_imm_6inone", "28_Jul_22")
-save_final_file("age_defs_imm_mmr", "28_Jul_22")
-save_final_file("month_eligibility_immun", "28_Jul_22")
+save_final_file("age_defs_imm_6inone", "31_Aug_22")
+save_final_file("age_defs_imm_mmr", "31_Aug_22")
+save_final_file("month_eligibility_immun", "31_Aug_22")
 ##########################################################.
-ch_date <- "28_Jul_22"
+ch_date <- "30_Aug_22"
 ## Child health reviews - first visit ----
 save_final_file("first_visit", ch_date)
 save_final_file("first_visit_datatable", ch_date)
@@ -167,7 +167,7 @@ save_final_file("tears_linechart_data", "20_Jul_22")
 save_final_file("tears_download_data", "20_Jul_22")
 ##########################################################.
 ## Mental health  ----
-save_final_file("mentalhealth_drugs", "01_Aug_22") # Prescribing
+save_final_file("mentalhealth_drugs", "16_Aug_22") # Prescribing
 save_final_file("mh_A&E", "01_Aug_22") # A&E
 save_final_file("mh_ooh", "01_Aug_22") # OOH
 ##########################################################.

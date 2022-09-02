@@ -588,15 +588,15 @@ output$cardio_explorer <- renderUI({
          h3(paste0("Quarterly ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`)),
          fluidRow(column(6, sourcemodal_ui("cardio")),
                   column(6,data_last_updated)),
-         plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_overall"),
+         plot_box("2020 to 2022 compared with 2015-2019 average", "cardio_overall"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " compared with the corresponding
-                     time in 2018-2019 by sex (Only totals are shown at board level due to small numbers)"), "cardio_sex_var",
+                     time in 2015-2019 by sex (Only totals are shown at board level due to small numbers)"), "cardio_sex_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " by sex (Only totals are shown at board level due to small numbers)"), "cardio_sex_tot"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths ", input$`cardio-geoname`, " compared with the corresponding
-                     time in 2018-2019 by age group"), "cardio_age_var",
+                     time in 2015-2019 by age group"), "cardio_age_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " by age group"), "cardio_age_tot"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " compared with the corresponding
-                     time in 2018-2019 by SIMD quintile"), "cardio_depr_var",
+                     time in 2015-2019 by SIMD quintile"), "cardio_depr_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", " deaths in ", input$`cardio-geoname`, " by SIMD quintile"), "cardio_depr_tot",
                       extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
                                                    icon = icon('question-circle')))
@@ -770,7 +770,7 @@ overall_cardio_download <- reactive({
   # Deaths
   if (input$`cardio-measure` == "cardio_deaths") {
     selection <- c("week_ending", "area_name", "diagnosis", "count", "count_average", "variation")
-    new_var_name <- "average_2018_2019"
+    new_var_name <- "average_2015_2019"
   }  
   
   # Prep data for download
