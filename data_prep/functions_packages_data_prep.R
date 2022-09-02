@@ -18,6 +18,7 @@ library(haven)
 library(readxl)
 library(odbc) # for accessing SMRA
 library(glue) # For SQL date parameters
+library(listviewer)
 
 ###############################################.
 ## Filepaths ----
@@ -47,8 +48,11 @@ Sys.umask("006")
 hb_lookup <- read_spss(paste0(cl_out, "National Reference Files/Health_Board_Identifiers.sav")) %>%
   janitor::clean_names() %>% select(description, hb_cypher) %>%
   rename(area_name=description) %>%
-  mutate(hb_cypher=as.character(hb_cypher), area_name= as.character(area_name),
-         area_type="Health board")
+  mutate(hb_cypher=as.character(hb_cypher), 
+         area_name= as.character(area_name),
+         area_type="Health board",
+         area_name = case_when(hb_cypher == "K" ~ "NHS Golden Jubilee",
+                               TRUE ~ area_name))
 
 ###############################################.
 ## Functions ----

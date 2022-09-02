@@ -131,13 +131,21 @@
 }
 
 
-/* Remove the light purple shading from Summary tab specialty filter */
+/* Remove the light purple shading from Summary tab specialty filters */
 #data_explorer > div:nth-child(13) > div:nth-child(1) > div {
   background-color: #ffffff;
 } 
 
-/*Remove the light purple shading from Summary tab ethnicity filter */
+#data_explorer > div:nth-child(14) > div:nth-child(1) > div {
+  background-color: #ffffff;
+}
+
+/*Remove the light purple shading from Summary tab ethnicity filters (hosp adms and outpats) */
 #data_explorer > div:nth-child(16) > div:nth-child(1) > div {
+  background-color: #ffffff;
+}
+
+#data_explorer > div:nth-child(20) > div:nth-child(1) > div {
   background-color: #ffffff;
 }
 
