@@ -276,7 +276,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     xaxis_plots[["rangeslider"]] <- list(range="xvar", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
       
 
-    hist_legend_previous <- case_when(data_name == "deaths" ~ "Average 2015-2019",
+    hist_legend_previous <- case_when(data_name %in% c("deaths", "cardio_deaths") ~ "Average 2015-2019",
                                       TRUE ~ "Average 2018-2019")
 
     hist_legend_covid <- case_when(data_name %in% c("cath")  ~ "2020", TRUE ~ "2020 - 2022")
@@ -888,7 +888,7 @@ plot_sact_wk_difference_chart_treatment <- function(sact_wk_dataset) {
 ## # Function that creates specialty charts.   ----
 ###############################################.
 # Potentially could be merge with trend one
-plot_spec <- function(type, dataset, marg = 160, period = "weekly", op = F) {
+plot_spec <- function(type, dataset, marg = NULL, period = "weekly", op = F) {
   trend_data <- dataset
 
   if (type == "variation") {

@@ -49,10 +49,10 @@ create_cathlab()
 ## Child health datasets ----
 ###############################################.
 source("data_prep/childhealth_data_prep.R") # This sources the functions for the section
-create_chreview(ch_date_file = "20220725") # Child health reviews. #date included in filepath name
-create_childdev(filedate = "25thJuly2022")
-create_breastfeeding(filedate = "25thJuly2022")
-create_childdev_domains(filedate="25thJuly2022")
+create_chreview(ch_date_file = "20220829") # Child health reviews. #date included in filepath name
+create_childdev(filedate = "29thAugust2022")
+create_breastfeeding(filedate = "29thAugust2022")
+create_childdev_domains(filedate="29thAugust2022")
 
 ############## Remember to change final_app_files script dates
 file.edit("data_prep/final_app_files.R")
@@ -67,12 +67,13 @@ source("data_prep/summary_data_prep.R") # This sources the functions for the sec
 # Change extract to F if you just want to run the data prep and not the extraction
 # (quicker once the extraction has been done once)
 
-create_rapid(last_week =  "2022-07-24", extract = T) # this requires access to the RAPID dataset
+create_rapid(last_week =  "2022-07-24", last_month = "2022-07-01", extract = T) # this requires access to the RAPID dataset
 create_ae(filedate = "2022-07-28", last_week =  "2022-07-24")
 create_ooh(filename = "2022-08-01", last_week = "2022-07-24")
 create_nhs24(filedate = "2022-08-01", last_week =  "2022-07-24")
 create_sas(filedate = "2022-08-01", last_week =  "2022-07-24")
 create_ooh_cons(filename = "2022-08-01", last_week = "2022-07-24")
+
 
 # Deaths require access to deaths catalogue
 source("data_prep/deaths_data_preparation.R") # And the deaths function

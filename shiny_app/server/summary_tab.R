@@ -102,8 +102,7 @@ observeEvent(input$`summ-source-modal`,
                           "Public Health Scotland (PHS).",  target="_blank"), "This dataset is submitted daily to 
                   PHS and relates mainly to general acute care.
                    Exclusions from the RAPID dataset are day cases, neonatal, maternity and
-                   psychiatric care admissions. Admissions to the Golden Jubilee National Hospital are
-                   also not included. Admissions related to COVID-19 will be included in totals. 
+                   psychiatric care admissions. Admissions related to COVID-19 will be included in totals. 
                   Small counts, including zeroes, are not shown in order to protect patient confidentiality."),
                  p("Hospital admissions are allocated to weeks based on the ISO8601 standard. Following this standard 
                    the year 2020 had 53 weeks while 2018 and 2019 had 52. To allow comparisons, we use the 2018-2019 
@@ -360,7 +359,7 @@ observeEvent(input$btn_modal_moc, { showModal(moc_modal) })
 
 
 ###############################################.
-# Modal to explain ethnicity graphs
+# Modal to explain ethnicity charts in outpatients section.
 eth_modal <- modalDialog(
   h5(tags$b("Interpretation of this chart")),
   p("The ethnic group field in the Scottish Morbidity Record (SMR) 
@@ -389,7 +388,27 @@ eth_modal <- modalDialog(
 # Link action button click to modal launch 
 observeEvent(input$btn_modal_eth, { showModal(eth_modal) }) 
 
-
+###############################################.
+# Modal to explain ethnicity chart - rapid section
+# rapid_eth_modal <- modalDialog(
+#   h5(tags$b("Interpretation of this chart")),
+#   
+#   p("Ethnicity fields were added to Rapid Preliminary Inpatient Data (RAPID) submissions 
+#     in June 2020 to aid the COVID-19 response. NHS Boards were asked to re-submit 
+#     admissions data from 1 March 2020 onwards to include ethnicity information."),
+#   p("The following list is the current ethnicity classification (2011 Census categories) 
+#     used by NHS Scotland organisations, and the ethnic groupings that we have used in 
+#     this dashboard."),
+#   renderTable(eth_lookup),  
+#   p("The ‘Missing’ ethnic group category includes those where ethnic group was 
+#     recorded as 'Not Known', 'Refused/Not Provided by the Patient' or was not recorded at all."),
+#   p("It is important to note that the trends for ethnic groups with small populations should be 
+#   interpreted with caution as they will be subject to greater variability due to small numbers."),
+#   size = "l",
+#   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+# )
+# # Link action button click to modal launch 
+# observeEvent(input$btn_modal_eth_rapid, { showModal(rapid_eth_modal) }) 
 
 ###############################################.
 ## Reactive datasets ----
@@ -408,6 +427,14 @@ rapid_spec <- reactive({
              category == "All" &
              spec %in% input$adm_specialty)
 
+})
+
+# Rapid dataset used for ethnicity charts
+rapid_eth <- reactive({
+  rapid %>% filter(type == "eth") %>%
+    filter(area_name == input$`summary-geoname`,
+           category %in% input$rapid_ethnicity)
+  
 })
 
 # Outpatients dataset filtered for admission_type, then used to create the admissions charts
@@ -538,8 +565,8 @@ output$data_explorer <- renderUI({
                    paste0(total_title, "age group"), "summ_age_tot"),
       fluidRow(column(6, h4(paste0(variation_title, "SIMD quintile"))),
                column(6, h4(paste0(total_title, "SIMD quintile")))),
-      fluidRow(actionButton("btn_modal_simd", "What is SIMD and deprivation?",
-                            icon = icon('question-circle'))),
+      fluidRow(div(actionButton("btn_modal_simd", "What is SIMD and deprivation?",
+                            icon = icon('question-circle'), style = "float:right"))),
       fluidRow(column(6, withSpinner(plotlyOutput("summ_depr_var"))),
                column(6, withSpinner(plotlyOutput("summ_depr_tot"))))
       ) #tag list end
@@ -555,17 +582,37 @@ output$data_explorer <- renderUI({
                  data_name = "adm"),
       fluidRow(column(6, h4(paste0(variation_title, "specialty group - (admission type: ", tolower(input$adm_type), ")"))), # Adding adm_type here to make clear what is selected
                column(6, h4(paste0(total_title, "specialty group - (admission type: ", tolower(input$adm_type), ")")))), # Adding adm_type here to make clear what is selected
-      fluidRow(column(6, pickerInput("adm_specialty", "Select one or more specialty groups",
+      fluidRow(column(4, pickerInput("adm_specialty", "Select one or more specialty groups",
                                      choices = if (input$`summary-geotype` == "Scotland") {
                                        spec_list_rapid} else {
                                          spec_list_rapid[c(1:8,11)]}, multiple = TRUE,
                                      selected = c("Medical (incl. Cardiology & Cancer)", "Surgery", "Paediatrics (medical & surgical)"))),
-               column(6, actionButton("btn_spec_groups_rapid",
+               column(8, div(actionButton("btn_spec_groups_rapid",
                                       "Specialties and their groups",
-                                      icon = icon('question-circle')))),
+                                      icon = icon('question-circle'), style="float:right")))),
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
                column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
+    #   fluidRow(
+    #     column(12,
+    #            h4(paste0("Monthly number of ", dataset, " by ethnic group")),
+    #            p("Please note that ethnic group was not recorded in RAPID for 
+    #                     admissions prior to March 2020. This data is only available by month."))),
+    #   
+    #   fluidRow(column(4,
+    #                   pickerInput("rapid_ethnicity", "Select one or more ethnic groups",
+    #                               choices = eth_list_op, 
+    #                               multiple = TRUE,
+    #                               selected = eth_list_op,
+    #                               options = list(
+    #                                 `actions-box` = TRUE))),
+    #            column(8, div(actionButton("btn_modal_eth_rapid", "Interpretation of this chart",
+    #                                  icon = icon('fas fa-exclamation-circle'), style="float:right")))),
+    #   
+    #   fluidRow(
+    #     column(12,
+    #            withSpinner(plotlyOutput("adm_eth_tot"))))
     )
+
   } else if (input$`summary-measure` == "aye") {
     tagList(#A&E Attendances
     cut_charts(title= "Weekly attendances to A&E departments",
@@ -641,15 +688,15 @@ output$data_explorer <- renderUI({
                        column(6,
                               h4(paste0(total_title, "specialty group")))),
               ###Adding adm_type here to make clear what is selected
-              fluidRow(column(6,
+              fluidRow(column(4,
                               pickerInput("op_specialty", "Select one or more specialty groups",
                                           choices = spec_list_op, 
                                           multiple = TRUE,
                                           selected = c("Medical", "Surgery"))),
-                       column(6,
-                              actionButton("btn_spec_groups_op", 
+                       column(8,
+                              div(actionButton("btn_spec_groups_op", 
                                            "Specialties and their groups",
-                                           icon = icon('question-circle')))),
+                                           icon = icon('question-circle'), style = "float:right")))),
               fluidRow(column(6,
                               withSpinner(plotlyOutput("op_spec_var"))),
                        column(6,
@@ -659,8 +706,8 @@ output$data_explorer <- renderUI({
                        # Adding adm_type here to make clear what is selected
                        column(6,
                               h4(paste0(total_title, "mode of clinical interaction")))),
-              fluidRow(actionButton("btn_modal_moc", "Interpretation of this chart", 
-                                    icon = icon('fas fa-exclamation-circle'))),
+              fluidRow(div(actionButton("btn_modal_moc", "Interpretation of this chart", 
+                                    icon = icon('fas fa-exclamation-circle'), style = "float:right"))),
               fluidRow(column(6,
                               withSpinner(plotlyOutput("op_moc_var"))),
                        column(6,
@@ -672,22 +719,22 @@ output$data_explorer <- renderUI({
                          column(6,
                                 h4(paste0("Monthly number of ", dataset, " by ethnic group")),
                                 tags$em("Please note that this data is only available by month."))),
-                
-                ###Adding adm_type here to make clear what is selected
-                fluidRow(column(6,
+              
+              fluidRow(column(4,
                                 pickerInput("op_ethnicity", "Select one or more ethnic groups",
                                             choices = eth_list_op, 
                                             multiple = TRUE,
                                             selected = eth_list_op,
                                             options = list(
                                               `actions-box` = TRUE))),
-                         column(6,
-                                actionButton("btn_modal_eth", "Interpretation of this chart", 
-                                             icon = icon('fas fa-exclamation-circle')))),
+                         column(8,
+                                div(actionButton("btn_modal_eth", "Interpretation of this chart", 
+                                             icon = icon('fas fa-exclamation-circle'), style="float:right")))),
                 fluidRow(column(6,
                                 withSpinner(plotlyOutput("op_eth_var"))),
                          column(6,
                                 withSpinner(plotlyOutput("op_eth_tot"))))
+    
                                           
       ) #tag list end
   } #op end
@@ -729,6 +776,7 @@ output$summ_age_tot <- renderPlotly({
                    data_name = input$`summary-measure`, period = summ_time_period())})
 
 # Admissions to hospital charts
+#output$adm_eth_tot <- renderPlotly({plot_trend_chart(rapid_eth(), pal_eth, "eth", "total", "adm", period = "monthly")})
 output$adm_spec_var <- renderPlotly({plot_spec("variation", rapid_spec())})
 output$adm_spec_tot <- renderPlotly({plot_spec("total", rapid_spec())})
 

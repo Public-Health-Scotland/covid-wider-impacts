@@ -6,7 +6,6 @@
 # 
 # Notes:
 # Remove records belonging to hospitals G303H (Mearnskirk House, GGC) and W106H (St Brendans Cot Hosp, WI).
-# Admissions to the Golden Jubilee National Hospital (D102H) are also removed.
 # Day cases, neonatal, maternity and psychiatric care admissions are excluded from the RAPID dataset. 
 
 # Approximate run time: 5 minutes
@@ -37,8 +36,8 @@ rapid_extract <- as_tibble(dbGetQuery(RAPID_connection, statement=paste0(
                       FROM rapid.syswatch_hosp_stay      #name of RAPID Stay Table 
                       WHERE ADMISSION_DATE >= '2018-01-01' 
                       AND inpatient_daycase_identifier_code ='IP'
-                      AND hospital_of_treatment_nhs_board_code_current IN ('A', 'B', 'F', 'G', 'H', 'L', 'N','R', 'S', 'T', 'V', 'W', 'Y', 'Z')
-                      AND hospital_of_treatment_location_code NOT IN ('W106H', 'G303H', 'D102H')
+                      AND hospital_of_treatment_nhs_board_code_current IN ('A', 'B', 'F', 'G', 'H', 'K', 'L', 'N','R', 'S', 'T', 'V', 'W', 'Y', 'Z')
+                      AND hospital_of_treatment_location_code NOT IN ('W106H', 'G303H')
                       CONTEXT ('i18n'='gb', 'cache_wait_for_load'='true');"))) 
                       # i18: Internationalization configuration for the results of the query.
                       # cache: the query does not finish until the data is completely stored in cache.
@@ -101,8 +100,9 @@ rapid %<>%
                                     TRUE ~ 'Planned')) %>% 
   create_agegroups() %>% 
   create_sexgroups() %>% 
-  create_depgroups() %>% 
-  select(-age, -age_grp1, -postcode, -emergency_admission_flag, -medsur) %>% 
+  create_depgroups() %>%
+  create_ethgroups() %>% 
+  select(-age, -age_grp1, -postcode, -emergency_admission_flag, -medsur, -ethnic_group_description, -ethnic_group_code) %>% 
   rename(age = age_grp)
 
 
@@ -112,11 +112,11 @@ rapid %<>%
 
 # Totals - by admission_type, spec, dep, age, sex, and date_adm.
 rapid_output <- rapid %>% 
-    group_by(hb, hscp_code, hscp_name, admission_type, spec, dep, age, sex, date_adm) %>% 
+    group_by(hb, hscp_code, hscp_name, admission_type, spec, dep, age, sex, ethnic_group, date_adm) %>% 
     summarise(count = n()) %>% 
     ungroup() %>%  
-    select(hb, hscp_code, hscp_name, admission_type, spec, dep, age, sex, date_adm, count)
-
+    select(hb, hscp_code, hscp_name, admission_type, spec, dep, age, sex, ethnic_group, date_adm, count)
+ 
 
 # Save file with today's date
 date_on_filename <<- format(Sys.Date(), format = '%Y-%m-%d')
