@@ -75,9 +75,9 @@ output$apgar_linechart_number <- renderPlotly({plot_apgar_linechart(measure="apg
 output$apgar_linechart_percent <- renderPlotly({plot_apgar_linechart(measure="percent_apgar")})
 
 #chart outputs for line charts for Scotland only age and deprivation line charts
-output$apgar_linechart_age_n <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="age"),split="age", measure="tot_apgar5_37plus")})
+output$apgar_linechart_age_n <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="age"),split="age", measure="low_apgar5_37plus")})
 output$apgar_linechart_age_p <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="age"),split="age", measure="perc_low_apgar5_37plus")})
-output$apgar_linechart_dep_n <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="dep"),split="dep", measure="tot_apgar5_37plus")})
+output$apgar_linechart_dep_n <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="dep"),split="dep", measure="low_apgar5_37plus")})
 output$apgar_linechart_dep_p <- renderPlotly({plot_apgar_split(dataset=apgar_linechart_split(split="dep"),split="dep", measure="perc_low_apgar5_37plus")})
 
 ###############################################.
@@ -262,7 +262,7 @@ plot_apgar_linechart <- function(measure){
 
     xaxis_plots <- c(xaxis_plots,
                      dtick =tick_freq, tickangle = 0,
-                     categoryorder = "array", categoryarray = ~date)
+                     categoryorder = "array", categoryarray = ~date_label)
 
     #Creating trend plot
     plot_ly(data=plot_data, x=~date_label,  y = ~get(measure)) %>%
@@ -285,12 +285,12 @@ plot_apgar_split <- function(dataset, split, measure){
   plot_data <- dataset
 
   #improve grammar of label to appear in tool tip
-  tool_tip_split <- case_when(split=="age" ~ paste0("Age group:"), split=="dep" ~ paste0("Deprivation group:"))
+  tool_tip_split <- case_when(split=="age" ~ paste0("Age group: "), split=="dep" ~ paste0("Deprivation group: "))
 
   # Create tooltip for line chart
   tooltip <- c(paste0(tool_tip_split,dataset$category,"<br>",
                       "Quarter: ", format(plot_data$quarter_label),"<br>",
-                      "Number: ", plot_data$tot_apgar5_37plus, "<br>",
+                      "Number: ", plot_data$low_apgar5_37plus, "<br>",
                       "Percentage: ", format(plot_data$perc_low_apgar5_37plus,digits=1,nsmall = 1),"%"))
 
   # adjust chart y axis according to what is being displayed
@@ -301,7 +301,7 @@ plot_apgar_split <- function(dataset, split, measure){
     if(split == "dep"){
       yaxis_plots[["range"]] <- c(0, 10)}  # forcing range from 0 to 10% for dep
   }
-  if(measure == "tot_apgar5_37plus"){
+  if(measure == "low_apgar5_37plus"){
     yaxis_plots[["title"]] <- "Number of births"
   }
 
@@ -317,8 +317,8 @@ plot_apgar_split <- function(dataset, split, measure){
     pallette <- pal_depr}
 
   xaxis_plots <- c(xaxis_plots,
-                   dtick = 3, tickangle = 0,
-                   categoryorder = "array", categoryarray = ~quarter)
+                   dtick = 4, tickangle = 0,
+                   categoryorder = "array", categoryarray = ~quarter_label)
 
   #Creating trend plot
   plot_ly(data=plot_data, x=~quarter_label,  y=~get(measure)) %>%

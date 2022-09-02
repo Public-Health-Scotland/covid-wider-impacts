@@ -112,7 +112,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                         sact_tabm,
                         sact_tabw), # SACT
              injuries_tab, # Unintentional injuries
-             mh_tab, # mental health 
+             mh_tab, # mental health
              # Pregnancy sections
              navbarMenu("Pregnancy", icon = icon("venus"),
                         antenatal_tab, # antenatal bookings
@@ -136,7 +136,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                         childdev_tab
              ), #navbarMenu bracket
              drugs_tab, # substance use
-             data_tab # data 
+             data_tab # data
   ) # page bracket
 )# taglist bracket
  # )#secure app

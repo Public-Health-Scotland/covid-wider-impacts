@@ -13,11 +13,12 @@ source("data_prep/births_babies_data_prep.R") # This sources the functions for t
 #This is perhaps a very big function and should be split into three (one for each delivery indicator)
 
 # 21/07/22 - Data for FORTH VALLEY incomplete for April 22, so temporarily removed for delivery data
-create_delivery(folderdate = "2022-07-18") # Mode of delivery, induction and gestation data
+create_delivery(folderdate = "2022-08-12") # Mode of delivery, induction and gestation data
+create_apgar(folderdate = "2022_08_12", max_date = "2022-05-31") # Apgar scores
+create_preterm(preterm_date = "2022_06_13", max_date = "2022-03-31") # Preterm - updated quarterly so some months these dates are not updated.
+create_tears(tears_date = "2022_08_12", max_date = "2022-05-31") # Perineal tears
+
 create_perinatal(foldermonth = "aug22") # Stillbirths and perinatal mortality
-create_apgar(folderdate = "2022_07_13", max_date = "2022-04-30") # Apgar scores
-create_preterm(preterm_date = "2022_06_13", max_date = "2022-03-31") # Preterm
-create_tears(tears_date = "2022_07_13", max_date = "2022-04-30") # Perineal tears
 
 # For delivery, apgar, preterm, tears and antenatal change dates in global script
 # For perinatal change dates in perinatal_tab script
@@ -95,7 +96,7 @@ file.edit("shiny_app/summary_tab.R")
 source("data_prep/pregnancy_data_prep.R") # functions for section
 
 create_terminations(top_date = "2022-07-12")
-create_antebooking(booking_date = "13072022", max_book_date = "2022-07-10")
+create_antebooking(booking_date = "17082022", max_book_date = "2022-08-14")
 
 
 #For terminations change global extract date, and in terminations tab, update date.

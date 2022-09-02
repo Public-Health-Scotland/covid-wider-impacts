@@ -176,7 +176,7 @@ perinatal <- readRDS("data/perinatal.rds")
 #Pregnancy tab
 #antenatal booking
 
-booking_extract_date <- "13 July 2022"
+booking_extract_date <- "17 August 2022"
 booking <- readRDS("data/ante_booking.rds")
 booking_download <- readRDS("data/ante_booking_download.rds")
 
@@ -186,7 +186,7 @@ top <- readRDS("data/top.rds")
 top_download <- readRDS("data/top_download.rds")
 
 #mode of delivery (pregnanacy tab)
-mod_extract_date <- "18 July 2022"
+mod_extract_date <- "12 August 2022"
 mod_runchart <- readRDS("data/mod_runchart_data.rds")
 mod_scot <- readRDS("data/mod_scot_data.rds")
 mod_linechart <- readRDS("data/mod_linechart_data.rds")
@@ -215,13 +215,13 @@ child_dev_domains <- readRDS("data/child_dev_domains.rds")
 
 
 # Apgar (births and babies tab)
-apgar_extract_date <- "13 July 2022"
+apgar_extract_date <- "12 August 2022"
 apgar_runchart <- readRDS("data/apgar_runchart_data.rds")
 apgar_scot <- readRDS("data/apgar_scot_data.rds")
 apgar_linechart <- readRDS("data/apgar_linechart_data.rds")
 apgar_download <- readRDS("data/apgar_download_data.rds")
 
-# Preterm
+# Preterm - updated quarterly
 preterm_extract_date <- "13 June 2022"
 preterm_chart <- readRDS("data/preterm.rds")
 preterm_linechart <- readRDS("data/preterm_linechart_data.rds")
@@ -256,7 +256,8 @@ home_list <- c("About" = "about",
                 "Accessibility" = "accessibility")
  
  # List of sections in Commentary tab
-commentary_list <- c("Summary trends" = "summary",
+commentary_list <- c(
+                      "Summary trends" = "summary",
                       "Cardiovascular" = "cardio",
                       "Cancer" = "cancer",
                       "Injuries" = "injuries",
@@ -538,7 +539,7 @@ pal_eth <- c('#E39C8C',
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
-                    showline = TRUE, fixedrange=TRUE, rangeslider = FALSE)
+                    showline = TRUE, fixedrange=TRUE, rangeslider = FALSE, range = FALSE)
 
 yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
                     tickfont = list(size=14), titlefont = list(size=14))
