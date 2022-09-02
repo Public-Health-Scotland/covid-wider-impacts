@@ -95,9 +95,8 @@ file.edit("shiny_app/summary_tab.R")
 ###############################################.
 source("data_prep/pregnancy_data_prep.R") # functions for section
 
-create_terminations(top_date = "2022-07-12")
+create_terminations(top_date = "2022-08-16")
 create_antebooking(booking_date = "17082022", max_book_date = "2022-08-14")
-
 
 #For terminations change global extract date, and in terminations tab, update date.
 # Add here what needs to be changed in the shiny scripts

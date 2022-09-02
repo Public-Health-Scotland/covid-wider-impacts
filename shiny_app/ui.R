@@ -1,17 +1,17 @@
 #UI
 # Sourcing UI scripts
 source(file.path('ui/modules_ui.R'),  local = TRUE)$value 
-source(file.path('ui/intro_ui.R'),  local = TRUE)$value 
-source(file.path('ui/summary_ui.R'),  local = TRUE)$value 
-source(file.path('ui/cardio_ui.R'),  local = TRUE)$value 
-source(file.path('ui/cancer_ui.R'),  local = TRUE)$value 
-source(file.path('ui/injuries_ui.R'),  local = TRUE)$value 
-source(file.path('ui/mh_ui.R'),  local = TRUE)$value 
+source(file.path('ui/intro_ui.R'),  local = TRUE)$value
+source(file.path('ui/summary_ui.R'),  local = TRUE)$value
+source(file.path('ui/cardio_ui.R'),  local = TRUE)$value
+source(file.path('ui/cancer_ui.R'),  local = TRUE)$value
+source(file.path('ui/injuries_ui.R'),  local = TRUE)$value
+source(file.path('ui/mh_ui.R'),  local = TRUE)$value
 source(file.path('ui/pregnancy_ui.R'),  local = TRUE)$value 
-source(file.path('ui/birthsbabies_ui.R'),  local = TRUE)$value 
-source(file.path('ui/childhealth_ui.R'),  local = TRUE)$value 
-source(file.path('ui/drugs_ui.R'),  local = TRUE)$value 
-source(file.path('ui/data_ui.R'),  local = TRUE)$value 
+source(file.path('ui/birthsbabies_ui.R'),  local = TRUE)$value
+source(file.path('ui/childhealth_ui.R'),  local = TRUE)$value
+source(file.path('ui/drugs_ui.R'),  local = TRUE)$value
+source(file.path('ui/data_ui.R'),  local = TRUE)$value
 
  # secure_app( #uncomment if needing password protection
 
@@ -117,7 +117,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
              navbarMenu("Pregnancy", icon = icon("venus"),
                         antenatal_tab, # antenatal bookings
                         terminations_tab # terminations
-             ), 
+             ) ,
              # Births and Babies sections
              navbarMenu("Births and babies", icon = icon("baby"),
                         inductions_tab,
