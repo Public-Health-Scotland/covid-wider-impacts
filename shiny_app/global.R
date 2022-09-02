@@ -257,25 +257,25 @@ home_list <- c("About" = "about",
  
  # List of sections in Commentary tab
 commentary_list <- c(
-                      # "Summary trends" = "summary",
-                      # "Cardiovascular" = "cardio",
-                      # "Cancer" = "cancer",
-                      # "Injuries" = "injuries",
-                      # "Mental health" = "mental-health",
+                      "Summary trends" = "summary",
+                      "Cardiovascular" = "cardio",
+                      "Cancer" = "cancer",
+                      "Injuries" = "injuries",
+                      "Mental health" = "mental-health",
                       "Antenatal bookings" = "booking",
-                      # "Termination of pregnancy" = "termination",
+                      "Termination of pregnancy" = "termination",
                       "Induction of labour" = "induction",
                       "Method of delivery" = "delivery",
                       "Gestation at delivery" = "gestation",
                       "Apgar scores" = "apgar",
                       "Location of extremely preterm babies" = "preterm",
-                      "Perineal tears" = "tears"
-                      # "Stillbirths and infant deaths" = "perinatal",
-                      # "Immunisations" = "immunisation",
-                      # "Child health reviews" = "child-health",
-                      # "Breastfeeding" = "breastfeeding",
-                      # "Child development" = "child-dev",
-                      # "Substance use" = "drugs"
+                      "Perineal tears" = "tears",
+                      "Stillbirths and infant deaths" = "perinatal",
+                      "Immunisations" = "immunisation",
+                      "Child health reviews" = "child-health",
+                      "Breastfeeding" = "breastfeeding",
+                      "Child development" = "child-dev",
+                      "Substance use" = "drugs"
                       )
 
 spec_list_rapid <- sort(c(unique(spec_lookup_rapid$'Specialty group'),
@@ -539,7 +539,7 @@ pal_eth <- c('#E39C8C',
 
 # Style of x and y axis
 xaxis_plots <- list(title = FALSE, tickfont = list(size=14), titlefont = list(size=14),
-                    showline = TRUE, fixedrange=TRUE, rangeslider = FALSE)
+                    showline = TRUE, fixedrange=TRUE, rangeslider = FALSE, range = FALSE)
 
 yaxis_plots <- list(title = FALSE, rangemode="tozero", fixedrange=TRUE, size = 4,
                     tickfont = list(size=14), titlefont = list(size=14))
