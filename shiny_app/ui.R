@@ -40,63 +40,63 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                                           choices = commentary_list, status = "primary",
                                           direction = "vertical", justified = T)),
            mainPanel(width = 9,
-                     # # Summary trends
-                     # conditionalPanel(condition= 'input.commentary_select == "summary"',
-                     #                  summary_commentary),
-                     # # Cardiovascular
-                     # conditionalPanel(condition= 'input.commentary_select == "cardio"',
-                     #                  cardio_commentary),
-                     # # Cancer
-                     # conditionalPanel(condition= 'input.commentary_select == "cancer"',
-                     #                  cancer_commentary),
-                     # # Injuries
-                     # conditionalPanel(condition= 'input.commentary_select == "injuries"',
-                     #                  injuries_commentary),
-                     # # Mental health
-                     # conditionalPanel(condition= 'input.commentary_select == "mental-health"',
-                     #                  mentalhealth_commentary),
-                     # # Antenatal bookings
-                     # conditionalPanel(condition= 'input.commentary_select == "booking"',
-                     #                  booking_commentary),
-                     # # Terminations
-                     # conditionalPanel(condition= 'input.commentary_select == "termination"',
-                     #                  top_commentary),
-                     # # Induction of labour
-                     # conditionalPanel(condition= 'input.commentary_select == "induction"',
-                     #                  induction_commentary),
-                     # # Method of delivery
-                     # conditionalPanel(condition= 'input.commentary_select == "delivery"',
-                     #                  mod_commentary),
-                     # # Gestation at delivery
-                     # conditionalPanel(condition= 'input.commentary_select == "gestation"',
-                     #                  gestation_commentary),
-                     # # Apgar scores
-                     # conditionalPanel(condition= 'input.commentary_select == "apgar"',
-                     #                  apgar_commentary),
-                     # # Location of extremely preterm babies
-                     # conditionalPanel(condition= 'input.commentary_select == "preterm"',
-                     #                  preterm_commentary),
-                     # # Perineal tears
-                     # conditionalPanel(condition= 'input.commentary_select == "tears"',
-                     #                  tears_commentary),
+                     # Summary trends
+                     conditionalPanel(condition= 'input.commentary_select == "summary"',
+                                      summary_commentary),
+                     # Cardiovascular
+                     conditionalPanel(condition= 'input.commentary_select == "cardio"',
+                                      cardio_commentary),
+                     # Cancer
+                     conditionalPanel(condition= 'input.commentary_select == "cancer"',
+                                      cancer_commentary),
+                     # Injuries
+                     conditionalPanel(condition= 'input.commentary_select == "injuries"',
+                                      injuries_commentary),
+                     # Mental health
+                     conditionalPanel(condition= 'input.commentary_select == "mental-health"',
+                                      mentalhealth_commentary),
+                     # Antenatal bookings
+                     conditionalPanel(condition= 'input.commentary_select == "booking"',
+                                      booking_commentary),
+                     # Terminations
+                     conditionalPanel(condition= 'input.commentary_select == "termination"',
+                                      top_commentary),
+                     # Induction of labour
+                     conditionalPanel(condition= 'input.commentary_select == "induction"',
+                                      induction_commentary),
+                     # Method of delivery
+                     conditionalPanel(condition= 'input.commentary_select == "delivery"',
+                                      mod_commentary),
+                     # Gestation at delivery
+                     conditionalPanel(condition= 'input.commentary_select == "gestation"',
+                                      gestation_commentary),
+                     # Apgar scores
+                     conditionalPanel(condition= 'input.commentary_select == "apgar"',
+                                      apgar_commentary),
+                     # Location of extremely preterm babies
+                     conditionalPanel(condition= 'input.commentary_select == "preterm"',
+                                      preterm_commentary),
+                     # Perineal tears
+                     conditionalPanel(condition= 'input.commentary_select == "tears"',
+                                      tears_commentary),
                      # Stillbirths and infant deaths
                      conditionalPanel(condition= 'input.commentary_select == "perinatal"',
-                                      perinatal_commentary)
-                     # # Immunisations
-                     # conditionalPanel(condition= 'input.commentary_select == "immunisation"',
-                     #                  immun_commentary_section),
-                     # # Child health reviews1
-                     # conditionalPanel(condition= 'input.commentary_select == "child-health"',
-                     #                  child_comments),
-                     # # Breastfeeding
-                     # conditionalPanel(condition= 'input.commentary_select == "breastfeeding"',
-                     #                  breastfeeding_commentary),
-                     # # Child development
-                     # conditionalPanel(condition= 'input.commentary_select == "child-dev"',
-                     #                  childdev_commentary),
-                     # # Substance use
-                     # conditionalPanel(condition= 'input.commentary_select == "drugs"',
-                     #                  drug_commentary)
+                                      perinatal_commentary),
+                     # Immunisations
+                     conditionalPanel(condition= 'input.commentary_select == "immunisation"',
+                                      immun_commentary_section),
+                     # Child health reviews1
+                     conditionalPanel(condition= 'input.commentary_select == "child-health"',
+                                      child_comments),
+                     # Breastfeeding
+                     conditionalPanel(condition= 'input.commentary_select == "breastfeeding"',
+                                      breastfeeding_commentary),
+                     # Child development
+                     conditionalPanel(condition= 'input.commentary_select == "child-dev"',
+                                      childdev_commentary),
+                     # Substance use
+                     conditionalPanel(condition= 'input.commentary_select == "drugs"',
+                                      drug_commentary)
                      
            )#mainPanel
          ) #sidebarLayout
@@ -104,39 +104,39 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
              ##############################################.
              # Section tabs ----
              #############################################.
-             # summary_tab, # Summary trends
-             # cardio_tab, # Cardiovascular
-             # # Cancer sections
-             # navbarMenu("Cancer", icon = icon("disease"),
-             #            cancerpath_tab, # Cancer pathology
-             #            sact_tabm,
-             #            sact_tabw), # SACT
-             # injuries_tab, # Unintentional injuries
-             # mh_tab, # mental health 
-             # # Pregnancy sections
-             # navbarMenu("Pregnancy", icon = icon("venus"),
-             #            antenatal_tab, # antenatal bookings
-             #            terminations_tab # terminations
-             # ), 
+             summary_tab, # Summary trends
+             cardio_tab, # Cardiovascular
+             # Cancer sections
+             navbarMenu("Cancer", icon = icon("disease"),
+                        cancerpath_tab, # Cancer pathology
+                        sact_tabm,
+                        sact_tabw), # SACT
+             injuries_tab, # Unintentional injuries
+             mh_tab, # mental health
+             # Pregnancy sections
+             navbarMenu("Pregnancy", icon = icon("venus"),
+                        antenatal_tab, # antenatal bookings
+                        terminations_tab # terminations
+             ),
              # Births and Babies sections
              navbarMenu("Births and babies", icon = icon("baby"),
-                        # inductions_tab,
-                        # mode_delivery_tab,
-                        # gestation_tab,
-                        # apgar_tab,
-                        # preterm_tab,
-                        # perineal_tab,
+                        inductions_tab,
+                        mode_delivery_tab,
+                        gestation_tab,
+                        apgar_tab,
+                        preterm_tab,
+                        perineal_tab,
                         perinatal_tab
-             ) # navbar menu bracket.
+             ), # navbar menu bracket.
              # # Child health sections.
-             # navbarMenu("Child health", icon = icon("child"),
-             #            immunisations_tab,
-             #            childreview_tab,
-             #            breastfeeding_tab,
-             #            childdev_tab
-             # ), #navbarMenu bracket
-             # drugs_tab, # substance use
-             # data_tab # data 
+             navbarMenu("Child health", icon = icon("child"),
+                        immunisations_tab,
+                        childreview_tab,
+                        breastfeeding_tab,
+                        childdev_tab
+             ), #navbarMenu bracket
+             drugs_tab, # substance use
+             data_tab # data
   ) # page bracket
 )# taglist bracket
  )#secure app
