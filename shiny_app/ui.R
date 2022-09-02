@@ -13,7 +13,9 @@ source(file.path('ui/childhealth_ui.R'),  local = TRUE)$value
 source(file.path('ui/drugs_ui.R'),  local = TRUE)$value
 source(file.path('ui/data_ui.R'),  local = TRUE)$value
 
+
  # secure_app( #uncomment if needing password protection
+
 
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
@@ -117,7 +119,8 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
              navbarMenu("Pregnancy", icon = icon("venus"),
                         antenatal_tab, # antenatal bookings
                         terminations_tab # terminations
-             ) ,
+             ),
+
              # Births and Babies sections
              navbarMenu("Births and babies", icon = icon("baby"),
                         inductions_tab,
@@ -128,7 +131,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                         perineal_tab,
                         perinatal_tab
              ), # navbar menu bracket.
-             # Child health sections.
+             # # Child health sections.
              navbarMenu("Child health", icon = icon("child"),
                         immunisations_tab,
                         childreview_tab,
@@ -139,5 +142,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
              data_tab # data
   ) # page bracket
 )# taglist bracket
+
  # )#secure app
+
 #END

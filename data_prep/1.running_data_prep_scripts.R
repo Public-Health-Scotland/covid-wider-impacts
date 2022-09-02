@@ -18,7 +18,7 @@ create_apgar(folderdate = "2022_08_12", max_date = "2022-05-31") # Apgar scores
 create_preterm(preterm_date = "2022_06_13", max_date = "2022-03-31") # Preterm - updated quarterly so some months these dates are not updated.
 create_tears(tears_date = "2022_08_12", max_date = "2022-05-31") # Perineal tears
 
-create_perinatal(foldermonth = "aug22") # Stillbirths and perinatal mortality
+create_perinatal(foldermonth = "sep22") # Stillbirths and perinatal mortality
 
 # For delivery, apgar, preterm, tears and antenatal change dates in global script
 # For perinatal change dates in perinatal_tab script

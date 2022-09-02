@@ -166,7 +166,7 @@ save_final_file("tears_linechart_data", births_date)
 save_final_file("tears_download_data", births_date)
 
 ## B&B - Stillbirths and perinatal mortality ----
-save_final_file("perinatal", "21_Jul_22")
+save_final_file("perinatal", "29_Aug_22")
 ##########################################################.
 ## Mental health  ----
 save_final_file("mentalhealth_drugs", "16_Aug_22") # Prescribing
