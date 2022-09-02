@@ -1438,11 +1438,11 @@ plot_run_chart =
   if (width_mode == "narrow") {
     leg_wrap_char = 52
     leg_pos_y = -0.48
-    button_pos_y = -0.35
+    button_pos_y = -0.30
   } else {
     leg_wrap_char = 60
     leg_pos_y = -0.48
-    button_pos_y = -0.35
+    button_pos_y = -0.30
   }
 
   # Need to adjust spacing when plotting centreline 2 due to taller legend
