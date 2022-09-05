@@ -460,7 +460,7 @@ cardio_chart_data <- reactive({
 # The charts and text shown on the app will depend on what the user wants to see
 output$cardio_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 3 August 2022"))
+  data_last_updated <- tagList(p("Last updated: 7 September 2022"))
 
   # Charts and rest of UI
   if (input$`cardio-measure` == "cath") {
@@ -521,9 +521,11 @@ output$cardio_explorer <- renderUI({
 
      } else if (input$`cardio-measure` == "ooh_cardiac") {
         tagList(# OOH Attendances
-          tags$b("The numbers of cases reported from July 2021 onwards are not comparable to
+          tags$b(p("The numbers of cases reported from July 2021 onwards are not comparable to
                     those in earlier weeks. The clinical codes used to categorise out of hours diagnoses changed in that month,
              affecting the number of cases that are categorised as chest pain."),
+          p("Due to an ongoing technical issue with the GP out of hours datamart, there is no update to OOH data for August. 
+                 This section will be updated once the issue has been resolved.")),
           h3(paste0("Weekly chest pain cases in out of hours services in ", input$`cardio-geoname`)),
           fluidRow(column(6, sourcemodal_ui("cardio")),
                    column(6,data_last_updated)),
