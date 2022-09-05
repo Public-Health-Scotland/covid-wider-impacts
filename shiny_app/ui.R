@@ -30,7 +30,10 @@ tagList( #needed for shinyjs
                                 HTML("<html lang='en'>"),
                                 tags$link(rel="shortcut icon", href="favicon_phs.ico"), #Icon for browser tab
                                 #Including Google analytics
-                                includeScript("google-analytics.js")),
+                                includeScript("google-analytics.js"),
+                                #Including Google analytics 4
+                                HTML('<script async src="https://www.googletagmanager.com/gtag/js?id=G-YLEJLM420G"></script>'),
+                                includeScript("gtag.js")),
              intro_tab, #Introduction ----
              ###############################################.
              ## Commentary ----
