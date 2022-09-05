@@ -74,13 +74,13 @@ save_final_file("spec_lookup_op", "24_May_22")
 ##########################################################.
 ## Cardio ----
 save_final_file("cath_lab", "16_Nov_20") # cath labs
-save_final_file("ae_cardio", "01_Aug_22") # A&E
+save_final_file("ae_cardio", "05_Sep_22") # A&E
 save_final_file("ae_cardio_codes", "30_Nov_20")
 save_final_file("ooh_cardiac", "01_Aug_22") # GP OOH
-save_final_file("sas_cardiac", "01_Aug_22") # SAS
-save_final_file("cardio_drugs", "01_Aug_22") # prescribing
-save_final_file("cardio_deaths", "13_May_22") # deaths
-save_final_file("cardio_admissions", "01_Jul_22") # admissions
+save_final_file("sas_cardiac", "05_Sep_22") # SAS
+save_final_file("cardio_drugs", "05_Sep_22") # prescribing
+save_final_file("cardio_deaths", "05_Sep_22") # deaths
+save_final_file("cardio_admissions", "05_Sep_22") # admissions
 
 ##########################################################.
 ## Immunisations - six in one ----
@@ -169,8 +169,8 @@ save_final_file("tears_download_data", births_date)
 save_final_file("perinatal", "29_Aug_22")
 ##########################################################.
 ## Mental health  ----
-save_final_file("mentalhealth_drugs", "16_Aug_22") # Prescribing
-save_final_file("mh_A&E", "01_Aug_22") # A&E
+save_final_file("mentalhealth_drugs", "05_Sep_22") # Prescribing
+save_final_file("mh_A&E", "05_Sep_22") # A&E
 save_final_file("mh_ooh", "01_Aug_22") # OOH
 ##########################################################.
 ## Drugs - substance use ----
