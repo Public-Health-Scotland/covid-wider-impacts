@@ -26,7 +26,7 @@ save_final_file <- function(dataset, date_saved) {
 ###############################################.
 ###############################################.
 ## Deaths ----
-save_final_file("deaths", "01_Aug_22")
+save_final_file("deaths", "05_Sep_22")
 ##########################################################.
 ## Cancer ----#
 save_final_file("cancer_data_2", "15_Jul_22")
@@ -35,8 +35,8 @@ save_final_file("cancer_data_quarters_2yr", "15_Jul_22")
 
 ##########################################################.
 ## SACT ----
-save_final_file("sact_data", "29_Aug_22")
-save_final_file("sact_weekly_data", "29_Aug_22")
+save_final_file("sact_data", "05_Sep_22")
+save_final_file("sact_weekly_data", "05_Sep_22")
 
 ##########################################################.
 ## DCE ----
@@ -55,7 +55,7 @@ save_final_file("ui_smr01_assaults", ui_update_date)
 
 ##########################################################.
 ## RAPID ----
-save_final_file("rapid", "01_Aug_22")
+save_final_file("rapid", "05_Sep_22")
 save_final_file("ethnicity_lookup", "14_Feb_22")
 save_final_file("spec_lookup_rapid", "09_Mar_21")
 ## OOH ----
@@ -63,11 +63,11 @@ save_final_file("ooh", "01_Aug_22")
 ## OOH_cons ----
 save_final_file("ooh_cons", "01_Aug_22")
 ## A&E ----
-save_final_file("ae", "01_Aug_22")
+save_final_file("ae", "05_Sep_22")
 ## NHS24 ----
-save_final_file("nhs24", "01_Aug_22")
+save_final_file("nhs24", "05_Sep_22")
 ## SAS ----
-save_final_file("sas", "01_Aug_22")
+save_final_file("sas", "05_Sep_22")
 ### Outpatients ----
 save_final_file("outpats", "24_May_22")
 save_final_file("spec_lookup_op", "24_May_22")
