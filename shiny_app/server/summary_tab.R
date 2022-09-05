@@ -779,7 +779,7 @@ output$summ_age_tot <- renderPlotly({
                    data_name = input$`summary-measure`, period = summ_time_period())})
 
 # Admissions to hospital charts
-output$adm_eth_tot <- renderPlotly({plot_trend_chart(rapid_eth(), pal_eth, "eth", "total", "adm", period = "monthly")})
+output$adm_eth_tot <- renderPlotly({plot_trend_chart(rapid_eth(), pal_eth, "eth", "total", data_name = "rapid", period = "monthly")})
 output$adm_spec_var <- renderPlotly({plot_spec("variation", rapid_spec())})
 output$adm_spec_tot <- renderPlotly({plot_spec("total", rapid_spec())})
 
