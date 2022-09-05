@@ -523,7 +523,8 @@ output$data_explorer <- renderUI({
 
   #update date for outpatients and the rest is different
   upd_date_summ <- case_when(input$`summary-measure` == "op" ~ "15 June 2022",
-                             TRUE ~ "3 August 2022")
+                             input$`summary-measure` == "ooh" ~ "3 August 2022", # temporary due to issues with OOH
+                             TRUE ~ "7 September 2022")
 
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
@@ -631,7 +632,9 @@ output$data_explorer <- renderUI({
                        "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
                        PHS are working with data suppliers to resolve this. 
                        These will impact on Scotland figures and comparisons with previous years.", 
-                       style = "color:red")),
+                       style = "color:red",
+                       br(),
+                       "Due to an ongoing technical issue with the GP out of hours datamart, there is no update to OOH data for August. This section will be updated once the issue has been resolved.")),
              br(),
     
           cut_charts(title = "Weekly cases in out of hours services", data_name ="ooh"))
