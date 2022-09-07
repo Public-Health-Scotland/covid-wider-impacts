@@ -1788,11 +1788,6 @@ plot_run_chart =
 ###############################################.
 ## Select geography ----
 ###############################################.
-# geotype_value <- function(input, output, session) {
-#   geotype <- reactive({input$geotype})
-#   return(geotype)
-# }
-
 geoname_server <- function(id, lookup = geo_lookup) {
   moduleServer(
     id,
@@ -1802,6 +1797,12 @@ geoname_server <- function(id, lookup = geo_lookup) {
             ns <- session$ns #obtaining namespace
             
       areas_summary <- sort(lookup$areaname[lookup$areatype == input$geotype])
+      
+      # Golden Jubilee only present for rapid data
+      if ((input$measure != "rapid" || !exists("input$measure")) && input$geotype == "Health board") {
+        areas_summary <- areas_summary[areas_summary != "NHS Golden Jubilee"]
+      } 
+      
       selectizeInput(ns("geoname"), label = NULL,
                      choices = areas_summary, selected = "")
       
