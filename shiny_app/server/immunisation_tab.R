@@ -235,10 +235,9 @@ output$immun_scurve <- renderPlotly({
     #Creating time trend plot
     plot_ly() %>%
       # commented out because add_trace() breaks colour palette
-      add_lines(data = grey_lines,
+      add_lines(data = grey_lines, name = "Other time periods", showlegend = FALSE,
                 x=~interv,  y = ~surv, 
                 colors = all_scale, color = ~time_period_eligible,
-                name = "unselected time periods", showlegend = FALSE,
                 text= tooltip_grey, hoverinfo="text") %>%
       add_lines(data = coloured_lines,
                 x=~interv,  y = ~surv,
@@ -432,7 +431,6 @@ output$empty_plot <- renderPlotly({ plot_nodata() })
 ## Layout ----
 ###############################################.
 
-# <<<<<<< HEAD:shiny_app/immunisation_tab.R
 output$immunisation_explorer <- renderUI({
 
   imm_trends_title <- case_when(input$`immun-measure` == "sixin_dose1" ~ "Uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland",
@@ -465,7 +463,8 @@ output$immunisation_explorer <- renderUI({
                                          "NHS inform (external website)", target="_blank"),"."),
                           h4(paste0(immune_title)),
                           p(immune_subtitle))),
-          fluidRow(column(6,br(), br(),
+          fluidRow(column(6,
+                          p("Grey lines represent previous month's data not selected in step 3 filter."),
                           withSpinner(plotlyOutput("immun_scurve"))),
           column(6, uiOutput("immun_table"))),
 
@@ -545,95 +544,7 @@ output$immunisation_explorer <- renderUI({
 
   }
 })
-# =======
-# # The charts and text shown on the app will depend on what the user wants to see
-# output$immunisation_explorer <- renderUI({
-#   
-#   # text for titles of cut charts
-#   immune_title <- case_when(input$`immun-measure` == "sixin_dose1" ~ paste0("Uptake of first dose of 6-in-1 vaccine (offered to children at 8 weeks of age): ",
-#                                                                                  input$`immun-geoname`),
-#                             input$`immun-measure` == "sixin_dose2" ~ paste0("Uptake of second dose 6-in-1 vaccine (offered to children at 12 weeks of age): ", input$`immun-geoname`),
-#                             input$`immun-measure` == "sixin_dose3" ~ paste0("Uptake of third dose 6-in-1 vaccine (offered to children at 16 weeks of age): ", input$`immun-geoname`),
-#                             input$`immun-measure` == "mmr_dose1" ~ paste0("Uptake of first dose MMR vaccine (offered to children at 12-13 months of age): ", input$`immun-geoname`),
-#                             input$`immun-measure` == "mmr_dose2" ~ paste0("Uptake of second dose MMR vaccine (offered to children at 3 years 4 months of age): ", input$`immun-geoname`))
-#   immune_subtitle <-  paste0("Figures based on data extracted from SIRS on ",immunisation_extract_date)
-#   
-#   # text for SIMD titles of cut charts - SIMD only available at scotland level so no need for variable geography
-#   immune_simd_chan_title <- case_when(input$`immun-measure` == "sixin_dose1" ~ "Change in uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland (Compared to baseline of children turning 8 weeks in 2019)",
-#                                       input$`immun-measure` == "sixin_dose2" ~ "Change in uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland (Compared to baseline of children turning 12 weeks in 2019)",
-#                                       input$`immun-measure` == "sixin_dose3" ~ "Change in uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation: Scotland (Compared to baseline of children turning 16 weeks in 2019)",
-#                                       input$`immun-measure` == "mmr_dose1" ~ "Change in uptake of first dose MMR vaccine by 13 months of age by deprivation: Scotland (Compared to baseline of children turning 12-13 months in 2019)",
-#                                       input$`immun-measure` == "mmr_dose2" ~ "Change in uptake of second dose MMR vaccine by 3 years 5 months of age by deprivation: Scotland (Compared to baseline of children turning 3 years and 4 months in 2019)")
-#   
-#   immune_simd_tot_title <- case_when(input$`immun-measure` == "sixin_dose1" ~ "Uptake of first dose of 6-in-1 vaccine by 12 weeks of age by deprivation: Scotland",
-#                                      input$`immun-measure` == "sixin_dose2" ~ "Uptake of second dose of 6-in-1 vaccine by 16 weeks of age by deprivation: Scotland",
-#                                      input$`immun-measure` == "sixin_dose3" ~ "Uptake of third dose of 6-in-1 vaccine by 20 weeks of age by deprivation",
-#                                      input$`immun-measure` == "mmr_dose1" ~ "Uptake of first dose MMR vaccine by 13 months of age by deprivation",
-#                                      input$`immun-measure` == "mmr_dose2" ~ "Uptake of second dose MMR vaccine by 3 years 5 months of by age deprivation")
-#   
-#   
-#   # Intro paragraph within imumunisation tab
-#   intro_6in1 <- p("Immunisation protects children against certain serious infections.
-#                   Public Health Scotland and Scottish Government have produced a range of communications reminding parents that the NHS is still open for childhood immunisations, signposting parents to up to date advice via ",
-#                  tags$a(href="https://www.nhsinform.scot/immunisation","NHS inform (external website)", target="_blank"),".")
-#   
-#   #Additional commentart/meta data to appear on immunisation tab
-#   commentary_6in1 <-  tagList(p("All preschool children are offered a total of five immunisation appointments as they reach the following ages: 8, 12, and 16 weeks; 12-13 months; and 3 years and 4 months of age. Multiple immunisations are offered at each appointment. Here, for simplicity, we have just shown the uptake of one of the immunisations offered at each appointment. The charts show the progression of uptake of the relevant immunisation as children age and the data tables provide the uptake rates at three specific time-points.  Data is provided  on children who have become eligible for immunisation during the pandemic (from March 2020 onwards) and for children who became eligible for immunisation before the pandemic (in 2019 and in January and February 2020) for comparison."),
-#                               p("After a child becomes eligible for an immunisation, it takes time for them to attend their appointment, and for a record of the immunisation provided to subsequently be entered into the SIRS system. We have allowed a 6-week window for this, therefore each release of this page will report on children becoming eligible for an immunisation up to 6 weeks before the date the data were extracted for analysis. Although children will generally have their immunisation, and their SIRS record updated accordingly, within 6 weeks of becoming eligible, the pandemic may have influenced not only how quickly eligible children receive their immunisations, but also how long it takes for children’s SIRS records to be updated once an immunisation has been given. Any disruption to SIRS data entry may vary across NHS Boards. Data provided for the most recent cohorts of children will therefore not be fully complete in SIRS and should be viewed as provisional. The uptake rates for each cohort will be refreshed with more up-to-date data every 4 to 5 weeks, and rates for the most recent cohorts may increase slightly as relevant records are updated in SIRS."),
-#                               p("On this page, data for yearly and monthly cohorts are shown for Scotland and for NHS Board areas. For the second dose of MMR vaccine at the 3 year 4 months appointment specifically, results for NHS Grampian are not shown separately, and NHS Grampian is excluded from the ‘Scotland’ totals. This is because children in NHS Grampian are offered the second dose of MMR vaccine at 4 years of age rather than 3 years 4 months. Separate figures on uptake of the second dose of MMR vaccine from age 4 years are available for NHS Grampian only through the data download button at the top of the page. "),
-#                               p("The data downloads also include information by Health and Social Care Partnerships, as well as weekly cohorts. Note that due to small numbers of children in the Island Boards, results for NHS Orkney, NHS Shetland and NHS Western Isles are provided for monthly and yearly cohorts only."),
-#                               p("Some NHS Boards and HSCPs have small numbers of children eligible for immunisation. Uptake rates based on these small numbers are prone to fluctuation, and it is important to bear this in mind when interpreting uptake rates.")
-#   )
-#   
-#   depr_imm <- tagList(
-#     p("The deprivation chart on the left shows the immunisation uptake for children becoming eligible for their immunisation during the Covid-19 pandemic, compared to those who became eligible in 2019, at all Scotland level. Early uptake achieved by 4 weeks after the children became eligible for their immunisation is considered, as this indicator is available for the most recent cohorts of children as well as the baseline 2019 cohort. The early uptake rates are shown for children living in areas with different levels of deprivation."),
-#     p("The deprivation chart on the right shows the change in early uptake for children becoming eligible for their immunisation during the Covid-19 pandemic, compared to those who became eligible in 2019.  Again, results are shown for children living in areas with different levels of deprivation. So, for example, if early uptake for children becoming eligible for an immunisation in 2019 and in March 2020 was 80% and 84% respectively, this would be shown on the ‘change’ chart as a 4% absolute increase in early uptake for children becoming eligible in March 2020. The deprivation data download (available through the button above the ‘change’ chart) also provides the relative change (5% in this example) as this allows an easier comparison across deprivation groups if the baseline level of uptake varies between groups.")
-#   )
-#   
-#   # Function to create common layout to all immunisation charts
-#   imm_layout <- function(s_table, simd_tot_plot, simd_chan_plot, age_def = "") {
-#     tagList(fluidRow(column(12, renderUI(intro_6in1),
-#                             h4(paste0(immune_title)),
-#                             p(immune_subtitle))),
-#             fluidRow(column(6,br(), br(),
-#                             withSpinner(plotlyOutput("immun_scurve")),
-#                             p(age_def)),
-#                      column(6, uiOutput("immun_table"))),
-#             fluidRow(column(12, renderUI(commentary_6in1))),
-#             if (input$`immun-geotype` == "Scotland"){
-#               tagList(fluidRow(column(6, h4(paste0(immune_simd_tot_title))),
-#                                column(6, h4(paste0(immune_simd_chan_title))),
-#                                column(6,
-#                                       actionButton("btn_modal_simd_imm", "What is SIMD and deprivation?",
-#                                                    icon = icon('question-circle'))),
-#                                column(6,
-#                                       downloadButton('download_imm_simd_data', 'Download deprivation data'))),
-#                       fluidRow(column(6, br(), withSpinner(plotlyOutput(simd_tot_plot))),
-#                                column(6, br(), withSpinner(plotlyOutput(simd_chan_plot))),
-#                                depr_imm
-#                       )
-#               ) #tagList from if statement
-#             }
-#     ) #tagList barcket
-#   }
-#   
-#   # Specify items to display in immunisation ui based on step 2 selection 
-#   if (input$`immun-measure` == "sixin_dose1") {
-#     imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose1", simd_chan_plot = "imm_6in1_simd_chan_dose1")
-#   }  else if (input$`immun-measure` == "sixin_dose2"){
-#     imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose2", simd_chan_plot = "imm_6in1_simd_chan_dose2")
-#   }  else if (input$`immun-measure` == "sixin_dose3"){
-#     imm_layout(simd_tot_plot = "imm_6in1_simd_tot_dose3", simd_chan_plot = "imm_6in1_simd_chan_dose3")
-#   }  else if (input$`immun-measure` == "mmr_dose1"){
-#     imm_layout(simd_tot_plot = "imm_mmr_simd_tot_dose1", simd_chan_plot = "imm_mmr_simd_chan_dose1",
-#                age_def = "12 months defined as 53 weeks")
-#   } else if (input$`immun-measure` == "mmr_dose2"){
-#     imm_layout(simd_tot_plot = "imm_mmr_simd_tot_dose2", simd_chan_plot = "imm_mmr_simd_chan_dose2", 
-#                age_def = "3 year 4 months defined as 174 weeks")
-#   }
-#   
-# }) #close immunisation_explorer function
-# >>>>>>> master:shiny_app/server/immunisation_tab.R
+
 
 ###############################################.
 ## Data downloads ----
