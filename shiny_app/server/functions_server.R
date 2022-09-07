@@ -1802,6 +1802,12 @@ geoname_server <- function(id, lookup = geo_lookup) {
             ns <- session$ns #obtaining namespace
             
       areas_summary <- sort(lookup$areaname[lookup$areatype == input$geotype])
+      
+      # Golden Jubilee only present for rapid data
+      if (input$measure != "rapid") {
+        areas_summary <- areas_summary[areas_summary != "NHS Golden Jubilee"]
+      }
+      
       selectizeInput(ns("geoname"), label = NULL,
                      choices = areas_summary, selected = "")
       
