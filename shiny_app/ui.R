@@ -1,19 +1,20 @@
 #UI
 # Sourcing UI scripts
 source(file.path('ui/modules_ui.R'),  local = TRUE)$value 
-source(file.path('ui/intro_ui.R'),  local = TRUE)$value 
-source(file.path('ui/summary_ui.R'),  local = TRUE)$value 
-source(file.path('ui/cardio_ui.R'),  local = TRUE)$value 
-source(file.path('ui/cancer_ui.R'),  local = TRUE)$value 
-source(file.path('ui/injuries_ui.R'),  local = TRUE)$value 
-source(file.path('ui/mh_ui.R'),  local = TRUE)$value 
+source(file.path('ui/intro_ui.R'),  local = TRUE)$value
+source(file.path('ui/summary_ui.R'),  local = TRUE)$value
+source(file.path('ui/cardio_ui.R'),  local = TRUE)$value
+source(file.path('ui/cancer_ui.R'),  local = TRUE)$value
+source(file.path('ui/injuries_ui.R'),  local = TRUE)$value
+source(file.path('ui/mh_ui.R'),  local = TRUE)$value
 source(file.path('ui/pregnancy_ui.R'),  local = TRUE)$value 
-source(file.path('ui/birthsbabies_ui.R'),  local = TRUE)$value 
-source(file.path('ui/childhealth_ui.R'),  local = TRUE)$value 
-source(file.path('ui/drugs_ui.R'),  local = TRUE)$value 
-source(file.path('ui/data_ui.R'),  local = TRUE)$value 
+source(file.path('ui/birthsbabies_ui.R'),  local = TRUE)$value
+source(file.path('ui/childhealth_ui.R'),  local = TRUE)$value
+source(file.path('ui/drugs_ui.R'),  local = TRUE)$value
+source(file.path('ui/data_ui.R'),  local = TRUE)$value
 
-# secure_app( #uncomment if needing password protection
+
+ # secure_app( #uncomment if needing password protection
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   
@@ -27,7 +28,10 @@ tagList( #needed for shinyjs
                                 HTML("<html lang='en'>"),
                                 tags$link(rel="shortcut icon", href="favicon_phs.ico"), #Icon for browser tab
                                 #Including Google analytics
-                                includeScript("google-analytics.js")),
+                                includeScript("google-analytics.js"),
+                                #Including Google analytics 4
+                                HTML('<script async src="https://www.googletagmanager.com/gtag/js?id=G-YLEJLM420G"></script>'),
+                                includeScript("gtag.js")),
              intro_tab, #Introduction ----
              ###############################################.
              ## Commentary ----
@@ -84,7 +88,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                      # Immunisations
                      conditionalPanel(condition= 'input.commentary_select == "immunisation"',
                                       immun_commentary_section),
-                     # Child health reviews1
+                     # Child health reviews
                      conditionalPanel(condition= 'input.commentary_select == "child-health"',
                                       child_comments),
                      # Breastfeeding
@@ -111,12 +115,13 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                         sact_tabm,
                         sact_tabw), # SACT
              injuries_tab, # Unintentional injuries
-             mh_tab, # mental health 
+             mh_tab, # mental health
              # Pregnancy sections
              navbarMenu("Pregnancy", icon = icon("venus"),
                         antenatal_tab, # antenatal bookings
                         terminations_tab # terminations
-             ), 
+             ),
+
              # Births and Babies sections
              navbarMenu("Births and babies", icon = icon("baby"),
                         inductions_tab,
@@ -127,7 +132,7 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                         perineal_tab,
                         perinatal_tab
              ), # navbar menu bracket.
-             # Child health sections.
+             # # Child health sections.
              navbarMenu("Child health", icon = icon("child"),
                         immunisations_tab,
                         childreview_tab,
@@ -135,8 +140,10 @@ tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
                         childdev_tab
              ), #navbarMenu bracket
              drugs_tab, # substance use
-             data_tab # data 
+             data_tab # data
   ) # page bracket
 )# taglist bracket
-# )#secure app
+
+ # )#secure app
+
 #END

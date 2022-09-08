@@ -460,7 +460,7 @@ cardio_chart_data <- reactive({
 # The charts and text shown on the app will depend on what the user wants to see
 output$cardio_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 3 August 2022"))
+  data_last_updated <- tagList(p("Last updated: 7 September 2022"))
 
   # Charts and rest of UI
   if (input$`cardio-measure` == "cath") {
@@ -489,9 +489,7 @@ output$cardio_explorer <- renderUI({
       tagList(# A&E attendances (cardiovascular only)
         p("Please note that, due to limitations in diagnosis recording in the A&E datamart, the data are
                  incomplete for a number of NHS Boards. Thus, the figures reported for cardiovascular-related
-                 attendances offer only a very approximate indication of attendances. In addition, due to a technical
-                 issue in the A&E diagnosis recording for the weeks ending in 2nd and 9th August
-                 figures for NHS Greater Glasgow & Clyde are incomplete for that time period.
+                 attendances offer only a very approximate indication of attendances.
                  Moreover, some NHS Boards have moved to a new recording standard which
                  has not been fully consolidated in the A&E datamart as yet. As a result, figures for 2020,
                  even prior to the introduction of lockdown measures, appear somewhat lower when compared to
@@ -521,9 +519,11 @@ output$cardio_explorer <- renderUI({
 
      } else if (input$`cardio-measure` == "ooh_cardiac") {
         tagList(# OOH Attendances
-          tags$b("The numbers of cases reported from July 2021 onwards are not comparable to
+          tags$b(p("The numbers of cases reported from July 2021 onwards are not comparable to
                     those in earlier weeks. The clinical codes used to categorise out of hours diagnoses changed in that month,
              affecting the number of cases that are categorised as chest pain."),
+          p("Due to an ongoing technical issue with the GP out of hours datamart, there is no update to OOH data for August. 
+                 This section will be updated once the issue has been resolved.")),
           h3(paste0("Weekly chest pain cases in out of hours services in ", input$`cardio-geoname`)),
           fluidRow(column(6, sourcemodal_ui("cardio")),
                    column(6,data_last_updated)),
@@ -588,15 +588,15 @@ output$cardio_explorer <- renderUI({
          h3(paste0("Quarterly ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`)),
          fluidRow(column(6, sourcemodal_ui("cardio")),
                   column(6,data_last_updated)),
-         plot_box("2020 to 2022 compared with 2018-2019 average", "cardio_overall"),
+         plot_box("2020 to 2022 compared with 2015-2019 average", "cardio_overall"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " compared with the corresponding
-                     time in 2018-2019 by sex (Only totals are shown at board level due to small numbers)"), "cardio_sex_var",
+                     time in 2015-2019 by sex (Only totals are shown at board level due to small numbers)"), "cardio_sex_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " by sex (Only totals are shown at board level due to small numbers)"), "cardio_sex_tot"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths ", input$`cardio-geoname`, " compared with the corresponding
-                     time in 2018-2019 by age group"), "cardio_age_var",
+                     time in 2015-2019 by age group"), "cardio_age_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " by age group"), "cardio_age_tot"),
          plot_cut_box(paste0("Percentage change in ", input$diagnosis_select, " ", "deaths in ", input$`cardio-geoname`, " compared with the corresponding
-                     time in 2018-2019 by SIMD quintile"), "cardio_depr_var",
+                     time in 2015-2019 by SIMD quintile"), "cardio_depr_var",
                       paste0("Quarterly number of ", input$diagnosis_select, " ", " deaths in ", input$`cardio-geoname`, " by SIMD quintile"), "cardio_depr_tot",
                       extra_content = actionButton("btn_modal_simd_cardio", "What is SIMD and deprivation?",
                                                    icon = icon('question-circle')))
@@ -770,7 +770,7 @@ overall_cardio_download <- reactive({
   # Deaths
   if (input$`cardio-measure` == "cardio_deaths") {
     selection <- c("week_ending", "area_name", "diagnosis", "count", "count_average", "variation")
-    new_var_name <- "average_2018_2019"
+    new_var_name <- "average_2015_2019"
   }  
   
   # Prep data for download

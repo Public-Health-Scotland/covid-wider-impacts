@@ -79,10 +79,10 @@ output$perinatal_explorer <- renderUI({
   "have produced guidelines for attending antenatal and postnatal care appointments during the pandemic (external website).", target="_blank")
 
   # Text to be updated every month with updated dates
-  last_month_peri <- "June 2022"
-  cutdate_peri <- "17 July 2022"
-  extractdate_peri <- "20 July 2022"
-  nextup_peri <- "September 2022"
+  last_month_peri <- "July 2022"
+  cutdate_peri <- "21 August 2022"
+  extractdate_peri <- "27 August 2022"
+  nextup_peri <- "October 2022"
   nextdata_peri <- "August 2022"
 
 
@@ -186,12 +186,15 @@ Whilst each extended perinatal death is clearly a tragedy for the family involve
     yaxis_plots[["title"]] <- case_when(input$`perinatal-measure` %in% c("pnnd", "nnd", "infantdeaths") ~ "Rate per 1,000 live births",
                                         input$`perinatal-measure` %in% c("extperi", "stillbirths") ~ "Rate per 1,000 (live + still) births")
     xaxis_plots[["title"]] <- "Month"
+    
 
     xaxis_plots[["ticktext"]] <- list("Jul 2017", "Jan 2018", "Jul 2018", "Jan 2019", "Jul 2019", "Jan 2020",
-                                      "Jul 2020", "Jan 2021", "Jul 2021", "Jan 2022")
+                                      "Jul 2020", "Jan 2021", "Jul 2021", "Jan 2022", "Jul 2022")
 
     xaxis_plots[["tickvals"]] <- list("2017-07-01", "2018-01-01", "2018-07-01", "2019-01-01", "2019-07-01", "2020-01-01",
-                                      "2020-07-01", "2021-01-01", "2021-07-01", "2022-01-01")
+                                      "2020-07-01", "2021-01-01", "2021-07-01", "2022-01-01", "2022-07-01")
+    
+    
     # Tooltip
     measure_selected <- case_when(input$`perinatal-measure` == "stillbirths" ~ "Still births",
                                   input$`perinatal-measure` ==   "pnnd" ~ "Post-neonatal deaths",

@@ -274,7 +274,7 @@ plot_overall_chart <- function(dataset, data_name, yaxis_title, area = T,
     # Add a range slider to filter the time period in the chart
     xaxis_plots[["rangeslider"]] <- list(range="xvar", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
       
-    hist_legend_previous <- case_when(data_name == "deaths" ~ "Average 2015-2019",
+    hist_legend_previous <- case_when(data_name %in% c("deaths", "cardio_deaths") ~ "Average 2015-2019",
                                       TRUE ~ "Average 2018-2019")
 
     hist_legend_covid <- case_when(data_name %in% c("cath")  ~ "2020", TRUE ~ "2020 - 2022")
@@ -1661,11 +1661,11 @@ plot_run_chart =
   if (width_mode == "narrow") {
     leg_wrap_char = 52
     leg_pos_y = -0.48
-    button_pos_y = -0.35
+    button_pos_y = -0.30
   } else {
     leg_wrap_char = 60
     leg_pos_y = -0.48
-    button_pos_y = -0.35
+    button_pos_y = -0.30
   }
 
   # Need to adjust spacing when plotting centreline 2 due to taller legend
@@ -2011,11 +2011,6 @@ plot_run_chart =
 ###############################################.
 ## Select geography ----
 ###############################################.
-# geotype_value <- function(input, output, session) {
-#   geotype <- reactive({input$geotype})
-#   return(geotype)
-# }
-
 geoname_server <- function(id, lookup = geo_lookup) {
   moduleServer(
     id,
@@ -2024,10 +2019,12 @@ geoname_server <- function(id, lookup = geo_lookup) {
           output$geoname <- renderUI({
             ns <- session$ns #obtaining namespace
             
-      areas_summary <- sort(lookup$areaname[lookup$areatype == input$geotype])
-      selectizeInput(ns("geoname"), label = NULL,
-                     choices = areas_summary, selected = "")
-      
+            areas_choices <- sort(lookup$areaname[lookup$areatype == input$geotype])
+            areas_choices <- areas_choices[areas_choices != "NHS Golden Jubilee"]
+
+          geoname <-  selectizeInput(ns("geoname"), label = NULL,
+                         choices = areas_choices, selected = "")
+
     })
 }
 

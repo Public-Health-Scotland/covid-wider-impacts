@@ -33,6 +33,7 @@ observeEvent({input$`summary-measure`}, {
                       label = "Step 3. Select type of admission.",
                       choices = c("All", "Emergency", "Planned"),
                       selected = "All")
+
   } else if (input$`summary-measure` == "op") {
     disable("adm_type")
     enable("appt_type")
@@ -61,6 +62,16 @@ observeEvent({input$`summary-measure`}, {
   }
 
 })
+
+# To include Golden Jubilee in the area dropdown for RAPID data
+observeEvent({input$`summary-geotype`}, {
+  if (input$`summary-measure` == "rapid") {
+    areas_summ <- sort(geo_lookup$areaname[geo_lookup$areatype == input$`summary-geotype`])
+    
+    updateSelectInput(session, "summary-geoname", choices = areas_summ, selected = areas_summ[1])
+  } 
+}
+)
 
 ###############################################.
 ## Modals ----
@@ -390,25 +401,25 @@ observeEvent(input$btn_modal_eth, { showModal(eth_modal) })
 
 ###############################################.
 # Modal to explain ethnicity chart - rapid section
-# rapid_eth_modal <- modalDialog(
-#   h5(tags$b("Interpretation of this chart")),
-#   
-#   p("Ethnicity fields were added to Rapid Preliminary Inpatient Data (RAPID) submissions 
-#     in June 2020 to aid the COVID-19 response. NHS Boards were asked to re-submit 
-#     admissions data from 1 March 2020 onwards to include ethnicity information."),
-#   p("The following list is the current ethnicity classification (2011 Census categories) 
-#     used by NHS Scotland organisations, and the ethnic groupings that we have used in 
-#     this dashboard."),
-#   renderTable(eth_lookup),  
-#   p("The ‘Missing’ ethnic group category includes those where ethnic group was 
-#     recorded as 'Not Known', 'Refused/Not Provided by the Patient' or was not recorded at all."),
-#   p("It is important to note that the trends for ethnic groups with small populations should be 
-#   interpreted with caution as they will be subject to greater variability due to small numbers."),
-#   size = "l",
-#   easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
-# )
-# # Link action button click to modal launch 
-# observeEvent(input$btn_modal_eth_rapid, { showModal(rapid_eth_modal) }) 
+rapid_eth_modal <- modalDialog(
+  h5(tags$b("Interpretation of this chart")),
+
+  p("Ethnicity fields were added to Rapid Preliminary Inpatient Data (RAPID) submissions
+    in June 2020 to aid the COVID-19 response. NHS Boards were asked to re-submit
+    admissions data from 1 March 2020 onwards to include ethnicity information."),
+  p("The following list is the current ethnicity classification (2011 Census categories)
+    used by NHS Scotland organisations, and the ethnic groupings that we have used in
+    this dashboard."),
+  renderTable(eth_lookup),
+  p("The ‘Missing’ ethnic group category includes those where ethnic group was
+    recorded as 'Not Known', 'Refused/Not Provided by the Patient' or was not recorded at all."),
+  p("It is important to note that the trends for ethnic groups with small populations should be
+  interpreted with caution as they will be subject to greater variability due to small numbers."),
+  size = "l",
+  easyClose = TRUE, fade=TRUE, footer = modalButton("Close (Esc)")
+)
+# Link action button click to modal launch
+observeEvent(input$btn_modal_eth_rapid, { showModal(rapid_eth_modal) })
 
 ###############################################.
 ## Reactive datasets ----
@@ -523,7 +534,8 @@ output$data_explorer <- renderUI({
 
   #update date for outpatients and the rest is different
   upd_date_summ <- case_when(input$`summary-measure` == "op" ~ "15 June 2022",
-                             TRUE ~ "3 August 2022")
+                             input$`summary-measure` == "ooh" ~ "3 August 2022", # temporary due to issues with OOH
+                             TRUE ~ "7 September 2022")
 
   # Function to create the standard layout for all the different charts/sections
   cut_charts <- function(title, source, data_name) {
@@ -591,26 +603,26 @@ output$data_explorer <- renderUI({
                                       "Specialties and their groups",
                                       icon = icon('question-circle'), style="float:right")))),
       fluidRow(column(6, withSpinner(plotlyOutput("adm_spec_var"))),
-               column(6, withSpinner(plotlyOutput("adm_spec_tot"))))
-    #   fluidRow(
-    #     column(12,
-    #            h4(paste0("Monthly number of ", dataset, " by ethnic group")),
-    #            p("Please note that ethnic group was not recorded in RAPID for 
-    #                     admissions prior to March 2020. This data is only available by month."))),
-    #   
-    #   fluidRow(column(4,
-    #                   pickerInput("rapid_ethnicity", "Select one or more ethnic groups",
-    #                               choices = eth_list_op, 
-    #                               multiple = TRUE,
-    #                               selected = eth_list_op,
-    #                               options = list(
-    #                                 `actions-box` = TRUE))),
-    #            column(8, div(actionButton("btn_modal_eth_rapid", "Interpretation of this chart",
-    #                                  icon = icon('fas fa-exclamation-circle'), style="float:right")))),
-    #   
-    #   fluidRow(
-    #     column(12,
-    #            withSpinner(plotlyOutput("adm_eth_tot"))))
+               column(6, withSpinner(plotlyOutput("adm_spec_tot")))),
+      fluidRow(
+        column(12,
+               h4(paste0("Monthly number of ", dataset, " by ethnic group")),
+               p("Please note that ethnic group was not recorded in RAPID for
+                        admissions prior to March 2020. This data is only available by month."))),
+
+      fluidRow(column(4,
+                      pickerInput("rapid_ethnicity", "Select one or more ethnic groups",
+                                  choices = eth_list_op,
+                                  multiple = TRUE,
+                                  selected = eth_list_op,
+                                  options = list(
+                                    `actions-box` = TRUE))),
+               column(8, div(actionButton("btn_modal_eth_rapid", "Interpretation of this chart",
+                                     icon = icon('fas fa-exclamation-circle'), style="float:right")))),
+
+      fluidRow(
+        column(12,
+               withSpinner(plotlyOutput("adm_eth_tot"))))
     )
 
   } else if (input$`summary-measure` == "aye") {
@@ -631,7 +643,9 @@ output$data_explorer <- renderUI({
                        "Please note there are seven missing files for NHS Lanarkshire: 30 Jan 2022 ;01 Feb 2022; 27 Feb 2022; 12 Mar 2022; 13 Mar 2022; 19 Mar 2022; 02 May 2022, 
                        PHS are working with data suppliers to resolve this. 
                        These will impact on Scotland figures and comparisons with previous years.", 
-                       style = "color:red")),
+                       style = "color:red",
+                       br(),
+                       "Due to an ongoing technical issue with the GP out of hours datamart, there is no update to OOH data for August. This section will be updated once the issue has been resolved.")),
              br(),
     
           cut_charts(title = "Weekly cases in out of hours services", data_name ="ooh"))
@@ -776,7 +790,7 @@ output$summ_age_tot <- renderPlotly({
                    data_name = input$`summary-measure`, period = summ_time_period())})
 
 # Admissions to hospital charts
-#output$adm_eth_tot <- renderPlotly({plot_trend_chart(rapid_eth(), pal_eth, "eth", "total", "adm", period = "monthly")})
+output$adm_eth_tot <- renderPlotly({plot_trend_chart(rapid_eth(), pal_eth, "eth", "total", data_name = "rapid", period = "monthly")})
 output$adm_spec_var <- renderPlotly({plot_spec("variation", rapid_spec())})
 output$adm_spec_tot <- renderPlotly({plot_spec("total", rapid_spec())})
 

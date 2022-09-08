@@ -27,7 +27,9 @@ function(input, output, session) {
                  title = "New content added and future updates",
                  h4("New content and updates"),
                  tags$ul(
-                   tags$li("31 August 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("7 September 2022 - Systemic anti-cancer therapies data update."),
+                   tags$li("7 September 2022 - New data on hospital admissions by ethnicity."),
+                   tags$li("7 September 2022 - Monthly update of data (most sections)."),
                    tags$li("3 August 2022 - Monthly update of data (most sections)."),
                    tags$li("3 August 2022 - Cancer pathology data update."),
                    tags$li("6 July 2022 - Monthly update of data (most sections)."),
@@ -35,14 +37,11 @@ function(input, output, session) {
                    tags$li("29 June 2022 - Substance use data update and new dataset on A&E attendances due to substance misuse."),
                    tags$li("15 June 2022 - Outpatient activity data update."),
                    tags$li("1 June 2022 - Monthly update of data (most sections)."),
-                   tags$li("25 May 2022 - Additional data for the cardiovascular section: hospital admissions and excess mortality."),
-                   tags$li("30 March 2022 - New data on ambulance administered naloxone and update of substance use section.")
-                   ),
+                   tags$li("25 May 2022 - Additional data for the cardiovascular section: hospital admissions and excess mortality.")                   ),
                  h4("Future updates"),
                  p("Please keep in mind that these dates are tentative and subject to change with short notice."),
                  tags$ul(
-                   tags$li("7 September 2022 - Systemic anti-cancer therapies data update."),
-                   tags$li("7 September 2022 - Monthly update of data (most sections)."),
+                   tags$li("14 September 2022 - Systemic anti-cancer therapies data update."),
                    tags$li("5 October 2022 - Monthly update of data (most sections)."),
                    tags$li("5 October 2022 - New section with data on cancer waiting time.")
                  ),

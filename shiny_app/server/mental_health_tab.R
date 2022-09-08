@@ -254,7 +254,7 @@ output$mh_drugs_tot <- renderPlotly({
 # The charts and text shown on the app will depend on what the user wants to see
 output$mh_explorer <- renderUI({
 
-  data_last_updated <- tagList(p("Last updated: 3 August 2022"))
+  data_last_updated <- tagList(p("Last updated: 7 September 2022"))
 
   note_average <- p("Please note that to ease interpretation of these charts ",
                     "we are presenting 3-week rolling average figures.",
@@ -283,6 +283,9 @@ output$mh_explorer <- renderUI({
               therefore give only a high level indication of differences over time and by age and sex, and should be interpreted with 
               caution. Breakdowns by SIMD are not felt to be reliable, as they could be heavily skewed by the demographic profile of 
               the areas represented in the data available. PHS are planning work to improve consistency.")},
+      if (input$`mh-measure` %in% c("ooh")) {
+        p("Due to an ongoing technical issue with the GP out of hours datamart, there is no update to OOH data for August. 
+                 This section will be updated once the issue has been resolved.")},
       h3(paste0("Weekly mental health ", mh_type, " in ", input$`mh-geoname`)),
       fluidRow(column(6,
                       actionButton("mh-source-modal", "Data source and definitions",
