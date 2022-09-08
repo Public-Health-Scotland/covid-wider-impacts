@@ -1060,23 +1060,23 @@ plot_immun_simd <- function(imm_simd_data){
   p <- graph_data %>%
     plot_ly( x = ~`time_period_eligible`) %>%
     add_lines(
-      y = ~`1 - most deprived`, line = list(color="#AF69A9"), name = '1 - most deprived', mode = 'lines',
+      y = ~`1 - most deprived`, line = list(color="#045a8d"), name = '1 - most deprived', mode = 'lines',
       text = tooltip_trend, hoverinfo = "text"
     ) %>%
     add_lines(
-      y = ~`2`, line = list(color="#3393DD"), name = '2', mode = 'lines',
+      y = ~`2`, line = list(color="#2b8cbe"), name = '2', mode = 'lines',
       text = tooltip_trend, hoverinfo = "text"
     ) %>%
     add_lines(
-      y = ~`3`, line = list(color="#655E9D"), name = '3', mode = 'lines',
+      y = ~`3`, line = list(color="#74a9cf"), name = '3', mode = 'lines',
       text = tooltip_trend, hoverinfo = "text"
     ) %>%
     add_lines(
-      y = ~`4`, line = list(color="#6B5C85"), name = '4', mode = 'lines',
+      y = ~`4`, line = list(color="#a6bddb"), name = '4', mode = 'lines',
       text = tooltip_trend, hoverinfo = "text"
     ) %>%
     add_lines(
-      y = ~`5 - least deprived`, line = list(color="#1E7F84"), name = '5 - least deprived', mode = 'lines',
+      y = ~`5 - least deprived`, line = list(color="#d0d1e6"), name = '5 - least deprived', mode = 'lines',
       text = tooltip_trend, hoverinfo = "text"
     ) %>%
 
@@ -1182,7 +1182,7 @@ plot_imm_simd_change <- function(imm_simd_data){
                     dataset_name == "six_simd_dose2" ~ "16 weeks",
                     dataset_name == "six_simd_dose3" ~ "20 weeks",
                     dataset_name == "mmr_simd_dose1" ~ "13 months",
-                    dataset_name == "mmr_simd_dose2" ~ "3years 5 months")
+                    dataset_name == "mmr_simd_dose2" ~ "3 years 5 months")
 
   # define changing baseline column name depending on dataset
   baseline <- case_when(dataset_name == "six_simd_dose1" ~ "week12",
@@ -1216,39 +1216,42 @@ plot_imm_simd_change <- function(imm_simd_data){
 
   abs_change_plot_1 <- abs_change_1 %>%
     plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "1 - most deprived",
-             type = 'scatter', mode = 'lines', line = list(color="#AF69A9"),
+             type = 'scatter', mode = 'lines', line = list(color="black"),
              text = paste0("Cohort: ", format(abs_change_1$time_period_eligible, "%B %Y"), "<br>",
                            "Deprivation quintile: 1 (most deprived) <br>",
                            "Percentage uptake: ", round(abs_change_1$abs_diff,1), "%"),
              hoverinfo = 'text') %>%
-    layout(xaxis = xaxis_plots,
-           yaxis = yaxis_plots)
+    layout(xaxis = xaxis_plots, yaxis = yaxis_plots, 
+           annotations = list( x = 0.5, y = 1.0, text = "1-most deprived", xref = "paper",  yref = "paper",  
+                 xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
 
   abs_change_2 <- abs_change %>%
     filter(simdq == "2")
 
   abs_change_plot_2 <- abs_change_2 %>%
     plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "2",
-             type = 'scatter', mode = 'lines' , line = list(color="#3393DD"),
+             type = 'scatter', mode = 'lines' , line = list(color="black"),
              text = paste0("Cohort: ", format(abs_change_2$time_period_eligible, "%B %Y"), "<br>",
                            "Deprivation quintile: 2 <br>",
                            "Percentage uptake: ", round(abs_change_2$abs_diff,1), "%"),
              hoverinfo = 'text') %>%
-    layout(xaxis = xaxis_plots,
-           yaxis = yaxis_plots)
+    layout(xaxis = xaxis_plots, yaxis = yaxis_plots,
+           annotations = list( x = 0.5, y = 1.0, text = "Quintile 2", xref = "paper",  yref = "paper",  
+                               xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
 
   abs_change_3 <- abs_change %>%
     filter(simdq == "3")
 
   abs_change_plot_3 <- abs_change_3 %>%
     plot_ly( x = ~`time_period_eligible`, y=~`abs_diff`, name = "3",
-             type = 'scatter', mode = 'lines' , line = list(color="#655E9D"),
+             type = 'scatter', mode = 'lines' , line = list(color="black"),
              text = paste0("Cohort: ", format(abs_change_3$time_period_eligible, "%B %Y"), "<br>",
                            "Deprivation quintile: 3 <br>",
                            "Percentage uptake: ", round(abs_change_3$abs_diff,1), "%"),
              hoverinfo = 'text')%>%
-    layout(xaxis = xaxis_plots,
-           yaxis = yaxis_plots)
+    layout(xaxis = xaxis_plots, yaxis = yaxis_plots,
+           annotations = list( x = 0.5, y = 1.0, text = "Quintile 3", xref = "paper",  yref = "paper",  
+                               xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
 
 
   abs_change_4 <- abs_change %>%
@@ -1256,30 +1259,43 @@ plot_imm_simd_change <- function(imm_simd_data){
 
   abs_change_plot_4 <- abs_change_4 %>%
     plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "4",
-             type = 'scatter', mode = 'lines' , line = list(color="#6B5C85"),
+             type = 'scatter', mode = 'lines' , line = list(color="black"),
              text = paste0("Cohort: ", format(abs_change_4$time_period_eligible, "%B %Y"), "<br>",
                            "Deprivation quintile: 4 <br>",
                            "Percentage uptake: ", round(abs_change_4$abs_diff,1), "%"),
              hoverinfo = 'text')%>%
-    layout(xaxis = xaxis_plots,
-           yaxis = yaxis_plots)
+    layout(xaxis = xaxis_plots, yaxis = yaxis_plots,
+           annotations = list( x = 0.5, y = 1.0, text = "Quintile 4", xref = "paper",  yref = "paper",  
+                               xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
 
   abs_change_5 <- abs_change %>%
     filter(simdq == "5 - least deprived")
 
   abs_change_plot_5 <- abs_change_5 %>%
     plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "5 - least deprived",
-             type = 'scatter', mode = 'lines' , line = list(color="#1E7F84"),
+             type = 'scatter', mode = 'lines' , line = list(color="black"),
              text = paste0("Cohort: ", format(abs_change_5$time_period_eligible, "%B %Y"), "<br>",
                            "Deprivation quintile: 5 (least deprived) <br>",
                            "Percentage uptake: ", round(abs_change_5$abs_diff,1), "%"),
              hoverinfo = 'text') %>%
-    layout(xaxis = xaxis_plots,
-           yaxis = yaxis_plots)
+    layout(xaxis = xaxis_plots,  yaxis = yaxis_plots,
+           annotations = list( x = 0.5, y = 1.0, text = "5-least deprived", xref = "paper",  yref = "paper",  
+                 xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
+  
+  # Number of rows for subplot depending on dimensions
+  react_rows <- case_when(between(input$dimension[1], 600, 1000) ~ 2,
+                          input$dimension[1] < 600 ~ 5,
+                          TRUE ~ 1)
+  # Also height of plot depending on number of rows
+  react_height <- case_when(react_rows == 5 ~ 1200,
+                            react_rows == 2 ~ 700,
+                            T ~ 400)
+
 
   abs_change_plot <- subplot(abs_change_plot_1, abs_change_plot_2, abs_change_plot_3, abs_change_plot_4, abs_change_plot_5,
-                             shareY = TRUE, shareX = TRUE) %>%
-    layout(legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T) %>%
+                             shareY = TRUE, shareX = TRUE, nrows = react_rows) %>%
+    layout(legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = F,
+           height = react_height) %>%
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 

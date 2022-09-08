@@ -455,8 +455,8 @@ pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
 
 pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine groupings
 
-pal_yr_immun <- c("2019" = '#4B0082', "2020" = '#87CEFA',
-                  "2021" = '#000080', "2022*" = '#d3d3d3')
+pal_yr_immun <- c("2019" = '#a6cee3', "2020" = '#1f78b4',
+                  "2021" = '#b2df8a', "2022*" = '#33a02c')
 
 pal_immun <- c(
   "#ff9966", #orange
