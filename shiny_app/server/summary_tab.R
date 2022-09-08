@@ -33,6 +33,7 @@ observeEvent({input$`summary-measure`}, {
                       label = "Step 3. Select type of admission.",
                       choices = c("All", "Emergency", "Planned"),
                       selected = "All")
+
   } else if (input$`summary-measure` == "op") {
     disable("adm_type")
     enable("appt_type")
@@ -61,6 +62,16 @@ observeEvent({input$`summary-measure`}, {
   }
 
 })
+
+# To include Golden Jubilee in the area dropdown for RAPID data
+observeEvent({input$`summary-geotype`}, {
+  if (input$`summary-measure` == "rapid") {
+    areas_summ <- sort(geo_lookup$areaname[geo_lookup$areatype == input$`summary-geotype`])
+    
+    updateSelectInput(session, "summary-geoname", choices = areas_summ, selected = areas_summ[1])
+  } 
+}
+)
 
 ###############################################.
 ## Modals ----

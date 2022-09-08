@@ -1796,16 +1796,12 @@ geoname_server <- function(id, lookup = geo_lookup) {
           output$geoname <- renderUI({
             ns <- session$ns #obtaining namespace
             
-      areas_summary <- sort(lookup$areaname[lookup$areatype == input$geotype])
-      
-      # Golden Jubilee only present for rapid data
-      if ((input$measure != "rapid" || !exists("input$measure")) && input$geotype == "Health board") {
-        areas_summary <- areas_summary[areas_summary != "NHS Golden Jubilee"]
-      } 
-      
-      selectizeInput(ns("geoname"), label = NULL,
-                     choices = areas_summary, selected = "")
-      
+            areas_choices <- sort(lookup$areaname[lookup$areatype == input$geotype])
+            areas_choices <- areas_choices[areas_choices != "NHS Golden Jubilee"]
+
+          geoname <-  selectizeInput(ns("geoname"), label = NULL,
+                         choices = areas_choices, selected = "")
+
     })
 }
 
