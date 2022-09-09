@@ -1026,7 +1026,6 @@ plot_immun_simd <- function(imm_simd_data){
 
   #Modifying standard xaxis name applies to all curves
   xaxis_plots[["title"]] <- "Month"
-  xaxis_plots[["tickangle"]] <- 315
 
   yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
   yaxis_plots[["title"]] <- paste0("% uptake by ", elig) # elig isn't working
@@ -1054,7 +1053,7 @@ plot_immun_simd <- function(imm_simd_data){
          hovertext = zoom_hover_text,
          showarrow = TRUE, ax = 0, ay = 18,
          x = 0, xref = "paper", xanchor = "left",
-         y = -0.35, yref = "paper", yanchor = "middle")
+         y = -0.28, yref = "paper", yanchor = "middle")
 
 
   p <- graph_data %>%
@@ -1083,8 +1082,9 @@ plot_immun_simd <- function(imm_simd_data){
     layout(margin = list(b = 80, t = 5),
            yaxis = yaxis_plots,
            xaxis = xaxis_plots,
-           legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T,
-           annotations = zoom_annotation) %>%
+           legend = list(orientation = "h", x=0, y=1.2),
+           annotations = zoom_annotation
+           ) %>%
     # leaving only save plot button
     config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
 
@@ -1138,7 +1138,6 @@ plot_imm_simd_bar <- function(imm_simd_data){
 
   #Modifying standard xaxis name applies to all curves
   xaxis_plots[["title"]] <- "SIMD Quintile"
-  xaxis_plots[["tickangle"]] <- 315
 
   yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
   yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
