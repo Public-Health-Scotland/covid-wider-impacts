@@ -15,8 +15,6 @@ source(file.path('ui/data_ui.R'),  local = TRUE)$value
 
 
  # secure_app( #uncomment if needing password protection
-
-
 tagList( #needed for shinyjs
   useShinyjs(),  # Include shinyjs
   
@@ -33,7 +31,21 @@ tagList( #needed for shinyjs
                                 includeScript("google-analytics.js"),
                                 #Including Google analytics 4
                                 HTML('<script async src="https://www.googletagmanager.com/gtag/js?id=G-YLEJLM420G"></script>'),
-                                includeScript("gtag.js")),
+                                includeScript("gtag.js"),
+                                # To obtain user screen size
+                                tags$script('
+                                var dimension = [0, 0];
+                                $(document).on("shiny:connected", function(e) {
+                                    dimension[0] = window.innerWidth;
+                                    dimension[1] = window.innerHeight;
+                                    Shiny.onInputChange("dimension", dimension);
+                                });
+                                $(window).resize(function(e) {
+                                    dimension[0] = window.innerWidth;
+                                    dimension[1] = window.innerHeight;
+                                    Shiny.onInputChange("dimension", dimension);
+                                });
+                            ')),
              intro_tab, #Introduction ----
              ###############################################.
              ## Commentary ----

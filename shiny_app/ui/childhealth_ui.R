@@ -5,7 +5,7 @@
 ##############################################.
 immunisations_tab <- 
   tabPanel(title = "Immunisations", value = "imm",
-         wellPanel(
+         wellPanel(#actionButton("browser", "browser"),
            column(4, selectdata_ui("immun", measure_choices = data_list_immun)),
            column(4, selectgeo_ui("immun", area_choices =  c("Scotland", "Health board")),
                   div(title="Select the time periods you want to explore. You can click in the box then click on time periods in the dropdown to add them, or click on the x to remove a time period.",

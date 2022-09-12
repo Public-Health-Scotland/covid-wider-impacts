@@ -455,17 +455,45 @@ pal_2ages <- c('#9ebcda','#8856a7') # for those with only two age groups
 
 pal_med <- c('#543005', '#bf812d', '#74add1', '#80cdc1') # Palettes for medicine groupings
 
-pal_immun <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
-               "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
-               "APR 2020" = "#7fcdbb", "MAY 2020" = "#41b6c4", "JUN 2020" = "#1d91c0",
-               "JUL 2020" = "#225ea8", "AUG 2020" = "#253494", "SEP 2020" = "#0d38b0",
-               "OCT 2020" = "#5959d7", "NOV 2020" = "#42249f", "DEC 2020" = "#660066",
-               "JAN 2021" = "#990099", "FEB 2021" = "#ff5050", "MAR 2021" = "#ff9966",
-               "APR 2021" = "#a64208", "MAY 2021" = "#e3b419", "JUN 2021" = "#9999ff",
-               "JUL 2021" = "#2d2da1", "AUG 2021" = "#6e2bd9", "SEP 2021" = "#604675",
-               "OCT 2021" = "#8e23a0", "NOV 2021" = "#682c50", "DEC 2021" = "#a81141",
-               "JAN 2022" = "#00BA42", "FEB 2022" = "#ff00ff", "MAR 2022" = "#3399ff",
-               "APR 2022" = "#bcbddc", "MAY 2022" = "#7300e6", "JUN 2022" = "#d95f0e")
+pal_yr_immun <- c("2019" = '#a6cee3', "2020" = '#1f78b4',
+                  "2021" = '#b2df8a', "2022*" = '#33a02c')
+
+pal_immun <- c(
+  "#ff9966", #orange
+  "#1d91c0", #teal/light blue
+  "#8e23a0", #purple
+  "#00BA42", #green
+  "#7fcdbb", #mint
+  "#9999ff", #lilac
+  "#ffbf80", #orange
+  "#696969", #dim grey -20
+  "#edf8b1", #light yellow
+  "#ff00ff", #bright pink
+  "#5f9ea0", #cadet blue
+  "#253494", #purple
+  "#41b6c4", #blue
+  "#9acd32", #yellow green
+  "#c7e9b4", #light green
+  "#660066", #dark pink
+  "#bcbddc", #light purple
+  "#40e0d0", #turquoise
+  "#FFEC8B", #light gold
+  "#006400", # dark green
+  "#604675", #phs purple
+  "#0d38b0", #purple/blue
+  "#ff5050", #coral
+  "#bcbddc", #light purple
+  "#40e0d0", #turquoise
+  "#EEE0E5", #lavender
+  "#2e8b57", #sea green
+  "#41b6c4", #blue
+  "#ff1493", #deep pink
+  "#9BCD9B", #sea green dark
+  "#a81141", #deep pink/red
+  "#ffa07a", #salmon
+  "#a64208", #brown
+  "#682c50" #deep purple
+)
 
 pal_child <- c("2019" = '#000000', "2020" = '#41b6c4', "2021" = '#ffbf80',
                "JAN 2020" = "#ffffd9", "FEB 2020" = "#edf8b1", "MAR 2020" = "#c7e9b4",
