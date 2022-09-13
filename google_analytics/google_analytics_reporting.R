@@ -144,21 +144,21 @@ pages_ga4 <- ga_data(ga_id,
 # Calculating week endding and aggregating to obtain totals
 sessions_un <- sessions_ga %>% 
   mutate(week_ending = ceiling_date(date, "week", change_on_boundary = F)) %>% 
-  group_by(week_ending) %>% 
-  summarise(count = sum(sessions, na.rm = T),
-            tot_session = sum(sessionDuration)) %>% ungroup() %>% 
-  mutate(session_ave = round(tot_session/count/60, 1)) 
+  rename(tot_session = sessionDuration)
 
 # Calculating week ending and aggregating to obtain totals
 sessions_4 <- sessions_ga4 %>% 
   mutate(week_ending = ceiling_date(date, "week", change_on_boundary = F),
          tot_session = sessions * averageSessionDuration) %>% 
+  select(-averageSessionDuration)
+
+sessions <- rbind(sessions_un, sessions_4) %>%   
   group_by(week_ending) %>% 
   summarise(count = sum(sessions, na.rm = T),
-            tot_session = sum(tot_session, na.rm = T)) %>% ungroup() %>% 
-  mutate(session_ave = round(tot_session/count/60, 1))
+            tot_session = sum(tot_session)) %>% ungroup() %>% 
+  mutate(session_ave = round(tot_session/count/60, 1)) 
 
-saveRDS(rbind(sessions_un, sessions_4), paste0(data_folder, "sessions.rds"))
+saveRDS(sessions, paste0(data_folder, "sessions.rds"))
 
 ###############################################.
 # Events data 
