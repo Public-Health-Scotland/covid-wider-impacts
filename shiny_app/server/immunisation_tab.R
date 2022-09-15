@@ -83,6 +83,322 @@ observeEvent(input$imm_elig_defs,
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
+###############################################.
+## Functions ----
+###############################################.
+plot_immun_simd <- function(imm_simd_data){
+  
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
+  dataset_name <- deparse(substitute(imm_simd_data)) # character name of the data
+  
+  title <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
+                     dataset_name == "six_simd_dose2" ~ "16 weeks",
+                     dataset_name == "six_simd_dose3" ~ "20 weeks",
+                     dataset_name == "mmr_simd_dose1" ~ "13 months",
+                     dataset_name == "mmr_simd_dose2" ~ "3y 5 months")
+  
+  elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
+                    dataset_name == "six_simd_dose2" ~ "16 weeks",
+                    dataset_name == "six_simd_dose3" ~ "20 weeks",
+                    dataset_name== "mmr_simd_dose1" ~ "13 months",
+                    dataset_name== "mmr_simd_dose2" ~ "3y 5 months")
+  
+  imm_simd_data %<>% dplyr::rename("percent_uptake" = names(select(imm_simd_data, ends_with("_percent"))))
+  
+  percent_name <- case_when(dataset_name == "six_simd_dose1" ~ "12weeks",
+                            dataset_name == "six_simd_dose2" ~ "16weeks",
+                            dataset_name == "six_simd_dose3" ~ "20weeks",
+                            dataset_name == "mmr_simd_dose1" ~ "57weeks",
+                            dataset_name == "mmr_simd_dose2" ~ "178weeks")
+  
+  graph_data <- imm_simd_data %>%
+    filter(cohort == "monthly") %>%
+    mutate(time_period_eligible = paste0("01", time_period_eligible)) %>%
+    mutate(time_period_eligible = dmy(time_period_eligible)) %>%
+    select(time_period_eligible, simdq, percent_uptake) %>%
+    pivot_wider(names_from = simdq,
+                values_from = percent_uptake)
+  
+  #Modifying standard xaxis name applies to all curves
+  xaxis_plots[["title"]] <- "Month"
+  
+  yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
+  yaxis_plots[["title"]] <- paste0("% uptake by ", elig) # elig isn't working
+  
+  #count the number of distinct months in the dataset - used later to correctly adjust chart
+  month_count <- length(unique(graph_data$time_period_eligible))
+  
+  tooltip_trend <- c(paste0("Month: ", format(graph_data$time_period_eligible, "%B %Y"),"<br>",
+                            "1 (most deprived): ", format(as.numeric(graph_data$`1 - most deprived`)), "%", "<br>",
+                            "2: ", format(as.numeric(graph_data$`2`)), "%", "<br>",
+                            "3: ", format(as.numeric(graph_data$`3`)), "%", "<br>",
+                            "4: ", format(as.numeric(graph_data$`4`)), "%", "<br>",
+                            "5 (least deprived): ", format(as.numeric(graph_data$`5 - least deprived`)), "%"))
+  
+  
+  xaxis_plots[["rangeslider"]] <- list(range="week_ending", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
+  
+  # For annotation
+  zoom_hover_text =
+    "Drag the markers at either end of<br>the bar to view specific time periods"
+  
+  # We need an annotation to show user how to use the rangeslider
+  zoom_annotation =
+    list(text = "Drag to zoom", borderpad = 2,
+         hovertext = zoom_hover_text,
+         showarrow = TRUE, ax = 0, ay = 18,
+         x = 0, xref = "paper", xanchor = "left",
+         y = -0.28, yref = "paper", yanchor = "middle")
+  
+  
+  p <- graph_data %>%
+    plot_ly( x = ~`time_period_eligible`) %>%
+    add_lines(
+      y = ~`1 - most deprived`, line = list(color="#045a8d"), name = '1 - most deprived', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
+    add_lines(
+      y = ~`2`, line = list(color="#2b8cbe"), name = '2', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
+    add_lines(
+      y = ~`3`, line = list(color="#74a9cf"), name = '3', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
+    add_lines(
+      y = ~`4`, line = list(color="#a6bddb"), name = '4', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
+    add_lines(
+      y = ~`5 - least deprived`, line = list(color="#d0d1e6"), name = '5 - least deprived', mode = 'lines',
+      text = tooltip_trend, hoverinfo = "text"
+    ) %>%
+    
+    layout(margin = list(b = 80, t = 5),
+           yaxis = yaxis_plots,
+           xaxis = xaxis_plots,
+           legend = list(orientation = "h", x=0, y=1.2),
+           annotations = zoom_annotation
+    ) %>%
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  
+  return(p)
+  
+}
+
+
+plot_imm_simd_bar <- function(imm_simd_data){
+  
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
+  dataset_name <- deparse(substitute(imm_simd_data)) # character name of the data
+  
+  # define changing y axis depending on dataset
+  elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
+                    dataset_name == "six_simd_dose2" ~ "16 weeks",
+                    dataset_name == "six_simd_dose3" ~ "20 weeks",
+                    dataset_name == "mmr_simd_dose1" ~ "13 months",
+                    dataset_name == "mmr_simd_dose2" ~ "3years 5 months")
+  
+  imm_simd_data %<>% dplyr::rename("percent_var" = names(select(imm_simd_data, ends_with("_percent"))))
+  imm_simd_data %<>% dplyr::rename("baseline_var" = names(select(imm_simd_data, ends_with("weeks"))))
+  
+  #create recent year variable
+  recent_year <- imm_simd_data %>%
+    filter(cohort == "monthly") %>%
+    group_by(simdq) %>%
+    mutate(percent_var = mean(percent_var)) %>%
+    ungroup() %>%
+    select(simdq, percent_var) %>%
+    mutate(time_period_eligible = "2022*") %>%
+    distinct()
+  
+  #seperate out 2019 from main dataset and combine with recent year variable
+  additional_bars <- imm_simd_data %>%
+    filter(cohort == "yearly") %>%
+    select(simdq, baseline_var) %>%
+    mutate(time_period_eligible = "2019") %>%
+    distinct() %>%
+    rename(percent_var = baseline_var) %>%
+    rbind(recent_year)
+  
+  graph_data <- imm_simd_data %>%
+    filter(cohort == "yearly") %>%
+    select(time_period_eligible, simdq, percent_var) %>%
+    rbind(additional_bars) %>%
+    group_by(simdq) %>%
+    mutate(time_period_eligible = as.character(time_period_eligible))
+  
+  #Modifying standard xaxis name applies to all curves
+  xaxis_plots[["title"]] <- "SIMD Quintile"
+  
+  yaxis_plots[["range"]] <- c(0, 100) # enforcing range from 0 to 100%
+  yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
+  
+  #count the number of distinct months in the dataset - used later to correctly adjust chart
+  year_count <- length(unique(graph_data$time_period_eligible))
+  
+  tooltip_bars <- c(paste0("Cohort: ", graph_data$time_period_eligible, "<br>",
+                           "Deprivation quintile: ", graph_data$simdq, "<br>",
+                           "Percentage uptake: ", round(graph_data$percent_var,1), "%"))
+  
+  #Creating bar plot
+  simd_plot <- plot_ly(data=graph_data, x = ~simdq) %>%
+    add_bars(y = ~percent_var,
+             color = ~time_period_eligible,
+             colors = pal_yr_immun,
+             text = tooltip_bars,
+             hoverinfo = "text",
+             name = ~time_period_eligible) %>%
+    
+    layout(margin = list(b = 80, t = 5),
+           yaxis = yaxis_plots, xaxis = xaxis_plots,
+           legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = T, barmode="group") %>%
+    
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  
+  return(simd_plot)
+  
+}
+
+plot_imm_simd_change <- function(imm_simd_data){
+  
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_immun
+  
+  dataset_name <- deparse(substitute(imm_simd_data)) # character name of the data
+  
+  # define changing y axis depending on dataset
+  elig <- case_when(dataset_name == "six_simd_dose1" ~ "12 weeks",
+                    dataset_name == "six_simd_dose2" ~ "16 weeks",
+                    dataset_name == "six_simd_dose3" ~ "20 weeks",
+                    dataset_name == "mmr_simd_dose1" ~ "13 months",
+                    dataset_name == "mmr_simd_dose2" ~ "3 years 5 months")
+  
+  # define changing baseline column name depending on dataset
+  baseline <- case_when(dataset_name == "six_simd_dose1" ~ "week12",
+                        dataset_name == "six_simd_dose2" ~ "week16",
+                        dataset_name == "six_simd_dose3" ~ "week20",
+                        dataset_name == "mmr_simd_dose1" ~ "week57",
+                        dataset_name == "mmr_simd_dose2" ~ "week178")
+  
+  abs_change <- imm_simd_data %>%
+    filter(cohort == "monthly") %>%
+    mutate(simdq = as.factor(simdq)) %>%
+    mutate(time_period_eligible = paste0("01", time_period_eligible)) %>%
+    mutate(time_period_eligible = dmy(time_period_eligible)) %>%
+    select(time_period_eligible, simdq, paste0(baseline, "_abs_diff"))
+  
+  abs_change %<>% dplyr::rename("abs_diff" = names(select(imm_simd_data, ends_with("_abs_diff"))))
+  
+  #Modifying standard xaxis name applies to all curves
+  xaxis_plots[["title"]] <- "Month"
+  xaxis_plots[["tickangle"]] <- 315
+  # rangeslider doesn't work so well with subplot
+  #xaxis_plots[["rangeslider"]] <- list(range="week_ending", visible = TRUE, thickness = 0.05, bgcolor = "#ECEBF3")
+  
+  yaxis_plots[["range"]] <- c(-30, 30) # enforcing range from -30 to 30%
+  yaxis_plots[["title"]] <- paste0("% uptake by ", elig)
+  yaxis_plots[["zerolinecolor"]] <- "#C73918"
+  yaxis_plots[["zerolinewidth"]] <- 2
+  
+  abs_change_1 <- abs_change %>%
+    filter(simdq == "1 - most deprived")
+  
+  abs_change_plot_1 <- abs_change_1 %>%
+    plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "1 - most deprived",
+             type = 'scatter', mode = 'lines', line = list(color="black"),
+             text = paste0("Cohort: ", format(abs_change_1$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 1 (most deprived) <br>",
+                           "Percentage uptake: ", round(abs_change_1$abs_diff,1), "%"),
+             hoverinfo = 'text') %>%
+    layout(xaxis = xaxis_plots, yaxis = yaxis_plots, 
+           annotations = list( x = 0.5, y = 1.0, text = "1-most deprived", xref = "paper",  yref = "paper",  
+                               xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
+  
+  abs_change_2 <- abs_change %>%
+    filter(simdq == "2")
+  
+  abs_change_plot_2 <- abs_change_2 %>%
+    plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "2",
+             type = 'scatter', mode = 'lines' , line = list(color="black"),
+             text = paste0("Cohort: ", format(abs_change_2$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 2 <br>",
+                           "Percentage uptake: ", round(abs_change_2$abs_diff,1), "%"),
+             hoverinfo = 'text') %>%
+    layout(xaxis = xaxis_plots, yaxis = yaxis_plots,
+           annotations = list( x = 0.5, y = 1.0, text = "Quintile 2", xref = "paper",  yref = "paper",  
+                               xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
+  
+  abs_change_3 <- abs_change %>%
+    filter(simdq == "3")
+  
+  abs_change_plot_3 <- abs_change_3 %>%
+    plot_ly( x = ~`time_period_eligible`, y=~`abs_diff`, name = "3",
+             type = 'scatter', mode = 'lines' , line = list(color="black"),
+             text = paste0("Cohort: ", format(abs_change_3$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 3 <br>",
+                           "Percentage uptake: ", round(abs_change_3$abs_diff,1), "%"),
+             hoverinfo = 'text')%>%
+    layout(xaxis = xaxis_plots, yaxis = yaxis_plots,
+           annotations = list( x = 0.5, y = 1.0, text = "Quintile 3", xref = "paper",  yref = "paper",  
+                               xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
+  
+  
+  abs_change_4 <- abs_change %>%
+    filter(simdq == "4")
+  
+  abs_change_plot_4 <- abs_change_4 %>%
+    plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "4",
+             type = 'scatter', mode = 'lines' , line = list(color="black"),
+             text = paste0("Cohort: ", format(abs_change_4$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 4 <br>",
+                           "Percentage uptake: ", round(abs_change_4$abs_diff,1), "%"),
+             hoverinfo = 'text')%>%
+    layout(xaxis = xaxis_plots, yaxis = yaxis_plots,
+           annotations = list( x = 0.5, y = 1.0, text = "Quintile 4", xref = "paper",  yref = "paper",  
+                               xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
+  
+  abs_change_5 <- abs_change %>%
+    filter(simdq == "5 - least deprived")
+  
+  abs_change_plot_5 <- abs_change_5 %>%
+    plot_ly( x = ~`time_period_eligible`, y = ~`abs_diff`, name = "5 - least deprived",
+             type = 'scatter', mode = 'lines' , line = list(color="black"),
+             text = paste0("Cohort: ", format(abs_change_5$time_period_eligible, "%B %Y"), "<br>",
+                           "Deprivation quintile: 5 (least deprived) <br>",
+                           "Percentage uptake: ", round(abs_change_5$abs_diff,1), "%"),
+             hoverinfo = 'text') %>%
+    layout(xaxis = xaxis_plots,  yaxis = yaxis_plots,
+           annotations = list( x = 0.5, y = 1.0, text = "5-least deprived", xref = "paper",  yref = "paper",  
+                               xanchor = "center", yanchor = "bottom", showarrow = FALSE ))
+  
+  # Number of rows for subplot depending on dimensions
+  react_rows <- case_when(between(input$dimension[1], 600, 1000) ~ 2,
+                          input$dimension[1] < 600 ~ 5,
+                          TRUE ~ 1)
+  # Also height of plot depending on number of rows
+  react_height <- case_when(react_rows == 5 ~ 1200,
+                            react_rows == 2 ~ 700,
+                            T ~ 400)
+  
+  
+  abs_change_plot <- subplot(abs_change_plot_1, abs_change_plot_2, abs_change_plot_3, abs_change_plot_4, abs_change_plot_5,
+                             shareY = TRUE, shareX = TRUE, nrows = react_rows) %>%
+    layout(legend = list(x = 100, y = 0.8, yanchor = "top"), showlegend = F,
+           height = react_height) %>%
+    # leaving only save plot button
+    config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  
+  return(abs_change_plot)
+  
+}
+
 ###############################################...
 ## Reactive controls  ----
 ###############################################.

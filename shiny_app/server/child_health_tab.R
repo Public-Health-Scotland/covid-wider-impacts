@@ -20,6 +20,238 @@ observeEvent(input$`childr-source-modal`,
                  size = "m",
                  easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
     
+###############################################.
+## Functions ----
+###############################################.
+#####################################################################################.
+## HV S-curve----
+## Function for drawing S-Curve charts used in health visitor tabs.
+
+plot_scurve_child <- function(dataset, age_week) {
+  
+  # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
+  input$btn_update_time_child
+  
+  scurve_data <- dataset %>% filter(area_name == input$`childr-geoname`,
+                                    # filter to selected time periods, but don't re-execute each time input changes
+                                    time_period_eligible %in% isolate(input$dates_child))
+  # %>%
+  # droplevels() # might be needed if sort order in legend is to change
+  
+  if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
+  { plot_nodata(height = 50)
+  } else {
+    
+    #Create tooltip for scurve
+    tooltip_scurve <- c(paste0("Cohort: ", scurve_data$time_period_eligible))
+    
+    if (age_week == "2 weeks")  {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in weeks"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(14, 126, by = 28))
+      xaxis_plots[["ticktext"]] <- c(0, seq(2, 18, by = 4))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    } else if (age_week == "6 weeks") {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in weeks"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(42, 154, by = 28))
+      xaxis_plots[["ticktext"]] <- c(0, seq(6, 22, by = 4))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    } else if (age_week == "13 months") {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in months"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(371, 518, by = 29.4))
+      xaxis_plots[["ticktext"]] <- c(0, seq(12, 17, by = 1))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    } else if (age_week == "27 months") {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in months"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(791, 945, by = 30.8))
+      xaxis_plots[["ticktext"]] <- c(0, seq(26, 31, by = 1))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    } else if (age_week == "4 years") {
+      
+      #Modifying standard yaxis layout
+      yaxis_plots[["title"]] <- "% of children who have received their review"
+      xaxis_plots[["title"]] <- "Age of children in months"
+      # For custom tick labels
+      xaxis_plots[["tickvals"]] <- c(0, seq(1428, 1582, by = 30.8))
+      xaxis_plots[["ticktext"]] <- c(0, seq(47, 52, by = 1))
+      # enforcing range from 0 to 100%
+      yaxis_plots[["range"]] <- c(0, 100)
+      
+    }
+    
+    #filter dataset to just time periods to be shown in grey
+    grey_lines <- scurve_data_col %>%
+      filter(colour_flag == 0)
+    
+    #filter dataset to just time periods to be shown in colour
+    coloured_lines <- scurve_data_col %>%
+      filter(colour_flag == 1)
+    
+    # First define the palette of colours used, then set a named vector, so each color
+    # gets assigned to an time period. But it has to be done for grays and coloured lines 
+    trend_length <- length(unique(coloured_lines$time_period_eligible))
+    grey_length <-  length(unique(grey_lines$time_period_eligible))
+    
+    trend_scale <- c(setNames(pal_immun, unique(coloured_lines$time_period_eligible)[1:trend_length]))
+    trend_scale <- trend_scale[1:trend_length]
+    grey_scale <- c(setNames(rep("lightgrey", grey_length), 
+                             unique(grey_lines$time_period_eligible)[1:grey_length]))
+    all_scale <- c(grey_scale, trend_scale)
+    
+    # Create tooltip for scurves
+    tooltip_grey <- c(paste0("Cohort: ", grey_lines$time_period_eligible))
+    tooltip_col <- c(paste0("Cohort: ", coloured_lines$time_period_eligible))
+    #Creating time trend plot
+    plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
+      add_trace(type = 'scatter', mode = 'lines',
+                color = ~time_period_eligible, colors = pal_child,
+                text= tooltip_scurve, hoverinfo="text") %>%
+      #Layout
+      layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
+             yaxis = yaxis_plots, xaxis = xaxis_plots,
+             legend = list(title=list(text=paste0("Children turning ", age_week, " in:")),
+                           x = 100, y = 0.8, yanchor="top")) %>% #position of legend
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+  }}
+
+
+#####################################################################################.
+## Function for generating flextable summary of child health data being displayed in s curve.
+
+child_table <- function(dataset, age_week, age_not_reached) {
+  
+  table_data <- filter_table_data_child(dataset)
+  
+  table_data <- table_data %>%
+    filter(substr(time_period_eligible,1,3) != "W/B") #filter child health table to exclude weekly cohorts that should only be downloadable
+  
+  no_complete_row <- with(table_data, (shade_cells == 1))
+  
+  if (age_week == "2 weeks") {
+    format_col <- c("denominator","coverage_6weeks_num","coverage_18weeks_num","coverage_tot_num")
+    
+    child_table <- table_data %>%
+      select (time_period_eligible, denominator, coverage_6weeks_num,
+              coverage_6weeks_percent, coverage_18weeks_num, coverage_18weeks_percent,
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_6weeks_num="Children recorded as receiving their health visitor first visit by 6 weeks of age",
+                        coverage_6weeks_percent="Children recorded as receiving their health visitor first visit by 6 weeks of age",
+                        coverage_18weeks_num="Children recorded as receiving their health visitor first visit by 18 weeks of age (or younger if children have not reached 18 weeks of age by the date data was extracted for analysis)",
+                        coverage_18weeks_percent="Children recorded as receiving their health visitor first visit by 18 weeks of age (or younger if children have not reached 18 weeks of age by the date data was extracted for analysis)") %>%
+      # Italics and colour if not 12 weeks
+      color(i = no_complete_row, j = c("coverage_18weeks_num", "coverage_18weeks_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_18weeks_num", "coverage_18weeks_percent"))
+  }
+  else if (age_week == "6 weeks") {
+    format_col <- c("denominator","coverage_10weeks_num","coverage_22weeks_num","coverage_tot_num")
+    
+    child_table <- table_data %>%
+      select (time_period_eligible, denominator, coverage_10weeks_num,
+              coverage_10weeks_percent, coverage_22weeks_num, coverage_22weeks_percent,
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_10weeks_num="Children recorded as receiving their 6-8 week review by 10 weeks of age",
+                        coverage_10weeks_percent="Children recorded as receiving their 6-8 week review by 10 weeks of age",
+                        coverage_22weeks_num="Children recorded as receiving their 6-8 week review by 22 weeks of age (or younger if children have not reached 22 weeks of age by the date data was extracted for analysis)",
+                        coverage_22weeks_percent="Children recorded as receiving their 6-8 week review by 22 weeks of age (or younger if children have not reached 22 weeks of age by the date data was extracted for analysis)") %>%
+      # Italics and colour if not 12 weeks
+      color(i = no_complete_row, j = c("coverage_22weeks_num", "coverage_22weeks_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_22weeks_num", "coverage_22weeks_percent"))
+  }
+  else if (age_week == "13 months") {
+    format_col <- c("denominator","coverage_14months_num","coverage_17months_num","coverage_tot_num")
+    
+    child_table <- table_data %>%
+      select (time_period_eligible, denominator, coverage_14months_num,
+              coverage_14months_percent, coverage_17months_num, coverage_17months_percent,
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_14months_num="Children recorded as receiving their 13-15 month review by 14 months of age",
+                        coverage_14months_percent="Children recorded as receiving their 13-15 month review by 14 months of age",
+                        coverage_17months_num="Children recorded as receiving their 13-15 month review by 17 months of age (or younger if children have not reached 17 months of age by the date data was extracted for analysis)",
+                        coverage_17months_percent="Children recorded as receiving their 13-15 month review by 17 months of age (or younger if children have not reached 17 months of age by the date data was extracted for analysis)") %>%
+      # Italics and colour if not 17 months
+      color(i = no_complete_row, j = c("coverage_17months_num", "coverage_17months_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_17months_num", "coverage_17months_percent"))
+  }
+  else if (age_week == "27 months") {
+    format_col <- c("denominator","coverage_28months_num","coverage_31months_num","coverage_tot_num")
+    
+    child_table <- table_data %>%
+      select (time_period_eligible, denominator, coverage_28months_num,
+              coverage_28months_percent, coverage_31months_num, coverage_31months_percent,
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_28months_num="Children recorded as receiving their 27-30 month review by 28 months of age",
+                        coverage_28months_percent="Children recorded as receiving their 27-30 month review by 28 months of age",
+                        coverage_31months_num="Children recorded as receiving their 27-30 month review by 31 months of age (or younger if children have not reached 31 months of age by the date data was extracted for analysis)",
+                        coverage_31months_percent="Children recorded as receiving their 27-30 month review by 31 months of age (or younger if children have not reached 31 months of age by the date data was extracted for analysis)") %>%
+      # Italics and colour if not 17 months
+      color(i = no_complete_row, j = c("coverage_31months_num", "coverage_31months_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_31months_num", "coverage_31months_percent"))
+  }
+  else if (age_week == "4 years") {
+    format_col <- c("denominator","coverage_49months_num","coverage_52months_num","coverage_tot_num")
+    
+    child_table <- table_data %>%
+      select (time_period_eligible, denominator, coverage_49months_num,
+              coverage_49months_percent, coverage_52months_num, coverage_52months_percent,
+              coverage_tot_num, coverage_tot_percent) %>%
+      flextable() %>%
+      set_header_labels(coverage_49months_num="Children recorded as receiving their 4-5 year review by 49 months of age",
+                        coverage_49months_percent="Children recorded as receiving their 4-5 year review by 49 months of age",
+                        coverage_52months_num="Children recorded as receiving their 4-5 year review by 52 months of age (or younger if children have not reached 52 months of age by the date data was extracted for analysis)",
+                        coverage_52months_percent="Children recorded as receiving their 4-5 year review by 52 months of age (or younger if children have not reached 52 months of age by the date data was extracted for analysis)") %>%
+      # Italics and colour if not 17 months
+      color(i = no_complete_row, j = c("coverage_52months_num", "coverage_52months_percent"), color="#0033cc")  %>%
+      italic(i = no_complete_row, j = c("coverage_52months_num", "coverage_52months_percent"))
+  }
+  
+  child_table %>%
+    set_header_labels(time_period_eligible=paste0("Children turning ", age_week, " in:"),
+                      denominator="Total number of children",
+                      coverage_tot_num=paste0("Children recorded as receiving their review by the date information was extracted for analysis (", child_extract_date,")"),
+                      coverage_tot_percent=paste0("Children recorded as receiving their review by the date information was extracted for analysis (", child_extract_date,")")) %>%
+    footnote(i = 1, j = c(2, 5),
+             value = as_paragraph(c("Cohort sizes are dependent on time periods whether, annual, monthly (4 or 5 weeks) or weekly",
+                                    paste0("Blue cells indicate cohorts that have not reached ", age_not_reached, " of age"))),
+             part = "header") %>%
+    merge_at(i = 1, j = 3:4, part = "header") %>%
+    merge_at(i = 1, j = 5:6, part = "header") %>%
+    merge_at(i = 1, j = 7:8, part = "header") %>%
+    add_header_row(values=c("","","N","%","N","%","N","%"), top = FALSE ) %>%
+    font(fontname="Helvetica", part = "all") %>%
+    colformat_num(j=format_col,big.mark = ",", digits=0) %>%
+    theme_box() %>%
+    autofit() %>%
+    htmltools_value()
+  
+}
 
 ###############################################.
 ## Reactive controls  ----

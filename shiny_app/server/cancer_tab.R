@@ -31,6 +31,164 @@ observeEvent(input$`cancer-source-modal`,
                p(paste0("Figures presented based on data extracted on ",cancer_extract_date)), # need to define cancer_extract_date reactive value
                size = "m",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
+###############################################.
+## Functions ----
+###############################################..
+## Function for overall cancer charts 
+
+plot_overall_cancer_chart <- function(dataset, var1_chosen, var2_chosen, var3_chosen, var4_chosen, data_name) {
+  
+  # set plot display if no data
+  if (is.data.frame(dataset) && nrow(dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- case_when(data_name == "cum" ~ "Cumulative total of individuals",
+                             data_name == "inc" ~ "Weekly total of individuals")
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips
+    
+    measure_name <- case_when(data_name == "cum" ~ "Cumulative total of individuals: ",
+                              data_name == "inc" ~ "Weekly total of individuals: ")
+    
+    denom_period <- case_when(var2_chosen %in% c("count19", "cum_count19")  ~ "2019",
+                              var2_chosen %in% c("count_mean_17_19", "cum_count_mean_17_19") ~ "Mean 2017-2019")
+    
+    value1 <- dataset[[var1_chosen]]
+    
+    value2 <- dataset[[var2_chosen]]
+    
+    value3 <- dataset[[var3_chosen]]
+    
+    value4 <- dataset[[var4_chosen]]
+    
+    tooltip_1 <- c(paste0("Year: 2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, value1))
+    
+    tooltip_2 <- c(paste0("Year: ", denom_period, "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, value2))
+    
+    tooltip_3 <- c(paste0("Year: 2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, value3))
+    
+    tooltip_3.1 <- c(paste0("Year: 2022", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                            "<br>", measure_name, value4))
+    
+    tooltip_4 <- c(paste0("Year: 2020", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
+    tooltip_5 <- c(paste0("Year: 2021", "<br>", "Week ending: ", format(dataset$week_ending, "%d %b"),
+                          "<br>", measure_name, paste0(format(round(value3, 2), nsmall = 2), "%")))
+    
+    
+    #Creating time trend plot for cumulative totals and incidence
+    plot_ly(data=dataset, x=~week_ending) %>%
+      add_lines(y = ~get(var4_chosen), line = list(color = "red", opacity = 0.3, width = 3),
+                text=tooltip_3.1, hoverinfo="text", name = "2022") %>%
+      # 2021 line
+      add_lines(y = ~get(var3_chosen), line = list(color = "blue", opacity = 0.3, width = 3),
+                text=tooltip_3, hoverinfo="text", name = "2021") %>%
+      # 2020 line
+      add_lines(y = ~get(var1_chosen), line = list(color = "green", opacity = 0.6, width = 2),
+                text=tooltip_1, hoverinfo="text", name = "2020") %>%
+      # 2019 line
+      add_lines(y = ~get(var2_chosen), line = list(color = "black", dash = 'dash', opacity = 3, width = 1),
+                text=tooltip_2, hoverinfo="text", name = denom_period) %>%
+      #Layout
+      layout(yaxis = yaxis_plots, xaxis = list(title = "Week ending", tickfont = list(size = 13), tick0 = "2020-01-05", dtick = 4*60*60*24*7*1000),
+             legend = list(x = 100, y = 0.5)) %>%
+      add_vline(x = '2020-03-22', text = "1st lockdown", margin = list(b = 80, t = 20)) %>% 
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+###############################################.
+# CANCER DIFF PLOT - NO BREAKDOWN 
+plot_diff_cancer_chart <- function(dataset, periodvar, diffvar1) {
+  
+  # set plot display if no data
+  if (is.data.frame(dataset) && nrow(dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available, no referrals recorded")
+  } else {
+    
+    # Set x axis label
+    xaxis_title <-  "Quarter"
+    
+    xaxis_plots[["title"]] <- xaxis_title
+    
+    # Set y axis label
+    yaxis_title <-  "% Change from 2019 quarter"
+    yaxis_plots[["title"]] <- yaxis_title 
+    
+    #Text for tooltips  
+    measure_name <- "Percentage (%) change:"
+    
+    value1 <- dataset[[diffvar1]]
+    
+    tooltip_1 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>",
+                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
+    tooltip_2 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>",
+                          "Age group: ", dataset$age_group, "<br>",
+                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
+    tooltip_3 <- c(paste0("Quarter: ", dataset$quarter_no, "<br>", 
+                          "Deprivation quintile: ", dataset$dep, "<br>",
+                          measure_name, " ", paste0(format(round(value1, 2), nsmall = 2), "%")))
+    
+    #Creating time trend plot for difference
+    
+    diff_plot <- plot_ly(data=dataset, x = ~get(periodvar))
+    
+    if (input$breakdown == "None"){ # DIFF PLOT - No breakdown
+      
+      diff_plot <- diff_plot %>%
+        add_trace(y = ~get(diffvar1),
+                  type = 'scatter',
+                  mode = 'line',
+                  color = 'purple',
+                  text = tooltip_1,
+                  hoverinfo="text")
+      
+    } else if (input$breakdown == "Age Group") { # DIFF PLOT - AGE BREAKDOWN
+      
+      diff_plot <- diff_plot %>%
+        add_trace(y = ~get(diffvar1),
+                  type = 'scatter',
+                  mode = 'line',
+                  color = ~age_group,
+                  colors = pal_sact,
+                  text = tooltip_2,
+                  hoverinfo="text")
+      
+    } else if (input$breakdown == "Deprivation") { #DIFF PLOT - Deprivation BREAKDOWN
+      
+      diff_plot <- diff_plot %>% 
+        add_trace(y = ~get(diffvar1),
+                  type = 'scatter',
+                  mode = 'line',
+                  color = ~dep,
+                  colors = pal_cancer_diff,
+                  text = tooltip_3, 
+                  hoverinfo="text") 
+    }
+    
+    #Layout
+    diff_plot %>%  layout(margin = list(b = 80, t=5),
+                          xaxis = xaxis_plots, yaxis = yaxis_plots,
+                          legend = list(orientation = 'h', x = 0, y = 1.1)) %>%
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
 
 ###############################################.
 ## Reactive datasets ----
