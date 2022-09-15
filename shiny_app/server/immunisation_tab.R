@@ -460,22 +460,14 @@ filter_chart_data_immun <- function(dataset){
 ###############################################.
 ## Reactive data ----
 ###############################################.
+# These two reactive datasets are used for the s-chart
 six_alldose_filt <- reactive({
-  filter_table_data_immun(six_alldose)
-})
-
-mmr_alldose_filt <- reactive({
-   filter_table_data_immun(mmr_alldose)
-})
-
-six_alldose_filt2 <- reactive({
   filter_chart_data_immun(six_alldose)
 })
 
-mmr_alldose_filt2 <- reactive({
+mmr_alldose_filt <- reactive({
   filter_chart_data_immun(mmr_alldose)
 })
-
 
 ###############################################.
 ## Charts ----
@@ -490,12 +482,6 @@ output$immun_scurve <- renderPlotly({
     scurve_data <-  six_alldose_filt()
   } else if (substr(input$`immun-measure`, 1, 3) == "mmr") {
     scurve_data <-  mmr_alldose_filt()
-  }
-
-  if (substr(input$`immun-measure`, 1, 3) == "six") {
-    scurve_data_col <- six_alldose_filt2()
-  } else if (substr(input$`immun-measure`, 1, 3) == "mmr") {
-    scurve_data_col <- mmr_alldose_filt2()
   }
 
   dose <- paste("dose", #extracting dose from input
@@ -556,11 +542,11 @@ output$immun_scurve <- renderPlotly({
     }
 
     #filter dataset to just time periods to be shown in grey
-    grey_lines <- scurve_data_col %>%
+    grey_lines <- scurve_data %>%
       filter(colour_flag == 0)
 
     #filter dataset to just time periods to be shown in colour
-    coloured_lines <- scurve_data_col %>%
+    coloured_lines <- scurve_data %>%
       filter(colour_flag == 1)
     
     # First define the palette of colours used, then set a named vector, so each color
