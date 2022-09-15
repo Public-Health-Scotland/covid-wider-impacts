@@ -800,7 +800,7 @@ output$immunisation_explorer <- renderUI({
                           h4(paste0(immune_title)),
                           p(immune_subtitle))),
           fluidRow(column(6,
-                          p("Grey lines represent previous month's data not selected in step 3 filter."),
+                          p("Grey lines represent previous month's data not selected in step 3."),
                           withSpinner(plotlyOutput("immun_scurve"))),
           column(6, uiOutput("immun_table"))),
 

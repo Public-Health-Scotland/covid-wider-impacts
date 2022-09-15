@@ -354,7 +354,8 @@ output$child_health_explorer <- renderUI({
   # Specify items to display in child health ui based on step 2 selection 
   if (input$`childr-measure` == "first_visit") {
     tagList(explorer_child,
-      fluidRow(column(6,br(), br(),
+      fluidRow(column(6,br(), 
+                      p("Grey lines represent previous month's data not selected in step 3.")
                       withSpinner(plotlyOutput("child_first_scurve"))),
                column(6, uiOutput("child_first_table"))),
       fluidRow(column(12, renderUI(commentary_first)))
