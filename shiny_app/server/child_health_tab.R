@@ -32,11 +32,11 @@ plot_scurve_child <- function(dataset, age_week) {
   # We want shiny to re-execute this function whenever the button is pressed, so create a dependency here
   input$btn_update_time_child
   
-  scurve_data <- dataset %>% filter(area_name == input$`childr-geoname`,
+  scurve_data <- dataset %>% filter(area_name == input$`childr-geoname`) %>% 
+    mutate(colour_flag = case_when(time_period_eligible %in% isolate(input$dates_child) ~ 1,
+                                   TRUE ~ 0))
                                     # filter to selected time periods, but don't re-execute each time input changes
-                                    time_period_eligible %in% isolate(input$dates_child))
-  # %>%
-  # droplevels() # might be needed if sort order in legend is to change
+                                    # time_period_eligible %in% isolate(input$dates_child))
   
   if (is.data.frame(scurve_data) && nrow(scurve_data) == 0)
   { plot_nodata(height = 50)
@@ -103,11 +103,11 @@ plot_scurve_child <- function(dataset, age_week) {
     }
     
     #filter dataset to just time periods to be shown in grey
-    grey_lines <- scurve_data_col %>%
+    grey_lines <- scurve_data %>%
       filter(colour_flag == 0)
     
     #filter dataset to just time periods to be shown in colour
-    coloured_lines <- scurve_data_col %>%
+    coloured_lines <- scurve_data %>%
       filter(colour_flag == 1)
     
     # First define the palette of colours used, then set a named vector, so each color
@@ -124,11 +124,17 @@ plot_scurve_child <- function(dataset, age_week) {
     # Create tooltip for scurves
     tooltip_grey <- c(paste0("Cohort: ", grey_lines$time_period_eligible))
     tooltip_col <- c(paste0("Cohort: ", coloured_lines$time_period_eligible))
-    #Creating time trend plot
-    plot_ly(data=scurve_data, x=~interv,  y = ~surv) %>%
-      add_trace(type = 'scatter', mode = 'lines',
-                color = ~time_period_eligible, colors = pal_child,
-                text= tooltip_scurve, hoverinfo="text") %>%
+    
+    # Creating time trend plot
+    plot_ly() %>%
+      add_lines(data = grey_lines, name = "Other time periods", showlegend = FALSE,
+                x=~interv,  y = ~surv,
+                colors = all_scale, color = ~time_period_eligible,
+                text= tooltip_grey, hoverinfo="text") %>%
+      add_lines(data = coloured_lines,
+                x=~interv,  y = ~surv,
+                color = ~time_period_eligible, colors = all_scale,
+                text= tooltip_col,hoverinfo="text") %>%
       #Layout
       layout(margin = list(b = 80, t=12), #to avoid labels getting cut out
              yaxis = yaxis_plots, xaxis = xaxis_plots,
@@ -136,6 +142,7 @@ plot_scurve_child <- function(dataset, age_week) {
                            x = 100, y = 0.8, yanchor="top")) %>% #position of legend
       # leaving only save plot button
       config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove )
+
   }}
 
 

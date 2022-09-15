@@ -566,7 +566,6 @@ output$immun_scurve <- renderPlotly({
 
     #Creating time trend plot
     plot_ly() %>%
-      # commented out because add_trace() breaks colour palette
       add_lines(data = grey_lines, name = "Other time periods", showlegend = FALSE,
                 x=~interv,  y = ~surv, 
                 colors = all_scale, color = ~time_period_eligible,
