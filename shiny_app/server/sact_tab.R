@@ -117,6 +117,382 @@ observeEvent(input$btn_sact_wk_modal,
                size = "l",
                easyClose = TRUE, fade=FALSE,footer = modalButton("Close (Esc)"))))
 
+###############################################.
+## Functions ----
+###############################################.
+## 1. MONTHLY INCIDENCE
+plot_sact_incidence_chart <- function(sact_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_dataset) && nrow(sact_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set axis labelS
+    yaxis_title <- "Number of patients"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    xaxis_title <- "Month"
+    
+    xaxis_plots[["title"]] <- xaxis_title
+    
+    #Text for tooltips
+    sact_tooltip_mon <- c(paste0("Month: ", sact_dataset$month,
+                                 "<br>", "Number of patients: ", sact_dataset$count,
+                                 "<br>", "Area: ", sact_dataset$area))
+    
+    # #Creating time trend plot for incidence
+    
+    plot_ly(data=sact_dataset) %>%
+      add_trace(x=~month,
+                y = ~count,
+                type = 'scatter',
+                mode = 'line',
+                colors = pal_sact,
+                text = sact_tooltip_mon,
+                hoverinfo = "text") %>%
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             xaxis = xaxis_plots, yaxis = yaxis_plots,
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
+      
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+
+## 2. MONTHLY INCIDENCE - AREA
+
+plot_sact_incidence_chart_area <- function(sact_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_dataset) && nrow(sact_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    # Set axis labelS
+    yaxis_title <- "Number of patients"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    xaxis_title <- "Month"
+    
+    xaxis_plots[["title"]] <- xaxis_title
+    
+    
+    #Text for tooltips
+    
+    sact_tooltip_mon <- c(paste0("Month: ", sact_dataset$month,
+                                 "<br>", "Number of patients: ", sact_dataset$count,
+                                 "<br>", "Area: ", sact_dataset$area))
+    
+    # #Creating time trend plot for incidence
+    plot_ly(data=sact_dataset) %>%
+      add_trace(x=~month,
+                y = ~count,
+                type = 'scatter',
+                mode = 'line',
+                color = ~area,
+                colors = pal_sact,
+                text = sact_tooltip_mon,
+                hoverinfo = "text") %>%
+      #Layout
+      layout(margin = list(b = 80, t=5),
+             xaxis = xaxis_plots, yaxis = yaxis_plots,
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+## 3. MONTHLY INCIDENCE - TREATMENTS
+
+plot_sact_incidence_chart_treatment <- function(sact_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_dataset) && nrow(sact_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    # Set axis labelS
+    yaxis_title <- "Number of patients"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    xaxis_title <- "Month"
+    
+    xaxis_plots[["title"]] <- xaxis_title
+    
+    
+    #Text for tooltips
+    
+    sact_tooltip_mon <- c(paste0("Month: ", sact_dataset$month,
+                                 "<br>", "Number of patients: ", sact_dataset$count,
+                                 "<br>", "Administration route: ", sact_dataset$treatment))
+    
+    # #Creating time trend plot for incidence
+    plot_ly(data=sact_dataset ) %>%
+      add_trace(x=~month,
+                y = ~count,
+                type = 'scatter',
+                mode = 'line',
+                color = ~treatment,
+                colors = pal_sact,
+                text = sact_tooltip_mon,
+                hoverinfo = "text") %>%
+      layout(margin = list(b = 80, t=5),
+             xaxis = xaxis_plots, yaxis = yaxis_plots,
+             legend = list(orientation = 'h', x = 0, y = 1.1)) %>%
+      # leaving only save plot button
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+
+## 2. WEEKLY INCIDENCE
+
+plot_sact_wk_incidence_chart <- function(sact_wk_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- "Number of appointments"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    #Text for tooltips
+    
+    sact_tooltip_wk_inc <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>", "Number of appointments: ", sact_wk_dataset$count,
+                                    "<br>", "Area: ", sact_wk_dataset$area))
+    
+    # #Creating time trend plot for weekly incidence
+    plot_ly(data=sact_wk_dataset) %>%
+      add_trace(x=~week_beginning,
+                y = ~count,
+                type = 'scatter',
+                mode = 'line',
+                colors = pal_sact,
+                text=sact_tooltip_wk_inc,
+                hoverinfo="text") %>%
+      layout( yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13),
+                                                tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+              legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
+      add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+## 2. WEEKLY INCIDENCE - AREA
+
+plot_sact_wk_incidence_chart_area <- function(sact_wk_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- "Number of appointments"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    #Text for tooltips
+    sact_tooltip_wk_inc <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>", "Number of appointments: ", sact_wk_dataset$count,
+                                    "<br>", "Area: ", sact_wk_dataset$area))
+    
+    # #Creating time trend plot for weekly incidence
+    plot_ly(data=sact_wk_dataset) %>%
+      add_trace(x=~week_beginning,
+                y = ~count,
+                type = 'scatter',
+                mode = 'line',
+                color = ~area,
+                colors = pal_sact,
+                text=sact_tooltip_wk_inc,
+                hoverinfo="text") %>%
+      layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13),
+                                               tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             legend = list(orientation = 'h', x = 0, y = 1.2, traceorder = 'reversed')) %>%
+      add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+  }
+}
+
+## 2. WEEKLY INCIDENCE - TREATMENT
+
+plot_sact_wk_incidence_chart_treatment <- function(sact_wk_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    
+    # Set y axis label
+    yaxis_title <- "Number of appointments"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    #Text for tooltips
+    
+    sact_tooltip_wk_inc <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>", "Number of appointments: ", sact_wk_dataset$count,
+                                    "<br>", "Administration route: ", sact_wk_dataset$treatment))
+    
+    # #Creating time trend plot for weekly incidence
+    plot_ly(data=sact_wk_dataset) %>%
+      add_trace(x=~week_beginning,
+                y = ~count,
+                type = 'scatter',
+                mode = 'line',
+                color = ~treatment,
+                colors = pal_sact,
+                text=sact_tooltip_wk_inc,
+                hoverinfo="text") %>%
+      layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13),
+                                               tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             legend = list(orientation = 'h', x = 0, y = 1.2)) %>%
+      add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+################################################################################.
+## 3. WEEKLY DIFFERENCE
+
+plot_sact_wk_difference_chart <- function(sact_wk_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    # Set y axis label
+    yaxis_title <- "Percentage change (%)"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    
+    #Text for tooltips
+    
+    sact_tooltip_wk_dif <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>",
+                                    "Percentage change (%):", paste0(format(round(sact_wk_dataset$week_on_refweek_perc, 2), nsmall = 2), "%"),
+                                    "<br>",
+                                    "Area: ", sact_wk_dataset$area))
+    
+    
+    # #Creating time trend plot for difference
+    
+    plot_ly(data=sact_wk_dataset) %>%
+      add_trace(x=~week_beginning, y = ~week_on_refweek_perc, type = 'scatter',
+                mode = 'line',
+                text=sact_tooltip_wk_dif, hoverinfo="text") %>%
+      layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             legend = list(orientation = 'h', x = 0, y = 1.1, traceorder = 'reversed')) %>%
+      add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+  }
+}
+
+## 3. WEEKLY DIFFERENCE - AREA
+
+plot_sact_wk_difference_chart_area <- function(sact_wk_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    # Set y axis label
+    yaxis_title <- "Percentage change (%)"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    #Text for tooltips
+    
+    sact_tooltip_wk_dif <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>",
+                                    "Percentage change (%):", paste0(format(round(sact_wk_dataset$week_on_refweek_perc, 2), nsmall = 2), "%"),
+                                    "<br>",
+                                    "Area: ", sact_wk_dataset$area))
+    
+    # #Creating time trend plot for difference
+    plot_ly(data=sact_wk_dataset) %>%
+      add_trace(x=~week_beginning, y = ~week_on_refweek_perc, type = 'scatter',
+                mode = 'line',
+                color = ~area,
+                colors = pal_sact,
+                text=sact_tooltip_wk_dif,
+                hoverinfo="text") %>%
+      layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             legend = list(orientation = 'h', x = 0, y = 1.2, traceorder = 'reversed')) %>%
+      add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
+
+## 3. WEEKLY DIFFERENCE - TREATMENT
+
+plot_sact_wk_difference_chart_treatment <- function(sact_wk_dataset) {
+  
+  # set plot display if no data
+  if (is.data.frame(sact_wk_dataset) && nrow(sact_wk_dataset) == 0)
+  { plot_nodata(height = 30, text_nodata = "Chart not available")
+  } else {
+    
+    # Set y axis label
+    yaxis_title <- "Percentage change (%)"
+    
+    yaxis_plots[["title"]] <- yaxis_title
+    
+    #Text for tooltips
+    
+    sact_tooltip_wk_dif <- c(paste0("Week beginning: ", format(sact_wk_dataset$week_beginning, "%d %b"),
+                                    "<br>",
+                                    "Percentage change (%):", paste0(format(round(sact_wk_dataset$week_on_refweek_perc, 2), nsmall = 2), "%"),
+                                    "<br>",
+                                    "Administration route: ", sact_wk_dataset$treatment))
+    
+    # #Creating time trend plot for difference
+    plot_ly(data=sact_wk_dataset) %>%
+      add_trace(x=~week_beginning,
+                y = ~week_on_refweek_perc,
+                type = 'scatter',
+                mode = 'line',
+                color = ~treatment,
+                colors = pal_sact,
+                text=sact_tooltip_wk_dif,
+                hoverinfo="text") %>%
+      layout(yaxis = yaxis_plots, xaxis = list(title = "Week beginning", tickfont = list(size = 13), tick0 = "2019-12-30", dtick = 60*60*24*7*1000*4),
+             legend = list(orientation = 'h', x = 0, y = 1.2)) %>%
+      add_vline(x = '2020-03-23', text = "1st lockdown", line_number = 2,
+                x2 = '2020-12-26', text2 = "2nd lockdown") %>% 
+      config(displaylogo = F, displayModeBar = TRUE, modeBarButtonsToRemove = bttn_remove)
+    
+  }
+}
 
 ###############################################.
 ## Reactive datasets ----
